@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/cloudflare-stream",
-	"version": "0.0.7",
+	"version": "0.0.9",
 	"description": "Lit-based web-component for cloudflare stream service.",
 	"repository": {
 		"type": "git",

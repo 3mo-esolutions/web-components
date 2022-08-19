@@ -5,8 +5,32 @@ type CloudflareStreamApi = {
 	pause(): Promise<void>
 }
 
+export const enum AutoPauseStrategy {
+	WhenNotInViewport = 'when-not-in-viewport',
+	WhenQuarterInViewport = 'when-quarter-in-viewport',
+	WhenHalfInViewport = 'when-half-in-viewport',
+}
+
 @component('mo-cloudflare-stream')
 export class CloudflareStream extends Component {
+	private static getViewportShallPausePredicate(scale: number) {
+		return (rect: DOMRect) => {
+			const scaledHeight = Math.ceil(rect.height * (1 - scale))
+			return (
+				rect.top > scaledHeight * -1 &&
+				rect.left >= 0 &&
+				rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) + scaledHeight &&
+				rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+			) === false
+		}
+	}
+
+	private static readonly shallPauseByStrategy = new Map([
+		[AutoPauseStrategy.WhenNotInViewport, CloudflareStream.getViewportShallPausePredicate(0)],
+		[AutoPauseStrategy.WhenQuarterInViewport, CloudflareStream.getViewportShallPausePredicate(0.25)],
+		[AutoPauseStrategy.WhenHalfInViewport, CloudflareStream.getViewportShallPausePredicate(0.5)],
+	])
+
 	static override get styles() {
 		return css`
 			:host {
@@ -28,21 +52,19 @@ export class CloudflareStream extends Component {
 
 	@eventListener({ type: 'scroll', target: window })
 	protected handleScroll() {
-		const rect = this.getBoundingClientRect()
-		const isHalfInViewPort =
-			rect.top > Math.ceil(rect.height / 2) * -1 &&
-			rect.left >= 0 &&
-			rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) + Math.ceil(rect.height / 2) &&
-			rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-
-		if (isHalfInViewPort) {
-			this.stream?.play()
-		} else {
-			this.stream?.pause()
+		if (this.autoPause) {
+			const rect = this.getBoundingClientRect()
+			const shallPause = CloudflareStream.shallPauseByStrategy.get(this.autoPause)?.(rect) ?? false
+			if (shallPause) {
+				this.stream?.pause()
+			} else {
+				this.stream?.play()
+			}
 		}
 	}
 
 	@property() source?: string
+	@property() autoPause?: AutoPauseStrategy
 
 	@query('iframe') readonly iframeElement!: HTMLIFrameElement
 
@@ -58,8 +80,8 @@ export class CloudflareStream extends Component {
 			<iframe src=${ifDefined(this.source)}
 				?hidden=${!this.source}
 				allow='accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;'
-				allowfullscreen>
-			</iframe>
+				allowfullscreen
+			></iframe>
 		`
 	}
 }
