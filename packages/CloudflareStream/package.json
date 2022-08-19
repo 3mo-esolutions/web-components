@@ -1,10 +1,10 @@
 {
 	"name": "@3mo/cloudflare-stream",
-	"version": "0.0.6",
+	"version": "0.0.7",
 	"description": "Lit-based web-component for cloudflare stream service.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components/packages/CloudflareStream"
+		"url": "https://github.com/3mo-esolutions/web-components/tree/main/packages/CloudflareStream"
 	},
 	"keywords": [
 		"lit",
