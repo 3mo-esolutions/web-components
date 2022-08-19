@@ -1,0 +1,19 @@
+{
+	"scripts": {
+		"postinstall": "cd packages/CloudflareStream && npm install"
+	},
+	"devDependencies": {
+		"@a11d/eslint-config": "0.0.1",
+		"ts-loader": "*",
+		"html-webpack-plugin": "*",
+		"webpack": "*",
+		"webpack-cli": "*",
+		"webpack-dev-server": "*",
+		"eslint": "*",
+		"typescript": "4.*",
+		"@typescript-eslint/eslint-plugin": "*",
+		"@typescript-eslint/parser": "*",
+		"eslint-plugin-import": "*",
+		"eslint-plugin-lit": "*"
+	}
+}
