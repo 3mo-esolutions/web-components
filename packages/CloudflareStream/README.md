@@ -1,3 +1,3 @@
 # Cloudflare Stream
 
-Lit-based web-component for cloudflare stream service.
+Lit-based web-component for [Cloudflare stream](https://developers.cloudflare.com/stream/) service.

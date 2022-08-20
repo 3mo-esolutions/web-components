@@ -4,18 +4,19 @@
 	},
 	"devDependencies": {
 		"@a11d/eslint-config": "0.0.1",
-		"ts-loader": "*",
-		"html-webpack-plugin": "*",
-		"webpack": "*",
-		"webpack-cli": "*",
-		"webpack-dev-server": "*",
-		"eslint": "*",
-		"typescript": "4.*",
 		"@typescript-eslint/eslint-plugin": "*",
 		"@typescript-eslint/parser": "*",
+		"eslint": "*",
 		"eslint-plugin-import": "*",
 		"eslint-plugin-lit": "*",
+		"html-webpack-plugin": "*",
+		"minify-html-literals-loader": "*",
 		"terser-webpack-plugin": "*",
-		"tsconfig-paths-webpack-plugin": "*"
+		"ts-loader": "*",
+		"tsconfig-paths-webpack-plugin": "*",
+		"typescript": "4.*",
+		"webpack": "*",
+		"webpack-cli": "*",
+		"webpack-dev-server": "*"
 	}
 }
