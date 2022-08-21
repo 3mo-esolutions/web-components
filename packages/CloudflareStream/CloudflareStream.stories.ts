@@ -1,6 +1,6 @@
 import { html } from '@a11d/lit'
 import { Meta } from '@storybook/web-components'
-import { createStory as story } from '../../.storybook/story'
+import { story } from '../../.storybook/story'
 import { CloudflareStreamAutoPause } from './CloudflareStream'
 import '.'
 

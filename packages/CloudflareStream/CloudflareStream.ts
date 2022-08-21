@@ -48,21 +48,8 @@ export class CloudflareStream extends Component {
 		`
 	}
 
-	@eventListener({ type: 'scroll', target: window })
-	protected handleScroll() {
-		if (this.autoPause) {
-			const rect = this.getBoundingClientRect()
-			const shallPause = CloudflareStream.shallPauseByStrategy.get(this.autoPause)?.(rect) ?? false
-			if (shallPause) {
-				this.stream?.pause()
-			} else {
-				this.stream?.play()
-			}
-		}
-	}
-
 	@property() source?: string
-	@property() autoPause?: AutoPauseStrategy
+	@property({ updated(this: CloudflareStream) { this.autoPauseIfNecessary() } }) autoPause?: CloudflareStreamAutoPause
 
 	@query('iframe') readonly iframeElement!: HTMLIFrameElement
 
@@ -81,6 +68,20 @@ export class CloudflareStream extends Component {
 				allowfullscreen
 			></iframe>
 		`
+	}
+
+	@eventListener({ type: 'scroll', target: window })
+	@eventListener({ type: 'resize', target: window })
+	protected autoPauseIfNecessary() {
+		if (this.autoPause) {
+			const rect = this.getBoundingClientRect()
+			const shallPause = CloudflareStream.shallPauseByStrategy.get(this.autoPause)?.(rect) ?? false
+			if (shallPause) {
+				this.stream?.pause()
+			} else {
+				this.stream?.play()
+			}
+		}
 	}
 }
 

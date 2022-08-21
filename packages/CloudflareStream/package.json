@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/cloudflare-stream",
-	"version": "0.0.10",
+	"version": "0.0.13",
 	"description": "Lit-based web-component for cloudflare stream service.",
 	"repository": {
 		"type": "git",
@@ -25,8 +25,9 @@
 		"dist"
 	],
 	"scripts": {
-		"build": "tsc && webpack",
-		"release": "npm run build && npm version patch && npm publish --access public"
+		"clean": "del-cli \"./dist\"",
+		"build": "npm run clean && tsc && webpack",
+		"release": "npm run build && npm version patch && npm publish --access public && npm run clean"
 	},
 	"dependencies": {
 		"@a11d/lit": "*"

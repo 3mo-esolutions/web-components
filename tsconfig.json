@@ -17,6 +17,7 @@
 		"noUncheckedIndexedAccess": true,
 		"noImplicitOverride": true,
 		"esModuleInterop": true,
+		"skipLibCheck": true,
 		"plugins": [
 			{
 				"name": "ts-lit-plugin",

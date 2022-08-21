@@ -19,6 +19,15 @@ module.exports = {
 			{
 				test: /\.ts?$/,
 				loader: 'ts-loader',
+				options: {
+					compilerOptions: {
+						emitDeclarationOnly: false,
+						noImplicitAny: false,
+						noUnusedLocals: false,
+						declaration: false,
+						allowJs: false,
+					}
+				}
 			},
 			...rest
 		]
