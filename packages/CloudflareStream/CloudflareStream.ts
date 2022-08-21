@@ -5,30 +5,28 @@ type CloudflareStreamApi = {
 	pause(): Promise<void>
 }
 
-export const enum AutoPauseStrategy {
+export const enum CloudflareStreamAutoPause {
 	WhenNotInViewport = 'when-not-in-viewport',
 	WhenQuarterInViewport = 'when-quarter-in-viewport',
 	WhenHalfInViewport = 'when-half-in-viewport',
 }
 
+const getViewportShallPausePredicate = (scale: number) => (rect: DOMRect) => {
+	const scaledHeight = Math.ceil(rect.height * (1 - scale))
+	return (
+		rect.top > scaledHeight * -1
+		&& rect.left >= 0
+		&& rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) + scaledHeight
+		&& rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+	) === false
+}
+
 @component('mo-cloudflare-stream')
 export class CloudflareStream extends Component {
-	private static getViewportShallPausePredicate(scale: number) {
-		return (rect: DOMRect) => {
-			const scaledHeight = Math.ceil(rect.height * (1 - scale))
-			return (
-				rect.top > scaledHeight * -1 &&
-				rect.left >= 0 &&
-				rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) + scaledHeight &&
-				rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-			) === false
-		}
-	}
-
 	private static readonly shallPauseByStrategy = new Map([
-		[AutoPauseStrategy.WhenNotInViewport, CloudflareStream.getViewportShallPausePredicate(0)],
-		[AutoPauseStrategy.WhenQuarterInViewport, CloudflareStream.getViewportShallPausePredicate(0.25)],
-		[AutoPauseStrategy.WhenHalfInViewport, CloudflareStream.getViewportShallPausePredicate(0.5)],
+		[CloudflareStreamAutoPause.WhenNotInViewport, getViewportShallPausePredicate(0)],
+		[CloudflareStreamAutoPause.WhenQuarterInViewport, getViewportShallPausePredicate(0.25)],
+		[CloudflareStreamAutoPause.WhenHalfInViewport, getViewportShallPausePredicate(0.5)],
 	])
 
 	static override get styles() {
