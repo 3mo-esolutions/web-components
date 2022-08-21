@@ -3,7 +3,8 @@
 	"exclude": [
 		"./dist",
 		"*.config.*",
-		"*.stories.*"
+		"*.stories.ts",
+		"*.test.ts"
 	],
 	"compilerOptions": {
 		"baseUrl": ".",

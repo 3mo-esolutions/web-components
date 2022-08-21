@@ -1,10 +1,13 @@
 {
 	"scripts": {
 		"start": "npm install && start-storybook -p 3000",
+		"test": "webpack --config ./webpack.config.test.mjs && concurrently --raw \"webpack --watch --config ./webpack.config.test.mjs\" \"karma start\" --restart-tries -1",
+		"test:ci": "webpack --config ./webpack.config.test.mjs && karma start --single-run",
 		"postinstall": "cd packages/CloudflareStream && npm install",
 		"build-storybook": "build-storybook"
 	},
 	"devDependencies": {
+		"concurrently": "*",
 		"@a11d/eslint-config": "0.0.1",
 		"@a11d/lit": "^0.0.26",
 		"@storybook/addon-actions": "6.*",
@@ -27,6 +30,12 @@
 		"typescript": "4.*",
 		"webpack": "*",
 		"webpack-cli": "*",
-		"webpack-dev-server": "*"
+		"webpack-dev-server": "*",
+		"karma": "*",
+		"karma-chrome-launcher": "*",
+		"karma-firefox-launcher": "*",
+		"karma-helpful-reporter": "*",
+		"karma-jasmine": "*",
+		"@types/jasmine": "*"
 	}
 }

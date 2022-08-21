@@ -1,11 +1,12 @@
 {
 	"compileOnSave": true,
 	"compilerOptions": {
+		"baseUrl": "./packages",
 		"incremental": true,
 		"declaration": true,
 		"target": "ES2017",
 		"module": "ES2015",
-		"moduleResolution": "node",
+		"moduleResolution": "Node",
 		"strict": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
