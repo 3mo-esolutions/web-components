@@ -2,7 +2,8 @@
 	"extends": "../../tsconfig.json",
 	"exclude": [
 		"./dist",
-		"*.config.*"
+		"*.config.*",
+		"*.stories.*"
 	],
 	"compilerOptions": {
 		"baseUrl": ".",

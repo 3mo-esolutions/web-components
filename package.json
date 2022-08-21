@@ -1,9 +1,17 @@
 {
 	"scripts": {
-		"postinstall": "cd packages/CloudflareStream && npm install"
+		"dev": "start-storybook -p 3000",
+		"postinstall": "cd packages/CloudflareStream && npm install",
+		"build-storybook": "build-storybook"
 	},
 	"devDependencies": {
 		"@a11d/eslint-config": "0.0.1",
+		"@storybook/addon-actions": "6.*",
+		"@storybook/addon-essentials": "6.*",
+		"@storybook/addon-links": "6.*",
+		"@storybook/builder-webpack5": "6.*",
+		"@storybook/manager-webpack5": "6.*",
+		"@storybook/web-components": "6.*",
 		"@typescript-eslint/eslint-plugin": "*",
 		"@typescript-eslint/parser": "*",
 		"eslint": "*",

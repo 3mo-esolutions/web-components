@@ -25,7 +25,6 @@
 		"dist"
 	],
 	"scripts": {
-		"dev": "npm run build && snowpack dev && tsc --watch",
 		"build": "tsc && webpack",
 		"release": "npm run build && npm version patch && npm publish --access public"
 	},
