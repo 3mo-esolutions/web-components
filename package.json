@@ -4,7 +4,7 @@
 		"test": "webpack --config ./webpack.config.test.mjs && concurrently --raw \"webpack --watch --config ./webpack.config.test.mjs\" \"karma start\" --restart-tries -1",
 		"test:ci": "webpack --config ./webpack.config.test.mjs && karma start --single-run",
 		"postinstall": "cd packages/CloudflareStream && npm install",
-		"build-storybook": "build-storybook"
+		"docs:build": "build-storybook -o docs-dist"
 	},
 	"devDependencies": {
 		"concurrently": "*",
