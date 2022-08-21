@@ -1,12 +1,27 @@
+import { story, meta } from '../../.storybook/story'
 import { html } from '@a11d/lit'
-import { Meta } from '@storybook/web-components'
-import { story } from '../../.storybook/story'
 import { CloudflareStreamAutoPause } from './CloudflareStream'
 import '.'
 
-export default {
+export default meta({
 	title: 'CloudflareStream',
 	component: 'mo-cloudflare-stream',
+})
+
+const defaultStreamSource = 'https://customer-m3y97nwa2fb7cpy9.cloudflarestream.com/39fc05d336585f825b0170efb2ff8783/iframe?preload=true&loop=true'
+
+export const Default = story({
+	args: { source: defaultStreamSource },
+	render: ({ source }) => html`
+		<mo-cloudflare-stream source=${source}></mo-cloudflare-stream>
+	`
+})
+
+export const AutoPause = story({
+	args: {
+		autoPause: CloudflareStreamAutoPause.WhenHalfInViewport,
+		source: defaultStreamSource
+	},
 	argTypes: {
 		autoPause: {
 			control: { type: 'select' },
@@ -16,23 +31,16 @@ export default {
 				CloudflareStreamAutoPause.WhenHalfInViewport,
 			],
 		},
-	}
-} as Meta
-
-const defaultStreamSource = 'https://customer-m3y97nwa2fb7cpy9.cloudflarestream.com/39fc05d336585f825b0170efb2ff8783/iframe?preload=true&loop=true'
+	},
+	render: ({ autoPause, source }) => html`
+		${loremIpsum(20)}
+		<mo-cloudflare-stream autoPause=${autoPause} source=${source}></mo-cloudflare-stream>
+		${loremIpsum(40)}
+	`,
+})
 
 const loremIpsum = (repetition: number) => html`
 	${new Array(repetition).fill(0).map(() => html`
-		<p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Suscipit laudantium eos reprehenderit repudiandae officiis dolor explicabo aut necessitatibus ex voluptas soluta excepturi, est fugit exercitationem sunt recusandae voluptatibus aperiam nam?</p>
+		<p>Lorem ipsum dolor sit.</p>
 	`)}
 `
-
-export const Default = story({ source: defaultStreamSource }, props => html`
-	<mo-cloudflare-stream source=${props.source}></mo-cloudflare-stream>
-`)
-
-export const AutoPause = story({ autoPause: CloudflareStreamAutoPause.WhenHalfInViewport, source: defaultStreamSource }, props => html`
-	${loremIpsum(10)}
-	<mo-cloudflare-stream autoPause=${props.autoPause} source=${props.source}></mo-cloudflare-stream>
-	${loremIpsum(20)}
-`)

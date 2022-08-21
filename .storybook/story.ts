@@ -1,7 +1,13 @@
-// @ts-nocheck
-import { Story } from '@storybook/web-components'
+import { Args, Meta, StoryObj } from '@storybook/web-components'
 
-export function story<TProps extends Record<unknown, unknown>, TStory extends Story<TProps>>(props: TProps, story: TStory): TStory {
-	(story = story.bind({})).args = props
-	return story
+export type LitStory<TArgs extends Args> = StoryObj<TArgs> & {
+	args?: TArgs
+}
+
+export function meta(metaDefinition: Meta) {
+	return metaDefinition
+}
+
+export function story<TArgs extends Args>(storyDefinition: LitStory<TArgs>) {
+	return storyDefinition
 }

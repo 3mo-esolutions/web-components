@@ -7,7 +7,11 @@ module.exports = {
 	],
 	addons: [
 		"@storybook/addon-links",
-		"@storybook/addon-essentials"
+		"@storybook/addon-essentials",
+		{
+			name: "@storybook/addon-docs",
+			options: { transcludeMarkdown: true },
+		},
 	],
 	framework: "@storybook/web-components",
 	core: {
