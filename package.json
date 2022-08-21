@@ -1,6 +1,6 @@
 {
 	"scripts": {
-		"dev": "start-storybook -p 3000",
+		"start": "npm install && start-storybook -p 3000",
 		"postinstall": "cd packages/CloudflareStream && npm install",
 		"build-storybook": "build-storybook"
 	},
