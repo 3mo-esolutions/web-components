@@ -1,7 +1,7 @@
 import { CloudflareStream } from './CloudflareStream'
 
 describe(CloudflareStream.name, () => {
-	const fixture = new ComponentTestFixture(() => new CloudflareStream)
+	const fixture = new ComponentTestFixture(() => document.createElement('mo-cloudflare-stream'))
 
 	it('should have the default iframe allowances', () => {
 		expect(fixture.component.renderRoot.querySelector('iframe')?.getAttribute('allow')).toBe('accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;')

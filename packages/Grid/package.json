@@ -1,0 +1,33 @@
+{
+	"name": "@3mo/grid",
+	"version": "0.0.1",
+	"description": "A simple wrapper web-component for CSS Grid Layout.",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/3mo-esolutions/web-components/tree/main/packages/Grid"
+	},
+	"keywords": [
+		"lit",
+		"web-component",
+		"css-grid"
+	],
+	"author": "3MO GmbH",
+	"license": "MIT",
+	"homepage": "https://www.3mo.de",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"clean": "del-cli \"./dist\"",
+		"build": "npm run clean && tsc && webpack --config ../../webpack.config.mjs",
+		"release": "npm run build && npm version patch && npm publish --access public && npm run clean"
+	},
+	"dependencies": {
+		"@a11d/lit": "*",
+		"tslib": "*",
+		"csstype": "*"
+	}
+}
