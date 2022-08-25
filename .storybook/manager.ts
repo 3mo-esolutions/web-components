@@ -1,9 +1,9 @@
 import { addons } from '@storybook/addons'
-import { create } from '@storybook/theming'
+import { themes } from '@storybook/theming'
 
 addons.setConfig({
-	theme: create({
-		base: 'light',
+	theme: {
+		...themes.dark,
 
 		brandTitle: '3MO',
 		brandUrl: 'https://3mo.de',
@@ -12,5 +12,5 @@ addons.setConfig({
 
 		colorPrimary: '#0077c8',
 		barTextColor: '#0077c8',
-	}),
+	},
 })

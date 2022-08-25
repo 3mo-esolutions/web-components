@@ -6,4 +6,4 @@ We are now ready to take the next step and develop micro-frontends and component
 to be able to bring Web Components to each and every web-based project, not only our business-suite web applications.
 
 Browse example stories now by navigating to them in the sidebar.
-View their code in `*.stories.tx` files to learn how they work.
+View their code in `*.stories.*` files to learn how they work.

@@ -33,7 +33,6 @@
 		"karma-helpful-reporter": "*",
 		"karma-jasmine": "*",
 		"minify-html-literals-loader": "*",
-		"storybook-dark-mode": "^1.1.0",
 		"terser-webpack-plugin": "*",
 		"ts-loader": "*",
 		"tsconfig-paths-webpack-plugin": "*",
