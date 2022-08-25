@@ -7,9 +7,9 @@ export default meta({
 	title: 'Grid',
 	component: 'mo-grid',
 	argTypes: {
-		columns: { description: 'Tunnels the value to the native "grid-template-columns" css property which defines the layout of columns. Additionally it supports Asterix syntax for grid fraction (e.g. "2*" equals to "2fr")' },
-		rows: { description: 'Tunnels the value to the native "grid-template-rows" css property which defines the layout of rows. Additionally it supports Asterix syntax for grid fraction (e.g. "2*" equals to "2fr")' },
-		gap: { description: 'Tunnels the value to the native "gap" css property which defines the gap between grid items.' },
+		columns: { description: 'Tunnels `grid-template-columns` CSS property which defines the layout of columns. Additionally it supports Asterix syntax for grid fraction (e.g. `2*` equals to `2fr`)' },
+		rows: { description: 'Tunnels `grid-template-rows` CSS property which defines the layout of rows. Additionally it supports Asterix syntax for grid fraction (e.g. `2*` equals to `2fr`)' },
+		gap: { description: 'Tunnels `gap` CSS property which defines the gap between grid items.' },
 	},
 	parameters: {
 		docs: {

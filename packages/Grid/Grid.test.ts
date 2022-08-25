@@ -34,18 +34,18 @@ describe(Grid.name, () => {
 
 	for (const [property, cssProperty] of cssPropertiesByProperty) {
 		describe(`Property "${property}"`, () => {
-			it(`Writes to CSS property ${cssProperty}`, () => {
-				setPropertyValue(property, 'initial')
-				expect(fixture.component.style.getPropertyValue(cssProperty)).toBe('initial')
-			})
-
-			it(`Reads from CSS property "${cssProperty}"`, () => {
+			it(`should get from CSS property "${cssProperty}"`, () => {
 				fixture.component.style.setProperty(cssProperty, 'initial')
 				expect(fixture.component[property]).toBe('initial')
 			})
 
+			it(`should set CSS property ${cssProperty}`, () => {
+				setPropertyValue(property, 'initial')
+				expect(fixture.component.style.getPropertyValue(cssProperty)).toBe('initial')
+			})
+
 			if (propertiesSupportingAsterixSyntax.has(property)) {
-				it('Supports asterisk syntax', () => {
+				it('should supports asterisk syntax', () => {
 					setPropertyValue(property, '*')
 					expect(fixture.component.style.getPropertyValue(cssProperty)).toBe('1fr')
 
