@@ -5,7 +5,7 @@ import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin'
 export default () => ({
 	mode: 'development',
 	stats: 'minimal',
-	entry: ['./testing.ts', ...glob.sync('./**/*.test.ts').filter(path => path.includes('node_modules') === false)],
+	entry: ['./test/index.ts', ...glob.sync('./**/*.test.ts').filter(path => path.includes('node_modules') === false)],
 	devtool: false,
 	output: {
 		path: resolve('dist'),
