@@ -1,41 +1,45 @@
 {
 	"scripts": {
-		"start": "npm install && start-storybook -p 3000",
+		"start": "npm run clean && npm install && start-storybook -p 3000",
 		"test": "webpack --config ./webpack.config.test.mjs && concurrently --raw \"webpack --watch --config ./webpack.config.test.mjs\" \"karma start\" --restart-tries -1",
 		"test:ci": "webpack --config ./webpack.config.test.mjs && karma start --single-run",
-		"postinstall": "cd packages/CloudflareStream && npm install",
-		"docs:build": "build-storybook -o docs-dist"
+		"docs:build": "build-storybook -o docs-dist",
+		"clean": "node ./forEachPackage.mjs \"run clean\""
 	},
+	"workspaces": [
+		"./packages/*"
+	],
 	"devDependencies": {
-		"concurrently": "*",
 		"@a11d/eslint-config": "0.0.1",
-		"@a11d/lit": "^0.0.26",
+		"@a11d/lit": "*",
 		"@storybook/addon-actions": "6.*",
 		"@storybook/addon-essentials": "6.*",
 		"@storybook/addon-links": "6.*",
 		"@storybook/builder-webpack5": "6.*",
 		"@storybook/manager-webpack5": "6.*",
 		"@storybook/web-components": "6.*",
+		"@types/jasmine": "*",
 		"@typescript-eslint/eslint-plugin": "*",
 		"@typescript-eslint/parser": "*",
+		"concurrently": "*",
 		"del-cli": "*",
 		"eslint": "*",
 		"eslint-plugin-import": "*",
 		"eslint-plugin-lit": "*",
 		"html-webpack-plugin": "*",
+		"karma": "*",
+		"karma-chrome-launcher": "*",
+		"karma-firefox-launcher": "*",
+		"karma-helpful-reporter": "*",
+		"karma-jasmine": "*",
 		"minify-html-literals-loader": "*",
+		"storybook-dark-mode": "^1.1.0",
 		"terser-webpack-plugin": "*",
 		"ts-loader": "*",
 		"tsconfig-paths-webpack-plugin": "*",
 		"typescript": "4.*",
 		"webpack": "*",
 		"webpack-cli": "*",
-		"webpack-dev-server": "*",
-		"karma": "*",
-		"karma-chrome-launcher": "*",
-		"karma-firefox-launcher": "*",
-		"karma-helpful-reporter": "*",
-		"karma-jasmine": "*",
-		"@types/jasmine": "*"
+		"webpack-dev-server": "*"
 	}
 }
