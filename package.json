@@ -4,7 +4,8 @@
 		"test": "npm install && webpack --config ./webpack.config.test.mjs && concurrently --raw \"webpack --watch --config ./webpack.config.test.mjs\" \"karma start\" --restart-tries -1",
 		"test:ci": "webpack --config ./webpack.config.test.mjs && karma start --single-run",
 		"docs:build": "build-storybook -o docs-dist",
-		"clean": "node ./forEachPackage.mjs \"run clean\""
+		"clean": "node ./scripts/clean.mjs",
+		"release": "node ./scripts/release.mjs"
 	},
 	"workspaces": [
 		"./packages/*"

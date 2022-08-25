@@ -21,11 +21,6 @@
 	"files": [
 		"dist"
 	],
-	"scripts": {
-		"clean": "del-cli \"./dist\"",
-		"build": "npm run clean && tsc && webpack --config ../../webpack.config.mjs",
-		"release": "npm run build && npm version patch && npm publish --access public && npm run clean"
-	},
 	"dependencies": {
 		"@a11d/lit": "*",
 		"tslib": "*"
