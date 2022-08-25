@@ -29,6 +29,7 @@ module.exports = {
 						noImplicitAny: false,
 						noUnusedLocals: false,
 						declaration: false,
+						declarationMap: false,
 						allowJs: false,
 					}
 				}

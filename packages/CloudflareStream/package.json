@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/cloudflare-stream",
-	"version": "0.0.13",
+	"version": "0.0.14",
 	"description": "Lit-based web-component for cloudflare stream service.",
 	"repository": {
 		"type": "git",
@@ -12,11 +12,8 @@
 		"cloudflare",
 		"cloudflare-stream"
 	],
-	"author": "@3mo",
+	"author": "3MO GmbH",
 	"license": "MIT",
-	"bugs": {
-		"url": "https://github.com/3mo-esolutions/web-components/web-components.git"
-	},
 	"homepage": "https://www.3mo.de",
 	"type": "module",
 	"main": "dist/index.js",
@@ -30,9 +27,7 @@
 		"release": "npm run build && npm version patch && npm publish --access public && npm run clean"
 	},
 	"dependencies": {
-		"@a11d/lit": "*"
-	},
-	"devDependencies": {
-		"tsc-watch": "*"
+		"@a11d/lit": "*",
+		"tslib": "*"
 	}
 }
