@@ -34,6 +34,7 @@
 		"karma-helpful-reporter": "*",
 		"karma-jasmine": "*",
 		"minify-html-literals-loader": "*",
+		"resolve-typescript-plugin": "*",
 		"terser-webpack-plugin": "*",
 		"ts-loader": "*",
 		"tsconfig-paths-webpack-plugin": "*",

@@ -1,4 +1,5 @@
-import { Grid } from './Grid'
+import { ComponentTestFixture } from '../../test/index.js'
+import { Grid } from './Grid.js'
 
 describe(Grid.name, () => {
 	const fixture = new ComponentTestFixture(() => document.createElement('mo-grid'))

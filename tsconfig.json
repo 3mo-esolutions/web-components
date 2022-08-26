@@ -1,13 +1,13 @@
 {
 	"compileOnSave": true,
 	"compilerOptions": {
-		"baseUrl": "./packages",
+		"baseUrl": ".",
 		"incremental": true,
 		"declaration": true,
 		"declarationMap": true,
 		"target": "ES2017",
-		"module": "ES2015",
-		"moduleResolution": "Node",
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
 		"strict": true,
 		"importHelpers": true,
 		"noUnusedLocals": true,

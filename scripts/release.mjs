@@ -7,8 +7,9 @@ const versionBumpType = Arguments.tryGet(1, 'No version bump type provided')
 
 const packageDirectory = Packages.getDirectory(packageName)
 
-await run(`npm run build`, packageDirectory)
+await run('npm run clean')
+await run(`tsc`, packageDirectory)
+await run(`webpack --config ../../webpack.config.mjs`, packageDirectory)
 await run(`npm version ${versionBumpType}`, packageDirectory)
 await run('npm publish', packageDirectory)
-
 await run('npm run clean')

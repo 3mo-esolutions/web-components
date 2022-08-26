@@ -1,5 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-class ComponentTestFixture<TComponent extends import('@a11d/lit').LitElement> {
+export class ComponentTestFixture<TComponent extends import('@a11d/lit').LitElement> {
 	private _component?: TComponent
 	get component() { return this._component! }
 
@@ -29,6 +28,3 @@ class ComponentTestFixture<TComponent extends import('@a11d/lit').LitElement> {
 		await this.updateComplete
 	}
 }
-
-// @ts-expect-error - ComponentTestFixture global value
-globalThis.ComponentTestFixture = ComponentTestFixture

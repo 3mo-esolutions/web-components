@@ -1,6 +1,6 @@
-import { story, meta } from '../../.storybook/story'
+import { story, meta } from '../../.storybook/story.js'
 import { html } from '@a11d/lit'
-import { CloudflareStreamAutoPause } from './CloudflareStream'
+import { CloudflareStreamAutoPause } from './CloudflareStream.js'
 import '.'
 
 export default meta({

@@ -1,4 +1,5 @@
 const path = require('path')
+const ResolveTypeScriptPlugin = require('resolve-typescript-plugin')
 
 module.exports = {
 	stories: [
@@ -36,6 +37,7 @@ module.exports = {
 			},
 			...rest
 		]
+		config.resolve.plugins = [...(config.resolve.plugins ?? []), new ResolveTypeScriptPlugin()]
 		return config
 	},
 }

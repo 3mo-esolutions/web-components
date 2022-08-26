@@ -1,6 +1,7 @@
 import { resolve } from 'path'
 import glob from 'glob'
 import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin'
+import ResolveTypeScriptPlugin from 'resolve-typescript-plugin'
 
 export default () => ({
 	mode: 'development',
@@ -32,7 +33,8 @@ export default () => ({
 	resolve: {
 		extensions: ['.ts', '.js'],
 		plugins: [
-			new TsconfigPathsPlugin({ configFile: './tsconfig.json' })
+			new TsconfigPathsPlugin({ configFile: './tsconfig.json' }),
+			new ResolveTypeScriptPlugin(),
 		]
 	}
 })

@@ -1,4 +1,5 @@
-import { CloudflareStream } from './CloudflareStream'
+import { ComponentTestFixture } from '../../test/index.js'
+import { CloudflareStream } from './CloudflareStream.js'
 
 describe(CloudflareStream.name, () => {
 	const fixture = new ComponentTestFixture(() => document.createElement('mo-cloudflare-stream'))

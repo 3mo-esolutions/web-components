@@ -1,6 +1,7 @@
 import { resolve } from 'path'
 import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin'
 import TerserPlugin from 'terser-webpack-plugin'
+import ResolveTypeScriptPlugin from 'resolve-typescript-plugin'
 
 export default () => ({
 	mode: 'production',
@@ -24,6 +25,7 @@ export default () => ({
 	resolve: {
 		extensions: ['.ts', '.js'],
 		plugins: [
+			new ResolveTypeScriptPlugin(),
 			new TsconfigPathsPlugin({ configFile: './tsconfig.json' })
 		]
 	},

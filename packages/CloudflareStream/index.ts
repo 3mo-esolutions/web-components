@@ -1,1 +1,1 @@
-export * from './CloudflareStream'
+export * from './CloudflareStream.js'

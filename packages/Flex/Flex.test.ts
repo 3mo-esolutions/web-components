@@ -1,4 +1,5 @@
-import { Flex } from '.'
+import { ComponentTestFixture } from '../../test/index.js'
+import { Flex } from './Flex.js'
 
 describe(Flex.name, () => {
 	const fixture = new ComponentTestFixture(() => document.createElement('mo-flex'))

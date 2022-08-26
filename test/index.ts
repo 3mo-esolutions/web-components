@@ -1,1 +1,1 @@
-import './ComponentTestFixture'
+export * from './ComponentTestFixture.js'

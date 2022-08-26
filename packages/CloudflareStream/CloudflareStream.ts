@@ -1,5 +1,5 @@
 import { Component, component, css, eventListener, html, ifDefined, property, query } from '@a11d/lit'
-import './cloudflarestream-sdk'
+import './cloudflarestream-sdk.js'
 
 type CloudflareStreamApi = {
 	play(): Promise<void>
