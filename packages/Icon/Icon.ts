@@ -8,6 +8,10 @@ export const enum IconVariant {
 	Rounded = 'rounded',
 }
 
+/**
+ * @attr variant - The variant of the icon tied to a specific font.
+ * @attr icon - The icon to display.
+ */
 @component('mo-icon')
 export class Icon extends Component {
 	static defaultVariant = IconVariant.Filled
