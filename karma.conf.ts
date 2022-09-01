@@ -8,7 +8,7 @@ module.exports = config => config.set({
 	reporters: ['helpful'],
 	logLevel: 'ERROR',
 	port: 9876,
-	browsers: ['ChromeHeadless'],
+	browsers: ['ChromeHeadless', 'FirefoxHeadless'],
 	colors: true,
 	autoWatch: true,
 	singleRun: false,

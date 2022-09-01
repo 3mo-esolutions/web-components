@@ -1,5 +1,5 @@
 import { ComponentTestFixture } from '../../test/index.js'
-import { Icon, IconVariant, MaterialIconFonts } from './Icon.js'
+import { Icon, IconVariant } from './Icon.js'
 
 describe(Icon.name, () => {
 	const fixture = new ComponentTestFixture(() => document.createElement('mo-icon'))
@@ -29,11 +29,11 @@ describe(Icon.name, () => {
 		expect(fixture.component.renderRoot.querySelector('span')?.textContent).toBe(icon)
 	})
 
-	MaterialIconFonts.fontsByVariant.forEach((font, variant) => {
+	Icon.fontsByVariant.forEach((font, variant) => {
 		it(`should set the font-family to "${font.name}" and load the font automatically when the variant is set to "${variant}"`, async () => {
 			fixture.component.variant = variant
 			await fixture.update()
-			expect(getComputedStyle(fixture.component.renderRoot.querySelector('span')!).fontFamily).toBe(`"${font.name}"`)
+			expect(getComputedStyle(fixture.component.renderRoot.querySelector('span')!).fontFamily).toContain(font.name)
 
 			const fontStyleSheet = document.head.querySelector('style')
 			expect(fontStyleSheet?.textContent).toContain(font.url)
