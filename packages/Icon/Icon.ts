@@ -12,19 +12,20 @@ export const enum IconVariant {
 export class Icon extends Component {
 	static defaultVariant = IconVariant.Filled
 
-	private static readonly fontStyleElement = document.createElement('style')
-	private static readonly fontUrls = new Set<string>()
-
-	static {
-		document.head.appendChild(Icon.fontStyleElement)
-	}
-
 	static readonly fontsByVariant = new Map([
 		[IconVariant.Filled, { name: 'Material Icons', url: 'https://fonts.googleapis.com/icon?family=Material+Icons' }],
 		[IconVariant.Outlined, { name: 'Material Icons Outlined', url: 'https://fonts.googleapis.com/icon?family=Material+Icons+Outlined' }],
 		[IconVariant.Sharp, { name: 'Material Icons Sharp', url: 'https://fonts.googleapis.com/icon?family=Material+Icons+Sharp' }],
 		[IconVariant.Rounded, { name: 'Material Icons Round', url: 'https://fonts.googleapis.com/icon?family=Material+Icons+Round' }],
 	])
+
+	private static readonly fontStyleElement = document.createElement('style')
+	private static readonly fontUrls = new Set<string>()
+
+	static {
+		document.head.appendChild(Icon.fontStyleElement)
+		Icon.ensureAvailable(Icon.defaultVariant)
+	}
 
 	private static get(variant: IconVariant) {
 		const font = Icon.fontsByVariant.get(variant)
