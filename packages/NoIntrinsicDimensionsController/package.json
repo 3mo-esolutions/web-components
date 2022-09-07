@@ -1,7 +1,7 @@
 {
-	"name": "@3mo/anchor",
-	"version": "1.0.0",
-	"description": "An anchor web-component.",
+	"name": "@3mo/no-intrinsic-dimensions-controller",
+	"version": "0.1.0",
+	"description": "A controller that raises an error on elements without intrinsic dimensions.",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/3mo-esolutions/web-components/tree/main/packages/Flex"
@@ -9,7 +9,8 @@
 	"keywords": [
 		"lit",
 		"web-component",
-		"anchor"
+		"controller",
+		"intrinsic-dimensions"
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
