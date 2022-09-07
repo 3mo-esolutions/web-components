@@ -5,11 +5,11 @@ export class NoIntrinsicDimensionsController extends Controller {
 		super(host)
 	}
 
-	override hostConnected() {
+	override hostUpdated() {
 		const { width, height } = this.host.getBoundingClientRect()
 		if (width === 0 || height === 0) {
 			// eslint-disable-next-line no-console
-			console.error(`The following "${this.host.tagName.toLowerCase()}" element has no intrinsic dimensions as the parent element doesn't specify its dimensions.`, this.host)
+			console.warn(`The following "${this.host.tagName.toLowerCase()}" element has no intrinsic dimensions and the parent element doesn't specify its dimensions.`, this.host)
 		}
 	}
 }

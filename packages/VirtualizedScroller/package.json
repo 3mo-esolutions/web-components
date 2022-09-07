@@ -1,7 +1,7 @@
 {
-	"name": "@3mo/no-intrinsic-dimensions-controller",
+	"name": "@3mo/virtualized-scroller",
 	"version": "0.1.1",
-	"description": "A controller that raises an error on elements without intrinsic dimensions.",
+	"description": "A virtualized scroller web-component based on Lit Virtualizer",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/3mo-esolutions/web-components/tree/main/packages/Flex"
@@ -9,8 +9,7 @@
 	"keywords": [
 		"lit",
 		"web-component",
-		"controller",
-		"intrinsic-dimensions"
+		"scroller"
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
@@ -22,6 +21,9 @@
 		"dist"
 	],
 	"dependencies": {
+		"@3mo/scroller": "*",
+		"@lit-labs/virtualizer": "*",
+		"@3mo/no-intrinsic-dimensions-controller": "*",
 		"@a11d/lit": "*",
 		"tslib": "*"
 	}
