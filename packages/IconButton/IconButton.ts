@@ -20,16 +20,19 @@ export class IconButton extends Component {
 	static override get styles() {
 		return css`
 			:host {
-				font-size: 24px;
-				display: inline-grid;
+				font-size: 20px;
+			}
+
+			:host, mwc-icon-button {
+				display: inline-flex;
 			}
 
 			:host::part(button) {
-				padding: 30%;
+				padding: 0.4em;
 			}
 
 			:host([dense])::part(button) {
-				padding: 15%;
+				padding: 0.2em;
 			}
 
 			mo-icon {
@@ -51,6 +54,8 @@ export class IconButton extends Component {
 
 MwcIconButton.elementStyles.push(css`
 	span { display: inline-grid !important; }
+
+	i { display: none !important; }
 
 	button {
 		width: unset !important;

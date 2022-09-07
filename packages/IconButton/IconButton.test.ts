@@ -8,12 +8,12 @@ describe(IconButton.name, () => {
 
 	const getButton = () => getMwcIconButton()?.renderRoot.querySelector('button') as HTMLButtonElement
 
-	it('should have a default font-size of 24px', () => {
-		expect(getComputedStyle(fixture.component).fontSize).toBe('24px')
+	it('should have a default font-size of 20px', () => {
+		expect(getComputedStyle(fixture.component).fontSize).toBe('20px')
 	})
 
-	it('should have a default display of inline-grid', () => {
-		expect(getComputedStyle(fixture.component).display).toBe('inline-grid')
+	it('should have a default display of inline-flex', () => {
+		expect(getComputedStyle(fixture.component).display).toBe('inline-flex')
 	})
 
 	it('should export css part "button"', () => {
