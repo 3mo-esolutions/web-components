@@ -26,8 +26,8 @@ describe(Anchor.name, () => {
 		const blue = 'rgb(0, 0, 255)'
 		const red = 'rgb(255, 0, 0)'
 
-		it('should default to "rgb(0, 0, 204)"', () => {
-			expect(getComputedStyle(getAnchorElement()).color).toBe('rgb(0, 0, 204)')
+		it('should default to "rgb(0, 119, 200)"', () => {
+			expect(getComputedStyle(getAnchorElement()).color).toBe('rgb(0, 119, 200)')
 		})
 
 		it('should apply the CSS property "--mo-color-accent"', async () => {

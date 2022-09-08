@@ -71,7 +71,7 @@ export class Anchor extends Component {
 
 	static override get styles() {
 		return css`
-			a { color: var(--mo-anchor-color, var(--mo-color-accent, #00C)); }
+			a { color: var(--mo-anchor-color, var(--mo-color-accent, #0077c8)); }
 		`
 	}
 
