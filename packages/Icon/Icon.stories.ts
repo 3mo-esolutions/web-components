@@ -19,10 +19,6 @@ export default meta({
 	argTypes: {
 		icon: { control: { type: 'select', options: icons } },
 		variant: { control: { type: 'select', options: variants } },
-		fill: { },
-		weight: { },
-		grade: { },
-		opticalScale: { },
 	},
 	parameters: {
 		docs: {
@@ -37,42 +33,24 @@ export const Icon = story({
 	args: {
 		icon: 'verified' as MaterialIcon,
 		variant: IconVariant.Filled,
-		fill: '0',
-		weight: '500',
-		grade: '50',
-		opticalScale: '48',
 	},
-	render: ({ variant, icon, fill, grade, opticalScale, weight }) => html`
+	render: ({ variant, icon }) => html`
 		<mo-icon ${style({ color: 'rgb(200,200,200)', mixBlendMode: 'difference', fontSize: '48px' })}
 			variant=${variant}
 			icon=${icon}
-			fill=${fill}
-			grade=${grade}
-			opticalScale=${opticalScale}
-			weight=${weight}
 		></mo-icon>
 	`
 })
 
 export const List = story({
-	args: {
-		variant: IconVariant.Filled,
-		fill: '0',
-		weight: '500',
-		grade: '50',
-		opticalScale: '48',
-	},
-	render: ({ variant, fill, grade, opticalScale, weight }) => html`
+	args: { variant: IconVariant.Filled },
+	render: ({ variant }) => html`
 		<mo-grid gap='10px' columns='repeat(auto-fit, minmax(100px, 1fr))' ${style({ color: 'rgb(200,200,200)', mixBlendMode: 'difference' })}>
 			${icons.map(icon => html`
 				<mo-flex alignItems='center' justifyContent='center' gap='10px' ${style({ margin: '10px' })}>
 					<mo-icon ${style({ fontSize: '48px' })}
 						variant=${variant}
 						icon=${icon}
-						fill=${fill}
-						grade=${grade}
-						opticalScale=${opticalScale}
-						weight=${weight}
 					></mo-icon>
 					<div title=${icon} ${style({ userSelect: 'all', textAlign: 'center', width: '100%', overflowWrap: 'anywhere' })}>${icon}</div>
 				</mo-flex>
