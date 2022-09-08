@@ -24,7 +24,7 @@ export class IconButton extends Component {
 			}
 
 			:host, mwc-icon-button {
-				display: inline-flex;
+				display: inline-block;
 			}
 
 			:host::part(button) {

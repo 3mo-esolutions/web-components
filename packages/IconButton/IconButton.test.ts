@@ -4,7 +4,7 @@ import { IconButton } from './IconButton.js'
 describe(IconButton.name, () => {
 	const fixture = new ComponentTestFixture(() => document.createElement('mo-icon-button'))
 
-	const getMwcIconButton = () =>fixture.component.renderRoot.querySelector('mwc-icon-button')
+	const getMwcIconButton = () => fixture.component.renderRoot.querySelector('mwc-icon-button')
 
 	const getButton = () => getMwcIconButton()?.renderRoot.querySelector('button') as HTMLButtonElement
 
@@ -12,8 +12,8 @@ describe(IconButton.name, () => {
 		expect(getComputedStyle(fixture.component).fontSize).toBe('20px')
 	})
 
-	it('should have a default display of inline-flex', () => {
-		expect(getComputedStyle(fixture.component).display).toBe('inline-flex')
+	it('should have a default display of inline-block', () => {
+		expect(getComputedStyle(fixture.component).display).toBe('inline-block')
 	})
 
 	it('should export css part "button"', () => {
