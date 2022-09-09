@@ -19,6 +19,7 @@ module.exports = {
 		builder: "@storybook/builder-webpack5"
 	},
 	webpackFinal: config => {
+		config.mode = 'development'
 		const [_babel, ...rest] = config.module.rules
 		config.module.rules = [
 			{
