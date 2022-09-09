@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/icon",
-	"version": "1.0.3",
+	"version": "1.0.4",
 	"description": "Icon Web Component based on Material Icons.",
 	"repository": {
 		"type": "git",
@@ -9,8 +9,8 @@
 	"keywords": [
 		"lit",
 		"web-component",
-		"icon",
-		"material-icon"
+		"material",
+		"icon"
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
