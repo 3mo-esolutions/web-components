@@ -83,11 +83,15 @@ export class Button extends Component {
 				?raised=${this.type === ButtonType.Raised}
 				?outlined=${this.type === ButtonType.Outlined}
 				?unelevated=${this.type === ButtonType.Unelevated}
-				?disabled=${this.disabled}
+				?disabled=${this.isDisabled}
 			>
 				${this.contentTemplate}
 			</mwc-button>
 		`
+	}
+
+	protected get isDisabled() {
+		return this.disabled
 	}
 
 	protected get contentTemplate() {
@@ -101,9 +105,13 @@ export class Button extends Component {
 	protected get leadingSlotTemplate() {
 		return html`
 			<slot name='leading' slot='icon'>
-				${!this.leadingIcon ? nothing : html`<mo-icon icon=${this.leadingIcon}></mo-icon>`}
+				${this.leadingIconTemplate}
 			</slot>
 		`
+	}
+
+	protected get leadingIconTemplate() {
+		return !this.leadingIcon ? nothing : html`<mo-icon icon=${this.leadingIcon}></mo-icon>`
 	}
 
 	protected get slotTemplate() {
@@ -113,9 +121,13 @@ export class Button extends Component {
 	protected get trailingSlotTemplate() {
 		return html`
 			<slot name='trailing' slot='trailingIcon'>
-				${!this.trailingIcon ? nothing : html`<mo-icon icon=${this.trailingIcon}></mo-icon>`}
+				${this.trailingIconTemplate}
 			</slot>
 		`
+	}
+
+	protected get trailingIconTemplate() {
+		return !this.trailingIcon ? nothing : html`<mo-icon icon=${this.trailingIcon}></mo-icon>`
 	}
 }
 
