@@ -1,0 +1,31 @@
+{
+	"name": "@3mo/loading-button",
+	"version": "0.1.0",
+	"description": "A button web-component with a loading state and capable of inferring the loading state from click event handler promises.",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/3mo-esolutions/web-components/tree/main/packages/Flex"
+	},
+	"keywords": [
+		"lit",
+		"web-component",
+		"material",
+		"button",
+		"loading-button"
+	],
+	"author": "3MO GmbH",
+	"license": "MIT",
+	"homepage": "https://www.3mo.de",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"dependencies": {
+		"@a11d/lit": "*",
+		"tslib": "*",
+		"@3mo/button": "*",
+		"@3mo/circular-progress": "*"
+	}
+}

@@ -2,9 +2,5 @@
 	"root": true,
 	"extends": [
 		"./node_modules/@a11d/eslint-config/.eslintrc.json"
-	],
-	"rules": {
-		"import/no-unresolved": "off",
-		"import/no-useless-path-segments": "off"
-	}
+	]
 }

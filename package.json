@@ -11,7 +11,7 @@
 		"./packages/*"
 	],
 	"devDependencies": {
-		"@a11d/eslint-config": "0.0.1",
+		"@a11d/eslint-config": "*",
 		"@a11d/lit": "*",
 		"@storybook/addon-actions": "6.*",
 		"@storybook/addon-essentials": "6.*",
