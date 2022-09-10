@@ -3,6 +3,17 @@ import type * as CSS from 'csstype'
 
 export type FlexDirection = 'horizontal' | 'vertical' | 'horizontal-reversed' | 'vertical-reversed'
 
+/**
+ * @attr direction
+ * @attr wrap
+ * @attr gap
+ * @attr justifyItems
+ * @attr justifyContent
+ * @attr alignItems
+ * @attr alignContent
+ *
+ * @slot - The content of the flex container.
+ */
 @component('mo-flex')
 export class Flex extends Component {
 	private static readonly flexDirectionByDirections = new Map<FlexDirection, string>([
