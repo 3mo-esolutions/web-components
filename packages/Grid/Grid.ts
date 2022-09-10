@@ -1,6 +1,21 @@
 import { Component, component, css, html, property } from '@a11d/lit'
 import type * as CSS from 'csstype'
 
+/**
+ * @attr rows
+ * @attr columns
+ * @attr autoRows
+ * @attr autoColumns
+ * @attr rowGap
+ * @attr columnGap
+ * @attr gap
+ * @attr justifyItems
+ * @attr justifyContent
+ * @attr alignItems
+ * @attr alignContent
+ *
+ * @slot - The content of the grid container.
+ */
 @component('mo-grid')
 export class Grid extends Component {
 	private static readonly fromAsteriskSyntax = (value: string) => ` ${value}`.split('*').join('fr').split(' fr').join(' 1fr').substring(1)
