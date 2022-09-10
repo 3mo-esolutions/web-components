@@ -31,6 +31,10 @@ export const LoadingButton = story({
 	render: ({ type, disabled, loading, preventClickEventInference }) => html`<mo-loading-button @click=${handler} type=${type} ?disabled=${disabled} ?loading=${loading} ?preventClickEventInference=${preventClickEventInference}>Button</mo-loading-button>`
 })
 
+export const WithCustomBorderRadius = story({
+	render: ({ type, disabled, loading, preventClickEventInference }) => html`<mo-loading-button @click=${handler} type=${type} ?disabled=${disabled} ?loading=${loading} ?preventClickEventInference=${preventClickEventInference} ${style({ borderRadius: '100px' })}>Custom Border Radius</mo-loading-button>`
+})
+
 export const WithLeadingIcon = story({
 	render: ({ type, disabled, loading, preventClickEventInference }) => html`<mo-loading-button @click=${handler} leadingIcon='add' type=${type} ?disabled=${disabled} ?loading=${loading} ?preventClickEventInference=${preventClickEventInference}>Leading Icon</mo-loading-button>`
 })

@@ -39,6 +39,7 @@ export class Button extends Component {
 			:host {
 				display: inline-block;
 				text-transform: uppercase;
+				border-radius: var(--mo-border-radius, 4px);
 			}
 
 			:host([disabled]) {
@@ -71,6 +72,7 @@ export class Button extends Component {
 				--mdc-button-disabled-fill-color: var(--mo-button-disabled-background-color);
 				--mdc-button-disabled-ink-color: var(--mo-button-disabled-color, var(--mo-color-gray-transparent));
 				--mdc-button-disabled-outline-color: var(--mo-button-disabled-color, var(--mo-color-gray-transparent));
+				--mdc-shape-small: inherit;
 			}
 		`
 	}
@@ -79,7 +81,7 @@ export class Button extends Component {
 
 	protected override get template() {
 		return html`
-			<mwc-button exportparts='button' expandContent
+			<mwc-button expandContent
 				?raised=${this.type === ButtonType.Raised}
 				?outlined=${this.type === ButtonType.Outlined}
 				?unelevated=${this.type === ButtonType.Unelevated}
@@ -136,6 +138,7 @@ MwcButton.elementStyles.push(css`
 		display: inline-grid !important;
 		width: 100% !important;
 		height: 100% !important;
+		border-radius: inherit !important;
 	}
 
 	button {
@@ -146,6 +149,7 @@ MwcButton.elementStyles.push(css`
 		padding-top: 4px !important;
 		padding-bottom: 4px !important;
 		text-transform: unset !important;
+		border-radius: inherit !important;
 	}
 
 	.mdc-button__label {

@@ -27,6 +27,10 @@ export const Button = story({
 	render: ({ type, disabled }) => html`<mo-button type=${type} ?disabled=${disabled}>Button</mo-button>`
 })
 
+export const WithCustomBorderRadius = story({
+	render: ({ type, disabled }) => html`<mo-button type=${type} ?disabled=${disabled} ${style({ borderRadius: '100px' })}>Custom Border Radius</mo-button>`
+})
+
 export const WithLeadingIcon = story({
 	render: ({ type, disabled }) => html`<mo-button leadingIcon='add' type=${type} ?disabled=${disabled}>Leading Icon</mo-button>`
 })
