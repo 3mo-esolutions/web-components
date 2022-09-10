@@ -4,7 +4,7 @@ import p from './package.json'
 import '.'
 
 export default meta({
-	title: 'LoadingButton',
+	title: 'Core/Button/LoadingButton',
 	component: 'mo-loading-button',
 	args: {
 		type: 'outlined',

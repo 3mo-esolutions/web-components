@@ -14,7 +14,7 @@ const icons = new Array<MaterialIcon>(
 const variants = [IconVariant.Sharp, IconVariant.Outlined, IconVariant.Rounded, IconVariant.Filled]
 
 export default meta({
-	title: 'Icon',
+	title: 'Core/Icon',
 	component: 'mo-icon',
 	argTypes: {
 		icon: { control: { type: 'select', options: icons } },

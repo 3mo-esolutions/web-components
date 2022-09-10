@@ -1,3 +1,5 @@
+[![Storybook Demo](https://img.shields.io/badge/-Storybook%20Demo-pink.svg)](https://3mo-esolutions.github.io/web-components/)
+
 ## Introduction
 
 3MO started the journey to use Web Components to build its business-suite web applications a while back, and it did wonders for us!

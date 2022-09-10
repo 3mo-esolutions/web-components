@@ -4,7 +4,7 @@ import { CloudflareStreamAutoPause } from './CloudflareStream.js'
 import '.'
 
 export default meta({
-	title: 'CloudflareStream',
+	title: 'misc/CloudflareStream',
 	component: 'mo-cloudflare-stream',
 })
 

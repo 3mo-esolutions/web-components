@@ -4,7 +4,7 @@ import p from './package.json'
 import '.'
 
 export default meta({
-	title: 'Anchor',
+	title: 'Core/Anchor',
 	component: 'mo-anchor',
 	args: {
 		href: 'https://www.3mo.de',

@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default meta({
-	title: 'ButtonGroup',
+	title: 'Core/Button/ButtonGroup',
 	component: 'mo-button-group',
 	args: {
 		type: 'outlined',
