@@ -1,0 +1,31 @@
+{
+	"name": "@3mo/button-group",
+	"version": "0.1.0",
+	"description": "A button-group web-component.",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/3mo-esolutions/web-components/tree/main/packages/ButtonGroup"
+	},
+	"keywords": [
+		"lit",
+		"web-component",
+		"button-group",
+		"button"
+	],
+	"author": "3MO GmbH",
+	"license": "MIT",
+	"homepage": "https://www.3mo.de",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"dependencies": {
+		"@a11d/lit": "*",
+		"tslib": "*",
+		"@3mo/flex": "*",
+		"@3mo/button": "*",
+		"@3mo/slot-controller": "*"
+	}
+}
