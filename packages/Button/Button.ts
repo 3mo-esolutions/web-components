@@ -12,7 +12,6 @@ export const enum ButtonType {
 
 /**
  * @attr type
- * @attr icon
  * @attr disabled
  * @attr leadingIcon
  * @attr trailingIcon
