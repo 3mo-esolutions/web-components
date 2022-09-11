@@ -25,6 +25,8 @@ export const enum ButtonType {
  * @cssprop --mo-button-horizontal-padding
  * @cssprop --mo-button-disabled-background-color
  * @cssprop --mo-button-disabled-color
+ *
+ * @csspart button - The composed native button element.
  */
 @component('mo-button')
 export class Button extends Component {
@@ -81,7 +83,7 @@ export class Button extends Component {
 
 	protected override get template() {
 		return html`
-			<mwc-button expandContent
+			<mwc-button exportparts='button' expandContent
 				?raised=${this.type === ButtonType.Raised}
 				?outlined=${this.type === ButtonType.Outlined}
 				?unelevated=${this.type === ButtonType.Unelevated}
@@ -132,6 +134,12 @@ export class Button extends Component {
 		return !this.trailingIcon ? nothing : html`<mo-icon icon=${this.trailingIcon}></mo-icon>`
 	}
 }
+
+MwcButton.addInitializer(async element => {
+	const button = element as MwcButton
+	await button.updateComplete
+	button.renderRoot.querySelector('button')?.setAttribute('part', 'button')
+})
 
 MwcButton.elementStyles.push(css`
 	:host {
