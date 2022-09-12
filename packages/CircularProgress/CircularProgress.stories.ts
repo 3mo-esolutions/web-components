@@ -4,7 +4,7 @@ import p from './package.json'
 import '.'
 
 export default meta({
-	title: 'Core/Progress/CircularProgress',
+	title: 'Core/Progress/Circular Progress',
 	component: 'mo-circular-progress',
 	parameters: {
 		docs: {

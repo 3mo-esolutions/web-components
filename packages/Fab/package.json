@@ -1,0 +1,33 @@
+{
+	"name": "@3mo/fab",
+	"version": "0.1.0",
+	"description": "A floating action button web-component based on Material Web Components (MWC).",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/3mo-esolutions/web-components/tree/main/packages/Fab"
+	},
+	"keywords": [
+		"lit",
+		"web-component",
+		"material",
+		"floating-action-button",
+		"fab"
+	],
+	"author": "3MO GmbH",
+	"license": "MIT",
+	"homepage": "https://www.3mo.de",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"dependencies": {
+		"@a11d/lit": "*",
+		"tslib": "*",
+		"@3mo/icon": "*",
+		"@lit-labs/observers": "*",
+		"@3mo/extends-attribute-controller": "*",
+		"@material/mwc-fab": "0.27.*"
+	}
+}

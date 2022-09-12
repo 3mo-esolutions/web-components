@@ -5,7 +5,8 @@
 		"test:ci": "webpack --config ./webpack.config.test.mjs && karma start --single-run",
 		"docs:build": "build-storybook -o docs-dist",
 		"clean": "node ./scripts/clean.mjs",
-		"release": "node ./scripts/release.mjs"
+		"release": "node ./scripts/release.mjs",
+		"analyze": "cem analyze --globs \"packages/**/*.ts\" --exclude \"packages/**/*.(stories|test).ts\" --litelement"
 	},
 	"workspaces": [
 		"./packages/*"
@@ -13,6 +14,7 @@
 	"devDependencies": {
 		"@a11d/eslint-config": "*",
 		"@a11d/lit": "*",
+		"@custom-elements-manifest/analyzer": "*",
 		"@storybook/addon-actions": "6.*",
 		"@storybook/addon-essentials": "6.*",
 		"@storybook/addon-links": "6.*",
