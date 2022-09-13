@@ -44,7 +44,12 @@ export class Icon extends Component {
 	private static ensureAvailable(variant: IconVariant) {
 		const font = Icon.get(variant)
 		Icon.fontUrls.add(font.url)
-		Icon.fontStyleElement.innerHTML = [...Icon.fontUrls].map(url => `@import '${url}';`).join('\n')
+
+		const importStatements = [...Icon.fontUrls].map(url => `@import '${url}';`)
+
+		if (importStatements.some(statement => Icon.fontStyleElement.innerText.includes(statement) === false)) {
+			Icon.fontStyleElement.innerHTML = importStatements.join('\n')
+		}
 	}
 
 	@property({ updated(this: Icon) { Icon.ensureAvailable(this.variant) } }) variant = Icon.defaultVariant
