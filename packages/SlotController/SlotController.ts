@@ -1,28 +1,43 @@
 import { Controller, ReactiveControllerHost } from '@a11d/lit'
 
 export class SlotController extends Controller {
+	protected readonly mutationObserver = new MutationObserver(this.handleMutation.bind(this)).observe(this.host, {
+		childList: true,
+		subtree: true,
+	})
+
 	constructor(protected override readonly host: ReactiveControllerHost & Element, private readonly slotChangeCallback?: () => void) {
 		super(host)
 	}
 
+	getAssignedNodes(slotName: string) {
+		const slot = this.host.shadowRoot?.querySelector<HTMLSlotElement>(slotName ? `slot[name="${slotName}"]` : 'slot:not([name])')
+		return slot
+			? this.extractNodesFromSlot(slot)
+			: this.extractNodesFromChildren(slotName)
+	}
+
+	hasAssignedNodes(slotName: string) {
+		return this.getAssignedNodes(slotName).length > 0
+	}
+
 	getAssignedElements(slotName: string) {
-		const slotElement = this.host.shadowRoot?.querySelector<HTMLSlotElement>(slotName ? `slot[name="${slotName}"]` : 'slot:not([name])')
-
-		if (!slotElement) {
-			return []
-		}
-
-		const extractElementFromSlot = (slot: HTMLSlotElement): Array<Element> => {
-			return slot.assignedElements()
-				.flatMap(e => e instanceof HTMLSlotElement ? extractElementFromSlot(e) : [e])
-				.filter((e): e is Element => (e instanceof Element && e.slot === slotName) || ((e instanceof Element) === false && !slotName))
-		}
-
-		return extractElementFromSlot(slotElement)
+		return this.getAssignedNodes(slotName).filter((node): node is Element => node instanceof Element)
 	}
 
 	hasAssignedElements(slotName: string) {
 		return this.getAssignedElements(slotName).length > 0
+	}
+
+	private extractNodesFromSlot(slot: HTMLSlotElement): Array<Node> {
+		return slot.assignedNodes().flatMap(e => e instanceof HTMLSlotElement ? this.extractNodesFromSlot(e) : [e])
+	}
+
+	private extractNodesFromChildren(slotName: string) {
+		return [...this.host.childNodes]
+			.filter(node => node instanceof Element || (node instanceof Text && !!node.textContent?.trim()))
+			.filter(child => !slotName || (child instanceof Element && child.slot === slotName))
+			.flatMap(child => child instanceof HTMLSlotElement ? child.assignedNodes() : [child])
 	}
 
 	override hostConnected() {
@@ -36,5 +51,11 @@ export class SlotController extends Controller {
 	private readonly handleChange = () => {
 		this.host.requestUpdate()
 		this.slotChangeCallback?.()
+	}
+
+	private handleMutation(mutations: MutationRecord[]) {
+		if (mutations.some(mutation => mutation.type === 'childList')) {
+			this.handleChange()
+		}
 	}
 }

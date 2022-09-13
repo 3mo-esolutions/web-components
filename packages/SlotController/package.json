@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/slot-controller",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"description": "A controller that updates a host when slotted content changes and provides helper methods for checking and getting assigned slot elements.",
 	"repository": {
 		"type": "git",
