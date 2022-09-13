@@ -1,4 +1,4 @@
-import { Component, component, css, html, ifDefined, property, style } from '@a11d/lit'
+import { Component, component, css, html, ifDefined, property } from '@a11d/lit'
 import { MutationController } from '@lit-labs/observers/mutation_controller.js'
 import { ExtendsAttributeController } from '@3mo/extends-attribute-controller'
 import { MaterialIcon } from '@3mo/icon'
@@ -61,7 +61,6 @@ export class Fab extends Component {
 					<mo-icon icon=${ifDefined(this.icon)}></mo-icon>
 				</slot>
 			</mwc-fab>
-			<slot ${style({ display: 'none' })}></slot>
 		`
 	}
 }
