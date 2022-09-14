@@ -27,11 +27,11 @@ export class IconButton extends Component {
 				display: inline-block;
 			}
 
-			:host::part(button) {
+			mwc-icon-button::part(button) {
 				padding: 0.4em;
 			}
 
-			:host([dense])::part(button) {
+			:host([dense]) mwc-icon-button::part(button) {
 				padding: 0.2em;
 			}
 
