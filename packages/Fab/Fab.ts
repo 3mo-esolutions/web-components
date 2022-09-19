@@ -23,7 +23,7 @@ export class Fab extends Component {
 	@property() icon?: MaterialIcon
 	@property({ type: Boolean }) iconAtEnd = false
 	@property({ type: Boolean }) dense = false
-	@property({ type: Boolean }) disabled = false
+	@property({ type: Boolean, reflect: true }) disabled = false
 
 	protected readonly extendsAttributeController = new ExtendsAttributeController(this)
 	protected readonly mutationController = new MutationController(this, {
@@ -38,6 +38,10 @@ export class Fab extends Component {
 		return css`
 			:host {
 				display: inline-block;
+			}
+
+			:host([disabled]) {
+				pointer-events: none;
 			}
 
 			mwc-fab {
