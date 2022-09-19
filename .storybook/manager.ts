@@ -3,7 +3,7 @@ import { themes } from '@storybook/theming'
 
 addons.setConfig({
 	theme: {
-		...themes.dark,
+		...themes.normal,
 
 		brandTitle: '3MO',
 		brandUrl: 'https://3mo.de',

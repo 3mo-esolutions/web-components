@@ -14,13 +14,17 @@ import { MaterialIcon } from '@3mo/icon'
 @component('mo-icon-button')
 export class IconButton extends Component {
 	@property() icon!: MaterialIcon
-	@property({ type: Boolean }) disabled = false
+	@property({ type: Boolean, reflect: true }) disabled = false
 	@property({ type: Boolean, reflect: true }) dense = false
 
 	static override get styles() {
 		return css`
 			:host {
 				font-size: 20px;
+			}
+
+			:host([disabled]) {
+				pointer-events: none;
 			}
 
 			:host, mwc-icon-button {

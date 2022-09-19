@@ -27,6 +27,12 @@ describe(IconButton.name, () => {
 		expect(getMwcIconButton()?.disabled).toBe(true)
 	})
 
+	it('should set pointer-events to "none" when disabled', async () => {
+		fixture.component.disabled = true
+		await fixture.update()
+		expect(getComputedStyle(fixture.component).pointerEvents).toBe('none')
+	})
+
 	it('should have an "icon" slot containing a default mo-icon element', () => {
 		expect(fixture.component.renderRoot.querySelector('slot[name="icon"]')).toBeTruthy()
 		expect(fixture.component.renderRoot.querySelector('slot[name="icon"] > mo-icon')).toBeTruthy()
