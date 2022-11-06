@@ -26,12 +26,11 @@ export default meta({
 })
 
 export const Checkbox = story({
-	render: ({ label, disabled, value, checked }) => html`
+	render: ({ label, disabled, value }) => html`
 		<mo-checkbox
 			label=${label}
 			?disabled=${disabled}
 			value=${value}
-			?checked=${checked}
 		></mo-checkbox>
 	`
 })

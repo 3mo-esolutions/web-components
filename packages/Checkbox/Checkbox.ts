@@ -3,6 +3,8 @@ import { Formfield as FormField } from '@material/mwc-formfield'
 import '@material/mwc-checkbox'
 
 /**
+ * @element mo-checkbox
+ *
  * @attr label
  * @attr disabled
  * @attr value
@@ -99,9 +101,9 @@ export class Checkbox extends Component {
 }
 
 FormField.addInitializer(async element => {
-	const checkbox = element as FormField
-	await checkbox.updateComplete
-	checkbox.renderRoot.querySelector('label')?.setAttribute('part', 'label')
+	const formField = element as FormField
+	await formField.updateComplete
+	formField.renderRoot.querySelector('label')?.setAttribute('part', 'label')
 })
 
 declare global {
