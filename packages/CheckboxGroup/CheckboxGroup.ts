@@ -83,6 +83,6 @@ export class CheckboxGroup extends Checkbox {
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'mo-checkbox-group': CheckboxValue
+		'mo-checkbox-group': CheckboxGroup
 	}
 }
