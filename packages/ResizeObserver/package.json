@@ -1,0 +1,29 @@
+{
+	"name": "@3mo/resize-observer",
+	"version": "0.0.1",
+	"description": "A lit controller and directive for observing resizes.",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/3mo-esolutions/web-components/tree/main/packages/ResizeObserver"
+	},
+	"keywords": [
+		"lit",
+		"web-component",
+		"controller",
+		"resize-observer"
+	],
+	"author": "3MO GmbH",
+	"license": "MIT",
+	"homepage": "https://www.3mo.de",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"dependencies": {
+		"@a11d/lit": "*",
+		"tslib": "*",
+		"@lit-labs/observers": "*"
+	}
+}
