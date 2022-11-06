@@ -109,6 +109,6 @@ FormField.addInitializer(async element => {
 declare global {
 	type CheckboxValue = 'checked' | 'unchecked' | 'indeterminate'
 	interface HTMLElementTagNameMap {
-		'mo-checkbox': CheckboxValue
+		'mo-checkbox': Checkbox
 	}
 }
