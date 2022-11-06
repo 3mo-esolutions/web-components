@@ -1,5 +1,5 @@
 import { Component, component, css, html, ifDefined, property } from '@a11d/lit'
-import { MutationController } from '@lit-labs/observers/mutation_controller.js'
+import { MutationController } from '@3mo/mutation-observer'
 import { ExtendsAttributeController } from '@3mo/extends-attribute-controller'
 import { MaterialIcon } from '@3mo/icon'
 import { Fab as MwcFab } from '@material/mwc-fab'
