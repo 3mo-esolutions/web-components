@@ -1,19 +1,6 @@
-type KeyPathOf<T> =
-	object extends T ? string :
-	T extends ReadonlyArray<any> ? Extract<keyof T, `${number}`> | SubKeyPathOf<T, Extract<keyof T, `${number}`>> :
-	T extends object ? Extract<keyof T, string> | SubKeyPathOf<T, Extract<keyof T, string>> :
-	never
-
-type SubKeyPathOf<T, K extends string> = K extends keyof T ? `${K}.${KeyPathOf<T[K]>}` : never
-
 function getKeyPath<T>(keyPath: KeyPathOf<T>) {
 	return keyPath
 }
-
-type KeyPathValueOf<T, KeyPath extends string = KeyPathOf<T>> =
-	KeyPath extends keyof T ? T[KeyPath] :
-	KeyPath extends `${infer K}.${infer R}` ? K extends keyof T ? KeyPathValueOf<T[K], R> : unknown :
-	unknown
 
 function getValueByKeyPath<T, KeyPath extends KeyPathOf<T>>(object: T, keyPath: KeyPath): KeyPathValueOf<T, KeyPath> {
 	return !keyPath ? undefined : keyPath
@@ -43,4 +30,17 @@ declare global {
 	var getKeyPath: GetKeyPathFunction
 	var getValueByKeyPath: GetValueByKeyPathFunction
 	var setValueByKeyPath: SetValueByKeyPathFunction
+
+	type KeyPathOf<T> =
+		object extends T ? string :
+		T extends ReadonlyArray<any> ? Extract<keyof T, `${number}`> | SubKeyPathOf<T, Extract<keyof T, `${number}`>> :
+		T extends object ? Extract<keyof T, string> | SubKeyPathOf<T, Extract<keyof T, string>> :
+		never
+
+	type KeyPathValueOf<T, KeyPath extends string = KeyPathOf<T>> =
+		KeyPath extends keyof T ? T[KeyPath] :
+		KeyPath extends `${infer K}.${infer R}` ? K extends keyof T ? KeyPathValueOf<T[K], R> : unknown :
+		unknown
 }
+
+type SubKeyPathOf<T, K extends string> = K extends keyof T ? `${K}.${KeyPathOf<T[K]>}` : never
