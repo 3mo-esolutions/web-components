@@ -22,9 +22,9 @@
 		"dist"
 	],
 	"dependencies": {
-		"@a11d/lit": "*",
-		"tslib": "*",
-		"@material/mwc-checkbox": "*",
-		"@material/mwc-formfield": "*"
+		"@a11d/lit": "x",
+		"tslib": "x",
+		"@material/mwc-checkbox": "x",
+		"@material/mwc-formfield": "x"
 	}
 }

@@ -22,9 +22,9 @@
 		"dist"
 	],
 	"dependencies": {
-		"@a11d/lit": "*",
-		"tslib": "*",
-		"@3mo/flex": "*",
-		"@3mo/checkbox": "*"
+		"@a11d/lit": "x",
+		"tslib": "x",
+		"@3mo/flex": "x",
+		"@3mo/checkbox": "x"
 	}
 }

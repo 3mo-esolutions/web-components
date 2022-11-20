@@ -21,8 +21,8 @@
 		"dist"
 	],
 	"dependencies": {
-		"@3mo/no-intrinsic-dimensions-controller": "*",
-		"@a11d/lit": "*",
-		"tslib": "*"
+		"@3mo/no-intrinsic-dimensions-controller": "x",
+		"@a11d/lit": "x",
+		"tslib": "x"
 	}
 }

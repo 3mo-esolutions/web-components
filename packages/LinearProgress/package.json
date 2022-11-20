@@ -22,8 +22,8 @@
 		"dist"
 	],
 	"dependencies": {
-		"@a11d/lit": "*",
-		"tslib": "*",
-		"@material/mwc-linear-progress": "0.27.*"
+		"@a11d/lit": "x",
+		"tslib": "x",
+		"@material/mwc-linear-progress": "0.27.x"
 	}
 }

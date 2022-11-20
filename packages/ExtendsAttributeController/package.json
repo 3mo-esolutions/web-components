@@ -23,7 +23,7 @@
 		"dist"
 	],
 	"dependencies": {
-		"@a11d/lit": "*",
-		"tslib": "*"
+		"@a11d/lit": "x",
+		"tslib": "x"
 	}
 }

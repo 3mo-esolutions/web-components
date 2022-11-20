@@ -22,10 +22,10 @@
 		"dist"
 	],
 	"dependencies": {
-		"@a11d/lit": "*",
-		"tslib": "*",
-		"@3mo/icon": "*",
-		"@3mo/extends-attribute-controller": "*",
-		"@material/mwc-button": "0.27.*"
+		"@a11d/lit": "x",
+		"tslib": "x",
+		"@3mo/icon": "x",
+		"@3mo/extends-attribute-controller": "x",
+		"@material/mwc-button": "0.27.x"
 	}
 }

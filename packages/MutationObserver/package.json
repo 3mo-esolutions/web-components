@@ -22,8 +22,8 @@
 		"dist"
 	],
 	"dependencies": {
-		"@a11d/lit": "*",
-		"tslib": "*",
-		"@lit-labs/observers": "*"
+		"@a11d/lit": "x",
+		"tslib": "x",
+		"@lit-labs/observers": "x"
 	}
 }

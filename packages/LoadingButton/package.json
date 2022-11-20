@@ -23,9 +23,9 @@
 		"dist"
 	],
 	"dependencies": {
-		"@a11d/lit": "*",
-		"tslib": "*",
-		"@3mo/button": "*",
-		"@3mo/circular-progress": "*"
+		"@a11d/lit": "x",
+		"tslib": "x",
+		"@3mo/button": "x",
+		"@3mo/circular-progress": "x"
 	}
 }

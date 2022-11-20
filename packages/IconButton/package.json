@@ -22,9 +22,9 @@
 		"dist"
 	],
 	"dependencies": {
-		"@a11d/lit": "*",
-		"tslib": "*",
-		"@3mo/icon": "*",
-		"@material/mwc-icon-button": "*"
+		"@a11d/lit": "x",
+		"tslib": "x",
+		"@3mo/icon": "x",
+		"@material/mwc-icon-button": "x"
 	}
 }

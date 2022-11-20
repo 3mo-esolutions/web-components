@@ -21,10 +21,10 @@
 		"dist"
 	],
 	"dependencies": {
-		"@3mo/scroller": "*",
-		"@lit-labs/virtualizer": "*",
-		"@3mo/no-intrinsic-dimensions-controller": "*",
-		"@a11d/lit": "*",
-		"tslib": "*"
+		"@3mo/scroller": "x",
+		"@lit-labs/virtualizer": "x",
+		"@3mo/no-intrinsic-dimensions-controller": "x",
+		"@a11d/lit": "x",
+		"tslib": "x"
 	}
 }

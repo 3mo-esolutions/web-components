@@ -21,8 +21,8 @@
 		"dist"
 	],
 	"dependencies": {
-		"@a11d/lit": "*",
-		"tslib": "*",
-		"csstype": "*"
+		"@a11d/lit": "x",
+		"tslib": "x",
+		"csstype": "x"
 	}
 }
