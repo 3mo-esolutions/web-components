@@ -56,13 +56,13 @@ export class Button extends Component {
 			}
 
 			slot[name=leading] *, slot[name=leading]::slotted(*) {
-				margin-right: calc(var(--mo-button-horizontal-padding, var(--mo-button-default-horizontal-padding)) * 0.5);
-				margin-left: calc(var(--mo-button-horizontal-padding, var(--mo-button-default-horizontal-padding)) * -0.5);
+				margin-inline-end: calc(var(--mo-button-horizontal-padding, var(--mo-button-default-horizontal-padding)) * 0.5);
+				margin-inline-start: calc(var(--mo-button-horizontal-padding, var(--mo-button-default-horizontal-padding)) * -0.5);
 			}
 
 			slot[name=trailing] *, slot[name=trailing]::slotted(*) {
-				margin-left: calc(var(--mo-button-horizontal-padding, var(--mo-button-default-horizontal-padding)) * 0.5);
-				margin-right: calc(var(--mo-button-horizontal-padding, var(--mo-button-default-horizontal-padding)) * -0.5);
+				margin-inline-start: calc(var(--mo-button-horizontal-padding, var(--mo-button-default-horizontal-padding)) * 0.5);
+				margin-inline-end: calc(var(--mo-button-horizontal-padding, var(--mo-button-default-horizontal-padding)) * -0.5);
 			}
 
 			mwc-button {

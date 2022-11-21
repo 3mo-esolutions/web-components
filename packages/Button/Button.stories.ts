@@ -43,6 +43,10 @@ export const WithLeadingAndTrailingIcon = story({
 	render: ({ type, disabled }) => html`<mo-button leadingIcon='add' trailingIcon='done' type=${type} ?disabled=${disabled}>Leading & Trailing Icon</mo-button>`
 })
 
+export const WithLeadingAndTrailingIconRtl = story({
+	render: ({ type, disabled }) => html`<mo-button dir='rtl' leadingIcon='add' trailingIcon='done' type=${type} ?disabled=${disabled}>با آیکان سر و ته</mo-button>`
+})
+
 export const WithNonTextContent = story({
 	render: ({ type, disabled }) => html`
 		<mo-button type=${type} ?disabled=${disabled}>
