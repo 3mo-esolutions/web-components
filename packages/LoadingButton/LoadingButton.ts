@@ -78,7 +78,7 @@ export class LoadingButton extends Button {
 			<mo-circular-progress ${style({
 				position: this.circularProgressReplacesLeadingIcon ? undefined : 'absolute',
 				top: this.circularProgressReplacesLeadingIcon ? undefined : '50%',
-				left: this.circularProgressReplacesLeadingIcon ? undefined : '50%',
+				insetInlineStart: this.circularProgressReplacesLeadingIcon ? undefined : '50%',
 				transform: this.circularProgressReplacesLeadingIcon ? undefined : 'translate(-50%, -50%)',
 				width: this.circularProgressReplacesLeadingIcon ? '24px' : 'auto',
 				height: this.circularProgressReplacesLeadingIcon ? '24px' : '75%',

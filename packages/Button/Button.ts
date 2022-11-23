@@ -169,8 +169,8 @@ MwcButton.elementStyles.push(css`
 	}
 
 	.trailing-icon ::slotted(*), .leading-icon ::slotted(*) {
-		margin-left: unset;
-		margin-right: unset;
+		margin-inline-start: unset;
+		margin-inline-end: unset;
 		display: unset;
 		position: unset;
 		vertical-align: unset;

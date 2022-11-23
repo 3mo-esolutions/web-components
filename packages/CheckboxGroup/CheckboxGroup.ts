@@ -51,7 +51,7 @@ export class CheckboxGroup extends Checkbox {
 			}
 
 			::slotted(*) {
-				margin-left: var(--mo-checkbox-group-nested-margin);
+				margin-inline-start: var(--mo-checkbox-group-nested-margin);
 			}
 		`
 	}

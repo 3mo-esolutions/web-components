@@ -69,7 +69,7 @@ export class Checkbox extends Component {
 			}
 
 			mwc-formfield::part(label) {
-				padding-left: 0px;
+				padding-inline-start: 0px;
 			}
 
 			:host([disabled]) mwc-formfield::part(label) {

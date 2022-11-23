@@ -76,8 +76,8 @@ export class ButtonGroup extends Component {
 
 			:host([direction=vertical]:not([type=outlined])) ::slotted([extends*=mo-button]:not([data-mo-button-group-last]))::after,
 			:host([direction=vertical-reversed]:not([type=outlined])) ::slotted([extends*=mo-button]:not([data-mo-button-group-last]))::after {
-				right: 15%;
-				left: 15%;
+				inset-inline-end: 15%;
+				inset-inline-start: 15%;
 				width: 70%;
 				height: 1px;
 			}
@@ -99,11 +99,11 @@ export class ButtonGroup extends Component {
 			}
 
 			:host([direction=horizontal]:not([type=outlined])) ::slotted([extends*=mo-button]:not([data-mo-button-group-last]))::after {
-				right: 0px;
+				inset-inline-end: 0px;
 			}
 
 			:host([direction=horizontal-reversed]:not([type=outlined])) ::slotted([extends*=mo-button]:not([data-mo-button-group-last]))::after {
-				left: 0px;
+				inset-inline-start: 0px;
 			}
 
 			/* The following 4 rules won't work due to ::part selector and ::slotted selectors cannot be used together. https://github.com/w3c/csswg-drafts/issues/3896 */
@@ -116,11 +116,11 @@ export class ButtonGroup extends Component {
 			}
 
 			:host([direction=horizontal][type=outlined]) ::slotted([extends*=mo-button]:not([data-mo-button-group-last]))::part(button) {
-				border-right-width: 0px;
+				border-inline-end-width: 0px;
 			}
 
 			:host([direction=horizontal-reversed][type=outlined]) ::slotted([extends*=mo-button]:not([data-mo-button-group-last]))::part(button) {
-				border-left-width: 0px;
+				border-inline-start-width: 0px;
 			}
 		`
 	}
