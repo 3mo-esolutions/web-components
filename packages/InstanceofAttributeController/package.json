@@ -1,7 +1,7 @@
 {
-	"name": "@3mo/extends-attribute-controller",
+	"name": "@3mo/instanceof-attribute-controller",
 	"version": "0.1.0",
-	"description": "A controller that writes extended classes' tag names into the \"extends\" attribute.",
+	"description": "A controller that writes extended classes' tag names into the \"instanceof\" attribute.",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/3mo-esolutions/web-components/tree/main/packages/Flex"
@@ -10,8 +10,8 @@
 		"lit",
 		"web-component",
 		"controller",
-		"extends-attribute",
-		"extends"
+		"instanceof-attribute",
+		"instanceof"
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",

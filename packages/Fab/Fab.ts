@@ -1,6 +1,6 @@
 import { Component, component, css, html, ifDefined, property } from '@a11d/lit'
 import { MutationController } from '@3mo/mutation-observer'
-import { ExtendsAttributeController } from '@3mo/extends-attribute-controller'
+import { InstanceofAttributeController } from '@3mo/instanceof-attribute-controller'
 import { MaterialIcon } from '@3mo/icon'
 import { Fab as MwcFab } from '@material/mwc-fab'
 
@@ -25,7 +25,7 @@ export class Fab extends Component {
 	@property({ type: Boolean }) dense = false
 	@property({ type: Boolean, reflect: true }) disabled = false
 
-	protected readonly extendsAttributeController = new ExtendsAttributeController(this)
+	protected readonly instanceofAttributeController = new InstanceofAttributeController(this)
 	protected readonly mutationController = new MutationController(this, {
 		config: {
 			subtree: true,

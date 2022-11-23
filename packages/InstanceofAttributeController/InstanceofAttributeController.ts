@@ -1,12 +1,14 @@
 import { Controller, ReactiveControllerHost } from '@a11d/lit'
 
-export class ExtendsAttributeController extends Controller {
+export class InstanceofAttributeController extends Controller {
+	private static readonly attribute = 'instanceof'
+
 	constructor(override readonly host: Element & ReactiveControllerHost) {
 		super(host)
 	}
 
 	override hostConnected() {
-		this.host.setAttribute('extends', [...this.walkupPrototypeChainAndGetAttributeNames()].join(' '))
+		this.host.setAttribute(InstanceofAttributeController.attribute, [...this.walkupPrototypeChainAndGetAttributeNames()].join(' '))
 	}
 
 	private *walkupPrototypeChainAndGetAttributeNames() {

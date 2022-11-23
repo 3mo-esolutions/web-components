@@ -1,5 +1,5 @@
 import { component, property, css, Component, html, nothing, style } from '@a11d/lit'
-import { ExtendsAttributeController } from '@3mo/extends-attribute-controller'
+import { InstanceofAttributeController } from '@3mo/instanceof-attribute-controller'
 import { MaterialIcon } from '@3mo/icon'
 import { Button as MwcButton } from '@material/mwc-button'
 
@@ -78,7 +78,7 @@ export class Button extends Component {
 		`
 	}
 
-	protected readonly extendsAttributeController = new ExtendsAttributeController(this)
+	protected readonly instanceofAttributeController = new InstanceofAttributeController(this)
 
 	protected override get template() {
 		return html`

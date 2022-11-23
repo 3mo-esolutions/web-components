@@ -21,105 +21,105 @@ export class ButtonGroup extends Component {
 			}
 
 			/* Border Radius */
-			::slotted([extends*=mo-button]) {
+			::slotted([instanceof*=mo-button]) {
 				position: relative;
 				border-radius: 0px;
 				--mdc-button-raised-box-shadow: none;
 			}
 
-			:host([direction=vertical]) ::slotted([extends*=mo-button][data-mo-button-group-first]) {
+			:host([direction=vertical]) ::slotted([instanceof*=mo-button][data-mo-button-group-first]) {
 				border-radius: var(--mo-button-group-border-radius, 4px) var(--mo-button-group-border-radius, 4px) 0px 0px;
 			}
 
-			:host([direction=vertical]) ::slotted([extends*=mo-button][data-mo-button-group-last]) {
+			:host([direction=vertical]) ::slotted([instanceof*=mo-button][data-mo-button-group-last]) {
 				border-radius: 0px 0px var(--mo-button-group-border-radius, 4px) var(--mo-button-group-border-radius, 4px);
 			}
 
-			:host([direction=vertical-reversed]) ::slotted([extends*=mo-button][data-mo-button-group-first]) {
+			:host([direction=vertical-reversed]) ::slotted([instanceof*=mo-button][data-mo-button-group-first]) {
 				border-radius: 0px 0px var(--mo-button-group-border-radius, 4px) var(--mo-button-group-border-radius, 4px);
 			}
 
-			:host([direction=vertical-reversed]) ::slotted([extends*=mo-button][data-mo-button-group-last]) {
+			:host([direction=vertical-reversed]) ::slotted([instanceof*=mo-button][data-mo-button-group-last]) {
 				border-radius: var(--mo-button-group-border-radius, 4px) var(--mo-button-group-border-radius, 4px) 0px 0px;
 			}
 
-			:host([direction=horizontal]) ::slotted([extends*=mo-button][data-mo-button-group-first]) {
+			:host([direction=horizontal]) ::slotted([instanceof*=mo-button][data-mo-button-group-first]) {
 				border-radius: var(--mo-button-group-border-radius, 4px) 0px 0px var(--mo-button-group-border-radius, 4px);
 			}
 
-			:host([direction=horizontal]) ::slotted([extends*=mo-button][data-mo-button-group-last]) {
+			:host([direction=horizontal]) ::slotted([instanceof*=mo-button][data-mo-button-group-last]) {
 				border-radius: 0px var(--mo-button-group-border-radius, 4px) var(--mo-button-group-border-radius, 4px) 0px;
 			}
 
-			:host([direction=horizontal-reversed]) ::slotted([extends*=mo-button][data-mo-button-group-first]) {
+			:host([direction=horizontal-reversed]) ::slotted([instanceof*=mo-button][data-mo-button-group-first]) {
 				border-radius: 0px var(--mo-button-group-border-radius, 4px) var(--mo-button-group-border-radius, 4px) 0px;
 			}
 
-			:host([direction=horizontal-reversed]) ::slotted([extends*=mo-button][data-mo-button-group-last]) {
+			:host([direction=horizontal-reversed]) ::slotted([instanceof*=mo-button][data-mo-button-group-last]) {
 				border-radius: var(--mo-button-group-border-radius, 4px) 0px 0px var(--mo-button-group-border-radius, 4px);
 			}
 
 			/* Separator */
-			:host(:not([type=outlined])) ::slotted([extends*=mo-button]:not([data-mo-button-group-last]))::after {
+			:host(:not([type=outlined])) ::slotted([instanceof*=mo-button]:not([data-mo-button-group-last]))::after {
 				content: '';
 				position: absolute;
 			}
 
-			:host([type=normal]) ::slotted([extends*=mo-button]:not([data-mo-button-group-last]))::after {
+			:host([type=normal]) ::slotted([instanceof*=mo-button]:not([data-mo-button-group-last]))::after {
 				background: var(--mo-button-group-separator-color, rgba(var(--mo-color-on-background-base, 0, 0, 0), 0.3));
 			}
 
-			:host([type=unelevated]) ::slotted([extends*=mo-button]:not([data-mo-button-group-last]))::after,
-			:host([type=raised]) ::slotted([extends*=mo-button]:not([data-mo-button-group-last]))::after {
+			:host([type=unelevated]) ::slotted([instanceof*=mo-button]:not([data-mo-button-group-last]))::after,
+			:host([type=raised]) ::slotted([instanceof*=mo-button]:not([data-mo-button-group-last]))::after {
 				background: var(--mo-button-group-separator-color, rgba(var(--mo-color-on-primary-base, 255, 255, 255), 0.3));
 			}
 
-			:host([direction=vertical]:not([type=outlined])) ::slotted([extends*=mo-button]:not([data-mo-button-group-last]))::after,
-			:host([direction=vertical-reversed]:not([type=outlined])) ::slotted([extends*=mo-button]:not([data-mo-button-group-last]))::after {
+			:host([direction=vertical]:not([type=outlined])) ::slotted([instanceof*=mo-button]:not([data-mo-button-group-last]))::after,
+			:host([direction=vertical-reversed]:not([type=outlined])) ::slotted([instanceof*=mo-button]:not([data-mo-button-group-last]))::after {
 				inset-inline-end: 15%;
 				inset-inline-start: 15%;
 				width: 70%;
 				height: 1px;
 			}
 
-			:host([direction=vertical]:not([type=outlined])) ::slotted([extends*=mo-button]:not([data-mo-button-group-last]))::after {
+			:host([direction=vertical]:not([type=outlined])) ::slotted([instanceof*=mo-button]:not([data-mo-button-group-last]))::after {
 				bottom: 0px;
 			}
 
-			:host([direction=vertical-reversed]:not([type=outlined])) ::slotted([extends*=mo-button]:not([data-mo-button-group-last]))::after {
+			:host([direction=vertical-reversed]:not([type=outlined])) ::slotted([instanceof*=mo-button]:not([data-mo-button-group-last]))::after {
 				top: 0px;
 			}
 
-			:host([direction=horizontal]:not([type=outlined])) ::slotted([extends*=mo-button]:not([data-mo-button-group-last]))::after,
-			:host([direction=horizontal-reversed]:not([type=outlined])) ::slotted([extends*=mo-button]:not([data-mo-button-group-last]))::after {
+			:host([direction=horizontal]:not([type=outlined])) ::slotted([instanceof*=mo-button]:not([data-mo-button-group-last]))::after,
+			:host([direction=horizontal-reversed]:not([type=outlined])) ::slotted([instanceof*=mo-button]:not([data-mo-button-group-last]))::after {
 				top: 15%;
 				bottom: 15%;
 				height: 70%;
 				width: 1px;
 			}
 
-			:host([direction=horizontal]:not([type=outlined])) ::slotted([extends*=mo-button]:not([data-mo-button-group-last]))::after {
+			:host([direction=horizontal]:not([type=outlined])) ::slotted([instanceof*=mo-button]:not([data-mo-button-group-last]))::after {
 				inset-inline-end: 0px;
 			}
 
-			:host([direction=horizontal-reversed]:not([type=outlined])) ::slotted([extends*=mo-button]:not([data-mo-button-group-last]))::after {
+			:host([direction=horizontal-reversed]:not([type=outlined])) ::slotted([instanceof*=mo-button]:not([data-mo-button-group-last]))::after {
 				inset-inline-start: 0px;
 			}
 
 			/* The following 4 rules won't work due to ::part selector and ::slotted selectors cannot be used together. https://github.com/w3c/csswg-drafts/issues/3896 */
-			:host([direction=vertical][type=outlined]) ::slotted([extends*=mo-button]:not([data-mo-button-group-last]))::part(button) {
+			:host([direction=vertical][type=outlined]) ::slotted([instanceof*=mo-button]:not([data-mo-button-group-last]))::part(button) {
 				border-bottom-width: 0px;
 			}
 
-			:host([direction=vertical-reversed][type=outlined]) ::slotted([extends*=mo-button]:not([data-mo-button-group-last]))::part(button) {
+			:host([direction=vertical-reversed][type=outlined]) ::slotted([instanceof*=mo-button]:not([data-mo-button-group-last]))::part(button) {
 				border-top-width: 0px;
 			}
 
-			:host([direction=horizontal][type=outlined]) ::slotted([extends*=mo-button]:not([data-mo-button-group-last]))::part(button) {
+			:host([direction=horizontal][type=outlined]) ::slotted([instanceof*=mo-button]:not([data-mo-button-group-last]))::part(button) {
 				border-inline-end-width: 0px;
 			}
 
-			:host([direction=horizontal-reversed][type=outlined]) ::slotted([extends*=mo-button]:not([data-mo-button-group-last]))::part(button) {
+			:host([direction=horizontal-reversed][type=outlined]) ::slotted([instanceof*=mo-button]:not([data-mo-button-group-last]))::part(button) {
 				border-inline-start-width: 0px;
 			}
 		`
