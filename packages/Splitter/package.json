@@ -1,0 +1,30 @@
+{
+	"name": "@3mo/splitter",
+	"version": "0.0.1",
+	"description": "A splitter web-component.",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/3mo-esolutions/web-components/tree/main/packages/Flex"
+	},
+	"keywords": [
+		"lit",
+		"web-component",
+		"splitter"
+	],
+	"author": "3MO GmbH",
+	"license": "MIT",
+	"homepage": "https://www.3mo.de",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"dependencies": {
+		"@a11d/lit": "x",
+		"tslib": "x",
+		"csstype": "x",
+		"@3mo/flex": "x",
+		"@3mo/slot-controller": "x"
+	}
+}
