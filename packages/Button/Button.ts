@@ -48,7 +48,7 @@ export class Button extends Component {
 			}
 
 			:host([type=normal]) mwc-button {
-				--mo-button-default-horizontal-padding: 8px;
+				--mo-button-default-horizontal-padding: 12px;
 			}
 
 			:host(:not([type=normal])) mwc-button {

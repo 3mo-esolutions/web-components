@@ -32,7 +32,7 @@ export const WithCustomBorderRadius = story({
 })
 
 export const WithLeadingIcon = story({
-	render: ({ type, disabled }) => html`<mo-button leadingIcon='add' type=${type} ?disabled=${disabled}>Leading Icon</mo-button>`
+	render: ({ type, disabled }) => html`<mo-button leadingIcon='contact_mail' type=${type} ?disabled=${disabled}>Leading Icon</mo-button>`
 })
 
 export const WithTrailingIcon = story({
