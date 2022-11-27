@@ -27,7 +27,7 @@ export class Section extends Component {
 			section {
 				display: flex;
 				flex-direction: column;
-				gap: var(--mo-thickness-l);
+				gap: 8px;
 				width: 100%;
 				height: 100%;
 			}
