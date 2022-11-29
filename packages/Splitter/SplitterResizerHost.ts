@@ -63,7 +63,7 @@ export class SplitterResizerHost extends Component {
 				justify-content: center;
 				-webkit-user-select: none;
 				-moz-user-select: none;
-				transition: var(--mo-duration-quick);
+				transition: var(--mo-duration-quick, 250ms);
 			}
 
 			:host([locked]) {
