@@ -2,6 +2,15 @@ import { html, component, Component, css, property, eventListener, style } from 
 import { Fab } from '@3mo/fab'
 import { SlotController } from '@3mo/slot-controller'
 
+/**
+ * @element mo-fab-group
+ *
+ * @attr open
+ *
+ * @slot - Floating action buttons
+ *
+ * @cssprop --mo-fab-group-transition-duration
+ */
 @component('mo-fab-group')
 export class FabGroup extends Component {
 	@property({ type: Boolean, reflect: true, updated(this: FabGroup) { this.updateFabElements() } }) open = false
@@ -62,7 +71,7 @@ export class FabGroup extends Component {
 	protected override get template() {
 		return html`
 			<mo-fab icon='add' @click=${this.handleClick}></mo-fab>
-			<div id='fabs' ${style({ position: 'absolute', bottom: '0', right: '0' })}>
+			<div id='fabs' ${style({ position: 'absolute', bottom: '0', insetInlineEnd: '0' })}>
 				<div ${style({ display: 'flex', flexDirection: 'column-reverse', alignItems: 'end', gap: '8px' })}>
 					<slot @slotchange=${() => this.updateFabElements()}></slot>
 				</div>
