@@ -37,7 +37,7 @@ export default meta({
 })
 
 export const Section = story({
-	render: ({ heading, subHeading, content, avatar, image }) => html`
+	render: ({ heading, content }) => html`
 		<mo-section heading=${heading}>
 			<mo-icon-button slot='action' icon='share'></mo-icon-button>
 			<mo-icon-button slot='action' icon='more_vert'></mo-icon-button>
