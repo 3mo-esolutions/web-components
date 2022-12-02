@@ -34,7 +34,7 @@ describe(Card.name, () => {
 			testSlotRendersIfContentAvailable('header', slotName)
 		}
 
-		for (const [propertyName, elementSelector] of [['avatar', 'mo-avatar'], ['heading', 'mo-heading[part=heading]'], ['subHeading', 'mo-heading[part=subHeading]']] as const) {
+		for (const [propertyName, elementSelector] of [['avatar', 'div[part=avatar]'], ['heading', 'mo-heading[part=heading]'], ['subHeading', 'mo-heading[part=subHeading]']] as const) {
 			it(`should render the ${elementSelector} element if ${propertyName} is set`, async () => {
 				const content = 'Content'
 
