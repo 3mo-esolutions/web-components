@@ -143,7 +143,7 @@ export class Alert extends Component {
 	}
 
 	protected get slotTemplate() {
-		return !this.slotController.hasAssignedNodes('') ? nothing : html`<slot></slot>`
+		return !this.slotController.hasAssignedContent('') ? nothing : html`<slot></slot>`
 	}
 }
 

@@ -180,7 +180,7 @@ export class Card extends Component {
 	}
 
 	protected get bodyTemplate() {
-		this.slotController.hasAssignedNodes('') ? this.setAttribute('hasBody', '') : this.removeAttribute('hasBody')
+		this.slotController.hasAssignedContent('') ? this.setAttribute('hasBody', '') : this.removeAttribute('hasBody')
 		return html`<slot></slot>`
 	}
 

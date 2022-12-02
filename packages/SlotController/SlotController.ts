@@ -21,6 +21,11 @@ export class SlotController extends Controller {
 		return this.getAssignedNodes(slotName).length > 0
 	}
 
+	hasAssignedContent(slotName: string) {
+		return this.getAssignedNodes(slotName)
+			.some(node => node.nodeType === Node.TEXT_NODE && node.textContent?.trim() || node.nodeType === Node.ELEMENT_NODE)
+	}
+
 	getAssignedElements(slotName: string) {
 		return this.getAssignedNodes(slotName).filter((node): node is Element => node instanceof Element)
 	}
