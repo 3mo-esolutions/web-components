@@ -36,7 +36,7 @@ export class TabBar extends Component {
 
 	@state() private activeIndex?: number
 
-	protected get tabs() {
+	get tabs() {
 		return [...this.children].filter((c): c is Tab => c instanceof Tab)
 	}
 
