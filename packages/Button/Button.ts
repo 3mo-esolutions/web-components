@@ -42,6 +42,7 @@ export class Button extends Component {
 				text-transform: uppercase;
 				text-align: center;
 				border-radius: var(--mo-border-radius, 4px);
+				min-height: 36px;
 			}
 
 			:host([disabled]) {
@@ -67,7 +68,7 @@ export class Button extends Component {
 			}
 
 			mwc-button {
-				min-height: 36px;
+				min-height: inherit;
 				text-align: inherit;
 				--mdc-button-horizontal-padding: var(--mo-button-horizontal-padding, var(--mo-button-default-horizontal-padding));
 				--mdc-theme-primary: var(--mo-button-accent-color, var(--mo-color-accent, #0077c8));

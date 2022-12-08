@@ -1,0 +1,60 @@
+import { component, css, html, Component } from '@a11d/lit'
+
+/**
+ * @element mo-chip
+ *
+ * @slot - The default slot.
+ * @slot leading - The icon slot.
+ * @slot trailing - The icon slot.
+ *
+ * @cssprop --mo-chip-background-color - The background color of the chip.
+ * @cssprop --mo-chip-foreground-color - The foreground color of the chip.
+ */
+@component('mo-chip')
+export class Chip extends Component {
+	static override get styles() {
+		return css`
+			:host {
+				display: inline-block;
+				height: 30px;
+				border-radius: 16px;
+			}
+
+			mo-button {
+				--mo-button-accent-color: var(--mo-chip-background-color, rgba(var(--mo-color-foreground-base, 0,0,0), 0.15));
+				--mdc-theme-on-primary: var(--mo-chip-foreground-color, rgba(var(--mo-color-foreground-base, 0,0,0), 0.8));
+				--mo-button-horizontal-padding: 10px;
+				height: 100%;
+				min-height: auto;
+				border-radius: inherit;
+				text-transform: none;
+			}
+
+			mo-button::part(button) {
+				font-weight: auto;
+				letter-spacing: normal;
+				text-decoration: auto;
+			}
+
+			::slotted(mo-icon-button) {
+				font-size: 20px;
+			}
+		`
+	}
+
+	protected override get template() {
+		return html`
+			<mo-button type='unelevated'>
+				<slot name='leading' slot='leading'></slot>
+				<slot></slot>
+				<slot name='trailing' slot='trailing'></slot>
+			</mo-button>
+		`
+	}
+}
+
+declare global {
+	interface HTMLElementTagNameMap {
+		'mo-chip': Chip
+	}
+}
