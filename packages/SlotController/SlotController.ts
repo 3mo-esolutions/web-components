@@ -41,7 +41,7 @@ export class SlotController extends Controller {
 	private extractNodesFromChildren(slotName: string) {
 		return [...this.host.childNodes]
 			.filter(node => node instanceof Element || (node instanceof Text && !!node.textContent?.trim()))
-			.filter(child => !slotName || (child instanceof Element && child.slot === slotName))
+			.filter(child => child instanceof Element ? child.slot === slotName : !slotName)
 			.flatMap(child => child instanceof HTMLSlotElement ? child.assignedNodes() : [child])
 	}
 
