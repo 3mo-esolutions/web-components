@@ -31,6 +31,10 @@ export class LoadingButton extends Button {
 		this.renderRoot.querySelector('mwc-button')?.addEventListener<any>('click', this.clickHandler)
 	}
 
+	protected override disconnected() {
+		this.renderRoot.querySelector('mwc-button')?.removeEventListener<any>('click', this.clickHandler)
+	}
+
 	private readonly clickHandler = async (e: PointerEvent) => {
 		if (this.preventClickEventInference === false) {
 			const clickEventHandlers = this.eventListeners
