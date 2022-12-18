@@ -9,6 +9,7 @@ export abstract class SliderBase<T> extends Component {
 	abstract value: T
 
 	@property({ type: Boolean }) disabled = false
+	@property({ type: Boolean }) discrete = false
 	@property({ type: Number }) step?: number
 	@property({ type: Number }) min?: number
 	@property({ type: Number }) max?: number
@@ -54,4 +55,5 @@ MwcSliderBase.addInitializer(async component => {
 	const slider = component as MwcSliderBase
 	await slider.updateComplete
 	slider.renderRoot.querySelector('.mdc-slider__tick-marks')?.setAttribute('part', 'marks')
+	slider.renderRoot.querySelectorAll('.mdc-slider__thumb')?.forEach(thumb => thumb.setAttribute('part', 'thumb'))
 })

@@ -6,9 +6,13 @@ import { SliderBase } from './SliderBase.js'
  *
  * @attr value
  * @attr disabled
+ * @attr discrete
  * @attr step
  * @attr min
  * @attr max
+ *
+ * @csspart parts
+ * @csspart thumb
  *
  * @fires input {CustomEvent<number>}
  * @fires change {CustomEvent<number>}
@@ -19,7 +23,8 @@ export class Slider extends SliderBase<number> {
 
 	protected override get template() {
 		return html`
-			<mwc-slider withTickMarks discrete
+			<mwc-slider withTickMarks
+				?discrete=${this.discrete}
 				?disabled=${this.disabled}
 				value=${this.value}
 				step=${ifDefined(this.step)}

@@ -8,6 +8,7 @@ export default meta({
 	component: 'mo-range-slider',
 	args: {
 		disabled: false,
+		discrete: false,
 		valueStart: 40,
 		valueEnd: 60,
 		step: 1,
@@ -18,6 +19,7 @@ export default meta({
 		valueStart: { control: 'number' },
 		valueEnd: { control: 'number' },
 		disabled: { control: 'boolean' },
+		discrete: { control: 'boolean' },
 		step: { control: 'number' },
 		min: { control: 'number' },
 		max: { control: 'number' },
@@ -32,8 +34,9 @@ export default meta({
 })
 
 export const RangeSlider = story({
-	render: ({ disabled, valueStart, valueEnd, step, min, max }) => html`
+	render: ({ disabled, discrete, valueStart, valueEnd, step, min, max }) => html`
 		<mo-range-slider ${style({ marginTop: '20px' })}
+			?discrete=${discrete}
 			?disabled=${disabled}
 			.value=${[valueStart, valueEnd]}
 			step=${step}

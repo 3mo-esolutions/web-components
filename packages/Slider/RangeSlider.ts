@@ -9,9 +9,13 @@ export type RangeSliderValue = [start: number, end: number]
  *
  * @attr value
  * @attr disabled
+ * @attr discrete
  * @attr step
  * @attr min
  * @attr max
+ *
+ * @csspart parts
+ * @csspart thumb
  *
  * @fires input {CustomEvent<[start: number, end: number]>}
  * @fires change {CustomEvent<[start: number, end: number]>}
@@ -23,7 +27,8 @@ export class RangeSlider extends SliderBase<RangeSliderValue> {
 	protected override get template() {
 		const [start, end] = this.value
 		return html`
-			<mwc-slider-range withTickMarks discrete
+			<mwc-slider-range withTickMarks
+				?discrete=${this.discrete}
 				?disabled=${this.disabled}
 				valueStart=${start}
 				valueEnd=${end}

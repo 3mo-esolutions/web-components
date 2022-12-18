@@ -8,6 +8,7 @@ export default meta({
 	component: 'mo-slider',
 	args: {
 		disabled: false,
+		discrete: false,
 		value: 15,
 		step: 1,
 		min: 0,
@@ -16,6 +17,7 @@ export default meta({
 	argTypes: {
 		value: { control: 'number' },
 		disabled: { control: 'boolean' },
+		discrete: { control: 'boolean' },
 		step: { control: 'number' },
 		min: { control: 'number' },
 		max: { control: 'number' },
@@ -30,8 +32,9 @@ export default meta({
 })
 
 export const slider = story({
-	render: ({ disabled, value, step, min, max }) => html`
+	render: ({ disabled, value, step, min, max, discrete }) => html`
 		<mo-slider ${style({ marginTop: '20px' })}
+			?discrete=${discrete}
 			?disabled=${disabled}
 			value=${value}
 			step=${step}
