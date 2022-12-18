@@ -23,7 +23,7 @@ export class Slider extends SliderBase<number> {
 
 	protected override get template() {
 		return html`
-			<mwc-slider withTickMarks
+			<mwc-slider withTickMarks exportparts='marks,thumb'
 				?discrete=${this.discrete}
 				?disabled=${this.disabled}
 				value=${this.value}

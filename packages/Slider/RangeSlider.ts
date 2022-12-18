@@ -27,7 +27,7 @@ export class RangeSlider extends SliderBase<RangeSliderValue> {
 	protected override get template() {
 		const [start, end] = this.value
 		return html`
-			<mwc-slider-range withTickMarks
+			<mwc-slider-range withTickMarks exportparts='marks,thumb'
 				?discrete=${this.discrete}
 				?disabled=${this.disabled}
 				valueStart=${start}
