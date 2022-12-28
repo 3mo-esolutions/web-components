@@ -41,7 +41,7 @@ export const enum CardType {
  */
 @component('mo-card')
 export class Card extends Component {
-	@property() type = CardType.Filled
+	@property({ reflect: true }) type = CardType.Filled
 	@property() heading?: string
 	@property() subHeading?: string
 	@property() avatar?: string
