@@ -1,11 +1,17 @@
-import { component, html, property, Component, css, nothing, style } from '@a11d/lit'
+import { component, html, property, Component, css, nothing, style, unsafeCSS } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
 import '@3mo/heading'
 import '@3mo/flex'
 
+export const enum CardType {
+	Filled = 'filled',
+	Outlined = 'outlined'
+}
+
 /**
  * @element mo-card
  *
+ * @attr type
  * @attr heading
  * @attr subHeading
  * @attr avatar
@@ -35,6 +41,7 @@ import '@3mo/flex'
  */
 @component('mo-card')
 export class Card extends Component {
+	@property() type = CardType.Filled
 	@property() heading?: string
 	@property() subHeading?: string
 	@property() avatar?: string
@@ -46,9 +53,16 @@ export class Card extends Component {
 		return css`
 			:host {
 				display: block;
+				border-radius: var(--mo-border-radius, 4px);
+			}
+
+			:host([type="${unsafeCSS(CardType.Filled)}"]) {
 				background: var(--mo-color-surface, rgb(255, 255, 255));
 				box-shadow: var(--mo-shadow, rgba(95, 81, 78, .4) 0 1px 2px 0, rgba(95, 81, 78, .2) 0 1px 3px 1px);
-				border-radius: var(--mo-border-radius, 4px);
+			}
+
+			:host([type="${unsafeCSS(CardType.Outlined)}"]) {
+				border: 1px solid var(--mo-color-transparent-gray-3, rgba(0, 0, 0, .12));
 			}
 
 			slot[name=header] {

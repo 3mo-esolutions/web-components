@@ -7,6 +7,7 @@ export default meta({
 	title: 'Core/Layout/Card',
 	component: 'mo-card',
 	args: {
+		type: 'filled',
 		heading: 'Satoshi Nakamoto',
 		subHeading: 'On 9th of January 2009',
 		content: `A purely peer-to-peer version of electronic cash would allow online
@@ -27,6 +28,7 @@ export default meta({
 		image: 'https://image.winudf.com/v2/image/Y29tLnRydWVoZHdhbGxwYXBlcnMuYml0Y29pbndhbGxwYXBlcnNfc2NyZWVuXzBfMTUxMjU2ODY0OF8wNTU/screen-0.jpg?fakeurl=1&type=.jpg',
 	},
 	argTypes: {
+		type: { control: { type: 'select', options: ['filled', 'outlined'] } },
 		heading: { control: 'text' },
 		subHeading: { control: 'text' },
 		content: { control: 'text' },
@@ -42,8 +44,8 @@ export default meta({
 })
 
 export const Card = story({
-	render: ({ heading, subHeading, content, avatar, image }) => html`
-		<mo-card heading=${heading} subHeading=${subHeading} avatar=${avatar} image=${image} ${style({ width: '400px' })}>
+	render: ({ type, heading, subHeading, content, avatar, image }) => html`
+		<mo-card type=${type} heading=${heading} subHeading=${subHeading} avatar=${avatar} image=${image} ${style({ width: '400px' })}>
 			<mo-icon-button slot='action' icon='share'></mo-icon-button>
 			<mo-icon-button slot='action' icon='more_vert'></mo-icon-button>
 
