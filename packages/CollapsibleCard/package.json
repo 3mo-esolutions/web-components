@@ -1,0 +1,32 @@
+{
+	"name": "@3mo/collapsible-card",
+	"version": "0.1.0",
+	"description": "An extension of @3mo/card component with support for collapsible state.",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/3mo-esolutions/web-components/tree/main/packages/Card"
+	},
+	"keywords": [
+		"lit",
+		"web-component",
+		"material",
+		"card",
+		"collapsible"
+	],
+	"author": "3MO GmbH",
+	"license": "MIT",
+	"homepage": "https://www.3mo.de",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"dependencies": {
+		"@a11d/lit": "x",
+		"tslib": "x",
+		"@3mo/card": "x",
+		"@3mo/tooltip": "x",
+		"@3mo/icon-button": "x"
+	}
+}
