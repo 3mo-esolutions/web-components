@@ -1,9 +1,9 @@
-import { directive, Directive, ElementPart, PartInfo, PartType } from '@a11d/lit'
+import { AsyncDirective, directive, ElementPart, PartInfo, PartType } from '@a11d/lit'
 
-export const observeResize = directive(class extends Directive {
+class ResizeDirective extends AsyncDirective {
 	readonly observer = new ResizeObserver((...args) => this.callback?.(...args))
-	readonly element: Element
-	callback?: ResizeObserverCallback
+	protected readonly element: Element
+	protected callback?: ResizeObserverCallback
 
 	constructor(partInfo: PartInfo) {
 		super(partInfo)
@@ -20,4 +20,10 @@ export const observeResize = directive(class extends Directive {
 		this.callback = callback
 		this.observer.observe(this.element, options)
 	}
-})
+
+	protected override disconnected() {
+		this.observer.disconnect()
+	}
+}
+
+export const observeResize = directive(ResizeDirective)
