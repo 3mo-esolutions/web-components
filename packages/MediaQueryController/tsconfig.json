@@ -1,0 +1,13 @@
+{
+	"extends": "../../tsconfig.json",
+	"exclude": [
+		"../MediaQueryObserver/dist",
+		"../MediaQueryObserver/*.config.*",
+		"../MediaQueryObserver/*.stories.ts",
+		"../MediaQueryObserver/*.test.ts"
+	],
+	"compilerOptions": {
+		"baseUrl": "../MediaQueryObserver",
+		"outDir": "../MediaQueryObserver/dist"
+	}
+}
