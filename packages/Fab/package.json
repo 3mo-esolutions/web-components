@@ -25,6 +25,7 @@
 	"dependencies": {
 		"@a11d/lit": "x",
 		"tslib": "x",
+		"@3mo/disabled-property": "x",
 		"@3mo/icon": "x",
 		"@3mo/mutation-observer": "x",
 		"@3mo/instanceof-attribute-controller": "x",

@@ -1,4 +1,5 @@
 import { property, css, Component, event, HTMLTemplateResult } from '@a11d/lit'
+import { disabledProperty } from '@3mo/disabled-property'
 import { SliderBase as MwcSliderBase, Thumb } from '@material/mwc-slider/slider-base.js'
 import '@material/mwc-slider'
 
@@ -8,7 +9,7 @@ export abstract class SliderBase<T> extends Component {
 
 	abstract value: T
 
-	@property({ type: Boolean }) disabled = false
+	@disabledProperty() disabled = false
 	@property({ type: Boolean }) discrete = false
 	@property({ type: Number }) step?: number
 	@property({ type: Number }) min?: number
@@ -18,10 +19,6 @@ export abstract class SliderBase<T> extends Component {
 		return css`
 			:host {
 				display: block;
-			}
-
-			:host([disabled]) {
-				pointer-events: none;
 			}
 
 			mwc-slider, mwc-slider-range {

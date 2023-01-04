@@ -1,5 +1,6 @@
 import { component, property, css, Component, html, event } from '@a11d/lit'
 import { Formfield as FormField } from '@material/mwc-formfield'
+import { disabledProperty } from '@3mo/disabled-property'
 import '@material/mwc-switch'
 
 /**
@@ -25,17 +26,13 @@ export class Switch extends Component {
 	@event() readonly change!: EventDispatcher<boolean>
 
 	@property() label = ''
-	@property({ type: Boolean }) disabled = false
+	@disabledProperty() disabled = false
 	@property({ type: Boolean }) selected = false
 
 	static override get styles() {
 		return css`
 			:host {
 				display: inline-flex;
-			}
-
-			:host([disabled]) {
-				pointer-events: none;
 			}
 
 			mwc-switch {

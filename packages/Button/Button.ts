@@ -2,6 +2,7 @@ import { component, property, css, Component, html, nothing, style } from '@a11d
 import { InstanceofAttributeController } from '@3mo/instanceof-attribute-controller'
 import { MaterialIcon } from '@3mo/icon'
 import { Button as MwcButton } from '@material/mwc-button'
+import { disabledProperty } from '@3mo/disabled-property'
 
 export const enum ButtonType {
 	Normal = 'normal',
@@ -30,7 +31,7 @@ export const enum ButtonType {
 @component('mo-button')
 export class Button extends Component {
 	@property({ reflect: true }) type = ButtonType.Normal
-	@property({ reflect: true, type: Boolean }) disabled = false
+	@disabledProperty() disabled = false
 
 	@property() leadingIcon?: MaterialIcon
 	@property() trailingIcon?: MaterialIcon
@@ -43,10 +44,6 @@ export class Button extends Component {
 				text-align: center;
 				border-radius: var(--mo-border-radius, 4px);
 				min-height: 36px;
-			}
-
-			:host([disabled]) {
-				pointer-events: none;
 			}
 
 			:host([type=normal]) mwc-button {

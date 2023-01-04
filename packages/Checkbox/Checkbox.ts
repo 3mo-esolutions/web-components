@@ -1,5 +1,6 @@
 import { component, property, css, Component, html, event } from '@a11d/lit'
 import { Formfield as FormField } from '@material/mwc-formfield'
+import { disabledProperty } from '@3mo/disabled-property'
 import '@material/mwc-checkbox'
 
 /**
@@ -23,7 +24,7 @@ export class Checkbox extends Component {
 	@event() readonly change!: EventDispatcher<CheckboxValue>
 
 	@property() label = ''
-	@property({ type: Boolean }) disabled = false
+	@disabledProperty() disabled = false
 	@property({ type: Boolean }) checked = false
 	@property({ type: Boolean }) indeterminate = false
 	@property()
@@ -53,10 +54,6 @@ export class Checkbox extends Component {
 		return css`
 			:host {
 				display: inline-flex;
-			}
-
-			:host([disabled]) {
-				pointer-events: none;
 			}
 
 			mwc-checkbox {

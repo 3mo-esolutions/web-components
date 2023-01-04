@@ -25,6 +25,7 @@
 	"dependencies": {
 		"@a11d/lit": "x",
 		"tslib": "x",
+		"@3mo/disabled-property": "x",
 		"@material/mwc-slider": "x"
 	}
 }

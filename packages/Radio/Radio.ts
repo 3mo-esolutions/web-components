@@ -1,4 +1,5 @@
 import { component, property, css, Component, html, event } from '@a11d/lit'
+import { disabledProperty } from '@3mo/disabled-property'
 import { Formfield as FormField } from '@material/mwc-formfield'
 import '@material/mwc-radio'
 
@@ -22,17 +23,13 @@ export class Radio extends Component {
 
 	@property() label = ''
 	@property() name = ''
-	@property({ type: Boolean }) disabled = false
+	@disabledProperty() disabled = false
 	@property({ type: Boolean }) checked = false
 
 	static override get styles() {
 		return css`
 			:host {
 				display: inline-flex;
-			}
-
-			:host([disabled]) {
-				pointer-events: none;
 			}
 
 			mwc-radio {

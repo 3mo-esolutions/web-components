@@ -1,6 +1,7 @@
 import { Component, component, css, html, ifDefined, property } from '@a11d/lit'
 import { MutationController } from '@3mo/mutation-observer'
 import { InstanceofAttributeController } from '@3mo/instanceof-attribute-controller'
+import { disabledProperty } from '@3mo/disabled-property'
 import { MaterialIcon } from '@3mo/icon'
 import { Fab as MwcFab } from '@material/mwc-fab'
 
@@ -23,7 +24,7 @@ export class Fab extends Component {
 	@property() icon?: MaterialIcon
 	@property({ type: Boolean }) iconAtEnd = false
 	@property({ type: Boolean }) dense = false
-	@property({ type: Boolean, reflect: true }) disabled = false
+	@disabledProperty() disabled = false
 
 	protected readonly instanceofAttributeController = new InstanceofAttributeController(this)
 	protected readonly mutationController = new MutationController(this, {
@@ -38,10 +39,6 @@ export class Fab extends Component {
 		return css`
 			:host {
 				display: inline-block;
-			}
-
-			:host([disabled]) {
-				pointer-events: none;
 			}
 
 			mwc-fab {

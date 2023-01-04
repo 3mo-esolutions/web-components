@@ -1,6 +1,7 @@
 import { component, Component, css, html, property } from '@a11d/lit'
-import { IconButton as MwcIconButton } from '@material/mwc-icon-button'
+import { disabledProperty } from '@3mo/disabled-property'
 import { MaterialIcon } from '@3mo/icon'
+import { IconButton as MwcIconButton } from '@material/mwc-icon-button'
 
 /**
  * @attr icon - The icon to display.
@@ -14,17 +15,13 @@ import { MaterialIcon } from '@3mo/icon'
 @component('mo-icon-button')
 export class IconButton extends Component {
 	@property() icon!: MaterialIcon
-	@property({ type: Boolean, reflect: true }) disabled = false
+	@disabledProperty() disabled = false
 	@property({ type: Boolean, reflect: true }) dense = false
 
 	static override get styles() {
 		return css`
 			:host {
 				font-size: 20px;
-			}
-
-			:host([disabled]) {
-				pointer-events: none;
 			}
 
 			:host, mwc-icon-button {
