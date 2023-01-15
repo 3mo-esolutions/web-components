@@ -82,7 +82,7 @@ export class Section extends Component {
 
 	protected get contentTemplate() {
 		return !this.slotController.hasAssignedContent('') ? nothing : html`
-			<mo-grid ${style({ height: '*' })}>
+			<mo-grid ${style({ height: '100%' })}>
 				<slot></slot>
 			</mo-grid>
 		`
