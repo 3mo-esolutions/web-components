@@ -76,6 +76,7 @@ export class Switch extends Component {
 
 			mwc-formfield::part(label) {
 				padding-inline-start: 0px;
+				text-align: start;
 			}
 
 			:host([disabled]) mwc-formfield::part(label) {

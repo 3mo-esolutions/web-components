@@ -44,6 +44,7 @@ export class Radio extends Component {
 			mwc-formfield::part(label) {
 				padding-inline-start: 0px;
 				margin-inline-start: -2px;
+				text-align: start;
 			}
 
 			:host([disabled]) mwc-formfield::part(label) {
