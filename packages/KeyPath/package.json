@@ -4,7 +4,7 @@
 	"description": "A set of type-safe utilities for working with objects and their properties with support for array members.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components/tree/main/packages/KeyPath"
+		"url": "https://github.com/3mo-esolutions/web-components"
 	},
 	"keywords": [
 		"key-path",

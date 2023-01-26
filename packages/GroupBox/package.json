@@ -4,7 +4,7 @@
 	"description": "A group-box web-component based on Material Design.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components/tree/main/packages/GroupBox"
+		"url": "https://github.com/3mo-esolutions/web-components"
 	},
 	"keywords": [
 		"lit",

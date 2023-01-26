@@ -4,7 +4,7 @@
 	"description": "A floating action button group web-component.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components/tree/main/packages/Fab"
+		"url": "https://github.com/3mo-esolutions/web-components"
 	},
 	"keywords": [
 		"lit",

@@ -4,7 +4,7 @@
 	"description": "A controller that raises an error on elements without intrinsic dimensions.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components/tree/main/packages/Flex"
+		"url": "https://github.com/3mo-esolutions/web-components"
 	},
 	"keywords": [
 		"lit",

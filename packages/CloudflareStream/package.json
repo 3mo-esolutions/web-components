@@ -4,7 +4,7 @@
 	"description": "Lit-based web-component for cloudflare stream service.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components/tree/main/packages/CloudflareStream"
+		"url": "https://github.com/3mo-esolutions/web-components"
 	},
 	"keywords": [
 		"lit",

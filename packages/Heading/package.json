@@ -4,7 +4,7 @@
 	"description": "A heading web-component.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components/tree/main/packages/heading"
+		"url": "https://github.com/3mo-esolutions/web-components"
 	},
 	"keywords": [
 		"lit",

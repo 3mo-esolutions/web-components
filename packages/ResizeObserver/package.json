@@ -4,7 +4,7 @@
 	"description": "A lit controller and directive for observing resizes.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components/tree/main/packages/ResizeObserver"
+		"url": "https://github.com/3mo-esolutions/web-components"
 	},
 	"keywords": [
 		"lit",

@@ -4,7 +4,7 @@
 	"description": "A simple wrapper web-component for CSS Grid Layout.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components/tree/main/packages/Grid"
+		"url": "https://github.com/3mo-esolutions/web-components"
 	},
 	"keywords": [
 		"lit",

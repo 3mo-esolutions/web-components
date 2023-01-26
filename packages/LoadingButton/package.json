@@ -4,7 +4,7 @@
 	"description": "A button web-component with a loading state and capable of inferring the loading state from click event handler promises.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components/tree/main/packages/Flex"
+		"url": "https://github.com/3mo-esolutions/web-components"
 	},
 	"keywords": [
 		"lit",
