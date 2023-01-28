@@ -113,6 +113,7 @@ declare global {
 		Mongolian = 'mn',
 		Morisyen = 'mfe',
 		Mundang = 'mua',
+		Maldivian = 'mdv',
 		Nama = 'naq',
 		Nepali = 'ne',
 		NorthNdebele = 'nd',
