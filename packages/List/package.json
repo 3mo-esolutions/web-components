@@ -1,0 +1,34 @@
+{
+	"name": "@3mo/list",
+	"version": "0.0.1",
+	"description": "A list web-component.",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/3mo-esolutions/web-components"
+	},
+	"keywords": [
+		"lit",
+		"web-component",
+		"material",
+		"list"
+	],
+	"author": "3MO GmbH",
+	"license": "MIT",
+	"homepage": "https://www.3mo.de",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"dependencies": {
+		"@a11d/lit": "x",
+		"tslib": "x",
+		"@3mo/flex": "x",
+		"@3mo/disabled-property": "x",
+		"@3mo/checkbox": "x",
+		"@3mo/radio": "x",
+		"@3mo/switch": "x",
+		"@material/web": "1.0.0-pre.1"
+	}
+}
