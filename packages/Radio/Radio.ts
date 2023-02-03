@@ -7,6 +7,7 @@ import '@material/mwc-radio'
  * @element mo-radio
  *
  * @attr label
+ * @attr name
  * @attr disabled
  * @attr checked
  *
