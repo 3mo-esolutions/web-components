@@ -61,7 +61,7 @@ export class Radio extends Component {
 					name=${this.name}
 					?disabled=${this.disabled}
 					?checked=${this.checked}
-					@change=${this.handleChange.bind(this)}
+					@checked=${this.handleChange.bind(this)}
 				></mwc-radio>
 			</mwc-formfield>
 		`

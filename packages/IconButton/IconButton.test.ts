@@ -38,7 +38,7 @@ describe(IconButton.name, () => {
 		expect(fixture.component.renderRoot.querySelector('slot[name="icon"] > mo-icon')).toBeTruthy()
 	})
 
-	it('should reflect "icon" onto the the mo-icon element', async () => {
+	it('should reflect "icon" onto the mo-icon element', async () => {
 		fixture.component.icon = 'home'
 		await fixture.update()
 		expect(fixture.component.renderRoot.querySelector('mo-icon')?.icon).toBe('home')
