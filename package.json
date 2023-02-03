@@ -1,7 +1,7 @@
 {
 	"scripts": {
-		"start": "npm run clean && npm install && start-storybook -p 3000",
-		"test": "npm install && webpack --config ./webpack.config.test.mjs && concurrently --raw \"webpack --watch --config ./webpack.config.test.mjs\" \"karma start\" --restart-tries -1",
+		"start": "npm run clean && npm install --loglevel=error && start-storybook -p 3000",
+		"test": "npm install --loglevel=error && webpack --config ./webpack.config.test.mjs && concurrently --raw \"webpack --watch --config ./webpack.config.test.mjs\" \"karma start\" --restart-tries -1",
 		"test:ci": "webpack --config ./webpack.config.test.mjs && karma start --single-run",
 		"docs:build": "build-storybook -o docs-dist",
 		"clean": "node ./scripts/clean.mjs",

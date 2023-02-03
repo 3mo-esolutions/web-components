@@ -12,5 +12,7 @@ addons.setConfig({
 
 		colorPrimary: '#0077c8',
 		barTextColor: '#0077c8',
+
+		fontBase: '"Roboto", sans-serif',
 	},
 })

@@ -109,6 +109,7 @@ export class Localizer {
 globalThis.t = Localizer.localize
 
 declare global {
+	// eslint-disable-next-line no-var
 	var t: typeof Localizer.localize
 
 	// namespace Localizer {

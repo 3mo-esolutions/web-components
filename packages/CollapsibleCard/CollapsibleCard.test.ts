@@ -1,4 +1,4 @@
-import { CollapsibleCard } from '.'
+import { CollapsibleCard } from './CollapsibleCard.js'
 import { ComponentTestFixture } from '../../test/index.js'
 
 describe(CollapsibleCard.name, () => {

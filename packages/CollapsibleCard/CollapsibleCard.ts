@@ -1,6 +1,7 @@
 import { component, css, html, property, nothing, event } from '@a11d/lit'
 import { Card } from '@3mo/card'
 import { tooltip } from '@3mo/tooltip'
+import '@3mo/localization'
 import '@3mo/icon-button'
 
 /**
@@ -9,6 +10,9 @@ import '@3mo/icon-button'
  * @attr collapsed
  * @attr disableCollapse
  * @attr showSubHeadingOnlyWhenCollapsed
+ *
+ * @i18n "Collapse"
+ * @i18n "Expand"
  *
  * @fires collapse - Dispatched when the card is collapsed or expanded
  */
@@ -44,7 +48,7 @@ export class CollapsibleCard extends Card {
 			${super.defaultHeaderActionTemplate}
 
 			<mo-icon-button dense
-				${tooltip(this.collapsed ? 'Erweitern' : 'Reduzieren')}
+				${tooltip(t(this.collapsed ? 'Expand' : 'Collapse'))}
 				?disabled=${this.disableCollapse}
 				icon=${this.collapsed ? 'expand_more' : 'expand_less'}
 				@click=${() => this.toggleCollapse()}

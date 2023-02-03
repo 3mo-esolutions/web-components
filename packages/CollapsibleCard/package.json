@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/collapsible-card",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "An extension of @3mo/card component with support for collapsible state.",
 	"repository": {
 		"type": "git",
@@ -27,6 +27,7 @@
 		"tslib": "x",
 		"@3mo/card": "x",
 		"@3mo/tooltip": "x",
+		"@3mo/localization": "x",
 		"@3mo/icon-button": "x"
 	}
 }

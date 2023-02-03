@@ -1,3 +1,4 @@
+// @ts-expect-error - This is a test file, so we don't need to import the types.
 export class ComponentTestFixture<TComponent extends import('@a11d/lit').LitElement> {
 	private _component?: TComponent
 	get component() { return this._component! }
