@@ -1,0 +1,13 @@
+{
+	"extends": "../../tsconfig.json",
+	"exclude": [
+		"../IntersectionObserver/dist",
+		"../IntersectionObserver/*.config.*",
+		"../IntersectionObserver/*.stories.ts",
+		"../IntersectionObserver/*.test.ts"
+	],
+	"compilerOptions": {
+		"baseUrl": "../IntersectionObserver",
+		"outDir": "../IntersectionObserver/dist"
+	}
+}
