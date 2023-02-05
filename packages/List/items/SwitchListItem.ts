@@ -1,11 +1,11 @@
-import { component, event, eventListener, html, property } from '@a11d/lit'
-import { ControlListItem } from './ControlListItem.js'
+import { component, eventListener, html, property } from '@a11d/lit'
+import { SelectionListItemWithControl } from './SelectionListItemWithControl.js'
 import '@3mo/switch'
 
 /**
  * @element mo-switch-list-item
  *
- * @attr controlAlignment - The alignment of the switch relative to the list item content
+ * @attr selectionControlAlignment - The alignment of the switch relative to the list item content
  * @attr selected - Whether the switch is selected
  *
  * @slot - Default slot for content
@@ -13,14 +13,12 @@ import '@3mo/switch'
  * @event change - Dispatched when the switch value changes
  */
 @component('mo-switch-list-item')
-export class SwitchListItem extends ControlListItem {
-	@event() readonly change!: EventDispatcher<boolean>
-
-	@property({ type: Boolean }) selected?: boolean
+export class SwitchListItem extends SelectionListItemWithControl {
+	@property({ type: Boolean }) selected = false
 
 	override role = 'menuitemradio'
 
-	protected get controlTemplate() {
+	protected get selectionControlTemplate() {
 		return html`
 			<mo-switch tabindex='-1'
 				?selected=${this.selected}

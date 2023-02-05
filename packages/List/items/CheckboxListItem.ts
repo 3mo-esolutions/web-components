@@ -1,11 +1,11 @@
-import { component, event, eventListener, html, ifDefined, property } from '@a11d/lit'
-import { ControlListItem } from './ControlListItem.js'
+import { component, eventListener, html, ifDefined, property } from '@a11d/lit'
+import { SelectionListItemWithControl } from './SelectionListItemWithControl.js'
 import '@3mo/checkbox'
 
 /**
  * @element mo-checkbox-list-item
  *
- * @attr controlAlignment - The alignment of the checkbox relative to the list item content
+ * @attr selectionControlAlignment - The alignment of the checkbox relative to the list item content
  * @attr checked - Whether the checkbox is checked
  * @attr indeterminate - Whether the checkbox is indeterminate
  * @attr value - The value of the checkbox
@@ -15,16 +15,17 @@ import '@3mo/checkbox'
  * @event change - Dispatched when the checkbox value changes
  */
 @component('mo-checkbox-list-item')
-export class CheckboxListItem extends ControlListItem {
-	@event() readonly change!: EventDispatcher<CheckboxValue>
-
-	@property({ type: Boolean }) checked = false
-	@property({ type: Boolean }) indeterminate = false
+export class CheckboxListItem extends SelectionListItemWithControl<CheckboxValue> {
+	@property({ type: Boolean, reflect: true }) checked = false
+	@property({ type: Boolean, reflect: true }) indeterminate = false
 	@property() value?: CheckboxValue
+
+	get selected() { return this.checked }
+	set selected(value) { this.checked = value }
 
 	override role = 'menuitemcheckbox'
 
-	protected get controlTemplate() {
+	protected get selectionControlTemplate() {
 		return html`
 			<mo-checkbox tabindex='-1'
 				?checked=${this.checked}

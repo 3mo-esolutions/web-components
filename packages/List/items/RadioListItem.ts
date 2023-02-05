@@ -1,11 +1,11 @@
-import { component, event, eventListener, html, ifDefined, property } from '@a11d/lit'
-import { ControlListItem } from './ControlListItem.js'
+import { component, eventListener, html, ifDefined, property } from '@a11d/lit'
+import { SelectionListItemWithControl } from './SelectionListItemWithControl.js'
 import '@3mo/radio'
 
 /**
  * @element mo-radio-list-item
  *
- * @attr controlAlignment - The alignment of the radio relative to the list item content
+ * @attr selectionControlAlignment - The alignment of the radio relative to the list item content
  * @attr name - The name of the radio
  * @attr checked - Whether the radio is checked
  *
@@ -14,15 +14,16 @@ import '@3mo/radio'
  * @event change - Dispatched when the radio value changes
  */
 @component('mo-radio-list-item')
-export class RadioListItem extends ControlListItem {
-	@event() readonly change!: EventDispatcher<boolean>
-
+export class RadioListItem extends SelectionListItemWithControl {
 	@property() name?: string
-	@property({ type: Boolean }) checked?: boolean
+	@property({ type: Boolean }) checked = false
+
+	get selected() { return this.checked }
+	set selected(value) { this.checked = value }
 
 	override role = 'menuitemradio'
 
-	protected get controlTemplate() {
+	protected get selectionControlTemplate() {
 		return html`
 			<mo-radio tabindex='-1'
 				name=${ifDefined(this.name)}
