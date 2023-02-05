@@ -6,7 +6,7 @@ import ResolveTypeScriptPlugin from 'resolve-typescript-plugin'
 export default () => ({
 	mode: 'development',
 	stats: 'minimal',
-	entry: ['./test/index.ts', ...glob.sync('./**/*.test.ts').filter(path => path.includes('node_modules') === false)],
+	entry: glob.sync('./**/*.test.ts').filter(path => path.includes('node_modules') === false),
 	devtool: false,
 	output: {
 		path: resolve('dist'),

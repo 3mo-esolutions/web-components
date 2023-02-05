@@ -1,4 +1,4 @@
-import { ComponentTestFixture } from '../../test/index.js'
+import { ComponentTestFixture } from '@a11d/lit/dist/test/index.js'
 import { Anchor, AnchorReferrerPolicy } from './Anchor.js'
 
 describe(Anchor.name, () => {

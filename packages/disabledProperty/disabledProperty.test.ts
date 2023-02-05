@@ -1,6 +1,6 @@
 import { component, Component } from '@a11d/lit'
 import { disabledProperty } from './disabledProperty.js'
-import { ComponentTestFixture } from '../../test/ComponentTestFixture.js'
+import { ComponentTestFixture } from '@a11d/lit/dist/test/index.js'
 
 describe(disabledProperty.name, () => {
 	@component('mo-test-disabled-property')

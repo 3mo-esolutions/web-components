@@ -22,7 +22,7 @@ export const VirtualizedScroller = story({
 		return html`
 			<mo-virtualized-scroller ${style({ height: '400px' })}
 				.items=${items}
-				.getItemTemplate=${number => html`<mo-virtualized-scroller-story-box>Box #${number}</mo-virtualized-scroller-story-box>`}
+				.getItemTemplate=${(number: number) => html`<mo-virtualized-scroller-story-box>Box #${number}</mo-virtualized-scroller-story-box>`}
 			></mo-virtualized-scroller>
 		`
 	}

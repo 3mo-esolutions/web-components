@@ -1,5 +1,5 @@
 import { CollapsibleCard } from './CollapsibleCard.js'
-import { ComponentTestFixture } from '../../test/index.js'
+import { ComponentTestFixture } from '@a11d/lit/dist/test/index.js'
 
 describe(CollapsibleCard.name, () => {
 	const fixture = new ComponentTestFixture(() => {
