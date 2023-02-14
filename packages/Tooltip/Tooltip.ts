@@ -7,12 +7,16 @@ export const enum TooltipPosition {
 	Left = 'left',
 }
 
+function target(this: Tooltip) {
+	return this.anchor
+}
+
 @component('mo-tooltip')
 export class Tooltip extends Component {
 	private static readonly instancesContainer = new Set<Tooltip>()
 	private static visibleInstance?: Tooltip
 
-	@property({ type: Object }) anchor?: Element
+	@property({ type: Object }) anchor!: Element
 	@property({ type: String, reflect: true }) position = TooltipPosition.Bottom
 
 	@property({ type: Boolean, reflect: true }) protected rich = false
@@ -23,7 +27,7 @@ export class Tooltip extends Component {
 
 	constructor(anchor?: Element) {
 		super()
-		this.anchor = anchor
+		this.anchor = anchor ?? this.anchor
 	}
 
 	@eventListener('pointerenter')
@@ -42,47 +46,41 @@ export class Tooltip extends Component {
 
 	override connected() {
 		Tooltip.instancesContainer.add(this)
-		this.anchor?.addEventListener<any>('focus', this.handleAnchorFocus)
-		this.anchor?.addEventListener<any>('blur', this.handleAnchorBlur)
-		this.anchor?.addEventListener<any>('pointerenter', this.handleAnchorPointerEnter)
-		this.anchor?.addEventListener<any>('pointermove', this.handleAnchorPointerMove)
-		this.anchor?.addEventListener<any>('pointerleave', this.handleAnchorPointerLeave)
-		this.anchor?.addEventListener<any>('pointerup', this.handleAnchorPointerLeave)
-		this.anchor?.addEventListener<any>('click', this.handleAnchorPointerLeave)
 	}
 
 	override disconnected() {
 		Tooltip.instancesContainer.delete(this)
-		this.anchor?.removeEventListener<any>('focus', this.handleAnchorFocus)
-		this.anchor?.removeEventListener<any>('blur', this.handleAnchorBlur)
-		this.anchor?.removeEventListener<any>('pointerenter', this.handleAnchorPointerEnter)
-		this.anchor?.removeEventListener<any>('pointermove', this.handleAnchorPointerMove)
-		this.anchor?.removeEventListener<any>('pointerleave', this.handleAnchorPointerLeave)
-		this.anchor?.removeEventListener<any>('pointerend', this.handleAnchorPointerLeave)
 	}
 
-	private readonly handleAnchorFocus = (e: any) => {
+	@eventListener({ target, type: 'focus' })
+	protected handleAnchorFocus(e: any) {
 		if (!e.sourceCapabilities?.firesTouchEvents) {
 			this.anchorFocused = true
 			this.updatePositionAndVisibility()
 		}
 	}
 
-	private readonly handleAnchorBlur = () => {
+	@eventListener({ target, type: 'blur' })
+	protected handleAnchorBlur() {
 		this.anchorFocused = false
 		this.updatePositionAndVisibility()
 	}
 
-	private readonly handleAnchorPointerEnter = () => {
+	@eventListener({ target, type: 'pointerenter' })
+	protected handleAnchorPointerEnter() {
 		this.anchorHover = true
 		this.updatePositionAndVisibility()
 	}
 
-	private readonly handleAnchorPointerMove = () => {
+	@eventListener({ target, type: 'pointermove' })
+	protected handleAnchorPointerMove() {
 		this.updatePosition()
 	}
 
-	private readonly handleAnchorPointerLeave = () => {
+	@eventListener({ target, type: 'pointerleave' })
+	@eventListener({ target, type: 'pointerup' })
+	@eventListener({ target, type: 'click' })
+	protected handleAnchorPointerLeave() {
 		this.anchorHover = false
 		this.updatePositionAndVisibility()
 	}
