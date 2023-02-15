@@ -1,0 +1,37 @@
+{
+	"name": "@3mo/dialog",
+	"version": "0.0.2",
+	"description": "A dialog component based on Material Web Components (MWC).",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/3mo-esolutions/web-components"
+	},
+	"keywords": [
+		"lit",
+		"web-component",
+		"material",
+		"dialog"
+	],
+	"author": "3MO GmbH",
+	"license": "MIT",
+	"homepage": "https://www.3mo.de",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"dependencies": {
+		"tslib": "x",
+		"@a11d/lit": "x",
+		"@a11d/lit-application": "x",
+		"@material/mwc-dialog": "x",
+		"@3mo/slot-controller": "x",
+		"@3mo/flex": "x",
+		"@3mo/heading": "x",
+		"@3mo/tooltip": "x",
+		"@3mo/localization": "x",
+		"@3mo/icon-button": "x",
+		"@3mo/loading-button": "x"
+	}
+}

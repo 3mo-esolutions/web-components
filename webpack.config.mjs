@@ -18,7 +18,15 @@ export default () => ({
 			},
 			{
 				test: /\.(js|jsx|ts|tsx)$/,
-				loader: 'minify-html-literals-loader'
+				loader: 'minify-html-literals-loader',
+				exclude: [
+					/PageDialog.js/,
+					/PageError.js/,
+					/DataGrid.ts/,
+					/TooltipHost.ts/,
+					/Snackbar.ts/,
+					/ThemeHelper.ts/,
+				],
 			}
 		]
 	},
