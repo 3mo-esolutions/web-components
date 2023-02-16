@@ -300,6 +300,11 @@ MwcDialog.elementStyles.push(css`
 	slot[name=footer]::slotted(*) {
 		margin-left: initial !important;
 	}
+
+	.mdc-dialog--scrollable [part=heading] {
+		padding-bottom: 15px;
+		border-bottom: 1px solid var(--mdc-dialog-scroll-divider-color);
+	}
 `)
 
 MwcDialog.addInitializer(element => {
