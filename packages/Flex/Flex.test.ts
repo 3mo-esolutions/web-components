@@ -2,7 +2,7 @@ import { ComponentTestFixture } from '@a11d/lit/dist/test/index.js'
 import { Flex } from './Flex.js'
 
 describe(Flex.name, () => {
-	const fixture = new ComponentTestFixture(() => document.createElement('mo-flex'))
+	const fixture = new ComponentTestFixture<Flex>('mo-flex')
 
 	const setPropertyValue = (propertyName: string, value: string) => {
 		// @ts-ignore - "property" won't be a key of readonly property

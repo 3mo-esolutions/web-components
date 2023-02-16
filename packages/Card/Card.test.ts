@@ -3,7 +3,7 @@ import { ComponentTestFixture } from '@a11d/lit/dist/test/index.js'
 import { Card } from './Card.js'
 
 describe(Card.name, () => {
-	const fixture = new ComponentTestFixture(() => new Card)
+	const fixture = new ComponentTestFixture<Card>('mo-card')
 
 	function testSlotRendersIfContentAvailable(toBeRenderSlotName: string, contentSlotName: string) {
 		it(`should render slot "${toBeRenderSlotName}" if the content of slot "${contentSlotName}" is available`, async () => {

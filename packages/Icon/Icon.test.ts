@@ -2,7 +2,7 @@ import { ComponentTestFixture } from '@a11d/lit/dist/test/index.js'
 import { Icon, IconVariant } from './Icon.js'
 
 describe(Icon.name, () => {
-	const fixture = new ComponentTestFixture(() => document.createElement('mo-icon'))
+	const fixture = new ComponentTestFixture<Icon>('mo-icon')
 
 	it('should have a default font-size of 24px', () => {
 		expect(getComputedStyle(fixture.component).fontSize).toBe('24px')

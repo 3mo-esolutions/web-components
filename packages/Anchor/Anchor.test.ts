@@ -2,7 +2,7 @@ import { ComponentTestFixture } from '@a11d/lit/dist/test/index.js'
 import { Anchor, AnchorReferrerPolicy } from './Anchor.js'
 
 describe(Anchor.name, () => {
-	const fixture = new ComponentTestFixture(() => document.createElement('mo-anchor'))
+	const fixture = new ComponentTestFixture<Anchor>('mo-anchor')
 
 	const getAnchorElement = () => fixture.component.renderRoot.querySelector('a') as HTMLAnchorElement
 

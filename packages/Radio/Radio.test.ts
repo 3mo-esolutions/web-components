@@ -2,7 +2,7 @@ import { ComponentTestFixture } from '@a11d/lit/dist/test/index.js'
 import { Radio } from './Radio.js'
 
 describe(Radio.name, () => {
-	const fixture = new ComponentTestFixture(() => new Radio())
+	const fixture = new ComponentTestFixture<Radio>('mo-radio')
 
 	it('should tunnel "label" to the mwc-formfield element', async () => {
 		fixture.component.label = 'test'
@@ -39,9 +39,9 @@ describe(Radio.name, () => {
 	})
 
 	describe('integrates with other radio components', () => {
-		const fixture1 = new ComponentTestFixture(() => new Radio())
-		const fixture2 = new ComponentTestFixture(() => new Radio())
-		const fixture3 = new ComponentTestFixture(() => new Radio())
+		const fixture1 = new ComponentTestFixture<Radio>('mo-radio')
+		const fixture2 = new ComponentTestFixture<Radio>('mo-radio')
+		const fixture3 = new ComponentTestFixture<Radio>('mo-radio')
 
 		it('should set "checked" to false when another radio is checked', async () => {
 			fixture1.component.checked = true

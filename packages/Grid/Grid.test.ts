@@ -2,7 +2,7 @@ import { ComponentTestFixture } from '@a11d/lit/dist/test/index.js'
 import { Grid } from './Grid.js'
 
 describe(Grid.name, () => {
-	const fixture = new ComponentTestFixture(() => document.createElement('mo-grid'))
+	const fixture = new ComponentTestFixture<Grid>('mo-grid')
 
 	const setPropertyValue = (propertyName: string, value: string) => {
 		// @ts-ignore - "property" won't be a key of readonly property

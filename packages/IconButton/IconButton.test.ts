@@ -2,7 +2,7 @@ import { ComponentTestFixture } from '@a11d/lit/dist/test/index.js'
 import { IconButton } from './IconButton.js'
 
 describe(IconButton.name, () => {
-	const fixture = new ComponentTestFixture(() => document.createElement('mo-icon-button'))
+	const fixture = new ComponentTestFixture<IconButton>('mo-icon-button')
 
 	const getMwcIconButton = () => fixture.component.renderRoot.querySelector('mwc-icon-button')
 
