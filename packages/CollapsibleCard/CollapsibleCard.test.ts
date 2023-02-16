@@ -8,12 +8,32 @@ describe(CollapsibleCard.name, () => {
 		return card
 	})
 
-	it('should collapse when icon-button is clicked', async () => {
+	it('should collapse when icon-button is clicked', () => {
 		const collapsed = fixture.component.collapsed
 
 		fixture.component.renderRoot.querySelector('mo-icon-button')?.click()
 
 		expect(fixture.component.collapsed).toBe(!collapsed)
+	})
+
+	it('should not collapse when disabled', () => {
+		const collapsed = fixture.component.collapsed
+		fixture.component.disableCollapse = true
+
+		fixture.component.renderRoot.querySelector('mo-icon-button')?.click()
+
+		expect(fixture.component.collapsed).toBe(collapsed)
+	})
+
+	it('should dispatch "collapse" event when collapsed', () => {
+		let value = false
+		const spy = jasmine.createSpy().and.callFake((e: CustomEvent<boolean>) => value = e.detail)
+		fixture.component.addEventListener('collapse', spy)
+
+		fixture.component.renderRoot.querySelector('mo-icon-button')?.click()
+
+		expect(spy).toHaveBeenCalled()
+		expect(value).toBe(true)
 	})
 
 	it('should switch to icon "expand_less" when not collapsed', async () => {

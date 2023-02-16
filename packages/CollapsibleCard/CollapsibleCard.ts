@@ -18,7 +18,7 @@ import '@3mo/icon-button'
  */
 @component('mo-collapsible-card')
 export class CollapsibleCard extends Card {
-	@event() private readonly collapse!: EventDispatcher<boolean>
+	@event() readonly collapse!: EventDispatcher<boolean>
 
 	@property({ type: Boolean, reflect: true }) collapsed = false
 	@property({ type: Boolean }) disableCollapse = false
@@ -61,8 +61,10 @@ export class CollapsibleCard extends Card {
 	}
 
 	protected toggleCollapse() {
-		this.collapsed = !this.collapsed
-		this.collapse.dispatch(this.collapsed)
+		if (this.disableCollapse === false) {
+			this.collapsed = !this.collapsed
+			this.collapse.dispatch(this.collapsed)
+		}
 	}
 }
 
