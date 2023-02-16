@@ -42,6 +42,7 @@ export const enum DialogSize {
  * @cssprop --mo-dialog-divider-color - Color of the dialog divider
  * @cssprop --mo-dialog-height - Height of the dialog
  * @cssprop --mo-dialog-width - Width of the dialog
+ * @cssprop --mo-dialog-heading-line-height - Line height of the dialog heading
  *
  * @i18n "Close"
  *
@@ -286,7 +287,7 @@ MwcDialog.elementStyles.push(css`
 		margin-block-start: 4px;
 		-webkit-font-smoothing: antialiased;
 		font-size: 1.25rem;
-		line-height: 2rem;
+		line-height: var(--mo-dialog-heading-line-height, 2rem);
 		font-weight: 500;
 		letter-spacing: 0.0125em;
 		text-decoration: inherit;
