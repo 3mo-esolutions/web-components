@@ -153,10 +153,14 @@ export class Dialog extends Component {
 			&& !this.slotController.hasAssignedContent('footer')
 	}
 
+	protected get dialogHeading() {
+		return this.heading
+	}
+
 	protected override get template() {
 		return html`
 			<mwc-dialog
-				heading=${this.heading}
+				heading=${this.dialogHeading}
 				initialFocusAttribute='data-focus'
 				scrimClickAction=''
 				escapeKeyAction=''
