@@ -25,6 +25,7 @@ export default () => ({
 						declaration: false,
 						declarationMap: false,
 						allowJs: false,
+						preserveValueImports: true,
 					}
 				}
 			}

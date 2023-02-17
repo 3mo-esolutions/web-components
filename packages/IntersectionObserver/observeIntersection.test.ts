@@ -25,7 +25,7 @@ interface FakeIntersectionObserver {
 	readonly callback: IntersectionObserverCallback
 }
 
-describe(observeIntersection.name, () => {
+describe('observeIntersection', () => {
 	const fixture = new ComponentTestFixture(() => new ObserveIntersectionTestComponent)
 
 	let currentObserver: FakeIntersectionObserver

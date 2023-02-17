@@ -1,7 +1,7 @@
 import { ComponentTestFixture } from '@a11d/lit/dist/test/index.js'
 import { CloudflareStream } from './CloudflareStream.js'
 
-describe(CloudflareStream.name, () => {
+describe('CloudflareStream', () => {
 	const fixture = new ComponentTestFixture<CloudflareStream>('mo-cloudflare-stream')
 
 	it('should have the default iframe allowances', () => {

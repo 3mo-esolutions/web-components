@@ -1,7 +1,7 @@
 import { ComponentTestFixture } from '@a11d/lit/dist/test/index.js'
 import { Grid } from './Grid.js'
 
-describe(Grid.name, () => {
+describe('Grid', () => {
 	const fixture = new ComponentTestFixture<Grid>('mo-grid')
 
 	const setPropertyValue = (propertyName: string, value: string) => {

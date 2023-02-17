@@ -1,5 +1,4 @@
 /* eslint-disable */
-// @ts-nocheck
 module.exports = config => config.set({
 	basePath: '.',
 	frameworks: ['jasmine'],

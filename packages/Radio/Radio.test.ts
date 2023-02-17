@@ -1,7 +1,7 @@
 import { ComponentTestFixture } from '@a11d/lit/dist/test/index.js'
 import { Radio } from './Radio.js'
 
-describe(Radio.name, () => {
+describe('Radio', () => {
 	const fixture = new ComponentTestFixture<Radio>('mo-radio')
 
 	it('should tunnel "label" to the mwc-formfield element', async () => {

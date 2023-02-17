@@ -2,7 +2,7 @@ import { component, Component } from '@a11d/lit'
 import { disabledProperty } from './disabledProperty.js'
 import { ComponentTestFixture } from '@a11d/lit/dist/test/index.js'
 
-describe(disabledProperty.name, () => {
+describe('disabledProperty', () => {
 	@component('mo-test-disabled-property')
 	class TestComponent extends Component {
 		@disabledProperty() disabled?: boolean
@@ -12,7 +12,6 @@ describe(disabledProperty.name, () => {
 	class TestComponentBlockFocus extends Component {
 		@disabledProperty({ blockFocus: true }) disabled?: boolean
 	}
-
 
 	const baseFixture = new ComponentTestFixture(() => new TestComponent)
 	const blockFocusFixture = new ComponentTestFixture(() => new TestComponentBlockFocus)

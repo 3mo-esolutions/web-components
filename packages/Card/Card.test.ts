@@ -2,7 +2,7 @@ import { html, render } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit/dist/test/index.js'
 import { Card } from './Card.js'
 
-describe(Card.name, () => {
+describe('Card', () => {
 	const fixture = new ComponentTestFixture<Card>('mo-card')
 
 	function testSlotRendersIfContentAvailable(toBeRenderSlotName: string, contentSlotName: string) {

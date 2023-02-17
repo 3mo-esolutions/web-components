@@ -1,7 +1,7 @@
 import { CollapsibleCard } from './CollapsibleCard.js'
 import { ComponentTestFixture } from '@a11d/lit/dist/test/index.js'
 
-describe(CollapsibleCard.name, () => {
+describe('CollapsibleCard', () => {
 	const fixture = new ComponentTestFixture(() => {
 		const card = new CollapsibleCard
 		card.heading = 'Heading'
