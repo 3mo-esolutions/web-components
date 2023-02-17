@@ -172,22 +172,24 @@ export class Dialog extends Component {
 			>
 				<mo-flex slot='header' direction='horizontal-reversed' alignItems='center' gap='4px'>
 					${this.headerOptionsTemplate}
-					<slot name='header'></slot>
+					${this.headerSlotTemplate}
 				</mo-flex>
-
-				<slot></slot>
-
-				<slot name='primaryAction' slot='primaryAction' @click=${() => this.handleAction(DialogActionKey.Primary)}>
-					${this.primaryButtonTemplate}
-				</slot>
-
-				<slot name='secondaryAction' slot='secondaryAction' @click=${() => this.handleAction(DialogActionKey.Secondary)}>
-					${this.secondaryButtonTemplate}
-				</slot>
-
-				<slot name='footer' slot='footer'></slot>
+				${this.contentSlotTemplate}
+				${this.footerSlotTemplate}
+				${this.primaryActionSlotTemplate}
+				${this.secondaryActionSlotTemplate}
 			</mwc-dialog>
 		`
+	}
+
+	protected get headerSlotTemplate() {
+		return html`
+			<slot name='header'>${this.headerDefaultTemplate}</slot>
+		`
+	}
+
+	protected get headerDefaultTemplate() {
+		return nothing
 	}
 
 	protected get headerOptionsTemplate() {
@@ -201,7 +203,35 @@ export class Dialog extends Component {
 		`
 	}
 
-	protected get primaryButtonTemplate() {
+	protected get contentSlotTemplate() {
+		return html`
+			<slot>${this.contentDefaultTemplate}</slot>
+		`
+	}
+
+	protected get contentDefaultTemplate() {
+		return nothing
+	}
+
+	protected get footerSlotTemplate() {
+		return html`
+			<slot name='footer' slot='footer'>${this.footerDefaultTemplate}</slot>
+		`
+	}
+
+	protected get footerDefaultTemplate() {
+		return nothing
+	}
+
+	protected get primaryActionSlotTemplate() {
+		return html`
+			<slot name='primaryAction' slot='primaryAction' @click=${() => this.handleAction(DialogActionKey.Primary)}>
+				${this.primaryActionDefaultTemplate}
+			</slot>
+		`
+	}
+
+	protected get primaryActionDefaultTemplate() {
 		return !this.primaryButtonText ? nothing : html`
 			<mo-loading-button type='raised'>
 				${this.primaryButtonText}
@@ -214,7 +244,15 @@ export class Dialog extends Component {
 			?? this.renderRoot.querySelector<HTMLElement>('slot[name=primaryAction] > *') ?? undefined
 	}
 
-	protected get secondaryButtonTemplate() {
+	protected get secondaryActionSlotTemplate() {
+		return html`
+			<slot name='secondaryAction' slot='secondaryAction' @click=${() => this.handleAction(DialogActionKey.Secondary)}>
+				${this.secondaryActionDefaultTemplate}
+			</slot>
+		`
+	}
+
+	protected get secondaryActionDefaultTemplate() {
 		return !this.secondaryButtonText ? nothing : html`
 			<mo-loading-button>
 				${this.secondaryButtonText}
