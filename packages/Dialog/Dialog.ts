@@ -160,7 +160,7 @@ export class Dialog extends Component {
 	protected override get template() {
 		return html`
 			<mwc-dialog
-				heading=${this.dialogHeading}
+				heading=${this.dialogHeading || ' '}
 				initialFocusAttribute='data-focus'
 				scrimClickAction=''
 				escapeKeyAction=''
@@ -371,7 +371,6 @@ MwcDialog.addInitializer(element => {
 			this.scrimElement?.setAttribute('part', 'scrim')
 			this.contentElement.setAttribute('part', 'content')
 			this.actionsElement?.setAttribute('part', 'actions')
-			this.addHeaderSlot()
 			this.addFooterSlot()
 		}
 
@@ -387,12 +386,6 @@ MwcDialog.addInitializer(element => {
 				e.stopImmediatePropagation()
 				return
 			}
-		}
-
-		private addHeaderSlot() {
-			const header = document.createElement('slot')
-			header.name = 'header'
-			this.surfaceElement?.appendChild(header)
 		}
 
 		private addFooterSlot() {
