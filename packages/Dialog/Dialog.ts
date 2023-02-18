@@ -353,13 +353,24 @@ MwcDialog.elementStyles.push(css`
 MwcDialog.addInitializer(element => {
 	element.addController(new class {
 		private get dialog() { return element as MwcDialog }
-
 		private get footerElement() { return this.dialog.renderRoot.querySelector('footer') }
 		private get surfaceElement() { return this.dialog.renderRoot.querySelector('.mdc-dialog__surface') }
 		private get contentElement() { return this.dialog['contentElement'] }
 		private get titleElement() { return this.dialog.renderRoot.querySelector('#title') }
 		private get scrimElement() { return this.dialog.renderRoot.querySelector('.mdc-dialog__scrim') }
 		private get actionsElement() { return this.dialog.renderRoot.querySelector('#actions') }
+
+		constructor() {
+			this.overrideKeydownBehavior()
+		}
+
+		overrideKeydownBehavior() {
+			const setEventListenersBase = this.dialog['setEventListeners']
+			this.dialog['setEventListeners'] = () => {
+				this.dialog['boundHandleKeydown'] = null
+				setEventListenersBase.call(this.dialog)
+			}
+		}
 
 		async hostConnected() {
 			this.dialog.addEventListener('closed', this.handleClosed)
@@ -372,6 +383,7 @@ MwcDialog.addInitializer(element => {
 			this.contentElement.setAttribute('part', 'content')
 			this.actionsElement?.setAttribute('part', 'actions')
 			this.addFooterSlot()
+			this.overrideKeydownBehavior()
 		}
 
 		hostDisconnected() {
@@ -408,7 +420,6 @@ MwcDialog.addInitializer(element => {
 		async hostUpdated() {
 			await this.dialog.updateComplete
 			this.overrideCloseBehavior()
-			this.overrideKeydownBehavior()
 		}
 
 		private overrideCloseBehavior() {
@@ -424,14 +435,6 @@ MwcDialog.addInitializer(element => {
 					closeBase.call(foundation, action)
 					this.dialog.dispatchEvent(new CustomEvent('requestClose'))
 				}
-			}
-		}
-
-		private overrideKeydownBehavior() {
-			const setEventListenersBase = this.dialog['setEventListeners']
-			this.dialog['setEventListeners'] = () => {
-				this.dialog['boundHandleKeydown'] = null
-				setEventListenersBase.call(this.dialog)
 			}
 		}
 	})
