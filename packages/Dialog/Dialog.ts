@@ -320,7 +320,10 @@ MwcDialog.elementStyles.push(css`
 	}
 
 	mo-flex[part=heading] {
-		padding: 14px 12px 10px 24px;
+		padding-top: 14px;
+		padding-bottom: 10px;
+		padding-inline-start: 24px;
+		padding-inline-end: 12px;
 		align-items: flex-start;
 	}
 
