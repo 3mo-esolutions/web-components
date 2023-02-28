@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/list",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"description": "A list web-component.",
 	"repository": {
 		"type": "git",
@@ -29,6 +29,6 @@
 		"@3mo/checkbox": "x",
 		"@3mo/radio": "x",
 		"@3mo/switch": "x",
-		"@material/web": "1.0.0-pre.1"
+		"@material/web": "1.0.0-pre.3"
 	}
 }

@@ -1,7 +1,17 @@
 import { EventListenerController, Controller, ReactiveControllerHost, ReactiveElement } from '@a11d/lit'
+import { isListItem } from './List.js'
+
+interface VirtualizedListItem {
+	scrollIntoView(options?: ScrollIntoViewOptions): void
+}
+
+interface ListItem extends HTMLElement { }
 
 interface ElementWithItems extends HTMLElement {
-	readonly items: Array<HTMLElement>
+	readonly items: Array<ListItem>
+	readonly itemsLength?: number
+	getItem?(index: number): VirtualizedListItem | ListItem | undefined
+	getIndexOf?(item: ListItem): number | undefined
 }
 
 export class ListItemsKeyboardController extends Controller {
@@ -9,8 +19,30 @@ export class ListItemsKeyboardController extends Controller {
 		super(host)
 	}
 
-	private get items() {
-		return this.host.items
+	private get items() { return this.host.items }
+
+	private get itemsLength() { return this.host.itemsLength ?? this.items.length }
+
+	protected getItem(index: number) {
+		return this.host.getItem?.(index) ?? this.items[index]
+	}
+
+	protected getRenderedItemIndex(item: HTMLElement) {
+		return this.host.getIndexOf?.(item) ?? this.items.indexOf(item)
+	}
+
+	private _focusedItemIndex?: number
+	protected get focusedItemIndex() { return this._focusedItemIndex }
+	protected set focusedItemIndex(value) {
+		this._focusedItemIndex = value
+
+		for (const item of this.items) {
+			if (this.getRenderedItemIndex(item) === value) {
+				item.setAttribute('focused', '')
+			} else {
+				item.removeAttribute('focused')
+			}
+		}
 	}
 
 	override hostConnected() {
@@ -22,9 +54,43 @@ export class ListItemsKeyboardController extends Controller {
 		this.host.tabIndex = -1
 	}
 
-	protected readonly focusEventListener = new EventListenerController(this.host, 'focus', () => this.focusedItem ??= this.items[0])
+	protected focusFirstItem() {
+		this.focusItem(0)
+	}
 
-	protected readonly blurEventListener = new EventListenerController(this.host, 'blur', () => this.focusedItem = undefined)
+	protected focusLastItem() {
+		this.focusItem(this.itemsLength - 1)
+	}
+
+	protected focusNextItem() {
+		this.focusItem((this.focusedItemIndex ?? -1) + 1)
+	}
+
+	protected focusPreviousItem() {
+		this.focusItem((this.focusedItemIndex ?? 0) - 1)
+	}
+
+	protected focusItem(index: number) {
+		if (index < 0) {
+			index = this.itemsLength + index
+		}
+
+		if (index >= this.itemsLength) {
+			index = index - this.itemsLength
+		}
+
+		if (this.focusedItemIndex === index) {
+			return
+		}
+
+		this.getItem(index)?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
+
+		this.focusedItemIndex = index
+	}
+
+	protected readonly focusEventListener = new EventListenerController(this.host, 'focus', () => this.focusedItemIndex ??= 0)
+
+	protected readonly blurEventListener = new EventListenerController(this.host, 'blur', () => this.focusedItemIndex = -1)
 
 	protected readonly keyDownEventListener = new EventListenerController(this.host, 'keydown', (event: KeyboardEvent) => {
 		let prevent = false
@@ -46,6 +112,16 @@ export class ListItemsKeyboardController extends Controller {
 				this.handleArrowUp()
 				prevent = true
 				break
+			case 'Home':
+			case 'PageUp':
+				this.handlePageUp()
+				prevent = true
+				break
+			case 'End':
+			case 'PageDown':
+				this.handlePageDown()
+				prevent = true
+				break
 			case 'Esc':
 			case 'Escape':
 				this.handleEscape()
@@ -65,41 +141,13 @@ export class ListItemsKeyboardController extends Controller {
 	})
 
 	protected readonly itemsPointerDownEventListener = new EventListenerController(this.host, {
-		target: () => this.items,
+		target: () => this.host,
 		type: 'pointerdown',
-		listener: (event: PointerEvent) => this.focusedItem = event.target as HTMLElement
-	})
-
-	get focusedItem() { return this.items.find(item => item.hasAttribute('focused')) }
-	set focusedItem(value) {
-		for (const item of this.items) {
-			if (item === value) {
-				item.setAttribute('focused', '')
-			} else {
-				item.removeAttribute('focused')
-			}
+		listener: (event: PointerEvent) => {
+			const listItem = event.composedPath().find(item => isListItem(item as HTMLElement))
+			this.focusedItemIndex = this.getRenderedItemIndex(listItem as ListItem)
 		}
-	}
-
-	protected focusFirstItem() {
-		this.focusedItem = this.items[0]
-	}
-
-	protected focusLastItem() {
-		this.focusedItem = this.items[this.items.length - 1]
-	}
-
-	protected focusNextItem() {
-		const activeIndex = !this.focusedItem ? -1 : this.items.indexOf(this.focusedItem)
-		const nextIndex = activeIndex === this.items.length - 1 ? 0 : activeIndex + 1
-		this.focusedItem = this.items[nextIndex]
-	}
-
-	protected focusPreviousItem() {
-		const activeIndex = !this.focusedItem ? this.items.length : this.items.indexOf(this.focusedItem)
-		const previousIndex = activeIndex === 0 ? this.items.length - 1 : activeIndex - 1
-		this.focusedItem = this.items[previousIndex]
-	}
+	})
 
 	protected handleEnterKey() {
 		// if (this.listboxHasVisualFocus) {
@@ -136,6 +184,36 @@ export class ListItemsKeyboardController extends Controller {
 		// if (this.hasOptions()) {
 		// 	if (this.listboxHasVisualFocus) {
 		// 		this.setOption(this.getPreviousOption(this.option), true)
+		// 	} else {
+		// 		this.open()
+		// 		if (!altKey) {
+		// 			this.setOption(this.lastOption, true)
+		// 			this.setVisualFocusListbox()
+		// 		}
+		// 	}
+		// }
+	}
+
+	protected handlePageUp() {
+		this.focusFirstItem()
+		// if (this.hasOptions()) {
+		// 	if (this.listboxHasVisualFocus) {
+		// 		this.setOption(this.firstOption, true)
+		// 	} else {
+		// 		this.open()
+		// 		if (!altKey) {
+		// 			this.setOption(this.firstOption, true)
+		// 			this.setVisualFocusListbox()
+		// 		}
+		// 	}
+		// }
+	}
+
+	protected handlePageDown() {
+		this.focusLastItem()
+		// if (this.hasOptions()) {
+		// 	if (this.listboxHasVisualFocus) {
+		// 		this.setOption(this.lastOption, true)
 		// 	} else {
 		// 		this.open()
 		// 		if (!altKey) {

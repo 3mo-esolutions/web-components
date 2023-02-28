@@ -17,10 +17,9 @@ export class ListItemRipple extends Component {
 		updated(this: ListItemRipple) {
 			if (!this.disabled) {
 				if (this.focused) {
-					this.ripple.beginFocus()
+					this.ripple.handleFocusin()
 				} else {
-					this.ripple.endFocus()
-					this.ripple.endHover()
+					this.ripple.handleFocusout()
 				}
 			}
 		}
@@ -69,14 +68,14 @@ export class ListItemRipple extends Component {
 
 		if (event.key === 'Enter' || event.key === ' ') {
 			event.preventDefault()
-			this.ripple.beginPress(event)
+			this.ripple['startPressAnimation'](event)
 			this.dispatchEvent(new MouseEvent('click', { bubbles: true, composed: true }))
 		}
 	}
 
 	@eventListener({ target: window, type: 'keyup' })
 	protected handleKeyUp() {
-		this.ripple.endPress()
+		this.ripple['endPressAnimation']()
 	}
 }
 

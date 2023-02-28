@@ -6,7 +6,7 @@ import { SelectionListItem } from './SelectionListItem.js'
  *
  * @attr selected - Whether the list item is selected
  *
- * @fires selectionChange - Dispatched when the list item is selected or deselected
+ * @fires change - Dispatched when the list item is selected or deselected
  */
 @component('mo-selectable-list-item')
 export class SelectableListItem extends SelectionListItem {

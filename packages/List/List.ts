@@ -2,6 +2,13 @@ import { Component, component, css, html } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
 import { ListItemsKeyboardController } from './ListItemsKeyboardController.js'
 
+export function isListItem(element: Element): element is HTMLElement {
+	return element instanceof HTMLElement
+		&& !!element.role
+		&& List.itemRoles.includes(element.role)
+		&& !element.hasAttribute('disabled')
+}
+
 /**
  * @element mo-list
  *
@@ -17,12 +24,7 @@ export class List extends Component {
 	override role = 'list'
 
 	get items() {
-		return this.slotController.getAssignedElements('')
-			.filter((element): element is HTMLElement => element instanceof HTMLElement
-				&& !!element.role
-				&& List.itemRoles.includes(element.role)
-				&& !element.hasAttribute('disabled')
-			)
+		return this.slotController.getAssignedElements('').filter(isListItem)
 	}
 
 	static override get styles() {
