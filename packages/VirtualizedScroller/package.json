@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/virtualized-scroller",
-	"version": "0.1.1",
+	"version": "0.2.1",
 	"description": "A virtualized scroller web-component based on Lit Virtualizer",
 	"repository": {
 		"type": "git",
@@ -23,7 +23,6 @@
 	"dependencies": {
 		"@3mo/scroller": "x",
 		"@lit-labs/virtualizer": "x",
-		"@3mo/no-intrinsic-dimensions-controller": "x",
 		"@a11d/lit": "x",
 		"tslib": "x"
 	}
