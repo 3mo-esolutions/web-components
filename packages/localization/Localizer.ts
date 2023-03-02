@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import { event } from '@a11d/lit'
 import { LocalStorage } from '@a11d/local-storage'
 import { CardinalPluralizationRulesByLanguage } from './CardinalPluralizationRulesByLanguage.js'
 
@@ -37,6 +38,8 @@ export class Localizer {
 	static readonly defaultLanguage = LanguageCode.English
 	static readonly pluralityIdentityType = 'pluralityNumber'
 
+	@event() static readonly languageChange: EventDispatcher<LanguageCode>
+
 	static get currentLanguage() {
 		return window.location.search.split('lang=')[1]?.split('&')[0] as LanguageCode | undefined
 			|| Localizer.languageCodeStorage.value
@@ -44,7 +47,10 @@ export class Localizer {
 			|| LanguageCode.English
 	}
 
-	static set currentLanguage(value) { Localizer.languageCodeStorage.value = value }
+	static set currentLanguage(value) {
+		Localizer.languageCodeStorage.value = value
+		Localizer.languageChange.dispatch(value)
+	}
 
 	private static readonly languageCodeStorage = new LocalStorage<LanguageCode | undefined>('MoDeL.Localizer.Language', undefined)
 	private static readonly dictionariesByLanguageCode = new Map<LanguageCode, Dictionary>()
