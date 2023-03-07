@@ -11,7 +11,7 @@ interface ElementWithItems extends HTMLElement {
 	readonly items: Array<ListItem>
 	readonly itemsLength?: number
 	getItem?(index: number): VirtualizedListItem | ListItem | undefined
-	getIndexOf?(item: ListItem): number | undefined
+	getRenderedItemIndex?(item: ListItem): number | undefined
 }
 
 export class ListItemsKeyboardController extends Controller {
@@ -28,16 +28,32 @@ export class ListItemsKeyboardController extends Controller {
 	}
 
 	protected getRenderedItemIndex(item: HTMLElement) {
-		return this.host.getIndexOf?.(item) ?? this.items.indexOf(item)
+		return this.host.getRenderedItemIndex?.(item) ?? this.items.indexOf(item)
 	}
 
 	private _focusedItemIndex?: number
 	protected get focusedItemIndex() { return this._focusedItemIndex }
 	protected set focusedItemIndex(value) {
+		if (value !== undefined) {
+			if (value < 0) {
+				value = this.itemsLength + value
+			}
+
+			if (value >= this.itemsLength) {
+				value = value - this.itemsLength
+			}
+		}
+
+
 		this._focusedItemIndex = value
 
+		if (value !== undefined) {
+			const item = this.getItem(value)
+			item?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
+		}
+
 		for (const item of this.items) {
-			if (this.getRenderedItemIndex(item) === value) {
+			if (value !== undefined && this.getRenderedItemIndex(item) === value) {
 				item.setAttribute('focused', '')
 			} else {
 				item.removeAttribute('focused')
@@ -55,42 +71,24 @@ export class ListItemsKeyboardController extends Controller {
 	}
 
 	protected focusFirstItem() {
-		this.focusItem(0)
+		this.focusedItemIndex = 0
 	}
 
 	protected focusLastItem() {
-		this.focusItem(this.itemsLength - 1)
+		this.focusedItemIndex = this.itemsLength - 1
 	}
 
 	protected focusNextItem() {
-		this.focusItem((this.focusedItemIndex ?? -1) + 1)
+		this.focusedItemIndex = (this.focusedItemIndex ?? -1) + 1
 	}
 
 	protected focusPreviousItem() {
-		this.focusItem((this.focusedItemIndex ?? 0) - 1)
-	}
-
-	protected focusItem(index: number) {
-		if (index < 0) {
-			index = this.itemsLength + index
-		}
-
-		if (index >= this.itemsLength) {
-			index = index - this.itemsLength
-		}
-
-		if (this.focusedItemIndex === index) {
-			return
-		}
-
-		this.getItem(index)?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
-
-		this.focusedItemIndex = index
+		this.focusedItemIndex = (this.focusedItemIndex ?? 0) - 1
 	}
 
 	protected readonly focusEventListener = new EventListenerController(this.host, 'focus', () => this.focusedItemIndex ??= 0)
 
-	protected readonly blurEventListener = new EventListenerController(this.host, 'blur', () => this.focusedItemIndex = -1)
+	protected readonly blurEventListener = new EventListenerController(this.host, 'blur', () => this.focusedItemIndex = undefined)
 
 	protected readonly keyDownEventListener = new EventListenerController(this.host, 'keydown', (event: KeyboardEvent) => {
 		let prevent = false
