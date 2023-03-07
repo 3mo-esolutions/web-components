@@ -9,6 +9,11 @@ export function isListItem(element: Element): element is HTMLElement {
 		&& !element.hasAttribute('disabled')
 }
 
+export function isList(element: EventTarget): element is HTMLElement {
+	return element instanceof HTMLElement
+		&& element.role === 'list'
+}
+
 /**
  * @element mo-list
  *

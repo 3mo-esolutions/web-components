@@ -1,5 +1,5 @@
 import { EventListenerController, Controller, ReactiveControllerHost, ReactiveElement } from '@a11d/lit'
-import { isListItem } from './List.js'
+import { isList, isListItem } from './List.js'
 
 interface VirtualizedListItem {
 	scrollIntoView(options?: ScrollIntoViewOptions): void
@@ -95,13 +95,20 @@ export class ListItemsKeyboardController extends Controller {
 	protected readonly keyDownEventListener = new EventListenerController(this.host, 'keydown', (event: KeyboardEvent) => {
 		let prevent = false
 
+		const isFirstList = event.composedPath().find(item => isList(item)) === this.host
+
+		if (!isFirstList) {
+			return
+		}
+
 		if (event.ctrlKey || event.shiftKey) {
 			return
 		}
 
 		switch (event.key) {
 			case 'Enter':
-				return this.handleEnterKey()
+				this.handleEnter()
+				break
 			case 'Down':
 			case 'ArrowDown':
 				this.handleArrowDown()
@@ -149,7 +156,7 @@ export class ListItemsKeyboardController extends Controller {
 		}
 	})
 
-	protected handleEnterKey() {
+	protected handleEnter() {
 		// if (this.listboxHasVisualFocus) {
 		// 	this.setValue(this.option.textContent)
 		// }

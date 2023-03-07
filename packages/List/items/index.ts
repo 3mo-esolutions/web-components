@@ -1,5 +1,8 @@
+import '@3mo/flex'
+import '@3mo/icon'
 export * from './ListItem.js'
 export * from './SelectableListItem.js'
 export * from './CheckboxListItem.js'
 export * from './RadioListItem.js'
 export * from './SwitchListItem.js'
+export * from './CollapsibleListItem.js'

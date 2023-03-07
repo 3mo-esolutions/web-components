@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/list",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"description": "A list web-component.",
 	"repository": {
 		"type": "git",
@@ -25,6 +25,7 @@
 		"@a11d/lit": "x",
 		"tslib": "x",
 		"@3mo/flex": "x",
+		"@3mo/icon": "x",
 		"@3mo/disabled-property": "x",
 		"@3mo/checkbox": "x",
 		"@3mo/radio": "x",

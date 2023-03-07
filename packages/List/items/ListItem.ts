@@ -1,7 +1,6 @@
 import { Component, component, css, eventListener, html, property } from '@a11d/lit'
 import { disabledProperty } from '@3mo/disabled-property'
 import './ListItemRipple.js'
-import '@3mo/flex'
 
 /**
  * @element mo-list-item
@@ -31,16 +30,19 @@ export class ListItem extends Component {
 	static override get styles() {
 		return css`
 			:host {
-				display: flex;
 				position: relative;
 				width: 100%;
 				box-sizing: border-box;
-				height: 48px;
 				user-select: none;
 				font-size: 16px;
-				padding: 0 16px;
+				padding-inline: 16px;
+			}
+
+			:host, .container {
+				display: flex;
 				gap: 16px;
 				align-items: center;
+				height: 48px;
 			}
 
 			:host([disabled]) {
@@ -51,7 +53,7 @@ export class ListItem extends Component {
 				outline: none;
 			}
 
-			slot {
+			slot:not([name]) {
 				display: inline-flex;
 				gap: inherit;
 				align-items: inherit;
