@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/flex",
-	"version": "1.0.4",
+	"version": "1.0.5",
 	"description": "A simple wrapper web-component for CSS Flexible Box Layout.",
 	"repository": {
 		"type": "git",
