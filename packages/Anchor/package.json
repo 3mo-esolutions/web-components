@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/anchor",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "An anchor web-component.",
 	"repository": {
 		"type": "git",

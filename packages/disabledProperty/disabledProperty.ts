@@ -1,4 +1,4 @@
-import { css, LitElement, property, UpdatedCallback } from '@a11d/lit'
+import { css, LitElement, property, type UpdatedCallback } from '@a11d/lit'
 
 const tabIndexBeforeDisabledSymbol = Symbol()
 

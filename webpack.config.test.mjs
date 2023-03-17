@@ -26,6 +26,7 @@ export default () => ({
 						declarationMap: false,
 						allowJs: false,
 						preserveValueImports: true,
+						ignoreDeprecations: '5.0'
 					}
 				}
 			}

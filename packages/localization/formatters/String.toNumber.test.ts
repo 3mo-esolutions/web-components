@@ -1,3 +1,5 @@
+import { LanguageCode } from '../LanguageCode.js'
+
 describe('String.toNumber()', () => {
 	it('should return undefined when empty', () => {
 		expect(''.toNumber()).toBeUndefined()

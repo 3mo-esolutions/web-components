@@ -1,4 +1,4 @@
-import { directive, AsyncDirective, ElementPart, HTMLTemplateResult, PartInfo, PartType, render, nothing } from '@a11d/lit'
+import { directive, AsyncDirective, type ElementPart, type HTMLTemplateResult, type PartInfo, PartType, render, nothing } from '@a11d/lit'
 import { Tooltip, TooltipPosition } from './Tooltip.js'
 import { TooltipHost } from './TooltipHost.js'
 

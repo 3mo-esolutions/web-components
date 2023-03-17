@@ -1,5 +1,5 @@
 import { Component, html, component, property, css, style } from '@a11d/lit'
-import { MaterialIcon } from './index.js'
+import { type MaterialIcon } from './index.js'
 
 export const enum IconVariant {
 	Filled = 'filled',

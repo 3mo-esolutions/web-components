@@ -1,4 +1,4 @@
-import { StyleEntry, styleHandler, StyleHandler } from '@a11d/lit'
+import { type StyleEntry, styleHandler, type StyleHandler } from '@a11d/lit'
 
 @styleHandler()
 export class AsteriskSyntaxStyleHandler implements StyleHandler {

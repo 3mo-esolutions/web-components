@@ -1,4 +1,4 @@
-import './LanguageCode.js'
+export * from './LanguageCode.js'
 export * from './Localizer.js'
 export * from './DirectionsByLanguage.js'
 export * from './CardinalPluralizationRulesByLanguage.js'

@@ -1,4 +1,4 @@
-import { Controller, ReactiveControllerHost } from '@a11d/lit'
+import { Controller, type ReactiveControllerHost } from '@a11d/lit'
 
 export class InstanceofAttributeController extends Controller {
 	private static readonly attribute = 'instanceof'

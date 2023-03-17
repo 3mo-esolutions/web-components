@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/media-query-observer",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"description": "A lit controller for observing media queries.",
 	"repository": {
 		"type": "git",

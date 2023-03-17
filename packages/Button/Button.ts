@@ -1,6 +1,6 @@
 import { component, property, css, Component, html, nothing, style } from '@a11d/lit'
 import { InstanceofAttributeController } from '@3mo/instanceof-attribute-controller'
-import { MaterialIcon } from '@3mo/icon'
+import { type MaterialIcon } from '@3mo/icon'
 import { Button as MwcButton } from '@material/mwc-button'
 import { disabledProperty } from '@3mo/disabled-property'
 

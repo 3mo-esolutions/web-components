@@ -1,4 +1,5 @@
 import { Localizer } from './Localizer.js'
+import { LanguageCode } from './LanguageCode.js'
 
 type Direction = 'ltr' | 'rtl'
 

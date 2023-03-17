@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/tab",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"description": "A tab web-component based on Material Web Components (MWC).",
 	"repository": {
 		"type": "git",

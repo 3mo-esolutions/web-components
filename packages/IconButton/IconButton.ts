@@ -1,6 +1,6 @@
 import { component, Component, css, html, property } from '@a11d/lit'
 import { disabledProperty } from '@3mo/disabled-property'
-import { MaterialIcon } from '@3mo/icon'
+import { type MaterialIcon } from '@3mo/icon'
 import { IconButton as MwcIconButton } from '@material/mwc-icon-button'
 
 /**

@@ -1,4 +1,4 @@
-import { Controller, ReactiveControllerHost } from '@a11d/lit'
+import { Controller, type ReactiveControllerHost } from '@a11d/lit'
 
 export class SlotController extends Controller {
 	protected readonly mutationObserver = new MutationObserver(this.handleMutation.bind(this)).observe(this.host, {

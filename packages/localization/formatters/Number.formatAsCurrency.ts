@@ -1,5 +1,5 @@
 import { Localizer } from '../Localizer.js'
-import { Currency, CurrencyCode } from './Currency.js'
+import { Currency, type CurrencyCode } from './Currency.js'
 import type { OptionsWithLanguage } from './OptionsWithLanguage.js'
 
 type FormatAsCurrencyOptions = OptionsWithLanguage<Omit<Intl.NumberFormatOptions, 'style' | 'currency' | 'unit' | 'unitDisplay'>>

@@ -1,4 +1,5 @@
 import { Localizer } from '../Localizer.js'
+import { LanguageCode } from '../LanguageCode.js'
 
 String.prototype.toNumber = function (this: string, language = Localizer.currentLanguage) {
 	const numberString = this.replace(/ /g, '')

@@ -1,3 +1,5 @@
+import { LanguageCode } from './LanguageCode.js'
+
 type PluralizationRuleFunction = (count: number) => number
 
 /**
