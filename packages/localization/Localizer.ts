@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { event } from '@a11d/lit'
 import { LocalStorage } from '@a11d/local-storage'
 import { CardinalPluralizationRulesByLanguage } from './CardinalPluralizationRulesByLanguage.js'
@@ -69,12 +68,9 @@ export class Localizer {
 	}
 
 	static localize<T extends string>(key: T, parameters?: LocalizationParameters<T>) {
-		if (Localizer.currentLanguage !== Localizer.defaultLanguage) {
-			if (!Localizer.currentLanguageDictionary) {
-				console.warn(`[Localizer] No dictionary found for current language "${Localizer.currentLanguage}".`)
-			} else if (!Localizer.currentLanguageDictionary.has(key)) {
-				console.warn(`[Localizer] Dictionary ${Localizer.currentLanguage} has no localization for "${key}".`)
-			}
+		if (Localizer.currentLanguage !== Localizer.defaultLanguage && !Localizer.currentLanguageDictionary?.has(key)) {
+			/* eslint-disable-next-line no-console */
+			console.warn(`[Localizer] No "${Localizer.currentLanguage}" localization found for "${key}".`)
 		}
 
 		return Localizer.getLocalization(key, parameters)
