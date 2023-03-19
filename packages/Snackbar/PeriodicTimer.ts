@@ -1,4 +1,6 @@
 export class PeriodicTimer {
+	private static readonly missThreshold = 50
+
 	private startTime?: number
 	private timerId?: number
 	private remainingTimeBeforePaused?: number
@@ -40,7 +42,7 @@ export class PeriodicTimer {
 
 	private tickIfApplies() {
 		const delta = Math.abs(this.remainingTimeToNextTick - this.interval)
-		const shallTick = delta <= 10
+		const shallTick = delta <= PeriodicTimer.missThreshold
 		if (shallTick) {
 			this.resolves.forEach(resolve => resolve())
 			this.resolves.clear()
