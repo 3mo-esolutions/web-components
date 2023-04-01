@@ -1,164 +1,44 @@
-import { component, Component, html, css, property, eventListener, unsafeCSS } from '@a11d/lit'
-
-export const enum TooltipPosition {
-	Top = 'top',
-	Bottom = 'bottom',
-	Right = 'right',
-	Left = 'left',
-}
-
-function target(this: Tooltip) {
-	return this.anchor
-}
+import { component, css, property, eventListener } from '@a11d/lit'
+import { PopoverController, PopoverComponent } from '@3mo/popover'
+import { TooltipPlacement } from './TooltipPlacement.js'
 
 @component('mo-tooltip')
-export class Tooltip extends Component {
+export class Tooltip extends PopoverComponent {
 	private static readonly instancesContainer = new Set<Tooltip>()
-	private static visibleInstance?: Tooltip
+	private static openInstance?: Tooltip
 
-	@property({ type: Object }) anchor!: Element
-	@property({ type: String, reflect: true }) position = TooltipPosition.Bottom
+	@property({ reflect: true }) override placement = TooltipPlacement.Bottom
 
 	@property({ type: Boolean, reflect: true }) protected rich = false
-	@property({ type: Boolean, reflect: true }) protected visible = false
-	private hover = false
-	private anchorHover = false
-	private anchorFocused = false
 
-	constructor(anchor?: Element) {
-		super()
-		this.anchor = anchor ?? this.anchor
-	}
+	protected readonly popoverController: PopoverController = new PopoverController(this, {
+		openOnFocus: true,
+		openOnHover: true,
+		handleOpen: () => {
+			if (this.open) {
+				Tooltip.openInstance = this
+			}
 
-	@eventListener('pointerenter')
-	protected handlePointerEnter() {
-		if (this.anchorHover) {
-			this.hover = true
-			this.updatePositionAndVisibility()
+			for (const tooltip of [...Tooltip.instancesContainer.values()].filter(t => t !== this)) {
+				tooltip.open = Tooltip.openInstance === tooltip
+			}
 		}
-	}
+	})
 
-	@eventListener('pointerleave')
-	protected handlePointerLeave() {
-		this.hover = false
-		this.updatePositionAndVisibility()
-	}
-
-	override connected() {
+	protected override connected() {
 		Tooltip.instancesContainer.add(this)
 	}
 
-	override disconnected() {
+	protected override disconnected() {
 		Tooltip.instancesContainer.delete(this)
-	}
-
-	@eventListener({ target, type: 'focus' })
-	protected handleAnchorFocus(e: any) {
-		if (!e.sourceCapabilities?.firesTouchEvents) {
-			this.anchorFocused = true
-			this.updatePositionAndVisibility()
-		}
-	}
-
-	@eventListener({ target, type: 'blur' })
-	protected handleAnchorBlur() {
-		this.anchorFocused = false
-		this.updatePositionAndVisibility()
-	}
-
-	@eventListener({ target, type: 'pointerenter' })
-	protected handleAnchorPointerEnter() {
-		this.anchorHover = true
-		this.updatePositionAndVisibility()
-	}
-
-	@eventListener({ target, type: 'pointermove' })
-	protected handleAnchorPointerMove() {
-		this.updatePosition()
-	}
-
-	@eventListener({ target, type: 'pointerleave' })
-	@eventListener({ target, type: 'pointerup' })
-	@eventListener({ target, type: 'click' })
-	protected handleAnchorPointerLeave() {
-		this.anchorHover = false
-		this.updatePositionAndVisibility()
-	}
-
-	private updatePositionAndVisibility() {
-		this.updatePosition()
-		this.updateVisibility()
-	}
-
-	private updateVisibility() {
-		const visible = this.anchorHover || this.hover || this.anchorFocused
-
-		this.visible = visible
-		if (visible) {
-			Tooltip.visibleInstance = this
-		}
-		for (const tooltip of [...Tooltip.instancesContainer.values()].filter(t => t !== this)) {
-			tooltip.visible = Tooltip.visibleInstance === tooltip
-		}
-	}
-
-	private updatePosition() {
-		const { left: anchorLeft, width: anchorWidth, top: anchorTop, height: anchorHeight } = this.anchor!.getBoundingClientRect()
-		const { height: tooltipHeight, width: tooltipWidth } = this.getBoundingClientRect()
-
-		// TODO: Support RTL
-
-		const leftOf = (value: number) => Math.max(0, Math.min(value, window.innerWidth - tooltipWidth))
-		const topOf = (value: number) => Math.max(0, Math.min(value, window.innerHeight - tooltipHeight))
-
-		switch (this.position) {
-			case TooltipPosition.Top:
-				this.style.left = `${leftOf(anchorLeft + anchorWidth / 2 - tooltipWidth / 2)}px`
-				this.style.top = `${topOf(anchorTop - tooltipHeight)}px`
-				break
-			case TooltipPosition.Bottom:
-				this.style.left = `${leftOf(anchorLeft + anchorWidth / 2 - tooltipWidth / 2)}px`
-				this.style.top = `${topOf(anchorTop + anchorHeight)}px`
-				break
-			case TooltipPosition.Left:
-				this.style.left = `${leftOf(anchorLeft - tooltipWidth)}px`
-				this.style.top = `${topOf(anchorTop + anchorHeight / 2 - tooltipHeight / 2)}px`
-				break
-			case TooltipPosition.Right:
-				this.style.left = `${leftOf(anchorLeft + anchorWidth)}px`
-				this.style.top = `${topOf(anchorTop + anchorHeight / 2 - tooltipHeight / 2)}px`
-				break
-		}
 	}
 
 	static override get styles() {
 		return css`
+			${super.styles}
+
 			:host {
-				pointer-events: none;
-				position: fixed;
-				transition-duration: 0.2s;
-				transition-property: opacity, transform;
-				transition-timing-function: ease-in-out;
-				transform-origin: right center;
-				opacity: 0;
-				z-index: 99;
 				border-radius: var(--mo-toolbar-border-radius, var(--mo-border-radius, 4px));
-			}
-
-			:host([position="${unsafeCSS(TooltipPosition.Top)}"]) {
-				transform: translateY(+10px);
-			}
-
-			:host([position="${unsafeCSS(TooltipPosition.Bottom)}"]) {
-				transform: translateY(-10px);
-			}
-
-			:host([position="${unsafeCSS(TooltipPosition.Left)}"]) {
-				transform: translateX(+10px);
-			}
-
-			:host([position="${unsafeCSS(TooltipPosition.Right)}"]) {
-				transform: translateX(-10px);
 			}
 
 			:host(:not([rich])) {
@@ -168,29 +48,11 @@ export class Tooltip extends Component {
 				box-shadow: var(--mo-tooltip-shadow, var(--mo-shadow-deep, 0px 5px 5px -3px rgba(95, 81, 78, 0.2), 0px 8px 10px 1px rgba(95, 81, 78, 0.14), 0px 3px 14px 2px rgba(95, 81, 78, 0.12)));
 				padding: 8px;
 			}
-
-			:host([activate]) {
-				transition-delay: 1s;
-			}
-
-			:host([visible]) {
-				opacity: 1;
-				transform: translate(0);
-				transition-delay: 0s;
-			}
-
-			slot {
-				display: block;
-			}
 		`
 	}
 
-	override get template() {
-		return html`<slot @slotchange=${this.handleSlotChange}></slot>`
-	}
-
-	private readonly handleSlotChange = () => {
-		this.updatePosition()
+	@eventListener('slotchange')
+	protected handleSlotChange() {
 		this.rich = this.childElementCount > 0
 	}
 }

@@ -1,0 +1,1 @@
+export { PopoverPlacement as TooltipPlacement } from '@3mo/popover'

@@ -1,8 +1,9 @@
 import { directive, AsyncDirective, type ElementPart, type HTMLTemplateResult, type PartInfo, PartType, render, nothing } from '@a11d/lit'
-import { Tooltip, TooltipPosition } from './Tooltip.js'
+import { Tooltip } from './Tooltip.js'
+import { TooltipPlacement } from './TooltipPlacement.js'
 import { TooltipHost } from './TooltipHost.js'
 
-type TooltipDirectiveParameters = [content: string | HTMLTemplateResult, position?: TooltipPosition]
+type TooltipDirectiveParameters = [content: string | HTMLTemplateResult, placement?: TooltipPlacement]
 
 export class TooltipDirective extends AsyncDirective {
 	private tooltip?: Tooltip
@@ -15,11 +16,13 @@ export class TooltipDirective extends AsyncDirective {
 		}
 	}
 
-	override update(part: ElementPart, [content, position]: TooltipDirectiveParameters) {
+	override update(part: ElementPart, [content, placement]: TooltipDirectiveParameters) {
 		if (this.isConnected) {
-			this.tooltip ??= new Tooltip(part.element)
-			if (position) {
-				this.tooltip.position = position
+			this.tooltip ??= new Tooltip()
+			this.tooltip.anchor = part.element
+
+			if (placement) {
+				this.tooltip.placement = placement
 			}
 
 			if (typeof content === 'string') {
@@ -31,7 +34,7 @@ export class TooltipDirective extends AsyncDirective {
 			TooltipHost.instance.appendChild(this.tooltip)
 		}
 
-		return super.update(part, [content, position])
+		return super.update(part, [content, placement])
 	}
 
 	render(...parameters: TooltipDirectiveParameters) {
