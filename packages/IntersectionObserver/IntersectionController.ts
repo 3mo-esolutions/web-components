@@ -1,1 +1,1 @@
-export * from '@lit-labs/observers/intersection_controller.js'
+export * from '@lit-labs/observers/intersection-controller.js'

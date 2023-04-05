@@ -1,1 +1,1 @@
-export * from '@lit-labs/observers/resize_controller.js'
+export * from '@lit-labs/observers/resize-controller.js'
