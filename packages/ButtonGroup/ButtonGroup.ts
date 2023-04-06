@@ -28,35 +28,43 @@ export class ButtonGroup extends Component {
 			}
 
 			:host([direction=vertical]) ::slotted([instanceof*=mo-button][data-mo-button-group-first]) {
-				border-radius: var(--mo-button-group-border-radius, 4px) var(--mo-button-group-border-radius, 4px) 0px 0px;
+				border-start-start-radius: var(--mo-button-group-border-radius, var(--mo-border-radius, 4px));
+				border-start-end-radius: var(--mo-button-group-border-radius, var(--mo-border-radius, 4px));
 			}
 
 			:host([direction=vertical]) ::slotted([instanceof*=mo-button][data-mo-button-group-last]) {
-				border-radius: 0px 0px var(--mo-button-group-border-radius, 4px) var(--mo-button-group-border-radius, 4px);
+				border-end-end-radius: var(--mo-button-group-border-radius, var(--mo-border-radius, 4px));
+				border-end-start-radius: var(--mo-button-group-border-radius, var(--mo-border-radius, 4px));
 			}
 
 			:host([direction=vertical-reversed]) ::slotted([instanceof*=mo-button][data-mo-button-group-first]) {
-				border-radius: 0px 0px var(--mo-button-group-border-radius, 4px) var(--mo-button-group-border-radius, 4px);
+				border-end-end-radius: var(--mo-button-group-border-radius, var(--mo-border-radius, 4px));
+				border-end-start-radius: var(--mo-button-group-border-radius, var(--mo-border-radius, 4px));
 			}
 
 			:host([direction=vertical-reversed]) ::slotted([instanceof*=mo-button][data-mo-button-group-last]) {
-				border-radius: var(--mo-button-group-border-radius, 4px) var(--mo-button-group-border-radius, 4px) 0px 0px;
+				border-start-start-radius: var(--mo-button-group-border-radius, var(--mo-border-radius, 4px));
+				border-start-end-radius: var(--mo-button-group-border-radius, var(--mo-border-radius, 4px));
 			}
 
 			:host([direction=horizontal]) ::slotted([instanceof*=mo-button][data-mo-button-group-first]) {
-				border-radius: var(--mo-button-group-border-radius, 4px) 0px 0px var(--mo-button-group-border-radius, 4px);
+				border-start-start-radius: var(--mo-button-group-border-radius, var(--mo-border-radius, 4px));
+				border-end-start-radius: var(--mo-button-group-border-radius, var(--mo-border-radius, 4px));
 			}
 
 			:host([direction=horizontal]) ::slotted([instanceof*=mo-button][data-mo-button-group-last]) {
-				border-radius: 0px var(--mo-button-group-border-radius, 4px) var(--mo-button-group-border-radius, 4px) 0px;
+				border-start-end-radius: var(--mo-button-group-border-radius, var(--mo-border-radius, 4px));
+				border-end-end-radius: var(--mo-button-group-border-radius, var(--mo-border-radius, 4px));
 			}
 
 			:host([direction=horizontal-reversed]) ::slotted([instanceof*=mo-button][data-mo-button-group-first]) {
-				border-radius: 0px var(--mo-button-group-border-radius, 4px) var(--mo-button-group-border-radius, 4px) 0px;
+				border-start-end-radius: var(--mo-button-group-border-radius, var(--mo-border-radius, 4px));
+				border-end-end-radius: var(--mo-button-group-border-radius, var(--mo-border-radius, 4px));
 			}
 
 			:host([direction=horizontal-reversed]) ::slotted([instanceof*=mo-button][data-mo-button-group-last]) {
-				border-radius: var(--mo-button-group-border-radius, 4px) 0px 0px var(--mo-button-group-border-radius, 4px);
+				border-start-start-radius: var(--mo-button-group-border-radius, var(--mo-border-radius, 4px));
+				border-end-start-radius: var(--mo-button-group-border-radius, var(--mo-border-radius, 4px));
 			}
 
 			/* Separator */
