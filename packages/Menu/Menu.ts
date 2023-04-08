@@ -1,4 +1,4 @@
-import { component, Component, css, html, property, query, unsafeCSS } from '@a11d/lit'
+import { component, Component, css, event, html, property, query, unsafeCSS } from '@a11d/lit'
 import { PopoverController, PopoverPlacement } from '@3mo/popover'
 import { SlotController } from '@3mo/slot-controller'
 import { List } from '@3mo/list'
@@ -12,17 +12,28 @@ export function isMenu(element: EventTarget): element is HTMLElement {
 /**
  * @element mo-menu
  *
+ * @attr placement - The placement of the menu relative to the anchor.
+ * @attr open - Whether the menu is open.
+ * @attr anchor - The anchor element for the menu.
+ * @attr opener - The element id that opens the menu.
+ *
  * @slot - Default slot for list items
+ *
+ * @fires openChange - Fired when the menu is opened or closed.
  */
 @component('mo-menu')
 export class Menu extends Component {
+	@event() readonly openChange!: EventDispatcher<boolean>
+
 	override readonly role = 'menu'
 
 	readonly menuKeyboardController = new MenuController(this)
 	readonly slotController = new SlotController(this)
-	readonly popoverController: PopoverController = new PopoverController(this, {})
+	readonly popoverController = new PopoverController(this, {})
 
 	@property({ type: Object }) anchor!: HTMLElement
+	@property() opener?: string
+
 	@property({ type: String, reflect: true }) placement = PopoverPlacement.Bottom
 	@property({
 		type: Boolean,
@@ -32,6 +43,7 @@ export class Menu extends Component {
 				this.list.listItemsKeyboardController.unfocus()
 			}
 			this.list.listItemsKeyboardController.forceFocused = this.open
+			this.openChange.dispatch(this.open)
 		}
 	}) open = false
 
@@ -80,6 +92,7 @@ export class Menu extends Component {
 				border-radius: var(--mo-menu-surface-border-radius, var(--mo-border-radius, 4px));
 				box-shadow: var(--mo-menu-surface-shadow, var(--mo-shadow, 0 2px 4px rgba(0, 0, 0, 0.2)));
 				overflow: hidden;
+				width: max-content;
 			}
 		`
 	}
@@ -87,7 +100,7 @@ export class Menu extends Component {
 	protected override get template() {
 		return html`
 			<div id='surface'>
-				<mo-list .anchor=${this.anchor}>
+				<mo-list>
 					<slot></slot>
 				</mo-list>
 			</div>

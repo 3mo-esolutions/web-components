@@ -5,6 +5,7 @@ import { ListElement } from '@3mo/list'
 interface MenuElement extends PopoverComponent {
 	readonly role: 'menu'
 	readonly list: ListElement
+	readonly opener?: string
 }
 
 export class MenuController extends Controller {
@@ -23,18 +24,8 @@ export class MenuController extends Controller {
 		type: 'click',
 		target: document,
 		listener: (event: PointerEvent) => {
-			if (event.pointerType === '') {
-				return
-			}
-
-			if (this.open === true) {
-				if (!event.composedPath().includes(this.host)) {
-					this.open = false
-				}
-			} else {
-				if (event.composedPath().includes(this.host.anchor)) {
-					this.open = true
-				}
+			if (event.pointerType !== '') {
+				this.setOpen(event, !this.open)
 			}
 		}
 	})
@@ -42,17 +33,15 @@ export class MenuController extends Controller {
 	protected anchorKeyDownEventController = new EventListenerController(this.host, {
 		type: 'keydown',
 		target: () => this.host.anchor,
-		listener: (event) => {
-			if (event.composedPath().includes(this.host.anchor) === false) {
-				return
-			}
-
+		listener: (event: KeyboardEvent) => {
 			if (event.ctrlKey || event.shiftKey) {
 				return
 			}
 
 			switch (event.key) {
 				case 'Enter':
+					this.setOpen(event, true)
+					break
 				case 'Down':
 				case 'ArrowDown':
 				case 'Up':
@@ -61,16 +50,39 @@ export class MenuController extends Controller {
 				case 'PageUp':
 				case 'End':
 				case 'PageDown':
-					this.open = true
+					this.setOpen(event, true, true)
 					break
 				case 'Esc':
 				case 'Escape':
 				case 'Tab':
-					this.open = false
+					this.setOpen(event, false)
 					break
 				default:
 					break
 			}
 		}
 	})
+
+	private setOpen(event: Event, value: boolean, ignoreOpener = false) {
+		if (this.open === value) {
+			return
+		}
+
+		const path = event.composedPath()
+
+		if (!value && !path.includes(this.host)) {
+			this.open = value
+		}
+
+		if (value && path.includes(this.host.anchor)) {
+			const openerAllows = ignoreOpener || (
+				!!this.host.opener &&
+				path.some(target => target instanceof Element && target.id === this.host.opener)
+			)
+
+			if (openerAllows) {
+				this.open = value
+			}
+		}
+	}
 }
