@@ -1,7 +1,7 @@
 {
-	"name": "@3mo/popover",
-	"version": "0.0.2",
-	"description": "A set of tools to help with creating popovers.",
+	"name": "@3mo/menu",
+	"version": "0.0.1",
+	"description": "A menu web-component.",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/3mo-esolutions/web-components"
@@ -9,7 +9,8 @@
 	"keywords": [
 		"lit",
 		"web-component",
-		"popover"
+		"material",
+		"menu"
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
@@ -23,7 +24,7 @@
 	"dependencies": {
 		"@a11d/lit": "x",
 		"tslib": "x",
-		"@3mo/focus-controller": "x",
-		"@3mo/pointer-controller": "x"
+		"@3mo/popover": "x",
+		"@3mo/list": "x"
 	}
 }

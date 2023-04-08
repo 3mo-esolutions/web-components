@@ -1,20 +1,18 @@
-import { component, css, property, eventListener } from '@a11d/lit'
-import { PopoverController, PopoverComponent } from '@3mo/popover'
+import { component, css, property, eventListener, html, unsafeCSS, Component } from '@a11d/lit'
+import { PopoverController, PopoverPlacement } from '@3mo/popover'
 import { TooltipPlacement } from './TooltipPlacement.js'
 
 @component('mo-tooltip')
-export class Tooltip extends PopoverComponent {
+export class Tooltip extends Component {
 	private static readonly instancesContainer = new Set<Tooltip>()
 	private static openInstance?: Tooltip
 
-	@property({ reflect: true }) override placement = TooltipPlacement.Bottom
-
-	@property({ type: Boolean, reflect: true }) protected rich = false
-
-	protected readonly popoverController: PopoverController = new PopoverController(this, {
-		openOnFocus: true,
-		openOnHover: true,
-		handleOpen: () => {
+	@property({ type: Object }) anchor!: HTMLElement
+	@property({ reflect: true }) placement = TooltipPlacement.Bottom
+	@property({
+		type: Boolean,
+		reflect: true,
+		updated(this: Tooltip) {
 			if (this.open) {
 				Tooltip.openInstance = this
 			}
@@ -22,6 +20,17 @@ export class Tooltip extends PopoverComponent {
 			for (const tooltip of [...Tooltip.instancesContainer.values()].filter(t => t !== this)) {
 				tooltip.open = Tooltip.openInstance === tooltip
 			}
+		}
+	}) open = false
+
+	@property({ type: Boolean, reflect: true }) protected rich = false
+
+	protected readonly popoverController = new PopoverController(this, {
+		openOnFocus: true,
+		openOnHover: true,
+		getPositionOffset: {
+			left: (anchorRect, popoverRect) => anchorRect.width / 2 - popoverRect.width / 2,
+			top: (anchorRect, popoverRect) => anchorRect.height / 2 - popoverRect.height / 2
 		}
 	})
 
@@ -35,10 +44,43 @@ export class Tooltip extends PopoverComponent {
 
 	static override get styles() {
 		return css`
-			${super.styles}
-
 			:host {
+				pointer-events: none;
 				border-radius: var(--mo-toolbar-border-radius, var(--mo-border-radius, 4px));
+				opacity: 0;
+				transition-duration: 175ms;
+				transition-property: opacity, transform;
+				position: fixed;
+				z-index: 99;
+			}
+
+			:host(:not([open])) {
+				pointer-events: none;
+			}
+
+			:host([placement="${unsafeCSS(PopoverPlacement.Top)}"]) {
+				transform: translateY(+10px);
+			}
+
+			:host([placement="${unsafeCSS(PopoverPlacement.Bottom)}"]) {
+				transform: translateY(-10px);
+			}
+
+			:host([placement="${unsafeCSS(PopoverPlacement.Left)}"]) {
+				transform: translateX(+10px);
+			}
+
+			:host([placement="${unsafeCSS(PopoverPlacement.Right)}"]) {
+				transform: translateX(-10px);
+			}
+
+			:host([open]) {
+				opacity: 1;
+				transform: translate(0);
+			}
+
+			slot {
+				display: block;
 			}
 
 			:host(:not([rich])) {
@@ -54,6 +96,10 @@ export class Tooltip extends PopoverComponent {
 	@eventListener('slotchange')
 	protected handleSlotChange() {
 		this.rich = this.childElementCount > 0
+	}
+
+	protected override get template() {
+		return html`<slot></slot>`
 	}
 }
 

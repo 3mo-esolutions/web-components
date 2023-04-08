@@ -1,5 +1,5 @@
 import { story, meta } from '../../.storybook/story.js'
-import { Component, component, css, html, state, style } from '@a11d/lit'
+import { Component, css, html, state, style } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 
@@ -28,7 +28,6 @@ export const VirtualizedScroller = story({
 	}
 })
 
-@component('mo-virtualized-scroller-story-box')
 class Box extends Component {
 	@state() private secondPassedConnected = false
 
@@ -59,3 +58,5 @@ class Box extends Component {
 		`
 	}
 }
+
+customElements.define('mo-virtualized-scroller-story-box', Box)

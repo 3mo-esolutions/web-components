@@ -1,13 +1,15 @@
 import { EventListenerController, Controller, ReactiveControllerHost, ReactiveElement } from '@a11d/lit'
-import { isList, isListItem } from './List.js'
+import { FocusController } from '@3mo/focus-controller'
+import { isListItem } from './List.js'
 
-interface VirtualizedListItem {
+export interface VirtualizedListItem {
 	scrollIntoView(options?: ScrollIntoViewOptions): void
 }
 
 interface ListItem extends HTMLElement { }
 
-interface ElementWithItems extends HTMLElement {
+export interface ListElement extends HTMLElement {
+	readonly role: 'list'
 	readonly items: Array<ListItem>
 	readonly itemsLength?: number
 	getItem?(index: number): VirtualizedListItem | ListItem | undefined
@@ -15,7 +17,7 @@ interface ElementWithItems extends HTMLElement {
 }
 
 export class ListItemsKeyboardController extends Controller {
-	constructor(protected override readonly host: ReactiveControllerHost & ReactiveElement & ElementWithItems) {
+	constructor(protected override readonly host: ReactiveControllerHost & ReactiveElement & ListElement) {
 		super(host)
 	}
 
@@ -32,8 +34,8 @@ export class ListItemsKeyboardController extends Controller {
 	}
 
 	private _focusedItemIndex?: number
-	protected get focusedItemIndex() { return this._focusedItemIndex }
-	protected set focusedItemIndex(value) {
+	get focusedItemIndex() { return this._focusedItemIndex }
+	set focusedItemIndex(value) {
 		if (value !== undefined) {
 			if (value < 0) {
 				value = this.itemsLength + value
@@ -43,7 +45,6 @@ export class ListItemsKeyboardController extends Controller {
 				value = value - this.itemsLength
 			}
 		}
-
 
 		this._focusedItemIndex = value
 
@@ -70,80 +71,41 @@ export class ListItemsKeyboardController extends Controller {
 		this.host.tabIndex = -1
 	}
 
-	protected focusFirstItem() {
+	focusFirstItem() {
 		this.focusedItemIndex = 0
 	}
 
-	protected focusLastItem() {
+	focusLastItem() {
 		this.focusedItemIndex = this.itemsLength - 1
 	}
 
-	protected focusNextItem() {
+	focusNextItem() {
 		this.focusedItemIndex = (this.focusedItemIndex ?? -1) + 1
 	}
 
-	protected focusPreviousItem() {
+	focusPreviousItem() {
 		this.focusedItemIndex = (this.focusedItemIndex ?? 0) - 1
 	}
 
-	protected readonly focusEventListener = new EventListenerController(this.host, 'focus', () => this.focusedItemIndex ??= 0)
+	unfocus() {
+		this.focusedItemIndex = undefined
+	}
 
-	protected readonly blurEventListener = new EventListenerController(this.host, 'blur', () => this.focusedItemIndex = undefined)
+	forceFocused = false
 
-	protected readonly keyDownEventListener = new EventListenerController(this.host, 'keydown', (event: KeyboardEvent) => {
-		let prevent = false
-
-		const isFirstList = event.composedPath().find(item => isList(item)) === this.host
-
-		if (!isFirstList) {
-			return
-		}
-
-		if (event.ctrlKey || event.shiftKey) {
-			return
-		}
-
-		switch (event.key) {
-			case 'Enter':
-				this.handleEnter()
-				break
-			case 'Down':
-			case 'ArrowDown':
-				this.handleArrowDown()
-				prevent = true
-				break
-			case 'Up':
-			case 'ArrowUp':
-				this.handleArrowUp()
-				prevent = true
-				break
-			case 'Home':
-			case 'PageUp':
-				this.handlePageUp()
-				prevent = true
-				break
-			case 'End':
-			case 'PageDown':
-				this.handlePageDown()
-				prevent = true
-				break
-			case 'Esc':
-			case 'Escape':
-				this.handleEscape()
-				prevent = true
-				break
-			case 'Tab':
-				this.handleTab()
-				break
-			default:
-				break
-		}
-
-		if (prevent) {
-			event.stopPropagation()
-			event.preventDefault()
-		}
+	protected readonly focusController = new FocusController(this.host, {
+		handleChange: (focused, bubbled) => {
+			if (!bubbled) {
+				if (focused) {
+					this.focusedItemIndex ??= 0
+				} else {
+					this.focusedItemIndex = undefined
+				}
+			}
+		},
 	})
+
+	get hasFocus() { return this.focusController.focused || this.forceFocused }
 
 	protected readonly itemsPointerDownEventListener = new EventListenerController(this.host, {
 		target: () => this.host,
@@ -154,100 +116,49 @@ export class ListItemsKeyboardController extends Controller {
 		}
 	})
 
-	protected handleEnter() {
-		// if (this.listboxHasVisualFocus) {
-		// 	this.setValue(this.option.textContent)
-		// }
-		// this.close(true)
-		// this.setVisualFocusCombobox()
-		// flag = true
-	}
+	protected readonly keyDownEventListener = new EventListenerController(this.host, {
+		type: 'keydown',
+		target: document,
+		listener: (event: KeyboardEvent) => {
+			if (this.hasFocus === false) {
+				return
+			}
 
-	protected handleArrowDown() {
-		this.focusNextItem()
-		// if (this.filteredOptions.length > 0) {
-		// 	if (event.altKey) {
-		// 		this.open()
-		// 	} else {
-		// 		this.open()
-		// 		if (
-		// 			this.listboxHasVisualFocus ||
-		// 			(this.isBoth && this.filteredOptions.length > 1)
-		// 		) {
-		// 			this.setOption(this.getNextOption(this.option), true)
-		// 			this.setVisualFocusListbox()
-		// 		} else {
-		// 			this.setOption(this.firstOption, true)
-		// 			this.setVisualFocusListbox()
-		// 		}
-		// 	}
-		// }
-	}
+			if (event.ctrlKey || event.shiftKey) {
+				return
+			}
 
-	protected handleArrowUp() {
-		this.focusPreviousItem()
-		// if (this.hasOptions()) {
-		// 	if (this.listboxHasVisualFocus) {
-		// 		this.setOption(this.getPreviousOption(this.option), true)
-		// 	} else {
-		// 		this.open()
-		// 		if (!altKey) {
-		// 			this.setOption(this.lastOption, true)
-		// 			this.setVisualFocusListbox()
-		// 		}
-		// 	}
-		// }
-	}
+			let prevent = false
 
-	protected handlePageUp() {
-		this.focusFirstItem()
-		// if (this.hasOptions()) {
-		// 	if (this.listboxHasVisualFocus) {
-		// 		this.setOption(this.firstOption, true)
-		// 	} else {
-		// 		this.open()
-		// 		if (!altKey) {
-		// 			this.setOption(this.firstOption, true)
-		// 			this.setVisualFocusListbox()
-		// 		}
-		// 	}
-		// }
-	}
+			switch (event.key) {
+				case 'Down':
+				case 'ArrowDown':
+					this.focusNextItem()
+					prevent = true
+					break
+				case 'Up':
+				case 'ArrowUp':
+					this.focusPreviousItem()
+					prevent = true
+					break
+				case 'Home':
+				case 'PageUp':
+					this.focusFirstItem()
+					prevent = true
+					break
+				case 'End':
+				case 'PageDown':
+					this.focusLastItem()
+					prevent = true
+					break
+				default:
+					break
+			}
 
-	protected handlePageDown() {
-		this.focusLastItem()
-		// if (this.hasOptions()) {
-		// 	if (this.listboxHasVisualFocus) {
-		// 		this.setOption(this.lastOption, true)
-		// 	} else {
-		// 		this.open()
-		// 		if (!altKey) {
-		// 			this.setOption(this.lastOption, true)
-		// 			this.setVisualFocusListbox()
-		// 		}
-		// 	}
-		// }
-	}
-
-	protected handleEscape() {
-		// if (this.isOpen()) {
-		// 	this.close(true)
-		// 	this.filter = this.comboboxNode.value
-		// 	this.filterOptions()
-		// 	this.setVisualFocusCombobox()
-		// } else {
-		// 	this.setValue('')
-		// 	this.comboboxNode.value = ''
-		// }
-		// this.option = null
-	}
-
-	protected handleTab() {
-		// this.close(true)
-		// if (this.listboxHasVisualFocus) {
-		// 	if (this.option) {
-		// 		this.setValue(this.option.textContent)
-		// 	}
-		// }
-	}
+			if (prevent) {
+				event.stopPropagation()
+				event.preventDefault()
+			}
+		}
+	})
 }

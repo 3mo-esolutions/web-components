@@ -19,7 +19,7 @@ export class TooltipDirective extends AsyncDirective {
 	override update(part: ElementPart, [content, placement]: TooltipDirectiveParameters) {
 		if (this.isConnected) {
 			this.tooltip ??= new Tooltip()
-			this.tooltip.anchor = part.element
+			this.tooltip.anchor = part.element as HTMLElement
 
 			if (placement) {
 				this.tooltip.placement = placement

@@ -23,10 +23,10 @@ export function isList(element: EventTarget): element is HTMLElement {
 export class List extends Component {
 	static readonly itemRoles = ['listitem', 'menuitem', 'menuitemcheckbox', 'menuitemradio']
 
-	protected readonly listItemsKeyboardController = new ListItemsKeyboardController(this)
-	protected readonly slotController = new SlotController(this)
+	override readonly role = 'list'
 
-	override role = 'list'
+	readonly listItemsKeyboardController = new ListItemsKeyboardController(this)
+	readonly slotController = new SlotController(this)
 
 	get items() {
 		return this.slotController.getAssignedElements('').filter(isListItem)

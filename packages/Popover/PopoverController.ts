@@ -1,9 +1,16 @@
 import { Controller, EventListenerController } from '@a11d/lit'
-import { type PopoverComponent, PopoverPlacement } from './PopoverComponent.js'
+import { PointerController } from '@3mo/pointer-controller'
+import { FocusController } from '@3mo/focus-controller'
+import { PopoverPlacement } from './PopoverPlacement.js'
+import { PopoverComponent } from './PopoverComponent.js'
 
 export interface PopoverControllerOptions {
 	readonly openOnHover?: boolean
 	readonly openOnFocus?: boolean
+	getPositionOffset?: {
+		left?: (anchorRect: DOMRect, popoverRect: DOMRect) => number
+		top?: (anchorRect: DOMRect, popoverRect: DOMRect) => number
+	}
 	handleOpen?: () => void
 	handleClose?: () => void
 }
@@ -17,63 +24,16 @@ export class PopoverController extends Controller {
 		super(host)
 	}
 
-	private _hover = false
-	get hover() { return this._hover }
-	set hover(value) {
-		this._hover = value
-		this.update()
-	}
-
-	private _anchorHover = false
-	get anchorHover() { return this._anchorHover }
-	set anchorHover(value) {
-		this._anchorHover = value
-		this.update()
-	}
-
-	private _anchorFocused = false
-	get anchorFocused() { return this._anchorFocused }
-	set anchorFocused(value) {
-		this._anchorFocused = value
-		this.update()
-	}
-
-	protected readonly pointerEnter = new EventListenerController(this.host, 'pointerenter', () => {
-		this.hover = true
-	})
-
-	protected readonly pointerLeave = new EventListenerController(this.host, 'pointerleave', () => {
-		this.hover = false
-	})
-
-	protected readonly anchorPointerEnter = new EventListenerController(this.host, {
-		type: 'pointerenter',
+	protected readonly anchorFocusController = new FocusController(this.host, {
 		target: targetAnchor,
-		listener: () => this.anchorHover = true
+		handleChange: () => this.update(),
 	})
 
-	protected readonly anchorPointerLeave = new EventListenerController(this.host, {
-		type: 'pointerleave',
-		target: targetAnchor,
-		listener: () => this.anchorHover = false
-	})
+	protected readonly pointerController = new PointerController(this.host)
 
-	protected readonly anchorFocusIn = new EventListenerController(this.host, {
-		type: 'focusin',
+	protected readonly anchorPointerController = new PointerController(this.host, {
 		target: targetAnchor,
-		listener: (e: any) => {
-			if (!e.sourceCapabilities?.firesTouchEvents) {
-				this.anchorFocused = true
-			}
-		}
-	})
-
-	protected readonly anchorFocusOut = new EventListenerController(this.host, {
-		type: 'focusout',
-		target: targetAnchor,
-		listener: () => {
-			this.anchorFocused = false
-		}
+		handleHoverChange: () => this.update(),
 	})
 
 	protected readonly slotChangeHandler = new EventListenerController(this.host, 'slotchange', () => this.updatePosition())
@@ -92,48 +52,49 @@ export class PopoverController extends Controller {
 		}
 
 		const open =
-			openOnHover && (this.hover || this.anchorHover) ||
-			openOnFocus && this.anchorFocused
+			(openOnHover && (this.pointerController.hover || this.anchorPointerController.hover)) ||
+			(openOnFocus && this.anchorFocusController.focused)
 
 		if (this.host.open === open) {
 			return
 		}
 
 		this.host.open = open
-
-		if (open) {
-			this.options?.handleOpen?.()
-		} else {
-			this.options?.handleClose?.()
-		}
 	}
 
 	private updatePosition() {
-		const { left: anchorLeft, width: anchorWidth, top: anchorTop, height: anchorHeight } = this.host.anchor.getBoundingClientRect()
-		const { height: tooltipHeight, width: tooltipWidth } = this.host.getBoundingClientRect()
+		const anchorRect = this.host.anchor.getBoundingClientRect()
+		const popoverRect = this.host.getBoundingClientRect()
 
-		// TODO: Support RTL
+		const leftOffset = this.options?.getPositionOffset?.left?.(anchorRect, popoverRect) ?? 0
+		const topOffset = this.options?.getPositionOffset?.top?.(anchorRect, popoverRect) ?? 0
 
-		const leftOf = (value: number) => Math.max(0, Math.min(value, window.innerWidth - tooltipWidth))
-		const topOf = (value: number) => Math.max(0, Math.min(value, window.innerHeight - tooltipHeight))
+		let left = 0
+		let top = 0
 
 		switch (this.host.placement) {
 			case PopoverPlacement.Top:
-				this.host.style.left = `${leftOf(anchorLeft + anchorWidth / 2 - tooltipWidth / 2)}px`
-				this.host.style.top = `${topOf(anchorTop - tooltipHeight)}px`
+				left = anchorRect.left + leftOffset
+				top = anchorRect.top - popoverRect.height
 				break
 			case PopoverPlacement.Bottom:
-				this.host.style.left = `${leftOf(anchorLeft + anchorWidth / 2 - tooltipWidth / 2)}px`
-				this.host.style.top = `${topOf(anchorTop + anchorHeight)}px`
+				left = anchorRect.left + leftOffset
+				top = anchorRect.top + anchorRect.height
 				break
 			case PopoverPlacement.Left:
-				this.host.style.left = `${leftOf(anchorLeft - tooltipWidth)}px`
-				this.host.style.top = `${topOf(anchorTop + anchorHeight / 2 - tooltipHeight / 2)}px`
+				left = anchorRect.left - popoverRect.width
+				top = anchorRect.top + topOffset
 				break
 			case PopoverPlacement.Right:
-				this.host.style.left = `${leftOf(anchorLeft + anchorWidth)}px`
-				this.host.style.top = `${topOf(anchorTop + anchorHeight / 2 - tooltipHeight / 2)}px`
+				left = anchorRect.left + anchorRect.width
+				top = anchorRect.top + topOffset
 				break
 		}
+
+		const leftOf = (value: number) => Math.max(0, Math.min(value, window.innerWidth - popoverRect.width))
+		const topOf = (value: number) => Math.max(0, Math.min(value, window.innerHeight - popoverRect.height))
+
+		this.host.style.left = `${leftOf(left)}px`
+		this.host.style.top = `${topOf(top)}px`
 	}
 }

@@ -18,7 +18,7 @@ export default meta({
 
 const getTemplate = (selectionMode: SelectableListSelectionMode) => html`
 	Check the console for the selected item.
-	<mo-selectable-list selectionMode=${selectionMode} @change=${e => console.log(e.detail)}>
+	<mo-selectable-list selectionMode=${selectionMode}>
 		<mo-selectable-list-item>Item 1</mo-selectable-list-item>
 		<mo-selectable-list-item>Item 2</mo-selectable-list-item>
 		<mo-checkbox-list-item>Item 3</mo-checkbox-list-item>
