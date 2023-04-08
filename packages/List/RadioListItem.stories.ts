@@ -1,4 +1,4 @@
-import { story, meta } from '../../../.storybook/story.js'
+import { story, meta } from '../../.storybook/story.js'
 import { html } from '@a11d/lit'
 import './index.js'
 

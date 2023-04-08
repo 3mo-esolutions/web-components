@@ -75,10 +75,9 @@ export class MenuController extends Controller {
 		}
 
 		if (value && path.includes(this.host.anchor)) {
-			const openerAllows = ignoreOpener || (
-				!!this.host.opener &&
-				path.some(target => target instanceof Element && target.id === this.host.opener)
-			)
+			const openerAllows = ignoreOpener
+				|| !this.host.opener
+				|| path.some(target => target instanceof Element && target.id === this.host.opener)
 
 			if (openerAllows) {
 				this.open = value

@@ -27,9 +27,9 @@ export class Menu extends Component {
 
 	override readonly role = 'menu'
 
-	readonly menuKeyboardController = new MenuController(this)
 	readonly slotController = new SlotController(this)
 	readonly popoverController = new PopoverController(this, {})
+	readonly menuKeyboardController = new MenuController(this)
 
 	@property({ type: Object }) anchor!: HTMLElement
 	@property() opener?: string
@@ -53,6 +53,13 @@ export class Menu extends Component {
 		return css`
 			:host {
 				border-radius: var(--mo-toolbar-border-radius, var(--mo-border-radius, 4px));
+
+				position: absolute;
+				background: var(--mo-color-surface, #fff);
+				border-radius: var(--mo-border-radius, 4px);
+				box-shadow: var(--mo-shadow, 0 2px 4px rgba(0, 0, 0, 0.2));
+				overflow: hidden;
+				width: max-content;
 
 				opacity: 0;
 				transition-duration: 175ms;
@@ -85,25 +92,14 @@ export class Menu extends Component {
 				opacity: 1;
 				transform: scale(1);
 			}
-
-			#surface {
-				position: absolute;
-				background: var(--mo-menu-surface-background, var(--mo-color-surface, #fff));
-				border-radius: var(--mo-menu-surface-border-radius, var(--mo-border-radius, 4px));
-				box-shadow: var(--mo-menu-surface-shadow, var(--mo-shadow, 0 2px 4px rgba(0, 0, 0, 0.2)));
-				overflow: hidden;
-				width: max-content;
-			}
 		`
 	}
 
 	protected override get template() {
 		return html`
-			<div id='surface'>
-				<mo-list>
-					<slot></slot>
-				</mo-list>
-			</div>
+			<mo-list>
+				<slot></slot>
+			</mo-list>
 		`
 	}
 }
