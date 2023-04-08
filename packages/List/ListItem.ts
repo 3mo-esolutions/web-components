@@ -57,6 +57,7 @@ export class ListItem extends Component {
 				display: inline-flex;
 				gap: inherit;
 				align-items: inherit;
+				justify-content: inherit;
 				flex: 1;
 			}
 		`

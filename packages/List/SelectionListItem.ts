@@ -1,6 +1,6 @@
 import { HTMLElementEventDispatcher } from '@a11d/lit'
 import { ListItem } from './ListItem.js'
-import { SelectionListItemChangeEvent } from '../SelectableList.js'
+import { SelectionListItemChangeEvent } from './SelectableList.js'
 
 class SelectionListItemEventDispatcher<T> extends HTMLElementEventDispatcher<T> {
 	constructor(protected override readonly element: SelectionListItem<T>) {
