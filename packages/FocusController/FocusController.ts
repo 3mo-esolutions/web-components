@@ -1,12 +1,12 @@
 import { Controller, EventListenerController, EventListenerTarget, ReactiveElement } from '@a11d/lit'
 
-export interface PointerControllerOptions {
+export interface FocusControllerOptions {
 	target?: EventListenerTarget
 	handleChange?(focused: boolean, bubbled: boolean): void
 }
 
 export class FocusController extends Controller {
-	constructor(protected override readonly host: ReactiveElement, protected readonly options?: PointerControllerOptions) {
+	constructor(protected override readonly host: ReactiveElement, protected readonly options?: FocusControllerOptions) {
 		super(host)
 	}
 
