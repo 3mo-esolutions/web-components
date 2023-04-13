@@ -15,6 +15,7 @@ export function isMenu(element: EventTarget): element is HTMLElement {
  *
  * @attr anchor - The element that the menu is anchored to.
  * @attr placement - The placement of the menu.
+ * @attr open - Whether the menu is open.
  * @attr opener - The element id that opens the menu.
  * @attr selectionMode - The selection mode of the menu.
  * @attr value - The value of the menu.
@@ -22,10 +23,12 @@ export function isMenu(element: EventTarget): element is HTMLElement {
  * @slot - Default slot for list items
  *
  * @fires change - Fired when the menu value changes.
+ * @fires openChange - Fired when the menu open state changes.
  */
 @component('mo-menu')
 export class Menu extends Component {
 	@event() readonly change!: EventDispatcher<Array<number>>
+	@event() readonly openChange!: EventDispatcher<boolean>
 
 	override readonly role = 'menu'
 
@@ -34,6 +37,7 @@ export class Menu extends Component {
 
 	@property({ type: Object }) anchor!: HTMLElement
 	@property({ type: Object }) placement?: MenuPlacement
+	@property({ type: Boolean }) open?: boolean
 	@property() opener?: string
 	@property() selectionMode?: SelectableList['selectionMode']
 	@property({ type: Object }) value?: SelectableList['value']
@@ -84,8 +88,10 @@ export class Menu extends Component {
 
 	protected override get template() {
 		return html`
-			<mo-popover .anchor=${this.anchor}
+			<mo-popover part='popover'
+				.anchor=${this.anchor}
 				placement=${ifDefined(this.placement)}
+				?open=${this.open}
 				@openChange=${this.handleOpenChange.bind(this)}
 			>
 				<mo-selectable-list
@@ -100,11 +106,12 @@ export class Menu extends Component {
 	}
 
 	protected handleOpenChange(e: CustomEvent<boolean>) {
-		const open = e.detail
-		if (open === false) {
+		this.open = e.detail
+		if (this.open === false) {
 			this.list.listItemsKeyboardController.unfocus()
 		}
-		this.list.listItemsKeyboardController.forceFocused = open
+		this.list.listItemsKeyboardController.forceFocused = this.open
+		this.openChange.dispatch(this.open)
 	}
 
 	protected handleChange(e: CustomEvent) {

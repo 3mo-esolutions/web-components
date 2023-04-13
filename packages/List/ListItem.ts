@@ -46,6 +46,7 @@ export class ListItem extends Component {
 			}
 
 			:host([disabled]) {
+				pointer-events: none;
 				opacity: 0.5;
 			}
 

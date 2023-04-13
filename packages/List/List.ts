@@ -6,7 +6,6 @@ export function isListItem(element: Element): element is HTMLElement {
 	return element instanceof HTMLElement
 		&& !!element.role
 		&& List.itemRoles.includes(element.role)
-		&& !element.hasAttribute('disabled')
 }
 
 export function isList(element: EventTarget): element is HTMLElement {
@@ -25,6 +24,7 @@ export class List extends Component {
 
 	override readonly role = 'list'
 
+	// readonly instanceofAttributeController = new InstanceofAttributeController()
 	readonly listItemsKeyboardController = new ListItemsKeyboardController(this)
 	readonly slotController = new SlotController(this)
 

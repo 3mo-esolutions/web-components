@@ -21,6 +21,7 @@ const getTemplate = (selectionMode: SelectableListSelectionMode) => html`
 	<mo-selectable-list selectionMode=${selectionMode}>
 		<mo-selectable-list-item>Item 1</mo-selectable-list-item>
 		<mo-selectable-list-item>Item 2</mo-selectable-list-item>
+		<mo-checkbox-list-item disabled>Item 3</mo-checkbox-list-item>
 		<mo-checkbox-list-item>Item 3</mo-checkbox-list-item>
 		<mo-checkbox-list-item>Item 4</mo-checkbox-list-item>
 		<mo-switch-list-item>Item 5</mo-switch-list-item>

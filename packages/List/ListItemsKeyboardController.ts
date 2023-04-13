@@ -54,12 +54,16 @@ export class ListItemsKeyboardController extends Controller {
 		}
 
 		for (const item of this.items) {
-			if (value !== undefined && this.getRenderedItemIndex(item) === value) {
+			if (value !== undefined && this.getRenderedItemIndex(item) === value && this.isFocusable(item)) {
 				item.setAttribute('focused', '')
 			} else {
 				item.removeAttribute('focused')
 			}
 		}
+	}
+
+	private isFocusable(item: ListItem | VirtualizedListItem) {
+		return !(item instanceof Element) || !item.hasAttribute('disabled')
 	}
 
 	override hostConnected() {
@@ -72,19 +76,38 @@ export class ListItemsKeyboardController extends Controller {
 	}
 
 	focusFirstItem() {
-		this.focusedItemIndex = 0
+		this.focusTraversal(0, 'forward')
 	}
 
 	focusLastItem() {
-		this.focusedItemIndex = this.itemsLength - 1
+		this.focusTraversal(this.itemsLength - 1, 'backward')
 	}
 
 	focusNextItem() {
-		this.focusedItemIndex = (this.focusedItemIndex ?? -1) + 1
+		this.focusTraversal((this.focusedItemIndex ?? -1) + 1, 'forward')
 	}
 
 	focusPreviousItem() {
-		this.focusedItemIndex = (this.focusedItemIndex ?? 0) - 1
+		this.focusTraversal((this.focusedItemIndex ?? 0) - 1, 'backward')
+	}
+
+	private focusTraversal(index: number, direction: 'forward' | 'backward') {
+		let breakSafe = 0
+		// eslint-disable-next-line no-constant-condition
+		while (true) {
+			if (breakSafe >= this.itemsLength) {
+				break
+			}
+
+			const item = this.getItem(index)
+			if (item && this.isFocusable(item)) {
+				this.focusedItemIndex = index
+				break
+			}
+			index = direction === 'forward' ? index + 1 : index - 1
+			index = index < 0 ? this.itemsLength - 1 : index % this.itemsLength
+			breakSafe++
+		}
 	}
 
 	unfocus() {
