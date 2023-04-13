@@ -1,9 +1,11 @@
-import { Controller, EventListenerController, ReactiveControllerHost, ReactiveElement } from '@a11d/lit'
-import { PopoverComponent } from '@3mo/popover'
+import { Component, Controller, EventListenerController, ReactiveControllerHost, ReactiveElement } from '@a11d/lit'
+import { Popover } from '@3mo/popover'
 import { ListElement } from '@3mo/list'
 
-interface MenuElement extends PopoverComponent {
+interface MenuElement extends Component {
 	readonly role: 'menu'
+	readonly anchor: HTMLElement
+	readonly popover: Popover
 	readonly list: ListElement
 	readonly opener?: string
 }
@@ -13,8 +15,8 @@ export class MenuController extends Controller {
 		super(host)
 	}
 
-	get open() { return this.host.open }
-	set open(value) { this.host.open = value }
+	get open() { return this.host.popover.open }
+	set open(value) { this.host.popover.setOpen(value) }
 
 	getItem(index: number) {
 		return this.host.list.getItem?.(index) ?? this.host.list.items[index]
@@ -54,6 +56,9 @@ export class MenuController extends Controller {
 					break
 				case 'Esc':
 				case 'Escape':
+					this.setOpen(event, false)
+					event.stopPropagation()
+					break
 				case 'Tab':
 					this.setOpen(event, false)
 					break

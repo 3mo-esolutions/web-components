@@ -2,25 +2,14 @@ import { Controller, EventListenerController } from '@a11d/lit'
 import { PointerController } from '@3mo/pointer-controller'
 import { FocusController } from '@3mo/focus-controller'
 import { PopoverPlacement } from './PopoverPlacement.js'
-import { PopoverComponent } from './PopoverComponent.js'
+import type { Popover } from './Popover.js'
 
-export interface PopoverControllerOptions {
-	readonly openOnHover?: boolean
-	readonly openOnFocus?: boolean
-	getPositionOffset?: {
-		left?: (anchorRect: DOMRect, popoverRect: DOMRect) => number
-		top?: (anchorRect: DOMRect, popoverRect: DOMRect) => number
-	}
-	handleOpen?: () => void
-	handleClose?: () => void
-}
-
-function targetAnchor(this: PopoverComponent) {
+function targetAnchor(this: Popover) {
 	return this.anchor
 }
 
 export class PopoverController extends Controller {
-	constructor(protected override readonly host: PopoverComponent, protected readonly options?: PopoverControllerOptions) {
+	constructor(protected override readonly host: Popover) {
 		super(host)
 	}
 
@@ -44,8 +33,8 @@ export class PopoverController extends Controller {
 	}
 
 	private openIfApplicable() {
-		const openOnFocus = this.options?.openOnFocus ?? false
-		const openOnHover = this.options?.openOnHover ?? false
+		const openOnFocus = this.host?.openOnFocus ?? false
+		const openOnHover = this.host?.openOnHover ?? false
 
 		if (!openOnFocus && !openOnHover) {
 			return
@@ -59,15 +48,15 @@ export class PopoverController extends Controller {
 			return
 		}
 
-		this.host.open = open
+		this.host.setOpen(open)
 	}
 
 	private updatePosition() {
 		const anchorRect = this.host.anchor.getBoundingClientRect()
 		const popoverRect = this.host.getBoundingClientRect()
 
-		const leftOffset = this.options?.getPositionOffset?.left?.(anchorRect, popoverRect) ?? 0
-		const topOffset = this.options?.getPositionOffset?.top?.(anchorRect, popoverRect) ?? 0
+		const leftOffset = this.host?.getLeftPositionOffset?.(anchorRect, popoverRect) ?? 0
+		const topOffset = this.host?.getTopPositionOffset?.(anchorRect, popoverRect) ?? 0
 
 		let left = 0
 		let top = 0

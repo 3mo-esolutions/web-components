@@ -1,38 +1,28 @@
-import { component, css, property, eventListener, html, unsafeCSS, Component } from '@a11d/lit'
-import { PopoverController, PopoverPlacement } from '@3mo/popover'
+import { component, css, property, html, unsafeCSS, Component, query, ifDefined } from '@a11d/lit'
+import { Popover, PopoverPlacement } from '@3mo/popover'
 import { TooltipPlacement } from './TooltipPlacement.js'
 
+/**
+ * @element mo-tooltip
+ *
+ * @attr placement - The placement of the tooltip.
+ * @attr anchor - The element id that the tooltip is anchored to.
+ *
+ * @slot - Default slot for tooltip content
+ */
 @component('mo-tooltip')
 export class Tooltip extends Component {
 	private static readonly instancesContainer = new Set<Tooltip>()
 	private static openInstance?: Tooltip
+	private static getLeftPositionOffset = (anchorRect: DOMRect, popoverRect: DOMRect) => anchorRect.width / 2 - popoverRect.width / 2
+	private static getTopPositionOffset = (anchorRect: DOMRect, popoverRect: DOMRect) => anchorRect.height / 2 - popoverRect.height / 2
 
-	@property({ type: Object }) anchor!: HTMLElement
-	@property({ reflect: true }) placement = TooltipPlacement.Bottom
-	@property({
-		type: Boolean,
-		reflect: true,
-		updated(this: Tooltip) {
-			if (this.open) {
-				Tooltip.openInstance = this
-			}
+	@property() placement?: TooltipPlacement
+	@property({ type: Object }) anchor?: HTMLElement
 
-			for (const tooltip of [...Tooltip.instancesContainer.values()].filter(t => t !== this)) {
-				tooltip.open = Tooltip.openInstance === tooltip
-			}
-		}
-	}) open = false
+	@property({ type: Boolean, reflect: true }) protected rich?: boolean
 
-	@property({ type: Boolean, reflect: true }) protected rich = false
-
-	protected readonly popoverController = new PopoverController(this, {
-		openOnFocus: true,
-		openOnHover: true,
-		getPositionOffset: {
-			left: (anchorRect, popoverRect) => anchorRect.width / 2 - popoverRect.width / 2,
-			top: (anchorRect, popoverRect) => anchorRect.height / 2 - popoverRect.height / 2
-		}
-	})
+	@query('mo-popover') protected readonly popover!: Popover
 
 	protected override connected() {
 		Tooltip.instancesContainer.add(this)
@@ -45,45 +35,36 @@ export class Tooltip extends Component {
 	static override get styles() {
 		return css`
 			:host {
-				pointer-events: none;
+				display: inline-block;
+			}
+
+			mo-popover {
 				border-radius: var(--mo-toolbar-border-radius, var(--mo-border-radius, 4px));
-				opacity: 0;
 				transition-duration: 175ms;
 				transition-property: opacity, transform;
-				position: fixed;
-				z-index: 99;
 			}
 
-			:host(:not([open])) {
-				pointer-events: none;
-			}
-
-			:host([placement="${unsafeCSS(PopoverPlacement.Top)}"]) {
+			mo-popover[placement="${unsafeCSS(PopoverPlacement.Top)}"] {
 				transform: translateY(+10px);
 			}
 
-			:host([placement="${unsafeCSS(PopoverPlacement.Bottom)}"]) {
+			mo-popover[placement="${unsafeCSS(PopoverPlacement.Bottom)}"] {
 				transform: translateY(-10px);
 			}
 
-			:host([placement="${unsafeCSS(PopoverPlacement.Left)}"]) {
+			mo-popover[placement="${unsafeCSS(PopoverPlacement.Left)}"] {
 				transform: translateX(+10px);
 			}
 
-			:host([placement="${unsafeCSS(PopoverPlacement.Right)}"]) {
+			mo-popover[placement="${unsafeCSS(PopoverPlacement.Right)}"] {
 				transform: translateX(-10px);
 			}
 
-			:host([open]) {
-				opacity: 1;
+			mo-popover[open] {
 				transform: translate(0);
 			}
 
-			slot {
-				display: block;
-			}
-
-			:host(:not([rich])) {
+			:host(:not([rich])) mo-popover {
 				background: var(--mo-tooltip-surface-color, var(--mo-color-surface, rgba(255, 255, 255, 0.75)));
 				backdrop-filter: blur(40px);
 				color: var(--mo-color-foreground);
@@ -93,13 +74,31 @@ export class Tooltip extends Component {
 		`
 	}
 
-	@eventListener('slotchange')
-	protected handleSlotChange() {
-		this.rich = this.childElementCount > 0
+	protected override get template() {
+		return html`
+			<mo-popover
+				.anchor=${this.anchor}
+				placement=${ifDefined(this.placement)}
+				openOnFocus
+				openOnHover
+				.getLeftPositionOffset=${Tooltip.getLeftPositionOffset}
+				.getTopPositionOffset=${Tooltip.getTopPositionOffset}
+				@openChange=${this.handleOpenChange.bind(this)}
+			>
+				<slot @slotChange=${() => this.rich = this.childElementCount > 0}></slot>
+			</mo-popover>
+		`
 	}
 
-	protected override get template() {
-		return html`<slot></slot>`
+	protected handleOpenChange(event: CustomEvent<boolean>) {
+		const open = event.detail
+		if (open) {
+			Tooltip.openInstance = this
+		}
+
+		for (const tooltip of [...Tooltip.instancesContainer.values()].filter(t => t !== this)) {
+			tooltip.popover.open = Tooltip.openInstance === tooltip
+		}
 	}
 }
 

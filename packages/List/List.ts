@@ -21,7 +21,7 @@ export function isList(element: EventTarget): element is HTMLElement {
  */
 @component('mo-list')
 export class List extends Component {
-	static readonly itemRoles = ['listitem', 'menuitem', 'menuitemcheckbox', 'menuitemradio']
+	static readonly itemRoles = ['listitem', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'option']
 
 	override readonly role = 'list'
 
