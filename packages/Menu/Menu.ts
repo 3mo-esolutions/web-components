@@ -36,7 +36,7 @@ export class Menu extends Component {
 	readonly menuKeyboardController = new MenuController(this)
 
 	@property({ type: Object }) anchor!: HTMLElement
-	@property({ type: Object }) placement?: MenuPlacement
+	@property() placement?: MenuPlacement
 	@property({ type: Boolean }) open?: boolean
 	@property() opener?: string
 	@property() selectionMode?: SelectableList['selectionMode']
