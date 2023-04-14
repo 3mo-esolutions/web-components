@@ -52,7 +52,7 @@ export class Localizer {
 		Localizer.languageChange.dispatch(value)
 	}
 
-	private static readonly languageCodeStorage = new LocalStorage<LanguageCode | undefined>('MoDeL.Localizer.Language', undefined)
+	private static readonly languageCodeStorage = new LocalStorage<LanguageCode | undefined>('Localizer.Language', undefined)
 	private static readonly dictionariesByLanguageCode = new Map<LanguageCode, Dictionary>()
 
 	private static readonly regex = /\${(.+?)(?::(.+?))?}/g

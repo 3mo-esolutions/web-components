@@ -1,13 +1,15 @@
 {
-	"name": "@3mo/color",
-	"version": "0.1.1",
-	"description": "A color class.",
+	"name": "@3mo/theme",
+	"version": "0.0.2",
+	"description": "Tools & tokens for theming 3MO components & applications.",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/3mo-esolutions/web-components"
 	},
 	"keywords": [
-		"color"
+		"lit",
+		"web-component",
+		"theme"
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
@@ -19,8 +21,10 @@
 		"dist"
 	],
 	"dependencies": {
-		"tslib": "x",
-		"color-string": "x",
-		"@types/color-string": "x"
+		"@a11d/lit": "x",
+		"@a11d/local-storage": "x",
+		"@a11d/lit-application": "x",
+		"@3mo/color": "x",
+		"tslib": "x"
 	}
 }
