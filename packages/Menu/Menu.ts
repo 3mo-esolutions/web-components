@@ -114,9 +114,9 @@ export class Menu extends Component {
 		this.openChange.dispatch(this.open)
 	}
 
-	protected handleChange(e: CustomEvent) {
-		this.value = e.detail.value
-		this.change.dispatch(e.detail.value)
+	protected handleChange(e: CustomEvent<Array<number>>) {
+		this.value = e.detail
+		this.change.dispatch(e.detail)
 	}
 }
 
