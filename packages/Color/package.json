@@ -1,0 +1,28 @@
+{
+	"name": "@3mo/color",
+	"version": "0.1.0",
+	"description": "A color class.",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/3mo-esolutions/web-components"
+	},
+	"keywords": [
+		"color"
+	],
+	"author": "3MO GmbH",
+	"license": "MIT",
+	"homepage": "https://www.3mo.de",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"dependencies": {
+		"tslib": "x",
+		"color-string": "x"
+	},
+	"devDependencies": {
+		"@types/color-string": "x"
+	}
+}

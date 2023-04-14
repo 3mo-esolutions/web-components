@@ -1,0 +1,3 @@
+# Color
+
+A color class.
