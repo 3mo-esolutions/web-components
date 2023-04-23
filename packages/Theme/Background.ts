@@ -1,4 +1,3 @@
-import { Application } from '@a11d/lit-application'
 import { LocalStorage } from '@a11d/local-storage'
 
 export const enum Background {
@@ -8,17 +7,12 @@ export const enum Background {
 }
 
 export class BackgroundStorage extends LocalStorage<Background> {
-	private application?: Application
-
 	constructor() {
 		super('Theme.Background', Background.System)
 		window.matchMedia('(prefers-color-scheme: dark)').onchange = () => this.updateAttributeValue()
 		window.matchMedia('(prefers-color-scheme: light)').onchange = () => this.updateAttributeValue()
-		Application.addInitializer(application => {
-			this.application = application as Application
-			this.updateAttributeValue()
-			this.changed.subscribe(() => this.updateAttributeValue())
-		})
+		this.updateAttributeValue()
+		this.changed.subscribe(() => this.updateAttributeValue())
 	}
 
 	get calculatedValue() {
@@ -30,6 +24,6 @@ export class BackgroundStorage extends LocalStorage<Background> {
 	}
 
 	private updateAttributeValue() {
-		this.application?.setAttribute('data-theme', this.calculatedValue)
+		document.documentElement.setAttribute('data-theme', this.calculatedValue)
 	}
 }

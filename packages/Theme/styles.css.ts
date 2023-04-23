@@ -21,7 +21,7 @@ RootCssInjector.inject(css`
 		overflow: auto;
 	}
 
-	[application][data-theme=light] {
+	:root[data-theme=light] {
 		color-scheme: light;
 		--mo-color-background-base: 255, 255, 255;
 		--mo-color-foreground-base: 0, 0, 0;
@@ -36,7 +36,7 @@ RootCssInjector.inject(css`
 		--mo-alternating-background: rgba(var(--mo-color-foreground-base), 0.05);
 	}
 
-	[application][data-theme=dark] {
+	:root[data-theme=dark] {
 		color-scheme: dark;
 		--mo-color-background-base: 0, 0, 0;
 		--mo-color-foreground-base: 255, 255, 255;
@@ -49,7 +49,7 @@ RootCssInjector.inject(css`
 		--mo-color-error-base: 255, 61, 96;
 	}
 
-	[application] {
+	:root {
 		--mo-font-family: Roboto, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 		--mo-border-radius: 4px;
 		/* Shadows */

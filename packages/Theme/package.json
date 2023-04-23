@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/theme",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"description": "Tools & tokens for theming 3MO components & applications.",
 	"repository": {
 		"type": "git",
@@ -23,7 +23,7 @@
 	"dependencies": {
 		"@a11d/lit": "x",
 		"@a11d/local-storage": "x",
-		"@a11d/lit-application": "x",
+		"@a11d/root-css-injector": "x",
 		"@3mo/color": "x",
 		"tslib": "x"
 	}

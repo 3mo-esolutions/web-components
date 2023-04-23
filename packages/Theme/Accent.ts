@@ -1,5 +1,5 @@
 import { css, unsafeCSS } from '@a11d/lit'
-import { RootCssInjector } from '@a11d/lit-application'
+import { RootCssInjector } from '@a11d/root-css-injector'
 import { LocalStorage } from '@a11d/local-storage'
 import { Color } from '@3mo/color'
 import { ColorSet } from './ColorSet.js'
@@ -55,7 +55,7 @@ export class AccentStorage extends LocalStorage<Color | ColorSet | undefined> {
 		const thirdColor = value instanceof ColorSet ? value.colors[2] : value
 		this.styleElement = RootCssInjector.inject(
 			css`
-				[application] {
+				:root {
 					--mo-color-accent-base-r:${unsafeCSS(medianColor?.r)};
 					--mo-color-accent-base-g:${unsafeCSS(medianColor?.g)};
 					--mo-color-accent-base-b:${unsafeCSS(medianColor?.b)};
