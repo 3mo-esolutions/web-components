@@ -36,27 +36,23 @@ export class Snackbar extends Component implements NotificationComponent {
 	static override get styles() {
 		return css`
 			:host {
-				--mo-snackbar-info-color-base: 0, 119, 200;
-				--mo-snackbar-success-color-base : 93, 170, 96;
-				--mo-snackbar-warning-color-base: 232, 152, 35;
-				--mo-snackbar-error-color-base: 221, 61, 49;
 				width: 100%;
 			}
 
 			:host([type=${unsafeCSS(NotificationType.Info)}]) {
-				--mo-snackbar-color-base: var(--mo-snackbar-info-color-base);
+				--mo-snackbar-color-base: var(--mo-color-blue-base);
 			}
 
 			:host([type=${unsafeCSS(NotificationType.Success)}]) {
-				--mo-snackbar-color-base: var(--mo-snackbar-success-color-base);
+				--mo-snackbar-color-base: var(--mo-color-green-base);
 			}
 
 			:host([type=${unsafeCSS(NotificationType.Warning)}]) {
-				--mo-snackbar-color-base: var(--mo-snackbar-warning-color-base);
+				--mo-snackbar-color-base: var(--mo-color-yellow-base);
 			}
 
 			:host([type=${unsafeCSS(NotificationType.Error)}]) {
-				--mo-snackbar-color-base: var(--mo-snackbar-error-color-base);
+				--mo-snackbar-color-base: var(--mo-color-red-base);
 			}
 		`
 	}

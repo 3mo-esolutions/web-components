@@ -44,27 +44,23 @@ export class Alert extends Component {
 	static override get styles() {
 		return css`
 			:host {
-				--mo-alert-success-color-base : 93, 170, 96;
-				--mo-alert-warning-color-base: 232, 152, 35;
-				--mo-alert-error-color-base: 221, 61, 49;
-				--mo-alert-info-color-base: 0, 119, 200;
 				width: 100%;
 			}
 
 			:host([type=success]) {
-				--mo-alert-color-base: var(--mo-alert-success-color-base);
+				--mo-alert-color-base: var(--mo-color-green-base);
 			}
 
 			:host([type=warning]) {
-				--mo-alert-color-base: var(--mo-alert-warning-color-base);
+				--mo-alert-color-base: var(--mo-color-yellow-base);
 			}
 
 			:host([type=error]) {
-				--mo-alert-color-base: var(--mo-alert-error-color-base);
+				--mo-alert-color-base: var(--mo-color-red-base);
 			}
 
 			:host([type=info]) {
-				--mo-alert-color-base: var(--mo-alert-info-color-base);
+				--mo-alert-color-base: var(--mo-color-blue-base);
 			}
 
 			mo-flex[role=alert] {

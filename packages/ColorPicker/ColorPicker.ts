@@ -49,7 +49,7 @@ export class ColorPicker extends Component {
 
 	protected get inputTemplate() {
 		return html`
-			<input id='input' part='input' type='color'
+			<input part='input' type='color'
 				list=${ifDefined(this.presets ? 'presetColors' : undefined)}
 				value=${ifDefined(this.value?.hex)}
 				@input=${(e: Event) => { e.stopImmediatePropagation(); this.value = this.inputColor; this.input.dispatch(this.inputColor) }}
