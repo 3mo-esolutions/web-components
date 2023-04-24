@@ -1,0 +1,39 @@
+import { component, html, live, property } from '@a11d/lit'
+import { InputFieldComponent } from './InputFieldComponent.js'
+
+/**
+ * @element mo-field-email
+ *
+ * @attr value - The value of the field.
+ */
+@component('mo-field-email')
+export class FieldEmail extends InputFieldComponent<string> {
+	@property() override value?: string
+
+	protected override handleChange(v?: string, e?: Event) {
+		super.handleChange(v, e)
+		this.inputStringValue = this.value ?? ''
+	}
+
+	protected override get inputTemplate() {
+		return html`
+			<input
+				part='input'
+				type='email'
+				inputmode='email'
+				?readonly=${this.readonly}
+				?required=${this.required}
+				?disabled=${this.disabled}
+				.value=${live(this.inputStringValue || '')}
+				@input=${(e: Event) => this.handleInput(this.inputElement.value, e)}
+				@change=${(e: Event) => this.handleChange(this.inputElement.value, e)}
+			>
+		`
+	}
+}
+
+declare global {
+	interface HTMLElementTagNameMap {
+		'mo-field-email': FieldEmail
+	}
+}

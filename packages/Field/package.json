@@ -1,7 +1,7 @@
 {
-	"name": "@3mo/theme",
-	"version": "0.0.6",
-	"description": "Tools & tokens for theming 3MO components & applications.",
+	"name": "@3mo/field",
+	"version": "0.0.1",
+	"description": "A set of field web components.",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/3mo-esolutions/web-components"
@@ -9,7 +9,9 @@
 	"keywords": [
 		"lit",
 		"web-component",
-		"theme"
+		"material",
+		"input",
+		"field"
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
@@ -22,9 +24,10 @@
 	],
 	"dependencies": {
 		"@a11d/lit": "x",
-		"@a11d/local-storage": "x",
-		"@a11d/root-css-injector": "x",
-		"@3mo/color": "x",
-		"tslib": "x"
+		"tslib": "x",
+		"@3mo/focus-controller": "x",
+		"@3mo/theme": "x",
+		"@3mo/localization": "x",
+		"@3mo/slot-controller": "x"
 	}
 }

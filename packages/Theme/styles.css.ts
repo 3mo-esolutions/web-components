@@ -1,5 +1,5 @@
 import { css } from '@a11d/lit'
-import { RootCssInjector } from '@a11d/lit-application'
+import { RootCssInjector } from '@a11d/root-css-injector'
 
 RootCssInjector.inject(css`
 	@import 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap';
