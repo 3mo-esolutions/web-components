@@ -10,6 +10,7 @@ export default meta({
 	args: {
 		label: 'Label',
 		required: false,
+		dense: false,
 		disabled: false,
 		readonly: false,
 		value: 'test@3mo.de',
@@ -24,8 +25,8 @@ export default meta({
 })
 
 export const Currency = story({
-	render: ({ label, required, disabled, readonly, value }) => html`
-		<mo-field-currency label=${label} ?required=${required} ?disabled=${disabled} ?readonly=${readonly} value=${value}></mo-field-currency>
+	render: ({ label, required, disabled, dense, readonly, value }) => html`
+		<mo-field-currency label=${label} ?required=${required} ?disabled=${disabled} ?readonly=${readonly} ?dense=${dense} value=${value}></mo-field-currency>
 	`
 })
 

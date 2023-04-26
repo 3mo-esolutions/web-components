@@ -9,6 +9,7 @@ export default meta({
 	args: {
 		label: 'Label',
 		required: false,
+		dense: false,
 		disabled: false,
 		readonly: false,
 		value: 'Value',
@@ -23,14 +24,14 @@ export default meta({
 })
 
 export const Search = story({
-	render: ({ label, value, required, disabled, readonly }) => html`
-		<mo-field-search label=${label} value=${value} ?required=${required} ?disabled=${disabled} ?readonly=${readonly}></mo-field-search>
+	render: ({ label, value, dense, required, disabled, readonly }) => html`
+		<mo-field-search label=${label} value=${value} ?required=${required} ?disabled=${disabled} ?readonly=${readonly} ?dense=${dense}></mo-field-search>
 	`
 })
 
 export const EndSlot = story({
-	render: ({ label, required, disabled, readonly }) => html`
-		<mo-field-search label=${label} ?required=${required} ?disabled=${disabled} ?readonly=${readonly}>
+	render: ({ label, required, dense, disabled, readonly }) => html`
+		<mo-field-search label=${label} ?required=${required} ?disabled=${disabled} ?readonly=${readonly} ?dense=${dense}>
 			<mo-icon-button slot='end' icon='settings'></mo-icon-button>
 		</mo-field-search>
 	`

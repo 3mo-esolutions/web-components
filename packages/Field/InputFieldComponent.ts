@@ -3,18 +3,24 @@ import { FieldComponent } from './FieldComponent.js'
 
 /**
  * @attr selectOnFocus - Selects the input text when the field receives focus.
+ * @attr dense - Whether the field is dense
  *
  * @csspart input - The input element.
  */
 export abstract class InputFieldComponent<T> extends FieldComponent<T> {
 	@property({ type: Boolean, reflect: true }) selectOnFocus = false
+	@property({ type: Boolean }) dense = false
 
 	@state() protected inputStringValue?: string
 
 	@query('[part=input]') readonly inputElement!: HTMLInputElement
 
-	override get populated() {
+	override get isPopulated() {
 		return !!this.inputStringValue
+	}
+
+	protected override get isDense() {
+		return this.dense
 	}
 
 	protected override update(changedProperties: PropertyValues<this>) {

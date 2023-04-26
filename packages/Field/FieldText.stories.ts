@@ -9,6 +9,7 @@ export default meta({
 	args: {
 		label: 'Label',
 		required: false,
+		dense: false,
 		disabled: false,
 		readonly: false,
 		value: 'Value',
@@ -23,22 +24,22 @@ export default meta({
 })
 
 export const Text = story({
-	render: ({ label, required, disabled, readonly, value }) => html`
-		<mo-field-text label=${label} ?required=${required} ?disabled=${disabled} ?readonly=${readonly} value=${value}></mo-field-text>
+	render: ({ label, required, disabled, dense, readonly, value }) => html`
+		<mo-field-text label=${label} ?required=${required} ?disabled=${disabled} ?readonly=${readonly} ?dense=${dense} value=${value}></mo-field-text>
 	`
 })
 
 export const MinMaxLength = story({
-	render: ({ required, disabled, readonly, value }) => html`
+	render: ({ required, disabled, dense, readonly, value }) => html`
 		<mo-field-text label='Label (between 10 and 25 characters)' minLength='10' maxLength='25'
-			?required=${required} ?disabled=${disabled} ?readonly=${readonly} value=${value}
+			?required=${required} ?disabled=${disabled} ?readonly=${readonly} ?dense=${dense} value=${value}
 		></mo-field-text>
 	`
 })
 
 export const StartAndEndSlots = story({
-	render: ({ required, disabled, readonly, value }) => html`
-		<mo-field-text label='Regex' ?required=${required} ?disabled=${disabled} ?readonly=${readonly} value=${value}>
+	render: ({ required, disabled, dense, readonly, value }) => html`
+		<mo-field-text label='Regex' ?required=${required} ?disabled=${disabled} ?readonly=${readonly} ?dense=${dense} value=${value}>
 			<span slot='start'>/</span>
 			<span slot='end'>/gm</span>
 		</mo-field-text>

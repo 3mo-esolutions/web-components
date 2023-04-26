@@ -46,7 +46,6 @@ export class Field extends Component {
 				--mo-field-label-translate-value-on-focus: -50%;
 				--mo-field-label-translate-on-focus: translateY(var(--mo-field-label-translate-value-on-focus));
 				--mo-field-label-transform-on-focus : var(--mo-field-label-translate-on-focus) var(--mo-field-label-scale-on-focus);
-				--mo-field-label-top-on-focus: 14px;
 				position: relative;
 				overflow: hidden;
 				display: flex;
@@ -79,7 +78,6 @@ export class Field extends Component {
 			:host([dense]) {
 				height: 32px;
 				--mo-field-label-scale-value-on-focus: 1;
-				--mo-field-label-top-on-focus: 16px;
 			}
 
 			:host([disabled]) {
@@ -102,7 +100,7 @@ export class Field extends Component {
 			}
 
 			div:last-child {
-				padding-inline-end: 10px;
+				padding-inline-end: var(--mo-field-input-padding-inline-end, 10px);
 			}
 
 			slot[name=end]:last-child {
@@ -117,7 +115,6 @@ export class Field extends Component {
 				padding: 0.8rem 0 0 0;
 				height: calc(100% - 0.8rem);
 				color: var(--mo-color-foreground);
-				transition: 0.1s ease-out;
 				background-color: transparent;
 				text-align: inherit;
 			}
@@ -145,7 +142,7 @@ export class Field extends Component {
 		return css`
 			span {
 				position: absolute;
-				top: calc(var(--mo-field-label-translate-value-on-focus) * -1);
+				top: min(50%, 30px);
 				transform: var(--mo-field-label-translate-on-focus);
 				color: var(--mo-color-gray);
 				transition: .1s ease-out;
@@ -162,7 +159,7 @@ export class Field extends Component {
 			}
 
 			:host([active]) span, :host([populated]) span {
-				top: var(--mo-field-label-top-on-focus);
+				top: 14px;
 				transform: var(--mo-field-label-transform-on-focus);
 			}
 

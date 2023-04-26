@@ -8,7 +8,6 @@ import { FocusController } from '@3mo/focus-controller'
  * @attr readonly - Whether the field is readonly
  * @attr disabled - Whether the field is disabled
  * @attr required - Whether the field is required
- * @attr dense - Whether the field is dense
  *
  * @slot - The field's content
  * @slot start - Content to be placed at the start of the field
@@ -28,7 +27,6 @@ export abstract class FieldComponent<T> extends Component {
 	@property({ type: Boolean }) readonly = false
 	@property({ type: Boolean }) disabled = false
 	@property({ type: Boolean }) required = false
-	@property({ type: Boolean }) dense = false
 	@property({ type: Boolean }) protected invalid = false
 
 	@state() protected inputValue?: T
@@ -60,18 +58,22 @@ export abstract class FieldComponent<T> extends Component {
 		this.change.dispatch(this.value)
 	}
 
-	protected get populated() {
+	protected get isPopulated() {
 		return this.inputValue !== undefined
+	}
+
+	protected get isDense() {
+		return false
 	}
 
 	protected override get template() {
 		return html`
 			<mo-field label=${this.label}
-				?populated=${this.populated}
+				?populated=${this.isPopulated}
 				?disabled=${this.disabled}
 				?readonly=${this.readonly}
 				?required=${this.required}
-				?dense=${this.dense}
+				?dense=${this.isDense}
 				?invalid=${this.invalid}
 			>
 				${this.startSlotTemplate}
