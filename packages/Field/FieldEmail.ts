@@ -10,9 +10,8 @@ import { InputFieldComponent } from './InputFieldComponent.js'
 export class FieldEmail extends InputFieldComponent<string> {
 	@property() override value?: string
 
-	protected override handleChange(v?: string, e?: Event) {
-		super.handleChange(v, e)
-		this.inputStringValue = this.value ?? ''
+	protected valueToInputValue(value?: string) {
+		return value ?? ''
 	}
 
 	protected override get inputTemplate() {

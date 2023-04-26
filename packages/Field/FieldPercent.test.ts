@@ -5,9 +5,10 @@ import { expectFieldPropertyTunnelsToInput, expectInputEventTunnelsToField } fro
 describe('FieldPercent', () => {
 	const fixture = new ComponentTestFixture<FieldPercent>('mo-field-percent')
 	it('should set the part attribute', () => expect(fixture.component.inputElement.getAttribute('part')).toBe('input'))
-	it('should tunnel disabled', () => expectFieldPropertyTunnelsToInput(fixture, true, 'disabled'))
-	it('should tunnel readonly', () => expectFieldPropertyTunnelsToInput(fixture, true, 'readonly', 'readOnly'))
-	it('should tunnel required', () => expectFieldPropertyTunnelsToInput(fixture, true, 'required'))
+	it('should tunnel disabled', () => expectFieldPropertyTunnelsToInput(fixture, { value: true, key: 'disabled' }))
+	it('should tunnel readonly', () => expectFieldPropertyTunnelsToInput(fixture, { value: true, fieldKey: 'readonly', inputKey: 'readOnly' }))
+	it('should tunnel required', () => expectFieldPropertyTunnelsToInput(fixture, { value: true, key: 'required' }))
+	it('should tunnel value', () => expectFieldPropertyTunnelsToInput(fixture, { fieldValue: 4.999, inputValue: '5', key: 'value' }))
 	it('should proxy input event', () => expectInputEventTunnelsToField(fixture, 'input', '4', 4))
 	it('should proxy change event', async () => {
 		expectInputEventTunnelsToField(fixture, 'change', '4.467', 4.467)

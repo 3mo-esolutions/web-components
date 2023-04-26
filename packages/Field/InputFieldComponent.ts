@@ -1,4 +1,4 @@
-import { property, query, state } from '@a11d/lit'
+import { PropertyValues, property, query, state } from '@a11d/lit'
 import { FieldComponent } from './FieldComponent.js'
 
 /**
@@ -17,10 +17,24 @@ export abstract class InputFieldComponent<T> extends FieldComponent<T> {
 		return !!this.inputStringValue
 	}
 
+	protected override update(changedProperties: PropertyValues<this>) {
+		if (changedProperties.has('value')) {
+			this.inputStringValue = this.valueToInputValue(this.value)
+		}
+		super.update(changedProperties)
+	}
+
 	protected override handleInput(value?: T, e?: Event) {
 		this.inputStringValue = this.inputElement.value
 		super.handleInput(value, e)
 	}
+
+	protected override handleChange(value?: T, event?: Event) {
+		super.handleChange(value, event)
+		this.inputStringValue = this.valueToInputValue(value)
+	}
+
+	protected abstract valueToInputValue(value?: T): string | undefined
 
 	protected override handleFocus() {
 		super.handleFocus()

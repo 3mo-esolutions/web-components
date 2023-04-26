@@ -5,9 +5,10 @@ import { expectFieldPropertyTunnelsToInput, expectInputEventTunnelsToField } fro
 xdescribe('FieldSearch', () => {
 	const fixture = new ComponentTestFixture<FieldSearch>('mo-field-search')
 	it('should set the part attribute', () => expect(fixture.component.inputElement.getAttribute('part')).toBe('input'))
-	it('should tunnel disabled', () => expectFieldPropertyTunnelsToInput(fixture, true, 'disabled'))
-	it('should tunnel readonly', () => expectFieldPropertyTunnelsToInput(fixture, true, 'readonly', 'readOnly'))
-	it('should tunnel required', () => expectFieldPropertyTunnelsToInput(fixture, true, 'required'))
+	it('should tunnel disabled', () => expectFieldPropertyTunnelsToInput(fixture, { value: true, key: 'disabled' }))
+	it('should tunnel readonly', () => expectFieldPropertyTunnelsToInput(fixture, { value: true, fieldKey: 'readonly', inputKey: 'readOnly' }))
+	it('should tunnel required', () => expectFieldPropertyTunnelsToInput(fixture, { value: true, key: 'required' }))
+	it('should tunnel value', () => expectFieldPropertyTunnelsToInput(fixture, { value: 'Test', key: 'value' }))
 	it('should proxy input event', () => expectInputEventTunnelsToField(fixture, 'input', 'test'))
 	it('should proxy change event', () => expectInputEventTunnelsToField(fixture, 'change', 'test'))
 })

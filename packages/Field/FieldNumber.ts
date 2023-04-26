@@ -21,9 +21,8 @@ export class FieldNumber extends InputFieldComponent<number> {
 
 	protected readonly format = (value: number) => value.format()
 
-	protected override handleChange(v?: number, e?: Event) {
-		super.handleChange(v, e)
-		this.inputStringValue = this.value === undefined ? '' : this.format(this.value)
+	protected valueToInputValue(value?: number) {
+		return value === undefined ? '' : this.format(value)
 	}
 
 	protected override get inputTemplate() {

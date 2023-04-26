@@ -77,9 +77,8 @@ export class FieldText extends InputFieldComponent<string> {
 	@property() pattern?: string
 	@property() autoComplete?: FieldTextAutoComplete
 
-	protected override handleChange(v?: string, e?: Event) {
-		super.handleChange(v, e)
-		this.inputStringValue = this.value ?? ''
+	protected valueToInputValue(value?: string) {
+		return value ?? ''
 	}
 
 	protected override get inputTemplate() {
