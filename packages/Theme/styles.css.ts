@@ -12,6 +12,9 @@ RootCssInjector.inject(css`
 	html {
 		width: 100%;
 		height: 100%;
+		font-family: var(--mo-font-family);
+		background-color: var(--mo-color-background);
+		color: var(--mo-color-foreground);
 	}
 
 	body {
@@ -77,9 +80,5 @@ RootCssInjector.inject(css`
 		--mo-color-accent-gradient: linear-gradient(135deg, rgb(var(--mo-color-accent-gradient-1)), rgb(var(--mo-color-accent-gradient-2)), rgb(var(--mo-color-accent-gradient-3)));
 		--mo-color-accent-gradient-transparent: linear-gradient(135deg, rgba(var(--mo-color-accent-gradient-1), 0.25), rgba(var(--mo-color-accent-gradient-2), 0.25), rgba(var(--mo-color-accent-gradient-3), 0.25));
 		--mo-color-surface: rgb(var(--mo-color-surface-base));
-
-		font-family: var(--mo-font-family);
-		background-color: var(--mo-color-background);
-		color: var(--mo-color-foreground);
 	}
 `)
