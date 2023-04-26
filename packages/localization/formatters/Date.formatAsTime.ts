@@ -1,4 +1,4 @@
-import { extractDateTimeOptions } from './DateTime.format.js'
+import { extractDateTimeOptions } from './Date.format.js'
 import type { OptionsWithLanguage } from './OptionsWithLanguage.js'
 
 type DateFormatOptions = OptionsWithLanguage<Intl.DateTimeFormatOptions>
