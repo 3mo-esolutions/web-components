@@ -6,6 +6,13 @@ import '.'
 export default meta({
 	title: 'Core/Input/Field/Number',
 	component: 'mo-field-number',
+	args: {
+		label: 'Label',
+		required: false,
+		disabled: false,
+		readonly: false,
+		value: 0,
+	},
 	parameters: {
 		docs: {
 			description: {
@@ -16,23 +23,9 @@ export default meta({
 })
 
 export const Number = story({
-	render: () => html`<mo-field-number label='Number'></mo-field-number>`
-})
-
-export const Dense = story({
-	render: () => html`<mo-field-number dense label='Number'></mo-field-number>`
-})
-
-export const Required = story({
-	render: () => html`<mo-field-number required label='Number'></mo-field-number>`
-})
-
-export const Readonly = story({
-	render: () => html`<mo-field-number readonly label='Number'></mo-field-number>`
-})
-
-export const Disabled = story({
-	render: () => html`<mo-field-number disabled label='Number'></mo-field-number>`
+	render: ({ label, required, disabled, readonly, value }) => html`
+		<mo-field-number label=${label} ?required=${required} ?disabled=${disabled} ?readonly=${readonly} value=${value}></mo-field-number>
+	`
 })
 
 export const MinMaxStep = story({

@@ -7,6 +7,13 @@ import './index.js'
 export default meta({
 	title: 'Core/Input/Field/Currency',
 	component: 'mo-field-currency',
+	args: {
+		label: 'Label',
+		required: false,
+		disabled: false,
+		readonly: false,
+		value: 'test@3mo.de',
+	},
 	parameters: {
 		docs: {
 			description: {
@@ -17,19 +24,9 @@ export default meta({
 })
 
 export const Currency = story({
-	render: () => html`<mo-field-currency label='Currency'></mo-field-currency>`
-})
-
-export const Required = story({
-	render: () => html`<mo-field-currency required label='Currency'></mo-field-currency>`
-})
-
-export const Disabled = story({
-	render: () => html`<mo-field-currency disabled label='Currency'></mo-field-currency>`
-})
-
-export const Readonly = story({
-	render: () => html`<mo-field-currency readonly label='Currency'></mo-field-currency>`
+	render: ({ label, required, disabled, readonly, value }) => html`
+		<mo-field-currency label=${label} ?required=${required} ?disabled=${disabled} ?readonly=${readonly} value=${value}></mo-field-currency>
+	`
 })
 
 export const CurrencySign = story({
@@ -38,8 +35,4 @@ export const CurrencySign = story({
 
 export const CurrencySymbol = story({
 	render: () => html`<mo-field-currency label='Currency' currencySymbol='₿'></mo-field-currency>`
-})
-
-export const Dense = story({
-	render: () => html`<mo-field-currency dense label='Currency'></mo-field-currency>`
 })

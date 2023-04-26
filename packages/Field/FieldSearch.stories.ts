@@ -6,6 +6,13 @@ import './index.js'
 export default meta({
 	title: 'Core/Input/Field/Search',
 	component: 'mo-field-search',
+	args: {
+		label: 'Label',
+		required: false,
+		disabled: false,
+		readonly: false,
+		value: 'Value',
+	},
 	parameters: {
 		docs: {
 			description: {
@@ -16,24 +23,14 @@ export default meta({
 })
 
 export const Search = story({
-	render: () => html`<mo-field-search label='Search'></mo-field-search>`
-})
-
-export const Required = story({
-	render: () => html`<mo-field-search required label='Search'></mo-field-search>`
-})
-
-export const Disabled = story({
-	render: () => html`<mo-field-search disabled label='Search'></mo-field-search>`
-})
-
-export const Readonly = story({
-	render: () => html`<mo-field-search readonly label='Search'></mo-field-search>`
+	render: ({ label, value, required, disabled, readonly }) => html`
+		<mo-field-search label=${label} value=${value} ?required=${required} ?disabled=${disabled} ?readonly=${readonly}></mo-field-search>
+	`
 })
 
 export const EndSlot = story({
-	render: () => html`
-		<mo-field-search label='Search'>
+	render: ({ label, required, disabled, readonly }) => html`
+		<mo-field-search label=${label} ?required=${required} ?disabled=${disabled} ?readonly=${readonly}>
 			<mo-icon-button slot='end' icon='settings'></mo-icon-button>
 		</mo-field-search>
 	`

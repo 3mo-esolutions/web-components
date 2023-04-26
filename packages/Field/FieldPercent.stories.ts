@@ -6,6 +6,13 @@ import './index.js'
 export default meta({
 	title: 'Core/Input/Field/Percent',
 	component: 'mo-field-percent',
+	args: {
+		label: 'Label',
+		required: false,
+		disabled: false,
+		readonly: false,
+		value: 10,
+	},
 	parameters: {
 		docs: {
 			description: {
@@ -16,21 +23,7 @@ export default meta({
 })
 
 export const Percent = story({
-	render: () => html`<mo-field-percent label='Percent'></mo-field-percent>`
-})
-
-export const Dense = story({
-	render: () => html`<mo-field-percent dense label='Percent'></mo-field-percent>`
-})
-
-export const Readonly = story({
-	render: () => html`<mo-field-percent readonly label='Percent'></mo-field-percent>`
-})
-
-export const Required = story({
-	render: () => html`<mo-field-percent required label='Percent'></mo-field-percent>`
-})
-
-export const Disabled = story({
-	render: () => html`<mo-field-percent disabled label='Percent'></mo-field-percent>`
+	render: ({ label, required, disabled, readonly, value }) => html`
+		<mo-field-percent label=${label} ?required=${required} ?disabled=${disabled} ?readonly=${readonly} value=${value}></mo-field-percent>
+	`
 })
