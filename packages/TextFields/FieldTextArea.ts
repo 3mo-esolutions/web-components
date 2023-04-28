@@ -1,5 +1,5 @@
 import { component, css, html, ifDefined, live, nothing, property, style } from '@a11d/lit'
-import { InputFieldComponent } from './InputFieldComponent.js'
+import { InputFieldComponent } from '@3mo/field'
 
 /**
  * @element mo-field-text-area

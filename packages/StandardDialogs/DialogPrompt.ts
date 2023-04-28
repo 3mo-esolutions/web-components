@@ -1,5 +1,5 @@
 import { state, component, html, ifDefined, query, style } from '@a11d/lit'
-import { FieldText, FieldTextArea } from '@3mo/field'
+import { FieldText, FieldTextArea } from '@3mo/text-fields'
 import { DialogComponent } from '@a11d/lit-application'
 import { Localizer, LanguageCode } from '@3mo/localization'
 import { BaseDialogParameters } from './BaseDialogParameters.js'

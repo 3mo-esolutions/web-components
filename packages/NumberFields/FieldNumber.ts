@@ -1,5 +1,5 @@
 import { component, html, ifDefined, live, property } from '@a11d/lit'
-import { InputFieldComponent } from './InputFieldComponent.js'
+import { InputFieldComponent } from '@3mo/field'
 import '@3mo/localization'
 
 /**

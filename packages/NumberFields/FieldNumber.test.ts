@@ -1,6 +1,6 @@
 import { ComponentTestFixture } from '@a11d/lit/dist/test/index.js'
+import { expectFieldPropertyTunnelsToInput, expectInputEventTunnelsToField } from '@3mo/field'
 import { FieldNumber } from './FieldNumber.js'
-import { expectFieldPropertyTunnelsToInput, expectInputEventTunnelsToField } from './InputFieldComponent.test.js'
 
 describe('FieldNumber', () => {
 	const fixture = new ComponentTestFixture<FieldNumber>('mo-field-number')
@@ -10,7 +10,5 @@ describe('FieldNumber', () => {
 	it('should tunnel required', () => expectFieldPropertyTunnelsToInput(fixture, { value: true, key: 'required' }))
 	it('should tunnel value', () => expectFieldPropertyTunnelsToInput(fixture, { fieldValue: 4.999, inputValue: '4.999', key: 'value' }))
 	it('should proxy input event', () => expectInputEventTunnelsToField(fixture, 'input', '4', 4))
-	it('should proxy change event', () => {
-		expectInputEventTunnelsToField(fixture, 'change', '5', 5)
-	})
+	it('should proxy change event', () => expectInputEventTunnelsToField(fixture, 'change', '5', 5))
 })

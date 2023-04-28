@@ -1,5 +1,5 @@
 import { component, html, live, property } from '@a11d/lit'
-import { InputFieldComponent } from './InputFieldComponent.js'
+import { InputFieldComponent } from '@3mo/field'
 
 /**
  * @element mo-field-email

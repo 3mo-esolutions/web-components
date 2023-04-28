@@ -1,9 +1,9 @@
 import { ComponentTestFixture } from '@a11d/lit/dist/test/index.js'
-import { FieldSearch } from './FieldSearch.js'
-import { expectFieldPropertyTunnelsToInput, expectInputEventTunnelsToField } from './InputFieldComponent.test.js'
+import { FieldPassword } from './FieldPassword.js'
+import { expectFieldPropertyTunnelsToInput, expectInputEventTunnelsToField } from '@3mo/field'
 
-xdescribe('FieldSearch', () => {
-	const fixture = new ComponentTestFixture<FieldSearch>('mo-field-search')
+describe('FieldPassword', () => {
+	const fixture = new ComponentTestFixture<FieldPassword>('mo-field-password')
 	it('should set the part attribute', () => expect(fixture.component.inputElement.getAttribute('part')).toBe('input'))
 	it('should tunnel disabled', () => expectFieldPropertyTunnelsToInput(fixture, { value: true, key: 'disabled' }))
 	it('should tunnel readonly', () => expectFieldPropertyTunnelsToInput(fixture, { value: true, fieldKey: 'readonly', inputKey: 'readOnly' }))

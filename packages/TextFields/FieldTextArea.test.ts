@@ -1,6 +1,6 @@
 import { ComponentTestFixture } from '@a11d/lit/dist/test/index.js'
 import { FieldTextArea } from './FieldTextArea.js'
-import { expectFieldPropertyTunnelsToInput, expectInputEventTunnelsToField } from './InputFieldComponent.test.js'
+import { expectFieldPropertyTunnelsToInput, expectInputEventTunnelsToField } from '@3mo/field'
 
 describe('FieldTextArea', () => {
 	const fixture = new ComponentTestFixture<FieldTextArea>('mo-field-text-area')

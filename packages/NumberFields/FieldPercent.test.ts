@@ -1,6 +1,6 @@
 import { ComponentTestFixture } from '@a11d/lit/dist/test/index.js'
+import { expectFieldPropertyTunnelsToInput, expectInputEventTunnelsToField } from '@3mo/field'
 import { FieldPercent } from './FieldPercent.js'
-import { expectFieldPropertyTunnelsToInput, expectInputEventTunnelsToField } from './InputFieldComponent.test.js'
 
 describe('FieldPercent', () => {
 	const fixture = new ComponentTestFixture<FieldPercent>('mo-field-percent')

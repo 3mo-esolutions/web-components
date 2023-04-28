@@ -6,7 +6,7 @@ import { FieldText } from './FieldText.js'
  */
 @component('mo-field-search')
 export class FieldSearch extends FieldText {
-	override readonly inputMode = 'search'
+	override readonly inputType = 'search'
 
 	protected override get startSlotTemplate() {
 		return html`

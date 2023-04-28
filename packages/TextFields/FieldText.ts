@@ -1,5 +1,5 @@
 import { component, html, ifDefined, live, nothing, property, style } from '@a11d/lit'
-import { InputFieldComponent } from './InputFieldComponent.js'
+import { InputFieldComponent } from '@3mo/field'
 
 export type FieldTextAutoComplete =
 	| 'on'
@@ -70,6 +70,7 @@ export type FieldTextAutoComplete =
 @component('mo-field-text')
 export class FieldText extends InputFieldComponent<string> {
 	protected readonly type: string = 'text'
+	protected readonly inputType: string = 'text'
 
 	@property() value?: string
 	@property({ type: Number }) minLength?: number
@@ -85,7 +86,7 @@ export class FieldText extends InputFieldComponent<string> {
 		return html`
 			<input
 				part='input'
-				inputmode='text'
+				inputmode=${this.inputType}
 				type=${this.type}
 				?readonly=${this.readonly}
 				?required=${this.required}

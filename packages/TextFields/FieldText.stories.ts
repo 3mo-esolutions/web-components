@@ -1,7 +1,7 @@
 import { story, meta } from '../../.storybook/story.js'
 import { html } from '@a11d/lit'
 import p from './package.json'
-import '.'
+import './index.js'
 
 export default meta({
 	title: 'Core/Input/Field/Text',

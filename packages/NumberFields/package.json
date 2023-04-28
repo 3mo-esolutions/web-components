@@ -1,7 +1,7 @@
 {
-	"name": "@3mo/field",
-	"version": "0.1.1",
-	"description": "A set of field web components.",
+	"name": "@3mo/number-fields",
+	"version": "0.0.1",
+	"description": "A set of number field web components.",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/3mo-esolutions/web-components"
@@ -11,7 +11,11 @@
 		"web-component",
 		"material",
 		"input",
-		"field"
+		"field",
+		"number",
+		"mo-field-number",
+		"mo-field-percent",
+		"mo-field-currency"
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
@@ -25,8 +29,10 @@
 	"dependencies": {
 		"@a11d/lit": "x",
 		"tslib": "x",
-		"@3mo/theme": "x",
 		"@3mo/focus-controller": "x",
-		"@3mo/slot-controller": "x"
+		"@3mo/theme": "x",
+		"@3mo/localization": "x",
+		"@3mo/slot-controller": "x",
+		"@3mo/field": "x"
 	}
 }
