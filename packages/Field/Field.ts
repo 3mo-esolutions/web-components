@@ -1,9 +1,7 @@
 import { css, html, property, Component, component, nothing } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
-import { FocusController } from '@3mo/focus-controller'
 import { ThemeController } from '@3mo/theme'
 
-// TODO: No height to migrate text-area to this component
 // TODO: Always focus when clicking on everything
 
 /**
@@ -30,13 +28,10 @@ export class Field extends Component {
 	@property({ type: Boolean, reflect: true }) dense = false
 	@property({ type: Boolean, reflect: true }) populated = false
 	@property({ type: Boolean, reflect: true }) invalid = false
-	@property({ type: Boolean, reflect: true }) protected active = false
+	@property({ type: Boolean, reflect: true }) active = false
 
 	readonly slotController = new SlotController(this)
 	readonly themeController = new ThemeController(this)
-	readonly focusController = new FocusController(this, {
-		handleChange: focused => this.active = focused,
-	})
 
 	static override get styles() {
 		return css`

@@ -29,11 +29,15 @@ export abstract class FieldComponent<T> extends Component {
 	@property({ type: Boolean }) required = false
 	@property({ type: Boolean }) protected invalid = false
 
+	@state() private focused = false
 	@state() protected inputValue?: T
 
 	protected readonly slotController = new SlotController(this)
 	protected readonly focusController = new FocusController(this, {
-		handleChange: focused => focused ? this.handleFocus() : this.handleBlur(),
+		handleChange: focused => {
+			this.focused = focused
+			focused ? this.handleFocus() : this.handleBlur()
+		}
 	})
 
 	protected override firstUpdated() {
@@ -62,6 +66,10 @@ export abstract class FieldComponent<T> extends Component {
 		return this.inputValue !== undefined
 	}
 
+	protected get isActive() {
+		return this.isPopulated || this.focused
+	}
+
 	protected get isDense() {
 		return false
 	}
@@ -75,6 +83,7 @@ export abstract class FieldComponent<T> extends Component {
 				?required=${this.required}
 				?dense=${this.isDense}
 				?invalid=${this.invalid}
+				?active=${this.isActive}
 			>
 				${this.startSlotTemplate}
 				${this.inputTemplate}

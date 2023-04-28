@@ -23,6 +23,10 @@ export abstract class FieldDateBase<T> extends InputFieldComponent<T> {
 		this.inputStringValue = this.valueToInputValue(value)
 	}
 
+	protected override get isActive() {
+		return super.isActive || this.open
+	}
+
 	static override get styles() {
 		return css`
 			mo-popover {
@@ -64,13 +68,13 @@ export abstract class FieldDateBase<T> extends InputFieldComponent<T> {
 			${this.hideDatePicker ? nothing : html`
 				<mo-icon-button tabindex='-1' dense slot='end'
 					icon=${this.calendarIconButtonIcon}
-					${style({ color: this.open ? 'var(--mo-color-accent)' : 'var(--mo-color-gray)' })}
+					${style({ color: this.isActive ? 'var(--mo-color-accent)' : 'var(--mo-color-gray)' })}
 					@click=${() => this.open = !this.open}>
 				</mo-icon-button>
 			`}
 
 			${this.hideDatePicker ? nothing : html`
-				<mo-popover tabindex='-1' slot='end'
+				<mo-popover tabindex='-1' slot='end' openOnFocus
 					.anchor=${this}
 					?open=${this.open}
 					@openChange=${(e: CustomEvent<boolean>) => this.open = e.detail}
