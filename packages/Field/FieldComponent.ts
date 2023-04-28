@@ -67,7 +67,7 @@ export abstract class FieldComponent<T> extends Component {
 	}
 
 	protected get isActive() {
-		return this.isPopulated || this.focused
+		return this.focused
 	}
 
 	protected get isDense() {
