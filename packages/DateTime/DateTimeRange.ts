@@ -41,7 +41,7 @@ export class DateTimeRange {
 		return !this.start && !this.end
 	}
 
-	contains(date: Date) {
+	includes(date: Date) {
 		return (!this.start || date >= this.start) && (!this.end || date <= this.end)
 	}
 

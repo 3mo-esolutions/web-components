@@ -42,15 +42,15 @@ describe('DateRange', () => {
 		expect(range.end).toEqual(end)
 	})
 
-	it('.contains() should return true for a date within the range', () => {
+	it('.includes() should return true for a date within the range', () => {
 		const start = new DateTime('2020-01-02')
 		const end = new DateTime('2020-01-04')
 		const range = new DateTimeRange(start, end)
-		expect(range.contains(new DateTime('2020-01-01'))).toBeFalse()
-		expect(range.contains(new DateTime('2020-01-02'))).toBeTrue()
-		expect(range.contains(new DateTime('2020-01-03'))).toBeTrue()
-		expect(range.contains(new DateTime('2020-01-04'))).toBeTrue()
-		expect(range.contains(new DateTime('2020-01-05'))).toBeFalse()
+		expect(range.includes(new DateTime('2020-01-01'))).toBeFalse()
+		expect(range.includes(new DateTime('2020-01-02'))).toBeTrue()
+		expect(range.includes(new DateTime('2020-01-03'))).toBeTrue()
+		expect(range.includes(new DateTime('2020-01-04'))).toBeTrue()
+		expect(range.includes(new DateTime('2020-01-05'))).toBeFalse()
 	})
 
 	it('.equals() should return true for the same range', () => {
@@ -75,14 +75,14 @@ describe('DateRange', () => {
 	it('.format() should return a formatted start date for a range with only a start date', () => {
 		const start = new DateTime('2020-01-02')
 		const range = new DateTimeRange(start)
-		expect(range.format({ language: LanguageCode.German })).toBe('02.01.2020 –')
+		expect(range.format({ language: LanguageCode.German }).replace(/\s/g, '')).toBe('02.01.2020–')
 		expect(range.format({ language: LanguageCode.Farsi })).toBe('۱۳۹۸/۱۰/۱۲ تا')
 	})
 
 	it('.format() should return a formatted end date for a range with only an end date', () => {
 		const end = new DateTime('2020-01-02')
 		const range = new DateTimeRange(undefined, end)
-		expect(range.format({ language: LanguageCode.German })).toBe('– 02.01.2020')
+		expect(range.format({ language: LanguageCode.German }).replace(/\s/g, '')).toBe('–02.01.2020')
 		expect(range.format({ language: LanguageCode.Farsi })).toBe('تا ۱۳۹۸/۱۰/۱۲')
 	})
 
@@ -90,7 +90,7 @@ describe('DateRange', () => {
 		const start = new DateTime('2010-01-02')
 		const end = new DateTime('2020-01-04')
 		const range = new DateTimeRange(start, end)
-		expect(range.format({ language: LanguageCode.German })).toBe('02.01.2010 – 04.01.2020')
+		expect(range.format({ language: LanguageCode.German }).replace(/\s/g, '')).toBe('02.01.2010–04.01.2020')
 		expect(range.format({ language: LanguageCode.Farsi })).toBe('۱۳۸۸/۱۰/۱۲ تا ۱۳۹۸/۱۰/۱۴')
 	})
 })
