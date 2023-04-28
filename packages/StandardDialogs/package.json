@@ -1,0 +1,34 @@
+{
+	"name": "@3mo/standard-dialogs",
+	"version": "0.0.1",
+	"description": "A package containing standard dialogs for web applications.",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/3mo-esolutions/web-components"
+	},
+	"keywords": [
+		"lit",
+		"web-component",
+		"splitter"
+	],
+	"author": "3MO GmbH",
+	"license": "MIT",
+	"homepage": "https://www.3mo.de",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"dependencies": {
+		"@a11d/lit": "x",
+		"@a11d/lit-application": "x",
+		"@a11d/local-storage": "x",
+		"tslib": "x",
+		"csstype": "x",
+		"@3mo/flex": "x",
+		"@3mo/dialog": "x",
+		"@3mo/localization": "x",
+		"@3mo/field": "x"
+	}
+}
