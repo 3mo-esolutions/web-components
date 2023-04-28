@@ -29,6 +29,8 @@ export abstract class FieldDateBase<T> extends InputFieldComponent<T> {
 
 	static override get styles() {
 		return css`
+			${super.styles}
+
 			mo-popover {
 				background: var(--mo-color-background);
 				box-shadow: var(--mo-shadow);

@@ -11,7 +11,8 @@ export default meta({
 		required: false,
 		disabled: false,
 		readonly: false,
-		value: 'Value',
+		value: 'Hey there!',
+		rows: 4,
 	},
 	parameters: {
 		docs: {
@@ -29,10 +30,10 @@ export const TextArea = story({
 })
 
 export const StartAndEndSlots = story({
-	render: ({ required, disabled, dense, readonly, value }) => html`
-		<mo-field-text-area label='Regex' ?required=${required} ?disabled=${disabled} ?readonly=${readonly} ?dense=${dense} value=${value}>
-			<span slot='start'>/</span>
-			<span slot='end'>/gm</span>
+	render: ({ required, disabled, dense, readonly, value, rows }) => html`
+		<mo-field-text-area label='Message' ?required=${required} ?disabled=${disabled} ?readonly=${readonly} ?dense=${dense} value=${value} rows=${rows}>
+			<mo-icon-button dense slot='start' icon='sentiment_satisfied_alt'></mo-icon-button>
+			<mo-icon-button dense slot='end' icon='send'></mo-icon-button>
 		</mo-field-text-area>
 	`
 })

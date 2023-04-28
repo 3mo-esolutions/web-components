@@ -9,12 +9,14 @@ import { InputFieldComponent } from '@3mo/field'
  * @attr maxLength
  * @attr pattern
  * @attr autoComplete
+ * @attr rows
  */
 @component('mo-field-text-area')
 export class FieldTextArea extends InputFieldComponent<string> {
 	@property() value?: string
 	@property({ type: Number }) minLength?: number
 	@property({ type: Number }) maxLength?: number
+	@property({ type: Number }) rows?: number
 
 	protected valueToInputValue(value?: string) {
 		return value ?? ''
@@ -22,6 +24,8 @@ export class FieldTextArea extends InputFieldComponent<string> {
 
 	static override get styles() {
 		return css`
+			${super.styles}
+
 			mo-field {
 				height: auto;
 				transition: none;
@@ -51,6 +55,7 @@ export class FieldTextArea extends InputFieldComponent<string> {
 				.value=${live(this.inputStringValue || '')}
 				minlength=${ifDefined(this.minLength)}
 				maxlength=${ifDefined(this.maxLength)}
+				rows=${ifDefined(this.rows)}
 				@input=${(e: Event) => this.handleInput(this.inputElement.value, e)}
 				@change=${(e: Event) => this.handleChange(this.inputElement.value, e)}
 			></textarea>

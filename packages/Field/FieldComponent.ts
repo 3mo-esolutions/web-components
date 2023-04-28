@@ -1,4 +1,4 @@
-import { html, property, event, nothing, Component, HTMLTemplateResult, state } from '@a11d/lit'
+import { html, property, event, nothing, Component, HTMLTemplateResult, state, css } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
 import { FocusController } from '@3mo/focus-controller'
 
@@ -72,6 +72,18 @@ export abstract class FieldComponent<T> extends Component {
 
 	protected get isDense() {
 		return false
+	}
+
+	static override get styles() {
+		return css`
+			:host {
+				display: block;
+			}
+
+			mo-field {
+				width: 100%;
+			}
+		`
 	}
 
 	protected override get template() {
