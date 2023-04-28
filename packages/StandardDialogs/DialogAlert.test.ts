@@ -3,7 +3,7 @@ import { ComponentTestFixture } from '@a11d/lit/dist/test/ComponentTestFixture.j
 import { DialogAlert } from './DialogAlert.js'
 
 describe('DialogAlert', () => {
-	const fixture = new ComponentTestFixture<DialogAlert>('mo-dialog-alert')
+	const fixture = new ComponentTestFixture(() => new DialogAlert(parameters))
 
 	const parameters: DialogAlert['parameters'] = {
 		heading: 'Heading',

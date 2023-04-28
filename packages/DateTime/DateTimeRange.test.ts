@@ -1,5 +1,6 @@
 import { LanguageCode } from '@3mo/localization'
 import { DateTimeRange } from './DateTimeRange.js'
+import { DateTime } from './DateTime.js'
 
 describe('DateRange', () => {
 	it('should construct without any dates', () => {

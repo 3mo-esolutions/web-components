@@ -3,7 +3,7 @@ import { ComponentTestFixture } from '@a11d/lit/dist/test/index.js'
 import { DialogAcknowledge } from './DialogAcknowledge.js'
 
 describe('DialogAcknowledge', () => {
-	const fixture = new ComponentTestFixture<DialogAcknowledge>('mo-dialog-acknowledge')
+	const fixture = new ComponentTestFixture(() => new DialogAcknowledge(parameters))
 
 	const parameters: DialogAcknowledge['parameters'] = {
 		heading: 'Heading',
