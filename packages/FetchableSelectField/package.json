@@ -1,0 +1,32 @@
+{
+	"name": "@3mo/fetchable-select-field",
+	"version": "0.0.1",
+	"description": "A select field with can fetch its options",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/3mo-esolutions/web-components"
+	},
+	"keywords": [
+		"lit",
+		"web-components",
+		"material",
+		"select",
+		"select-field",
+		"fetchable",
+		"fetchable-select-field"
+	],
+	"author": "3MO GmbH",
+	"license": "MIT",
+	"homepage": "https://www.3mo.de",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"dependencies": {
+		"tslib": "x",
+		"@a11d/lit": "x",
+		"@3mo/select-field": "x"
+	}
+}
