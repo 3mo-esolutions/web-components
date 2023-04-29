@@ -1,0 +1,32 @@
+{
+	"name": "@3mo/fetchable-dialog",
+	"version": "0.0.1",
+	"description": "An extension of @3mo/loading-dialog that fetches an entity.",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/3mo-esolutions/web-components"
+	},
+	"keywords": [
+		"lit",
+		"web-component",
+		"material",
+		"dialog",
+		"fetchable-dialog"
+	],
+	"author": "3MO GmbH",
+	"license": "MIT",
+	"homepage": "https://www.3mo.de",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"dependencies": {
+		"@a11d/lit": "x",
+		"tslib": "x",
+		"@3mo/fab": "x",
+		"@3mo/loading-dialog": "x",
+		"@3mo/fetcher-controller": "x"
+	}
+}
