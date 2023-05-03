@@ -53,29 +53,34 @@ export const Fixed = story({
 const keyboardShortcut = (shortcut: string) => html`<span style='font-size: 13px; color: darkgray'>${shortcut}</span>`
 
 const items = html`
-					<mo-list-item>
-						<mo-icon style='opacity: 0.66' icon='content_cut'></mo-icon>
-						<span style='flex: 1'>Cut</span>
-						${keyboardShortcut('Ctrl + X')}
-					</mo-list-item>
-					<mo-list-item>
-						<mo-icon style='opacity: 0.66' icon='content_copy'></mo-icon>
-						<span style='flex: 1'>Copy</span>
-						${keyboardShortcut('Ctrl + C')}
-					</mo-list-item>
-					<mo-list-item>
-						<mo-icon style='opacity: 0.66' icon='content_paste' ${tooltip('Paste')}></mo-icon>
-						<span style='flex: 1'>Paste</span>
-						${keyboardShortcut('Ctrl + V')}
-					</mo-list-item>
-					<div role='separator' style='width: 100%; height: 1px; background: darkgray; opacity: 0.3'></div>
-					<mo-list-item>Dictionary</mo-list-item>
-					<mo-list-item>Thesaurus</mo-list-item>
-					<mo-list-submenu>
-						More
-						<mo-list-item slot='detail'>Open in New</mo-list-item>
-						<mo-list-item slot='detail'>Report Issue</mo-list-item>
-					</mo-list-submenu>
+	<mo-list-item>
+		<mo-icon style='opacity: 0.66' icon='content_cut'></mo-icon>
+		<span style='flex: 1'>Cut</span>
+		${keyboardShortcut('Ctrl + X')}
+	</mo-list-item>
+	<mo-list-item>
+		<mo-icon style='opacity: 0.66' icon='content_copy'></mo-icon>
+		<span style='flex: 1'>Copy</span>
+		${keyboardShortcut('Ctrl + C')}
+	</mo-list-item>
+	<mo-list-item>
+		<mo-icon style='opacity: 0.66' icon='content_paste' ${tooltip('Paste')}></mo-icon>
+		<span style='flex: 1'>Paste</span>
+		${keyboardShortcut('Ctrl + V')}
+	</mo-list-item>
+	<div role='separator' style='width: 100%; height: 1px; background: darkgray; opacity: 0.3'></div>
+	<mo-list-item>Dictionary</mo-list-item>
+	<mo-list-item>Thesaurus</mo-list-item>
+	<mo-list-submenu>
+		More
+		<mo-list-item slot='detail'>Open in New</mo-list-item>
+		<mo-list-item slot='detail'>Report Issue</mo-list-item>
+		<mo-list-submenu slot='detail'>
+			More
+			<mo-list-item slot='detail'>Open in New</mo-list-item>
+			<mo-list-item slot='detail'>Report Issue</mo-list-item>
+		</mo-list-submenu>
+	</mo-list-submenu>
 `
 
 class ButtonWithMenuStory extends Component {

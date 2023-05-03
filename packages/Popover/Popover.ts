@@ -23,9 +23,7 @@ export class Popover extends Component {
 
 	@property({ type: Object }) anchor!: HTMLElement
 	@property({ reflect: true }) placement = PopoverPlacement.Bottom
-	@property({ type: Boolean, reflect: true, updated(this: Popover) {
-		this.popoverController.updatePosition()
-	} }) open = false
+	@property({ type: Boolean, reflect: true }) open = false
 	@property({ type: Boolean, reflect: true }) managed = false
 	@property({ type: Boolean }) openOnHover?: boolean
 	@property({ type: Boolean }) openOnFocus?: boolean

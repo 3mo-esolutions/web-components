@@ -1,4 +1,4 @@
-import { Component, ReactiveElement, component, html, property } from '@a11d/lit'
+import { Component, ReactiveElement, component, css, html, property } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
 
 export const enum PopoverHostedPlacement {
@@ -15,40 +15,56 @@ export const enum PopoverHostedAlignment {
 }
 
 /**
+ * @element mo-popover-host
+ *
  * @attr alignment
+ * @attr placement
+ *
+ * @slot - The content to be anchored
+ * @slot popover - The popover to be anchored
  */
 @component('mo-popover-host')
 export class PopoverHost extends Component {
-	protected static readonly flowByPosition = {
-		[PopoverHostedPlacement.InlineEnd]: 'row',
-		[PopoverHostedPlacement.InlineStart]: 'row-reverse',
-		[PopoverHostedPlacement.BlockEnd]: 'column',
-		[PopoverHostedPlacement.BlockStart]: 'column-reverse',
-	}
-
-	protected static readonly alignByAlignment = {
-		[PopoverHostedAlignment.Start]: 'flex-start',
-		[PopoverHostedAlignment.Center]: 'center',
-		[PopoverHostedAlignment.End]: 'flex-end',
-	}
-
-	@property() placement = PopoverHostedPlacement.InlineEnd
-	@property() alignment = PopoverHostedAlignment.Start
+	@property({ reflect: true }) placement = PopoverHostedPlacement.InlineEnd
+	@property({ reflect: true }) alignment = PopoverHostedAlignment.Start
 
 	protected readonly slotController = new SlotController(this, () => {
-		this.slotController.getAssignedElements('popover').forEach(x => (x as ReactiveElement & { anchor: HTMLElement }).anchor = this)
+		this.slotController.getAssignedElements('popover')
+			.forEach(x => {
+				const popover = x as ReactiveElement & {
+					anchor: HTMLElement
+					managed: boolean
+				}
+				popover.anchor = this
+				popover.managed = true
+			})
 	})
+
+	static override get styles() {
+		return css`
+			:host {
+				display: inline-flex;
+				position: relative;
+			}
+
+			:host([placement=blockStart]) { flex-flow: column-reverse; }
+			:host([placement=blockEnd]) { flex-flow: column; }
+			:host([placement=inlineStart]) { flex-flow: row-reverse; }
+			:host([placement=inlineEnd]) { flex-flow: row; }
+
+			:host([alignment=start]) { align-items: flex-start; }
+			:host([alignment=center]) { align-items: center; }
+			:host([alignment=end]) { align-items: flex-end; }
+
+			/* FIX: Merge this API with the popover managed logic */
+			:host([alignment=start]) ::slotted([slot=popover]) { transform: translateX(0%); }
+			:host([alignment=center]) ::slotted([slot=popover]) { transform: translateX(-50%); }
+			:host([alignment=end]) ::slotted([slot=popover]) { transform: translateX(-100%); }
+		`
+	}
 
 	protected override get template() {
 		return html`
-			<style>
-				:host \{
-					display: inline-flex;
-					position: relative;
-					flex-flow: ${PopoverHost.flowByPosition[this.placement] || 'unset'};
-					align-items: ${PopoverHost.alignByAlignment[this.alignment] || 'unset'};
-				\}
-			</style>
 			<slot></slot>
 			<slot name='popover'></slot>
 		`

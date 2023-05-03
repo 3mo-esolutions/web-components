@@ -4,7 +4,6 @@ import { FocusController } from '@3mo/focus-controller'
 import { ResizeController } from '@3mo/resize-observer'
 import { PopoverPlacement } from './PopoverPlacement.js'
 import { Popover } from './Popover.js'
-import { PopoverHost, PopoverHostedAlignment, PopoverHostedPlacement } from './PopoverHost.js'
 
 function targetAnchor(this: Popover) {
 	return this.anchor
@@ -33,6 +32,12 @@ export class PopoverController extends Controller {
 		callback: () => this.update()
 	})
 
+	override hostUpdated() {
+		this.update()
+	}
+
+	protected readonly slotChangeHandler = new EventListenerController(this.host, 'slotchange', () => this.updatePosition())
+
 	private update() {
 		this.openIfApplicable()
 		this.updatePosition()
@@ -58,19 +63,6 @@ export class PopoverController extends Controller {
 	}
 
 	updatePosition() {
-		if (this.host.anchor instanceof PopoverHost) {
-			this.host.style.position = 'absolute'
-			this.host.style.transform = `translate${
-				[PopoverHostedPlacement.BlockEnd, PopoverHostedPlacement.BlockStart].includes(this.host.anchor.placement) ? 'X' : 'Y'}(${
-					{
-						[PopoverHostedAlignment.Start]: '0%',
-						[PopoverHostedAlignment.Center]: '-50%',
-						[PopoverHostedAlignment.End]: '-100%',
-					}[this.host.anchor.alignment]
-				})`
-			return
-		}
-
 		if (this.host.managed) {
 			this.host.style.position = 'absolute'
 			return
