@@ -37,7 +37,7 @@ export class Menu extends Component {
 
 	@property({ type: Object }) anchor!: HTMLElement
 	@property() placement?: MenuPlacement
-	@property({ type: Boolean }) open?: boolean
+	@property({ type: Boolean, reflect: true }) open?: boolean
 	@property() opener?: string
 	@property() selectionMode?: SelectableList['selectionMode']
 	@property({ type: Object }) value?: SelectableList['value']
