@@ -97,6 +97,7 @@ export class FieldSelect<T> extends InputFieldComponent<Value> {
 				transition: 0.2s ease-in-out;
 				height: 36px;
 				opacity: 1;
+				min-width: var(--mo-field-width);
 			}
 
 			mo-option[data-search-no-match], ::slotted(mo-option[data-search-no-match]) {
@@ -123,6 +124,7 @@ export class FieldSelect<T> extends InputFieldComponent<Value> {
 	}
 
 	protected override get endSlotTemplate() {
+		this.style.setProperty('--mo-field-width', this.offsetWidth + 'px')
 		return html`
 			${super.endSlotTemplate}
 
