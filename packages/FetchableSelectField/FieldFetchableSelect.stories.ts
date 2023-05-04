@@ -1,6 +1,5 @@
 import { story, meta } from '../../.storybook/story.js'
 import { html } from '@a11d/lit'
-import { countries } from '../SelectField/FieldSelect.stories.js'
 import p from './package.json'
 import './index.js'
 
