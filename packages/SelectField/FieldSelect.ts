@@ -1,4 +1,4 @@
-import { html, property, css, event, component, style, live, PropertyValues, query, nothing } from '@a11d/lit'
+import { html, property, css, event, component, live, PropertyValues, query, nothing } from '@a11d/lit'
 import { InputFieldComponent } from '@3mo/field'
 import { Menu } from '@3mo/menu'
 import { Option } from './Option.js'
@@ -64,17 +64,19 @@ export class FieldSelect<T> extends InputFieldComponent<Value> {
 		return css`
 			${super.styles}
 
-			input:hover {
+			input {
 				cursor: pointer;
 			}
 
-			mo-icon-button[part=dropDownIcon] {
-				display: flex;
-				align-items: center;
+			mo-icon[part=dropDownIcon] {
+				font-size: 20px;
 				color: var(--mo-color-gray);
+				user-select: none;
+				margin-inline-end: -4px;
+				cursor: pointer;
 			}
 
-			:host([open]) mo-icon-button[part=dropDownIcon], :host([active]) mo-icon-button[part=dropDownIcon] {
+			mo-field[active] mo-icon[part=dropDownIcon] {
 				color: var(--mo-color-accent);
 			}
 
@@ -128,14 +130,9 @@ export class FieldSelect<T> extends InputFieldComponent<Value> {
 		return html`
 			${super.endSlotTemplate}
 
-			<mo-icon-button tabindex='-1' slot='end'
-				part='dropDownIcon'
-				dense
-				icon='expand_more'
-				${style({ color: 'var(--mo-color-gray)' })}
-			></mo-icon-button>
+			<mo-icon slot='end' part='dropDownIcon' icon='expand_more'></mo-icon>
 
-			<mo-menu tabindex='-1' slot='end'
+			<mo-menu slot='end'
 				selectionMode=${this.multiple ? 'multiple' : 'single'}
 				.anchor=${this}
 				?open=${this.open}

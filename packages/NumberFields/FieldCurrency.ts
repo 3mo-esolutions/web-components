@@ -21,6 +21,8 @@ export class FieldCurrency extends FieldNumber {
 
 	static override get styles() {
 		return css`
+			${super.styles}
+
 			span[slot=end] {
 				font-size: x-large;
 				color: var(--mo-color-gray);

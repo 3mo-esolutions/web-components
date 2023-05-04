@@ -31,6 +31,7 @@ export class Menu extends Component {
 	@event() readonly openChange!: EventDispatcher<boolean>
 
 	override readonly role = 'menu'
+	override readonly tabIndex = -1
 
 	readonly slotController = new SlotController(this)
 	readonly menuKeyboardController = new MenuController(this)

@@ -19,6 +19,8 @@ export class FieldPercent extends FieldNumber {
 
 	static override get styles() {
 		return css`
+			${super.styles}
+
 			span[slot=end] {
 				font-size: 20px;
 				font-weight: 600;
