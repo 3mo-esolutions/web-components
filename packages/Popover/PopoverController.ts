@@ -1,4 +1,4 @@
-import { Controller, EventListenerController } from '@a11d/lit'
+import { Controller } from '@a11d/lit'
 import { PointerController } from '@3mo/pointer-controller'
 import { FocusController } from '@3mo/focus-controller'
 import { ResizeController } from '@3mo/resize-observer'
@@ -36,8 +36,6 @@ export class PopoverController extends Controller {
 		this.update()
 	}
 
-	protected readonly slotChangeHandler = new EventListenerController(this.host, 'slotchange', () => this.updatePosition())
-
 	private update() {
 		this.openIfApplicable()
 		this.updatePosition()
@@ -67,14 +65,25 @@ export class PopoverController extends Controller {
 			return
 		}
 
-		if (this.host.managed) {
-			this.host.style.position = 'absolute'
-			return
+		if (this.host.fixed) {
+			this.positionFixed()
+		} else {
+			this.positionAbsolute()
 		}
+	}
 
-		if (this.host.openWith) {
-			this.host.style.left = `${this.host.openWith.clientX}px`
-			this.host.style.top = `${this.host.openWith.clientY}px`
+	private positionAbsolute() {
+		this.host.style.position = 'absolute'
+		// TODO: [Popover] [Blocking] Placement
+		// TODO: [Popover] [Blocking] Alignment
+		// TODO: [Popover] Out-of-bounds-correction
+	}
+
+	private positionFixed() {
+		if (this.host.coordinates) {
+			const [x, y] = this.host.coordinates
+			this.host.style.left = `${x}px`
+			this.host.style.top = `${y}px`
 			return
 		}
 
@@ -87,25 +96,27 @@ export class PopoverController extends Controller {
 		let left = 0
 		let top = 0
 
+		// TODO: [Popover] Did renaming this to Inline/Block break any calculations?
 		switch (this.host.placement) {
-			case PopoverPlacement.Top:
+			case PopoverPlacement.BlockStart:
 				left = anchorRect.left + leftOffset
 				top = anchorRect.top - popoverRect.height
 				break
-			case PopoverPlacement.Bottom:
+			case PopoverPlacement.BlockEnd:
 				left = anchorRect.left + leftOffset
 				top = anchorRect.top + anchorRect.height
 				break
-			case PopoverPlacement.Left:
+			case PopoverPlacement.InlineStart:
 				left = anchorRect.left - popoverRect.width
 				top = anchorRect.top + topOffset
 				break
-			case PopoverPlacement.Right:
+			case PopoverPlacement.InlineEnd:
 				left = anchorRect.left + anchorRect.width
 				top = anchorRect.top + topOffset
 				break
 		}
-
+		// TODO: [Popover] [Blocking] Alignment
+		// TODO: [Popover] is Out-of-bounds-correction correct?
 		const leftOf = (value: number) => Math.max(0, Math.min(value, window.innerWidth - popoverRect.width))
 		const topOf = (value: number) => Math.max(0, Math.min(value, window.innerHeight - popoverRect.height))
 

@@ -17,32 +17,32 @@ export default meta({
 	},
 })
 
-export const Hosted = story({
+export const WithContainer = story({
 	render: () => {
 		return html`
-			<mo-popover-host placement='blockEnd'>
+			<mo-popover-container placement='blockEnd'>
 				<mo-button type='outlined'>Click to open the menu</mo-button>
 				<mo-menu slot='popover'>
 					${items}
 				</mo-menu>
-			</mo-popover-host>
+			</mo-popover-container>
 		`
 	}
 })
 
-export const Manual = story({
+export const Absolute = story({
 	render: () => html`
-		<mo-button-with-menu-story managed></mo-button-with-menu-story>
+		<mo-button-with-menu-story></mo-button-with-menu-story>
 		<!-- ENCAPSULATED CODE:
 			<mo-button id='button' type='outlined'>Click to open the menu</mo-button>
-			<mo-menu .anchor=\${this} opener='button' managed>\${items}</mo-menu>
+			<mo-menu .anchor=\${this} opener='button'>\${items}</mo-menu>
 		-->
 	`
 })
 
 export const Fixed = story({
 	render: () => html`
-		<mo-button-with-menu-story></mo-button-with-menu-story>
+		<mo-button-with-menu-story fixed></mo-button-with-menu-story>
 		<!-- ENCAPSULATED CODE:
 			<mo-button id='' type='outlined'>Click to open the menu</mo-button>
 			<mo-menu .anchor=\${this} opener='button'>\${items}</mo-menu>
@@ -91,7 +91,7 @@ const items = html`
 `
 
 class ButtonWithMenuStory extends Component {
-	@property({ type: Boolean }) managed = false
+	@property({ type: Boolean }) fixed = false
 
 	static override get styles() {
 		return css`
@@ -111,13 +111,12 @@ class ButtonWithMenuStory extends Component {
 	protected override get template() {
 		return html`
 			<mo-button id='button' type='outlined'>Click to open the menu</mo-button>
-			<mo-menu .anchor=${this} opener='button' ?managed=${this.managed}>${items}</mo-menu>
+			<mo-menu .anchor=${this} opener='button' ?fixed=${this.fixed}>${items}</mo-menu>
 		`
 	}
 }
 
 class ContextMenuStory extends Component {
-
 	@query('mo-menu') readonly menu!: Menu
 
 	static override get styles() {
@@ -131,7 +130,7 @@ class ContextMenuStory extends Component {
 		return html`
 			<div
 				style='width: 100%; height: 300px; display: flex; align-items: center; justify-content: center; border: dotted 2px currentColor; opacity: .7; border-radius: var(--mo-border-radius)'
-				@contextmenu=${(e: PointerEvent) => { this.menu.openWith = e }}
+				@contextmenu=${(e: PointerEvent) => this.menu.openWith(e)}
 			>
 				Right click anywhere
 			</div>

@@ -4,6 +4,8 @@ import { Menu } from '@3mo/menu'
 import { Option } from './Option.js'
 import { Data, FieldSelectValueController, Index, Value } from './SelectValueController.js'
 
+// TODO: [Popover] [Blocking] Doesn't work in select
+
 /**
  * @element mo-field-select
  *

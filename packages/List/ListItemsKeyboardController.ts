@@ -137,7 +137,7 @@ export class ListItemsKeyboardController extends Controller {
 		type: 'keydown',
 		target: document,
 		listener: (event: KeyboardEvent) => {
-			if (this.hasFocus === false || this.host.items.some(x => (x as ListItem & { open: boolean }).open)) {
+			if (this.hasFocus === false) {
 				return
 			}
 

@@ -1,21 +1,9 @@
-import { Component, ReactiveElement, component, css, html, property } from '@a11d/lit'
+import { Component, component, css, html, property } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
-
-export const enum PopoverHostedPlacement {
-	BlockStart = 'blockStart',
-	BlockEnd = 'blockEnd',
-	InlineStart = 'inlineStart',
-	InlineEnd = 'inlineEnd',
-}
-
-export const enum PopoverHostedAlignment {
-	Start = 'start',
-	Center = 'center',
-	End = 'end',
-}
+import { PopoverPlacement, Popover, PopoverAlignment } from '@3mo/popover'
 
 /**
- * @element mo-popover-host
+ * @element mo-popover-container
  *
  * @attr alignment
  * @attr placement
@@ -23,20 +11,17 @@ export const enum PopoverHostedAlignment {
  * @slot - The content to be anchored
  * @slot popover - The popover to be anchored
  */
-@component('mo-popover-host')
-export class PopoverHost extends Component {
-	@property({ reflect: true }) placement = PopoverHostedPlacement.InlineEnd
-	@property({ reflect: true }) alignment = PopoverHostedAlignment.Start
+@component('mo-popover-container')
+export class PopoverContainer extends Component {
+	@property({ reflect: true }) placement?: PopoverPlacement
+	@property({ reflect: true }) alignment?: PopoverAlignment
 
 	protected readonly slotController = new SlotController(this, () => {
 		this.slotController.getAssignedElements('popover')
 			.forEach(x => {
-				const popover = x as ReactiveElement & {
-					anchor: HTMLElement
-					managed: boolean
-				}
+				const popover = x as Popover
+				popover.fixed = false
 				popover.anchor = this
-				popover.managed = true
 			})
 	})
 
@@ -47,6 +32,7 @@ export class PopoverHost extends Component {
 				position: relative;
 			}
 
+			/* TODO [Popover] Move both placement and alignment logic to popover */
 			:host([placement=blockStart]) { flex-flow: column-reverse; }
 			:host([placement=blockEnd]) { flex-flow: column; }
 			:host([placement=inlineStart]) { flex-flow: row-reverse; }
@@ -56,7 +42,6 @@ export class PopoverHost extends Component {
 			:host([alignment=center]) { align-items: center; }
 			:host([alignment=end]) { align-items: flex-end; }
 
-			/* FIX: Merge this API with the popover managed logic */
 			:host([alignment=start]) ::slotted([slot=popover]) { transform: translateX(0%); }
 			:host([alignment=center]) ::slotted([slot=popover]) { transform: translateX(-50%); }
 			:host([alignment=end]) ::slotted([slot=popover]) { transform: translateX(-100%); }
@@ -73,6 +58,6 @@ export class PopoverHost extends Component {
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'mo-popover-host': PopoverHost
+		'mo-popover-container': PopoverContainer
 	}
 }

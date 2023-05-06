@@ -1,7 +1,7 @@
 import { Component, component, css, event, html, ifDefined, property, query, state, unsafeCSS } from '@a11d/lit'
-import { Popover, PopoverPlacement } from '@3mo/popover'
+import { Popover, PopoverCoordinates, PopoverPlacement } from '@3mo/popover'
 import { SlotController } from '@3mo/slot-controller'
-import { SelectableList } from '@3mo/list'
+import { ListElement, SelectableList } from '@3mo/list'
 import { MenuController } from './MenuController.js'
 import { MenuPlacement } from './MenuPlacement.js'
 
@@ -39,24 +39,27 @@ export class Menu extends Component {
 	@property({ type: Object }) anchor!: HTMLElement
 	@property() placement?: MenuPlacement
 	@property({ type: Boolean, reflect: true }) open?: boolean
-	@property({ type: Boolean }) managed = false
+	@property({ type: Boolean }) fixed = false
 	@property({ type: Boolean }) manualOpen = false
 	@property() opener?: string
 	@property() selectionMode?: SelectableList['selectionMode']
 	@property({ type: Object }) value?: SelectableList['value']
 
-	@state({ updated(this: Menu) {
-		if (this.openWith) {
-			this.openWith.preventDefault()
-			this.openWith.stopImmediatePropagation()
-			this.open = true
-			console.log(this.openWith)
-			console.log(this.popover)
-		}
-	} }) openWith?: PointerEvent
+	@state() protected coordinates?: PopoverCoordinates
 
 	@query('mo-popover') readonly popover!: Popover
-	@query('mo-selectable-list') readonly list!: SelectableList
+	@query('mo-selectable-list') readonly list!: ListElement & SelectableList
+
+	openWith(e: PointerEvent | PopoverCoordinates) {
+		if (e instanceof PointerEvent) {
+			e.preventDefault()
+			e.stopImmediatePropagation()
+			this.popover.coordinates = [e.clientX, e.clientY]
+		} else {
+			this.popover.coordinates = e
+		}
+		this.open = true
+	}
 
 	static override get styles() {
 		return css`
@@ -74,22 +77,22 @@ export class Menu extends Component {
 				transition-property: opacity, transform;
 			}
 
-			mo-popover[placement="${unsafeCSS(PopoverPlacement.Top)}"] {
+			mo-popover[placement="${unsafeCSS(PopoverPlacement.BlockStart)}"] {
 				transform: scaleY(0.9);
 				transform-origin: bottom;
 			}
 
-			mo-popover[placement="${unsafeCSS(PopoverPlacement.Bottom)}"] {
+			mo-popover[placement="${unsafeCSS(PopoverPlacement.BlockEnd)}"] {
 				transform: scaleY(0.9);
 				transform-origin: top;
 			}
 
-			mo-popover[placement="${unsafeCSS(PopoverPlacement.Left)}"] {
+			mo-popover[placement="${unsafeCSS(PopoverPlacement.InlineStart)}"] {
 				transform: scaleY(0.9);
 				transform-origin: right;
 			}
 
-			mo-popover[placement="${unsafeCSS(PopoverPlacement.Right)}"] {
+			mo-popover[placement="${unsafeCSS(PopoverPlacement.InlineEnd)}"] {
 				transform: scaleY(0.9);
 				transform-origin: left;
 			}
@@ -107,8 +110,8 @@ export class Menu extends Component {
 				placement=${ifDefined(this.placement)}
 				?open=${this.open}
 				@openChange=${this.handleOpenChange.bind(this)}
-				?managed=${this.managed}
-				.openWith=${this.openWith}
+				?fixed=${this.fixed}
+				.coordinates=${this.coordinates}
 			>
 				<mo-selectable-list
 					selectionMode=${this.selectionMode}
@@ -123,10 +126,8 @@ export class Menu extends Component {
 
 	protected handleOpenChange(e: CustomEvent<boolean>) {
 		this.open = e.detail
-		console.log(`OPEN: [${e.detail}]`)
 		if (this.open === false) {
 			this.list.listItemsKeyboardController.unfocus()
-			this.openWith = undefined
 		}
 		this.list.listItemsKeyboardController.forceFocused = this.open
 		this.openChange.dispatch(this.open)

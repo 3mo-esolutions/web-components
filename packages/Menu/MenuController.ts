@@ -1,17 +1,8 @@
-import { Component, Controller, EventListenerController, ReactiveControllerHost, ReactiveElement } from '@a11d/lit'
-import { Popover } from '@3mo/popover'
-import { ListElement } from '@3mo/list'
-
-interface MenuElement extends Component {
-	readonly role: 'menu'
-	readonly anchor: HTMLElement
-	readonly popover: Popover
-	readonly list: ListElement
-	readonly opener?: string
-}
+import { Controller, EventListenerController } from '@a11d/lit'
+import type { Menu } from './Menu.js'
 
 export class MenuController extends Controller {
-	constructor(protected override readonly host: ReactiveControllerHost & ReactiveElement & MenuElement) {
+	constructor(protected override readonly host: Menu) {
 		super(host)
 	}
 
@@ -62,14 +53,6 @@ export class MenuController extends Controller {
 				case 'Tab':
 					this.setOpen(event, false)
 					break
-				/*case 'Right':
-				case 'ArrowRight':
-					this.host.anchor instanceof Submenu && this.setOpen(event, getComputedStyle(this.host.anchor).direction === 'ltr')
-					break
-				case 'Left':
-				case 'ArrowLeft':
-					this.host.anchor instanceof Submenu && this.setOpen(event, getComputedStyle(this.host.anchor).direction === 'rtl')
-					break*/
 				default:
 					break
 			}
@@ -81,7 +64,7 @@ export class MenuController extends Controller {
 			return
 		}
 
-		if (value && (this.host as MenuElement & { manualOpen: boolean }).manualOpen) {
+		if (value && this.host.manualOpen) {
 			return
 		}
 

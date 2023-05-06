@@ -1,0 +1,1 @@
+export type PopoverCoordinates = [x: number, y: number]

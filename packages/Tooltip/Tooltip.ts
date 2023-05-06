@@ -44,19 +44,19 @@ export class Tooltip extends Component {
 				transition-property: opacity, transform;
 			}
 
-			mo-popover[placement="${unsafeCSS(PopoverPlacement.Top)}"] {
+			mo-popover[placement="${unsafeCSS(PopoverPlacement.BlockStart)}"] {
 				transform: translateY(+10px);
 			}
 
-			mo-popover[placement="${unsafeCSS(PopoverPlacement.Bottom)}"] {
+			mo-popover[placement="${unsafeCSS(PopoverPlacement.BlockEnd)}"] {
 				transform: translateY(-10px);
 			}
 
-			mo-popover[placement="${unsafeCSS(PopoverPlacement.Left)}"] {
+			mo-popover[placement="${unsafeCSS(PopoverPlacement.InlineStart)}"] {
 				transform: translateX(+10px);
 			}
 
-			mo-popover[placement="${unsafeCSS(PopoverPlacement.Right)}"] {
+			mo-popover[placement="${unsafeCSS(PopoverPlacement.InlineEnd)}"] {
 				transform: translateX(-10px);
 			}
 
@@ -76,7 +76,7 @@ export class Tooltip extends Component {
 
 	protected override get template() {
 		return html`
-			<mo-popover
+			<mo-popover fixed
 				.anchor=${this.anchor}
 				placement=${ifDefined(this.placement)}
 				openOnFocus
