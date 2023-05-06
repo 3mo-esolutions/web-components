@@ -2,7 +2,6 @@ import { story, meta } from '../../.storybook/story.js'
 import { html } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
-import { Drawer } from './index.js'
 
 export default meta({
 	title: 'Core/Drawer',
@@ -17,11 +16,11 @@ export default meta({
 })
 
 function handleClick(this: HTMLElement) {
-	const drawer = this.previousElementSibling as Drawer
+	const drawer = this.previousElementSibling as HTMLElement & { open: boolean }
 	drawer.open = !drawer.open
 }
 
-export const EmptyState = story({
+export const Drawer = story({
 	render: () => html`
 		<mo-drawer>
 			<mo-flex gap='10px'>
