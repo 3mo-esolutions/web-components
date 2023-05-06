@@ -1,6 +1,7 @@
-import { Controller, EventListenerController } from '@a11d/lit'
+import { Controller } from '@a11d/lit'
 import { PointerController } from '@3mo/pointer-controller'
 import { FocusController } from '@3mo/focus-controller'
+import { ResizeController } from '@3mo/resize-observer'
 import { PopoverPlacement } from './PopoverPlacement.js'
 import type { Popover } from './Popover.js'
 
@@ -18,14 +19,18 @@ export class PopoverController extends Controller {
 		handleChange: () => this.update(),
 	})
 
-	protected readonly pointerController = new PointerController(this.host)
+	protected readonly pointerController = new PointerController(this.host, {
+		handleHoverChange: () => this.update(),
+	})
 
 	protected readonly anchorPointerController = new PointerController(this.host, {
 		target: targetAnchor,
 		handleHoverChange: () => this.update(),
 	})
 
-	protected readonly slotChangeHandler = new EventListenerController(this.host, 'slotchange', () => this.updatePosition())
+	protected readonly resizeController = new ResizeController(this.host, {
+		callback: () => this.update()
+	})
 
 	private update() {
 		this.openIfApplicable()

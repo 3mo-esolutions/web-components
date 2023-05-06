@@ -15,7 +15,7 @@ export class MenuController extends Controller {
 		super(host)
 	}
 
-	get open() { return this.host.popover.open }
+	get open() { return this.host.popover.open ?? false }
 	set open(value) { this.host.popover.setOpen(value) }
 
 	getItem(index: number) {
@@ -79,7 +79,7 @@ export class MenuController extends Controller {
 			this.open = value
 		}
 
-		if (value && path.includes(this.host.anchor)) {
+		if (value && path.includes(this.host.anchor) && !path.includes(this.host)) {
 			const openerAllows = ignoreOpener
 				|| !this.host.opener
 				|| path.some(target => target instanceof Element && target.id === this.host.opener)
