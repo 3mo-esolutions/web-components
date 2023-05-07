@@ -63,14 +63,14 @@ export class MenuController extends Controller {
 				case 'Tab':
 					this.setOpen(event, false)
 					break
-				case 'Right':
+				/*case 'Right':
 				case 'ArrowRight':
 					this.host.anchor instanceof Submenu && this.setOpen(event, getComputedStyle(this.host.anchor).direction === 'ltr')
 					break
 				case 'Left':
 				case 'ArrowLeft':
 					this.host.anchor instanceof Submenu && this.setOpen(event, getComputedStyle(this.host.anchor).direction === 'rtl')
-					break
+					break*/
 				default:
 					break
 			}
