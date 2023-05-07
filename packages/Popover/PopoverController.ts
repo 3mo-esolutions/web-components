@@ -4,7 +4,7 @@ import { FocusController } from '@3mo/focus-controller'
 import { ResizeController } from '@3mo/resize-observer'
 import { PopoverPlacement } from './PopoverPlacement.js'
 import { Popover } from './Popover.js'
-import { PopoverHost } from './PopoverHost.js'
+import { PopoverHost, PopoverHostedAlignment, PopoverHostedPlacement } from './PopoverHost.js'
 
 function targetAnchor(this: Popover) {
 	return this.anchor
@@ -57,9 +57,17 @@ export class PopoverController extends Controller {
 		this.host.setOpen(open)
 	}
 
-	private updatePosition() {
+	updatePosition() {
 		if (this.host.anchor instanceof PopoverHost) {
 			this.host.style.position = 'absolute'
+			this.host.style.transform = `translate${
+				[PopoverHostedPlacement.BlockEnd, PopoverHostedPlacement.BlockStart].includes(this.host.anchor.placement) ? 'X' : 'Y'}(${
+					{
+						[PopoverHostedAlignment.Start]: '0%',
+						[PopoverHostedAlignment.Center]: '-50%',
+						[PopoverHostedAlignment.End]: '-100%',
+					}[this.host.anchor.alignment]
+				})`
 			return
 		}
 

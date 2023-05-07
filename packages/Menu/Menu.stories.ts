@@ -66,18 +66,18 @@ class ButtonWithMenuStory extends Component {
 			${separator}
 			<mo-list-item>Dictionary</mo-list-item>
 			<mo-list-item>Thesaurus</mo-list-item>
-			<mo-list-submenu>
-				More
-				<mo-list-item slot='menu'>Open in New</mo-list-item>
-				<mo-list-item slot='menu'>Report Issue</mo-list-item>
+			<mo-list-submenu menuAlignment='center'>
+				<span slot='origin'>More</span>
+				<mo-list-item>Open in New</mo-list-item>
+				<mo-list-item>Report Issue</mo-list-item>
 			</mo-list-submenu>
 		`
 		return html`
-			<mo-popover-host alignment='blockEnd'>
+			<mo-popover-host placement='blockEnd' alignment='center'>
 				<mo-button type='outlined'>Click to open the menu</mo-button>
 				<mo-menu ?open=${this.open} slot='popover'>${items}</mo-menu>
 			</mo-popover-host>
-			<div style='margin: 5px;'>Text below the thing</div>
+			<div style='margin: 10px; opacity: .5'>Sample text to demonstrate hosted isolation.</div>
 		`
 	}
 }
