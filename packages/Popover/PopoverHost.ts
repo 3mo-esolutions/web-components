@@ -1,4 +1,4 @@
-import { Component, ReactiveElement, component, html, property, style } from '@a11d/lit'
+import { Component, ReactiveElement, component, html, property, unsafeCSS } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
 
 export const enum PopoverAlignment {
@@ -28,10 +28,15 @@ export class PopoverHost extends Component {
 
 	protected override get template() {
 		return html`
-			<mo-flex ${style({ position: 'relative', flexFlow: PopoverHost.flowByAlignment[this.alignment] })}>
-				<slot></slot>
-				<slot name='popover'></slot>
-			</mo-flex>
+			<style>
+				:host \{
+					display: inline-flex;
+					position: relative;
+					flex-flow: ${PopoverHost.flowByAlignment[this.alignment]};
+				\}
+			</style>
+			<slot></slot>
+			<slot name='popover'></slot>
 		`
 	}
 }

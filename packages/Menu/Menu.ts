@@ -49,7 +49,7 @@ export class Menu extends Component {
 	static override get styles() {
 		return css`
 			:host {
-				position: absolute;
+				position: relative;
 			}
 
 			mo-popover {

@@ -67,16 +67,17 @@ class ButtonWithMenuStory extends Component {
 			<mo-list-item>Dictionary</mo-list-item>
 			<mo-list-item>Thesaurus</mo-list-item>
 			<mo-list-submenu>
-				More Actions
+				More
 				<mo-list-item slot='menu'>Open in New</mo-list-item>
 				<mo-list-item slot='menu'>Report Issue</mo-list-item>
 			</mo-list-submenu>
 		`
 		return html`
-			<mo-popover-host>
+			<mo-popover-host alignment='blockEnd'>
 				<mo-button type='outlined'>Click to open the menu</mo-button>
 				<mo-menu ?open=${this.open} slot='popover'>${items}</mo-menu>
 			</mo-popover-host>
+			<div style='margin: 5px;'>Text below the thing</div>
 		`
 	}
 }
