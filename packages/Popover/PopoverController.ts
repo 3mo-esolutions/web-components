@@ -63,8 +63,18 @@ export class PopoverController extends Controller {
 	}
 
 	updatePosition() {
+		if (!this.host.open) {
+			return
+		}
+
 		if (this.host.managed) {
 			this.host.style.position = 'absolute'
+			return
+		}
+
+		if (this.host.openWith) {
+			this.host.style.left = `${this.host.openWith.clientX}px`
+			this.host.style.top = `${this.host.openWith.clientY}px`
 			return
 		}
 

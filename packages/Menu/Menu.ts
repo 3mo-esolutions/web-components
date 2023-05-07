@@ -1,4 +1,4 @@
-import { Component, component, css, event, html, ifDefined, property, query, unsafeCSS } from '@a11d/lit'
+import { Component, component, css, event, html, ifDefined, property, query, state, unsafeCSS } from '@a11d/lit'
 import { Popover, PopoverPlacement } from '@3mo/popover'
 import { SlotController } from '@3mo/slot-controller'
 import { SelectableList } from '@3mo/list'
@@ -40,9 +40,20 @@ export class Menu extends Component {
 	@property() placement?: MenuPlacement
 	@property({ type: Boolean, reflect: true }) open?: boolean
 	@property({ type: Boolean }) managed = false
+	@property({ type: Boolean }) manualOpen = false
 	@property() opener?: string
 	@property() selectionMode?: SelectableList['selectionMode']
 	@property({ type: Object }) value?: SelectableList['value']
+
+	@state({ updated(this: Menu) {
+		if (this.openWith) {
+			this.openWith.preventDefault()
+			this.openWith.stopImmediatePropagation()
+			this.open = true
+			console.log(this.openWith)
+			console.log(this.popover)
+		}
+	} }) openWith?: PointerEvent
 
 	@query('mo-popover') readonly popover!: Popover
 	@query('mo-selectable-list') readonly list!: SelectableList
@@ -97,6 +108,7 @@ export class Menu extends Component {
 				?open=${this.open}
 				@openChange=${this.handleOpenChange.bind(this)}
 				?managed=${this.managed}
+				.openWith=${this.openWith}
 			>
 				<mo-selectable-list
 					selectionMode=${this.selectionMode}
@@ -111,8 +123,10 @@ export class Menu extends Component {
 
 	protected handleOpenChange(e: CustomEvent<boolean>) {
 		this.open = e.detail
+		console.log(`OPEN: [${e.detail}]`)
 		if (this.open === false) {
 			this.list.listItemsKeyboardController.unfocus()
+			this.openWith = undefined
 		}
 		this.list.listItemsKeyboardController.forceFocused = this.open
 		this.openChange.dispatch(this.open)

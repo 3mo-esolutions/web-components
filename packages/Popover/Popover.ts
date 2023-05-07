@@ -30,6 +30,8 @@ export class Popover extends Component {
 	@property({ type: Object }) getLeftPositionOffset?: (anchorRect: DOMRect, popoverRect: DOMRect) => number
 	@property({ type: Object }) getTopPositionOffset?: (anchorRect: DOMRect, popoverRect: DOMRect) => number
 
+	@property({ type: Object }) openWith?: PointerEvent
+
 	protected readonly popoverController = new PopoverController(this)
 
 	setOpen(open: boolean) {

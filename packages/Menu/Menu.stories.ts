@@ -1,6 +1,7 @@
 import { story, meta } from '../../.storybook/story.js'
 import { Component, css, html, property, query } from '@a11d/lit'
 import { tooltip } from '@3mo/tooltip'
+import { Menu } from '@3mo/menu'
 import p from './package.json'
 import './index.js'
 
@@ -46,6 +47,12 @@ export const Fixed = story({
 			<mo-button id='' type='outlined'>Click to open the menu</mo-button>
 			<mo-menu .anchor=\${this} opener='button'>\${items}</mo-menu>
 		-->
+	`
+})
+
+export const Pointer = story({
+	render: () => html`
+		<mo-context-menu-story></mo-context-menu-story>
 	`
 })
 
@@ -101,10 +108,6 @@ class ButtonWithMenuStory extends Component {
 		this.button.focus()
 	}
 
-	get rawTemplate() {
-		return this.template
-	}
-
 	protected override get template() {
 		return html`
 			<mo-button id='button' type='outlined'>Click to open the menu</mo-button>
@@ -113,4 +116,29 @@ class ButtonWithMenuStory extends Component {
 	}
 }
 
+class ContextMenuStory extends Component {
+
+	@query('mo-menu') readonly menu!: Menu
+
+	static override get styles() {
+		return css`
+			width: 100vw;
+			height: 100dvh;
+		`
+	}
+
+	protected override get template() {
+		return html`
+			<div
+				style='width: 100%; height: 300px; display: flex; align-items: center; justify-content: center; border: dotted 2px currentColor; opacity: .7; border-radius: var(--mo-border-radius)'
+				@contextmenu=${(e: PointerEvent) => { this.menu.openWith = e }}
+			>
+				Right click anywhere
+			</div>
+			<mo-menu manualOpen .anchor=${this}>${items}</mo-menu>
+		`
+	}
+}
+
 customElements.define('mo-button-with-menu-story', ButtonWithMenuStory)
+customElements.define('mo-context-menu-story', ContextMenuStory)

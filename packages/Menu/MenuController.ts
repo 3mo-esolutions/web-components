@@ -1,7 +1,6 @@
 import { Component, Controller, EventListenerController, ReactiveControllerHost, ReactiveElement } from '@a11d/lit'
 import { Popover } from '@3mo/popover'
 import { ListElement } from '@3mo/list'
-import { Submenu } from './Submenu.js'
 
 interface MenuElement extends Component {
 	readonly role: 'menu'
@@ -79,6 +78,10 @@ export class MenuController extends Controller {
 
 	private setOpen(event: Event, value: boolean, ignoreOpener = false) {
 		if (this.open === value) {
+			return
+		}
+
+		if (value && (this.host as MenuElement & { manualOpen: boolean }).manualOpen) {
 			return
 		}
 
