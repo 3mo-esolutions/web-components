@@ -1,5 +1,5 @@
 import { Component, component, css, event, html, ifDefined, property, query, state, unsafeCSS } from '@a11d/lit'
-import { Popover, PopoverCoordinates, PopoverPlacement } from '@3mo/popover'
+import { Popover, PopoverAlignment, PopoverCoordinates, PopoverPlacement } from '@3mo/popover'
 import { SlotController } from '@3mo/slot-controller'
 import { ListElement, SelectableList } from '@3mo/list'
 import { MenuController } from './MenuController.js'
@@ -37,7 +37,8 @@ export class Menu extends Component {
 	readonly menuKeyboardController = new MenuController(this)
 
 	@property({ type: Object }) anchor!: HTMLElement
-	@property() placement?: MenuPlacement
+	@property() placement?: PopoverPlacement
+	@property() alignment?: PopoverAlignment
 	@property({ type: Boolean, reflect: true }) open?: boolean
 	@property({ type: Boolean }) fixed = false
 	@property({ type: Boolean }) manualOpen = false
@@ -108,6 +109,7 @@ export class Menu extends Component {
 			<mo-popover part='popover'
 				.anchor=${this.anchor}
 				placement=${ifDefined(this.placement)}
+				alignment=${ifDefined(this.alignment)}
 				?open=${this.open}
 				@openChange=${this.handleOpenChange.bind(this)}
 				?fixed=${this.fixed}

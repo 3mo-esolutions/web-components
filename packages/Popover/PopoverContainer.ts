@@ -1,4 +1,4 @@
-import { Component, component, css, html, property } from '@a11d/lit'
+import { Component, component, css, html, property, unsafeCSS } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
 import { PopoverPlacement, Popover, PopoverAlignment } from '@3mo/popover'
 
@@ -32,19 +32,47 @@ export class PopoverContainer extends Component {
 				position: relative;
 			}
 
-			/* TODO [Popover] Move both placement and alignment logic to popover */
-			:host([placement=blockStart]) { flex-flow: column-reverse; }
-			:host([placement=blockEnd]) { flex-flow: column; }
-			:host([placement=inlineStart]) { flex-flow: row-reverse; }
-			:host([placement=inlineEnd]) { flex-flow: row; }
+			:host([placement=block-start]) { flex-flow: column-reverse; }
+			:host([placement=block-end]) { flex-flow: column; }
+			:host([placement=inline-start]) { flex-flow: row-reverse; }
+			:host([placement=inline-end]) { flex-flow: row; }
 
 			:host([alignment=start]) { align-items: flex-start; }
 			:host([alignment=center]) { align-items: center; }
 			:host([alignment=end]) { align-items: flex-end; }
 
-			:host([alignment=start]) ::slotted([slot=popover]) { transform: translateX(0%); }
-			:host([alignment=center]) ::slotted([slot=popover]) { transform: translateX(-50%); }
-			:host([alignment=end]) ::slotted([slot=popover]) { transform: translateX(-100%); }
+			:host([placement=block-start]) ::slotted([slot=popover]) {
+				--mo-popover-translate-y: -100%;
+			}
+			:host([placement=inline-start]) ::slotted([slot=popover]) {
+				--mo-popover-translate-x: -100%;
+			}
+
+			:host([placement=block-start][alignment=start]) ::slotted([slot=popover]),
+			:host([placement=block-end][alignment=start]) ::slotted([slot=popover]) {
+				--mo-popover-translate-x: 0%;
+			}
+			:host([placement=block-start][alignment=center]) ::slotted([slot=popover]),
+			:host([placement=block-end][alignment=center]) ::slotted([slot=popover]) {
+				--mo-popover-translate-x: -50%;
+			}
+			:host([placement=block-start][alignment=end]) ::slotted([slot=popover]),
+			:host([placement=block-end][alignment=end]) ::slotted([slot=popover]) {
+				--mo-popover-translate-x: -100%;
+			}
+			
+			:host([placement=inline-start][alignment=start]) ::slotted([slot=popover]),
+			:host([placement=inline-end][alignment=start]) ::slotted([slot=popover]) {
+				--mo-popover-translate-y: 0%;
+			}
+			:host([placement=inline-start][alignment=center]) ::slotted([slot=popover]),
+			:host([placement=inline-end][alignment=center]) ::slotted([slot=popover]) {
+				--mo-popover-translate-y: -50%;
+			}
+			:host([placement=inline-start][alignment=end]) ::slotted([slot=popover]),
+			:host([placement=inline-end][alignment=end]) ::slotted([slot=popover]) {
+				--mo-popover-translate-y: -100%;
+			}
 		`
 	}
 

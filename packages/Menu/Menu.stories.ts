@@ -20,7 +20,7 @@ export default meta({
 export const WithContainer = story({
 	render: () => {
 		return html`
-			<mo-popover-container placement='blockEnd'>
+			<mo-popover-container placement='block-end' alignment='end'>
 				<mo-button type='outlined'>Click to open the menu</mo-button>
 				<mo-menu slot='popover'>
 					${items}
@@ -111,7 +111,7 @@ class ButtonWithMenuStory extends Component {
 	protected override get template() {
 		return html`
 			<mo-button id='button' type='outlined'>Click to open the menu</mo-button>
-			<mo-menu .anchor=${this} opener='button' ?fixed=${this.fixed}>${items}</mo-menu>
+			<mo-menu .anchor=${this} opener='button' ?fixed=${this.fixed} alignment='end'>${items}</mo-menu>
 		`
 	}
 }
@@ -134,7 +134,7 @@ class ContextMenuStory extends Component {
 			>
 				Right click anywhere
 			</div>
-			<mo-menu manualOpen .anchor=${this}>${items}</mo-menu>
+			<mo-menu fixed manualOpen .anchor=${this}>${items}</mo-menu>
 		`
 	}
 }
