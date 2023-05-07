@@ -1,4 +1,4 @@
-import { Controller } from '@a11d/lit'
+import { Controller, EventListenerController } from '@a11d/lit'
 import { PointerController } from '@3mo/pointer-controller'
 import { FocusController } from '@3mo/focus-controller'
 import { ResizeController } from '@3mo/resize-observer'
