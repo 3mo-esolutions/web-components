@@ -3,7 +3,8 @@ import { PointerController } from '@3mo/pointer-controller'
 import { FocusController } from '@3mo/focus-controller'
 import { ResizeController } from '@3mo/resize-observer'
 import { PopoverPlacement } from './PopoverPlacement.js'
-import type { Popover } from './Popover.js'
+import { Popover } from './Popover.js'
+import { PopoverHost } from './PopoverHost.js'
 
 function targetAnchor(this: Popover) {
 	return this.anchor
@@ -57,6 +58,11 @@ export class PopoverController extends Controller {
 	}
 
 	private updatePosition() {
+		if (this.host.anchor instanceof PopoverHost) {
+			this.host.style.position = 'absolute'
+			return
+		}
+
 		const anchorRect = this.host.anchor.getBoundingClientRect()
 		const popoverRect = this.host.getBoundingClientRect()
 

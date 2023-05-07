@@ -1,15 +1,18 @@
-import { ListItem } from '@3mo/list'
-import { component, html } from '@a11d/lit'
+import { Component, component, html } from '@a11d/lit'
 
 @component('mo-list-submenu')
-export class Submenu extends ListItem {
+export class Submenu extends Component {
 	protected override get template() {
 		return html`
-			${super.template}
-			<mo-icon icon='chevron_right'></mo-icon>
-			<mo-menu .anchor=${this}>
-				<slot name='menu'></slot>
-			</mo-menu>
+			<mo-popover-host>
+				<mo-list-item>
+					<slot></slot>
+					<mo-icon icon='chevron_right'></mo-icon>
+				</mo-list-item>
+				<mo-menu slot='popover'>
+					<slot name='menu'></slot>
+				</mo-menu>
+			</mo-popover-host>
 		`
 	}
 }

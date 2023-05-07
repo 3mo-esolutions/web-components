@@ -27,6 +27,7 @@ class ButtonWithMenuStory extends Component {
 		return css`
 			:host {
 				display: block;
+				position: relative;
 			}
 		`
 	}
@@ -72,8 +73,10 @@ class ButtonWithMenuStory extends Component {
 			</mo-list-submenu>
 		`
 		return html`
-			<mo-button type='outlined'>Click to open the menu</mo-button>
-			<mo-menu ?open=${this.open} .anchor=${this}>${items}</mo-menu>
+			<mo-popover-host>
+				<mo-button type='outlined'>Click to open the menu</mo-button>
+				<mo-menu ?open=${this.open} slot='popover'>${items}</mo-menu>
+			</mo-popover-host>
 		`
 	}
 }

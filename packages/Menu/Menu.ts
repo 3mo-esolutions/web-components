@@ -56,7 +56,7 @@ export class Menu extends Component {
 				border-radius: var(--mo-toolbar-border-radius, var(--mo-border-radius, 4px));
 				background: var(--mo-color-surface, #fff);
 				border-radius: var(--mo-border-radius, 4px);
-				overflow: hidden;
+				/*overflow: hidden;*/
 				transition-duration: 100ms;
 				transition-property: opacity, transform;
 			}
