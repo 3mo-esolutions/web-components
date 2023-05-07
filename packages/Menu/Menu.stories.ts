@@ -65,6 +65,11 @@ class ButtonWithMenuStory extends Component {
 			${separator}
 			<mo-list-item>Dictionary</mo-list-item>
 			<mo-list-item>Thesaurus</mo-list-item>
+			<mo-list-submenu>
+				More Actions
+				<mo-list-item slot='menu'>Open in New</mo-list-item>
+				<mo-list-item slot='menu'>Report Issue</mo-list-item>
+			</mo-list-submenu>
 		`
 		return html`
 			<mo-button type='outlined'>Click to open the menu</mo-button>
