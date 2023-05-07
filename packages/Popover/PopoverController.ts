@@ -73,14 +73,6 @@ export class PopoverController extends Controller {
 
 		if (this.host.managed) {
 			this.host.style.position = 'absolute'
-			/*this.host.style.transform = `translate${
-				[PopoverHostedPlacement.BlockEnd, PopoverHostedPlacement.BlockStart].includes(this.host.anchor.placement) ? 'X' : 'Y'}(${
-					{
-						[PopoverHostedAlignment.Start]: '0%',
-						[PopoverHostedAlignment.Center]: '-50%',
-						[PopoverHostedAlignment.End]: '-100%',
-					}[this.host.anchor.alignment]
-				})`*/
 			return
 		}
 
