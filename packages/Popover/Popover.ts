@@ -26,6 +26,7 @@ export class Popover extends Component {
 	@property({ type: Boolean, reflect: true, updated(this: Popover) {
 		this.popoverController.updatePosition()
 	} }) open = false
+	@property({ type: Boolean, reflect: true }) managed = false
 	@property({ type: Boolean }) openOnHover?: boolean
 	@property({ type: Boolean }) openOnFocus?: boolean
 	@property({ type: Object }) getLeftPositionOffset?: (anchorRect: DOMRect, popoverRect: DOMRect) => number

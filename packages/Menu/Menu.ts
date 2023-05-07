@@ -39,6 +39,7 @@ export class Menu extends Component {
 	@property({ type: Object }) anchor!: HTMLElement
 	@property() placement?: MenuPlacement
 	@property({ type: Boolean, reflect: true }) open?: boolean
+	@property({ type: Boolean }) managed = false
 	@property() opener?: string
 	@property() selectionMode?: SelectableList['selectionMode']
 	@property({ type: Object }) value?: SelectableList['value']
@@ -49,7 +50,7 @@ export class Menu extends Component {
 	static override get styles() {
 		return css`
 			:host {
-				position: relative;
+				display: content;
 			}
 
 			mo-popover {
@@ -94,6 +95,7 @@ export class Menu extends Component {
 				placement=${ifDefined(this.placement)}
 				?open=${this.open}
 				@openChange=${this.handleOpenChange.bind(this)}
+				?managed=${this.managed}
 			>
 				<mo-selectable-list
 					selectionMode=${this.selectionMode}

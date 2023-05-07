@@ -1,6 +1,7 @@
 import { Component, Controller, EventListenerController, ReactiveControllerHost, ReactiveElement } from '@a11d/lit'
 import { Popover } from '@3mo/popover'
 import { ListElement } from '@3mo/list'
+import { Submenu } from './Submenu.js'
 
 interface MenuElement extends Component {
 	readonly role: 'menu'
@@ -61,6 +62,14 @@ export class MenuController extends Controller {
 					break
 				case 'Tab':
 					this.setOpen(event, false)
+					break
+				case 'Right':
+				case 'ArrowRight':
+					this.host.anchor instanceof Submenu && this.setOpen(event, getComputedStyle(this.host.anchor).direction === 'ltr')
+					break
+				case 'Left':
+				case 'ArrowLeft':
+					this.host.anchor instanceof Submenu && this.setOpen(event, getComputedStyle(this.host.anchor).direction === 'rtl')
 					break
 				default:
 					break
