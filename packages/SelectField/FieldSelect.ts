@@ -4,6 +4,8 @@ import { Menu } from '@3mo/menu'
 import { Option } from './Option.js'
 import { Data, FieldSelectValueController, Index, Value } from './SelectValueController.js'
 
+// TODO: [Popover] [Blocking] Doesn't work in select
+
 /**
  * @element mo-field-select
  *
@@ -64,6 +66,11 @@ export class FieldSelect<T> extends InputFieldComponent<Value> {
 		return css`
 			${super.styles}
 
+			:host {
+				display: flex;
+				flex-flow: column;
+			}
+
 			input {
 				cursor: pointer;
 			}
@@ -111,6 +118,20 @@ export class FieldSelect<T> extends InputFieldComponent<Value> {
 		`
 	}
 
+	protected override get template() {
+		return html`
+			${super.template}
+			<mo-menu slot='end'
+				selectionMode=${this.multiple ? 'multiple' : 'single'}
+				.anchor=${this}
+				?open=${this.open}
+				@openChange=${(e: CustomEvent<boolean>) => this.open = e.detail}
+				.value=${this.valueController.menuValue}
+				@change=${(e: CustomEvent<Array<number>>) => this.handleSelection(e.detail)}
+			>${this.optionsTemplate}</mo-menu>
+		`
+	}
+
 	protected override get inputTemplate() {
 		return html`
 			<input
@@ -131,15 +152,6 @@ export class FieldSelect<T> extends InputFieldComponent<Value> {
 			${super.endSlotTemplate}
 
 			<mo-icon slot='end' part='dropDownIcon' icon='expand_more'></mo-icon>
-
-			<mo-menu slot='end'
-				selectionMode=${this.multiple ? 'multiple' : 'single'}
-				.anchor=${this}
-				?open=${this.open}
-				@openChange=${(e: CustomEvent<boolean>) => this.open = e.detail}
-				.value=${this.valueController.menuValue}
-				@change=${(e: CustomEvent<Array<number>>) => this.handleSelection(e.detail)}
-			>${this.optionsTemplate}</mo-menu>
 		`
 	}
 

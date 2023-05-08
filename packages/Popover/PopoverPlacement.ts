@@ -1,6 +1,6 @@
 export const enum PopoverPlacement {
-	Top = 'top',
-	Right = 'right',
-	Bottom = 'bottom',
-	Left = 'left'
+	BlockStart = 'block-start',
+	InlineEnd = 'inline-end',
+	BlockEnd = 'block-end',
+	InlineStart = 'inline-start'
 }

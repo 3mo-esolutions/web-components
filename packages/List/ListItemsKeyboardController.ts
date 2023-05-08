@@ -37,13 +37,7 @@ export class ListItemsKeyboardController extends Controller {
 	get focusedItemIndex() { return this._focusedItemIndex }
 	set focusedItemIndex(value) {
 		if (value !== undefined) {
-			if (value < 0) {
-				value = this.itemsLength + value
-			}
-
-			if (value >= this.itemsLength) {
-				value = value - this.itemsLength
-			}
+			value %= this.itemsLength
 		}
 
 		this._focusedItemIndex = value

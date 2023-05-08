@@ -1,9 +1,9 @@
-import { Component, component, css, event, html, ifDefined, property, query, unsafeCSS } from '@a11d/lit'
-import { Popover, PopoverPlacement } from '@3mo/popover'
+import { Component, component, css, event, html, ifDefined, property, query, state, unsafeCSS } from '@a11d/lit'
+import { Popover, PopoverAlignment, PopoverCoordinates, PopoverPlacement } from '@3mo/popover'
 import { SlotController } from '@3mo/slot-controller'
-import { SelectableList } from '@3mo/list'
+import { ListElement, SelectableList } from '@3mo/list'
 import { MenuController } from './MenuController.js'
-import { MenuPlacement } from './MenuPlacement.js'
+import { Submenu } from './Submenu.js'
 
 export function isMenu(element: EventTarget): element is HTMLElement {
 	return element instanceof HTMLElement
@@ -37,52 +37,73 @@ export class Menu extends Component {
 	readonly menuKeyboardController = new MenuController(this)
 
 	@property({ type: Object }) anchor!: HTMLElement
-	@property() placement?: MenuPlacement
-	@property({ type: Boolean, reflect: true }) open?: boolean
+	@property() placement?: PopoverPlacement
+	@property() alignment?: PopoverAlignment
+	@property({ type: Boolean, reflect: true, updated(this: Menu) {
+		if (!this.open) {
+			this.list.items.forEach(x => x instanceof Submenu && (x.open = false))
+		}
+	} }) open?: boolean
+	@property({ type: Boolean }) fixed = false
+	@property({ type: Boolean }) manualOpen = false
 	@property() opener?: string
 	@property() selectionMode?: SelectableList['selectionMode']
 	@property({ type: Object }) value?: SelectableList['value']
 
+	@state() protected coordinates?: PopoverCoordinates
+
 	@query('mo-popover') readonly popover!: Popover
-	@query('mo-selectable-list') readonly list!: SelectableList
+	@query('mo-selectable-list') readonly list!: ListElement & SelectableList
+
+	openWith(e: PointerEvent | PopoverCoordinates) {
+		if (e instanceof PointerEvent) {
+			e.preventDefault()
+			e.stopImmediatePropagation()
+			this.popover.coordinates = [e.clientX, e.clientY]
+		} else {
+			this.popover.coordinates = e
+		}
+		this.open = true
+	}
 
 	static override get styles() {
 		return css`
 			:host {
-				position: absolute;
+				display: content;
+				position: relative;
 			}
 
 			mo-popover {
 				border-radius: var(--mo-toolbar-border-radius, var(--mo-border-radius, 4px));
 				background: var(--mo-color-surface, #fff);
 				border-radius: var(--mo-border-radius, 4px);
-				overflow: hidden;
+				/*overflow: hidden;*/
 				transition-duration: 100ms;
 				transition-property: opacity, transform;
 			}
 
-			mo-popover[placement="${unsafeCSS(PopoverPlacement.Top)}"] {
-				transform: scaleY(0.9);
+			mo-popover[placement="${unsafeCSS(PopoverPlacement.BlockStart)}"] {
+				--mo-popover-transform-extra: scaleY(0.9);
 				transform-origin: bottom;
 			}
 
-			mo-popover[placement="${unsafeCSS(PopoverPlacement.Bottom)}"] {
-				transform: scaleY(0.9);
+			mo-popover[placement="${unsafeCSS(PopoverPlacement.BlockEnd)}"] {
+				--mo-popover-transform-extra: scaleY(0.9);
 				transform-origin: top;
 			}
 
-			mo-popover[placement="${unsafeCSS(PopoverPlacement.Left)}"] {
-				transform: scaleY(0.9);
+			mo-popover[placement="${unsafeCSS(PopoverPlacement.InlineStart)}"] {
+				--mo-popover-transform-extra: scaleY(0.9);
 				transform-origin: right;
 			}
 
-			mo-popover[placement="${unsafeCSS(PopoverPlacement.Right)}"] {
-				transform: scaleY(0.9);
+			mo-popover[placement="${unsafeCSS(PopoverPlacement.InlineEnd)}"] {
+				--mo-popover-transform-extra: scaleY(0.9);
 				transform-origin: left;
 			}
 
 			mo-popover[open] {
-				transform: scaleY(1);
+				--mo-popover-transform-extra: scaleY(1);
 			}
 		`
 	}
@@ -92,8 +113,11 @@ export class Menu extends Component {
 			<mo-popover part='popover'
 				.anchor=${this.anchor}
 				placement=${ifDefined(this.placement)}
+				alignment=${ifDefined(this.alignment)}
 				?open=${this.open}
 				@openChange=${this.handleOpenChange.bind(this)}
+				?fixed=${this.fixed}
+				.coordinates=${this.coordinates}
 			>
 				<mo-selectable-list
 					selectionMode=${this.selectionMode}
