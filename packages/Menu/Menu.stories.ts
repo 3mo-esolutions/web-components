@@ -96,8 +96,10 @@ class ButtonWithMenuStory extends Component {
 	static override get styles() {
 		return css`
 			:host {
-				display: block;
+				display: inline-flex;
+				flex-flow: column;
 				position: relative;
+				align-items: flex-end;
 			}
 		`
 	}

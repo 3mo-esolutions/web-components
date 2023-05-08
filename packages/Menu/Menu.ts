@@ -3,7 +3,7 @@ import { Popover, PopoverAlignment, PopoverCoordinates, PopoverPlacement } from 
 import { SlotController } from '@3mo/slot-controller'
 import { ListElement, SelectableList } from '@3mo/list'
 import { MenuController } from './MenuController.js'
-import { MenuPlacement } from './MenuPlacement.js'
+import { Submenu } from './Submenu.js'
 
 export function isMenu(element: EventTarget): element is HTMLElement {
 	return element instanceof HTMLElement
@@ -39,7 +39,11 @@ export class Menu extends Component {
 	@property({ type: Object }) anchor!: HTMLElement
 	@property() placement?: PopoverPlacement
 	@property() alignment?: PopoverAlignment
-	@property({ type: Boolean, reflect: true }) open?: boolean
+	@property({ type: Boolean, reflect: true, updated(this: Menu) {
+		if (!this.open) {
+			this.list.items.forEach(x => x instanceof Submenu && (x.open = false))
+		}
+	} }) open?: boolean
 	@property({ type: Boolean }) fixed = false
 	@property({ type: Boolean }) manualOpen = false
 	@property() opener?: string
@@ -79,27 +83,27 @@ export class Menu extends Component {
 			}
 
 			mo-popover[placement="${unsafeCSS(PopoverPlacement.BlockStart)}"] {
-				transform: scaleY(0.9);
+				--mo-popover-transform-extra: scaleY(0.9);
 				transform-origin: bottom;
 			}
 
 			mo-popover[placement="${unsafeCSS(PopoverPlacement.BlockEnd)}"] {
-				transform: scaleY(0.9);
+				--mo-popover-transform-extra: scaleY(0.9);
 				transform-origin: top;
 			}
 
 			mo-popover[placement="${unsafeCSS(PopoverPlacement.InlineStart)}"] {
-				transform: scaleY(0.9);
+				--mo-popover-transform-extra: scaleY(0.9);
 				transform-origin: right;
 			}
 
 			mo-popover[placement="${unsafeCSS(PopoverPlacement.InlineEnd)}"] {
-				transform: scaleY(0.9);
+				--mo-popover-transform-extra: scaleY(0.9);
 				transform-origin: left;
 			}
 
 			mo-popover[open] {
-				transform: scaleY(1);
+				--mo-popover-transform-extra: scaleY(1);
 			}
 		`
 	}
