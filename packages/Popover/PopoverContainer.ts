@@ -1,6 +1,6 @@
-import { Component, component, css, html, property, unsafeCSS } from '@a11d/lit'
+import { Component, component, css, html, property } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
-import { PopoverPlacement, Popover, PopoverAlignment } from '@3mo/popover'
+import { type Popover, PopoverAlignment, PopoverPlacement } from './index.js'
 
 /**
  * @element mo-popover-container

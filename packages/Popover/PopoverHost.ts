@@ -1,9 +1,9 @@
 import { Component, component, html } from '@a11d/lit'
 
-@component('mo-tooltip-host')
-export class TooltipHost extends Component {
+@component('mo-popover-host')
+export class PopoverHost extends Component {
 	static get instance() {
-		return document.querySelector('mo-tooltip-host') ?? document.body
+		return document.querySelector('mo-popover-host') ?? document.body
 	}
 
 	protected override get template() {
@@ -13,6 +13,6 @@ export class TooltipHost extends Component {
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'mo-tooltip-host': TooltipHost
+		'mo-popover-host': PopoverHost
 	}
 }

@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/list",
-	"version": "0.0.17",
+	"version": "0.0.18",
 	"description": "A list web-component.",
 	"repository": {
 		"type": "git",

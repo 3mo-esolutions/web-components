@@ -1,7 +1,7 @@
 {
-	"name": "@3mo/tooltip",
-	"version": "0.1.6",
-	"description": "A tooltip web-component with Lit directives.",
+	"name": "@3mo/context-menu",
+	"version": "0.0.1",
+	"description": "A web component to display a context menu",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/3mo-esolutions/web-components"
@@ -9,8 +9,7 @@
 	"keywords": [
 		"lit",
 		"web-component",
-		"tooltip",
-		"directive"
+		"context-menu"
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
@@ -22,8 +21,9 @@
 		"dist"
 	],
 	"dependencies": {
-		"@a11d/lit": "x",
 		"tslib": "x",
+		"@a11d/lit": "x",
+		"@3mo/menu": "x",
 		"@3mo/popover": "x"
 	}
 }
