@@ -54,10 +54,6 @@ export class PopoverController extends Controller {
 			(openOnHover && (this.pointerController.hover || this.anchorPointerController.hover)) ||
 			(openOnFocus && this.anchorFocusController.focused)
 
-		if (this.host.open === open) {
-			return
-		}
-
 		this.host.setOpen(open)
 	}
 
@@ -110,9 +106,6 @@ export class PopoverController extends Controller {
 			return
 		}
 
-		const leftOffset = this.host?.getLeftPositionOffset?.(anchorRect, popoverRect) ?? 0
-		const topOffset = this.host?.getTopPositionOffset?.(anchorRect, popoverRect) ?? 0
-
 		let left = 0
 		let top = 0
 
@@ -120,20 +113,20 @@ export class PopoverController extends Controller {
 
 		switch (this.host.placement) {
 			case PopoverPlacement.BlockStart:
-				left = anchorRect.left * startWeight + anchorRect.right * endWeight - popoverRect.width * endWeight + leftOffset
+				left = anchorRect.left * startWeight + anchorRect.right * endWeight - popoverRect.width * endWeight
 				top = anchorRect.top - popoverRect.height
 				break
 			case PopoverPlacement.BlockEnd:
-				left = anchorRect.left * startWeight + anchorRect.right * endWeight - popoverRect.width * endWeight + leftOffset
+				left = anchorRect.left * startWeight + anchorRect.right * endWeight - popoverRect.width * endWeight
 				top = anchorRect.top + anchorRect.height
 				break
 			case PopoverPlacement.InlineStart:
 				left = anchorRect.left - popoverRect.width
-				top = anchorRect.top * startWeight + anchorRect.bottom * endWeight - popoverRect.height * endWeight + topOffset
+				top = anchorRect.top * startWeight + anchorRect.bottom * endWeight - popoverRect.height * endWeight
 				break
 			case PopoverPlacement.InlineEnd:
 				left = anchorRect.left + anchorRect.width
-				top = anchorRect.top * startWeight + anchorRect.bottom * endWeight - popoverRect.height * endWeight + topOffset
+				top = anchorRect.top * startWeight + anchorRect.bottom * endWeight - popoverRect.height * endWeight
 				break
 		}
 

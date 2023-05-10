@@ -10,11 +10,10 @@ import { PopoverCoordinates } from './PopoverCoordinates.js'
  * @attr fixed - Whether the popover is fixed.
  * @attr anchor - The anchor element for the popover.
  * @attr placement - The placement of the popover relative to the anchor.
+ * @attr alignment - The alignment of the popover relative to the anchor.
  * @attr open - Whether the popover is open.
  * @attr openOnHover - Whether the popover should open on hover.
  * @attr openOnFocus - Whether the popover should open on focus.
- * @attr getLeftPositionOffset - A function that returns the left position offset of the popover.
- * @attr getTopPositionOffset - A function that returns the top position offset of the popover.
  * @attr coordinates - The coordinates of the popover.
  *
  * @slot - Default slot for popover content
@@ -33,15 +32,14 @@ export class Popover extends Component {
 	@property({ type: Boolean, reflect: true }) open = false
 	@property({ type: Boolean }) openOnHover?: boolean
 	@property({ type: Boolean }) openOnFocus?: boolean
-	// TODO [Popover] Think of eliminating these two properties in favor of alignment
-	@property({ type: Object }) getLeftPositionOffset?: (anchorRect: DOMRect, popoverRect: DOMRect) => number
-	@property({ type: Object }) getTopPositionOffset?: (anchorRect: DOMRect, popoverRect: DOMRect) => number
 
 	protected readonly popoverController = new PopoverController(this)
 
 	setOpen(open: boolean) {
-		this.open = open
-		this.openChange.dispatch(open)
+		if (this.open !== open) {
+			this.open = open
+			this.openChange.dispatch(open)
+		}
 	}
 
 	static get translationStyles() {
@@ -65,7 +63,7 @@ export class Popover extends Component {
 			:host(:not([fixed])[placement=block-end][alignment=end]) {
 				--mo-popover-translate-x: -100%;
 			}
-			
+
 			:host(:not([fixed])[placement=inline-start][alignment=start]),
 			:host(:not([fixed])[placement=inline-end][alignment=start]) {
 				--mo-popover-translate-y: 0%;
