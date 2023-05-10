@@ -9,6 +9,8 @@ import { component, css, html, Component } from '@a11d/lit'
  *
  * @cssprop --mo-chip-background-color - The background color of the chip.
  * @cssprop --mo-chip-foreground-color - The foreground color of the chip.
+ *
+ * @csspart ripple - The ripple element.
  */
 @component('mo-chip')
 export class Chip extends Component {
@@ -44,7 +46,7 @@ export class Chip extends Component {
 
 	protected override get template() {
 		return html`
-			<mo-button type='unelevated'>
+			<mo-button type='unelevated' exportparts='ripple'>
 				<slot name='leading' slot='leading'></slot>
 				<slot></slot>
 				<slot name='trailing' slot='trailing'></slot>

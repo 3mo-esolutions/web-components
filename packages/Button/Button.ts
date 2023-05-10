@@ -27,6 +27,7 @@ export const enum ButtonType {
  * @cssprop --mo-button-disabled-color
  *
  * @csspart button - The composed native button element.
+ * @csspart ripple - The ripple element.
  */
 @component('mo-button')
 export class Button extends Component {
@@ -82,7 +83,7 @@ export class Button extends Component {
 
 	protected override get template() {
 		return html`
-			<mwc-button exportparts='button' expandContent
+			<mwc-button exportparts='button,ripple' expandContent
 				?raised=${this.type === ButtonType.Raised}
 				?outlined=${this.type === ButtonType.Outlined}
 				?unelevated=${this.type === ButtonType.Unelevated}
@@ -134,10 +135,13 @@ export class Button extends Component {
 	}
 }
 
-MwcButton.addInitializer(async element => {
-	const button = element as MwcButton
-	await button.updateComplete
-	button.renderRoot.querySelector('button')?.setAttribute('part', 'button')
+MwcButton.addInitializer(element => {
+	element.addController({
+		hostUpdated: () => {
+			element.renderRoot.querySelector('button')?.setAttribute('part', 'button')
+			element.renderRoot.querySelector('mwc-ripple')?.setAttribute('part', 'ripple')
+		}
+	})
 })
 
 MwcButton.elementStyles.push(css`
