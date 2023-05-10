@@ -19,6 +19,9 @@ export class ContextMenu extends Menu {
 	}
 
 	override openWith(...parameters: Parameters<Menu['openWith']>) {
+		if (this.open) {
+			this.setOpen(false)
+		}
 		for (const contextMenu of [...ContextMenu.container].filter(t => t !== this)) {
 			contextMenu.setOpen(false)
 		}

@@ -1,9 +1,9 @@
 import { component } from '@a11d/lit'
-import { Submenu } from '@3mo/menu'
+import { NestedMenuItem } from '@3mo/menu'
 
 /** @element mo-context-menu-item */
 @component('mo-context-menu-item')
-export class ContextMenuItem extends Submenu { }
+export class ContextMenuItem extends NestedMenuItem { }
 
 declare global {
 	interface HTMLElementTagNameMap {

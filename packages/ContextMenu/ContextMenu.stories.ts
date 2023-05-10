@@ -18,41 +18,41 @@ export default meta({
 const keyboardShortcut = (shortcut: string) => html`<span style='font-size: 13px; color: darkgray'>${shortcut}</span>`
 
 const mainContextMenu = html`
-	<mo-list-item>
+	<mo-context-menu-item>
 		<mo-icon style='opacity: 0.66' icon='content_cut'></mo-icon>
 		<span style='flex: 1'>Cut</span>
 		${keyboardShortcut('Ctrl + X')}
-	</mo-list-item>
-	<mo-list-item>
+	</mo-context-menu-item>
+	<mo-context-menu-item>
 		<mo-icon style='opacity: 0.66' icon='content_copy'></mo-icon>
 		<span style='flex: 1'>Copy</span>
 		${keyboardShortcut('Ctrl + C')}
-	</mo-list-item>
-	<mo-list-item>
+	</mo-context-menu-item>
+	<mo-context-menu-item>
 		<mo-icon style='opacity: 0.66' icon='content_paste'></mo-icon>
 		<span style='flex: 1'>Paste</span>
 		${keyboardShortcut('Ctrl + V')}
-	</mo-list-item>
+	</mo-context-menu-item>
 	<div role='separator' style='width: 100%; height: 1px; background: darkgray; opacity: 0.3'></div>
-	<mo-list-item>Dictionary</mo-list-item>
-	<mo-list-item>Thesaurus</mo-list-item>
-	<mo-list-submenu>
+	<mo-context-menu-item>Dictionary</mo-context-menu-item>
+	<mo-context-menu-item>Thesaurus</mo-context-menu-item>
+	<mo-context-menu-item>
 		More
-		<mo-list-item slot='detail'>Open in New</mo-list-item>
-		<mo-list-item slot='detail'>Report Issue</mo-list-item>
-		<mo-list-submenu slot='detail'>
+		<mo-context-menu-item slot='submenu'>Open in New</mo-context-menu-item>
+		<mo-context-menu-item slot='submenu'>Report Issue</mo-context-menu-item>
+		<mo-context-menu-item slot='submenu'>
 			More
-			<mo-list-item slot='detail'>Open in New</mo-list-item>
-			<mo-list-item slot='detail'>Report Issue</mo-list-item>
-		</mo-list-submenu>
-	</mo-list-submenu>
+			<mo-context-menu-item slot='submenu'>Open in New</mo-context-menu-item>
+			<mo-context-menu-item slot='submenu'>Report Issue</mo-context-menu-item>
+		</mo-context-menu-item>
+	</mo-context-menu-item>
 `
 
 const specialContextMenu = html`
-	<mo-list-item>
+	<mo-context-menu-item>
 		<mo-icon style='opacity: 0.66' icon='auto_fix_normal'></mo-icon>
 		<span style='flex: 1'>Another Item</span>
-	</mo-list-item>
+	</mo-context-menu-item>
 `
 
 export const ContextMenu = story({
