@@ -17,7 +17,7 @@ export default meta({
 
 const keyboardShortcut = (shortcut: string) => html`<span style='font-size: 13px; color: darkgray'>${shortcut}</span>`
 
-const items = html`
+const mainContextMenu = html`
 	<mo-list-item>
 		<mo-icon style='opacity: 0.66' icon='content_cut'></mo-icon>
 		<span style='flex: 1'>Cut</span>
@@ -48,12 +48,19 @@ const items = html`
 	</mo-list-submenu>
 `
 
+const specialContextMenu = html`
+	<mo-list-item>
+		<mo-icon style='opacity: 0.66' icon='auto_fix_normal'></mo-icon>
+		<span style='flex: 1'>Another Item</span>
+	</mo-list-item>
+`
+
 export const ContextMenu = story({
 	render: () => html`
-		<div style='width: 100%; height: 300px; display: flex; align-items: center; justify-content: center; border: dotted 2px currentColor; opacity: .7; border-radius: var(--mo-border-radius)'
-			${contextMenu(items)}
-		>
+		<div ${contextMenu(mainContextMenu)} style='width: 100%; height: 300px; position: relative; display: flex; align-items: center; justify-content: center; border: dotted 2px currentColor; opacity: .7; border-radius: var(--mo-border-radius)'>
 			Right click anywhere
+
+			<div ${contextMenu(specialContextMenu)} style='position: absolute; top: 50px; left: 60px; width: 100px; height: 100px; border: dotted 2px red; display: flex; align-items: center; justify-content: center;'>Or here</div>
 		</div>
 	`
 })

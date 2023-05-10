@@ -1,5 +1,5 @@
 import { component, css, eventListener, html, property, query } from '@a11d/lit'
-import { List, ListItem } from '@3mo/list'
+import { ListItem } from '@3mo/list'
 import { FocusController } from '@3mo/focus-controller'
 import { Menu } from './Menu.js'
 
@@ -11,8 +11,10 @@ export class Submenu extends ListItem {
 	@property({
 		updated(this: Submenu) {
 			// TODO: [Popover] Refactor
-			const parentList = this.parentElement as List
-			parentList
+			if (!this.menu?.list?.listItemsKeyboardController) {
+				return
+			}
+
 			if (this.open) {
 				this.menu.focus()
 				this.menu.list.focus()

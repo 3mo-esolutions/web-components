@@ -1,7 +1,7 @@
 import { Component, component, css, event, html, ifDefined, property, query, state, unsafeCSS } from '@a11d/lit'
 import { Popover, PopoverAlignment, PopoverCoordinates, PopoverPlacement } from '@3mo/popover'
 import { SlotController } from '@3mo/slot-controller'
-import { ListElement, SelectableList } from '@3mo/list'
+import { ListElement, ListItem, SelectableList } from '@3mo/list'
 import { MenuController } from './MenuController.js'
 import { Submenu } from './Submenu.js'
 
@@ -39,11 +39,7 @@ export class Menu extends Component {
 	@property({ type: Object }) anchor!: HTMLElement
 	@property() placement?: PopoverPlacement
 	@property() alignment?: PopoverAlignment
-	@property({ type: Boolean, reflect: true, updated(this: Menu) {
-		if (!this.open) {
-			this.list.items.forEach(x => x instanceof Submenu && (x.open = false))
-		}
-	} }) open?: boolean
+	@property({ type: Boolean, reflect: true }) open?: boolean
 	@property({ type: Boolean }) fixed = false
 	@property({ type: Boolean }) manualOpen = false
 	@property() opener?: string
@@ -55,15 +51,22 @@ export class Menu extends Component {
 	@query('mo-popover') readonly popover!: Popover
 	@query('mo-selectable-list') readonly list!: ListElement & SelectableList
 
+	get items() { return this.list.items as Array<ListItem & HTMLElement> }
+
 	openWith(e: PointerEvent | PopoverCoordinates) {
 		if (e instanceof PointerEvent) {
 			e.preventDefault()
 			e.stopImmediatePropagation()
-			this.popover.coordinates = [e.clientX, e.clientY]
+			this.coordinates = [e.clientX, e.clientY]
 		} else {
-			this.popover.coordinates = e
+			this.coordinates = e
 		}
-		this.open = true
+		this.setOpen(true)
+	}
+
+	setOpen(open: boolean) {
+		this.open = open
+		this.openChange.dispatch(open)
 	}
 
 	static override get styles() {
@@ -131,12 +134,20 @@ export class Menu extends Component {
 	}
 
 	protected handleOpenChange(e: CustomEvent<boolean>) {
-		this.open = e.detail
-		if (this.open === false) {
-			this.list.listItemsKeyboardController.unfocus()
+		this.setOpen(e.detail)
+
+		if (this.list) {
+			if (this.open === false) {
+				this.list.listItemsKeyboardController.unfocus()
+
+				this.items.forEach(x => {
+					if (x instanceof Submenu) {
+						x.open = false
+					}
+				})
+			}
+			this.list.listItemsKeyboardController.forceFocused = this.open as boolean
 		}
-		this.list.listItemsKeyboardController.forceFocused = this.open
-		this.openChange.dispatch(this.open)
 	}
 
 	protected handleChange(e: CustomEvent<Array<number>>) {
