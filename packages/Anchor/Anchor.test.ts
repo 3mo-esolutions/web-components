@@ -18,7 +18,7 @@ describe('Anchor', () => {
 			// @ts-expect-error Key wont be of a readonly property
 			fixture.component[key] = value
 			await fixture.updateComplete
-			expect(getAnchorElement()[key]).toBe(value)
+			expect((getAnchorElement() as any)[key]).toBe(value)
 		})
 	}
 
