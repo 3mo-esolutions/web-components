@@ -1,0 +1,28 @@
+{
+	"name": "@3mo/loading-button-dialog-adapter",
+	"version": "0.0.1",
+	"description": "The @3mo/dialog adapter of the @3mo/loading-button component",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/3mo-esolutions/web-components"
+	},
+	"keywords": [
+		"lit",
+		"loading-button",
+		"dialog-adapter"
+	],
+	"author": "3MO GmbH",
+	"license": "MIT",
+	"homepage": "https://www.3mo.de",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"dependencies": {
+		"tslib": "x",
+		"@3mo/loading-button": "x",
+		"@3mo/dialog": "x"
+	}
+}
