@@ -100,7 +100,7 @@ export class FieldDateRange extends FieldDateBase<DateTimeRange | undefined> {
 		}
 	}
 
-	protected override get menuContentTemplate() {
+	protected override get calendarTemplate() {
 		return html`
 			<mo-flex>
 				<mo-flex direction='horizontal' alignItems='center' ${style({ textAlign: 'center', height: '30px' })}>
@@ -116,7 +116,7 @@ export class FieldDateRange extends FieldDateBase<DateTimeRange | undefined> {
 							@click=${() => this.currentSelection = DateRangeCalendarSelectionAdapterCurrentSelection.EndDate}
 						>${!this.value?.end ? 'Ende' : this.value.end.formatAsDate()}</div>
 				</mo-flex>
-				${super.menuContentTemplate}
+				${super.calendarTemplate}
 			</mo-flex>
 		`
 	}

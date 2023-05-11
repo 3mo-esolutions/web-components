@@ -41,6 +41,13 @@ export abstract class FieldDateBase<T> extends InputFieldComponent<T> {
 		`
 	}
 
+	protected override get template() {
+		return html`
+			${super.template}
+			${this.popoverTemplate}
+		`
+	}
+
 	protected override get endSlotTemplate() {
 		return html`
 			${super.endSlotTemplate}
@@ -66,26 +73,28 @@ export abstract class FieldDateBase<T> extends InputFieldComponent<T> {
 	protected abstract override valueToInputValue(value: T | undefined): string
 
 	protected get calendarIconButtonTemplate() {
-		return html`
-			${this.hideDatePicker ? nothing : html`
-				<mo-icon-button tabindex='-1' dense slot='end'
-					icon=${this.calendarIconButtonIcon}
-					${style({ color: this.isActive ? 'var(--mo-color-accent)' : 'var(--mo-color-gray)' })}
-					@click=${() => this.open = !this.open}>
-				</mo-icon-button>
-			`}
-
-			${this.hideDatePicker ? nothing : html`
-				<mo-popover tabindex='-1' slot='end' openOnFocus
-					.anchor=${this}
-					?open=${this.open}
-					@openChange=${(e: CustomEvent<boolean>) => this.open = e.detail}
-				>${!this.open ? nothing : this.menuContentTemplate}</mo-popover>
-			`}
+		return this.hideDatePicker ? nothing : html`
+			<mo-icon-button tabindex='-1' dense slot='end'
+				icon=${this.calendarIconButtonIcon}
+				${style({ color: this.isActive ? 'var(--mo-color-accent)' : 'var(--mo-color-gray)' })}
+				@click=${() => this.open = !this.open}>
+			</mo-icon-button>
 		`
 	}
 
-	protected get menuContentTemplate() {
+	protected get popoverTemplate() {
+		return this.hideDatePicker ? nothing : html`
+			<mo-popover tabindex='-1' openOnFocus
+				.anchor=${this}
+				?open=${this.open}
+				@openChange=${(e: CustomEvent<boolean>) => this.open = e.detail}
+			>
+				${this.calendarTemplate}
+			</mo-popover>
+		`
+	}
+
+	protected get calendarTemplate() {
 		return html`
 			<mo-selectable-calendar
 				.selectionAdapterConstructor=${this.calendarSelectionAdapterConstructor}

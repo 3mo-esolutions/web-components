@@ -22,7 +22,7 @@ export default meta({
 	}
 })
 
-export const Date = story({
+export const Color = story({
 	render: ({ label, required, disabled, dense, readonly }) => html`
 		<mo-field-color label=${label} ?required=${required} ?disabled=${disabled} ?readonly=${readonly} ?dense=${dense}></mo-field-color>
 	`
