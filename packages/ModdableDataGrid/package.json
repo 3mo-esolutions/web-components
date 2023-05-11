@@ -1,0 +1,41 @@
+{
+	"name": "@3mo/moddable-data-grid",
+	"version": "0.0.3",
+	"description": "A moddable variant of @3mo/fetchable-data-grid",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/3mo-esolutions/web-components"
+	},
+	"keywords": [
+		"lit",
+		"web-component",
+		"material",
+		"data-grid",
+		"fetchable",
+		"moddable",
+		"moddable-data-grid"
+	],
+	"author": "3MO GmbH",
+	"license": "MIT",
+	"homepage": "https://www.3mo.de",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"dependencies": {
+		"tslib": "x",
+		"@a11d/lit": "x",
+		"@a11d/lit-application": "x",
+		"@a11d/local-storage": "x",
+		"@3mo/flex": "x",
+		"@3mo/icon-button": "x",
+		"@3mo/scroller": "x",
+		"@3mo/fetchable-data-grid": "x",
+		"@3mo/standard-dialogs": "x",
+		"@3mo/tooltip": "x",
+		"@3mo/localization": "x",
+		"@3mo/context-menu": "x"
+	}
+}
