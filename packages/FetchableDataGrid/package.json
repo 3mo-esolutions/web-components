@@ -1,0 +1,36 @@
+{
+	"name": "@3mo/fetchable-data-grid",
+	"version": "0.0.1",
+	"description": "A fetchable variant of @3mo/data-grid",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/3mo-esolutions/web-components"
+	},
+	"keywords": [
+		"lit",
+		"web-component",
+		"material",
+		"data-grid",
+		"fetchable",
+		"fetchable-data-grid"
+	],
+	"author": "3MO GmbH",
+	"license": "MIT",
+	"homepage": "https://www.3mo.de",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"dependencies": {
+		"tslib": "x",
+		"@a11d/lit": "x",
+		"@3mo/icon-button": "x",
+		"@3mo/circular-progress": "x",
+		"@3mo/empty-state": "x",
+		"@3mo/data-grid": "x",
+		"@3mo/fetcher-controller": "x",
+		"@3mo/tooltip": "x"
+	}
+}

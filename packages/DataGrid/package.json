@@ -10,7 +10,7 @@
 		"lit",
 		"web-component",
 		"material",
-		"section"
+		"data-grid"
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
