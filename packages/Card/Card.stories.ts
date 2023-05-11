@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default meta({
-	title: 'Core/Layout/Card',
+	title: 'Card',
 	component: 'mo-card',
 	args: {
 		type: 'filled',

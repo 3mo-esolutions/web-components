@@ -4,7 +4,7 @@ import p from './package.json'
 import '.'
 
 export default meta({
-	title: 'Core/ColorPicker',
+	title: 'ColorPicker',
 	component: 'mo-color-picker',
 	parameters: {
 		docs: {

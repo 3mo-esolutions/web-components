@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default meta({
-	title: 'Core/Input/Slider/Slider',
+	title: 'Slider',
 	component: 'mo-slider',
 	args: {
 		disabled: false,

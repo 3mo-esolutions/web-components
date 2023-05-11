@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default meta({
-	title: 'Core/Input/Select',
+	title: 'Field Select',
 	component: 'mo-field-select',
 	args: {
 		defaultText: 'No selection',

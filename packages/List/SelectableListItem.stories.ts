@@ -3,7 +3,7 @@ import { html } from '@a11d/lit'
 import './index.js'
 
 export default meta({
-	title: 'Core/List/Item/Selectable',
+	title: 'Selectable List Item',
 	component: 'mo-selectable-list-item',
 })
 

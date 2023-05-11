@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default meta({
-	title: 'Core/Input/Field/TextArea',
+	title: 'Field Text Area',
 	component: 'mo-field-text-area',
 	args: {
 		label: 'Label',

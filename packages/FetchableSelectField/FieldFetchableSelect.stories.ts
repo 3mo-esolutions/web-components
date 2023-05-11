@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default meta({
-	title: 'Core/Input/FetchableSelect',
+	title: 'FetchableSelect',
 	component: 'mo-field-fetchable-select',
 	args: {
 		defaultText: 'No selection',

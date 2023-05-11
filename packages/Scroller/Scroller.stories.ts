@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default meta({
-	title: 'Core/Layout/Scroller',
+	title: 'Scroller',
 	component: 'mo-scroller',
 	parameters: {
 		docs: {

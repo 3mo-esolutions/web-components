@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default meta({
-	title: 'Core/Drawer',
+	title: 'Drawer',
 	component: 'mo-drawer',
 	parameters: {
 		docs: {

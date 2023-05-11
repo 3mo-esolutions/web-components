@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default meta({
-	title: 'Core/Input/Field/Percent',
+	title: 'Field Percent',
 	component: 'mo-field-percent',
 	args: {
 		label: 'Label',

@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default meta({
-	title: 'Core/Layout/GroupBox',
+	title: 'GroupBox',
 	component: 'mo-group-box',
 	args: {
 		heading: 'Satoshi Nakamoto',

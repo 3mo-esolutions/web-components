@@ -12,7 +12,7 @@ const icons = new Array<MaterialIcon>(
 )
 
 export default meta({
-	title: 'Core/Button/Icon Button',
+	title: 'Icon Button',
 	component: 'mo-icon-button',
 	argTypes: {
 		icon: { control: { type: 'select', options: icons } },

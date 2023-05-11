@@ -5,7 +5,7 @@ import './index.js'
 import { SelectableListSelectionMode } from './index.js'
 
 export default meta({
-	title: 'Core/List/Selectable',
+	title: 'Selectable List',
 	component: 'mo-selectable-list',
 	parameters: {
 		docs: {

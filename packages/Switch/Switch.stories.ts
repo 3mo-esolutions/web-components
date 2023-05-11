@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default meta({
-	title: 'Core/Input/Switch',
+	title: 'Switch',
 	component: 'mo-switch',
 	args: {
 		disabled: false,

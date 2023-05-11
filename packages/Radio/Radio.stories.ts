@@ -4,7 +4,7 @@ import p from './package.json'
 import '.'
 
 export default meta({
-	title: 'Core/Input/Radio',
+	title: 'Radio',
 	component: 'mo-radio',
 	args: {
 		disabled: false,

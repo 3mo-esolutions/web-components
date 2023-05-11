@@ -5,7 +5,7 @@ import p from './package.json'
 import './index.js'
 
 export default meta({
-	title: 'Core/Input/Field/Currency',
+	title: 'Field Currency',
 	component: 'mo-field-currency',
 	args: {
 		label: 'Label',

@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default meta({
-	title: 'Core/Input/Field/Date',
+	title: 'Field Date',
 	component: 'mo-field-date',
 	args: {
 		label: 'Label',

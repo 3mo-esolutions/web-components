@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default meta({
-	title: 'Core/Input/Field/Email',
+	title: 'Field Email',
 	component: 'mo-field-email',
 	args: {
 		label: 'Label',

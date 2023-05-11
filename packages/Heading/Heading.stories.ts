@@ -4,7 +4,7 @@ import p from './package.json'
 import '.'
 
 export default meta({
-	title: 'Core/Heading',
+	title: 'Heading',
 	component: 'mo-heading',
 	args: {
 		typography: 'heading1',

@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default meta({
-	title: 'Core/Progress/Linear Progress',
+	title: 'Linear Progress',
 	component: 'mo-linear-progress',
 	parameters: {
 		docs: {

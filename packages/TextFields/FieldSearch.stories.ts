@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default meta({
-	title: 'Core/Input/Field/Search',
+	title: 'Field Search',
 	component: 'mo-field-search',
 	args: {
 		label: 'Label',

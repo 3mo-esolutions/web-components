@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default meta({
-	title: 'Core/Input/Field/Password',
+	title: 'Field Password',
 	component: 'mo-field-password',
 	args: {
 		label: 'Label',

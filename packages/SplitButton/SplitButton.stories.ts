@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default meta({
-	title: 'Core/Button/SplitButton',
+	title: 'SplitButton',
 	component: 'mo-split-button',
 	parameters: {
 		docs: {

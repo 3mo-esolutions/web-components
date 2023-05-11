@@ -4,7 +4,7 @@ import p from './package.json'
 import '.'
 
 export default meta({
-	title: 'Core/Input/Field/Number',
+	title: 'Field Number',
 	component: 'mo-field-number',
 	args: {
 		label: 'Label',

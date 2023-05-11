@@ -4,7 +4,7 @@ import p from './package.json'
 import '.'
 
 export default meta({
-	title: 'Core/Input/Checkbox',
+	title: 'Checkbox',
 	component: 'mo-checkbox',
 	args: {
 		disabled: false,

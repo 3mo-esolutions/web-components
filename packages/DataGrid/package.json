@@ -1,0 +1,50 @@
+{
+	"name": "@3mo/data-grid",
+	"version": "0.0.1",
+	"description": "A data grid web component",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/3mo-esolutions/web-components"
+	},
+	"keywords": [
+		"lit",
+		"web-component",
+		"material",
+		"section"
+	],
+	"author": "3MO GmbH",
+	"license": "MIT",
+	"homepage": "https://www.3mo.de",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"dependencies": {
+		"tslib": "x",
+		"@a11d/lit": "x",
+		"@a11d/lit-application": "x",
+		"@3mo/flex": "x",
+		"@3mo/grid": "x",
+		"@3mo/key-path": "x",
+		"@3mo/icon": "x",
+		"@3mo/icon-button": "x",
+		"@3mo/checkbox": "x",
+		"@3mo/slot-controller": "x",
+		"@3mo/instanceof-attribute-controller": "x",
+		"@3mo/media-query-observer": "x",
+		"@3mo/mutation-observer": "x",
+		"@3mo/resize-observer": "x",
+		"@3mo/localization": "x",
+		"@3mo/context-menu": "x",
+		"@3mo/tooltip": "x",
+		"@3mo/number-fields": "x",
+		"@3mo/text-fields": "x",
+		"@3mo/date-time-fields": "x",
+		"@3mo/empty-state": "x",
+		"@3mo/splitter": "x",
+		"@3mo/downloader": "x",
+		"@3mo/keyboard-controller": "x"
+	}
+}

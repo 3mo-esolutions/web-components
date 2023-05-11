@@ -4,7 +4,7 @@ import p from './package.json'
 import { contextMenu } from './index.js'
 
 export default meta({
-	title: 'Core/ContextMenu',
+	title: 'ContextMenu',
 	component: 'mo-field-context-menu',
 	parameters: {
 		docs: {

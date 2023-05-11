@@ -5,7 +5,7 @@ import './index.js'
 import { tooltip } from './index.js'
 
 export default meta({
-	title: 'Core/Tooltip',
+	title: 'Tooltip',
 	component: 'mo-tooltip',
 	parameters: {
 		docs: {

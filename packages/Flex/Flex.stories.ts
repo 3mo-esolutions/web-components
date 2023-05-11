@@ -16,7 +16,7 @@ const contentsOption = [
 ]
 
 export default meta({
-	title: 'Core/Layout/Flex',
+	title: 'Flex',
 	component: 'mo-flex',
 	args: {
 		direction: 'vertical',

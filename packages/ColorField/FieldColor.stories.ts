@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default meta({
-	title: 'Core/Input/Field/Color',
+	title: 'ColorField',
 	component: 'mo-field-color',
 	args: {
 		label: 'Label',

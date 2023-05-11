@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default meta({
-	title: 'Core/Alert',
+	title: 'Alert',
 	component: 'mo-alert',
 	parameters: {
 		docs: {

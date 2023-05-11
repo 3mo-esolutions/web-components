@@ -3,7 +3,7 @@ import { html } from '@a11d/lit'
 import './index.js'
 
 export default meta({
-	title: 'Core/List/Item/Switch',
+	title: 'Switch List Item',
 	component: 'mo-switch-list-item',
 })
 

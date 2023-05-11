@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default meta({
-	title: 'Core/Button/Floating Action Button (FAB)',
+	title: 'Floating Action Button (FAB)',
 	component: 'mo-fab',
 	parameters: {
 		docs: {

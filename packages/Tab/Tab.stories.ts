@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default meta({
-	title: 'Core/Tab',
+	title: 'Tab',
 	component: 'mo-tab',
 	argTypes: {
 		value: { control: { type: 'select', options: ['tab-1', 'tab-2', 'tab-3', 'tab-4'] } },

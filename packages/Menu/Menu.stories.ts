@@ -1,12 +1,11 @@
 import { story, meta } from '../../.storybook/story.js'
 import { Component, css, html, property, query } from '@a11d/lit'
-import { tooltip } from '@3mo/tooltip'
 import { Menu } from '@3mo/menu'
 import p from './package.json'
 import './index.js'
 
 export default meta({
-	title: 'Core/Menu',
+	title: 'Menu',
 	component: 'mo-menu',
 	parameters: {
 		docs: {

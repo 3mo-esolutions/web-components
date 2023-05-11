@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default meta({
-	title: 'Core/Snackbar',
+	title: 'Snackbar',
 	component: 'mo-snackbar',
 	parameters: {
 		docs: {

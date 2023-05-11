@@ -68,6 +68,7 @@ export class Checkbox extends Component {
 			mwc-formfield::part(label) {
 				padding-inline-start: 0px;
 				text-align: start;
+				color: var(--mo-color-foreground);
 			}
 
 			:host([disabled]) mwc-formfield::part(label) {

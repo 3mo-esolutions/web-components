@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default meta({
-	title: 'Core/Input/Field/Time',
+	title: 'Field Time',
 	component: 'mo-field-time',
 	args: {
 		label: 'Label',

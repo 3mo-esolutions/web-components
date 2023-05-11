@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default meta({
-	title: 'Core/Layout/Splitter',
+	title: 'Splitter',
 	component: 'mo-splitter',
 	args: {
 		gap: '0px',

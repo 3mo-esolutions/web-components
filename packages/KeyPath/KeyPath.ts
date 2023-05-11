@@ -1,3 +1,4 @@
+/* eslint-disable no-var */
 function getKeyPath<T>(keyPath: KeyPathOf<T>) {
 	return keyPath
 }

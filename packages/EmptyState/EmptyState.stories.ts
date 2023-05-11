@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default meta({
-	title: 'Core/EmptyState',
+	title: 'EmptyState',
 	component: 'mo-empty-state',
 	parameters: {
 		docs: {
