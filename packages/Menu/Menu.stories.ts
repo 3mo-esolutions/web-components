@@ -53,18 +53,15 @@ export const Fixed = story({
 const keyboardShortcut = (shortcut: string) => html`<span style='font-size: 13px; color: darkgray'>${shortcut}</span>`
 
 const items = html`
-	<mo-menu-item>
-		<mo-icon style='opacity: 0.66' icon='content_cut'></mo-icon>
+	<mo-menu-item icon='content_cut'>
 		<span style='flex: 1'>Cut</span>
 		${keyboardShortcut('Ctrl + X')}
 	</mo-menu-item>
-	<mo-menu-item>
-		<mo-icon style='opacity: 0.66' icon='content_copy'></mo-icon>
+	<mo-menu-item icon='content_copy'>
 		<span style='flex: 1'>Copy</span>
 		${keyboardShortcut('Ctrl + C')}
 	</mo-menu-item>
-	<mo-menu-item>
-		<mo-icon style='opacity: 0.66' icon='content_paste' ${tooltip('Paste')}></mo-icon>
+	<mo-menu-item icon='content_paste'>
 		<span style='flex: 1'>Paste</span>
 		${keyboardShortcut('Ctrl + V')}
 	</mo-menu-item>
