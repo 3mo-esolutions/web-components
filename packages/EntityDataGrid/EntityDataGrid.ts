@@ -109,6 +109,6 @@ export class EntityDataGrid<TEntity extends EntityWithId, TDataFetcherParameters
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'mo-data-grid-entity': EntityDataGrid<object>
+		'mo-entity-data-grid': EntityDataGrid<object>
 	}
 }
