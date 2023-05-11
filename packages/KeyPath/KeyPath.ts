@@ -10,7 +10,7 @@ function getValueByKeyPath<T, KeyPath extends KeyPathOf<T>>(object: T, keyPath: 
 }
 
 function setValueByKeyPath<T, KeyPath extends KeyPathOf<T>>(object: T, keyPath: KeyPath, value: KeyPathValueOf<T, KeyPath>) {
-	const keys = keyPath.split('.')
+	const keys = (keyPath as any).split('.')
 	const lastKey = keys[keys.length - 1]!
 	const otherKeysButLast = keys.slice(0, keys.length - 1)
 	const lastObject = getValueByKeyPath(object, otherKeysButLast.join('.') as KeyPath) ?? object as any
