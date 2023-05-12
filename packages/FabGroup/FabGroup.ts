@@ -35,7 +35,7 @@ export class FabGroup extends Component {
 			}
 
 			mo-fab {
-				transition: var(--mo-fab-group-transition-duration, var(--mo-duration-quick, 250ms));
+				transition: var(--mo-fab-group-transition-duration, 250ms);
 			}
 
 			:host([open]) mo-fab {
@@ -43,7 +43,7 @@ export class FabGroup extends Component {
 			}
 
 			::slotted([instanceof*=mo-fab]) {
-				transition: var(--mo-fab-group-transition-duration, var(--mo-duration-quick, 250ms));
+				transition: var(--mo-fab-group-transition-duration, 250ms);
 				transform: scale(0);
 				opacity: 0;
 			}

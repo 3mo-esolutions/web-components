@@ -41,7 +41,7 @@ export class DataGridHeader<TData> extends Component {
 				--mo-data-grid-header-separator-height: 15px;
 				--mo-data-grid-header-separator-width: 2px;
 				display: inherit;
-				font-size: var(--mo-font-size-s);
+				font-size: small;
 			}
 
 			#grdHeader {
@@ -148,7 +148,7 @@ export class DataGridHeader<TData> extends Component {
 	private get moreTemplate() {
 		return this.dataGrid.hasToolbar || this.dataGrid.sidePanelHidden ? nothing : html`
 			<mo-flex alignItems='center' justifyContent='center' ${style({ marginInlineEnd: '8px', cursor: 'pointer', position: 'relative' })}>
-				<mo-icon-button dense icon='settings' ${style({ color: 'var(--mo-color-accent)', fontSize: 'var(--mo-font-size-l)' })}
+				<mo-icon-button dense icon='settings' ${style({ color: 'var(--mo-color-accent)', fontSize: 'large' })}
 					@click=${() => this.dataGrid.navigateToSidePanelTab(this.dataGrid.sidePanelTab ? undefined : DataGridSidePanelTab.Settings)}
 				></mo-icon-button>
 			</mo-flex>

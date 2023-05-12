@@ -26,7 +26,7 @@ export class MaterialPage extends Component {
 		return css`
 			:host {
 				display: inherit;
-				animation: transitionIn var(--mo-duration-quick);
+				animation: transitionIn 250ms;
 			}
 
 			slot[name=heading] {

@@ -101,7 +101,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 
 			#contentContainer {
 				cursor: pointer;
-				transition: var(--mo-duration-quick);
+				transition: 250ms;
 			}
 
 			:host([detailsOpen]) #contentContainer {
@@ -122,7 +122,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			}
 
 			#contextMenuIconButton {
-				transition: var(--mo-duration-quick);
+				transition: 250ms;
 				opacity: 0.5;
 				color: var(--mo-color-gray);
 			}
@@ -138,7 +138,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			}
 
 			#detailsExpanderIconButton {
-				transition: var(--mo-duration-quick);
+				transition: 250ms;
 			}
 
 			#detailsExpanderIconButton:hover {

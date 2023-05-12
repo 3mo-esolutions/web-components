@@ -1,4 +1,4 @@
-import { html, css, property, TemplateResult, style } from '@a11d/lit'
+import { html, css, property, style, component } from '@a11d/lit'
 import { PageComponent, PageParameters, RouterController } from '@a11d/lit-application'
 import { Localizer, LanguageCode } from '@3mo/localization'
 
@@ -7,9 +7,17 @@ Localizer.register(LanguageCode.German, {
 })
 
 /**
+ * @element mo-split-page-host
+ *
+ * @attr isContentOpen - Whether the content page is open
+ * @attr contentPageHeading - The heading of the content page
+ *
+ * @slot pane - The pane slot
+ *
  * @i18n "Select a page"
  */
-export abstract class SplitPageComponent<T extends PageParameters = void> extends PageComponent<T> {
+@component('mo-split-page-host')
+export class SplitPageHost<T extends PageParameters = void> extends PageComponent<T> {
 	readonly router = new RouterController(this, [], {
 		fallback: {
 			render: () => html`
@@ -20,6 +28,16 @@ export abstract class SplitPageComponent<T extends PageParameters = void> extend
 		}
 	})
 
+	@property({ type: Boolean, reflect: true }) isContentOpen = false
+
+	@property({
+		updated(this: SplitPageHost<any>) {
+			if (this.contentPageHeading) {
+				this.isContentOpen = true
+			}
+		}
+	}) contentPageHeading?: string
+
 	static override get styles() {
 		return css`
 			lit-page-host *::part(pageHeader) {
@@ -27,7 +45,7 @@ export abstract class SplitPageComponent<T extends PageParameters = void> extend
 			}
 
 			lit-page-host {
-				padding: 0 var(--mo-thickness-xl);
+				padding: 0 14px;
 			}
 
 			lit-page-host::part(pageHolder) {
@@ -35,7 +53,9 @@ export abstract class SplitPageComponent<T extends PageParameters = void> extend
 			}
 
 			mo-grid {
-				grid-template-columns: var(--mo-split-page-component-sidebar-width, clamp(200px, 30%, 500px)) 1fr;
+				width: 100%;
+				height: 100%;
+				grid-template-columns: var(--mo-split-page-host-sidebar-width, clamp(200px, 30%, 500px)) 1fr;
 			}
 
 			#contentToolbar {
@@ -64,28 +84,14 @@ export abstract class SplitPageComponent<T extends PageParameters = void> extend
 		`
 	}
 
-	protected abstract get heading(): string
-
-	protected abstract get paneTemplate(): TemplateResult
-
-	@property({ type: Boolean, reflect: true }) isContentOpen = false
-
-	@property({
-		updated(this: SplitPageComponent<any>) {
-			if (this.contentPageHeading) {
-				this.isContentOpen = true
-			}
-		}
-	}) contentPageHeading?: string
-
 	protected override get template() {
 		return html`
-			<mo-page heading=${this.heading} fullHeight>
-				<mo-grid ${style({ height: '100%' })}>
-					<mo-flex id='pane'>${this.paneTemplate}</mo-flex>
-					<mo-flex id='content'>${this.contentTemplate}</mo-flex>
-				</mo-grid>
-			</mo-page>
+			<mo-grid ${style({ height: '100%' })}>
+				<mo-flex id='pane'>
+					<slot name='pane'></slot>
+				</mo-flex>
+				<mo-flex id='content'>${this.contentTemplate}</mo-flex>
+			</mo-grid>
 		`
 	}
 

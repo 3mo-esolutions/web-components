@@ -7,7 +7,7 @@ export class SplitterResizerLine extends SplitterResizer {
 	static override get styles() {
 		return css`
 			:host {
-				transition: var(--mo-splitter-resizer-line-transition-quick, var(--mo-duration-quick, 250ms));
+				transition: var(--mo-splitter-resizer-line-transition-quick, 250ms);
 				background: var(--mo-splitter-resizer-line-idle-background, var(--mo-color-gray-transparent, rgba(128, 128, 128, 0.5)));
 			}
 

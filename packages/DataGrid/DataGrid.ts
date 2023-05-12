@@ -4,6 +4,7 @@ import { LocalStorage } from '@a11d/local-storage'
 import { InstanceofAttributeController } from '@3mo/instanceof-attribute-controller'
 import { SlotController } from '@3mo/slot-controller'
 import { tooltip } from '@3mo/tooltip'
+import { ThemeController } from '@3mo/theme'
 import { observeMutation } from '@3mo/mutation-observer'
 import { MediaQueryController } from '@3mo/media-query-observer'
 import { observeResize } from '@3mo/resize-observer'
@@ -404,6 +405,8 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	protected readonly smallScreenObserverController = new MediaQueryController(this, '(max-width: 768px)')
 
+	readonly themeController = new ThemeController(this)
+
 	protected override updated(...parameters: Parameters<Component['updated']>) {
 		this.header?.requestUpdate()
 		this.sidePanel?.requestUpdate()
@@ -448,9 +451,17 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				overflow-x: hidden;
 			}
 
+			:host([data-theme=light]) {
+				--mo-data-grid-alternating-background: rgba(var(--mo-color-foreground-base), 0.05);
+			}
+
+			:host([data-theme=dark]) {
+				--mo-data-grid-alternating-background: rgba(var(--mo-color-background-base), 0.2);
+			}
+
 			/* Don't try to use ":nth-child(even)" as it won't work for virtualized data-grids */
 			[mo-data-grid-row][data-has-alternating-background] {
-				background: var(--mo-alternating-background);
+				background: var(--mo-data-grid-alternating-background);
 			}
 
 			:host([preventVerticalContentScroll]) mo-scroller {
@@ -514,7 +525,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				position: absolute;
 				top: -28px;
 				inset-inline-end: 16px;
-				transition: var(--mo-data-grid-fab-transition, var(--mo-duration-quick));
+				transition: var(--mo-data-grid-fab-transition, 250ms);
 			}
 
 			:host([fabSlotCollapsed][hasFabs]) #flexFab {
@@ -523,7 +534,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			}
 
 			mo-data-grid-footer {
-				transition: var(--mo-data-grid-fab-transition, var(--mo-duration-quick));
+				transition: var(--mo-data-grid-fab-transition, 250ms);
 			}
 
 			:host([hasSums][hasFabs]:not([fabSlotCollapsed])) mo-data-grid-footer {

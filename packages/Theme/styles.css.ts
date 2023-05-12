@@ -80,5 +80,19 @@ RootCssInjector.inject(css`
 		--mo-color-accent-gradient: linear-gradient(135deg, rgb(var(--mo-color-accent-gradient-1)), rgb(var(--mo-color-accent-gradient-2)), rgb(var(--mo-color-accent-gradient-3)));
 		--mo-color-accent-gradient-transparent: linear-gradient(135deg, rgba(var(--mo-color-accent-gradient-1), 0.25), rgba(var(--mo-color-accent-gradient-2), 0.25), rgba(var(--mo-color-accent-gradient-3), 0.25));
 		--mo-color-surface: rgb(var(--mo-color-surface-base));
+		/* Override Material Web Components variables */
+		--mdc-icon-font: Material Icons Sharp !important;
+		--mdc-theme-primary: var(--mo-color-accent) !important;
+		--mdc-theme-on-primary: var(--mo-color-accessible) !important;
+		--mdc-theme-secondary: var(--mo-color-accent) !important;
+		--mdc-theme-on-secondary: var(--mo-color-accessible) !important;
+		--mdc-theme-text-secondary-on-background: var(--mo-color-gray) !important;
+		--mdc-theme-surface: var(--mo-color-surface) !important;
+		--mdc-theme-text-primary-on-dark: var(--mo-color-surface) !important;
+		--mdc-theme-on-surface: var(--mo-color-foreground-transparent) !important;
+		--mdc-theme-text-disabled-on-light: var(--mo-color-gray-transparent) !important;
+		--mdc-theme-text-hint-on-background: var(--mo-color-foreground-transparent) !important;
+		--mdc-theme-text-icon-on-background: var(--mo-color-gray) !important;
+		--mdc-theme-text-primary-on-background: var(--mo-color-foreground) !important;
 	}
 `)

@@ -35,7 +35,7 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 				white-space: nowrap;
 				overflow: hidden !important;
 				text-overflow: ellipsis;
-				font-size: var(--mo-font-size-s);
+				font-size: small;
 			}
 
 			:host([editing]) {

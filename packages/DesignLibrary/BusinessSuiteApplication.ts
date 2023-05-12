@@ -55,34 +55,14 @@ export abstract class BusinessSuiteApplication extends Application {
 				--mo-font-size-l: 18px;
 				--mo-font-size-xl: 24px;
 				--mo-font-size-xxl: 36px;
-				/* Override Material Web Components variables */
-				--mdc-icon-font: Material Icons Sharp !important;
-				--mdc-theme-primary: var(--mo-color-accent) !important;
-				--mdc-theme-on-primary: var(--mo-color-accessible) !important;
-				--mdc-theme-secondary: var(--mo-color-accent) !important;
-				--mdc-theme-on-secondary: var(--mo-color-accessible) !important;
-				--mdc-theme-text-secondary-on-background: var(--mo-color-gray) !important;
-				--mdc-theme-surface: var(--mo-color-surface) !important;
-				--mdc-theme-text-primary-on-dark: var(--mo-color-surface) !important;
-				--mdc-theme-on-surface: var(--mo-color-foreground-transparent) !important;
-				--mdc-theme-text-disabled-on-light: var(--mo-color-gray-transparent) !important;
-				--mdc-theme-text-hint-on-background: var(--mo-color-foreground-transparent) !important;
-				--mdc-theme-text-icon-on-background: var(--mo-color-gray) !important;
-				--mdc-theme-text-primary-on-background: var(--mo-color-foreground) !important;
 			}
 
 			:root[data-theme=light] {
 				--mo-color-foreground-transparent: rgb(48, 48, 48) !important;
-				--mo-color-error-base: 176, 0, 32;
-				--mo-field-background: rgba(var(--mo-color-foreground-base), 0.09);
-				--mo-alternating-background: rgba(var(--mo-color-foreground-base), 0.05);
 			}
 
 			:root[data-theme=dark] {
 				--mo-color-foreground-transparent: rgb(220, 220, 220) !important;
-				--mo-color-error-base: 255, 61, 96;
-				--mo-field-background: rgba(var(--mo-color-background-base), 0.5);
-				--mo-alternating-background: rgba(var(--mo-color-background-base), 0.2);
 			}
 
 			[application][mobileNavigation] #navbarNavigations {

@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/del",
-	"version": "0.0.2",
+	"version": "0.0.4",
 	"description": "3MO Design Library to build business-suite web applications",
 	"repository": {
 		"type": "git",
@@ -110,7 +110,7 @@
 		"@3mo/loading-button-dialog-adapter": "x",
 		"@3mo/split-button-dialog-adapter": "x",
 		"@3mo/entity-data-grid": "x",
-		"@3mo/split-page-component": "x",
+		"@3mo/split-page-host": "x",
 		"detect-browser": "x",
 		"@ts-stack/markdown": "x"
 	}

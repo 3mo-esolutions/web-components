@@ -34,8 +34,8 @@ export class Calendar extends Component {
 			}
 
 			.navigatingMonth, .navigatingYear {
-				font-size: var(--mo-font-size-l);
-				transition: var(--mo-duration-quick);
+				font-size: large;
+				transition: 250ms;
 			}
 
 			.navigatingYear:hover {
@@ -47,10 +47,10 @@ export class Calendar extends Component {
 				text-align: center;
 				border-radius: 100px;
 				cursor: pointer;
-				transition: var(--mo-duration-quick);
+				transition: 250ms;
 				font-weight: 500;
 				user-select: none;
-				font-size: var(--mo-font-size-m);
+				font-size: medium;
 				width: var(--mo-calendar-day-size);
 				-webkit-user-select: none;
 				align-items: center;

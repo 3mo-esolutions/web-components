@@ -21,7 +21,7 @@ export class DataGridFooterSum extends Component {
 
 			div {
 				color: var(--mo-color-foreground-transparent);
-				font-size: var(--mo-font-size-xs);
+				font-size: x-small;
 				text-transform: uppercase;
 				text-align: center;
 			}

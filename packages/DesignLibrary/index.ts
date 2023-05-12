@@ -84,6 +84,7 @@ export * from '@3mo/intersection-observer'
 export * from '@3mo/popover'
 export * from '@3mo/query-connected-instances'
 export * from '@3mo/virtualized-list'
+export * from '@3mo/split-page-host'
 export * as System from 'detect-browser'
 export { Dialog } from '@3mo/dialog'
 

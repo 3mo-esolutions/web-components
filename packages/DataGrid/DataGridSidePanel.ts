@@ -31,7 +31,7 @@ export class DataGridSidePanel<TData> extends Component {
 		return css`
 			:host {
 				display: inline-block !important;
-				transition: var(--mo-duration-quick);
+				transition: 250ms;
 				width: 100%;
 				height: 100%;
 				transform-origin: right center;

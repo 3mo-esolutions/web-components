@@ -118,7 +118,7 @@ export class DataGridFooter<TData> extends Component {
 							@change=${(e: CustomEvent<number>) => this.handleManualPageChange(e.detail)}>
 						</mo-field-number>
 					` : html`
-						<div ${style({ fontSize: 'var(--mo-font-size-s)' })} @click=${() => this.manualPagination = hasUnknownDataLength === false}>${pageText}</div>
+						<div ${style({ fontSize: 'small' })} @click=${() => this.manualPagination = hasUnknownDataLength === false}>${pageText}</div>
 					`}
 				</div>
 
@@ -135,7 +135,7 @@ export class DataGridFooter<TData> extends Component {
 
 			<div ${style({ color: 'var(--mo-color-gray)', marginInlineStart: '8px' })}>
 				${!this.manualPageSize ? html`
-					<div ${style({ fontSize: 'var(--mo-font-size-s)' })} @click=${() => this.manualPageSize = true}>${pageSizeText}</div>
+					<div ${style({ fontSize: 'small' })} @click=${() => this.manualPageSize = true}>${pageSizeText}</div>
 				` : html`
 					<mo-field-select-data-grid-page-size dense ${style({ width: '90px' })}
 						.dataGrid=${this.dataGrid}
