@@ -86,7 +86,7 @@ export class Menu extends Component {
 		return css`
 			:host {
 				display: content;
-				position: relative;
+				position: static;
 			}
 
 			mo-popover {

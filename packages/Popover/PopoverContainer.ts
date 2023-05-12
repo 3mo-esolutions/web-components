@@ -35,15 +35,6 @@ export class PopoverContainer extends Component {
 				display: inline-flex;
 				position: relative;
 			}
-
-			:host([placement=block-start]) { flex-flow: column-reverse; }
-			:host([placement=block-end]) { flex-flow: column; }
-			:host([placement=inline-start]) { flex-flow: row-reverse; }
-			:host([placement=inline-end]) { flex-flow: row; }
-
-			:host([alignment=start]) { align-items: flex-start; }
-			:host([alignment=center]) { align-items: center; }
-			:host([alignment=end]) { align-items: flex-end; }
 		`
 	}
 

@@ -67,12 +67,11 @@ export class NestedMenuItem extends MenuItem {
 			}
 
 			mo-icon[icon=chevron_right] {
-				margin-inline-end: -4px;
+				margin-inline-end: -20px;
 			}
 
 			mo-menu {
 				inset-inline-end: 0px;
-				position: absolute;
 				height: 100%;
 			}
 		`
@@ -95,6 +94,8 @@ export class NestedMenuItem extends MenuItem {
 			<mo-menu .anchor=${this}
 				?open=${this.open}
 				@openChange=${(e: CustomEvent<boolean>) => this.handleOpenChange(e.detail)}
+				placement='inline-end'
+				alignment='start'
 			>
 				<slot name='submenu'></slot>
 			</mo-menu>
