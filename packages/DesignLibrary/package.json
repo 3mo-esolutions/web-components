@@ -110,6 +110,7 @@
 		"@3mo/loading-button-dialog-adapter": "x",
 		"@3mo/split-button-dialog-adapter": "x",
 		"@3mo/entity-data-grid": "x",
+		"@3mo/split-page-component": "x",
 		"detect-browser": "x",
 		"@ts-stack/markdown": "x"
 	}

@@ -1,0 +1,6 @@
+import '@3mo/empty-state'
+import '@3mo/flex'
+import '@3mo/grid'
+import '@3mo/icon-button'
+import '@3mo/heading'
+export * from './SplitPageComponent.js'

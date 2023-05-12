@@ -1,14 +1,14 @@
 import { html, component, style, nothing } from '@a11d/lit'
 import { route, routerLink } from '@a11d/lit-application'
+import { SplitPageComponent } from '@3mo/split-page-component'
 import { DialogReleaseNotes, PagePreferencesSecurity, PagePreferencesUserInterface } from '../index.js'
-import { PageSettingsHost } from './PageSettingsHost.js'
 
 @component('mo-page-preferences')
 @route('/preferences/:page?')
-export class PagePreferences extends PageSettingsHost {
+export class PagePreferences extends SplitPageComponent {
 	protected get heading() { return 'Benutzereinstellungen' }
 
-	protected get settingsTemplate() {
+	protected get paneTemplate() {
 		return html`
 			<mo-card ${style({ height: '100%', '--mo-card-body-padding': '0px' })}>
 				<mo-flex ${style({ height: '100%' })} gap='var(--mo-thickness-xl)' justifyContent='space-between'>
