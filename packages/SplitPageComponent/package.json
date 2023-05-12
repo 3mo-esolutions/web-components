@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/split-page-component",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"description": "A page component with a pane and content part with can host sub-pages automatically",
 	"repository": {
 		"type": "git",

@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/key-path",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"description": "A set of type-safe utilities for working with objects and their properties with support for array members.",
 	"repository": {
 		"type": "git",

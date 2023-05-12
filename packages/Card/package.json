@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/card",
-	"version": "0.2.2",
+	"version": "0.2.3",
 	"description": "A card web-component based on Material Design.",
 	"repository": {
 		"type": "git",

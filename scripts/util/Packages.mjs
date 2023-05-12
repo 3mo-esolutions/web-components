@@ -58,7 +58,6 @@ export class Packages {
 		const packageDirectory = Packages.getDirectory(packageName)
 		await run('npm run clean')
 		await run('tsc', packageDirectory)
-		await run('webpack --config ../../webpack.config.mjs', packageDirectory)
 		await run(`npm version --loglevel=error ${versionBumpType}`, packageDirectory)
 		await run('npm publish --loglevel=error --access public', packageDirectory)
 		await run('npm run clean')

@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/language-field",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"description": "A language field web component",
 	"repository": {
 		"type": "git",

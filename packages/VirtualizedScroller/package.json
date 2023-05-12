@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/virtualized-scroller",
-	"version": "0.2.2",
+	"version": "0.2.3",
 	"description": "A virtualized scroller web-component based on Lit Virtualizer",
 	"repository": {
 		"type": "git",

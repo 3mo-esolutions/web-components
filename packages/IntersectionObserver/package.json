@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/intersection-observer",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"description": "A lit controller and directive for observing intersections.",
 	"repository": {
 		"type": "git",

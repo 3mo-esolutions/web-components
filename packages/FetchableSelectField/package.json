@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/fetchable-select-field",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"description": "A select field with can fetch its options",
 	"repository": {
 		"type": "git",

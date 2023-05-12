@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/no-intrinsic-dimensions-controller",
-	"version": "0.1.2",
+	"version": "0.1.3",
 	"description": "A controller that raises an error on elements without intrinsic dimensions.",
 	"repository": {
 		"type": "git",
