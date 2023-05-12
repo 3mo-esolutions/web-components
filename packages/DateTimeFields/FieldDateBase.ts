@@ -31,6 +31,10 @@ export abstract class FieldDateBase<T> extends InputFieldComponent<T> {
 		return css`
 			${super.styles}
 
+			:host {
+				position: relative;
+			}
+
 			mo-popover {
 				background: var(--mo-color-background);
 				box-shadow: var(--mo-shadow);

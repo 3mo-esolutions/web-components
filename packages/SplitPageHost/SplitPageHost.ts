@@ -1,5 +1,4 @@
-import { html, css, property, style, component } from '@a11d/lit'
-import { PageComponent, PageParameters, RouterController } from '@a11d/lit-application'
+import { html, css, property, style, component, Component } from '@a11d/lit'
 import { Localizer, LanguageCode } from '@3mo/localization'
 
 Localizer.register(LanguageCode.German, {
@@ -12,26 +11,17 @@ Localizer.register(LanguageCode.German, {
  * @attr isContentOpen - Whether the content page is open
  * @attr contentPageHeading - The heading of the content page
  *
- * @slot pane - The pane slot
+ * @slot - The content page
+ * @slot sidebar - The sidebar slot
  *
  * @i18n "Select a page"
  */
 @component('mo-split-page-host')
-export class SplitPageHost<T extends PageParameters = void> extends PageComponent<T> {
-	readonly router = new RouterController(this, [], {
-		fallback: {
-			render: () => html`
-				<mo-empty-state icon='touch_app'>
-					${t('Select a page')}
-				</mo-empty-state>
-			`
-		}
-	})
-
+export class SplitPageHost extends Component {
 	@property({ type: Boolean, reflect: true }) isContentOpen = false
 
 	@property({
-		updated(this: SplitPageHost<any>) {
+		updated(this: SplitPageHost) {
 			if (this.contentPageHeading) {
 				this.isContentOpen = true
 			}
@@ -69,7 +59,7 @@ export class SplitPageHost<T extends PageParameters = void> extends PageComponen
 					grid-template-columns: 1fr;
 				}
 
-				:host([isContentOpen]) #pane {
+				:host([isContentOpen]) #sidebar {
 					display: none;
 				}
 
@@ -87,8 +77,8 @@ export class SplitPageHost<T extends PageParameters = void> extends PageComponen
 	protected override get template() {
 		return html`
 			<mo-grid ${style({ height: '100%' })}>
-				<mo-flex id='pane'>
-					<slot name='pane'></slot>
+				<mo-flex id='sidebar'>
+					<slot name='sidebar'></slot>
 				</mo-flex>
 				<mo-flex id='content'>${this.contentTemplate}</mo-flex>
 			</mo-grid>
@@ -100,7 +90,7 @@ export class SplitPageHost<T extends PageParameters = void> extends PageComponen
 			<mo-flex gap='6px' ${style({ flex: '1' })}>
 				${this.contentToolbarTemplate}
 				<lit-page-host ${style({ flex: '1' })} @pageHeadingChange=${(e: CustomEvent<string>) => this.contentPageHeading = e.detail}>
-					${this.router.outlet()}
+					<slot></slot>
 				</lit-page-host>
 			</mo-flex>
 		`
@@ -114,5 +104,11 @@ export class SplitPageHost<T extends PageParameters = void> extends PageComponen
 				<mo-heading typography='heading4'>${this.contentPageHeading}</mo-heading>
 			</mo-flex>
 		`
+	}
+}
+
+declare global {
+	interface HTMLElementTagNameMap {
+		'mo-split-page-host': SplitPageHost
 	}
 }
