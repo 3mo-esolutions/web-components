@@ -2,9 +2,14 @@ import { component, css, html, nothing, property } from '@a11d/lit'
 import { SelectableListItem } from '@3mo/list'
 import { MaterialIcon } from '@3mo/icon'
 
-/** @element mo-navigation-list-item */
+/**
+ * @element mo-navigation-list-item
+ * @attr icon
+ */
 @component('mo-navigation-list-item')
 export class NavigationListItem extends SelectableListItem {
+	@property() icon?: MaterialIcon
+
 	@property({
 		type: Boolean,
 		attribute: 'data-router-selected',
@@ -12,8 +17,6 @@ export class NavigationListItem extends SelectableListItem {
 			this.selected = this.routerSelected
 		}
 	}) protected routerSelected = false
-
-	@property() icon?: MaterialIcon
 
 	static override get styles() {
 		return css`
