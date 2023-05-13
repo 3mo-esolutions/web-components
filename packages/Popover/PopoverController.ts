@@ -58,10 +58,6 @@ export class PopoverController extends Controller {
 	}
 
 	updatePosition() {
-		if (!this.host.open) {
-			return
-		}
-
 		if (this.host.fixed) {
 			this.positionFixed()
 		} else {
@@ -70,11 +66,14 @@ export class PopoverController extends Controller {
 	}
 
 	private positionAbsolute() {
-		this.host.style.position = 'absolute'
+		this.host.anchor.style.position = 'relative'
 		// TODO: [Popover] Out-of-bounds-correction
 	}
 
 	private positionFixed() {
+		if (!this.host.open) {
+			return
+		}
 		const popoverRect = this.host.getBoundingClientRect()
 
 		const reverse = getComputedStyle(this.host).direction === 'rtl'
