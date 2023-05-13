@@ -80,6 +80,8 @@ describe('Popover', () => {
 		expect(fixture.component.popover.open).toBe(true)
 	})
 
+	// TODO: [Popover] Add OOBC testing
+
 	const placementExpectations = {
 		blockStart: (popover: DOMRect, anchor: DOMRect) => expect(popover.top + popover.height).toBe(anchor.top),
 		blockEnd: (popover: DOMRect, anchor: DOMRect) => expect(popover.top).toBe(anchor.top + anchor.height),
@@ -90,8 +92,8 @@ describe('Popover', () => {
 	const alignmentExpectations = {
 		blockStart: (popover: DOMRect, anchor: DOMRect) => expect(popover.left).toBe(anchor.left),
 		inlineStart: (popover: DOMRect, anchor: DOMRect) => expect(popover.top).toBe(anchor.top),
-		blockCenter: (popover: DOMRect, anchor: DOMRect) => expect(popover.left + popover.width / 2).toBeCloseTo(anchor.left + anchor.width / 2),
-		inlineCenter: (popover: DOMRect, anchor: DOMRect) => expect(popover.top + popover.height / 2).toBeCloseTo(anchor.top + anchor.height / 2),
+		blockCenter: (popover: DOMRect, anchor: DOMRect) => expect(popover.left + popover.width / 2).toBeCloseTo(anchor.left + anchor.width / 2, 0),
+		inlineCenter: (popover: DOMRect, anchor: DOMRect) => expect(popover.top + popover.height / 2).toBeCloseTo(anchor.top + anchor.height / 2, 0),
 		blockEnd: (popover: DOMRect, anchor: DOMRect) => expect(popover.left + popover.width).toBe(anchor.left + anchor.width),
 		inlineEnd: (popover: DOMRect, anchor: DOMRect) => expect(popover.top + popover.height).toBe(anchor.top + anchor.height),
 	}

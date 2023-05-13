@@ -71,6 +71,7 @@ export class PopoverController extends Controller {
 	}
 
 	private positionFixed() {
+		// TODO: [Popover] [Blocking] Tests are failing because of this.
 		if (!this.host.open) {
 			return
 		}
@@ -100,8 +101,6 @@ export class PopoverController extends Controller {
 		let left = 0
 		let top = 0
 
-		// TODO: [Popover] Did renaming this to Inline/Block break any calculations?
-
 		const anchorRect = this.host.coordinates
 			? new DOMRect(...this.host.coordinates, 0, 0)
 			: this.host.anchor?.getBoundingClientRect() ?? new DOMRect(0, 0, 0, 0)
@@ -125,7 +124,6 @@ export class PopoverController extends Controller {
 				break
 		}
 
-		// TODO: [Popover] is Out-of-bounds-correction correct?
 		const leftOf = (value: number) => Math.max(0, Math.min(value, window.innerWidth - popoverRect.width))
 		const topOf = (value: number) => Math.max(0, Math.min(value, window.innerHeight - popoverRect.height))
 
