@@ -36,7 +36,7 @@ export class FileUpload<TResult> extends Component {
 	async executeUpload(action?: () => Promise<TResult>) {
 		try {
 			this.setIsUploading(true)
-			action ??= this.uploadFile
+			action ??= this.uploadFile.bind(this)
 			const result = await action()
 			this.change.dispatch(result)
 			return result
