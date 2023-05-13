@@ -1,14 +1,13 @@
 import { Component, css, html, query } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit/dist/test/index.js'
-import { Popover } from './Popover.js'
-import { PopoverPlacement } from './PopoverPlacement.js'
-import { PopoverAlignment } from './PopoverAlignment.js'
+import { Popover, PopoverPlacement, PopoverAlignment } from './index.js'
 
 class PopoverAbsoluteTest extends Component {
 	static override get styles() {
 		return css`
 			:host {
 				display: inline-block;
+				margin: 0px;
 				width: 100px;
 				height: 100px;
 			}
@@ -42,9 +41,7 @@ customElements.define('mo-popover-fixed-test', PopoverFixedTest)
 describe('Popover', () => {
 	const fixture = new ComponentTestFixture(() => new PopoverAbsoluteTest)
 
-	beforeAll(() => {
-		document.body.style.margin = '0'
-	})
+	beforeAll(() => document.body.style.margin = '0')
 
 	it('should set open and dispatch openChange event when setOpen is called', () => {
 		const openChangeSpy = jasmine.createSpy()
@@ -83,6 +80,37 @@ describe('Popover', () => {
 		expect(fixture.component.popover.open).toBe(true)
 	})
 
+	const placementExpectations = {
+		blockStart: (popover: DOMRect, anchor: DOMRect) => expect(popover.top + popover.height).toBe(anchor.top),
+		blockEnd: (popover: DOMRect, anchor: DOMRect) => expect(popover.top).toBe(anchor.top + anchor.height),
+		inlineStart: (popover: DOMRect, anchor: DOMRect) => expect(popover.left + popover.width).toBe(anchor.left),
+		inlineEnd: (popover: DOMRect, anchor: DOMRect) => expect(popover.left).toBe(anchor.left + anchor.width),
+	}
+
+	const alignmentExpectations = {
+		blockStart: (popover: DOMRect, anchor: DOMRect) => expect(popover.left).toBe(anchor.left),
+		inlineStart: (popover: DOMRect, anchor: DOMRect) => expect(popover.top).toBe(anchor.top),
+		blockCenter: (popover: DOMRect, anchor: DOMRect) => expect(popover.left + popover.width / 2).toBeCloseTo(anchor.left + anchor.width / 2),
+		inlineCenter: (popover: DOMRect, anchor: DOMRect) => expect(popover.top + popover.height / 2).toBeCloseTo(anchor.top + anchor.height / 2),
+		blockEnd: (popover: DOMRect, anchor: DOMRect) => expect(popover.left + popover.width).toBe(anchor.left + anchor.width),
+		inlineEnd: (popover: DOMRect, anchor: DOMRect) => expect(popover.top + popover.height).toBe(anchor.top + anchor.height),
+	}
+
+	const positioningCases = [
+		[PopoverPlacement.BlockStart, PopoverAlignment.Start, placementExpectations.blockStart, alignmentExpectations.blockStart],
+		[PopoverPlacement.BlockStart, PopoverAlignment.Center, placementExpectations.blockStart, alignmentExpectations.blockCenter],
+		[PopoverPlacement.BlockStart, PopoverAlignment.End, placementExpectations.blockStart, alignmentExpectations.blockEnd],
+		[PopoverPlacement.BlockEnd, PopoverAlignment.Start, placementExpectations.blockEnd, alignmentExpectations.blockStart],
+		[PopoverPlacement.BlockEnd, PopoverAlignment.Center, placementExpectations.blockEnd, alignmentExpectations.blockCenter],
+		[PopoverPlacement.BlockEnd, PopoverAlignment.End, placementExpectations.blockEnd, alignmentExpectations.blockEnd],
+		[PopoverPlacement.InlineStart, PopoverAlignment.Start, placementExpectations.inlineStart, alignmentExpectations.inlineStart],
+		[PopoverPlacement.InlineStart, PopoverAlignment.Center, placementExpectations.inlineStart, alignmentExpectations.inlineCenter],
+		[PopoverPlacement.InlineStart, PopoverAlignment.End, placementExpectations.inlineStart, alignmentExpectations.inlineEnd],
+		[PopoverPlacement.InlineEnd, PopoverAlignment.Start, placementExpectations.inlineEnd, alignmentExpectations.inlineStart],
+		[PopoverPlacement.InlineEnd, PopoverAlignment.Center, placementExpectations.inlineEnd, alignmentExpectations.inlineCenter],
+		[PopoverPlacement.InlineEnd, PopoverAlignment.End, placementExpectations.inlineEnd, alignmentExpectations.inlineEnd],
+	] as const
+
 	describe('with absolute positing', () => {
 		const fixture = new ComponentTestFixture(() => new PopoverAbsoluteTest)
 
@@ -92,22 +120,8 @@ describe('Popover', () => {
 			expect(getComputedStyle(fixture.component.popover).position).toBe('absolute')
 		})
 
-		// TODO: Test Transform
-		for (const [placement, alignment, assertion] of [
-			[PopoverPlacement.BlockStart, PopoverAlignment.Start, (popover: DOMRect, anchor: DOMRect) => popover.top + popover.height === anchor.top],
-			[PopoverPlacement.BlockStart, PopoverAlignment.Center, (popover: DOMRect, anchor: DOMRect) => popover.top + popover.height === anchor.top],
-			[PopoverPlacement.BlockStart, PopoverAlignment.End, (popover: DOMRect, anchor: DOMRect) => popover.top + popover.height === anchor.top],
-			[PopoverPlacement.BlockEnd, PopoverAlignment.Start, (popover: DOMRect, anchor: DOMRect) => popover.top === anchor.top + anchor.height],
-			[PopoverPlacement.BlockEnd, PopoverAlignment.Center, (popover: DOMRect, anchor: DOMRect) => popover.top === anchor.top + anchor.height],
-			[PopoverPlacement.BlockEnd, PopoverAlignment.End, (popover: DOMRect, anchor: DOMRect) => popover.top === anchor.top + anchor.height],
-			[PopoverPlacement.InlineStart, PopoverAlignment.Start, (popover: DOMRect, anchor: DOMRect) => popover.left + popover.width === anchor.left],
-			[PopoverPlacement.InlineStart, PopoverAlignment.Center, (popover: DOMRect, anchor: DOMRect) => popover.left + popover.width === anchor.left],
-			[PopoverPlacement.InlineStart, PopoverAlignment.End, (popover: DOMRect, anchor: DOMRect) => popover.left + popover.width === anchor.left],
-			[PopoverPlacement.InlineEnd, PopoverAlignment.Start, (popover: DOMRect, anchor: DOMRect) => popover.left === anchor.left + anchor.width],
-			[PopoverPlacement.InlineEnd, PopoverAlignment.Center, (popover: DOMRect, anchor: DOMRect) => popover.left === anchor.left + anchor.width],
-			[PopoverPlacement.InlineEnd, PopoverAlignment.End, (popover: DOMRect, anchor: DOMRect) => popover.left === anchor.left + anchor.width],
-		] as const) {
-			it(`should align and place itself logically relative to the anchor element when placement is ${placement} and alignment is ${alignment}`, async () => {
+		for (const [placement, alignment, expectPlacement, expectAlignment] of positioningCases) {
+			it(`should align and place itself visually relative to the anchor element when placement is ${placement} and alignment is ${alignment}`, async () => {
 				fixture.component.popover.placement = placement
 				fixture.component.popover.alignment = alignment
 
@@ -116,7 +130,8 @@ describe('Popover', () => {
 				const anchorRect = fixture.component.getBoundingClientRect()
 				const popoverRect = fixture.component.popover.getBoundingClientRect()
 
-				expect(assertion(popoverRect, anchorRect)).toBe(true)
+				expectPlacement(popoverRect, anchorRect)
+				expectAlignment(popoverRect, anchorRect)
 			})
 		}
 	})
@@ -129,5 +144,20 @@ describe('Popover', () => {
 
 			expect(getComputedStyle(fixture.component.popover).position).toBe('fixed')
 		})
+
+		for (const [placement, alignment, expectPlacement, expectAlignment] of positioningCases) {
+			it(`should align and place itself visually relative to the anchor element when placement is ${placement} and alignment is ${alignment}`, async () => {
+				fixture.component.popover.placement = placement
+				fixture.component.popover.alignment = alignment
+
+				await fixture.updateComplete
+
+				const anchorRect = fixture.component.getBoundingClientRect()
+				const popoverRect = fixture.component.popover.getBoundingClientRect()
+
+				expectPlacement(popoverRect, anchorRect)
+				expectAlignment(popoverRect, anchorRect)
+			})
+		}
 	})
 })

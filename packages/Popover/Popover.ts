@@ -93,15 +93,13 @@ export class Popover extends Component {
 
 	static override get styles() {
 		return css`
-			${Popover.translationStyles}
-
 			:host {
 				position: absolute;
 				box-shadow: var(--mo-shadow, 0 2px 4px rgba(0, 0, 0, 0.2));
 				width: max-content;
 				opacity: 0;
 				z-index: 99;
-				transform: translate(var(--mo-popover-translate-x, 0%), var(--mo-popover-translate-y, 0%)) var(--mo-popover-transform-extra);
+				transform: translate(var(--mo-popover-translate-x, 0%), var(--mo-popover-translate-y, 0%));
 			}
 
 			:host([fixed]) {
@@ -116,6 +114,8 @@ export class Popover extends Component {
 			:host([open]) {
 				opacity: 1;
 			}
+
+			${Popover.translationStyles}
 		`
 	}
 
