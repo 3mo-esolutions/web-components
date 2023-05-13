@@ -1,5 +1,5 @@
 
-import { css, html, live, nothing, property, query, style } from '@a11d/lit'
+import { cache, css, html, live, nothing, property, query, style } from '@a11d/lit'
 import { InputFieldComponent } from '@3mo/field'
 import { MaterialIcon } from '@3mo/icon'
 import { CalendarSelectionAdapter, SelectableCalendar } from './calendar/index.js'
@@ -93,13 +93,13 @@ export abstract class FieldDateBase<T> extends InputFieldComponent<T> {
 				?open=${this.open}
 				@openChange=${(e: CustomEvent<boolean>) => this.open = e.detail}
 			>
-				${this.calendarTemplate}
+				${cache(this.calendarTemplate)}
 			</mo-popover>
 		`
 	}
 
 	protected get calendarTemplate() {
-		return html`
+		return !this.open ? nothing : html`
 			<mo-selectable-calendar
 				.selectionAdapterConstructor=${this.calendarSelectionAdapterConstructor}
 				.value=${this.value}
