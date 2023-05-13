@@ -1,5 +1,6 @@
 import { component, property, event } from '@a11d/lit'
-import { CalendarSelectionAdapter, Calendar } from './index.js'
+import { CalendarSelectionAdapter } from './index.js'
+import { Calendar } from './Calendar.js'
 
 /** @fires change {CustomEvent<T>} */
 @component('mo-selectable-calendar')

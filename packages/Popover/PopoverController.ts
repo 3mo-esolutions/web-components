@@ -7,7 +7,7 @@ import { Popover } from './Popover.js'
 import { PopoverAlignment } from './PopoverAlignment.js'
 
 function targetAnchor(this: Popover) {
-	return this.anchor
+	return this.anchor || []
 }
 
 export class PopoverController extends Controller {
@@ -51,8 +51,8 @@ export class PopoverController extends Controller {
 		}
 
 		const open =
-			(openOnHover && (this.pointerController.hover || this.anchorPointerController.hover)) ||
-			(openOnFocus && this.anchorFocusController.focused)
+			(openOnHover && (this.pointerController?.hover || this.anchorPointerController?.hover || false)) ||
+			(openOnFocus && (this.anchorFocusController?.focused || false))
 
 		this.host.setOpen(open)
 	}
@@ -75,10 +75,9 @@ export class PopoverController extends Controller {
 	}
 
 	private positionFixed() {
-		const anchorRect = this.host.anchor.getBoundingClientRect()
 		const popoverRect = this.host.getBoundingClientRect()
 
-		const reverse = getComputedStyle(this.host.anchor).direction === 'rtl'
+		const reverse = getComputedStyle(this.host).direction === 'rtl'
 		let startWeight, endWeight
 		switch (this.host.alignment) {
 			case PopoverAlignment.Start:
@@ -99,17 +98,14 @@ export class PopoverController extends Controller {
 			endWeight = 1 - endWeight
 		}
 
-		if (this.host.coordinates) {
-			const [x, y] = this.host.coordinates
-			this.host.style.left = `${x - popoverRect.width * endWeight}px`
-			this.host.style.top = `${y - popoverRect.height * endWeight}px`
-			return
-		}
-
 		let left = 0
 		let top = 0
 
 		// TODO: [Popover] Did renaming this to Inline/Block break any calculations?
+
+		const anchorRect = this.host.coordinates
+			? new DOMRect(...this.host.coordinates, 0, 0)
+			: this.host.anchor?.getBoundingClientRect() ?? new DOMRect(0, 0, 0, 0)
 
 		switch (this.host.placement) {
 			case PopoverPlacement.BlockStart:

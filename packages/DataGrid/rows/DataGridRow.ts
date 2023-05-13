@@ -1,5 +1,5 @@
 import { nothing, css, property, Component, html, state, queryAll, style, HTMLTemplateResult, LitElement } from '@a11d/lit'
-import { ContextMenu, contextMenu } from '@3mo/context-menu'
+import { ContextMenu } from '@3mo/context-menu'
 import { KeyboardController } from '@3mo/keyboard-controller'
 import { ColumnDefinition } from '../ColumnDefinition.js'
 import { DataGrid, DataGridCell, DataGridEditability, DataGridPrimaryContextMenuItem, DataGridSelectionMode } from '../index.js'
@@ -22,12 +22,6 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	@property({ type: Boolean, reflect: true }) protected contextMenuOpen = false
 	@state() protected editing = false
 
-	private contextMenu?: ContextMenu
-	private setContextMenu(contextMenu: ContextMenu) {
-		this.contextMenu = contextMenu
-		this.contextMenu.openChange.subscribe(this.handleContextMenuOpenChange)
-	}
-
 	get detailsElement() {
 		return this.renderRoot.querySelector('#detailsContainer')?.firstElementChild as TDetailsElement as TDetailsElement | undefined
 	}
@@ -38,20 +32,6 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 
 	protected override disconnected() {
 		this.dataGrid.rowDisconnected.dispatch(this)
-		this.contextMenu?.openChange.unsubscribe(this.handleContextMenuOpenChange)
-		this.contextMenu = undefined
-	}
-
-	protected readonly handleContextMenuOpenChange = async (open: boolean) => {
-		if (this.contextMenuOpen) {
-			if (this.dataGrid.selectedData.includes(this.data) === false) {
-				this.dataGrid.select(this.dataGrid.selectionMode !== DataGridSelectionMode.None ? [this.data] : [])
-			}
-		}
-
-		this.contextMenuOpen = open
-
-		await this.updateComplete
 	}
 
 	protected override initialized() {
@@ -166,16 +146,11 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	}
 
 	protected override get template() {
-		const contextMenuData = this.dataGrid.selectionMode === DataGridSelectionMode.None
-			? [this.data]
-			: this.dataGrid.selectedData.length === 0
-				? [this.data]
-				: this.dataGrid.selectedData
 		return html`
 			<mo-grid id='contentContainer'
-				${contextMenu(this.dataGrid.getRowContextMenuTemplate?.(contextMenuData) ?? nothing, contextMenu => this.setContextMenu(contextMenu))}
 				@click=${() => this.handleContentClick()}
 				@dblclick=${() => this.handleContentDoubleClick()}
+				@contextmenu=${(e: PointerEvent) => this.openContextMenu(e)}
 			>
 				${this.rowTemplate}
 			</mo-grid>
@@ -324,14 +299,37 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		this.dataGrid.rowDoubleClick.dispatch(this)
 	}
 
-	async openContextMenu(pointerEvent?: PointerEvent) {
-		pointerEvent?.stopPropagation()
-		this.renderRoot.querySelector('#contentContainer')?.dispatchEvent(new PointerEvent('contextmenu', { bubbles: true }))
-		await this.handleContextMenuOpenChange(true)
+	async openContextMenu(mouseEvent?: MouseEvent) {
+		mouseEvent?.stopPropagation()
+		const contextMenu = ContextMenu.open(mouseEvent || [0, 0], this.contextMenuTemplate)
+		const handler = (open: boolean) => {
+			this.contextMenuOpen = open
+			if (open === false) {
+				contextMenu.openChange.unsubscribe(handler)
+			}
+		}
+		contextMenu.openChange.subscribe(handler)
+
+		if (this.dataGrid.selectedData.includes(this.data) === false) {
+			this.dataGrid.select(this.dataGrid.selectionMode !== DataGridSelectionMode.None ? [this.data] : [])
+		}
+
+		await this.updateComplete
+	}
+
+	private get contextMenuData() {
+		return this.dataGrid.selectionMode === DataGridSelectionMode.None || this.dataGrid.selectedData.length === 0
+			? [this.data]
+			: this.dataGrid.selectedData
+	}
+
+	private get contextMenuTemplate() {
+		return this.dataGrid.getRowContextMenuTemplate?.(this.contextMenuData) ?? nothing
 	}
 
 	async closeContextMenu() {
-		await this.handleContextMenuOpenChange(false)
+		this.contextMenuOpen = false
+		await this.updateComplete
 	}
 
 	async setDetails(value: boolean) {

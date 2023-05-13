@@ -1,9 +1,9 @@
 import { html, property, css, event, component, live, PropertyValues, query, nothing } from '@a11d/lit'
 import { InputFieldComponent } from '@3mo/field'
-import { Menu } from '@3mo/menu'
+import type { ListItem } from '@3mo/list'
+import type { Menu } from '@3mo/menu'
 import { Option } from './Option.js'
 import { Data, FieldSelectValueController, Index, Value } from './SelectValueController.js'
-import { ListItem } from '@3mo/list/ListItem.js'
 
 /**
  * @element mo-field-select

@@ -26,7 +26,7 @@ export class Popover extends Component {
 
 	@property({ type: Boolean, reflect: true }) fixed = false
 	@property({ type: Array }) coordinates?: PopoverCoordinates
-	@property({ type: Object }) anchor!: HTMLElement
+	@property({ type: Object }) anchor?: HTMLElement
 	@property({ reflect: true }) placement = PopoverPlacement.BlockEnd
 	@property({ reflect: true }) alignment = PopoverAlignment.Start
 	@property({ type: Boolean, reflect: true }) open = false

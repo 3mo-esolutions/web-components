@@ -35,3 +35,17 @@ export const DataGrid = story({
 		</mo-data-grid>
 	`
 })
+
+export const ContextMenu = story({
+	render: () => html`
+		<mo-data-grid .data=${people} style='height: 500px' selectionMode='multiple' .getRowContextMenuTemplate=${() => html`
+			<mo-context-menu-item>Item1</mo-context-menu-item>
+			<mo-context-menu-item>Item2</mo-context-menu-item>
+		`}>
+			<mo-data-grid-column-number hidden heading='ID' dataSelector='id'></mo-data-grid-column-number>
+			<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
+			<mo-data-grid-column-number heading='Age' dataSelector='age'></mo-data-grid-column-number>
+			<mo-data-grid-column-text heading='City' dataSelector='city'></mo-data-grid-column-text>
+		</mo-data-grid>
+	`
+})

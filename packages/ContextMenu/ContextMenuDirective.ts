@@ -1,8 +1,8 @@
-import { directive, AsyncDirective, type ElementPart, type HTMLTemplateResult, type PartInfo, PartType, render, nothing } from '@a11d/lit'
-import { PopoverHost } from '@3mo/popover'
+import { directive, AsyncDirective, PartType, nothing, type ElementPart, type PartInfo } from '@a11d/lit'
 import { ContextMenu } from './ContextMenu.js'
+import { ContextMenuLazyInitializer, ContextMenuTemplate } from './ContextMenuLazyInitializer.js'
 
-type ContextMenuDirectiveParameters = [content: HTMLTemplateResult, callback?: (contextMenu: ContextMenu) => void]
+type ContextMenuDirectiveParameters = [content: ContextMenuTemplate]
 
 export class ContextMenuDirective extends AsyncDirective {
 	private contextMenu?: ContextMenu
@@ -15,17 +15,13 @@ export class ContextMenuDirective extends AsyncDirective {
 		}
 	}
 
-	override update(part: ElementPart, [content, callback]: ContextMenuDirectiveParameters) {
-		if (this.isConnected) {
-			if (!this.contextMenu) {
-				this.contextMenu = new ContextMenu()
-				callback?.(this.contextMenu)
-			}
+	override update(part: ElementPart, [template]: ContextMenuDirectiveParameters) {
+		if (this.isConnected && !this.contextMenu) {
+			this.contextMenu = new ContextMenu()
 			this.contextMenu.anchor = part.element as HTMLElement
-			render(content, this.contextMenu)
-			PopoverHost.instance.appendChild(this.contextMenu)
+			ContextMenuLazyInitializer.initialize(this.contextMenu, template)
 		}
-		return super.update(part, [content, callback])
+		return super.update(part, [template])
 	}
 
 	render(...parameters: ContextMenuDirectiveParameters) {

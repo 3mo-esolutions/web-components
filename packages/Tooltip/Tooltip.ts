@@ -1,5 +1,5 @@
-import { component, css, property, html, unsafeCSS, Component, query, ifDefined } from '@a11d/lit'
-import { Popover, PopoverPlacement } from '@3mo/popover'
+import { component, css, property, html, unsafeCSS, Component, ifDefined } from '@a11d/lit'
+import { PopoverPlacement } from '@3mo/popover'
 import { TooltipPlacement } from './TooltipPlacement.js'
 
 /**
@@ -16,8 +16,6 @@ export class Tooltip extends Component {
 	@property({ type: Object }) anchor?: HTMLElement
 
 	@property({ type: Boolean, reflect: true }) protected rich?: boolean
-
-	@query('mo-popover') protected readonly popover!: Popover
 
 	static override get styles() {
 		return css`

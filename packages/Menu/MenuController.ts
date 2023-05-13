@@ -25,7 +25,7 @@ export class MenuController extends Controller {
 
 	protected anchorKeyDownEventController = new EventListenerController(this.host, {
 		type: 'keydown',
-		target: () => this.host.anchor,
+		target: () => this.host.anchor || [],
 		listener: (event: KeyboardEvent) => {
 			if (event.ctrlKey || event.shiftKey) {
 				return
