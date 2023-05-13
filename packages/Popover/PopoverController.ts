@@ -130,7 +130,7 @@ export class PopoverController extends Controller {
 		const leftOf = (value: number) => Math.max(0, Math.min(value, window.innerWidth - popoverRect.width))
 		const topOf = (value: number) => Math.max(0, Math.min(value, window.innerHeight - popoverRect.height))
 
-		this.host.style.insetInlineStart = `${leftOf(left)}px`
-		this.host.style.insetBlockStart = `${topOf(top)}px`
+		this.host.style.left = `${leftOf(left)}px`
+		this.host.style.top = `${topOf(top)}px`
 	}
 }
