@@ -1,4 +1,4 @@
-import { property, component, Component, html, css, live, query, nothing, ifDefined, PropertyValues, event, queryAll, style, literal, staticHtml, HTMLTemplateResult } from '@a11d/lit'
+import { property, component, Component, html, css, live, query, nothing, ifDefined, PropertyValues, event, queryAll, style, literal, staticHtml, HTMLTemplateResult, cache } from '@a11d/lit'
 import { NotificationHost } from '@a11d/lit-application'
 import { LocalStorage } from '@a11d/local-storage'
 import { InstanceofAttributeController } from '@3mo/instanceof-attribute-controller'
@@ -580,11 +580,11 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			<mo-splitter direction='horizontal-reversed' ${style({ height: '100%' })} .resizerTemplate=${html`
 				<mo-splitter-resizer-line style='--mo-splitter-resizer-line-thickness: 1px; --mo-splitter-resizer-line-idle-background: var(--mo-color-transparent-gray-3); --mo-splitter-resizer-line-horizontal-transform: scaleX(5);'></mo-splitter-resizer-line>
 			`}>
-				${this.sidePanelTab === undefined ? nothing : html`
+				${cache(this.sidePanelTab === undefined ? nothing : html`
 					<mo-splitter-item size='min(25%, 300px)' min='max(15%, 250px)' max='clamp(100px, 50%, 750px)'>
 						${this.sidePanelTemplate}
 					</mo-splitter-item>
-				`}
+				`)}
 
 				<mo-splitter-item min='0px' ${style({ position: 'relative' })}>
 					${this.dataGridTemplate}
