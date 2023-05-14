@@ -65,7 +65,7 @@ export class Popover extends Component {
 			:host(:not([fixed])[placement=block-start][alignment=center]),
 			:host(:not([fixed])[placement=block-end][alignment=center]) {
 				--mo-popover-translate-x: -50%;
-				inset-inline-start: 50%;
+				left: 50%;
 			}
 			:host(:not([fixed])[placement=block-start][alignment=end]),
 			:host(:not([fixed])[placement=block-end][alignment=end]) {
@@ -81,7 +81,7 @@ export class Popover extends Component {
 			:host(:not([fixed])[placement=inline-start][alignment=center]),
 			:host(:not([fixed])[placement=inline-end][alignment=center]) {
 				--mo-popover-translate-y: -50%;
-				inset-block-start: 50%;
+				top: 50%;
 			}
 			:host(:not([fixed])[placement=inline-start][alignment=end]),
 			:host(:not([fixed])[placement=inline-end][alignment=end]) {
@@ -99,7 +99,9 @@ export class Popover extends Component {
 				width: max-content;
 				opacity: 0;
 				z-index: 99;
-				transform: translate(var(--mo-popover-translate-x, 0%), var(--mo-popover-translate-y, 0%));
+				transition: all .3s ease, transform none !important;
+				transform: translate(calc(var(--mo-popover-translate-x, 0%) + var(--mo-popover-correction-x, 0px)),
+					calc(var(--mo-popover-translate-y, 0%) + var(--mo-popover-correction-y, 0px)));
 			}
 
 			:host([fixed]) {
