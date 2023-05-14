@@ -58,10 +58,6 @@ export class PopoverController extends Controller {
 	}
 
 	updatePosition() {
-		if (!this.host.open) {
-			return
-		}
-
 		if (this.host.fixed) {
 			this.positionFixed()
 		} else {
@@ -70,14 +66,70 @@ export class PopoverController extends Controller {
 	}
 
 	private positionAbsolute() {
-		this.host.style.position = 'absolute'
-		// TODO: [Popover] Out-of-bounds-correction
+		if (!this.host.anchor) {
+			return
+		}
+		this.host.anchor.style.position = 'relative'
+
+		if (!this.host.open) {
+			return
+		}
+
+		const popoverRect = this.host.getBoundingClientRect()
+		const anchorRect = this.host.anchor.getBoundingClientRect()
+		const naturalX = popoverRect.x - Number(this.host.style.getPropertyValue('--mo-popover-correction-x').replace('px', ''))
+		const naturalY = popoverRect.y - Number(this.host.style.getPropertyValue('--mo-popover-correction-y').replace('px', ''))
+
+		const leftOf = Math.max(0, Math.min(naturalX, window.innerWidth - popoverRect.width))
+		const topOf = Math.max(0, Math.min(naturalY, window.innerHeight - popoverRect.height))
+
+		switch (this.host.placement) {
+			case PopoverPlacement.BlockStart:
+				this.host.style.setProperty('--mo-popover-correction-x', `${leftOf - naturalX}px`)
+				if (naturalY + anchorRect.height + popoverRect.height <= window.innerHeight) {
+					this.host.style.setProperty('--mo-popover-correction-y', `100% + ${anchorRect.height}px`)
+				} else {
+					this.host.style.setProperty('--mo-popover-correction-y', `${topOf - naturalY}px`)
+				}
+				break
+
+			case PopoverPlacement.BlockEnd:
+				this.host.style.setProperty('--mo-popover-correction-x', `${leftOf - naturalX}px`)
+				if (naturalY - anchorRect.height - popoverRect.height >= 0) {
+					this.host.style.setProperty('--mo-popover-correction-y', `-100% - ${anchorRect.height}px`)
+				} else {
+					this.host.style.setProperty('--mo-popover-correction-y', `${topOf - naturalY}px`)
+				}
+				break
+
+			case PopoverPlacement.InlineStart:
+				this.host.style.setProperty('--mo-popover-correction-y', `${topOf - naturalY}px`)
+				if (naturalX + anchorRect.width + popoverRect.width <= window.innerWidth) {
+					this.host.style.setProperty('--mo-popover-correction-x', `100% + ${anchorRect.width}px`)
+				} else {
+					this.host.style.setProperty('--mo-popover-correction-x', `${leftOf - naturalX}px`)
+				}
+				break
+
+			case PopoverPlacement.InlineEnd:
+				this.host.style.setProperty('--mo-popover-correction-y', `${topOf - naturalY}px`)
+				if (naturalX - anchorRect.width - popoverRect.width >= 0) {
+					this.host.style.setProperty('--mo-popover-correction-x', `-100% - ${anchorRect.width}px`)
+				} else {
+					this.host.style.setProperty('--mo-popover-correction-x', `${leftOf - naturalX}px`)
+				}
+				break
+		}
 	}
 
 	private positionFixed() {
+		// TODO: [Popover] Find a way to remove this constraint.
+		if (!this.host.open) {
+			return
+		}
 		const popoverRect = this.host.getBoundingClientRect()
-
 		const reverse = getComputedStyle(this.host).direction === 'rtl'
+
 		let startWeight, endWeight
 		switch (this.host.alignment) {
 			case PopoverAlignment.Start:
@@ -93,15 +145,13 @@ export class PopoverController extends Controller {
 				endWeight = 1
 				break
 		}
-		if (reverse) {
+		if ([PopoverPlacement.BlockEnd, PopoverPlacement.BlockStart].includes(this.host.placement) && reverse) {
 			startWeight = 1 - startWeight
 			endWeight = 1 - endWeight
 		}
 
 		let left = 0
 		let top = 0
-
-		// TODO: [Popover] Did renaming this to Inline/Block break any calculations?
 
 		const anchorRect = this.host.coordinates
 			? new DOMRect(...this.host.coordinates, 0, 0)
@@ -126,7 +176,6 @@ export class PopoverController extends Controller {
 				break
 		}
 
-		// TODO: [Popover] is Out-of-bounds-correction correct?
 		const leftOf = (value: number) => Math.max(0, Math.min(value, window.innerWidth - popoverRect.width))
 		const topOf = (value: number) => Math.max(0, Math.min(value, window.innerHeight - popoverRect.height))
 

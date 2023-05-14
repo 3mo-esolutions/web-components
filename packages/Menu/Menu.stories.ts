@@ -103,7 +103,7 @@ class ButtonWithMenuStory extends Component {
 	protected override get template() {
 		return html`
 			<mo-button id='button' type='outlined'>Click to open the menu</mo-button>
-			<mo-menu .anchor=${this} opener='button' ?fixed=${this.fixed} alignment='end'>${items}</mo-menu>
+			<mo-menu .anchor=${this} opener='button' ?fixed=${this.fixed} palcement='top' alignment='end'>${items}</mo-menu>
 		`
 	}
 }

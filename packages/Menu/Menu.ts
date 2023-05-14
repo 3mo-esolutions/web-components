@@ -86,7 +86,7 @@ export class Menu extends Component {
 		return css`
 			:host {
 				display: content;
-				position: relative;
+				position: static;
 			}
 
 			mo-popover {
@@ -94,32 +94,7 @@ export class Menu extends Component {
 				background: var(--mo-color-surface, #fff);
 				border-radius: var(--mo-border-radius, 4px);
 				/*overflow: hidden;*/
-				transition-duration: 100ms;
-				transition-property: opacity, transform;
-			}
-
-			mo-popover[placement="${unsafeCSS(PopoverPlacement.BlockStart)}"] {
-				--mo-popover-transform-extra: scaleY(0.9);
-				transform-origin: bottom;
-			}
-
-			mo-popover[placement="${unsafeCSS(PopoverPlacement.BlockEnd)}"] {
-				--mo-popover-transform-extra: scaleY(0.9);
-				transform-origin: top;
-			}
-
-			mo-popover[placement="${unsafeCSS(PopoverPlacement.InlineStart)}"] {
-				--mo-popover-transform-extra: scaleY(0.9);
-				transform-origin: right;
-			}
-
-			mo-popover[placement="${unsafeCSS(PopoverPlacement.InlineEnd)}"] {
-				--mo-popover-transform-extra: scaleY(0.9);
-				transform-origin: left;
-			}
-
-			mo-popover[open] {
-				--mo-popover-transform-extra: scaleY(1);
+				transition: opacity 100ms;
 			}
 		`
 	}

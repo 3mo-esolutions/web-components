@@ -45,51 +45,67 @@ export class Popover extends Component {
 	static get translationStyles() {
 		return css`
 			:host(:not([fixed])[placement=block-start]) {
-				--mo-popover-translate-y: -100%;
+				inset-block-end: 100%;
+			}
+			:host(:not([fixed])[placement=block-end]) {
+				inset-block-start: 100%;
 			}
 			:host(:not([fixed])[placement=inline-start]) {
-				--mo-popover-translate-x: -100%;
+				inset-inline-end: 100%;
+			}
+			:host(:not([fixed])[placement=inline-end]) {
+				inset-inline-start: 100%;
 			}
 
 			:host(:not([fixed])[placement=block-start][alignment=start]),
 			:host(:not([fixed])[placement=block-end][alignment=start]) {
 				--mo-popover-translate-x: 0%;
+				inset-inline-start: 0;
 			}
 			:host(:not([fixed])[placement=block-start][alignment=center]),
 			:host(:not([fixed])[placement=block-end][alignment=center]) {
 				--mo-popover-translate-x: -50%;
+				left: 50%;
 			}
 			:host(:not([fixed])[placement=block-start][alignment=end]),
 			:host(:not([fixed])[placement=block-end][alignment=end]) {
-				--mo-popover-translate-x: -100%;
+				--mo-popover-translate-x: 0%;
+				inset-inline-end: 0;
 			}
 
 			:host(:not([fixed])[placement=inline-start][alignment=start]),
 			:host(:not([fixed])[placement=inline-end][alignment=start]) {
 				--mo-popover-translate-y: 0%;
+				inset-block-start: 0;
 			}
 			:host(:not([fixed])[placement=inline-start][alignment=center]),
 			:host(:not([fixed])[placement=inline-end][alignment=center]) {
 				--mo-popover-translate-y: -50%;
+				top: 50%;
 			}
 			:host(:not([fixed])[placement=inline-start][alignment=end]),
 			:host(:not([fixed])[placement=inline-end][alignment=end]) {
-				--mo-popover-translate-y: -100%;
+				--mo-popover-translate-y: 0%;
+				inset-block-end: 0;
 			}
 		`
 	}
 
 	static override get styles() {
 		return css`
-			${Popover.translationStyles}
-
 			:host {
-				position: fixed;
+				position: absolute;
 				box-shadow: var(--mo-shadow, 0 2px 4px rgba(0, 0, 0, 0.2));
 				width: max-content;
 				opacity: 0;
 				z-index: 99;
-				transform: translate(var(--mo-popover-translate-x, 0%), var(--mo-popover-translate-y, 0%)) var(--mo-popover-transform-extra);
+				transition: all .3s ease, transform none !important;
+				transform: translate(calc(var(--mo-popover-translate-x, 0%) + var(--mo-popover-correction-x, 0px)),
+					calc(var(--mo-popover-translate-y, 0%) + var(--mo-popover-correction-y, 0px)));
+			}
+
+			:host([fixed]) {
+				position: fixed;
 			}
 
 			:host(:not([open])) {
@@ -100,6 +116,8 @@ export class Popover extends Component {
 			:host([open]) {
 				opacity: 1;
 			}
+
+			${Popover.translationStyles}
 		`
 	}
 
