@@ -1,7 +1,7 @@
 {
-	"name": "@3mo/file-upload",
-	"version": "0.0.4",
-	"description": "File Upload facilitates the upload of files.",
+	"name": "@3mo/file-upload-drop-area",
+	"version": "0.0.3",
+	"description": "A component to upload files via drag and drop",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/3mo-esolutions/web-components"
@@ -10,7 +10,9 @@
 		"web-component",
 		"lit",
 		"upload",
-		"file"
+		"file",
+		"drop",
+		"drag-and-drop"
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
@@ -23,8 +25,6 @@
 	],
 	"dependencies": {
 		"tslib": "x",
-		"@a11d/lit": "x",
-		"@a11d/lit-application": "x",
-		"@3mo/localization": "x"
+		"@3mo/file-upload": "x"
 	}
 }
