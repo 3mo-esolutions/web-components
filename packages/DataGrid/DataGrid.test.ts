@@ -4,21 +4,19 @@ import { html } from '@a11d/lit'
 
 type Person = { id: number, name: string, birthDate: DateTime }
 
+const people = [
+	{ id: 1, name: 'John', birthDate: new DateTime(2000, 0, 0) },
+	{ id: 2, name: 'Jane', birthDate: new DateTime(2000, 0, 0) },
+	{ id: 3, name: 'Joe', birthDate: new DateTime(2000, 0, 0) },
+]
+
 describe('DataGrid', () => {
-	const fixture = new ComponentTestFixture(() => {
-		const dataGrid = new DataGrid<Person>()
-		dataGrid.data = [
-			{ id: 1, name: 'John', birthDate: new DateTime(2000, 0, 0) },
-			{ id: 2, name: 'Jane', birthDate: new DateTime(2000, 0, 0) },
-			{ id: 3, name: 'Joe', birthDate: new DateTime(2000, 0, 0) },
-		]
-		dataGrid.selectionMode = DataGridSelectionMode.Single
-		dataGrid.getRowContextMenuTemplate = () => html`
+	const fixture = new ComponentTestFixture<DataGrid<Person>>(html`
+		<mo-data-grid selectionMode=${DataGridSelectionMode.Single} .data=${people} .getRowContextMenuTemplate=${() => html`
 			<mo-menu-item>Item1</mo-menu-item>
 			<mo-menu-item>Item2</mo-menu-item>
-		`
-		return dataGrid
-	})
+		`}></mo-data-grid>
+	`)
 
 	it('should auto-generate columns', () => {
 		const [firstColumn, secondColumn, thirdColumn] = fixture.component.columns
