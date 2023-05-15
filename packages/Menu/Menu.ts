@@ -1,4 +1,4 @@
-import { Component, component, css, event, html, ifDefined, property, query, state, unsafeCSS } from '@a11d/lit'
+import { Component, component, css, event, html, ifDefined, property, query, state } from '@a11d/lit'
 import { Popover, PopoverAlignment, PopoverCoordinates, PopoverPlacement } from '@3mo/popover'
 import { SlotController } from '@3mo/slot-controller'
 import { ListElement, ListItem, SelectableList } from '@3mo/list'
@@ -114,6 +114,7 @@ export class Menu extends Component {
 					selectionMode=${this.selectionMode}
 					.value=${this.value}
 					@change=${this.handleChange.bind(this)}
+					@menuItemClick=${this.handleMenuItemClick.bind(this)}
 				>
 					<slot></slot>
 				</mo-selectable-list>
@@ -124,6 +125,10 @@ export class Menu extends Component {
 	protected handleChange(e: CustomEvent<Array<number>>) {
 		this.value = e.detail
 		this.change.dispatch(e.detail)
+	}
+
+	protected handleMenuItemClick() {
+		this.setOpen(false)
 	}
 }
 

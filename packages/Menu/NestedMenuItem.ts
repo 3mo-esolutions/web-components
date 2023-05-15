@@ -102,6 +102,12 @@ export class NestedMenuItem extends MenuItem {
 		`
 	}
 
+	protected override handleClick() {
+		if (this.hasSubMenu === false) {
+			super.handleClick()
+		}
+	}
+
 	protected handleOpenChange(open: boolean) {
 		this.open = open
 
