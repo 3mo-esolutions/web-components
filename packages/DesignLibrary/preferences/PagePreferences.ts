@@ -1,15 +1,25 @@
 import { html, component, style, nothing } from '@a11d/lit'
-import { PageComponent, route, routerLink } from '@a11d/lit-application'
+import { PageComponent, RouterController, route, routerLink } from '@a11d/lit-application'
 import { DialogReleaseNotes, PagePreferencesSecurity, PagePreferencesUserInterface } from '../index.js'
 
 @component('mo-page-preferences')
 @route('/preferences/:page?')
 export class PagePreferences extends PageComponent {
+	readonly router = new RouterController(this, [], {
+		fallback: {
+			render: () => html`
+				<mo-empty-state icon='touch_app'>
+					${t('Select a page')}
+				</mo-empty-state>
+			`
+		}
+	})
+
 	protected override get template() {
 		return html`
 			<mo-page fullHeight heading='Benutzereinstellungen'>
-				<split-page-host>
-					<mo-card part='pane' ${style({ height: '100%', '--mo-card-body-padding': '0px' })}>
+				<mo-split-page-host>
+					<mo-card slot='sidebar' ${style({ height: '100%', '--mo-card-body-padding': '0px' })}>
 						<mo-flex ${style({ height: '100%' })} gap='var(--mo-thickness-xl)' justifyContent='space-between'>
 							<mo-list>
 								<mo-navigation-list-item icon='palette' ${routerLink(new PagePreferencesUserInterface)}>
@@ -28,7 +38,8 @@ export class PagePreferences extends PageComponent {
 							`}
 						</mo-flex>
 					</mo-card>
-				</split-page-host>
+					${this.router.outlet()}
+				</mo-split-page-host>
 			</mo-page>
 		`
 	}
