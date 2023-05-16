@@ -151,6 +151,7 @@ export class FieldSelect<T> extends InputFieldComponent<Value> {
 			<mo-menu
 				selectionMode=${this.multiple ? 'multiple' : 'single'}
 				.anchor=${this}
+				?disabled=${this.disabled}
 				?open=${this.open}
 				@openChange=${(e: CustomEvent<boolean>) => this.open = e.detail}
 				.value=${this.valueController.menuValue}

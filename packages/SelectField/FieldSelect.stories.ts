@@ -25,7 +25,22 @@ export const Select = story({
 		<mo-card style='max-width: 300px'>
 			<mo-field-select label='Countries' ?searchable=${searchable} ?multiple=${multiple} default=${defaultText}>
 				${countries.map(country => html`
-					<mo-option value=${country.code}>
+					<mo-option value=${country.code} .data=${country}>
+						<img width='25px' src=${`https://flagcdn.com/h40/${country.code.toLowerCase()}.png`} />
+						${country.label}
+					</mo-option>
+				`)}
+			</mo-field-select>
+		</mo-card>
+	`
+})
+
+export const PreSelectedValue = story({
+	render: ({ searchable, multiple, defaultText }) => html`
+		<mo-card style='max-width: 300px'>
+			<mo-field-select label='Countries' ?searchable=${searchable} ?multiple=${multiple} default=${defaultText} .value=${multiple ? ['DE', 'FR'] : 'DE'}>
+				${countries.map(country => html`
+					<mo-option value=${country.code} .data=${country}>
 						<img width='25px' src=${`https://flagcdn.com/h40/${country.code.toLowerCase()}.png`} />
 						${country.label}
 					</mo-option>

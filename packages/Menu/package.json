@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/menu",
-	"version": "0.0.20",
+	"version": "0.0.21",
 	"description": "A menu web-component.",
 	"repository": {
 		"type": "git",
@@ -26,6 +26,7 @@
 		"tslib": "x",
 		"@3mo/popover": "x",
 		"@3mo/list": "x",
+		"@3mo/disabled-property": "x",
 		"@3mo/slot-controller": "x"
 	}
 }

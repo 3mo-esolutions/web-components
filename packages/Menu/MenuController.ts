@@ -71,7 +71,7 @@ export class MenuController extends Controller {
 		const path = event.composedPath()
 
 		if (!value && !path.includes(this.host)) {
-			this.open = value
+			this.host.setOpen(value)
 		}
 
 		if (value && path.includes(this.host.anchor) && !path.includes(this.host)) {
@@ -80,7 +80,7 @@ export class MenuController extends Controller {
 				|| path.some(target => target instanceof Element && target.id === this.host.opener)
 
 			if (openerAllows) {
-				this.open = value
+				this.host.setOpen(value)
 			}
 		}
 	}

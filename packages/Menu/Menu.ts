@@ -1,6 +1,7 @@
 import { Component, component, css, event, html, ifDefined, property, query, state } from '@a11d/lit'
 import { Popover, PopoverCoordinates } from '@3mo/popover'
 import { SlotController } from '@3mo/slot-controller'
+import { disabledProperty } from '@3mo/disabled-property'
 import { ListElement, ListItem, SelectableList } from '@3mo/list'
 import { MenuController } from './MenuController.js'
 import { NestedMenuItem } from './NestedMenuItem.js'
@@ -20,6 +21,7 @@ export function isMenu(element: EventTarget): element is HTMLElement {
  * @attr opener - The element id that opens the menu.
  * @attr selectionMode - The selection mode of the menu.
  * @attr value - The value of the menu.
+ * @attr disabled - Whether the menu is disabled.
  *
  * @slot - Default slot for list items
  *
@@ -46,6 +48,7 @@ export class Menu extends Component {
 	@property() opener?: string
 	@property() selectionMode?: SelectableList['selectionMode']
 	@property({ type: Object }) value?: SelectableList['value']
+	@disabledProperty() disabled = false
 
 	@state() protected coordinates?: PopoverCoordinates
 
@@ -66,6 +69,10 @@ export class Menu extends Component {
 	}
 
 	setOpen(open: boolean) {
+		if (this.disabled) {
+			return
+		}
+
 		this.open = open
 		this.openChange.dispatch(open)
 
