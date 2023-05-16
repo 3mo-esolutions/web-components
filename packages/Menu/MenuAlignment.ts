@@ -1,0 +1,1 @@
+export { PopoverAlignment as MenuAlignment } from '@3mo/popover'

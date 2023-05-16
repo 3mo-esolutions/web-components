@@ -1,5 +1,6 @@
 import '@3mo/popover'
 export * from './MenuPlacement.js'
+export * from './MenuAlignment.js'
 export * from './MenuController.js'
 export * from './MenuItem.js'
 export * from './NestedMenuItem.js'

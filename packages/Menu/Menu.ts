@@ -1,9 +1,10 @@
 import { Component, component, css, event, html, ifDefined, property, query, state } from '@a11d/lit'
-import { Popover, PopoverAlignment, PopoverCoordinates, PopoverPlacement } from '@3mo/popover'
+import { Popover, PopoverCoordinates } from '@3mo/popover'
 import { SlotController } from '@3mo/slot-controller'
 import { ListElement, ListItem, SelectableList } from '@3mo/list'
 import { MenuController } from './MenuController.js'
 import { NestedMenuItem } from './NestedMenuItem.js'
+import type { MenuPlacement, MenuAlignment } from './index.js'
 
 export function isMenu(element: EventTarget): element is HTMLElement {
 	return element instanceof HTMLElement
@@ -37,8 +38,8 @@ export class Menu extends Component {
 	readonly menuKeyboardController = new MenuController(this)
 
 	@property({ type: Object }) anchor!: HTMLElement
-	@property() placement?: PopoverPlacement
-	@property() alignment?: PopoverAlignment
+	@property() placement?: MenuPlacement
+	@property() alignment?: MenuAlignment
 	@property({ type: Boolean, reflect: true }) open?: boolean
 	@property({ type: Boolean }) fixed = false
 	@property({ type: Boolean }) manualOpen = false
