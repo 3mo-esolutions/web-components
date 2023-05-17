@@ -80,7 +80,6 @@ export abstract class BusinessSuiteApplication extends Application {
 	protected override get template() {
 		return html`
 			${super.template}
-			<mo-context-menu-host></mo-context-menu-host>
 			<mo-confetti></mo-confetti>
 			<mo-popover-host></mo-popover-host>
 		`
@@ -169,10 +168,10 @@ export abstract class BusinessSuiteApplication extends Application {
 	protected getNavigationItemTemplate(navigation: Navigation) {
 		return navigation.hidden ? nothing : html`
 			<mo-navigation-item .navigation=${navigation} ${!navigation.component ? nothing : routerLink({
-			component: navigation.component as PageComponent,
-			matchMode: navigation.matchMode,
-			invocationHandler: () => this.drawerOpen = false
-		})}>${navigation.label}</mo-navigation-item>
+				component: navigation.component as PageComponent,
+				matchMode: navigation.matchMode,
+				invocationHandler: () => this.drawerOpen = false
+			})}>${navigation.label}</mo-navigation-item>
 		`
 	}
 
@@ -184,7 +183,7 @@ export abstract class BusinessSuiteApplication extends Application {
 
 	protected get userAvatarTemplate() {
 		return !Authentication.hasAuthenticator() ? nothing : html`
-			<mo-user-avatar>
+			<mo-user-avatar style='color: var(--mo-color-accessible)'>
 				${this.userAvatarMenuItemsTemplate}
 			</mo-user-avatar>
 		`

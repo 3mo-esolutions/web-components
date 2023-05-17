@@ -13,7 +13,6 @@ export class UserAvatar extends Component {
 
 			mo-avatar {
 				place-self: center;
-				color: var(--mo-color-foreground);
 				background: rgba(0, 0, 0, 0.25);
 			}
 
@@ -27,6 +26,10 @@ export class UserAvatar extends Component {
 				height: 1px;
 				background: darkgray;
 				opacity: 0.3;
+			}
+
+			mo-menu {
+				color: var(--mo-color-foreground);
 			}
 		`
 	}
@@ -58,10 +61,10 @@ export class UserAvatar extends Component {
 
 			<mo-menu .anchor=${this}>
 				${join([
-			this.avatarTemplate,
-			html`<slot></slot>`,
-			this.signOutTemplate
-		].filter(Boolean), html`<li role='separator'></li>`)}
+					this.avatarTemplate,
+					html`<slot></slot>`,
+					this.signOutTemplate
+				].filter(Boolean), html`<li role='separator'></li>`)}
 			</mo-menu>
 		`
 	}

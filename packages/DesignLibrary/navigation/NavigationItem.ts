@@ -71,6 +71,10 @@ export class NavigationItem extends Component {
 					letter-spacing: 0.0125em;
 					font-size: var(--mo-font-size-m);
 				}
+
+				mo-menu {
+					color: var(--mo-color-foreground);
+				}
 			</style>
 			<mo-flex direction='horizontal' alignItems='center' justifyContent='center' gap='2px'>
 				<span>${this.navigation.label}</span>
