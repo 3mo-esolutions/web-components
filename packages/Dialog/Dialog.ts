@@ -274,6 +274,7 @@ MwcDialog.elementStyles.push(css`
 
 		width: var(--mo-dialog-width, var(--mo-dialog-default-width));
 		max-width: calc(100vw - 32px);
+		overflow: hidden;
 	}
 
 	@media (max-width: 1024px), (max-height: 768px) {
