@@ -1,3 +1,4 @@
+import '@3mo/theme'
 export * from './PopoverPlacement.js'
 export * from './PopoverAlignment.js'
 export * from './PopoverCoordinates.js'

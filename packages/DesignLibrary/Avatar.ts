@@ -13,7 +13,7 @@ export class Avatar extends Component {
 				justify-content: center;
 				align-items: center;
 				border-radius: 50%;
-				font-size: var(--mo-font-size-l);
+				font-size: large;
 				background: var(--mo-color-accent);
 			}
 		`

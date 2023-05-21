@@ -2,6 +2,7 @@ import { component, css, Component, html, property } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
 import { Button, ButtonType } from '@3mo/button'
 import type { Flex } from '@3mo/flex'
+import '@3mo/theme'
 
 /**
  * @cssprop --mo-button-group-border-radius
@@ -28,43 +29,43 @@ export class ButtonGroup extends Component {
 			}
 
 			:host([direction=vertical]) ::slotted([instanceof*=mo-button][data-mo-button-group-first]) {
-				border-start-start-radius: var(--mo-button-group-border-radius, var(--mo-border-radius, 4px));
-				border-start-end-radius: var(--mo-button-group-border-radius, var(--mo-border-radius, 4px));
+				border-start-start-radius: var(--mo-button-group-border-radius, var(--mo-border-radius));
+				border-start-end-radius: var(--mo-button-group-border-radius, var(--mo-border-radius));
 			}
 
 			:host([direction=vertical]) ::slotted([instanceof*=mo-button][data-mo-button-group-last]) {
-				border-end-end-radius: var(--mo-button-group-border-radius, var(--mo-border-radius, 4px));
-				border-end-start-radius: var(--mo-button-group-border-radius, var(--mo-border-radius, 4px));
+				border-end-end-radius: var(--mo-button-group-border-radius, var(--mo-border-radius));
+				border-end-start-radius: var(--mo-button-group-border-radius, var(--mo-border-radius));
 			}
 
 			:host([direction=vertical-reversed]) ::slotted([instanceof*=mo-button][data-mo-button-group-first]) {
-				border-end-end-radius: var(--mo-button-group-border-radius, var(--mo-border-radius, 4px));
-				border-end-start-radius: var(--mo-button-group-border-radius, var(--mo-border-radius, 4px));
+				border-end-end-radius: var(--mo-button-group-border-radius, var(--mo-border-radius));
+				border-end-start-radius: var(--mo-button-group-border-radius, var(--mo-border-radius));
 			}
 
 			:host([direction=vertical-reversed]) ::slotted([instanceof*=mo-button][data-mo-button-group-last]) {
-				border-start-start-radius: var(--mo-button-group-border-radius, var(--mo-border-radius, 4px));
-				border-start-end-radius: var(--mo-button-group-border-radius, var(--mo-border-radius, 4px));
+				border-start-start-radius: var(--mo-button-group-border-radius, var(--mo-border-radius));
+				border-start-end-radius: var(--mo-button-group-border-radius, var(--mo-border-radius));
 			}
 
 			:host([direction=horizontal]) ::slotted([instanceof*=mo-button][data-mo-button-group-first]) {
-				border-start-start-radius: var(--mo-button-group-border-radius, var(--mo-border-radius, 4px));
-				border-end-start-radius: var(--mo-button-group-border-radius, var(--mo-border-radius, 4px));
+				border-start-start-radius: var(--mo-button-group-border-radius, var(--mo-border-radius));
+				border-end-start-radius: var(--mo-button-group-border-radius, var(--mo-border-radius));
 			}
 
 			:host([direction=horizontal]) ::slotted([instanceof*=mo-button][data-mo-button-group-last]) {
-				border-start-end-radius: var(--mo-button-group-border-radius, var(--mo-border-radius, 4px));
-				border-end-end-radius: var(--mo-button-group-border-radius, var(--mo-border-radius, 4px));
+				border-start-end-radius: var(--mo-button-group-border-radius, var(--mo-border-radius));
+				border-end-end-radius: var(--mo-button-group-border-radius, var(--mo-border-radius));
 			}
 
 			:host([direction=horizontal-reversed]) ::slotted([instanceof*=mo-button][data-mo-button-group-first]) {
-				border-start-end-radius: var(--mo-button-group-border-radius, var(--mo-border-radius, 4px));
-				border-end-end-radius: var(--mo-button-group-border-radius, var(--mo-border-radius, 4px));
+				border-start-end-radius: var(--mo-button-group-border-radius, var(--mo-border-radius));
+				border-end-end-radius: var(--mo-button-group-border-radius, var(--mo-border-radius));
 			}
 
 			:host([direction=horizontal-reversed]) ::slotted([instanceof*=mo-button][data-mo-button-group-last]) {
-				border-start-start-radius: var(--mo-button-group-border-radius, var(--mo-border-radius, 4px));
-				border-end-start-radius: var(--mo-button-group-border-radius, var(--mo-border-radius, 4px));
+				border-start-start-radius: var(--mo-button-group-border-radius, var(--mo-border-radius));
+				border-end-start-radius: var(--mo-button-group-border-radius, var(--mo-border-radius));
 			}
 
 			/* Separator */
@@ -74,12 +75,12 @@ export class ButtonGroup extends Component {
 			}
 
 			:host([type=normal]) ::slotted([instanceof*=mo-button]:not([data-mo-button-group-last]))::after {
-				background: var(--mo-button-group-separator-color, rgba(var(--mo-color-on-background-base, 0, 0, 0), 0.3));
+				background: var(--mo-button-group-separator-color, rgba(var(--mo-color-on-background-base), 0.3));
 			}
 
 			:host([type=unelevated]) ::slotted([instanceof*=mo-button]:not([data-mo-button-group-last]))::after,
 			:host([type=raised]) ::slotted([instanceof*=mo-button]:not([data-mo-button-group-last]))::after {
-				background: var(--mo-button-group-separator-color, rgba(var(--mo-color-on-primary-base, 255, 255, 255), 0.3));
+				background: var(--mo-button-group-separator-color, rgba(var(--mo-color-on-primary-base), 0.3));
 			}
 
 			:host([direction=vertical]:not([type=outlined])) ::slotted([instanceof*=mo-button]:not([data-mo-button-group-last]))::after,

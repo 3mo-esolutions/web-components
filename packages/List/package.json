@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/list",
-	"version": "0.0.20",
+	"version": "0.0.21",
 	"description": "A list web-component.",
 	"repository": {
 		"type": "git",
@@ -24,6 +24,7 @@
 	"dependencies": {
 		"@a11d/lit": "x",
 		"tslib": "x",
+		"@3mo/theme": "x",
 		"@3mo/flex": "x",
 		"@3mo/icon": "x",
 		"@3mo/disabled-property": "x",

@@ -2,6 +2,7 @@ import { property, css, Component, event, HTMLTemplateResult } from '@a11d/lit'
 import { disabledProperty } from '@3mo/disabled-property'
 import { SliderBase as MwcSliderBase, Thumb } from '@material/mwc-slider/slider-base.js'
 import '@material/mwc-slider'
+import '@3mo/theme'
 
 export abstract class SliderBase<T> extends Component {
 	@event() readonly change!: EventDispatcher<T>
@@ -22,7 +23,7 @@ export abstract class SliderBase<T> extends Component {
 			}
 
 			mwc-slider, mwc-slider-range {
-				--mdc-theme-primary: var(--mo-slider-accent-color, var(--mo-color-accent, #0077c8));
+				--mdc-theme-primary: var(--mo-slider-accent-color, var(--mo-color-accent));
 			}
 
 			mwc-slider::part(marks), mwc-slider-range::part(marks) {

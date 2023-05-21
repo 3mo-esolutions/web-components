@@ -1,5 +1,6 @@
 import '@3mo/flex'
 import '@3mo/icon'
+import '@3mo/theme'
 export * from './ListItem.js'
 export * from './SelectableListItem.js'
 export * from './SelectionListItem.js'

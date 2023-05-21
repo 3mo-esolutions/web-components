@@ -1,5 +1,6 @@
 import { component, html, property, Component, css, nothing, style, unsafeCSS } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
+import '@3mo/theme'
 import '@3mo/heading'
 import '@3mo/flex'
 
@@ -53,16 +54,16 @@ export class Card extends Component {
 		return css`
 			:host {
 				display: block;
-				border-radius: var(--mo-border-radius, 4px);
+				border-radius: var(--mo-border-radius);
 			}
 
 			:host([type="${unsafeCSS(CardType.Filled)}"]) {
-				background: var(--mo-color-surface, rgb(255, 255, 255));
-				box-shadow: var(--mo-shadow, rgba(95, 81, 78, .4) 0 1px 2px 0, rgba(95, 81, 78, .2) 0 1px 3px 1px);
+				background: var(--mo-color-surface);
+				box-shadow: var(--mo-shadow);
 			}
 
 			:host([type="${unsafeCSS(CardType.Outlined)}"]) {
-				border: 1px solid var(--mo-color-transparent-gray-3, rgba(0, 0, 0, .12));
+				border: 1px solid var(--mo-color-transparent-gray-3);
 			}
 
 			slot[name=header] {
@@ -77,7 +78,7 @@ export class Card extends Component {
 			}
 
 			slot[name=media] > *:first-child, slot[name=media]::slotted(:first-child) {
-				border-radius: var(--mo-border-radius, 4px) var(--mo-border-radius, 4px) 0 0;
+				border-radius: var(--mo-border-radius) var(--mo-border-radius) 0 0;
 				display: block;
 				background-size: cover;
 				background-repeat: no-repeat;
@@ -101,8 +102,8 @@ export class Card extends Component {
 				align-items: center;
 				border-radius: 50%;
 				font-size: 18px;
-				background: var(--mo-card-avatar-background, var(--mo-color-accent, #0077c8));
-				color: var(--mo-card-avatar-color, var(--mo-color-on-accent, #fff));
+				background: var(--mo-card-avatar-background, var(--mo-color-accent));
+				color: var(--mo-card-avatar-color, var(--mo-color-on-accent));
 
 			}
 

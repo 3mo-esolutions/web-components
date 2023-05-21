@@ -54,7 +54,7 @@ export class FieldNetGrossCurrency extends InputFieldComponent<NetGrossCurrency>
 			}
 
 			button[data-selected] {
-				color: var(--mo-color-accessible);
+				color: var(--mo-color-on-accent);
 				background-color: var(--mo-color-accent);
 			}
 		`
@@ -82,7 +82,7 @@ export class FieldNetGrossCurrency extends InputFieldComponent<NetGrossCurrency>
 					>B</button>
 				</mo-flex>
 
-				<div ${style({ fontSize: 'var(--mo-font-size-xl)' })}>
+				<div ${style({ fontSize: 'x-large' })}>
 					${this.currencySymbol ?? this.currency.symbol}
 				</div>
 			</mo-flex>

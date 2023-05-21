@@ -8,13 +8,13 @@ export class SplitterResizerKnob extends SplitterResizer {
 		return css`
 			:host {
 				transition: 0.2s;
-				background: var(--mo-splitter-resizer-knob-background, var(--mo-color-gray-transparent, rgba(128, 128, 128, 0.5)));
+				background: var(--mo-splitter-resizer-knob-background, var(--mo-color-gray-transparent));
 				border-radius: 10px;
 				align-self: center;
 			}
 
 			:host([hostHover]), :host([hostResizing]) {
-				background: var(--mo-splitter-resizer-knob-active-background, var(--mo-color-accent, #0077c8));
+				background: var(--mo-splitter-resizer-knob-active-background, var(--mo-color-accent));
 			}
 
 			:host([hostDirection=vertical]), :host([hostDirection=vertical-reversed]) {

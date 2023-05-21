@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/downloader",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"description": "A simple downloader for files and blobs",
 	"repository": {
 		"type": "git",

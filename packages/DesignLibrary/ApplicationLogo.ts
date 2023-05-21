@@ -5,7 +5,7 @@ import { Theme } from '@3mo/theme'
 export class ApplicationLogo extends Component {
 	static source?: string
 
-	@property() color = 'var(--mo-color-accessible)'
+	@property() color = 'var(--mo-color-on-accent)'
 	@property() source = ApplicationLogo.source
 
 	protected override initialized() {

@@ -6,7 +6,7 @@ export abstract class PageSettings<T extends PageParameters = void> extends Page
 		return css`
 			mo-list-item, mo-checkbox-list-item, mo-radio-list-item, mo-switch-list-item {
 				justify-content: space-between;
-				font-size: var(--mo-font-size-m);
+				font-size: medium;
 				background: var(--mo-color-surface);
 				border-radius: var(--mo-border-radius);
 				box-shadow: var(--mo-shadow);

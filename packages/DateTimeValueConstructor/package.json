@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/date-time-value-constructor",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"description": "Date time value constructor for @a11d/api",
 	"repository": {
 		"type": "git",

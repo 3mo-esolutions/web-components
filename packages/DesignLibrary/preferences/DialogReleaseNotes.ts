@@ -22,8 +22,7 @@ export class DialogReleaseNotes extends DialogComponent {
 			ul {
 				margin: 0;
 				font-weight: 400;
-				font-size: var(--mo-font-size-m);
-				line-height: var(--mo-elm-height-xxs);
+				font-size: medium;
 			}
 
 			h1, h2, h3 {
@@ -32,7 +31,7 @@ export class DialogReleaseNotes extends DialogComponent {
 			}
 
 			h1, h2, h3 {
-				font-size: var(--mo-font-size-xl);
+				font-size: x-large;
 				margin-bottom: 0.5em;
 			}
 

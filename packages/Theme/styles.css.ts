@@ -2,27 +2,6 @@ import { css } from '@a11d/lit'
 import { RootCssInjector } from '@a11d/root-css-injector'
 
 RootCssInjector.inject(css`
-	@import 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap';
-
-	* {
-		font-weight: 400;
-		box-sizing: border-box;
-	}
-
-	html {
-		width: 100%;
-		height: 100%;
-		font-family: var(--mo-font-family);
-		background-color: var(--mo-color-background);
-		color: var(--mo-color-foreground);
-	}
-
-	body {
-		height: 100%;
-		width: 100%;
-		overflow: auto;
-	}
-
 	:root[data-theme=light] {
 		color-scheme: light;
 		--mo-color-background-base: 255, 255, 255;
@@ -71,9 +50,9 @@ RootCssInjector.inject(css`
 		--mo-color-blue-base: 0, 119, 200;
 		/* TODO: Replace with @color-contrast when available: https://caniuse.com/mdn-css_types_color_color-contrast */
 		/* More info: https://css-tricks.com/css-variables-calc-rgb-enforcing-high-contrast-colors/ */
-		--mo-color-accessible-base-value: calc(((((var(--mo-color-accent-base-r) * 299) + (var(--mo-color-accent-base-g) * 587) + (var(--mo-color-accent-base-b) * 114)) / 1000) - 128) * -1000);
-		--mo-color-accessible-base: var(--mo-color-accessible-base-value), var(--mo-color-accessible-base-value), var(--mo-color-accessible-base-value);
-		--mo-color-accessible: rgb(var(--mo-color-accessible-base));
+		--mo-color-on-accent-base-value: calc(((((var(--mo-color-accent-base-r) * 299) + (var(--mo-color-accent-base-g) * 587) + (var(--mo-color-accent-base-b) * 114)) / 1000) - 128) * -1000);
+		--mo-color-on-accent-base: var(--mo-color-on-accent-base-value), var(--mo-color-on-accent-base-value), var(--mo-color-on-accent-base-value);
+		--mo-color-on-accent: rgb(var(--mo-color-on-accent-base));
 		--mo-color-accent-base: var(--mo-color-accent-base-r), var(--mo-color-accent-base-g), var(--mo-color-accent-base-b);
 		--mo-color-accent: rgb(var(--mo-color-accent-base));
 		--mo-color-accent-transparent: rgba(var(--mo-color-accent-base), 0.25);
@@ -83,9 +62,9 @@ RootCssInjector.inject(css`
 		/* Override Material Web Components variables */
 		--mdc-icon-font: Material Icons Sharp !important;
 		--mdc-theme-primary: var(--mo-color-accent) !important;
-		--mdc-theme-on-primary: var(--mo-color-accessible) !important;
+		--mdc-theme-on-primary: var(--mo-color-on-accent) !important;
 		--mdc-theme-secondary: var(--mo-color-accent) !important;
-		--mdc-theme-on-secondary: var(--mo-color-accessible) !important;
+		--mdc-theme-on-secondary: var(--mo-color-on-accent) !important;
 		--mdc-theme-text-secondary-on-background: var(--mo-color-gray) !important;
 		--mdc-theme-surface: var(--mo-color-surface) !important;
 		--mdc-theme-text-primary-on-dark: var(--mo-color-surface) !important;

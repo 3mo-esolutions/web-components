@@ -65,7 +65,7 @@ export class Calendar extends Component {
 
 			.selected {
 				background: var(--mo-color-accent);
-				color: var(--mo-color-accessible) !important;
+				color: var(--mo-color-on-accent) !important;
 			}
 
 			.day {

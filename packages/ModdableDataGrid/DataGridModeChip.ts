@@ -62,7 +62,7 @@ export class DataGridModeChip extends Component {
 
 			:host([selected]) {
 				--mo-chip-background-color: var(--mo-color-accent);
-				--mo-chip-foreground-color: var(--mo-color-accessible);
+				--mo-chip-foreground-color: var(--mo-color-on-accent);
 			}
 
 			mo-chip::part(ripple) {
@@ -70,7 +70,7 @@ export class DataGridModeChip extends Component {
 			}
 
 			mo-icon-button {
-				color: var(--mo-color-accessible);
+				color: var(--mo-color-on-accent);
 				--mdc-icon-size: 18px;
 			}
 

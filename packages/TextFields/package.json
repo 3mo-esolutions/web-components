@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/text-fields",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"description": "A set of text field component web components.",
 	"repository": {
 		"type": "git",

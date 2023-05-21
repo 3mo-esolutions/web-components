@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/file-upload",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"description": "File Upload facilitates the upload of files.",
 	"repository": {
 		"type": "git",

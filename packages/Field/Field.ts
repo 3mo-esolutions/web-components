@@ -1,6 +1,7 @@
 import { css, html, property, Component, component, nothing } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
 import { ThemeController } from '@3mo/theme'
+import '@3mo/theme'
 
 // TODO: Always focus when clicking on everything
 
@@ -47,8 +48,8 @@ export class Field extends Component {
 				gap: 4px;
 				min-width: 0;
 
-				border-start-start-radius: var(--mo-field-border-start-start-radius, var(--mo-border-radius, 4px));
-				border-start-end-radius: var(--mo-field-border-start-end-radius, var(--mo-border-radius, 4px));
+				border-start-start-radius: var(--mo-field-border-start-start-radius, var(--mo-border-radius));
+				border-start-end-radius: var(--mo-field-border-start-end-radius, var(--mo-border-radius));
 				box-sizing: border-box;
 				background: var(--mo-field-background-default);
 				gap: 6px;

@@ -52,7 +52,7 @@ export class NavigationItem extends Component {
 					display: inline-block;
 					border-radius: var(--mo-border-radius);
 					padding: 0 var(--mo-thickness-l);
-					color: var(--mo-color-accessible);
+					color: var(--mo-color-on-accent);
 					cursor: pointer;
 					white-space: nowrap;
 				}
@@ -69,7 +69,7 @@ export class NavigationItem extends Component {
 					line-height: 2rem;
 					font-weight: 500;
 					letter-spacing: 0.0125em;
-					font-size: var(--mo-font-size-m);
+					font-size: medium;
 				}
 
 				mo-menu {
@@ -79,7 +79,7 @@ export class NavigationItem extends Component {
 			<mo-flex direction='horizontal' alignItems='center' justifyContent='center' gap='2px'>
 				<span>${this.navigation.label}</span>
 				${!this.navigation.children ? nothing : html`
-					<mo-icon icon=${this.open ? 'keyboard_arrow_up' : 'keyboard_arrow_down'} ${style({ fontSize: 'var(--mo-font-size-l)' })}></mo-icon>
+					<mo-icon icon=${this.open ? 'keyboard_arrow_up' : 'keyboard_arrow_down'} ${style({ fontSize: 'large' })}></mo-icon>
 				`}
 			</mo-flex>
 			<mo-menu fixed .anchor=${this}>

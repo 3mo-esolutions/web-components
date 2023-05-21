@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/group-box",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"description": "A group-box web-component based on Material Design.",
 	"repository": {
 		"type": "git",

@@ -17,8 +17,8 @@ export class SelectableListItem extends SelectionListItem {
 			${super.styles}
 
 			:host([selected]) {
-				background-color: var(--mo-selectable-list-item-selected-background, var(--mo-color-accent-transparent, rgba(0, 119, 200, 0.25)));
-				color: var(--mo-selectable-list-item-selected-color, var(--mo-color-accent, rgb(0, 119, 200)));
+				background-color: var(--mo-selectable-list-item-selected-background, var(--mo-color-accent-transparent));
+				color: var(--mo-selectable-list-item-selected-color, var(--mo-color-accent));
 			}
 		`
 	}

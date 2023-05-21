@@ -1,4 +1,5 @@
 import { component, css, Component, html, property, eventListener, ifDefined } from '@a11d/lit'
+import '@3mo/theme'
 
 export const enum AnchorSpecialTarget {
 	/** the current browsing context. (Default) */
@@ -70,7 +71,7 @@ export class Anchor extends Component {
 
 	static override get styles() {
 		return css`
-			a { color: var(--mo-anchor-color, var(--mo-color-accent, #0077c8)); }
+			a { color: var(--mo-anchor-color, var(--mo-color-accent)); }
 		`
 	}
 

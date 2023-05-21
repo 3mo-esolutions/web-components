@@ -28,7 +28,7 @@ export class Meta extends Component {
 
 				mo-heading {
 					color: var(--mo-color-gray);
-					font-size: var(--mo-font-size-s);
+					font-size: small;
 					text-transform: uppercase;
 					font-weight: 400;
 					justify-content: end;

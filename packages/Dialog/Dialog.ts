@@ -92,9 +92,9 @@ export class Dialog extends Component {
 	static override get styles() {
 		return css`
 			mwc-dialog {
-				--mdc-dialog-heading-ink-color: var(--mo-dialog-heading-color, var(--mo-color-foreground, rgba(0, 0, 0)));
-				--mdc-dialog-content-ink-color: var(--mo-dialog-content-color, var(--mo-color-foreground-transparent, rgba(48, 48, 48)));
-				--mdc-dialog-scroll-divider-color: var(--mo-dialog-divider-color, var(--mo-color-gray-transparent, rgba(121, 121, 121, 0.5)));
+				--mdc-dialog-heading-ink-color: var(--mo-dialog-heading-color, var(--mo-color-foreground));
+				--mdc-dialog-content-ink-color: var(--mo-dialog-content-color, var(--mo-color-foreground-transparent));
+				--mdc-dialog-scroll-divider-color: var(--mo-dialog-divider-color, var(--mo-color-gray-transparent));
 				--mdc-dialog-scrim-color: var(--mo-dialog-scrim-color, rgba(0, 0, 0, 0.5));
 			}
 
@@ -121,7 +121,7 @@ export class Dialog extends Component {
 			}
 
 			:host([boundToWindow]) mwc-dialog {
-				--mdc-dialog-scrim-color: var(--mo-dialog-scrim-color, var(--mo-color-background, rgba(255, 255, 255)));
+				--mdc-dialog-scrim-color: var(--mo-dialog-scrim-color, var(--mo-color-background));
 			}
 
 			:host([size=large]) mwc-dialog::part(heading) {

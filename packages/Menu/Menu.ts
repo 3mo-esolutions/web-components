@@ -98,9 +98,9 @@ export class Menu extends Component {
 			}
 
 			mo-popover {
-				border-radius: var(--mo-toolbar-border-radius, var(--mo-border-radius, 4px));
-				background: var(--mo-color-surface, #fff);
-				border-radius: var(--mo-border-radius, 4px);
+				border-radius: var(--mo-toolbar-border-radius, var(--mo-border-radius));
+				background: var(--mo-color-surface);
+				border-radius: var(--mo-border-radius);
 				/*overflow: hidden;*/
 				transition: opacity 100ms;
 			}

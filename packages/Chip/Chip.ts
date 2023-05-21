@@ -1,4 +1,5 @@
 import { component, css, html, Component } from '@a11d/lit'
+import '@3mo/theme'
 
 /**
  * @element mo-chip
@@ -23,8 +24,8 @@ export class Chip extends Component {
 			}
 
 			mo-button {
-				--mo-button-accent-color: var(--mo-chip-background-color, rgba(var(--mo-color-foreground-base, 0,0,0), 0.15));
-				--mdc-theme-on-primary: var(--mo-chip-foreground-color, rgba(var(--mo-color-foreground-base, 0,0,0), 0.8));
+				--mo-button-accent-color: var(--mo-chip-background-color, rgba(var(--mo-color-foreground-base), 0.15));
+				--mdc-theme-on-primary: var(--mo-chip-foreground-color, rgba(var(--mo-color-foreground-base), 0.8));
 				--mo-button-horizontal-padding: 10px;
 				height: 100%;
 				min-height: auto;

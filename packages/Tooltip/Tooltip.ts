@@ -24,7 +24,7 @@ export class Tooltip extends Component {
 			}
 
 			mo-popover {
-				border-radius: var(--mo-toolbar-border-radius, var(--mo-border-radius, 4px));
+				border-radius: var(--mo-toolbar-border-radius, var(--mo-border-radius));
 				transition-duration: 175ms;
 				transition-property: opacity, transform;
 			}
@@ -50,10 +50,10 @@ export class Tooltip extends Component {
 			}
 
 			:host(:not([rich])) mo-popover {
-				background: var(--mo-tooltip-surface-color, var(--mo-color-surface, rgba(255, 255, 255, 0.75)));
+				background: var(--mo-tooltip-surface-color, var(--mo-color-surface));
 				backdrop-filter: blur(40px);
 				color: var(--mo-color-foreground);
-				box-shadow: var(--mo-tooltip-shadow, var(--mo-shadow-deep, 0px 5px 5px -3px rgba(95, 81, 78, 0.2), 0px 8px 10px 1px rgba(95, 81, 78, 0.14), 0px 3px 14px 2px rgba(95, 81, 78, 0.12)));
+				box-shadow: var(--mo-tooltip-shadow, var(--mo-shadow-deep));
 				padding: 8px;
 			}
 		`

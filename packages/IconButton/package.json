@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/icon-button",
-	"version": "1.0.9",
+	"version": "1.0.10",
 	"description": "Icon Button Web Component based on Material Icon Button.",
 	"repository": {
 		"type": "git",

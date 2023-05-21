@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/keyboard-controller",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"description": "A simple keyboard controller which tracks the pressed special keys (ctrl, alt, shift, meta).",
 	"repository": {
 		"type": "git",

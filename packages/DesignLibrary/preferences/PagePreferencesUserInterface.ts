@@ -162,7 +162,7 @@ export class PagePreferencesUserInterface extends PageSettings {
 				>
 					<mo-flex gap='var(--mo-thickness-l)'>
 						<div ${style({ position: 'relative', opacity: 1, background: 'var(--mo-color-accent)', height: '20px', width: '100%' })}>
-							<div ${style({ insetInlineStart: '30%', top: '8px', position: 'absolute', background: 'var(--mo-color-accessible)', height: '4px', width: '40%', opacity: '1' })}></div>
+							<div ${style({ insetInlineStart: '30%', top: '8px', position: 'absolute', background: 'var(--mo-color-on-accent)', height: '4px', width: '40%', opacity: '1' })}></div>
 						</div>
 						<div ${style({ background: 'var(--mo-color-accent)', height: '4px', width: '50%', opacity: '1' })}></div>
 						<div ${style({ width: '100%' })}></div>

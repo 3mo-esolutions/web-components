@@ -27,10 +27,10 @@ export class Tab extends MwcTab {
 			...super.styles,
 			css`
 				:host {
-					--mdc-theme-primary: var(--mo-tab-accent, var(--mo-color-accent, #0077c8));
-					--mdc-theme-secondary: var(--mo-tab-accent, var(--mo-color-accent, #0077c8));
-					--mdc-tab-color-default: var(--mo-tab-color, var(--mo-color-foreground-transparent, rgb(48, 48, 48)));
-					--mdc-tab-text-label-color-default: var(--mo-tab-color, var(--mo-color-foreground-transparent, rgb(48, 48, 48)));
+					--mdc-theme-primary: var(--mo-tab-accent, var(--mo-color-accent));
+					--mdc-theme-secondary: var(--mo-tab-accent, var(--mo-color-accent));
+					--mdc-tab-color-default: var(--mo-tab-color, var(--mo-color-foreground-transparent));
+					--mdc-tab-text-label-color-default: var(--mo-tab-color, var(--mo-color-foreground-transparent));
 				}
 			`
 		]

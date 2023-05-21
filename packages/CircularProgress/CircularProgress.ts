@@ -1,5 +1,6 @@
 import { Component, component, css, html, ifDefined, property } from '@a11d/lit'
 import { CircularProgress as MwcCircularProgress } from '@material/mwc-circular-progress'
+import '@3mo/theme'
 
 /**
  * @attr progress - The progress of the circular progress indicator. Unset to display an indeterminate progress indicator.
@@ -24,7 +25,7 @@ export class CircularProgress extends Component {
 				width: 100%;
 				height: 100%;
 				--mdc-circular-progress-track-color: var(--mo-circular-progress-track-color, transparent);
-				--mdc-theme-primary: var(--mo-circular-progress-accent-color, var(--mo-color-accent, #0077c8));
+				--mdc-theme-primary: var(--mo-circular-progress-accent-color, var(--mo-color-accent));
 			}
 		`
 	}

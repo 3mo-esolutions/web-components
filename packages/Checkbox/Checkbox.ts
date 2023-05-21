@@ -2,6 +2,7 @@ import { component, property, css, Component, html, event } from '@a11d/lit'
 import { Formfield as FormField } from '@material/mwc-formfield'
 import { disabledProperty } from '@3mo/disabled-property'
 import '@material/mwc-checkbox'
+import '@3mo/theme'
 
 /**
  * @element mo-checkbox
@@ -57,12 +58,12 @@ export class Checkbox extends Component {
 			}
 
 			mwc-checkbox {
-				--mdc-theme-secondary: var(--mo-checkbox-accent-color, var(--mo-color-accent, #0077c8));
+				--mdc-theme-secondary: var(--mo-checkbox-accent-color, var(--mo-color-accent));
 				--mdc-checkbox-touch-target-size: 36px;
 				--mdc-checkbox-ripple-size: 36px;
-				--mdc-checkbox-disabled-color: var(--mo-checkbox-disabled-color, var(--mo-color-gray-transparent, rgba(128, 128, 128, 0.5)));
-				--mdc-checkbox-unchecked-color: var(--mo-checkbox-unchecked-color, var(--mo-color-foreground-transparent, rgb(48, 48, 48)));
-				--mdc-checkbox-ink-color: var(--mo-checkbox-ink-color, var(--mo-color-accessible));
+				--mdc-checkbox-disabled-color: var(--mo-checkbox-disabled-color, var(--mo-color-gray-transparent));
+				--mdc-checkbox-unchecked-color: var(--mo-checkbox-unchecked-color, var(--mo-color-foreground-transparent));
+				--mdc-checkbox-ink-color: var(--mo-checkbox-ink-color, var(--mo-color-on-accent));
 			}
 
 			mwc-formfield::part(label) {
@@ -72,7 +73,7 @@ export class Checkbox extends Component {
 			}
 
 			:host([disabled]) mwc-formfield::part(label) {
-				color: var(--mo-checkbox-disabled-color, var(--mo-color-gray-transparent, rgba(128, 128, 128, 0.5)));
+				color: var(--mo-checkbox-disabled-color, var(--mo-color-gray-transparent));
 			}
 		`
 	}

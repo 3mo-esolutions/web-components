@@ -1,6 +1,7 @@
 import { component, css, Component, html, property, ifDefined, nothing, style } from '@a11d/lit'
 import { MaterialIcon } from '@3mo/icon'
 import { SlotController } from '@3mo/slot-controller'
+import '@3mo/theme'
 import '@3mo/icon-button'
 import '@3mo/flex'
 import '@3mo/grid'
@@ -65,9 +66,9 @@ export class Alert extends Component {
 
 			mo-flex[role=alert] {
 				position: relative;
-				border-radius: var(--mo-alert-border-radius, var(--mo-border-radius, 4px));
+				border-radius: var(--mo-alert-border-radius, var(--mo-border-radius));
 				padding: 8px;
-				border-radius: var(--mo-alert-border-radius, var(--mo-border-radius, 4px));
+				border-radius: var(--mo-alert-border-radius, var(--mo-border-radius));
 
 				color: rgba(var(--mo-alert-color-base), 1);
 				background: rgba(var(--mo-alert-color-base), 0.12);
@@ -75,7 +76,7 @@ export class Alert extends Component {
 
 			slot {
 				grid-column: 2 / -1;
-				color: rgba(var(--mo-alert-body-color-base, var(--mo-color-foreground-base, 0, 0, 0), 0.9));
+				color: rgba(var(--mo-alert-body-color-base, var(--mo-color-foreground-base), 0.9));
 				display: block;
 			}
 

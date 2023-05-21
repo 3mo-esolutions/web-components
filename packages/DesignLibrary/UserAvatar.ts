@@ -55,7 +55,7 @@ export class UserAvatar extends Component {
 
 	protected override get template() {
 		return html`
-			<mo-avatar ${style({ color: 'var(--mo-color-accessible)' })}>
+			<mo-avatar ${style({ color: 'var(--mo-color-on-accent)' })}>
 				${this.avatarContentTemplate}
 			</mo-avatar>
 

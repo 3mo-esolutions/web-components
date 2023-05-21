@@ -8,11 +8,11 @@ export class SplitterResizerLine extends SplitterResizer {
 		return css`
 			:host {
 				transition: var(--mo-splitter-resizer-line-transition-quick, 250ms);
-				background: var(--mo-splitter-resizer-line-idle-background, var(--mo-color-gray-transparent, rgba(128, 128, 128, 0.5)));
+				background: var(--mo-splitter-resizer-line-idle-background, var(--mo-color-gray-transparent));
 			}
 
 			:host([hostHover]), :host([hostResizing]) {
-				background: var(--mo-splitter-resizer-line-accent-color, var(--mo-color-accent, #0077c8));
+				background: var(--mo-splitter-resizer-line-accent-color, var(--mo-color-accent));
 			}
 
 			:host([hostDirection=vertical]), :host([hostDirection=vertical-reversed]) {

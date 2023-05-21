@@ -36,9 +36,19 @@ export abstract class BusinessSuiteApplication extends Application {
 
 	static override get styles() {
 		return css`
+			@import 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap';
+
 			${super.styles}
 
+			* {
+				font-weight: 400;
+				box-sizing: border-box;
+			}
+
 			:root {
+				font-family: var(--mo-font-family);
+				background-color: var(--mo-color-background);
+				color: var(--mo-color-foreground);
 				/* Duration */
 				--mo-duration-quick: 250ms;
 				--mo-duration-slow: 1000ms;
@@ -47,14 +57,6 @@ export abstract class BusinessSuiteApplication extends Application {
 				--mo-thickness-m: 6px;
 				--mo-thickness-l: 8px;
 				--mo-thickness-xl: 14px;
-				/* Font Sizes */
-				--mo-font-size-xxs: 8px;
-				--mo-font-size-xs: 10px;
-				--mo-font-size-s: 12px;
-				--mo-font-size-m: 14px;
-				--mo-font-size-l: 18px;
-				--mo-font-size-xl: 24px;
-				--mo-font-size-xxl: 36px;
 			}
 
 			:root[data-theme=light] {
@@ -96,7 +98,7 @@ export abstract class BusinessSuiteApplication extends Application {
 	protected get navbarTemplate() {
 		return html`
 			<mo-flex direction='horizontal' gap='32px' ${style({ background: 'var(--mo-color-accent)', paddingInlineStart: '4px', height: '48px', overflow: 'hidden' })}>
-				<mo-flex direction='horizontal' alignItems='center' ${style({ color: 'var(--mo-color-accessible)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' })}>
+				<mo-flex direction='horizontal' alignItems='center' ${style({ color: 'var(--mo-color-on-accent)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' })}>
 					${this.navbarStartTemplate}
 				</mo-flex>
 
@@ -183,7 +185,7 @@ export abstract class BusinessSuiteApplication extends Application {
 
 	protected get userAvatarTemplate() {
 		return !Authentication.hasAuthenticator() ? nothing : html`
-			<mo-user-avatar style='color: var(--mo-color-accessible)'>
+			<mo-user-avatar style='color: var(--mo-color-on-accent)'>
 				${this.userAvatarMenuItemsTemplate}
 			</mo-user-avatar>
 		`

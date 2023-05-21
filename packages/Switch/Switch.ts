@@ -2,6 +2,7 @@ import { component, property, css, Component, html, event } from '@a11d/lit'
 import { Formfield as FormField } from '@material/mwc-formfield'
 import { disabledProperty } from '@3mo/disabled-property'
 import '@material/mwc-switch'
+import '@3mo/theme'
 
 /**
  * @element mo-switch
@@ -36,7 +37,7 @@ export class Switch extends Component {
 			}
 
 			mwc-switch {
-				--mdc-theme-primary: var(--mo-switch-accent-color, var(--mo-color-accent, #0077c8));
+				--mdc-theme-primary: var(--mo-switch-accent-color, var(--mo-color-accent));
 				--mdc-theme-secondary: var(--mdc-theme-primary);
 				--mdc-switch-touch-target-size: 36px;
 				--mdc-switch-ripple-size: 36px;
@@ -46,7 +47,7 @@ export class Switch extends Component {
 				--mdc-switch-selected-hover-handle-color: var(--mdc-switch-selected-handle-color);
 				--mdc-switch-selected-pressed-handle-color: var(--mdc-switch-selected-handle-color);
 
-				--mdc-switch-selected-track-color: var(--mo-switch-selected-track-color, rgba(var(--mo-color-accent-base, 0, 119, 200), 0.5));
+				--mdc-switch-selected-track-color: var(--mo-switch-selected-track-color, rgba(var(--mo-color-accent-base), 0.5));
 				--mdc-switch-selected-focus-track-color: var(--mdc-switch-selected-track-color);
 				--mdc-switch-selected-hover-track-color: var(--mdc-switch-selected-track-color);
 				--mdc-switch-selected-pressed-track-color: var(--mdc-switch-selected-track-color);
@@ -54,19 +55,19 @@ export class Switch extends Component {
 				--mdc-switch-selected-focus-state-layer-color: var(--mdc-theme-primary);
 				--mdc-switch-selected-hover-state-layer-color: var(--mdc-theme-primary);
 				--mdc-switch-selected-pressed-state-layer-color: var(--mdc-theme-primary);
-				--mdc-switch-selected-icon-color: var(--mo-switch-selected-icon-color, var(--mo-color-accessible, #ffffff));
+				--mdc-switch-selected-icon-color: var(--mo-switch-selected-icon-color, var(--mo-color-on-accent));
 
-				--mdc-switch-unselected-handle-color: var(--mo-switch-unselected-handle-color, var(--mo-color-foreground, #303030));
+				--mdc-switch-unselected-handle-color: var(--mo-switch-unselected-handle-color, var(--mo-color-foreground));
 				--mdc-switch-unselected-focus-handle-color: var(--mdc-switch-unselected-handle-color);
 				--mdc-switch-unselected-hover-handle-color: var(--mdc-switch-unselected-handle-color);
 				--mdc-switch-unselected-pressed-handle-color: var(--mdc-switch-unselected-handle-color);
 
-				--mdc-switch-unselected-track-color: var(--mo-switch-unselected-track-color, rgba(var(--mo-color-foreground-base, 0, 0, 0), 0.25));
+				--mdc-switch-unselected-track-color: var(--mo-switch-unselected-track-color, rgba(var(--mo-color-foreground-base), 0.25));
 				--mdc-switch-unselected-focus-track-color: var(--mdc-switch-unselected-track-color);
 				--mdc-switch-unselected-hover-track-color: var(--mdc-switch-unselected-track-color);
 				--mdc-switch-unselected-pressed-track-color: var(--mdc-switch-unselected-track-color);
 
-				--mdc-switch-unselected-state-layer-color: var(--mo-switch-unselected-state-layer-color, var(--mo-color-foreground, #303030));
+				--mdc-switch-unselected-state-layer-color: var(--mo-switch-unselected-state-layer-color, var(--mo-color-foreground));
 				--mdc-switch-unselected-focus-state-layer-color: var(--mdc-switch-unselected-state-layer-color);
 				--mdc-switch-unselected-hover-state-layer-color: var(--mdc-switch-unselected-state-layer-color);
 				--mdc-switch-unselected-pressed-state-layer-color: var(--mdc-switch-unselected-state-layer-color);
@@ -80,7 +81,7 @@ export class Switch extends Component {
 			}
 
 			:host([disabled]) mwc-formfield::part(label) {
-				color: var(--mo-switch-disabled-color, var(--mo-color-gray-transparent, rgba(128, 128, 128, 0.5)));
+				color: var(--mo-switch-disabled-color, var(--mo-color-gray-transparent));
 			}
 		`
 	}

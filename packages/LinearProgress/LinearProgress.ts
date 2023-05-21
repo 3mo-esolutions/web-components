@@ -1,5 +1,6 @@
 import { component, Component, css, html, ifDefined, property } from '@a11d/lit'
 import { LinearProgress as MwcLinearProgress } from '@material/mwc-linear-progress'
+import '@3mo/theme'
 
 /**
  * @attr progress
@@ -25,7 +26,7 @@ export class LinearProgress extends Component {
 				width: 100%;
 				height: 100%;
 				border-radius: inherit;
-				--mdc-theme-primary: var(--mo-linear-progress-accent, var(--mo-color-accent, #0077c8));
+				--mdc-theme-primary: var(--mo-linear-progress-accent, var(--mo-color-accent));
 				--mdc-linear-progress-buffer-color: var(--mo-linear-progress-buffer-color, var(--mo-color-gray-transparent));
 			}
 		`

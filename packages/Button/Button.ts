@@ -3,6 +3,7 @@ import { InstanceofAttributeController } from '@3mo/instanceof-attribute-control
 import { type MaterialIcon } from '@3mo/icon'
 import { Button as MwcButton } from '@material/mwc-button'
 import { disabledProperty } from '@3mo/disabled-property'
+import '@3mo/theme'
 
 export const enum ButtonType {
 	Normal = 'normal',
@@ -43,7 +44,7 @@ export class Button extends Component {
 				display: inline-block;
 				text-transform: uppercase;
 				text-align: center;
-				border-radius: var(--mo-border-radius, 4px);
+				border-radius: var(--mo-border-radius);
 				min-height: 36px;
 			}
 
@@ -69,8 +70,8 @@ export class Button extends Component {
 				min-height: inherit;
 				text-align: inherit;
 				--mdc-button-horizontal-padding: var(--mo-button-horizontal-padding, var(--mo-button-default-horizontal-padding));
-				--mdc-theme-primary: var(--mo-button-accent-color, var(--mo-color-accent, #0077c8));
-				--mdc-button-outline-color: var(--mo-button-accent-color, var(--mo-color-accent, #0077c8));
+				--mdc-theme-primary: var(--mo-button-accent-color, var(--mo-color-accent));
+				--mdc-button-outline-color: var(--mo-button-accent-color, var(--mo-color-accent));
 				--mdc-button-disabled-fill-color: var(--mo-button-disabled-background-color);
 				--mdc-button-disabled-ink-color: var(--mo-button-disabled-color, var(--mo-color-gray-transparent));
 				--mdc-button-disabled-outline-color: var(--mo-button-disabled-color, var(--mo-color-gray-transparent));

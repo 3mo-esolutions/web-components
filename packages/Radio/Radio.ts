@@ -2,6 +2,7 @@ import { component, property, css, Component, html, event } from '@a11d/lit'
 import { disabledProperty } from '@3mo/disabled-property'
 import { Formfield as FormField } from '@material/mwc-formfield'
 import '@material/mwc-radio'
+import '@3mo/theme'
 
 /**
  * @element mo-radio
@@ -34,12 +35,12 @@ export class Radio extends Component {
 			}
 
 			mwc-radio {
-				--mdc-theme-secondary: var(--mo-radio-accent-color, var(--mo-color-accent, #0077c8));
+				--mdc-theme-secondary: var(--mo-radio-accent-color, var(--mo-color-accent));
 				--mdc-radio-touch-target-size: 36px;
 				--mdc-radio-ripple-size: 36px;
-				--mdc-radio-disabled-color: var(--mo-radio-disabled-color, var(--mo-color-gray-transparent, rgba(128, 128, 128, 0.5)));
-				--mdc-radio-unchecked-color: var(--mo-radio-unchecked-color, var(--mo-color-foreground-transparent, rgb(48, 48, 48)));
-				--mdc-radio-ink-color: var(--mo-radio-ink-color, var(--mo-color-accessible));
+				--mdc-radio-disabled-color: var(--mo-radio-disabled-color, var(--mo-color-gray-transparent));
+				--mdc-radio-unchecked-color: var(--mo-radio-unchecked-color, var(--mo-color-foreground-transparent));
+				--mdc-radio-ink-color: var(--mo-radio-ink-color, var(--mo-color-on-accent));
 			}
 
 			mwc-formfield::part(label) {
@@ -49,7 +50,7 @@ export class Radio extends Component {
 			}
 
 			:host([disabled]) mwc-formfield::part(label) {
-				color: var(--mo-radio-disabled-color, var(--mo-color-gray-transparent, rgba(128, 128, 128, 0.5)));
+				color: var(--mo-radio-disabled-color, var(--mo-color-gray-transparent));
 			}
 		`
 	}

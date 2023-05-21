@@ -4,6 +4,7 @@ import { InstanceofAttributeController } from '@3mo/instanceof-attribute-control
 import { disabledProperty } from '@3mo/disabled-property'
 import { MaterialIcon } from '@3mo/icon'
 import { Fab as MwcFab } from '@material/mwc-fab'
+import '@3mo/theme'
 
 /**
  * @element mo-fab
@@ -42,7 +43,7 @@ export class Fab extends Component {
 			}
 
 			mwc-fab {
-				--mdc-theme-secondary: var(--mo-fab-color, var(--mo-color-accent, #0077c8));
+				--mdc-theme-secondary: var(--mo-fab-color, var(--mo-color-accent));
 			}
 		`
 	}

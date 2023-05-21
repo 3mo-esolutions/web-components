@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/split-page-host",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"description": "A page host consisting of pane and content.",
 	"repository": {
 		"type": "git",

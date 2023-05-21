@@ -30,7 +30,7 @@ export class MaterialPage extends Component {
 			}
 
 			slot[name=heading] {
-				font-size: var(--mo-font-size-l);
+				font-size: large;
 				color: var(--mo-color-accent);
 			}
 
