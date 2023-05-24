@@ -1,5 +1,5 @@
 import { css, html, property, nothing, style, HTMLTemplateResult, ifDefined, query, repeat } from '@a11d/lit'
-import { Application, deactivateInert, PageComponent, PwaHelper, RouteMatchMode, routerLink } from '@a11d/lit-application'
+import { Application, PageComponent, PwaHelper, RouteMatchMode, routerLink } from '@a11d/lit-application'
 import { Authentication } from '@a11d/lit-application-authentication'
 import { Localizer, LanguageCode } from '@3mo/localization'
 import { DialogReleaseNotes, PagePreferences, Navigation } from './index.js'
@@ -27,7 +27,6 @@ export abstract class BusinessSuiteApplication extends Application {
 	constructor() {
 		super()
 		PwaHelper.registerServiceWorker('/ServiceWorker.js')
-		deactivateInert(this.constructor as any)
 	}
 
 	override async connected() {

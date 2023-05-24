@@ -1,7 +1,8 @@
-import { Component, component, html } from '@a11d/lit'
+import { component, html } from '@a11d/lit'
+import { NonInertableComponent } from '@a11d/non-inertable-component'
 
 @component('mo-popover-host')
-export class PopoverHost extends Component {
+export class PopoverHost extends NonInertableComponent {
 	static get instance() {
 		return document.querySelector('mo-popover-host') ?? document.body
 	}
