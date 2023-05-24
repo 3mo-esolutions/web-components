@@ -1,4 +1,4 @@
-import { PropertyValues, property, query, state } from '@a11d/lit'
+import { property, query, state } from '@a11d/lit'
 import { FieldComponent } from './FieldComponent.js'
 
 /**
@@ -23,11 +23,9 @@ export abstract class InputFieldComponent<T> extends FieldComponent<T> {
 		return this.dense
 	}
 
-	protected override update(changedProperties: PropertyValues<this>) {
-		if (changedProperties.has('value')) {
-			this.inputStringValue = this.valueToInputValue(this.value)
-		}
-		super.update(changedProperties)
+	protected override valueUpdated() {
+		this.inputStringValue = this.valueToInputValue(this.value)
+		super.valueUpdated()
 	}
 
 	protected override handleInput(value?: T, e?: Event) {
@@ -73,8 +71,9 @@ export abstract class InputFieldComponent<T> extends FieldComponent<T> {
 		this.inputElement.setCustomValidity(error)
 	}
 
-	override checkValidity() {
-		return Promise.resolve(this.inputElement.checkValidity())
+	override async checkValidity() {
+		await this.updateComplete
+		return this.inputElement.checkValidity()
 	}
 
 	override reportValidity() {

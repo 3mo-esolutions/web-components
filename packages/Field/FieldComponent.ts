@@ -1,4 +1,4 @@
-import { html, property, event, nothing, Component, HTMLTemplateResult, state, css } from '@a11d/lit'
+import { html, property, event, nothing, Component, HTMLTemplateResult, state, css, PropertyValues } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
 import { FocusController } from '@3mo/focus-controller'
 
@@ -40,7 +40,15 @@ export abstract class FieldComponent<T> extends Component {
 		}
 	})
 
-	protected override firstUpdated() {
+	protected override update(changedProperties: PropertyValues<this>) {
+		if (changedProperties.has('value')) {
+			this.valueUpdated()
+		}
+		super.update(changedProperties)
+	}
+
+	protected valueUpdated() {
+		this.inputValue = this.value
 		this.validate()
 	}
 

@@ -236,3 +236,9 @@ export class Field extends Component {
 		`
 	}
 }
+
+declare global {
+	interface HTMLElementTagNameMap {
+		'mo-field': Field
+	}
+}

@@ -1,10 +1,13 @@
 import { ComponentTestFixture } from '@a11d/lit/dist/test/index.js'
-import { expectFieldPropertyTunnelsToInput, expectInputEventTunnelsToField } from '@3mo/field'
+import { expectFieldPropertyTunnelsToInput, expectInputEventTunnelsToField } from '../Field/InputFieldComponent.test.js'
+import { expectSlotRendersOnlyWithAssignedContent } from '../Field/FieldComponent.test.js'
 import { FieldPercent } from './FieldPercent.js'
 
 describe('FieldPercent', () => {
 	const fixture = new ComponentTestFixture<FieldPercent>('mo-field-percent')
 	it('should set the part attribute', () => expect(fixture.component.inputElement.getAttribute('part')).toBe('input'))
+	it('should render an start slot only if there are assigned elements', () => expectSlotRendersOnlyWithAssignedContent(fixture, 'start'))
+	it('should render an end slot only if there are assigned elements', () => expectSlotRendersOnlyWithAssignedContent(fixture, 'end'))
 	it('should tunnel disabled', () => expectFieldPropertyTunnelsToInput(fixture, { value: true, key: 'disabled' }))
 	it('should tunnel readonly', () => expectFieldPropertyTunnelsToInput(fixture, { value: true, fieldKey: 'readonly', inputKey: 'readOnly' }))
 	it('should tunnel required', () => expectFieldPropertyTunnelsToInput(fixture, { value: true, key: 'required' }))

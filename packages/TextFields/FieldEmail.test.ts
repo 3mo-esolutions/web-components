@@ -1,6 +1,7 @@
 import { ComponentTestFixture } from '@a11d/lit/dist/test/index.js'
 import { FieldEmail } from './FieldEmail.js'
-import { expectFieldPropertyTunnelsToInput, expectInputEventTunnelsToField } from '@3mo/field'
+import { expectFieldPropertyTunnelsToInput, expectInputEventTunnelsToField } from '../Field/InputFieldComponent.test.js'
+import { expectSlotRendersOnlyWithAssignedContent } from '../Field/FieldComponent.test.js'
 
 describe('FieldEmail', () => {
 	const fixture = new ComponentTestFixture<FieldEmail>('mo-field-email')
@@ -12,4 +13,6 @@ describe('FieldEmail', () => {
 	it('should tunnel value', () => expectFieldPropertyTunnelsToInput(fixture, { value: 'Test', key: 'value' }))
 	it('should proxy input event', () => expectInputEventTunnelsToField(fixture, 'input', 'test'))
 	it('should proxy change event', () => expectInputEventTunnelsToField(fixture, 'change', 'test'))
+	it('should render an start slot only if there are assigned elements', () => expectSlotRendersOnlyWithAssignedContent(fixture, 'start'))
+	it('should render an end slot only if there are assigned elements', () => expectSlotRendersOnlyWithAssignedContent(fixture, 'end'))
 })
