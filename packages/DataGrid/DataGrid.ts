@@ -117,9 +117,9 @@ export type DataGridSorting<TData> = {
  */
 @component('mo-data-grid')
 export class DataGrid<TData, TDetailsElement extends Element | undefined = undefined> extends Component {
-	static readonly rowHeight = new LocalStorage<number>('MoDeL.Components.DataGrid.RowHeight', 35)
-	static readonly pageSize = new LocalStorage<Exclude<DataGridPagination, 'auto'>>('MoDeL.Components.DataGrid.PageSize', 25)
-	static readonly hasAlternatingBackground = new LocalStorage('MoDeL.Components.DataGrid.HasAlternatingBackground', true)
+	static readonly rowHeight = new LocalStorage<number>('DataGrid.RowHeight', 35)
+	static readonly pageSize = new LocalStorage<Exclude<DataGridPagination, 'auto'>>('DataGrid.PageSize', 25)
+	static readonly hasAlternatingBackground = new LocalStorage('DataGrid.HasAlternatingBackground', true)
 	protected static readonly virtualizationThreshold: number = 50
 
 	@event() readonly dataChange!: EventDispatcher<Array<TData>>

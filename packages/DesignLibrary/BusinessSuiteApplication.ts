@@ -263,11 +263,3 @@ export abstract class BusinessSuiteApplication extends Application {
 		return nothing
 	}
 }
-
-declare global {
-	namespace MoDeL {
-		interface Globals {
-			readonly application: BusinessSuiteApplication
-		}
-	}
-}

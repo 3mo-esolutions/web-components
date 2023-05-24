@@ -1,4 +1,4 @@
-import { component, css, property, event, html, HTMLTemplateResult } from '@a11d/lit'
+import { component, css, property, event, html, HTMLTemplateResult, PropertyValues } from '@a11d/lit'
 import { FetcherController } from '@3mo/fetcher-controller'
 import { FieldSelect } from '@3mo/select-field'
 
@@ -79,8 +79,8 @@ export class FieldFetchableSelect<T, TDataFetcherParameters extends FieldFetchab
 		return super.template
 	}
 
-	protected override firstUpdated() {
-		super.firstUpdated()
+	protected override firstUpdated(props: PropertyValues<this>) {
+		super.firstUpdated(props)
 		if (!this.parameters) {
 			this.requestFetch()
 		}

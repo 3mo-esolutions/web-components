@@ -13,7 +13,7 @@ export abstract class ModdableDataGrid<TData, TDataFetcherParameters extends Fet
 	static disableModes = false
 
 	readonly modesRepository = new ModeRepository<TData, TDataFetcherParameters>(this as any)
-	private readonly modeStorage = new LocalStorage<number | undefined>(`MoDeL.Components.ModdableDataGrids.${this.tagName.toLowerCase()}.Mode`, undefined, (_, value) => Number(value))
+	private readonly modeStorage = new LocalStorage<number | undefined>(`ModdableDataGrid.${this.tagName.toLowerCase()}.Mode`, undefined, (_, value) => Number(value))
 	private readonly dataCache = new Map<number, { page: number, data: Array<TData> }>()
 
 	@event() readonly modeChange!: EventDispatcher<Mode<TData, TDataFetcherParameters> | undefined>
