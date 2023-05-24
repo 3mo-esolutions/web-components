@@ -35,8 +35,10 @@ describe('Icon', () => {
 			await fixture.update()
 			expect(getComputedStyle(fixture.component.renderRoot.querySelector('span')!).fontFamily).toContain(font.name)
 
-			const fontStyleSheet = document.head.querySelector('style')
-			expect(fontStyleSheet?.textContent).toContain(font.url)
+			const fontStyleSheetsContent = [...document.head.querySelectorAll('style')]
+				.map(style => style.textContent)
+				.join('\n')
+			expect(fontStyleSheetsContent).toContain(font.url)
 		})
 	})
 })
