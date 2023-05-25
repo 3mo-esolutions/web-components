@@ -42,6 +42,34 @@ export const Scrollable = story({
 			Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius quidem eaque earum obcaecati qui? Nihil quaerat,
 			repudiandae error delectus labore quasi inventore fugit corporis maxime eos aspernatur aliquid temporibus vitae.
 
+			<mo-field-select label='Select'>
+				<mo-option value='one'>Option 1</mo-option>
+				<mo-option value='two'>Option 2</mo-option>
+				<mo-option value='three'>Option 3</mo-option>
+				<mo-option value='four'>Option 4</mo-option>
+				<mo-option value='five'>Option 5</mo-option>
+				<mo-option value='six'>Option 6</mo-option>
+				<mo-option value='seven'>Option 7</mo-option>
+				<mo-option value='eight'>Option 8</mo-option>
+				<mo-option value='nine'>Option 9</mo-option>
+				<mo-option value='ten'>Option 10</mo-option>
+				<mo-option value='eleven'>Option 11</mo-option>
+				<mo-option value='twelve'>Option 12</mo-option>
+				<mo-option value='thirteen'>Option 13</mo-option>
+				<mo-option value='fourteen'>Option 14</mo-option>
+				<mo-option value='fifteen'>Option 15</mo-option>
+				<mo-option value='sixteen'>Option 16</mo-option>
+				<mo-option value='seventeen'>Option 17</mo-option>
+				<mo-option value='eighteen'>Option 18</mo-option>
+				<mo-option value='nineteen'>Option 19</mo-option>
+				<mo-option value='twenty'>Option 20</mo-option>
+				<mo-option value='twenty-one'>Option 21</mo-option>
+				<mo-option value='twenty-two'>Option 22</mo-option>
+				<mo-option value='twenty-three'>Option 23</mo-option>
+				<mo-option value='twenty-four'>Option 24</mo-option>
+				<mo-option value='twenty-five'>Option 25</mo-option>
+			</mo-field-select>
+
 			Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius quidem eaque earum obcaecati qui? Nihil quaerat,
 			repudiandae error delectus labore quasi inventore fugit corporis maxime eos aspernatur aliquid temporibus vitae.
 

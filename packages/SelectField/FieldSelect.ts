@@ -149,6 +149,7 @@ export class FieldSelect<T> extends InputFieldComponent<Value> {
 	protected get menuTemplate() {
 		return html`
 			<mo-menu
+				fixed
 				selectionMode=${this.multiple ? 'multiple' : 'single'}
 				.anchor=${this}
 				?disabled=${this.disabled}

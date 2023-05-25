@@ -29,7 +29,7 @@ export class Popover extends Component {
 	@property({ type: Object }) anchor?: HTMLElement
 	@property({ reflect: true }) placement = PopoverPlacement.BlockEnd
 	@property({ reflect: true }) alignment = PopoverAlignment.Start
-	@property({ type: Boolean, reflect: true }) open = false
+	@property({ type: Boolean, reflect: true, updated(this: Popover) { this.openChanged() } }) open = false
 	@property({ type: Boolean }) openOnHover?: boolean
 	@property({ type: Boolean }) openOnFocus?: boolean
 
@@ -39,6 +39,15 @@ export class Popover extends Component {
 		if (this.open !== open) {
 			this.open = open
 			this.openChange.dispatch(open)
+		}
+	}
+
+	protected async openChanged() {
+		if (this.open) {
+			this.toggleAttribute('displayOpen', true)
+		} else {
+			await new Promise(r => setTimeout(r, 300))
+			this.toggleAttribute('displayOpen', false)
 		}
 	}
 
@@ -111,6 +120,10 @@ export class Popover extends Component {
 			:host(:not([open])) {
 				visibility: collapse;
 				pointer-events: none;
+			}
+
+			:host(:not([displayOpen])) {
+				display: none;
 			}
 
 			:host([open]) {
