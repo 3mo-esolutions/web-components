@@ -88,7 +88,7 @@ export abstract class FieldDateBase<T> extends InputFieldComponent<T> {
 
 	protected get popoverTemplate() {
 		return this.hideDatePicker ? nothing : html`
-			<mo-popover tabindex='-1' openOnFocus
+			<mo-popover tabindex='-1' openOnFocus fixed
 				.anchor=${this}
 				?open=${this.open}
 				@openChange=${(e: CustomEvent<boolean>) => this.open = e.detail}
