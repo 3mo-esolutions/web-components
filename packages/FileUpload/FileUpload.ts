@@ -33,10 +33,9 @@ export class FileUpload<TResult> extends Component {
 
 	get file() { return this.inputElement.files?.[0] }
 
-	async executeUpload(action?: () => Promise<TResult>) {
+	async executeUpload(action: () => Promise<TResult>) {
 		try {
 			this.setIsUploading(true)
-			action ??= this.uploadFile.bind(this)
 			const result = await action()
 			this.change.dispatch(result)
 			return result
@@ -55,7 +54,7 @@ export class FileUpload<TResult> extends Component {
 		if (!file) {
 			throw new Error('No file selected')
 		}
-		return this.upload(file)
+		return this.executeUpload(() => this.upload(file as File))
 	}
 
 	protected setIsUploading(isUploading: boolean) {
@@ -77,7 +76,7 @@ export class FileUpload<TResult> extends Component {
 	private handleChange = () => {
 		const file = this.file
 		this.fileChange.dispatch(file)
-		return !this.uploadOnSelection ? undefined : this.executeUpload()
+		return !this.uploadOnSelection ? undefined : this.uploadFile(file)
 	}
 }
 
