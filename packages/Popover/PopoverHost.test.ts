@@ -1,6 +1,6 @@
 import { ComponentTestFixture } from '@a11d/lit/dist/test/index.js'
 
-describe('Popover', () => {
+describe('PopoverHost', () => {
 	const fixture = new ComponentTestFixture('mo-popover-host')
 
 	it('should reject inert attempt via attribute', async () => {

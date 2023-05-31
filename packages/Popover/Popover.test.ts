@@ -124,6 +124,7 @@ describe('Popover', () => {
 			it(`should align and place itself visually relative to the anchor element when placement is ${placement} and alignment is ${alignment}`, async () => {
 				fixture.component.popover.placement = placement
 				fixture.component.popover.alignment = alignment
+				fixture.component.popover.open = true
 
 				await fixture.updateComplete
 

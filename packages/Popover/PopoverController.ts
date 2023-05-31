@@ -11,6 +11,8 @@ function targetAnchor(this: Popover) {
 }
 
 export class PopoverController extends Controller {
+	static readonly marginToViewport = 8
+
 	constructor(protected override readonly host: Popover) {
 		super(host)
 	}
@@ -75,48 +77,63 @@ export class PopoverController extends Controller {
 			return
 		}
 
-		const popoverRect = this.host.getBoundingClientRect()
+		// Note that we shall not use the x/y coordinates of the popover bounding rect
+		// as they can be changed as a result of the out-of-bound-correction operations.
+		const { width: popoverWidth, height: popoverHeight } = this.host.getBoundingClientRect()
 		const anchorRect = this.host.anchor.getBoundingClientRect()
-		const naturalX = popoverRect.x - Number(this.host.style.getPropertyValue('--mo-popover-correction-x').replace('px', ''))
-		const naturalY = popoverRect.y - Number(this.host.style.getPropertyValue('--mo-popover-correction-y').replace('px', ''))
-
-		const leftOf = Math.max(0, Math.min(naturalX, window.innerWidth - popoverRect.width))
-		const topOf = Math.max(0, Math.min(naturalY, window.innerHeight - popoverRect.height))
 
 		switch (this.host.placement) {
 			case PopoverPlacement.BlockStart:
-				this.host.style.setProperty('--mo-popover-correction-x', `${leftOf - naturalX}px`)
-				if (naturalY + anchorRect.height + popoverRect.height <= window.innerHeight) {
-					this.host.style.setProperty('--mo-popover-correction-y', `100% + ${anchorRect.height}px`)
-				} else {
-					this.host.style.setProperty('--mo-popover-correction-y', `${topOf - naturalY}px`)
-				}
+				this.host.setAttribute('data-placement',
+					anchorRect.y - popoverHeight < PopoverController.marginToViewport
+						? PopoverPlacement.BlockEnd
+						: PopoverPlacement.BlockStart
+				)
 				break
-
 			case PopoverPlacement.BlockEnd:
-				this.host.style.setProperty('--mo-popover-correction-x', `${leftOf - naturalX}px`)
-				if (naturalY - anchorRect.height - popoverRect.height >= 0) {
-					this.host.style.setProperty('--mo-popover-correction-y', `-100% - ${anchorRect.height}px`)
-				} else {
-					this.host.style.setProperty('--mo-popover-correction-y', `${topOf - naturalY}px`)
-				}
+				this.host.setAttribute('data-placement',
+					anchorRect.y + anchorRect.height + popoverHeight > window.innerHeight + PopoverController.marginToViewport
+						? PopoverPlacement.BlockStart
+						: PopoverPlacement.BlockEnd
+				)
 				break
-
 			case PopoverPlacement.InlineStart:
-				this.host.style.setProperty('--mo-popover-correction-y', `${topOf - naturalY}px`)
-				if (naturalX + anchorRect.width + popoverRect.width <= window.innerWidth) {
-					this.host.style.setProperty('--mo-popover-correction-x', `100% + ${anchorRect.width}px`)
-				} else {
-					this.host.style.setProperty('--mo-popover-correction-x', `${leftOf - naturalX}px`)
+				this.host.setAttribute('data-placement',
+					anchorRect.x - popoverWidth < PopoverController.marginToViewport
+						? PopoverPlacement.InlineEnd
+						: PopoverPlacement.InlineStart
+				)
+				break
+			case PopoverPlacement.InlineEnd:
+				this.host.setAttribute('data-placement',
+					anchorRect.x + anchorRect.width + popoverWidth > window.innerWidth + PopoverController.marginToViewport
+						? PopoverPlacement.InlineStart
+						: PopoverPlacement.InlineEnd
+				)
+				break
+		}
+
+		this.host.setAttribute('data-alignment', this.host.alignment)
+
+		switch (this.host.getAttribute('data-placement')) {
+			case PopoverPlacement.InlineStart:
+			case PopoverPlacement.InlineEnd:
+				if (anchorRect.y + popoverHeight > window.innerHeight + PopoverController.marginToViewport) {
+					this.host.setAttribute('data-alignment', PopoverAlignment.End)
+				}
+
+				if (anchorRect.y + anchorRect.height - popoverHeight < PopoverController.marginToViewport) {
+					this.host.setAttribute('data-alignment', PopoverAlignment.Start)
 				}
 				break
+			case PopoverPlacement.BlockStart:
+			case PopoverPlacement.BlockEnd:
+				if (anchorRect.x + popoverWidth > window.innerWidth + PopoverController.marginToViewport) {
+					this.host.setAttribute('data-alignment', PopoverAlignment.End)
+				}
 
-			case PopoverPlacement.InlineEnd:
-				this.host.style.setProperty('--mo-popover-correction-y', `${topOf - naturalY}px`)
-				if (naturalX - anchorRect.width - popoverRect.width >= 0) {
-					this.host.style.setProperty('--mo-popover-correction-x', `-100% - ${anchorRect.width}px`)
-				} else {
-					this.host.style.setProperty('--mo-popover-correction-x', `${leftOf - naturalX}px`)
+				if (anchorRect.x + anchorRect.width - popoverWidth < PopoverController.marginToViewport) {
+					this.host.setAttribute('data-alignment', PopoverAlignment.Start)
 				}
 				break
 		}
@@ -176,10 +193,12 @@ export class PopoverController extends Controller {
 				break
 		}
 
-		const leftOf = (value: number) => Math.max(0, Math.min(value, window.innerWidth - popoverRect.width))
-		const topOf = (value: number) => Math.max(0, Math.min(value, window.innerHeight - popoverRect.height))
+		const [x, y] = [
+			Math.max(0, Math.min(left, window.innerWidth - popoverRect.width + PopoverController.marginToViewport)),
+			Math.max(0, Math.min(top, window.innerHeight - popoverRect.height + PopoverController.marginToViewport))
+		]
 
-		this.host.style.left = `${leftOf(left)}px`
-		this.host.style.top = `${topOf(top)}px`
+		this.host.style.left = `${x}px`
+		this.host.style.top = `${y}px`
 	}
 }
