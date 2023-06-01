@@ -143,18 +143,8 @@ export class ButtonGroup extends Component {
 	protected updateButtons() {
 		for (const [index, button] of this.buttonElements.entries()) {
 			button.type = this.type
-
-			if (index === 0) {
-				button.setAttribute('data-mo-button-group-first', '')
-			} else {
-				button.removeAttribute('data-mo-button-group-first')
-			}
-
-			if (index === this.buttonElements.length - 1) {
-				button.setAttribute('data-mo-button-group-last', '')
-			} else {
-				button.removeAttribute('data-mo-button-group-last')
-			}
+			button.toggleAttribute('data-mo-button-group-first', index === 0)
+			button.toggleAttribute('data-mo-button-group-last', index === this.buttonElements.length - 1)
 		}
 	}
 

@@ -147,7 +147,7 @@ export class Card extends Component {
 			|| !!this.avatar || !!this.heading || !!this.subHeading
 			|| this.slotController.hasAssignedElements('avatar') || this.slotController.hasAssignedElements('heading')
 			|| this.slotController.hasAssignedElements('subHeading') || this.slotController.hasAssignedElements('action')
-		hasHeader ? this.setAttribute('hasHeader', '') : this.removeAttribute('hasHeader')
+		this.toggleAttribute('hasHeader', hasHeader)
 		return !hasHeader ? nothing : html`
 			<slot part='header' name='header'>
 				${this.defaultHeaderAvatarTemplate}
@@ -195,7 +195,7 @@ export class Card extends Component {
 	}
 
 	protected get bodyTemplate() {
-		this.slotController.hasAssignedContent('') ? this.setAttribute('hasBody', '') : this.removeAttribute('hasBody')
+		this.toggleAttribute('hasBody', this.slotController.hasAssignedContent(''))
 		return html`<slot></slot>`
 	}
 

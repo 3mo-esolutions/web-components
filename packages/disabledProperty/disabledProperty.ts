@@ -13,13 +13,7 @@ export const disabledProperty = (options?: {
 			reflect: true,
 			updated(this: HTMLElement, value: boolean, oldValue: boolean) {
 				options?.updated?.call(this, value, oldValue)
-
-				if (value) {
-					this.setAttribute('aria-disabled', 'true')
-				} else {
-					this.removeAttribute('aria-disabled')
-				}
-
+				this.toggleAttribute('aria-disabled', !!value)
 				if (options?.blockFocus) {
 					const element = this as HTMLElement & { [tabIndexBeforeDisabledSymbol]: number | undefined }
 

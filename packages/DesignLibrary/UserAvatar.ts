@@ -1,4 +1,4 @@
-import { html, component, Component, css, nothing, style, join } from '@a11d/lit'
+import { html, component, Component, css, nothing, join } from '@a11d/lit'
 import { Authentication } from '@a11d/lit-application-authentication'
 import { BusinessSuiteDialogAuthenticator, User } from './BusinessSuiteDialogAuthenticator.js'
 
@@ -13,6 +13,7 @@ export class UserAvatar extends Component {
 
 			mo-avatar {
 				place-self: center;
+				color: var(--mo-color-accessible);
 				background: rgba(0, 0, 0, 0.25);
 			}
 
@@ -48,7 +49,7 @@ export class UserAvatar extends Component {
 
 	protected override get template() {
 		return html`
-			<mo-avatar ${style({ color: 'var(--mo-color-on-accent)' })}>
+			<mo-avatar>
 				${this.avatarContentTemplate}
 			</mo-avatar>
 

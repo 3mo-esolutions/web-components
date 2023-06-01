@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/button-group",
-	"version": "0.1.5",
+	"version": "0.1.6",
 	"description": "A button-group web-component.",
 	"repository": {
 		"type": "git",
