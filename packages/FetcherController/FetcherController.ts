@@ -1,5 +1,6 @@
 import { Controller, event, ReactiveControllerHost } from '@a11d/lit'
-import { Throttler, Enqueuer } from './index.js'
+import { Throttler } from '@3mo/throttler'
+import { Enqueuer } from './index.js'
 
 type Options<T> = {
 	readonly fetch: () => T | PromiseLike<T>
