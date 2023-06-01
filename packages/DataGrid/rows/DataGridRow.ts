@@ -301,6 +301,11 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 
 	async openContextMenu(mouseEvent?: MouseEvent) {
 		mouseEvent?.stopPropagation()
+
+		if (this.dataGrid.selectedData.includes(this.data) === false) {
+			this.dataGrid.select(this.dataGrid.selectionMode !== DataGridSelectionMode.None ? [this.data] : [])
+		}
+
 		const contextMenu = ContextMenu.open(mouseEvent || [0, 0], this.contextMenuTemplate)
 		const handler = (open: boolean) => {
 			this.contextMenuOpen = open
@@ -309,10 +314,6 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			}
 		}
 		contextMenu.openChange.subscribe(handler)
-
-		if (this.dataGrid.selectedData.includes(this.data) === false) {
-			this.dataGrid.select(this.dataGrid.selectionMode !== DataGridSelectionMode.None ? [this.data] : [])
-		}
 
 		await this.updateComplete
 	}

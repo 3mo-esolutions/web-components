@@ -38,7 +38,8 @@ export const DataGrid = story({
 
 export const ContextMenu = story({
 	render: () => html`
-		<mo-data-grid .data=${people} style='height: 500px' selectionMode='multiple' .getRowContextMenuTemplate=${() => html`
+		<mo-data-grid .data=${people} style='height: 500px' selectionMode='multiple' .getRowContextMenuTemplate=${(data: Array<Person>) => html`
+			<div style='margin: 10px; opacity: 0.5'>${data.map(p => `"${p.name}"`).join(', ')} selected</div>
 			<mo-context-menu-item>Item1</mo-context-menu-item>
 			<mo-context-menu-item>Item2</mo-context-menu-item>
 		`}>
