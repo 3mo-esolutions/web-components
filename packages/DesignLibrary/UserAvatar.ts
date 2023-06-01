@@ -21,13 +21,6 @@ export class UserAvatar extends Component {
 				background: rgba(0, 0, 0, calc(0.25 * 2));
 			}
 
-			li[role=separator] {
-				width: 100%;
-				height: 1px;
-				background: darkgray;
-				opacity: 0.3;
-			}
-
 			mo-menu {
 				color: var(--mo-color-foreground);
 			}
@@ -59,12 +52,12 @@ export class UserAvatar extends Component {
 				${this.avatarContentTemplate}
 			</mo-avatar>
 
-			<mo-menu .anchor=${this}>
+			<mo-menu fixed .anchor=${this}>
 				${join([
 					this.avatarTemplate,
 					html`<slot></slot>`,
 					this.signOutTemplate
-				].filter(Boolean), html`<li role='separator'></li>`)}
+				].filter(Boolean), html`<mo-line></mo-line>`)}
 			</mo-menu>
 		`
 	}
@@ -84,8 +77,6 @@ export class UserAvatar extends Component {
 					${!this.user?.email ? nothing : html`<span>${this.user.email}</span>`}
 				</mo-flex>
 			</mo-flex>
-
-			<li role='separator'></li>
 		`
 	}
 
