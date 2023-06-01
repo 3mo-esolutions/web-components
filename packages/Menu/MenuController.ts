@@ -20,7 +20,8 @@ export class MenuController extends Controller {
 			if (event.pointerType !== '') {
 				this.setOpen(event, !this.open)
 			}
-		}
+		},
+		options: { capture: true }
 	})
 
 	protected anchorKeyDownEventController = new EventListenerController(this.host, {
