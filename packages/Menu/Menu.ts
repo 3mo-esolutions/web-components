@@ -27,11 +27,13 @@ export function isMenu(element: EventTarget): element is HTMLElement {
  *
  * @fires change - Fired when the menu value changes.
  * @fires openChange - Fired when the menu open state changes.
+ * @fires itemsChange - Fired when the menu items change.
  */
 @component('mo-menu')
 export class Menu extends Component {
 	@event() readonly change!: EventDispatcher<Array<number>>
 	@event() readonly openChange!: EventDispatcher<boolean>
+	@event() readonly itemsChange!: EventDispatcher<Array<ListItem & HTMLElement>>
 
 	override readonly role = 'menu'
 	override readonly tabIndex = -1
@@ -123,6 +125,7 @@ export class Menu extends Component {
 					.value=${this.value}
 					@change=${this.handleChange.bind(this)}
 					@menuItemClick=${this.handleMenuItemClick.bind(this)}
+					@itemsChange=${this.handleItemsChange.bind(this)}
 				>
 					<slot></slot>
 				</mo-selectable-list>
@@ -137,6 +140,10 @@ export class Menu extends Component {
 
 	protected handleMenuItemClick() {
 		this.setOpen(false)
+	}
+
+	protected handleItemsChange() {
+		this.itemsChange.dispatch(this.items)
 	}
 }
 

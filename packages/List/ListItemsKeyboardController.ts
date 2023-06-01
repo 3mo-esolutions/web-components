@@ -48,11 +48,7 @@ export class ListItemsKeyboardController extends Controller {
 		}
 
 		for (const item of this.items) {
-			if (value !== undefined && this.getRenderedItemIndex(item) === value && this.isFocusable(item)) {
-				item.setAttribute('focused', '')
-			} else {
-				item.removeAttribute('focused')
-			}
+			item.toggleAttribute('focused', value !== undefined && this.getRenderedItemIndex(item) === value && this.isFocusable(item))
 		}
 	}
 
