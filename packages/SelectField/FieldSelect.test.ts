@@ -1,6 +1,7 @@
 import { ComponentTestFixture } from '@a11d/lit/dist/test'
 import { FieldSelect } from './index.js'
 import { html } from '@a11d/lit'
+import '@3mo/date-time'
 
 type Person = { id: number, name: string, birthDate: DateTime }
 
@@ -16,6 +17,16 @@ describe('FieldSelect', () => {
 			${people.map(p => html`<mo-option value=${p.id} .data=${p}>${p.name}</mo-option>`)}
 		</mo-field-select>
 	`)
+
+	function spyOnChangeEvents() {
+		const changeSpy = jasmine.createSpy('change')
+		const dataChangeSpy = jasmine.createSpy('dataChange')
+		const indexChangeSpy = jasmine.createSpy('indexChange')
+		fixture.component.change.subscribe(changeSpy)
+		fixture.component.dataChange.subscribe(dataChangeSpy)
+		fixture.component.indexChange.subscribe(indexChangeSpy)
+		return { changeSpy, dataChangeSpy, indexChangeSpy }
+	}
 
 	it('should open menu when clicked', async () => {
 		fixture.component.dispatchEvent(new MouseEvent('click', { bubbles: true }))
@@ -33,6 +44,52 @@ describe('FieldSelect', () => {
 		await fixture.updateComplete
 
 		expect(fixture.component.open).toBe(false)
+	})
+
+	describe('change event dispatching', () => {
+		it('should dispatch change events and select the option on user interaction', async () => {
+			const { changeSpy, dataChangeSpy, indexChangeSpy } = spyOnChangeEvents()
+
+			await new Promise(r => setTimeout(r, 0))
+			fixture.component.renderRoot.querySelector('mo-menu')?.change.dispatch([0])
+
+			expect(fixture.component.options[0]!.selected).toBe(true)
+			expect(indexChangeSpy).toHaveBeenCalledWith(0)
+			expect(changeSpy).toHaveBeenCalledOnceWith(1)
+			expect(dataChangeSpy).toHaveBeenCalledWith(people[0])
+		})
+
+		it('should not dispatch change events when values changed programmatically', async () => {
+			const { changeSpy, dataChangeSpy, indexChangeSpy } = spyOnChangeEvents()
+
+			fixture.component.value = 1
+			await fixture.updateComplete
+
+			expect(indexChangeSpy).not.toHaveBeenCalled()
+			expect(changeSpy).not.toHaveBeenCalled()
+			expect(dataChangeSpy).not.toHaveBeenCalled()
+		})
+
+		it('should update input text value event when changes in options lead to different value', async () => {
+			const { changeSpy, dataChangeSpy, indexChangeSpy } = spyOnChangeEvents()
+			const waitUpdateAndOneTick = () => Promise.all([fixture.component.updateComplete, new Promise(r => setTimeout(r, 1))])
+
+			fixture.component.value = 4
+			await waitUpdateAndOneTick()
+			expect(fixture.component.inputElement.value).toBe('')
+
+			fixture.component.options[0]!.value = '4'
+			await waitUpdateAndOneTick()
+			expect(fixture.component.inputElement.value).toBe('John')
+
+			fixture.component.options[0]!.value = '5'
+			await waitUpdateAndOneTick()
+			expect(fixture.component.inputElement.value).toBe('')
+
+			expect(changeSpy).not.toHaveBeenCalled()
+			expect(indexChangeSpy).not.toHaveBeenCalled()
+			expect(dataChangeSpy).not.toHaveBeenCalled()
+		})
 	})
 
 	describe('single selection', () => {

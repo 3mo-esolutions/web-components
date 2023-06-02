@@ -1,18 +1,19 @@
-import { component, property, css, html, nothing, eventListener } from '@a11d/lit'
+import { component, property, css, html, nothing, eventListener, event } from '@a11d/lit'
 import { SelectionListItem } from '@3mo/list'
 
 @component('mo-option')
 export class Option<T> extends SelectionListItem {
+	@event({ bubbles: true, cancelable: true, composed: true }) readonly requestSelectValueUpdate!: EventDispatcher<void>
+
 	override readonly role = 'option'
 
 	@property({ type: Boolean, reflect: true }) selected = false
 
-	@property() value?: string
-	@property({ type: Object }) data?: T
+	@property({ type: Number, reflect: true, updated(this: Option<T>) { this.requestSelectValueUpdate.dispatch() } }) index?: number
+	@property({ updated(this: Option<T>) { this.requestSelectValueUpdate.dispatch() } }) value?: string
+	@property({ type: Object, updated(this: Option<T>) { this.requestSelectValueUpdate.dispatch() } }) data?: T
 	@property({ type: Boolean, reflect: true }) multiple = false
 	@property() inputText?: string
-
-	@property({ type: Number, reflect: true }) index?: number
 
 	dataMatches(data: T | undefined) {
 		return JSON.stringify(this.data) === JSON.stringify(data)

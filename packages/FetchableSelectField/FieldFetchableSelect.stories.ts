@@ -31,6 +31,7 @@ export const FetchableSelect = story({
 	render: ({ searchable, multiple, defaultText }) => html`
 		<mo-card style='max-width: 300px'>
 			<mo-field-fetchable-select label='Countries' ?searchable=${searchable} ?multiple=${multiple} default=${defaultText}
+				.value=${multiple ? ['DE', 'FR'] : 'DE'}
 				.fetch=${fetch}
 				.parameters=${fetchableSelectParameters}
 				.optionTemplate=${(country: any) => html`

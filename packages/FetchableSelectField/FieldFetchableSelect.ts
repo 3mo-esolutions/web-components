@@ -71,11 +71,7 @@ export class FieldFetchableSelect<T, TDataFetcherParameters extends FieldFetchab
 	}
 
 	protected override get template() {
-		if (this.fetcherController.isFetching) {
-			this.setAttribute('fetching', '')
-		} else {
-			this.removeAttribute('fetching')
-		}
+		this.toggleAttribute('fetching', this.fetcherController.isFetching)
 		return super.template
 	}
 

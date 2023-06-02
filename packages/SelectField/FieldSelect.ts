@@ -1,4 +1,4 @@
-import { html, property, css, event, component, live, PropertyValues, query, nothing } from '@a11d/lit'
+import { html, property, css, event, component, live, query, nothing, eventListener, state } from '@a11d/lit'
 import { InputFieldComponent } from '@3mo/field'
 import type { ListItem } from '@3mo/list'
 import type { Menu } from '@3mo/menu'
@@ -31,15 +31,18 @@ export class FieldSelect<T> extends InputFieldComponent<Value> {
 	@property({ type: Boolean }) multiple = false
 	@property({ type: Boolean }) searchable = false
 	@property({ type: Boolean, reflect: true }) open = false
-	@property({ type: Object })
-	get value() { return this.valueController.value }
-	set value(value) { this.valueController.value = value }
-	@property({ type: Array })
-	get index() { return this.valueController.index }
-	set index(value) { this.valueController.index = value }
-	@property({ type: Array })
-	get data() { return this.valueController.data }
-	set data(value) { this.valueController.data = value }
+	@property({ type: String, updated(this: FieldSelect<T>) { this.valueController.value = this.value } }) value: Value
+	@property({ type: Number, updated(this: FieldSelect<T>) { this.valueController.index = this.index } }) index: Index
+	@property({ type: Object, updated(this: FieldSelect<T>) { this.valueController.data = this.data } }) data: Data<T>
+
+	@state({
+		updated(this: FieldSelect<T>, value: number, oldValue: number) {
+			if (value && value !== oldValue) {
+				this.valueController.sync()
+				this.requestValueUpdate()
+			}
+		}
+	}) protected [FieldSelectValueController.requestSyncKey] = 0
 
 	@query('mo-menu') readonly menu?: Menu
 
@@ -47,15 +50,7 @@ export class FieldSelect<T> extends InputFieldComponent<Value> {
 	get options() { return this.listItems.filter(i => i instanceof Option) as Array<Option<T>> }
 	get selectedOptions() { return this.options.filter(o => o.selected) }
 
-	protected readonly valueController: FieldSelectValueController<T> = new FieldSelectValueController<T>(this, () => {
-		this.requestUpdate()
-		this.inputStringValue = this.valueToInputValue(this.value)
-	})
-
-	protected override updated(props: PropertyValues<this>) {
-		super.updated(props)
-		this.options.forEach(o => o.multiple = this.multiple)
-	}
+	protected readonly valueController = new FieldSelectValueController<T>(this)
 
 	protected override get isActive() {
 		return super.isActive || this.open
@@ -133,7 +128,7 @@ export class FieldSelect<T> extends InputFieldComponent<Value> {
 				?readonly=${!this.searchable}
 				?disabled=${this.disabled}
 				.value=${live(this.inputStringValue || '')}
-				@input=${(e: Event) => this.handleInput((e.target as HTMLInputElement).value, e)}
+				@input=${(e: Event) => this.handleInput(this.inputElement.value, e)}
 			>
 		`
 	}
@@ -157,6 +152,7 @@ export class FieldSelect<T> extends InputFieldComponent<Value> {
 				@openChange=${(e: CustomEvent<boolean>) => this.open = e.detail}
 				.value=${this.valueController.menuValue}
 				@change=${(e: CustomEvent<Array<number>>) => this.handleSelection(e.detail)}
+				@itemsChange=${() => this.handleItemsChange()}
 			>${this.optionsTemplate}</mo-menu>
 		`
 	}
@@ -168,6 +164,17 @@ export class FieldSelect<T> extends InputFieldComponent<Value> {
 			`}
 			<slot></slot>
 		`
+	}
+
+	@eventListener('requestSelectValueUpdate')
+	protected handleOptionRequestValueSync(e: Event) {
+		e.stopPropagation()
+		this.valueController.requestSync()
+	}
+
+	requestValueUpdate() {
+		this.options.forEach(o => o.selected = o.index !== undefined && this.valueController.menuValue.includes(o.index))
+		this.inputStringValue = this.valueToInputValue(this.value)
 	}
 
 	protected valueToInputValue(value: Value) {
@@ -204,6 +211,13 @@ export class FieldSelect<T> extends InputFieldComponent<Value> {
 		}
 	}
 
+	protected handleItemsChange() {
+		for (const option of this.options) {
+			option.index = this.listItems.indexOf(option)
+			option.multiple = this.multiple
+		}
+	}
+
 	protected get searchKeyword() {
 		return this.inputElement.value.toLowerCase().trim()
 	}
@@ -220,11 +234,7 @@ export class FieldSelect<T> extends InputFieldComponent<Value> {
 			.map(option => option.normalizedValue)
 		for (const option of this.options) {
 			const matches = matchedValues.some(v => option.valueMatches(v))
-			if (matches) {
-				option.removeAttribute('data-search-no-match')
-			} else {
-				option.setAttribute('data-search-no-match', '')
-			}
+			option.toggleAttribute('data-search-no-match', !matches)
 			option.disabled = !matches
 		}
 		return Promise.resolve()
