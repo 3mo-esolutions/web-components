@@ -88,6 +88,7 @@ export * from '@3mo/virtualized-list'
 export * from '@3mo/split-page-host'
 export * from '@3mo/file-upload'
 export * from '@3mo/file-upload-drop-area'
+export * from '@3mo/throttler'
 export * as System from 'detect-browser'
 export { Dialog } from '@3mo/dialog'
 
