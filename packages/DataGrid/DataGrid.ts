@@ -110,8 +110,6 @@ export type DataGridSorting<TData> = {
  * @fires rowConnected {CustomEvent<DataGridRow<TData, TDetailsElement>>}
  * @fires rowDisconnected {CustomEvent<DataGridRow<TData, TDetailsElement>>}
  * @fires rowDoubleClick {CustomEvent<DataGridRow<TData, TDetailsElement>>}
- * @fires rowDetailsOpen {CustomEvent<DataGridRow<TData, TDetailsElement>>}
- * @fires rowDetailsClose {CustomEvent<DataGridRow<TData, TDetailsElement>>}
  * @fires rowEdit {CustomEvent<DataGridRow<TData, TDetailsElement>>}
  * @fires cellEdit {CustomEvent<DataGridCell<any, TData, TDetailsElement>>}
  */
@@ -134,8 +132,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	@event() readonly rowDisconnected!: EventDispatcher<DataGridRow<TData, TDetailsElement>>
 	@event() readonly rowClick!: EventDispatcher<DataGridRow<TData, TDetailsElement>>
 	@event() readonly rowDoubleClick!: EventDispatcher<DataGridRow<TData, TDetailsElement>>
-	@event() readonly rowDetailsOpen!: EventDispatcher<DataGridRow<TData, TDetailsElement>>
-	@event() readonly rowDetailsClose!: EventDispatcher<DataGridRow<TData, TDetailsElement>>
 	@event() readonly rowEdit!: EventDispatcher<DataGridRow<TData, TDetailsElement>>
 	@event() readonly cellEdit!: EventDispatcher<DataGridCell<any, TData, TDetailsElement>>
 
@@ -155,17 +151,17 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	@property({ type: Boolean }) selectOnClick = false
 	@property() selectionBehaviorOnDataChange = DataGridSelectionBehaviorOnDataChange.Reset
 
+	@property({ type: Object }) getRowDetailsTemplate?: (data: TData) => HTMLTemplateResult
 	@property({ type: Boolean }) multipleDetails = false
 	@property({ updated: subDataGridSelectorChanged }) subDataGridDataSelector?: KeyPathOf<TData>
 	@property({ type: Object }) hasDataDetail?: (data: TData) => boolean
 	@property({ type: Boolean }) detailsOnClick = false
+	@property({ type: Array }) protected openDetailedData = new Array<TData>()
 
+	@property({ type: Object }) getRowContextMenuTemplate?: (data: Array<TData>) => HTMLTemplateResult
 	@property({ type: Boolean }) primaryContextMenuItemOnDoubleClick = false
 
 	@property({ reflect: true }) editability = DataGridEditability.Never
-
-	@property({ type: Object }) getRowDetailsTemplate?: (data: TData) => HTMLTemplateResult
-	@property({ type: Object }) getRowContextMenuTemplate?: (data: Array<TData>) => HTMLTemplateResult
 
 	@property() sidePanelTab: DataGridSidePanelTab | undefined
 	@property({ type: Boolean }) sidePanelHidden = false
@@ -237,17 +233,37 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		return this.isDataSelectable?.(data) ?? true
 	}
 
+	get detailedData() {
+		return this.data.filter(data => this.hasDetail(data))
+	}
+
+	get hasDetails() {
+		return !!this.getRowDetailsTemplate && this.detailedData.length > 0
+	}
+
 	hasDetail(data: TData) {
 		const hasAutomatedSubDataGrid = !this.subDataGridDataSelector || this.subDataGridDataSelector && Array.isArray(getValueByKeyPath(data, this.subDataGridDataSelector))
 		return hasAutomatedSubDataGrid && (this.hasDataDetail?.(data) ?? true)
 	}
 
-	async openRowDetails() {
-		await Promise.all(this.detailedRows.map(row => row.setDetails(true)))
+	get allRowDetailsOpen() {
+		return this.openDetailedData.length === this.detailedData.length
 	}
 
-	async closeRowDetails() {
-		await Promise.all(this.detailedRows.map(row => row.setDetails(false)))
+	openRowDetails() {
+		this.openDetailedData = this.detailedData
+	}
+
+	closeRowDetails() {
+		this.openDetailedData = []
+	}
+
+	toggleRowDetails() {
+		if (this.allRowDetailsOpen) {
+			this.closeRowDetails()
+		} else {
+			this.openRowDetails()
+		}
 	}
 
 	sort(sorting?: DataGridSorting<TData>) {
@@ -306,14 +322,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			NotificationHost.instance?.notifyError(error.message)
 			throw error
 		}
-	}
-
-	get detailedRows(): Array<DataGridRow<TData, TDetailsElement>> {
-		return this.rows.filter(row => this.hasDetail(row.data))
-	}
-
-	get hasDetails() {
-		return !!this.getRowDetailsTemplate && this.data.some(data => this.hasDetail(data))
 	}
 
 	get hasSelection() {
@@ -697,10 +705,28 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			<${this.rowElementTag} part='row'
 				.dataGrid=${this as any}
 				.data=${data}
-				?selected=${live(this.selectedData.includes(data))}
 				?data-has-alternating-background=${this.hasAlternatingBackground && index % 2 === 1}
+				?selected=${live(this.selectedData.includes(data))}
+				?detailsOpen=${live(this.openDetailedData.includes(data))}
+				@detailsOpenChange=${(event: CustomEvent<boolean>) => this.handleRowDetailsOpenChange(data, event)}
 			></${this.rowElementTag}>
 		`
+	}
+
+	protected handleRowDetailsOpenChange(data: TData, event: CustomEvent<boolean>) {
+		if (this.hasDetail(data) === false) {
+			return
+		}
+
+		if (event.detail && this.multipleDetails === false) {
+			this.closeRowDetails()
+		}
+
+		if (event.detail) {
+			this.openDetailedData = [...this.openDetailedData, data]
+		} else {
+			this.openDetailedData = this.openDetailedData.filter(d => d !== data)
+		}
 	}
 
 	protected get footerTemplate() {
@@ -989,8 +1015,6 @@ function subDataGridSelectorChanged<TData>(this: DataGrid<TData>) {
 			@rowDisconnected=${(e: CustomEvent<DataGridRow<TData, undefined>>) => this.rowDisconnected.dispatch(e.detail)}
 			@rowClick=${(e: CustomEvent<DataGridRow<TData, undefined>>) => this.rowClick.dispatch(e.detail)}
 			@rowDoubleClick=${(e: CustomEvent<DataGridRow<TData, undefined>>) => this.rowDoubleClick.dispatch(e.detail)}
-			@rowDetailsOpen=${(e: CustomEvent<DataGridRow<TData, undefined>>) => this.rowDetailsOpen.dispatch(e.detail)}
-			@rowDetailsClose=${(e: CustomEvent<DataGridRow<TData, undefined>>) => this.rowDetailsClose.dispatch(e.detail)}
 			@rowEdit=${(e: CustomEvent<DataGridRow<TData, undefined>>) => this.rowEdit.dispatch(e.detail)}
 			@cellEdit=${(e: CustomEvent<DataGridCell<any, TData, undefined>>) => this.cellEdit.dispatch(e.detail)}
 		></mo-data-grid>

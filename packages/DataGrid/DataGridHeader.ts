@@ -44,7 +44,7 @@ export class DataGridHeader<TData> extends Component {
 				font-size: small;
 			}
 
-			#grdHeader {
+			#header {
 				border-top: var(--mo-data-grid-border);
 				border-bottom: var(--mo-data-grid-border);
 				position: relative;
@@ -80,7 +80,7 @@ export class DataGridHeader<TData> extends Component {
 
 	protected override get template() {
 		return html`
-			<mo-grid id='grdHeader' columns=${this.skeletonColumns} columnGap='var(--mo-data-grid-columns-gap)'>
+			<mo-grid id='header' columns=${this.skeletonColumns} columnGap='var(--mo-data-grid-columns-gap)'>
 				${this.detailsExpanderTemplate}
 				${this.selectionTemplate}
 				${this.contentTemplate}
@@ -95,7 +95,7 @@ export class DataGridHeader<TData> extends Component {
 				${!this.dataGrid.hasDetails || !this.dataGrid.multipleDetails ? nothing : html`
 					<mo-icon-button dense ${style({ padding: '-10px 0px 0 -10px' })}
 						${style({ display: 'inherit' })}
-						icon=${this.areAllDetailsOpen ? 'unfold_less' : 'unfold_more'}
+						icon=${this.dataGrid.allRowDetailsOpen ? 'unfold_less' : 'unfold_more'}
 						@click=${() => this.toggleAllDetails()}
 					></mo-icon-button>
 				`}
@@ -173,17 +173,8 @@ export class DataGridHeader<TData> extends Component {
 		this.requestUpdate()
 	}
 
-	private get areAllDetailsOpen() {
-		return this.dataGrid.detailedRows.length !== 0
-			&& this.dataGrid.detailedRows.every(row => row.detailsOpen)
-	}
-
-	private async toggleAllDetails() {
-		if (this.areAllDetailsOpen) {
-			await this.dataGrid.closeRowDetails()
-		} else {
-			await this.dataGrid.openRowDetails()
-		}
+	private toggleAllDetails() {
+		this.dataGrid.toggleRowDetails()
 		this.requestUpdate()
 	}
 

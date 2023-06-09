@@ -17,36 +17,90 @@ export default meta({
 
 type Person = { id: number, name: string, age: number, city: string }
 
-const people: Array<Person> = [
-	{ id: 1, name: 'Max', age: 20, city: 'Berlin' },
-	{ id: 2, name: 'Moritz', age: 30, city: 'Hamburg' },
-	{ id: 3, name: 'Mia', age: 40, city: 'München' },
-	{ id: 4, name: 'Maja', age: 50, city: 'Köln' },
-	{ id: 5, name: 'Mika', age: 60, city: 'Frankfurt' },
-]
+const generatePeople = (count: number) => {
+	const cities = ['Berlin', 'Hamburg', 'München', 'Köln', 'Frankfurt']
+	const names = ['Max', 'Moritz', 'Mia', 'Maja', 'Mika']
+	return new Array(count).fill(0).map((_, i) => ({
+		id: i + 1,
+		name: names[Math.floor(Math.random() * names.length)],
+		age: Math.floor(Math.random() * 100),
+		city: cities[Math.floor(Math.random() * cities.length)]
+	}))
+}
+
+const fivePeople = generatePeople(5)
+const thousandPeople = generatePeople(1000)
+
+const columnsTemplate = html`
+	<mo-data-grid-column-number hidden heading='ID' dataSelector='id'></mo-data-grid-column-number>
+	<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
+	<mo-data-grid-column-number heading='Age' dataSelector='age'></mo-data-grid-column-number>
+	<mo-data-grid-column-text heading='City' dataSelector='city'></mo-data-grid-column-text>
+`
 
 export const DataGrid = story({
 	render: () => html`
-		<mo-data-grid .data=${people} style='height: 500px'>
-			<mo-data-grid-column-number hidden heading='ID' dataSelector='id'></mo-data-grid-column-number>
-			<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
-			<mo-data-grid-column-number heading='Age' dataSelector='age'></mo-data-grid-column-number>
-			<mo-data-grid-column-text heading='City' dataSelector='city'></mo-data-grid-column-text>
+		<mo-data-grid .data=${fivePeople} style='height: 500px'>
+			${columnsTemplate}
+		</mo-data-grid>
+	`
+})
+
+export const Selection = story({
+	args: {
+		selectionMode: 'single',
+		selectOnClick: false,
+	},
+	argTypes: {
+		selectionMode: {
+			control: {
+				type: 'select',
+				options: ['single', 'multiple']
+			}
+		}
+	},
+	render: ({ selectionMode, selectOnClick }) => html`
+		<mo-data-grid .data=${fivePeople} style='height: 500px' selectionMode=${selectionMode} ?selectOnClick=${selectOnClick}>
+			${columnsTemplate}
 		</mo-data-grid>
 	`
 })
 
 export const ContextMenu = story({
 	render: () => html`
-		<mo-data-grid .data=${people} style='height: 500px' selectionMode='multiple' .getRowContextMenuTemplate=${(data: Array<Person>) => html`
+		<mo-data-grid .data=${fivePeople} style='height: 500px' .getRowContextMenuTemplate=${(data: Array<Person>) => html`
 			<div style='margin: 10px; opacity: 0.5'>${data.map(p => `"${p.name}"`).join(', ')} selected</div>
 			<mo-context-menu-item>Item1</mo-context-menu-item>
 			<mo-context-menu-item>Item2</mo-context-menu-item>
 		`}>
-			<mo-data-grid-column-number hidden heading='ID' dataSelector='id'></mo-data-grid-column-number>
-			<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
-			<mo-data-grid-column-number heading='Age' dataSelector='age'></mo-data-grid-column-number>
-			<mo-data-grid-column-text heading='City' dataSelector='city'></mo-data-grid-column-text>
+			${columnsTemplate}
+		</mo-data-grid>
+	`
+})
+
+export const RowDetails = story({
+	args: {
+		multipleDetails: false,
+		detailsOnClick: false,
+	},
+	render: ({ multipleDetails, detailsOnClick }) => html`
+		<mo-data-grid style='height: 500px'
+			.data=${fivePeople}
+			?multipleDetails=${multipleDetails}
+			?detailsOnClick=${detailsOnClick}
+			.getRowDetailsTemplate=${(p: Person) => html`
+				<div style='margin: 10px; opacity: 0.5'>${p.name} details</div>
+			`}
+		>
+			${columnsTemplate}
+		</mo-data-grid>
+	`
+})
+
+export const Virtualization = story({
+	render: () => html`
+		<mo-data-grid .data=${thousandPeople} style='height: 500px'>
+			${columnsTemplate}
 		</mo-data-grid>
 	`
 })

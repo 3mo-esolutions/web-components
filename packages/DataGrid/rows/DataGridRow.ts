@@ -1,4 +1,4 @@
-import { nothing, css, property, Component, html, state, queryAll, style, HTMLTemplateResult, LitElement } from '@a11d/lit'
+import { nothing, css, property, Component, html, state, queryAll, style, HTMLTemplateResult, LitElement, event } from '@a11d/lit'
 import { ContextMenu } from '@3mo/context-menu'
 import { KeyboardController } from '@3mo/keyboard-controller'
 import { ColumnDefinition } from '../ColumnDefinition.js'
@@ -10,8 +10,12 @@ import { DataGrid, DataGridCell, DataGridEditability, DataGridPrimaryContextMenu
  * @attr selected
  * @attr contextMenuOpen
  * @attr detailsOpen
+ *
+ * @fires detailsOpenChange - Fired when the details open state changes
  */
 export abstract class DataGridRow<TData, TDetailsElement extends Element | undefined = undefined> extends Component {
+	@event() readonly detailsOpenChange!: EventDispatcher<boolean>
+
 	@queryAll('mo-data-grid-cell') readonly cells!: Array<DataGridCell<any, TData, TDetailsElement>>
 
 	@property({ type: Object }) dataGrid!: DataGrid<TData, TDetailsElement>
@@ -48,11 +52,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	}
 
 	protected get hasDetails() {
-		if (this.dataGrid.subDataGridDataSelector) {
-			return Array.isArray(getValueByKeyPath(this.data, this.dataGrid.subDataGridDataSelector))
-		}
-
-		return this.dataGrid.hasDetails
+		return this.dataGrid.hasDetail(this.data)
 	}
 
 	static override get styles() {
@@ -167,7 +167,8 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				@dblclick=${(e: Event) => e.stopPropagation()}
 			>
 			${this.hasDetails === false ? nothing : html`
-				<mo-icon-button id='detailsExpanderIconButton' icon=${getComputedStyle(this).direction === 'rtl' ? 'keyboard_arrow_left' : 'keyboard_arrow_right'} ${style({ color: 'var(--mo-color-foreground)' })}
+				<mo-icon-button id='detailsExpanderIconButton' ${style({ color: 'var(--mo-color-foreground)' })}
+					icon=${getComputedStyle(this).direction === 'rtl' ? 'keyboard_arrow_left' : 'keyboard_arrow_right'}
 					?disabled=${this.dataGrid.hasDataDetail?.(this.data) === false}
 					@click=${() => this.toggleDetails()}
 				></mo-icon-button>
@@ -333,19 +334,13 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		await this.updateComplete
 	}
 
-	async setDetails(value: boolean) {
-		if (this.hasDetails) {
-			if (value === true && this.dataGrid.multipleDetails === false) {
-				await this.dataGrid.closeRowDetails()
-			}
-			this.detailsOpen = value
-			await this.updateComplete;
-			(value ? this.dataGrid.rowDetailsOpen : this.dataGrid.rowDetailsClose).dispatch(this)
-		}
+	protected toggleDetails() {
+		this.setDetails(!this.detailsOpen)
 	}
 
-	private async toggleDetails() {
-		await this.setDetails(!this.detailsOpen)
+	protected setDetails(value: boolean) {
+		this.detailsOpen = value
+		this.detailsOpenChange.dispatch(value)
 	}
 }
 
