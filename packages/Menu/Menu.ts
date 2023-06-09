@@ -39,7 +39,7 @@ export class Menu extends Component {
 	override readonly tabIndex = -1
 
 	readonly slotController = new SlotController(this)
-	readonly menuKeyboardController = new MenuController(this)
+	readonly menuController = new MenuController(this)
 
 	@property({ type: Object }) anchor!: HTMLElement
 	@property() placement?: MenuPlacement
@@ -80,7 +80,7 @@ export class Menu extends Component {
 
 		if (this.list) {
 			if (this.open === false) {
-				this.list.listItemsKeyboardController.unfocus()
+				this.list.focusController.unfocus()
 
 				this.items.forEach(x => {
 					if (x instanceof NestedMenuItem) {
@@ -88,7 +88,7 @@ export class Menu extends Component {
 					}
 				})
 			}
-			this.list.listItemsKeyboardController.forceFocused = this.open as boolean
+			this.list.focusController.forceFocused = this.open as boolean
 		}
 	}
 

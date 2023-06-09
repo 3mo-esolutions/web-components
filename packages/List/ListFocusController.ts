@@ -16,7 +16,7 @@ export interface ListElement extends HTMLElement {
 	getRenderedItemIndex?(item: ListItem): number | undefined
 }
 
-export class ListItemsKeyboardController extends Controller {
+export class ListFocusController extends Controller {
 	constructor(protected override readonly host: ReactiveControllerHost & ReactiveElement & ListElement) {
 		super(host)
 	}

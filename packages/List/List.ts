@@ -1,6 +1,6 @@
 import { Component, component, css, event, html } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
-import { ListItemsKeyboardController } from './ListItemsKeyboardController.js'
+import { ListFocusController } from './ListFocusController.js'
 
 export function isListItem(element: Element): element is HTMLElement {
 	return element instanceof HTMLElement
@@ -28,8 +28,7 @@ export class List extends Component {
 
 	override readonly role = 'list'
 
-	// readonly instanceofAttributeController = new InstanceofAttributeController()
-	readonly listItemsKeyboardController = new ListItemsKeyboardController(this)
+	readonly focusController = new ListFocusController(this)
 	readonly slotController = new SlotController(this)
 
 	get items() {
