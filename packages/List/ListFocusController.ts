@@ -17,6 +17,8 @@ export interface ListElement extends HTMLElement {
 }
 
 export class ListFocusController extends Controller {
+	protected static forceFocusedList?: ListFocusController
+
 	constructor(protected override readonly host: ReactiveControllerHost & ReactiveElement & ListElement) {
 		super(host)
 	}
@@ -65,19 +67,30 @@ export class ListFocusController extends Controller {
 		this.host.tabIndex = -1
 	}
 
-	focusFirstItem() {
+	focusIn() {
+		ListFocusController.forceFocusedList = this
+		this.focusController.focusIn()
+		this.focusFirstItem()
+	}
+
+	focusOut() {
+		this.focusController.focusOut()
+		ListFocusController.forceFocusedList = undefined
+	}
+
+	private focusFirstItem() {
 		this.focusTraversal(0, 'forward')
 	}
 
-	focusLastItem() {
+	private focusLastItem() {
 		this.focusTraversal(this.itemsLength - 1, 'backward')
 	}
 
-	focusNextItem() {
+	private focusNextItem() {
 		this.focusTraversal((this.focusedItemIndex ?? -1) + 1, 'forward')
 	}
 
-	focusPreviousItem() {
+	private focusPreviousItem() {
 		this.focusTraversal((this.focusedItemIndex ?? 0) - 1, 'backward')
 	}
 
@@ -100,12 +113,6 @@ export class ListFocusController extends Controller {
 		}
 	}
 
-	unfocus() {
-		this.focusedItemIndex = undefined
-	}
-
-	forceFocused = false
-
 	protected readonly focusController = new FocusController(this.host, {
 		handleChange: (focused, bubbled) => {
 			if (!bubbled) {
@@ -118,7 +125,10 @@ export class ListFocusController extends Controller {
 		},
 	})
 
-	get hasFocus() { return this.focusController.focused || this.forceFocused }
+	get hasFocus() {
+		return this.focusController.focused
+			&& (ListFocusController.forceFocusedList === undefined || ListFocusController.forceFocusedList === this)
+	}
 
 	protected readonly itemsPointerDownEventListener = new EventListenerController(this.host, {
 		target: () => this.host,
@@ -133,11 +143,7 @@ export class ListFocusController extends Controller {
 		type: 'keydown',
 		target: document,
 		listener: (event: KeyboardEvent) => {
-			if (this.hasFocus === false) {
-				return
-			}
-
-			if (event.ctrlKey || event.shiftKey) {
+			if (this.hasFocus === false || event.ctrlKey || event.shiftKey) {
 				return
 			}
 
@@ -169,9 +175,15 @@ export class ListFocusController extends Controller {
 			}
 
 			if (prevent) {
-				event.stopPropagation()
 				event.preventDefault()
+				event.stopPropagation()
 			}
+
+			this.host.items.forEach(item => item.dispatchEvent(new CustomEvent('listKeyDown', {
+				detail: event,
+				bubbles: true,
+				composed: true,
+			})))
 		}
 	})
 }

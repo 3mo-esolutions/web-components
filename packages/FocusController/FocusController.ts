@@ -25,18 +25,30 @@ export class FocusController extends Controller {
 	protected readonly anchorFocusIn = new EventListenerController(this.host, {
 		type: 'focusin',
 		target: this.options?.target ?? this.host,
-		listener: (e: FocusEvent) => {
-			this.bubbled = e.target !== this.host
-			this.focused = true
-		}
+		listener: (e: FocusEvent) => this.handleFocusIn(e)
 	})
 
 	protected readonly anchorFocusOut = new EventListenerController(this.host, {
 		type: 'focusout',
 		target: this.options?.target ?? this.host,
-		listener: (e: FocusEvent) => {
-			this.bubbled = e.target !== this.host
-			this.focused = false
-		}
+		listener: (e: FocusEvent) => this.handleFocusOut(e)
 	})
+
+	focusIn() {
+		this.handleFocusIn(new FocusEvent('focusin', { bubbles: true }))
+	}
+
+	focusOut() {
+		this.handleFocusOut(new FocusEvent('focusout', { bubbles: true }))
+	}
+
+	private handleFocusIn(e: FocusEvent) {
+		this.bubbled = e.target !== this.host
+		this.focused = true
+	}
+
+	private handleFocusOut(e: FocusEvent) {
+		this.bubbled = e.target !== this.host
+		this.focused = false
+	}
 }

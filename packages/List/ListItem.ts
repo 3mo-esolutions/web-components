@@ -1,5 +1,6 @@
-import { Component, component, css, eventListener, html, property } from '@a11d/lit'
+import { Component, component, css, html, property } from '@a11d/lit'
 import { disabledProperty } from '@3mo/disabled-property'
+import { FocusController } from '@3mo/focus-controller'
 import './ListItemRipple.js'
 
 /**
@@ -14,18 +15,12 @@ export class ListItem extends Component {
 	@disabledProperty({ blockFocus: true }) disabled = false
 	@property({ type: Boolean, reflect: true }) protected focused = false
 
+	protected readonly focusController = new FocusController(this, {
+		handleChange: focused => this.focused = focused
+	})
+
 	override role = 'listitem'
 	override tabIndex = 0
-
-	@eventListener('focus')
-	protected handleFocus() {
-		this.focused = true
-	}
-
-	@eventListener('blur')
-	protected handleBlur() {
-		this.focused = false
-	}
 
 	static override get styles() {
 		return css`

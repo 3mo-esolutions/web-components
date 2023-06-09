@@ -1,10 +1,7 @@
-import { component, css, eventListener, html, nothing, property, query } from '@a11d/lit'
-import { FocusController } from '@3mo/focus-controller'
+import { component, css, eventListener, html, nothing, property } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
-import { Menu } from './Menu.js'
 import { MenuItem } from './MenuItem.js'
 
-// TODO: [Popover] Keyboard Support missing
 // TODO: [Popover] Tests overall
 
 /**
@@ -16,45 +13,18 @@ import { MenuItem } from './MenuItem.js'
 export class NestedMenuItem extends MenuItem {
 	@property({ type: Boolean }) open = false
 
-	@query('mo-menu') private readonly subMenu?: Menu
-
-	readonly focusController = new FocusController(this, {
-		handleChange: (focused, bubbled) => {
-			if (!bubbled && !(focused || this.hasCascadingFocus)) {
-				this.open = false
-			}
+	private setOpen(open: boolean) {
+		if (!this.disabled && this.hasSubMenu && this.open !== open && this.focused) {
+			this.open = open
 		}
-	})
+	}
 
 	readonly slotController = new SlotController(this)
 
-	private get hasCascadingFocus(): boolean {
-		return this.focusController.focused
-			|| (this.subMenu?.list.focusController?.hasFocus ?? false)
-			|| (this.subMenu?.list.items.some(x => (x as NestedMenuItem).hasCascadingFocus) ?? false)
-	}
-
-	@eventListener({ target: document, type: 'keydown' })
-	protected handleKeyDown(event: KeyboardEvent) {
-		if (!(this.focused || this.subMenu?.list.focusController.hasFocus) || this.disabled) {
-			return
-		}
-
-		switch (event.key) {
-			case 'Right':
-			case 'ArrowRight':
-				this.open = true
-				break
-			case 'Left':
-			case 'ArrowLeft':
-				if (this.subMenu?.list.focusController.hasFocus) {
-					this.open = false
-					break
-				}
-		}
-
-		if (this.subMenu?.list.focusController.hasFocus) {
-			return event.preventDefault()
+	@eventListener('listKeyDown')
+	protected handleKeyDown(event: CustomEvent<KeyboardEvent>) {
+		if (['Right', 'ArrowRight'].includes(event.detail.key)) {
+			this.setOpen(true)
 		}
 	}
 
@@ -93,7 +63,8 @@ export class NestedMenuItem extends MenuItem {
 			<mo-icon icon='chevron_right'></mo-icon>
 			<mo-menu .anchor=${this}
 				?open=${this.open}
-				@openChange=${(e: CustomEvent<boolean>) => this.handleOpenChange(e.detail)}
+				@openChange=${(e: CustomEvent<boolean>) => this.open = e.detail}
+				@listKeyDown=${(e: CustomEvent<KeyboardEvent>) => { e.stopImmediatePropagation(); !['Left', 'ArrowLeft'].includes(e.detail.key) ? void 0 : this.setOpen(false) }}
 				placement='inline-end'
 				alignment='start'
 			>
@@ -105,28 +76,6 @@ export class NestedMenuItem extends MenuItem {
 	protected override handleClick() {
 		if (this.hasSubMenu === false) {
 			super.handleClick()
-		}
-	}
-
-	protected handleOpenChange(open: boolean) {
-		this.open = open
-
-		// TODO: [Popover] Refactor
-		if (!this.subMenu?.list?.focusController) {
-			return
-		}
-
-		if (this.open) {
-			this.subMenu.focus()
-			this.subMenu.list.focus()
-			this.subMenu.list.focusController.unfocus()
-		} else {
-			this.subMenu.list.focusController.unfocus()
-			this.subMenu.list.blur()
-			this.subMenu.blur()
-			this.blur()
-			//parentList.focusController.unfocus()
-			this.focus()
 		}
 	}
 }

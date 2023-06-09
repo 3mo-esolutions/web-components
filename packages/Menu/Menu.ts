@@ -4,7 +4,6 @@ import { SlotController } from '@3mo/slot-controller'
 import { disabledProperty } from '@3mo/disabled-property'
 import { ListElement, ListItem, SelectableList } from '@3mo/list'
 import { MenuController } from './MenuController.js'
-import { NestedMenuItem } from './NestedMenuItem.js'
 import type { MenuPlacement, MenuAlignment } from './index.js'
 
 export function isMenu(element: EventTarget): element is HTMLElement {
@@ -44,7 +43,7 @@ export class Menu extends Component {
 	@property({ type: Object }) anchor!: HTMLElement
 	@property() placement?: MenuPlacement
 	@property() alignment?: MenuAlignment
-	@property({ type: Boolean, reflect: true }) open?: boolean
+	@property({ type: Boolean, reflect: true, updated(this: Menu) { this.openUpdated() } }) open = false
 	@property({ type: Boolean }) fixed = false
 	@property({ type: Boolean }) manualOpen = false
 	@property() opener?: string
@@ -71,24 +70,17 @@ export class Menu extends Component {
 	}
 
 	setOpen(open: boolean) {
-		if (this.disabled) {
-			return
+		if (!this.disabled && this.open !== open) {
+			this.open = open
+			this.openChange.dispatch(open)
 		}
+	}
 
-		this.open = open
-		this.openChange.dispatch(open)
-
-		if (this.list) {
-			if (this.open === false) {
-				this.list.focusController.unfocus()
-
-				this.items.forEach(x => {
-					if (x instanceof NestedMenuItem) {
-						x.open = false
-					}
-				})
-			}
-			this.list.focusController.forceFocused = this.open as boolean
+	protected openUpdated() {
+		if (this.open) {
+			this.list.focusController.focusIn()
+		} else {
+			this.list.focusController.focusOut()
 		}
 	}
 
@@ -126,6 +118,7 @@ export class Menu extends Component {
 					@change=${this.handleChange.bind(this)}
 					@menuItemClick=${this.handleMenuItemClick.bind(this)}
 					@itemsChange=${this.handleItemsChange.bind(this)}
+					@listKeyDown=${(e: CustomEvent<KeyboardEvent>) => this.dispatchEvent(new CustomEvent('listKeyDown', { detail: e.detail }))}
 				>
 					<slot></slot>
 				</mo-selectable-list>
