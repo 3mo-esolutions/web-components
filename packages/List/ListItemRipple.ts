@@ -70,7 +70,7 @@ export class ListItemRipple extends Component {
 		}
 
 		if (event.key === 'Enter' || event.key === ' ') {
-			event.preventDefault()
+			event.stopPropagation()
 			this.ripple['startPressAnimation'](event)
 			this.dispatchEvent(new MouseEvent('click', { bubbles: true, composed: true }))
 		}
