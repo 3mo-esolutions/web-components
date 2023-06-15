@@ -68,14 +68,23 @@ export class ListFocusController extends Controller {
 	}
 
 	focusIn() {
-		ListFocusController.forceFocusedList = this
 		this.focusController.focusIn()
-		this.focusFirstItem()
+		this.handleFocusIn()
 	}
 
 	focusOut() {
 		this.focusController.focusOut()
+		this.handleFocusOut()
+	}
+
+	protected handleFocusIn() {
+		ListFocusController.forceFocusedList = this
+		this.focusFirstItem()
+	}
+
+	protected handleFocusOut() {
 		ListFocusController.forceFocusedList = undefined
+		this.focusedItemIndex = undefined
 	}
 
 	private focusFirstItem() {
@@ -117,9 +126,9 @@ export class ListFocusController extends Controller {
 		handleChange: (focused, bubbled) => {
 			if (!bubbled) {
 				if (focused) {
-					this.focusedItemIndex ??= 0
+					this.handleFocusIn()
 				} else {
-					this.focusedItemIndex = undefined
+					this.handleFocusOut()
 				}
 			}
 		},

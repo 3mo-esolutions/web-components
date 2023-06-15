@@ -81,6 +81,7 @@ export class Menu extends Component {
 			this.list.focusController.focusIn()
 		} else {
 			this.list.focusController.focusOut()
+			this.anchor?.focus()
 		}
 	}
 
