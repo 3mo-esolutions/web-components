@@ -33,6 +33,7 @@ export class FieldPair extends Component {
 			slot[name=attachment] {
 				display: inline-block;
 				flex: 0 0 var(--mo-field-pair-attachment-width, 100px);
+				width: var(--mo-field-pair-attachment-width, 100px);
 			}
 
 			:host([mode=overlay]) slot[name=attachment] {

@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/field-pair",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"description": "A pair of two fields",
 	"repository": {
 		"type": "git",
