@@ -80,7 +80,11 @@ export class Option<T> extends SelectionListItem {
 
 	@eventListener('click')
 	protected handleClick() {
-		this.handleChange(this.selected ? 'unchecked' : 'checked')
+		this.handleChange(
+			this.multiple
+				? this.selected ? 'unchecked' : 'checked'
+				: 'checked'
+		)
 	}
 
 	protected handleChange(value: CheckboxValue) {
