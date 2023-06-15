@@ -18,6 +18,8 @@ describe('FieldSelect', () => {
 		</mo-field-select>
 	`)
 
+	const getDefaultOption = () => fixture.component.listItems.find(i => i.getAttribute('value') === '')
+
 	function spyOnChangeEvents() {
 		const changeSpy = jasmine.createSpy('change')
 		const dataChangeSpy = jasmine.createSpy('dataChange')
@@ -34,6 +36,17 @@ describe('FieldSelect', () => {
 		await fixture.updateComplete
 
 		expect(fixture.component.open).toBe(true)
+	})
+
+	it('should render a default option when default property is set', async () => {
+		expect(getDefaultOption()).toBeUndefined()
+
+		fixture.component.default = 'Select...'
+		await fixture.updateComplete
+
+		const defaultOption = getDefaultOption()
+		expect(defaultOption).toBeDefined()
+		expect(defaultOption?.textContent?.trim()).toBe('Select...')
 	})
 
 	it('should not open menu when disabled', async () => {

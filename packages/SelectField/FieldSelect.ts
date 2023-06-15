@@ -153,16 +153,24 @@ export class FieldSelect<T> extends InputFieldComponent<Value> {
 				.value=${this.valueController.menuValue}
 				@change=${(e: CustomEvent<Array<number>>) => this.handleSelection(e.detail)}
 				@itemsChange=${() => this.handleItemsChange()}
-			>${this.optionsTemplate}</mo-menu>
+			>
+				${this.defaultOptionTemplate}
+				${this.optionsTemplate}
+			</mo-menu>
 		`
 	}
 
 	protected get optionsTemplate() {
 		return html`
-			${!this.default ? nothing : html`
-				<mo-list-item value='' @click=${() => this.handleSelection([])}>${this.default}</mo-list-item>
-			`}
 			<slot></slot>
+		`
+	}
+
+	protected get defaultOptionTemplate() {
+		return !this.default ? nothing : html`
+			<mo-list-item value='' @click=${() => this.handleSelection([])}>
+				${this.default}
+			</mo-list-item>
 		`
 	}
 
