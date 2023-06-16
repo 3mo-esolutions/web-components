@@ -29,7 +29,7 @@ export class ExpandCollapseIconButton extends Component {
 	}
 
 	protected override get template() {
-		return html`<mo-icon-button dense icon='expand_less' ?disabled=${this.disabled}></mo-icon-button>`
+		return html`<mo-icon-button dense icon='expand_more' ?disabled=${this.disabled}></mo-icon-button>`
 	}
 }
 

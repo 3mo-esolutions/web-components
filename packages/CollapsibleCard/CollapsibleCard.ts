@@ -1,8 +1,6 @@
 import { component, css, html, property, nothing, event } from '@a11d/lit'
 import { Card } from '@3mo/card'
 import { tooltip } from '@3mo/tooltip'
-import '@3mo/localization'
-import '@3mo/icon-button'
 
 /**
  * @element mo-collapsible-card
@@ -47,12 +45,12 @@ export class CollapsibleCard extends Card {
 		return html`
 			${super.defaultHeaderActionTemplate}
 
-			<mo-icon-button dense
+			<mo-expand-collapse-icon-button
 				${tooltip(t(this.collapsed ? 'Expand' : 'Collapse'))}
 				?disabled=${this.disableCollapse}
-				icon=${this.collapsed ? 'expand_more' : 'expand_less'}
+				?open=${!this.collapsed}
 				@click=${() => this.toggleCollapse()}
-			></mo-icon-button>
+			></mo-expand-collapse-icon-button>
 		`
 	}
 
