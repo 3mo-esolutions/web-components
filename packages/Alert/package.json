@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/alert",
-	"version": "0.0.7",
+	"version": "1.0.0",
 	"description": "A alert web-component.",
 	"repository": {
 		"type": "git",
@@ -29,6 +29,7 @@
 		"@3mo/heading": "x",
 		"@3mo/flex": "x",
 		"@3mo/grid": "x",
+		"@3mo/expand-collapse-icon-button": "x",
 		"@3mo/slot-controller": "x"
 	}
 }

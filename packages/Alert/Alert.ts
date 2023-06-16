@@ -1,11 +1,6 @@
-import { component, css, Component, html, property, ifDefined, nothing, style } from '@a11d/lit'
+import { component, css, Component, html, property, ifDefined, nothing, event } from '@a11d/lit'
 import { MaterialIcon } from '@3mo/icon'
 import { SlotController } from '@3mo/slot-controller'
-import '@3mo/theme'
-import '@3mo/icon-button'
-import '@3mo/flex'
-import '@3mo/grid'
-import '@3mo/heading'
 
 export const enum AlertType {
 	Info = 'info',
@@ -27,6 +22,8 @@ export const enum AlertType {
  * @cssprop --mo-alert-border-radius
  * @cssprop --mo-alert-color-base
  * @cssprop --mo-alert-body-color-base
+ *
+ * @fires openChange - Fired when the alert is opened or closed.
  */
 @component('mo-alert')
 export class Alert extends Component {
@@ -36,6 +33,8 @@ export class Alert extends Component {
 		[AlertType.Warning, 'warning'],
 		[AlertType.Error, 'error'],
 	])
+
+	@event() readonly openChange!: EventDispatcher<boolean>
 
 	@property({ type: String, reflect: true }) heading?: string
 	@property({ type: String, reflect: true }) type = AlertType.Info
@@ -93,14 +92,26 @@ export class Alert extends Component {
 			:host([collapsible]) mo-grid {
 				grid-template-columns: auto 1fr auto;
 			}
+
+			mo-heading {
+				flex: 1;
+			}
+
+			mo-icon-button {
+				align-self: center;
+			}
+
+			mo-icon {
+				align-self: start
+			}
+
+			:host([collapsible]) mo-icon {
+				align-self: center;
+			}
 		`
 	}
 
 	protected readonly slotController = new SlotController(this)
-
-	private get isCollapsible() {
-		return this.collapsible && this.heading
-	}
 
 	protected override get template() {
 		return html`
@@ -116,27 +127,27 @@ export class Alert extends Component {
 	}
 
 	protected get iconTemplate() {
-		return html`
-			<mo-icon
-				${style({ alignSelf: this.collapsible ? 'center' : 'start' })}
-				icon=${ifDefined(Alert.iconByType.get(this.type))}
-			></mo-icon>
-		`
+		return html`<mo-icon icon=${ifDefined(Alert.iconByType.get(this.type))}></mo-icon>`
 	}
 
 	protected get headingTemplate() {
 		return !this.heading ? nothing : html`
-			<mo-heading part='heading' typography='heading4' ${style({ width: '*' })}>${this.heading}</mo-heading>
+			<mo-heading part='heading' typography='heading4'>${this.heading}</mo-heading>
 		`
 	}
 
 	protected get expandIconTemplate() {
-		return !this.isCollapsible ? nothing : html`
-			<mo-icon-button dense ${style({ alignSelf: 'center' })}
-				icon=${this.open ? 'expand_less' : 'expand_more'}
-				@click=${() => this.open = !this.open}
-			></mo-icon-button>
+		return !this.collapsible || !this.heading ? nothing : html`
+			<mo-expand-collapse-icon-button
+				?open=${this.open}
+				@click=${() => this.toggleOpen()}
+			></mo-expand-collapse-icon-button>
 		`
+	}
+
+	protected toggleOpen() {
+		this.open = !this.open
+		this.openChange.dispatch(this.open)
 	}
 
 	protected get slotTemplate() {
