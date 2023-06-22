@@ -2,16 +2,19 @@ import { List } from '@3mo/list'
 import { component, css, html, unsafeCSS } from '@a11d/lit'
 
 @component('mo-toolbar-pane')
-class ToolbarPane extends List {
+export class ToolbarPane extends List {
+	get unfilteredItems() {
+		return this.slotController.getAssignedElements('')
+	}
+
 	static override get styles() {
 		return css`
 			:host {
-				display: flex;
-				align-items: center;
-				justify-content: flex-start;
+				display: block;
+				overflow: clip;
 			}
 
-				${unsafeCSS(this.itemRoles.map(x => `::slotted(*[role=${x}])`).join(', '))} {
+				${unsafeCSS(this.itemRoles.map(x => `::slotted([role=${x}])`).join(', '))} {
 					flex: 1 1;
 					align-self: stretch;
 				}
@@ -20,17 +23,23 @@ class ToolbarPane extends List {
 				outline: none;
 			}
 
-			#pusher {
+			#filler {
 				content: '';
 				flex: 0 1 100%;
 			}
 		`
 	}
 
+	protected override handleSlotChange() {
+		this.itemsChange.dispatch(this.unfilteredItems.map(x => x as HTMLElement))
+	}
+
 	protected override get template() {
 		return html`
-			${super.template}
-			<div id='pusher'></div>
+			<mo-flex direction='horizontal' alignItems='center'>
+				${super.template}
+				<div id='filler'></div>
+			</mo-flex>
 		`
 	}
 }

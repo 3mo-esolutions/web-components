@@ -17,7 +17,7 @@ export default meta({
 
 export const Default = story({
 	render: () => html`
-		<mo-toolbar-pane>
+		<mo-toolbar>
 			<mo-menu-item icon='content_cut'>
 				<span>Cut</span>
 			</mo-menu-item>
@@ -45,6 +45,6 @@ export const Default = story({
 			<mo-menu-item icon='content_paste'>
 				<span>Paste</span>
 			</mo-menu-item>
-		</mo-toolbar-pane>
+		</mo-toolbar>
 	`
 })
