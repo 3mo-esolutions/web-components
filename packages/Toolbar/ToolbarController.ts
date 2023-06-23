@@ -6,10 +6,8 @@ import { ToolbarPane } from './index.js'
 export class ToolbarController extends Controller {
 	protected pane?: ToolbarPane
 
+	slotController?: SlotController
 	protected overflowController?: IntersectionController
-	protected slotController?: SlotController
-
-	protected lockReset = false
 
 	protected initiateLos = async (paneRef: Element | undefined) => {
 		if (!(paneRef instanceof ToolbarPane)) {
@@ -24,8 +22,6 @@ export class ToolbarController extends Controller {
 				for (const entry of entries) {
 					const target = entry.target
 					if (!entry.isIntersecting) {
-						console.log(entry.intersectionRatio.toFixed(2), target)
-						this.lockReset = true
 						target.slot = this.overflowSlot
 						this.overflowController?.unobserve(target)
 					}
@@ -41,14 +37,8 @@ export class ToolbarController extends Controller {
 		this.pane.unfilteredItems.forEach(x => this.overflowController?.observe(x))
 	}
 
-	protected handleResize = async () => {
-		if (this.lockReset) {
-			console.error('Reset Locked!')
-			this.lockReset = false
-			return
-		}
-		console.log('Resetting...')
-		for (const target of this.slotController!.getAssignedElements('overflow')) {
+	protected handleResize = () => {
+		for (const target of this.slotController?.getAssignedElements('overflow') ?? []) {
 			target.slot = this.paneSlot
 			this.overflowController?.observe(target)
 		}
