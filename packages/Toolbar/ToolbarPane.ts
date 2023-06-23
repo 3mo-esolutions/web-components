@@ -21,7 +21,9 @@ export class ToolbarPane extends List {
 			}
 
 				${unsafeCSS(this.itemRoles.map(x => `::slotted([role=${x}])`).join(', '))} {
-					flex: 1 1;
+					flex: 1 1 0%;
+					text-overflow: ellipsis;
+					white-space: nowrap;
 					align-self: stretch;
 				}
 

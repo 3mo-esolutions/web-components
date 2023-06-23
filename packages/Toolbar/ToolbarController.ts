@@ -9,7 +9,7 @@ export class ToolbarController extends Controller {
 	slotController?: SlotController
 	protected overflowController?: IntersectionController
 
-	protected initiateLos = async (paneRef: Element | undefined) => {
+	protected initiateObservers = async (paneRef: Element | undefined) => {
 		if (!(paneRef instanceof ToolbarPane)) {
 			return
 		}
@@ -35,12 +35,12 @@ export class ToolbarController extends Controller {
 
 		await this.pane.updateComplete
 		this.pane.unfilteredItems.forEach(x => this.overflowController?.observe(x))
+		this.pane.itemsChange.subscribe(elems => elems.forEach(x => this.overflowController?.observe(x)))
 	}
 
 	protected handleResize = () => {
 		for (const target of this.slotController?.getAssignedElements('overflow') ?? []) {
 			target.slot = this.paneSlot
-			this.overflowController?.observe(target)
 		}
 	}
 
@@ -50,7 +50,7 @@ export class ToolbarController extends Controller {
 
 	get paneTemplate() {
 		return html`
-			<mo-toolbar-pane @fillerResize=${this.handleResize} ${ref(this.initiateLos)} alignItems='center'>
+			<mo-toolbar-pane @fillerResize=${this.handleResize} ${ref(this.initiateObservers)}>
 				<slot name=${this.paneSlot}></slot>
 			</mo-toolbar-pane>
 		`
