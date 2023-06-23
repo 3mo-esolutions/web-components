@@ -1,5 +1,5 @@
 import { meta, story } from '../../.storybook/story.js'
-import { Component, component, html, property, ref } from '@a11d/lit'
+import { Component, html, property, ref } from '@a11d/lit'
 import { MaterialIcon } from '@3mo/icon'
 import { ToolbarController } from './index.js'
 import p from './package.json'
@@ -81,18 +81,18 @@ class CustomToolbarStory extends Component {
 	protected leftToolbarController = new ToolbarController(this, 'left', 'left-ovf')
 	protected rightToolbarController = new ToolbarController(this, 'right', 'right-ovf')
 
-	protected get template() {
+	protected override get template() {
 		return html`
 			<div style='display: flex; width: 100%; gap: 5px'>
 				<mo-toolbar-pane ${ref(this.leftToolbarController.initiate)} style='flex: 1 1;'>
 					<slot name='left'></slot>
 				</mo-toolbar-pane>
 				<mo-button style='flex: 0 0 auto' @click=${() => this.open = !this.open}>Overflow</mo-button>
-				<mo-toolbar-pane ${ref(this.rightToolbarController.initiate)} style='flex: 1 1; flex-direction: row-reverse'>
+				<mo-toolbar-pane ${ref(this.rightToolbarController.initiate)} style='flex: 1 1; direction: rtl'>
 					<slot name='right'></slot>
 				</mo-toolbar-pane>
 			</div>
-			<mo-list style='max-width: 400px; margin-inline: auto; margin-block: 10px; background-color: var(--mo-color-accent); display: ${this.open ? 'block' : 'none'}'>
+			<mo-list style='max-width: 350px; border-radius: var(--mo-border-radius); margin-inline: auto; margin-block: 10px; background-color: var(--mo-color-accent); display: ${this.open ? 'block' : 'none'}'>
 				${this.leftToolbarController.overflowTemplate}
 				${this.rightToolbarController.overflowTemplate}
 			</mo-list>

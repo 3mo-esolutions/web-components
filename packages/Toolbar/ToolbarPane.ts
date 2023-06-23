@@ -37,6 +37,11 @@ export class ToolbarPane extends List {
 				align-self: stretch;
 				flex: 0 1 100%;
 			}
+
+			#pad {
+				align-self: stretch;
+				flex: 0 0 1px;
+			}
 		`
 	}
 
@@ -46,6 +51,7 @@ export class ToolbarPane extends List {
 
 	protected override get template() {
 		return html`
+			<div id='pad'></div>
 			${super.template}
 			<div id='filler' ${observeResize(elems => this.fillerResize.dispatch(elems))}></div>
 		`
