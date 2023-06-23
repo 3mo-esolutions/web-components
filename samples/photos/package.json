@@ -1,0 +1,25 @@
+{
+	"name": "@3mo/photos-sample",
+	"description": "A project to demonstrate the use of @3mo/del",
+	"scripts": {
+		"start": "npm i && webpack serve --mode=development"
+	},
+	"type": "module",
+	"license": "UNLICENSED",
+	"dependencies": {
+		"@3mo/del": "x"
+	},
+	"devDependencies": {
+		"ts-lit-plugin": "x",
+		"typescript": "5.x",
+		"webpack": "5.x",
+		"webpack-cli": "x",
+		"webpack-dev-server": "4.x",
+		"copy-webpack-plugin": "x",
+		"html-webpack-plugin": "x",
+		"terser-webpack-plugin": "x",
+		"tsconfig-paths-webpack-plugin": "x",
+		"favicons-webpack-plugin": "x",
+		"ts-loader": "x"
+	}
+}

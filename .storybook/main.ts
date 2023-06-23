@@ -3,7 +3,8 @@ const ResolveTypeScriptPlugin = require('resolve-typescript-plugin')
 
 module.exports = {
 	stories: [
-		"../packages/**/*.stories.ts"
+		"../packages/**/*.stories.ts",
+		"../samples/**/*.stories.ts",
 	],
 	addons: [
 		"@storybook/addon-links",
