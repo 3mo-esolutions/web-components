@@ -26,7 +26,7 @@ export class ToolbarController extends Controller {
 					if (!entry.isIntersecting) {
 						console.log(entry.intersectionRatio.toFixed(2), target)
 						this.lockReset = true
-						target.slot = 'overflow'
+						target.slot = this.overflowSlot
 						this.overflowController?.unobserve(target)
 					}
 				}
@@ -44,33 +44,31 @@ export class ToolbarController extends Controller {
 	protected handleResize = async () => {
 		if (this.lockReset) {
 			console.error('Reset Locked!')
-			await new Promise(r => setTimeout(r, 75))
 			this.lockReset = false
 			return
 		}
 		console.log('Resetting...')
 		for (const target of this.slotController!.getAssignedElements('overflow')) {
-			console.log('RESET', target)
-			target.slot = ''
+			target.slot = this.paneSlot
 			this.overflowController?.observe(target)
 		}
 	}
 
-	constructor(protected override readonly host: ReactiveControllerHost & Element) {
+	constructor(protected override readonly host: ReactiveControllerHost & Element, readonly paneSlot = '', readonly overflowSlot = 'overflow') {
 		super(host)
 	}
 
 	get paneTemplate() {
 		return html`
 			<mo-toolbar-pane @fillerResize=${this.handleResize} ${ref(this.initiateLos)} alignItems='center'>
-				<slot></slot>
+				<slot name=${this.paneSlot}></slot>
 			</mo-toolbar-pane>
 		`
 	}
 
 	get overflowTemplate() {
 		return html`
-			<slot name='overflow'></slot>
+			<slot name=${this.overflowSlot}></slot>
 		`
 	}
 }
