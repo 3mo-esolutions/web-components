@@ -1,5 +1,4 @@
 import { Component, component, css, html } from '@a11d/lit'
-import { tooltip } from '@3mo/tooltip'
 import { ToolbarController } from './index.js'
 
 @component('mo-toolbar')
@@ -19,7 +18,9 @@ export class Toolbar extends Component {
 			<mo-flex direction='horizontal' alignItems='center'>
 				${this.toolbarController.paneTemplate}
 				<mo-popover-container placement='block-end' alignment='end' style='flex: 0 0; justify-content: flex-end;'>
-					<mo-icon-button icon='more_vert' ${tooltip('More')}></mo-icon-button>
+					<slot name='overflow-button'>
+						<mo-icon-button icon='more_vert'></mo-icon-button>
+					</slot>
 					<mo-menu slot='popover'>
 						${this.toolbarController.overflowTemplate}
 					</mo-menu>

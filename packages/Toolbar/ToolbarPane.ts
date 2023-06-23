@@ -1,8 +1,14 @@
 import { List } from '@3mo/list'
-import { component, css, html, unsafeCSS } from '@a11d/lit'
+import { observeResize } from '@3mo/resize-observer'
+import { component, css, html, unsafeCSS, event } from '@a11d/lit'
 
+/**
+ * @fires fillerResize
+ */
 @component('mo-toolbar-pane')
 export class ToolbarPane extends List {
+	@event() readonly fillerResize!: EventDispatcher<ResizeObserverEntry[]>
+
 	get unfilteredItems() {
 		return this.slotController.getAssignedElements('')
 	}
@@ -24,7 +30,7 @@ export class ToolbarPane extends List {
 			}
 
 			#filler {
-				content: '';
+				align-self: stretch;
 				flex: 0 1 100%;
 			}
 		`
@@ -38,7 +44,7 @@ export class ToolbarPane extends List {
 		return html`
 			<mo-flex direction='horizontal' alignItems='center'>
 				${super.template}
-				<div id='filler'></div>
+				<div id='filler' ${observeResize(elems => this.fillerResize.dispatch(elems))}></div>
 			</mo-flex>
 		`
 	}

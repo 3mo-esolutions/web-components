@@ -1,7 +1,6 @@
 import { Controller, ReactiveControllerHost, html, ref } from '@a11d/lit'
 import { IntersectionController } from '@3mo/intersection-observer'
 import { SlotController } from '@3mo/slot-controller'
-import { observeResize } from '@3mo/resize-observer'
 import { ToolbarPane } from './index.js'
 
 export class ToolbarController extends Controller {
@@ -45,6 +44,7 @@ export class ToolbarController extends Controller {
 	protected handleResize = async () => {
 		if (this.lockReset) {
 			console.error('Reset Locked!')
+			await new Promise(r => setTimeout(r, 75))
 			this.lockReset = false
 			return
 		}
@@ -62,7 +62,7 @@ export class ToolbarController extends Controller {
 
 	get paneTemplate() {
 		return html`
-			<mo-toolbar-pane ${observeResize(this.handleResize)} ${ref(this.initiateLos)} alignItems='center'>
+			<mo-toolbar-pane @fillerResize=${this.handleResize} ${ref(this.initiateLos)} alignItems='center'>
 				<slot></slot>
 			</mo-toolbar-pane>
 		`
