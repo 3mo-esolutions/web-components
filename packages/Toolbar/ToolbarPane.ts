@@ -16,12 +16,14 @@ export class ToolbarPane extends List {
 	static override get styles() {
 		return css`
 			:host {
-				display: block;
+				display: flex;
 				overflow: clip;
+				flex-direction: row;
+				align-items: center;
 			}
 
 				${unsafeCSS(this.itemRoles.map(x => `::slotted([role=${x}])`).join(', '))} {
-					flex: 1 1 0%;
+					flex: 1 0 0%;
 					text-overflow: ellipsis;
 					white-space: nowrap;
 					align-self: stretch;
@@ -44,10 +46,8 @@ export class ToolbarPane extends List {
 
 	protected override get template() {
 		return html`
-			<mo-flex direction='horizontal' alignItems='center'>
-				${super.template}
-				<div id='filler' ${observeResize(elems => this.fillerResize.dispatch(elems))}></div>
-			</mo-flex>
+			${super.template}
+			<div id='filler' ${observeResize(elems => this.fillerResize.dispatch(elems))}></div>
 		`
 	}
 }

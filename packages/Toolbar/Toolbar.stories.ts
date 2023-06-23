@@ -1,6 +1,7 @@
 import { meta, story } from '../../.storybook/story.js'
-import { html } from '@a11d/lit'
+import { Component, component, html, property, ref } from '@a11d/lit'
 import { MaterialIcon } from '@3mo/icon'
+import { ToolbarController } from './index.js'
 import p from './package.json'
 import './index.js'
 
@@ -14,6 +15,26 @@ export default meta({
 			},
 		}
 	},
+})
+
+export const Custom = story({
+	args: { itemCount: 4 },
+	render: ({ itemCount }) => {
+		return html`
+			<mo-custom-toolbar-story>
+				${[...Array(itemCount).keys()].map(i => html`
+					<mo-menu-item icon='arrow_circle_left' slot='left'>
+						<span>Left ${i + 1}</span>
+					</mo-menu-item>
+				`)}
+				${[...Array(itemCount).keys()].map(i => html`
+					<mo-menu-item icon='arrow_circle_right' slot='right'>
+						<span>Right ${i + 1}</span>
+					</mo-menu-item>
+				`)}
+			</mo-custom-toolbar-story>
+		`
+	}
 })
 
 export const Default = story({
@@ -54,3 +75,29 @@ export const Default = story({
 		</mo-toolbar>
 	`
 })
+
+class CustomToolbarStory extends Component {
+	@property({ type: Boolean, reflect: true }) open = false
+	protected leftToolbarController = new ToolbarController(this, 'left', 'left-ovf')
+	protected rightToolbarController = new ToolbarController(this, 'right', 'right-ovf')
+
+	protected get template() {
+		return html`
+			<div style='display: flex; width: 100%; gap: 5px'>
+				<mo-toolbar-pane ${ref(this.leftToolbarController.initiate)} style='flex: 1 1;'>
+					<slot name='left'></slot>
+				</mo-toolbar-pane>
+				<mo-button style='flex: 0 0 auto' @click=${() => this.open = !this.open}>Overflow</mo-button>
+				<mo-toolbar-pane ${ref(this.rightToolbarController.initiate)} style='flex: 1 1; flex-direction: row-reverse'>
+					<slot name='right'></slot>
+				</mo-toolbar-pane>
+			</div>
+			<mo-list style='max-width: 400px; margin-inline: auto; margin-block: 10px; background-color: var(--mo-color-accent); display: ${this.open ? 'block' : 'none'}'>
+				${this.leftToolbarController.overflowTemplate}
+				${this.rightToolbarController.overflowTemplate}
+			</mo-list>
+		`
+	}
+}
+
+customElements.define('mo-custom-toolbar-story', CustomToolbarStory)

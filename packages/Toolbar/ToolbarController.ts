@@ -7,23 +7,25 @@ export class ToolbarController extends Controller {
 	protected pane?: ToolbarPane
 
 	slotController?: SlotController
-	protected overflowController?: IntersectionController
+	protected intersectionController?: IntersectionController
 
-	protected initiateObservers = async (paneRef: Element | undefined) => {
+	initiate = async (paneRef: Element | undefined) => {
 		if (!(paneRef instanceof ToolbarPane)) {
 			return
 		}
 
 		this.pane = paneRef
-		this.overflowController = new IntersectionController(this.host, {
+		this.pane.fillerResize.subscribe(this.handleResize)
+		this.intersectionController = new IntersectionController(this.host, {
 			target: null,
 			config: { threshold: 1 },
 			callback: entries => {
 				for (const entry of entries) {
 					const target = entry.target
 					if (!entry.isIntersecting) {
+						console.log(entry.intersectionRatio, target)
 						target.slot = this.overflowSlot
-						this.overflowController?.unobserve(target)
+						this.intersectionController?.unobserve(target)
 					}
 				}
 				this.host.requestUpdate()
@@ -34,23 +36,34 @@ export class ToolbarController extends Controller {
 			?? new SlotController(this.host)
 
 		await this.pane.updateComplete
-		this.pane.unfilteredItems.forEach(x => this.overflowController?.observe(x))
-		this.pane.itemsChange.subscribe(elems => elems.forEach(x => this.overflowController?.observe(x)))
+		this.pane.unfilteredItems.forEach(x => this.intersectionController?.observe(x))
+		this.pane.itemsChange.subscribe(this.handleItemsChange)
+	}
+
+	override hostDisconnected(): void {
+		this.pane?.fillerResize.unsubscribe(this.handleResize)
+		this.pane?.itemsChange.unsubscribe(this.handleItemsChange)
+	}
+
+	protected handleItemsChange = (items: HTMLElement[]) => {
+		items.forEach(x => this.intersectionController?.observe(x))
 	}
 
 	protected handleResize = () => {
-		for (const target of this.slotController?.getAssignedElements('overflow') ?? []) {
+		for (const target of this.slotController?.getAssignedElements(this.overflowSlot) ?? []) {
 			target.slot = this.paneSlot
 		}
 	}
 
-	constructor(protected override readonly host: ReactiveControllerHost & Element, readonly paneSlot = '', readonly overflowSlot = 'overflow') {
+	constructor(protected override readonly host: ReactiveControllerHost & Element,
+		readonly paneSlot = '',
+		readonly overflowSlot = 'overflow') {
 		super(host)
 	}
 
 	get paneTemplate() {
 		return html`
-			<mo-toolbar-pane @fillerResize=${this.handleResize} ${ref(this.initiateObservers)}>
+			<mo-toolbar-pane ${ref(this.initiate)}>
 				<slot name=${this.paneSlot}></slot>
 			</mo-toolbar-pane>
 		`
