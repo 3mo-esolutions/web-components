@@ -1,77 +1,68 @@
-import { Controller, ReactiveControllerHost, html, ref } from '@a11d/lit'
+import { ElementPart, AsyncDirective, Controller, ReactiveControllerHost, directive, nothing } from '@a11d/lit'
 import { IntersectionController } from '@3mo/intersection-observer'
 import { SlotController } from '@3mo/slot-controller'
 import { ToolbarPane } from './index.js'
 
-export class ToolbarController extends Controller {
-	protected pane?: ToolbarPane
+const generatePaneDirective = (controller: ToolbarController) => directive(class ToolbarPaneDirective extends AsyncDirective {
+	pane?: ToolbarPane
 
-	slotController?: SlotController
-	protected intersectionController?: IntersectionController
+	override reconnected() { super.reconnected() }
 
-	initiate = async (paneRef: Element | undefined) => {
-		if (!(paneRef instanceof ToolbarPane)) {
-			return
-		}
+	render() { return nothing }
 
-		this.pane = paneRef
+	override async update(part: ElementPart) {
+		this.pane = part.element as ToolbarPane
 		this.pane.fillerResize.subscribe(this.handleResize)
-		this.intersectionController = new IntersectionController(this.host, {
-			target: null,
-			config: { threshold: 1 },
-			callback: entries => {
-				for (const entry of entries) {
-					const target = entry.target
-					if (!entry.isIntersecting) {
-						console.log(entry.intersectionRatio, target)
-						target.slot = this.overflowSlot
-						this.intersectionController?.unobserve(target)
-					}
-				}
-				this.host.requestUpdate()
-			}
-		})
-
-		this.slotController = (this.host as ReactiveControllerHost & Element & { slotController: SlotController }).slotController
-			?? new SlotController(this.host)
-
 		await this.pane.updateComplete
-		this.pane.unfilteredItems.forEach(x => this.intersectionController?.observe(x))
+		this.pane.items.forEach(x => controller.intersectionController?.observe(x))
 		this.pane.itemsChange.subscribe(this.handleItemsChange)
+		return super.update(part, [])
 	}
 
-	override hostDisconnected(): void {
+	override disconnected() {
 		this.pane?.fillerResize.unsubscribe(this.handleResize)
 		this.pane?.itemsChange.unsubscribe(this.handleItemsChange)
 	}
 
-	protected handleItemsChange = (items: HTMLElement[]) => {
-		items.forEach(x => this.intersectionController?.observe(x))
+	handleItemsChange = () => {
+		this.pane?.items.forEach(x => controller.intersectionController?.observe(x))
 	}
 
-	protected handleResize = () => {
-		for (const target of this.slotController?.getAssignedElements(this.overflowSlot) ?? []) {
-			target.slot = this.paneSlot
+	handleResize = () => {
+		for (const target of controller.slotController?.getAssignedElements(controller.overflowContentSlotName) ?? []) {
+			target.slot = controller.paneSlotName
 		}
 	}
+})
 
-	constructor(protected override readonly host: ReactiveControllerHost & Element,
-		readonly paneSlot = '',
-		readonly overflowSlot = 'overflow') {
-		super(host)
-	}
+export class ToolbarController extends Controller {
+	readonly slotController = this.host.slotController ?? new SlotController(this.host)
 
-	get paneTemplate() {
-		return html`
-			<mo-toolbar-pane ${ref(this.initiate)}>
-				<slot name=${this.paneSlot}></slot>
-			</mo-toolbar-pane>
-		`
-	}
+	readonly intersectionController = new IntersectionController(this.host, {
+		target: null,
+		config: { threshold: 1 },
+		callback: entries => {
+			for (const entry of entries) {
+				const target = entry.target
+				if (!entry.isIntersecting) {
+					target.slot = this.overflowContentSlotName
+					this.intersectionController?.unobserve(target)
+				}
+			}
+			this.host.requestUpdate()
+		}
+	})
 
-	get overflowTemplate() {
-		return html`
-			<slot name=${this.overflowSlot}></slot>
-		`
-	}
+	get paneSlotName() { return this.options?.paneSlotName ?? '' }
+	get overflowContentSlotName() { return this.options?.overflowContentSlotName ?? 'overflow-content' }
+
+	readonly pane = generatePaneDirective(this)
+
+	constructor(
+		protected override readonly host: ReactiveControllerHost & Element & { readonly slotController?: SlotController },
+		readonly options?: {
+			readonly paneSlotName: string
+			readonly overflowContentSlotName: string
+		}
+	) { super(host) }
 }

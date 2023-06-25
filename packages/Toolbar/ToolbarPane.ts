@@ -1,17 +1,19 @@
-import { List } from '@3mo/list'
+import { Component, component, css, html, event } from '@a11d/lit'
 import { observeResize } from '@3mo/resize-observer'
-import { component, css, html, unsafeCSS, event } from '@a11d/lit'
+import { SlotController } from '@3mo/slot-controller'
 
 /**
  * @fires fillerResize
+ * @fires itemsChange
  */
 @component('mo-toolbar-pane')
-export class ToolbarPane extends List {
-	@event() readonly fillerResize!: EventDispatcher<ResizeObserverEntry[]>
+export class ToolbarPane extends Component {
+	@event() readonly fillerResize!: EventDispatcher<Array<ResizeObserverEntry>>
+	@event() readonly itemsChange!: EventDispatcher
 
-	get unfilteredItems() {
-		return this.slotController.getAssignedElements('')
-	}
+	readonly slotController = new SlotController(this)
+
+	get items() { return this.slotController.getAssignedElements('') }
 
 	static override get styles() {
 		return css`
@@ -22,15 +24,19 @@ export class ToolbarPane extends List {
 				align-items: center;
 			}
 
-				${unsafeCSS(this.itemRoles.map(x => `::slotted([role=${x}])`).join(', '))} {
-					flex: 1 0 0%;
-					text-overflow: ellipsis;
-					white-space: nowrap;
-					align-self: stretch;
-				}
-
 			:host(:focus) {
 				outline: none;
+			}
+
+			mo-flex {
+				flex-direction: inherit;
+			}
+
+			::slotted(*) {
+				flex: 1 0 0%;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				align-self: stretch;
 			}
 
 			#filler {
@@ -45,15 +51,11 @@ export class ToolbarPane extends List {
 		`
 	}
 
-	protected override handleSlotChange() {
-		this.itemsChange.dispatch(this.unfilteredItems.map(x => x as HTMLElement))
-	}
-
 	protected override get template() {
 		return html`
 			<div id='pad'></div>
-			${super.template}
-			<div id='filler' ${observeResize(elems => this.fillerResize.dispatch(elems))}></div>
+			<slot @slotchange=${() => this.itemsChange.dispatch()}></slot>
+			<div id='filler' ${observeResize(elements => this.fillerResize.dispatch(elements))}></div>
 		`
 	}
 }

@@ -3,10 +3,17 @@ import { MaterialIcon } from '@3mo/icon'
 import { ToolbarController } from './index.js'
 
 /**
+ * @element mo-toolbar
+ *
  * @attr overflowIcon
  * @attr overflowPosition
  * @attr collapsed
- * @csspart overflowIcon
+ *
+ * @csspart pane - The toolbar pane
+ * @csspart overflowIcon - The overflow icon
+ *
+ * @slot - The default slot containing toolbar pane items
+ * @slot overflow - The overflow action element(s)
  */
 @component('mo-toolbar')
 export class Toolbar extends Component {
@@ -14,7 +21,7 @@ export class Toolbar extends Component {
 	@property() overflowPosition: 'end' | 'start' = 'end'
 	@property({ type: Boolean, reflect: true }) collapsed = false
 
-	protected toolbarController = new ToolbarController(this)
+	protected readonly toolbarController = new ToolbarController(this)
 
 	static override get styles() {
 		return css`
@@ -31,22 +38,40 @@ export class Toolbar extends Component {
 	override get template() {
 		return html`
 			<mo-flex direction='horizontal' alignItems='center' ${style({ display: !this.collapsed ? 'flex' : 'inline-flex' })}>
-				${this.toolbarController.paneTemplate}
+				${this.paneTemplate}
 				<mo-popover-container
 					placement='block-end'
 					alignment=${(this.collapsed || this.overflowPosition === 'start') ? 'start' : 'end'}
 					${style({ flex: '0 0', justifyContent: 'flex-end', order: this.overflowPosition === 'start' ? -1 : 'unset' })}
 				>
-					<slot name='overflow-button'>
-						<mo-icon-button icon=${this.overflowIcon} part='overflowIcon'
-						?disabled=${!this.toolbarController.slotController?.getAssignedElements(this.toolbarController.overflowSlot).length}
-						></mo-icon-button>
-					</slot>
-					<mo-menu slot='popover'>
-						${this.toolbarController.overflowTemplate}
-					</mo-menu>
+					<slot name='overflow'>${this.defaultOverflowOpenerTemplate}</slot>
+					${this.menuTemplate}
 				</mo-popover-container>
 			</mo-flex>
+		`
+	}
+
+	protected get paneTemplate() {
+		return html`
+			<mo-toolbar-pane part='pane' ${this.toolbarController.pane()}>
+				<slot name=${this.toolbarController.paneSlotName}></slot>
+			</mo-toolbar-pane>
+		`
+	}
+
+	protected get defaultOverflowOpenerTemplate() {
+		return html`
+			<mo-icon-button part='overflowIcon' icon=${this.overflowIcon}
+				?disabled=${!this.toolbarController.slotController?.hasAssignedContent(this.toolbarController.overflowContentSlotName)}
+			></mo-icon-button>
+		`
+	}
+
+	protected get menuTemplate() {
+		return html`
+			<mo-menu slot='popover'>
+				<slot name=${this.toolbarController.overflowContentSlotName}></slot>
+			</mo-menu>
 		`
 	}
 }

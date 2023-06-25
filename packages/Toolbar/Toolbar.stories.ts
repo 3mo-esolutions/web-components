@@ -1,7 +1,7 @@
-import { meta, story } from '../../.storybook/story.js'
-import { Component, html, property, ref } from '@a11d/lit'
+import { Component, html, property, range } from '@a11d/lit'
 import { MaterialIcon } from '@3mo/icon'
 import { ToolbarController } from './index.js'
+import { meta, story } from '../../.storybook/story.js'
 import p from './package.json'
 import './index.js'
 
@@ -15,26 +15,6 @@ export default meta({
 			},
 		}
 	},
-})
-
-export const Custom = story({
-	args: { itemCount: 4 },
-	render: ({ itemCount }) => {
-		return html`
-			<mo-custom-toolbar-story>
-				${[...Array(itemCount).keys()].map(i => html`
-					<mo-menu-item icon='arrow_circle_left' slot='left'>
-						<span>Left ${i + 1}</span>
-					</mo-menu-item>
-				`)}
-				${[...Array(itemCount).keys()].map(i => html`
-					<mo-menu-item icon='arrow_circle_right' slot='right'>
-						<span>Right ${i + 1}</span>
-					</mo-menu-item>
-				`)}
-			</mo-custom-toolbar-story>
-		`
-	}
 })
 
 export const Default = story({
@@ -53,7 +33,7 @@ export const Default = story({
 		},
 		overflowPosition: {
 			control: { type: 'radio' },
-			options: [ 'start', 'end' ]
+			options: ['start', 'end']
 		}
 	},
 	render: ({ collapsed, extraItems, overflowIcon, overflowPosition }) => html`
@@ -67,7 +47,7 @@ export const Default = story({
 			<mo-menu-item icon='content_paste'>
 				<span>Paste</span>
 			</mo-menu-item>
-			${[...Array(extraItems).keys()].map(i => html`
+			${[...range(0, extraItems)].map(i => html`
 				<mo-menu-item icon='category'>
 					<span>Item ${i + 1}</span>
 				</mo-menu-item>
@@ -76,25 +56,52 @@ export const Default = story({
 	`
 })
 
+export const Custom = story({
+	args: { itemCount: 4 },
+	render: ({ itemCount }) => {
+		return html`
+			<mo-custom-toolbar-story>
+				${[...range(0, itemCount)].map(i => html`
+					<mo-menu-item icon='arrow_circle_left' slot='left'>
+						<span>Left ${i + 1}</span>
+					</mo-menu-item>
+				`)}
+				${[...range(0, itemCount)].map(i => html`
+					<mo-menu-item icon='arrow_circle_right' slot='right'>
+						<span>Right ${i + 1}</span>
+					</mo-menu-item>
+				`)}
+			</mo-custom-toolbar-story>
+		`
+	}
+})
 class CustomToolbarStory extends Component {
 	@property({ type: Boolean, reflect: true }) open = false
-	protected leftToolbarController = new ToolbarController(this, 'left', 'left-ovf')
-	protected rightToolbarController = new ToolbarController(this, 'right', 'right-ovf')
+
+	protected readonly leftToolbarController = new ToolbarController(this, {
+		paneSlotName: 'left',
+		overflowContentSlotName: 'left-ovf',
+	})
+
+	protected readonly rightToolbarController = new ToolbarController(this, {
+		paneSlotName: 'right',
+		overflowContentSlotName: 'right-ovf',
+	})
 
 	protected override get template() {
 		return html`
 			<div style='display: flex; width: 100%; gap: 5px'>
-				<mo-toolbar-pane ${ref(this.leftToolbarController.initiate)} style='flex: 1 1;'>
-					<slot name='left'></slot>
+				<mo-toolbar-pane ${this.leftToolbarController.pane()} style='flex: 1 1;'>
+					<slot name=${this.leftToolbarController.paneSlotName}></slot>
 				</mo-toolbar-pane>
 				<mo-button style='flex: 0 0 auto' @click=${() => this.open = !this.open}>Overflow</mo-button>
-				<mo-toolbar-pane ${ref(this.rightToolbarController.initiate)} style='flex: 1 1; direction: rtl'>
-					<slot name='right'></slot>
+				<mo-toolbar-pane ${this.rightToolbarController.pane()} style='flex: 1 1; direction: rtl'>
+					<slot name=${this.rightToolbarController.paneSlotName}></slot>
 				</mo-toolbar-pane>
 			</div>
 			<mo-list style='max-width: 350px; border-radius: var(--mo-border-radius); margin-inline: auto; margin-block: 10px; background-color: var(--mo-color-accent); display: ${this.open ? 'block' : 'none'}'>
-				${this.leftToolbarController.overflowTemplate}
-				${this.rightToolbarController.overflowTemplate}
+				<slot name=${this.leftToolbarController.overflowContentSlotName}></slot>
+				<slot name=${this.rightToolbarController.overflowContentSlotName}></slot>
 			</mo-list>
 		`
 	}
