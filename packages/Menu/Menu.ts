@@ -48,7 +48,7 @@ export class Menu extends Component {
 	@property({ type: Boolean }) manualOpen = false
 	@property() opener?: string
 	@property() selectionMode?: SelectableList['selectionMode']
-	@property({ type: Object }) value?: SelectableList['value']
+	@property({ type: Array }) value?: SelectableList['value']
 	@disabledProperty() disabled = false
 
 	@state() protected coordinates?: PopoverCoordinates
@@ -114,8 +114,8 @@ export class Menu extends Component {
 				.coordinates=${this.coordinates}
 			>
 				<mo-selectable-list
-					selectionMode=${this.selectionMode}
-					.value=${this.value}
+					selectionMode=${ifDefined(this.selectionMode)}
+					.value=${this.value ?? []}
 					@change=${this.handleChange.bind(this)}
 					@menuItemClick=${this.handleMenuItemClick.bind(this)}
 					@itemsChange=${this.handleItemsChange.bind(this)}
