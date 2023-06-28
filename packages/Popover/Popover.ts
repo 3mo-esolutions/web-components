@@ -42,13 +42,18 @@ export class Popover extends Component {
 		}
 	}
 
+	private timerId?: number
 	protected async openChanged() {
-		if (this.open) {
-			this.toggleAttribute('displayOpen', true)
-		} else {
-			await new Promise(r => setTimeout(r, 300))
-			this.toggleAttribute('displayOpen', false)
+		if (this.timerId) {
+			window.clearTimeout(this.timerId)
+			this.timerId = undefined
 		}
+
+		if (this.open === false) {
+			await new Promise(r => this.timerId = window.setTimeout(r, 300))
+		}
+
+		this.toggleAttribute('displayOpen', this.open)
 	}
 
 	static get translationStyles() {
