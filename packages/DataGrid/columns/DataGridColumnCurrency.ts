@@ -9,7 +9,7 @@ export class DataGridColumnCurrency<TData> extends DataGridColumnNumberBase<TDat
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	getContentTemplate(value: number | undefined, _data: TData) {
-		return html`${(value ?? 0).formatAsCurrency(this.currency.code)}`
+		return html`${(value ?? 0).formatAsCurrency(this.currency)}`
 	}
 
 	getEditContentTemplate(value: number | undefined, data: TData) {
@@ -24,7 +24,7 @@ export class DataGridColumnCurrency<TData> extends DataGridColumnNumberBase<TDat
 
 	getSumTemplate(sum: number) {
 		return html`
-			<span ${style({ fontWeight: '500', color: 'var(--mo-color-accent)' })}>${sum.formatAsCurrency()}</span>
+			<span ${style({ fontWeight: '500', color: 'var(--mo-color-accent)' })}>${sum.formatAsCurrency(this.currency)}</span>
 		`
 	}
 }
