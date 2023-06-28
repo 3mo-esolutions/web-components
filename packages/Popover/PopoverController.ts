@@ -184,11 +184,11 @@ export class PopoverController extends Controller {
 				top = anchorRect.top + anchorRect.height
 				break
 			case PopoverPlacement.InlineStart:
-				left = anchorRect.left - popoverRect.width
+				left = !reverse ? anchorRect.left - popoverRect.width : anchorRect.right
 				top = anchorRect.top * startWeight + anchorRect.bottom * endWeight - popoverRect.height * endWeight
 				break
 			case PopoverPlacement.InlineEnd:
-				left = anchorRect.left + anchorRect.width
+				left = !reverse ? anchorRect.right : anchorRect.left - popoverRect.width
 				top = anchorRect.top * startWeight + anchorRect.bottom * endWeight - popoverRect.height * endWeight
 				break
 		}
