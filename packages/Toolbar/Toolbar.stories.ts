@@ -53,6 +53,7 @@ export const Default = story({
 				</mo-menu-item>
 			`)}
 		</mo-toolbar>
+		<div style='height: 1000px'></div>
 	`
 })
 

@@ -12,6 +12,7 @@ const generatePaneDirective = (controller: ToolbarController) => directive(class
 
 	override async update(part: ElementPart) {
 		this.pane = part.element as ToolbarPane
+		controller.beginObserving(this.pane)
 		this.pane.fillerResize.subscribe(this.handleResize)
 		await this.pane.updateComplete
 		this.pane.items.forEach(x => controller.intersectionController?.observe(x))
@@ -25,7 +26,7 @@ const generatePaneDirective = (controller: ToolbarController) => directive(class
 	}
 
 	handleItemsChange = () => {
-		this.pane?.items.forEach(x => controller.intersectionController?.observe(x))
+		this.pane?.items.forEach(x => x.slot === controller.paneSlotName && controller.intersectionController?.observe(x))
 	}
 
 	handleResize = () => {
@@ -38,20 +39,25 @@ const generatePaneDirective = (controller: ToolbarController) => directive(class
 export class ToolbarController extends Controller {
 	readonly slotController = this.host.slotController ?? new SlotController(this.host)
 
-	readonly intersectionController = new IntersectionController(this.host, {
-		target: null,
-		config: { threshold: 1 },
-		callback: entries => {
-			for (const entry of entries) {
-				const target = entry.target
-				if (!entry.isIntersecting) {
-					target.slot = this.overflowContentSlotName
-					this.intersectionController?.unobserve(target)
+	protected _intersectionController?: IntersectionController
+	get intersectionController() { return this._intersectionController }
+
+	beginObserving(root: ToolbarPane) {
+		this._intersectionController = new IntersectionController(this.host, {
+			target: null,
+			config: { threshold: .99, root },
+			callback: entries => {
+				for (const entry of entries) {
+					const target = entry.target
+					if (!entry.isIntersecting) {
+						target.slot = this.overflowContentSlotName
+						this.intersectionController?.unobserve(target)
+					}
 				}
+				this.host.requestUpdate()
 			}
-			this.host.requestUpdate()
-		}
-	})
+		})
+	}
 
 	get paneSlotName() { return this.options?.paneSlotName ?? '' }
 	get overflowContentSlotName() { return this.options?.overflowContentSlotName ?? 'overflow-content' }
