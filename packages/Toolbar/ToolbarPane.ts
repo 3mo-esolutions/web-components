@@ -22,6 +22,7 @@ export class ToolbarPane extends Component {
 				overflow: clip;
 				flex-direction: row;
 				align-items: center;
+				align-content: center;
 			}
 
 			:host(:focus) {
@@ -36,16 +37,13 @@ export class ToolbarPane extends Component {
 				flex: 1 0 0%;
 				text-overflow: ellipsis;
 				white-space: nowrap;
-				align-self: stretch;
 			}
 
 			#filler {
-				align-self: stretch;
 				flex: 0 1 100%;
 			}
 
 			#pad {
-				align-self: stretch;
 				flex: 0 0 1px;
 			}
 		`

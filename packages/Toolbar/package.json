@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/toolbar",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"description": "A toolbar web-component with overflow menu.",
 	"repository": {
 		"type": "git",
