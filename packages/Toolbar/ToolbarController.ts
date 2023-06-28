@@ -47,14 +47,18 @@ export class ToolbarController extends Controller {
 			target: null,
 			config: { threshold: .99, root },
 			callback: entries => {
+				let changed = false
 				for (const entry of entries) {
 					const target = entry.target
 					if (!entry.isIntersecting) {
 						target.slot = this.overflowContentSlotName
 						this.intersectionController?.unobserve(target)
+						changed = true
 					}
 				}
-				this.host.requestUpdate()
+				if (changed) {
+					this.host.requestUpdate()
+				}
 			}
 		})
 	}
