@@ -44,7 +44,7 @@ export const Default = story({
 			<mo-menu-item icon='content_copy'>
 				<span>Copy</span>
 			</mo-menu-item>
-			<mo-menu-item icon='content_paste'>
+			<mo-menu-item icon='content_paste' data-no-overflow>
 				<span>Paste</span>
 			</mo-menu-item>
 			${[...range(0, extraItems)].map(i => html`

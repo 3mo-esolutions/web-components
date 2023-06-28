@@ -15,7 +15,7 @@ const generatePaneDirective = (controller: ToolbarController) => directive(class
 		controller.beginObserving(this.pane)
 		this.pane.fillerResize.subscribe(this.handleResize)
 		await this.pane.updateComplete
-		this.pane.items.forEach(x => controller.intersectionController?.observe(x))
+		this.pane.items.forEach(x => x.slot === controller.paneSlotName && !x.hasAttribute('data-no-overflow') && controller.intersectionController?.observe(x))
 		this.pane.itemsChange.subscribe(this.handleItemsChange)
 		return super.update(part, [])
 	}
@@ -26,7 +26,7 @@ const generatePaneDirective = (controller: ToolbarController) => directive(class
 	}
 
 	handleItemsChange = () => {
-		this.pane?.items.forEach(x => x.slot === controller.paneSlotName && controller.intersectionController?.observe(x))
+		this.pane?.items.forEach(x => x.slot === controller.paneSlotName && !x.hasAttribute('data-no-overflow') && controller.intersectionController?.observe(x))
 	}
 
 	handleResize = () => {

@@ -34,13 +34,14 @@ export class ToolbarPane extends Component {
 			}
 
 			::slotted(*) {
-				flex: 1 0 0%;
+				flex: 0 0 0%;
 				text-overflow: ellipsis;
 				white-space: nowrap;
 			}
 
 			#filler {
 				flex: 0 1 100%;
+				align-self: stretch;
 			}
 
 			#pad {
