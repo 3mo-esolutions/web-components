@@ -804,7 +804,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 						${t('${count:pluralityNumber} entries selected', { count: this.selectedData.length })}
 					</div>
 					${!this.getRowContextMenuTemplate ? nothing : html`
-						<mo-flex id='flexActions' direction='horizontal' ${!this.getRowContextMenuTemplate ? nothing : contextMenu(this.getRowContextMenuTemplate(this.selectedData))}>
+						<mo-flex id='flexActions' direction='horizontal' ${contextMenu(this.getRowContextMenuTemplate(this.selectedData))}>
 							<div ${style({ width: '*' })}>${t('Options')}</div>
 							<mo-icon-button dense icon='arrow_drop_down' ${style({ display: 'flex', alignItems: 'center', justifyContent: 'center' })}></mo-icon-button>
 						</mo-flex>
