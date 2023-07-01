@@ -1,0 +1,26 @@
+{
+	"name": "@3mo/safe-round",
+	"version": "1.0.0",
+	"description": "Round numbers without floating point errors",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/3mo-esolutions/web-components"
+	},
+	"keywords": [
+		"Math",
+		"round",
+		"safe-round"
+	],
+	"author": "3MO GmbH",
+	"license": "MIT",
+	"homepage": "https://www.3mo.de",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"dependencies": {
+		"tslib": "x"
+	}
+}
