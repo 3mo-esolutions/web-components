@@ -9,7 +9,7 @@ export function extractDateTimeOptions(options?: DateFormatOptions) {
 	return [language ?? Localizer.currentLanguage, isEmpty ? undefined : otherOptions] as const
 }
 
-Date.prototype.format = function (this: Date, options?: DateFormatOptions) {
+function getFormatter(options?: DateFormatOptions) {
 	const [language, otherOptions] = extractDateTimeOptions(options)
 	return Intl.DateTimeFormat(language, otherOptions ?? {
 		year: 'numeric',
@@ -19,11 +19,20 @@ Date.prototype.format = function (this: Date, options?: DateFormatOptions) {
 		minute: '2-digit',
 		second: '2-digit',
 		timeZoneName: 'shortOffset'
-	}).format(this)
+	})
+}
+
+Date.prototype.format = function (this: Date, options?: DateFormatOptions) {
+	return getFormatter(options).format(this)
+}
+
+Date.prototype.formatToParts = function (this: Date, options?: DateFormatOptions) {
+	return getFormatter(options).formatToParts(this)
 }
 
 declare global {
 	interface Date {
 		format(options?: DateFormatOptions): string
+		formatToParts(options?: DateFormatOptions): Intl.DateTimeFormatPart[]
 	}
 }
