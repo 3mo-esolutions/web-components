@@ -65,9 +65,9 @@ export abstract class FieldComponent<T> extends Component {
 
 	protected handleChange(value: T | undefined, e?: Event) {
 		e?.stopPropagation()
-		this.handleInput(value)
 		this.value = value
 		this.change.dispatch(this.value)
+		this.validate()
 	}
 
 	protected get isPopulated() {
