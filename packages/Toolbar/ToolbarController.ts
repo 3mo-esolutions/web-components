@@ -43,7 +43,7 @@ export class ToolbarController extends Controller {
 	get intersectionController() { return this._intersectionController }
 
 	beginObserving(root: ToolbarPane) {
-		this._intersectionController = new IntersectionController(this.host, {
+		this._intersectionController = new IntersectionController(root, {
 			target: null,
 			config: { threshold: .99, root },
 			callback: entries => {
@@ -57,7 +57,7 @@ export class ToolbarController extends Controller {
 					}
 				}
 				if (changed) {
-					this.host.requestUpdate()
+					root.requestUpdate()
 				}
 			}
 		})
