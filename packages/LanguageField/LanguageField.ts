@@ -131,7 +131,7 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 	protected get languageSelectorStartTemplate() {
 		return html`
 			${this._languages.length === 1 ? nothing : html`
-				<mo-icon-button icon='launch' ${style({ display: 'flex', alignItems: 'center' })} @click=${() => this.openDialog()}></mo-icon-button>
+				<mo-icon-button icon='launch' ${style({ display: 'flex', alignItems: 'center' })} @click=${(e: PointerEvent) => { e.stopPropagation(); this.openDialog() }}></mo-icon-button>
 			`}
 			${this.flagTemplate}
 		`

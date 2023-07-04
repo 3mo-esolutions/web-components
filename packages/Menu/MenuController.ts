@@ -21,7 +21,6 @@ export class MenuController extends Controller {
 				this.setOpen(event, !this.open)
 			}
 		},
-		options: { capture: true }
 	})
 
 	protected anchorKeyDownEventController = new EventListenerController(this.host, {
