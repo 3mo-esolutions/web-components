@@ -1,5 +1,5 @@
 import { html, property, css, event, component, live, query, nothing, eventListener, state } from '@a11d/lit'
-import { InputFieldComponent } from '@3mo/field'
+import { FieldComponent } from '@3mo/field'
 import type { ListItem } from '@3mo/list'
 import type { Menu } from '@3mo/menu'
 import { Option } from './Option.js'
@@ -22,15 +22,25 @@ import { Data, FieldSelectValueController, Index, Value } from './SelectValueCon
  * @fires indexChange {CustomEvent<Index>}
  */
 @component('mo-field-select')
-export class FieldSelect<T> extends InputFieldComponent<Value> {
+export class FieldSelect<T> extends FieldComponent<Value> {
 	@event() readonly dataChange!: EventDispatcher<Data<T>>
 	@event() readonly indexChange!: EventDispatcher<Index>
 
 	@property() default?: string
+	@property({ type: Boolean }) dense = false
 	@property({ type: Boolean }) reflectDefault = false
 	@property({ type: Boolean }) multiple = false
 	@property({ type: Boolean }) searchable = false
-	@property({ type: Boolean, reflect: true }) open = false
+	@property({
+		type: Boolean,
+		reflect: true,
+		updated(this: FieldSelect<T>) {
+			if (this.searchable) {
+				this.searchInputElement?.setSelectionRange(0, this.searchString?.length ?? 0)
+				this.searchInputElement?.focus()
+			}
+		}
+	}) open = false
 	@property({ type: String, updated(this: FieldSelect<T>) { this.valueController.value = this.value } }) value: Value
 	@property({ type: Number, updated(this: FieldSelect<T>) { this.valueController.index = this.index } }) index: Index
 	@property({ type: Object, updated(this: FieldSelect<T>) { this.valueController.data = this.data } }) data: Data<T>
@@ -43,6 +53,19 @@ export class FieldSelect<T> extends InputFieldComponent<Value> {
 			}
 		}
 	}) protected [FieldSelectValueController.requestSyncKey] = 0
+
+	@state() private searchString?: string
+
+	@query('input#value') readonly valueInputElement!: HTMLInputElement
+	@query('input#search') readonly searchInputElement?: HTMLInputElement
+
+	override get isPopulated() {
+		return !!this.value
+	}
+
+	protected override get isDense() {
+		return this.dense
+	}
 
 	@query('mo-menu') readonly menu?: Menu
 
@@ -120,15 +143,23 @@ export class FieldSelect<T> extends InputFieldComponent<Value> {
 	}
 
 	protected override get inputTemplate() {
-		return html`
+		return !this.open || !this.searchable ? html`
 			<input
-				part='input'
+				id='value'
+				type='text'
+				autocomplete='off'
+				readonly
+				value=${this.valueToInputValue(this.value) || ''}
+			>
+		` : html`
+			<input
+				id='search'
 				type='text'
 				autocomplete='off'
 				?readonly=${!this.searchable}
 				?disabled=${this.disabled}
-				.value=${live(this.inputStringValue || '')}
-				@input=${(e: Event) => this.handleInput(this.inputElement.value, e)}
+				.value=${live(this.searchString || '')}
+				@input=${(e: Event) => { this.searchString = (e.target as HTMLInputElement).value; this.search() }}
 			>
 		`
 	}
@@ -182,7 +213,6 @@ export class FieldSelect<T> extends InputFieldComponent<Value> {
 
 	requestValueUpdate() {
 		this.options.forEach(o => o.selected = o.index !== undefined && this.valueController.menuValue.includes(o.index))
-		this.inputStringValue = this.valueToInputValue(this.value)
 	}
 
 	protected valueToInputValue(value: Value) {
@@ -196,16 +226,16 @@ export class FieldSelect<T> extends InputFieldComponent<Value> {
 
 	protected override handleFocus() {
 		super.handleFocus()
-		this.inputElement.setSelectionRange(0, 0)
 		if (this.searchable) {
-			this.select()
+			this.open = true
 		}
 	}
 
-	protected override handleInput(v: Value, e: Event) {
-		super.handleInput(v, e)
+	protected override handleBlur() {
+		super.handleBlur()
 		if (this.searchable) {
-			this.searchOptions()
+			this.open = false
+			this.resetSearch()
 		}
 	}
 
@@ -214,6 +244,7 @@ export class FieldSelect<T> extends InputFieldComponent<Value> {
 		this.change.dispatch(this.value)
 		this.dataChange.dispatch(this.data)
 		this.indexChange.dispatch(this.index)
+		this.resetSearch()
 		if (!this.multiple) {
 			this.open = false
 		}
@@ -226,14 +257,17 @@ export class FieldSelect<T> extends InputFieldComponent<Value> {
 		}
 	}
 
-	protected get searchKeyword() {
-		return this.inputElement.value.toLowerCase().trim()
+	override setCustomValidity(error: string) { error }
+
+	override async checkValidity() {
+		await this.updateComplete
+		return true
 	}
 
-	private async searchOptions() {
-		await this.search()
-		await this.updateComplete
-		this.open = this.options.length > 0
+	override reportValidity() { }
+
+	protected get searchKeyword() {
+		return this.searchString?.toLowerCase().trim() || ''
 	}
 
 	protected search() {
@@ -246,6 +280,14 @@ export class FieldSelect<T> extends InputFieldComponent<Value> {
 			option.disabled = !matches
 		}
 		return Promise.resolve()
+	}
+
+	protected resetSearch() {
+		this.searchString = this.valueToInputValue(this.value)
+		for (const option of this.options) {
+			option.removeAttribute('data-search-no-match')
+			option.disabled = false
+		}
 	}
 }
 

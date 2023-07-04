@@ -89,15 +89,15 @@ describe('FieldSelect', () => {
 
 			fixture.component.value = 4
 			await waitUpdateAndOneTick()
-			expect(fixture.component.inputElement.value).toBe('')
+			expect(fixture.component.valueInputElement.value).toBe('')
 
 			fixture.component.options[0]!.value = '4'
 			await waitUpdateAndOneTick()
-			expect(fixture.component.inputElement.value).toBe('John')
+			expect(fixture.component.valueInputElement.value).toBe('John')
 
 			fixture.component.options[0]!.value = '5'
 			await waitUpdateAndOneTick()
-			expect(fixture.component.inputElement.value).toBe('')
+			expect(fixture.component.valueInputElement.value).toBe('')
 
 			expect(changeSpy).not.toHaveBeenCalled()
 			expect(indexChangeSpy).not.toHaveBeenCalled()
@@ -113,7 +113,7 @@ describe('FieldSelect', () => {
 			expect(fixture.component.index).toBe(index)
 			expect(fixture.component.value).toBe(people[index]!.id)
 			expect(fixture.component.data).toBe(people[index]!)
-			expect(fixture.component.inputElement.value).toBe(people[index]!.name)
+			expect(fixture.component.valueInputElement.value).toBe(people[index]!.name)
 		}
 
 		it('should select the option by value', async () => {
@@ -142,7 +142,7 @@ describe('FieldSelect', () => {
 			expect(fixture.component.index).toEqual(index)
 			expect(fixture.component.value).toEqual(index.map(i => people[i]!.id))
 			expect(fixture.component.data).toEqual(index.map(i => people[i]!))
-			expect(fixture.component.inputElement.value).toBe(index.map(i => people[i]!.name).join(', '))
+			expect(fixture.component.valueInputElement.value).toBe(index.map(i => people[i]!.name).join(', '))
 		}
 
 		it('should select the option by value', async () => {
