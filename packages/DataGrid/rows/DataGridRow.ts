@@ -178,7 +178,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	}
 
 	protected get selectionTemplate() {
-		return this.dataGrid.hasSelection === false ? nothing : html`
+		return this.dataGrid.hasSelection === false || this.dataGrid.selectionCheckboxesHidden ? nothing : html`
 			<mo-flex id='selectionContainer' ${style({ width: 'var(--mo-data-grid-column-selection-width)' })} justifyContent='center' alignItems='center'
 				@click=${(e: Event) => e.stopPropagation()}
 				@dblclick=${(e: Event) => e.stopPropagation()}
@@ -240,7 +240,11 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			} else {
 				if (value) {
 					if (this.dataGrid.selectionMode === DataGridSelectionMode.Multiple) {
-						dataToSelect = [...dataToSelect, this.data]
+						if (this.dataGrid.selectionCheckboxesHidden) {
+							dataToSelect = [this.data]
+						} else {
+							dataToSelect = [...dataToSelect, this.data]
+						}
 					} else if (this.dataGrid.selectionMode === DataGridSelectionMode.Single) {
 						dataToSelect = [this.data]
 					}
@@ -256,16 +260,16 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	}
 
 	protected handleContentClick() {
-		if (this.dataGrid.selectOnClick && this.dataGrid.editability !== DataGridEditability.OnRowClick) {
-			this.setSelection(!this.selected)
-		}
-
-		if (this.dataGrid.detailsOnClick === true && this.dataGrid.editability !== DataGridEditability.OnRowClick) {
-			this.toggleDetails()
-		}
-
 		if (this.dataGrid.editability === DataGridEditability.OnRowClick) {
 			this.enableEditMode()
+		} else {
+			if (this.dataGrid.selectOnClick || this.dataGrid.selectionCheckboxesHidden) {
+				this.setSelection(this.dataGrid.selectionCheckboxesHidden || !this.selected)
+			}
+
+			if (this.dataGrid.hasDetails) {
+				this.toggleDetails()
+			}
 		}
 
 		this.dataGrid.rowClick.dispatch(this)

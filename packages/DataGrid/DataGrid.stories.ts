@@ -23,7 +23,7 @@ const generatePeople = (count: number) => {
 	return new Array(count).fill(0).map((_, i) => ({
 		id: i + 1,
 		name: names[Math.floor(Math.random() * names.length)],
-		age: Math.floor(Math.random() * 100),
+		age: Math.floor(Math.random() * 80),
 		city: cities[Math.floor(Math.random() * cities.length)]
 	}))
 }
@@ -50,6 +50,7 @@ export const Selection = story({
 	args: {
 		selectionMode: 'single',
 		selectOnClick: false,
+		selectionCheckboxesHidden: false,
 	},
 	argTypes: {
 		selectionMode: {
@@ -59,8 +60,11 @@ export const Selection = story({
 			}
 		}
 	},
-	render: ({ selectionMode, selectOnClick }) => html`
-		<mo-data-grid .data=${fivePeople} style='height: 500px' selectionMode=${selectionMode} ?selectOnClick=${selectOnClick}>
+	render: ({ selectionMode, selectOnClick, selectionCheckboxesHidden }) => html`
+		<mo-data-grid .data=${fivePeople} style='height: 500px' selectionMode=${selectionMode as any}
+			?selectOnClick=${selectOnClick}
+			?selectionCheckboxesHidden=${selectionCheckboxesHidden}
+		>
 			${columnsTemplate}
 		</mo-data-grid>
 	`

@@ -75,6 +75,7 @@ export type DataGridSorting<TData> = {
  * @attr isDataSelectable - Whether data of a given row is selectable.
  * @attr selectedData - The selected data.
  * @attr selectOnClick - Whether the row should be selected on click.
+ * @attr selectionCheckboxesHidden - Whether the selection checkboxes should be hidden. This activates selection on row click ignoring the `selectOnClick` attribute.
  * @attr selectionBehaviorOnDataChange - The behavior of the selection when the data changes.
  * @attr multipleDetails - Whether multiple details can be opened at the same time.
  * @attr subDataGridDataSelector - The key path of the sub data grid data.
@@ -149,6 +150,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	@property({ type: Object }) isDataSelectable?: (data: TData) => boolean
 	@property({ type: Array }) selectedData = new Array<TData>()
 	@property({ type: Boolean }) selectOnClick = false
+	@property({ type: Boolean }) selectionCheckboxesHidden = false
 	@property() selectionBehaviorOnDataChange = DataGridSelectionBehaviorOnDataChange.Reset
 
 	@property({ type: Object }) getRowDetailsTemplate?: (data: TData) => HTMLTemplateResult
@@ -172,7 +174,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	@property({ type: Boolean, reflect: true }) protected fabSlotCollapsed = false
 
 	@queryAll('[mo-data-grid-row]') readonly rows!: Array<DataGridRow<TData, TDetailsElement>>
-	@query('mo-data-grid-header') private readonly header?: DataGridHeader<TData>
+	@query('mo-data-grid-header') readonly header?: DataGridHeader<TData>
 	@query('#rowsContainer') private readonly rowsContainer?: HTMLElement
 	@query('mo-data-grid-footer') private readonly footer?: DataGridFooter<TData>
 	@query('mo-data-grid-side-panel') private readonly sidePanel?: DataGridSidePanel<TData>
@@ -349,13 +351,13 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}
 
 	get hasSums() {
-		const hasSums = !!this.columns.find(c => c.sumHeading) || !!this.querySelector('* [slot="sum"]') || !!this.renderRoot.querySelector('slot[name="sum"] > *')
+		const hasSums = !!this.columns.find(c => c.sumHeading) || !!this.querySelector('* [slot="sum"]') || !!this.renderRoot?.querySelector('slot[name="sum"] > *')
 		this.toggleAttribute('hasSums', hasSums)
 		return hasSums
 	}
 
 	get hasFabs() {
-		const hasFabs = !!this.querySelector('* [slot=fab]') || !!this.renderRoot.querySelector('#flexFab *:not(slot[name=fab])')
+		const hasFabs = !!this.querySelector('* [slot=fab]') || !!this.renderRoot?.querySelector('#flexFab *:not(slot[name=fab])')
 		this.toggleAttribute('hasFabs', hasFabs)
 		return hasFabs
 	}
@@ -858,7 +860,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}
 
 	get selectionColumnWidth() {
-		return !this.hasSelection ? undefined : window.getComputedStyle(this).getPropertyValue('--mo-data-grid-column-selection-width')
+		return !this.hasSelection || this.selectionCheckboxesHidden ? undefined : window.getComputedStyle(this).getPropertyValue('--mo-data-grid-column-selection-width')
 	}
 
 	get dataColumnsWidths() {
@@ -1006,6 +1008,7 @@ function subDataGridSelectorChanged<TData>(this: DataGrid<TData>) {
 			.selectionMode=${this.selectionMode}
 			.isDataSelectable=${this.isDataSelectable}
 			?selectOnClick=${this.selectOnClick}
+			?selectionCheckboxesHidden=${this.selectionCheckboxesHidden}
 			?primaryContextMenuItemOnDoubleClick=${this.primaryContextMenuItemOnDoubleClick}
 			?multipleDetails=${this.multipleDetails}
 			?detailsOnClick=${this.detailsOnClick}
