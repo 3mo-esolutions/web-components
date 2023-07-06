@@ -11,11 +11,11 @@ export class NavigationItem extends Component {
 
 	private get menuContentTemplate() {
 		const getItemTemplate = (navigation: Navigation): TemplateResult => navigation.hidden ? nothing : !navigation.children ? html`
-			<mo-navigation-list-item ${!navigation.component ? nothing : routerLink({
+			<mo-navigation-menu-item ${!navigation.component ? nothing : routerLink({
 			component: navigation.component as PageComponent,
 			matchMode: navigation.matchMode,
 			invocationHandler: () => this.open = false
-		})}>${navigation.label} ${navigation.openInNewPage ? '...' : ''}</mo-navigation-list-item>
+			})}>${navigation.label} ${navigation.openInNewPage ? '...' : ''}</mo-navigation-menu-item>
 		` : html`
 			<mo-nested-menu-item>
 				${navigation.label}

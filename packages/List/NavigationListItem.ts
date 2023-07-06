@@ -1,5 +1,5 @@
 import { component, css, html, nothing, property } from '@a11d/lit'
-import { SelectableListItem } from '@3mo/list'
+import { ListItem } from '@3mo/list'
 import { MaterialIcon } from '@3mo/icon'
 
 /**
@@ -7,16 +7,8 @@ import { MaterialIcon } from '@3mo/icon'
  * @attr icon
  */
 @component('mo-navigation-list-item')
-export class NavigationListItem extends SelectableListItem {
+export class NavigationListItem extends ListItem {
 	@property() icon?: MaterialIcon
-
-	@property({
-		type: Boolean,
-		attribute: 'data-router-selected',
-		updated(this: NavigationListItem) {
-			this.selected = this.routerSelected
-		}
-	}) protected routerSelected = false
 
 	static override get styles() {
 		return css`
@@ -26,6 +18,7 @@ export class NavigationListItem extends SelectableListItem {
 
 			:host([data-router-selected]) {
 				background-color: var(--mo-color-accent-transparent);
+				color: var(--mo-color-accent);
 			}
 		`
 	}

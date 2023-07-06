@@ -192,9 +192,9 @@ export abstract class BusinessSuiteApplication extends Application {
 
 	protected get userAvatarMenuItemsTemplate() {
 		return html`
-			<mo-navigation-list-item icon='manage_accounts'
+			<mo-navigation-menu-item icon='manage_accounts'
 				${routerLink({ component: new PagePreferences, matchMode: RouteMatchMode.IgnoreParameters, invocationHandler: () => this.drawerOpen = false })}
-			>${t('User Settings')}</mo-navigation-list-item>
+			>${t('User Settings')}</mo-navigation-menu-item>
 		`
 	}
 

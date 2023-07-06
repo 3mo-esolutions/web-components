@@ -83,10 +83,10 @@ export class UserAvatar extends Component {
 
 	private get signOutTemplate() {
 		return !Authentication.hasAuthenticator() || !this.user ? nothing : html`
-			<mo-list-item @click=${() => Authentication.unauthenticate()}>
+			<mo-menu-item @click=${() => Authentication.unauthenticate()}>
 				<mo-icon icon='exit_to_app'></mo-icon>
 				Sign out
-			</mo-list-item>
+			</mo-menu-item>
 		`
 	}
 }
