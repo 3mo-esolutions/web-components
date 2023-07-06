@@ -54,7 +54,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 		}
 	}) protected [FieldSelectValueController.requestSyncKey] = 0
 
-	@state() private searchString?: string
+	@state() protected searchString?: string
 
 	@query('input#value') readonly valueInputElement!: HTMLInputElement
 	@query('input#search') readonly searchInputElement?: HTMLInputElement
