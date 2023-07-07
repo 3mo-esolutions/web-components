@@ -11,7 +11,7 @@ export class DataGridColumnPercent<TData> extends DataGridColumnNumberBase<TData
 
 	getEditContentTemplate(value: number | undefined, data: TData) {
 		return html`
-			<mo-field-percent dense
+			<mo-field-percent dense data-focus
 				label=${this.heading}
 				value=${ifDefined(value)}
 				@change=${(e: CustomEvent<number>) => this.handleEdit(e.detail, data)}

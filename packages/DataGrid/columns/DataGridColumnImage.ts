@@ -11,9 +11,7 @@ export class DataGridColumnImage<TData> extends DataGridColumn<TData, string> {
 		`
 	}
 
-	getEditContentTemplate(value: string | undefined, data: TData) {
-		return this.getContentTemplate(value, data)
-	}
+	override getEditContentTemplate = undefined
 }
 
 declare global {

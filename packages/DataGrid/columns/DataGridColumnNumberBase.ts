@@ -1,4 +1,4 @@
-import { property, TemplateResult } from '@a11d/lit'
+import { HTMLTemplateResult, property } from '@a11d/lit'
 import { DataGridColumn } from './DataGridColumn.js'
 
 export abstract class DataGridColumnNumberBase<TData> extends DataGridColumn<TData, number> {
@@ -13,5 +13,5 @@ export abstract class DataGridColumnNumberBase<TData> extends DataGridColumn<TDa
 		}
 	}
 
-	abstract getSumTemplate(sum: number): TemplateResult<1>
+	abstract getSumTemplate(sum: number): HTMLTemplateResult
 }

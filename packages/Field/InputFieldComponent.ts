@@ -47,15 +47,18 @@ export abstract class InputFieldComponent<T> extends FieldComponent<T> {
 		}
 	}
 
-	override blur() {
-		this.inputElement.blur()
-	}
-
-	override focus() {
+	override async focus() {
+		await this.updateComplete
 		this.inputElement.focus()
 	}
 
-	select() {
+	override async blur() {
+		await this.updateComplete
+		this.inputElement.blur()
+	}
+
+	async select() {
+		await this.updateComplete
 		this.inputElement.select()
 	}
 

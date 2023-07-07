@@ -32,7 +32,7 @@ const fivePeople = generatePeople(5)
 const thousandPeople = generatePeople(1000)
 
 const columnsTemplate = html`
-	<mo-data-grid-column-number hidden heading='ID' dataSelector='id'></mo-data-grid-column-number>
+	<mo-data-grid-column-number hidden nonEditable heading='ID' dataSelector='id'></mo-data-grid-column-number>
 	<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
 	<mo-data-grid-column-number heading='Age' dataSelector='age'></mo-data-grid-column-number>
 	<mo-data-grid-column-text heading='City' dataSelector='city'></mo-data-grid-column-text>
@@ -95,6 +95,28 @@ export const RowDetails = story({
 			.getRowDetailsTemplate=${(p: Person) => html`
 				<div style='margin: 10px; opacity: 0.5'>${p.name} details</div>
 			`}
+		>
+			${columnsTemplate}
+		</mo-data-grid>
+	`
+})
+
+export const Editability = story({
+	args: {
+		editability: 'always'
+	},
+	argTypes: {
+		editability: {
+			control: {
+				type: 'select',
+				options: ['never', 'cell', 'always']
+			}
+		}
+	},
+	render: ({ editability }) => html`
+		<mo-data-grid style='height: 500px'
+			.data=${fivePeople}
+			editability=${editability as any}
 		>
 			${columnsTemplate}
 		</mo-data-grid>

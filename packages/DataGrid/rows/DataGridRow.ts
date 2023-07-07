@@ -1,8 +1,8 @@
-import { nothing, css, property, Component, html, state, queryAll, style, HTMLTemplateResult, LitElement, event } from '@a11d/lit'
+import { nothing, css, property, Component, html, queryAll, style, HTMLTemplateResult, LitElement, event } from '@a11d/lit'
 import { ContextMenu } from '@3mo/context-menu'
 import { KeyboardController } from '@3mo/keyboard-controller'
 import { ColumnDefinition } from '../ColumnDefinition.js'
-import { DataGrid, DataGridCell, DataGridEditability, DataGridPrimaryContextMenuItem, DataGridSelectionMode } from '../index.js'
+import { DataGrid, DataGridCell, DataGridPrimaryContextMenuItem, DataGridSelectionMode } from '../index.js'
 
 /**
  * @attr dataGrid
@@ -24,23 +24,13 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	@property({ type: Boolean, reflect: true }) detailsOpen = false
 
 	@property({ type: Boolean, reflect: true }) protected contextMenuOpen = false
-	@state() protected editing = false
 
 	get detailsElement() {
 		return this.renderRoot.querySelector('#detailsContainer')?.firstElementChild as TDetailsElement as TDetailsElement | undefined
 	}
 
-	protected override connected() {
-		this.dataGrid.rowConnected.dispatch(this)
-	}
-
-	protected override disconnected() {
-		this.dataGrid.rowDisconnected.dispatch(this)
-	}
-
 	protected override initialized() {
 		this.toggleAttribute('mo-data-grid-row', true)
-		this.editing = this.dataGrid.editability === DataGridEditability.Always
 	}
 
 	override updated(...parameters: Parameters<Component['updated']>) {
@@ -184,6 +174,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				@dblclick=${(e: Event) => e.stopPropagation()}
 			>
 				<mo-checkbox
+					tabindex='-1'
 					?disabled=${this.dataGrid.isDataSelectable?.(this.data) === false}
 					?checked=${this.selected}
 					@change=${(e: CustomEvent<CheckboxValue>) => this.setSelection(e.detail === 'checked')}
@@ -195,7 +186,6 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	protected getCellTemplate(column: ColumnDefinition<TData, KeyPathValueOf<TData, KeyPathOf<TData>>>) {
 		return column.hidden ? nothing : html`
 			<mo-data-grid-cell
-				?editing=${this.editing}
 				.row=${this as any}
 				.column=${column}
 				.value=${getValueByKeyPath(this.data, column.dataSelector as any)}
@@ -260,38 +250,15 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	}
 
 	protected handleContentClick() {
-		if (this.dataGrid.editability === DataGridEditability.OnRowClick) {
-			this.enableEditMode()
-		} else {
-			if (this.dataGrid.selectOnClick || this.dataGrid.selectionCheckboxesHidden) {
-				this.setSelection(this.dataGrid.selectionCheckboxesHidden || !this.selected)
-			}
+		if (this.dataGrid.selectOnClick || this.dataGrid.selectionCheckboxesHidden) {
+			this.setSelection(this.dataGrid.selectionCheckboxesHidden || !this.selected)
+		}
 
-			if (this.dataGrid.hasDetails) {
-				this.toggleDetails()
-			}
+		if (this.dataGrid.detailsOnClick && this.dataGrid.hasDetails) {
+			this.toggleDetails()
 		}
 
 		this.dataGrid.rowClick.dispatch(this)
-	}
-
-	// eslint-disable-next-line @typescript-eslint/member-ordering
-	private dataBeforeEdit?: string
-
-	private enableEditMode() {
-		this.dataBeforeEdit = JSON.stringify(this.data)
-		this.editing = true
-		const handleClick = (e: MouseEvent) => {
-			if (e.composedPath().includes(this) === false) {
-				const dataAfterEdit = JSON.stringify(this.data)
-				if (dataAfterEdit !== this.dataBeforeEdit) {
-					this.dataGrid.rowEdit.dispatch(this)
-				}
-				window.removeEventListener('click', handleClick)
-				this.editing = false
-			}
-		}
-		window.addEventListener('click', handleClick)
 	}
 
 	protected async handleContentDoubleClick() {

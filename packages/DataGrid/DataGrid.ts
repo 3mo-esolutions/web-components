@@ -52,7 +52,7 @@ export const enum DataGridSelectionBehaviorOnDataChange {
 
 export const enum DataGridEditability {
 	Never = 'never',
-	OnRowClick = 'on-row-click',
+	Cell = 'cell',
 	Always = 'always',
 }
 
@@ -108,10 +108,7 @@ export type DataGridSorting<TData> = {
  * @fires sidePanelClose {CustomEvent}
  * @fires sortingChange {CustomEvent<DataGridSorting<TData>>}
  * @fires rowClick {CustomEvent<DataGridRow<TData, TDetailsElement>>}
- * @fires rowConnected {CustomEvent<DataGridRow<TData, TDetailsElement>>}
- * @fires rowDisconnected {CustomEvent<DataGridRow<TData, TDetailsElement>>}
  * @fires rowDoubleClick {CustomEvent<DataGridRow<TData, TDetailsElement>>}
- * @fires rowEdit {CustomEvent<DataGridRow<TData, TDetailsElement>>}
  * @fires cellEdit {CustomEvent<DataGridCell<any, TData, TDetailsElement>>}
  */
 @component('mo-data-grid')
@@ -129,11 +126,8 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	@event() readonly sidePanelOpen!: EventDispatcher<DataGridSidePanelTab>
 	@event() readonly sidePanelClose!: EventDispatcher
 	@event() readonly sortingChange!: EventDispatcher<DataGridSorting<TData> | undefined>
-	@event() readonly rowConnected!: EventDispatcher<DataGridRow<TData, TDetailsElement>>
-	@event() readonly rowDisconnected!: EventDispatcher<DataGridRow<TData, TDetailsElement>>
 	@event() readonly rowClick!: EventDispatcher<DataGridRow<TData, TDetailsElement>>
 	@event() readonly rowDoubleClick!: EventDispatcher<DataGridRow<TData, TDetailsElement>>
-	@event() readonly rowEdit!: EventDispatcher<DataGridRow<TData, TDetailsElement>>
 	@event() readonly cellEdit!: EventDispatcher<DataGridCell<any, TData, TDetailsElement>>
 
 	@property({ type: Array }) data = new Array<TData>()
@@ -428,7 +422,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	protected override firstUpdated(props: PropertyValues) {
 		super.firstUpdated(props)
 		this.extractColumnsIfNotSetExplicitly()
-		this.rowEdit.subscribe(() => this.requestUpdate())
 		this.cellEdit.subscribe(() => this.requestUpdate())
 		this.setPage(1)
 	}
@@ -962,15 +955,11 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			.filter(key => !key.startsWith('_'))
 			.map(key => {
 				const columnElement = document.createElement(getDefaultColumnElement(getValueByKeyPath(sampleData, key as any)))
+				columnElement.heading = key.replace(/([A-Z])/g, ' $1').charAt(0).toUpperCase() + key.replace(/([A-Z])/g, ' $1').slice(1)
+				columnElement.dataGrid = key as any
+				const definition = columnElement.definition
 				columnElement.remove()
-				return {
-					heading: key.replace(/([A-Z])/g, ' $1').charAt(0).toUpperCase() + key.replace(/([A-Z])/g, ' $1').slice(1),
-					dataSelector: key as KeyPathOf<TData>,
-					width: '1fr',
-					hidden: false,
-					getContentTemplate: columnElement.getContentTemplate.bind(columnElement),
-					getEditContentTemplate: columnElement.getEditContentTemplate.bind(columnElement),
-				}
+				return definition
 			}) as Array<ColumnDefinition<TData>>
 	}
 
@@ -1014,11 +1003,8 @@ function subDataGridSelectorChanged<TData>(this: DataGrid<TData>) {
 			?detailsOnClick=${this.detailsOnClick}
 			.getRowContextMenuTemplate=${this.getRowContextMenuTemplate}
 			editability=${this.editability}
-			@rowConnected=${(e: CustomEvent<DataGridRow<TData, undefined>>) => this.rowConnected.dispatch(e.detail)}
-			@rowDisconnected=${(e: CustomEvent<DataGridRow<TData, undefined>>) => this.rowDisconnected.dispatch(e.detail)}
 			@rowClick=${(e: CustomEvent<DataGridRow<TData, undefined>>) => this.rowClick.dispatch(e.detail)}
 			@rowDoubleClick=${(e: CustomEvent<DataGridRow<TData, undefined>>) => this.rowDoubleClick.dispatch(e.detail)}
-			@rowEdit=${(e: CustomEvent<DataGridRow<TData, undefined>>) => this.rowEdit.dispatch(e.detail)}
 			@cellEdit=${(e: CustomEvent<DataGridCell<any, TData, undefined>>) => this.cellEdit.dispatch(e.detail)}
 		></mo-data-grid>
 	`

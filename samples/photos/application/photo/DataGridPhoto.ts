@@ -22,7 +22,7 @@ export class DataGridPhoto extends ModdableDataGrid<Photo, FirstParameter<typeof
 	override getRowDetailsTemplate = (photo: Photo) => html`
 		<mo-flex ${style({ padding: '10px' })} gap='10px'>
 			<mo-heading typography='heading5'>${photo.title}</mo-heading>
-			<img ${style({ width: '100%' })} src=${photo.thumbnailUrl} title=${photo.title}>
+			<img ${style({ width: '200px' })} src=${photo.thumbnailUrl} title=${photo.title}>
 		</mo-flex>
 	`
 

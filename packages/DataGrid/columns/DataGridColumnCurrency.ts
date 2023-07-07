@@ -14,7 +14,7 @@ export class DataGridColumnCurrency<TData> extends DataGridColumnNumberBase<TDat
 
 	getEditContentTemplate(value: number | undefined, data: TData) {
 		return html`
-			<mo-field-currency dense
+			<mo-field-currency dense data-focus
 				label=${this.heading}
 				value=${ifDefined(value)}
 				@change=${(e: CustomEvent<number>) => this.handleEdit(e.detail, data)}

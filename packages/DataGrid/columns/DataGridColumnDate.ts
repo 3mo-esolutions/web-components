@@ -16,7 +16,7 @@ export class DataGridColumnDate<TData> extends DataGridColumn<TData, Date> {
 
 	getEditContentTemplate(value: Date | undefined, data: TData) {
 		return html`
-			<mo-field-date dense
+			<mo-field-date dense data-focus
 				?hideDatePicker=${this.hideDatePicker}
 				label=${this.heading}
 				.value=${value}

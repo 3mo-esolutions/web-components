@@ -34,14 +34,14 @@ export abstract class DataGridColumn<TData, TValue> extends Component {
 			hidden: this.hidden,
 			width: !AsteriskSyntaxStyleHandler.regex.test(this.width) ? this.width : `${AsteriskSyntaxStyleHandler.getProportion(this.width)}fr`,
 			sortable: !this.nonSortable,
-			editable: !this.nonEditable,
+			editable: !this.nonEditable && this.getEditContentTemplate !== undefined,
 			getContentTemplate: this.getContentTemplate.bind(this),
-			getEditContentTemplate: this.getEditContentTemplate.bind(this),
+			getEditContentTemplate: this.getEditContentTemplate?.bind(this),
 		}
 	}
 
 	abstract getContentTemplate(value: TValue | undefined, data: TData): HTMLTemplateResult
-	abstract getEditContentTemplate(value: TValue | undefined, data: TData): HTMLTemplateResult
+	abstract getEditContentTemplate?(value: TValue | undefined, data: TData): HTMLTemplateResult
 
 	protected handleEdit(value: TValue | undefined, data: TData) {
 		this.dataGrid?.handleEdit(data, this.dataSelector, value as any)
