@@ -67,6 +67,7 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 		switch (event.key) {
 			case 'Enter':
 				event.preventDefault()
+				event.stopPropagation()
 				if (this.isEditable) {
 					this.editing = true
 				} else {
@@ -75,6 +76,7 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 				break
 			case 'Escape':
 				event.preventDefault()
+				event.stopPropagation()
 				this.editing = false
 				await this.updateComplete
 				this.focusCell(event, this)
