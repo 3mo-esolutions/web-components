@@ -1,7 +1,7 @@
 import { story, meta } from '../../.storybook/story.js'
 import { html, style } from '@a11d/lit'
 import p from './package.json'
-import './SymbolIcon.js'
+import './Symbol.js'
 import { SymbolVariant, MaterialSymbol } from './index.js'
 
 const icons = new Array<MaterialSymbol>(

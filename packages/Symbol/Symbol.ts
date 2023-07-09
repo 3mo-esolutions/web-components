@@ -3,18 +3,19 @@ import { MaterialSymbolController, SymbolVariant } from './MaterialSymbolControl
 import { MaterialSymbol } from './index.js'
 
 @component('mo-symbol')
-export class SymbolIcon extends Component {
+export class Symbol extends Component {
 	static defaultVariant = SymbolVariant.Rounded
 	static defaultFill?: string
 	static defaultWeight?: string
 	static defaultGrade?: string
 	static defaultOpticalScale?: string
 
-	@property({ updated(this: SymbolIcon) { this.materialIconController.ensureFontsAvailable(this.variant) } }) variant = SymbolIcon.defaultVariant
-	@property() fill? = SymbolIcon.defaultFill
-	@property() weight? = SymbolIcon.defaultWeight
-	@property() grade? = SymbolIcon.defaultGrade
-	@property() opticalScale? = SymbolIcon.defaultOpticalScale
+	// eslint-disable-next-line @typescript-eslint/ban-types
+	@property({ updated(this: Symbol) { this.materialIconController.ensureFontsAvailable(this.variant) } }) variant = Symbol.defaultVariant
+	@property() fill? = Symbol.defaultFill
+	@property() weight? = Symbol.defaultWeight
+	@property() grade? = Symbol.defaultGrade
+	@property() opticalScale? = Symbol.defaultOpticalScale
 
 	@property() icon?: MaterialSymbol
 
@@ -63,6 +64,7 @@ export class SymbolIcon extends Component {
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'mo-symbol': SymbolIcon
+		// eslint-disable-next-line @typescript-eslint/ban-types
+		'mo-symbol': Symbol
 	}
 }
