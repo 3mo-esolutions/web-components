@@ -44,14 +44,14 @@ export const Icon = story({
 		opticalScale: '48',
 	},
 	render: ({ variant, icon, fill, grade, opticalScale, weight }) => html`
-		<mo-icon ${style({ color: 'rgb(200,200,200)', mixBlendMode: 'difference', fontSize: '48px' })}
+		<mo-symbol ${style({ color: 'rgb(200,200,200)', mixBlendMode: 'difference', fontSize: '48px' })}
 			variant=${variant}
 			icon=${icon}
 			fill=${fill}
 			grade=${grade}
 			opticalScale=${opticalScale}
 			weight=${weight}
-		></mo-icon>
+		></mo-symbol>
 	`
 })
 
