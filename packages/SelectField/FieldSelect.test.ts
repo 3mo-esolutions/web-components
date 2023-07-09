@@ -5,11 +5,12 @@ import '@3mo/date-time'
 
 type Person = { id: number, name: string, birthDate: DateTime }
 
-const people = [
+const people = new Array<Person>(
+	{ id: 0, name: 'Pseudo-default Option', birthDate: new DateTime(1900, 0, 0) },
 	{ id: 1, name: 'John', birthDate: new DateTime(2000, 0, 0) },
 	{ id: 2, name: 'Jane', birthDate: new DateTime(2000, 0, 0) },
 	{ id: 3, name: 'Joe', birthDate: new DateTime(2000, 0, 0) },
-]
+)
 
 describe('FieldSelect', () => {
 	const fixture = new ComponentTestFixture<FieldSelect<Person>>(html`
@@ -36,6 +37,22 @@ describe('FieldSelect', () => {
 		await fixture.updateComplete
 
 		expect(fixture.component.open).toBe(true)
+	})
+
+	it('should stay populated when an option selected', async () => {
+		expect(fixture.component.renderRoot.querySelector('mo-field')?.populated).toBe(false)
+
+		fixture.component.value = 1
+		await fixture.updateComplete
+		expect(fixture.component.renderRoot.querySelector('mo-field')?.populated).toBe(true)
+
+		fixture.component.value = 0
+		await fixture.updateComplete
+		expect(fixture.component.renderRoot.querySelector('mo-field')?.populated).toBe(true)
+
+		fixture.component.value = undefined
+		await fixture.updateComplete
+		expect(fixture.component.renderRoot.querySelector('mo-field')?.populated).toBe(false)
 	})
 
 	it('should render a default option when default property is set', async () => {

@@ -60,7 +60,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 	@query('input#search') readonly searchInputElement?: HTMLInputElement
 
 	override get isPopulated() {
-		return !!this.value
+		return this.value !== undefined && this.value !== null && this.value !== ''
 	}
 
 	protected override get isDense() {
