@@ -1,0 +1,31 @@
+{
+	"name": "@3mo/symbol",
+	"version": "0.1.0",
+	"description": "Icon Web Component based on Material Symbols.",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/3mo-esolutions/web-components/tree/main/packages/icon"
+	},
+	"keywords": [
+		"lit",
+		"web-component",
+		"icon",
+		"symbol",
+		"material-icon",
+		"material-symbol"
+	],
+	"author": "3MO GmbH",
+	"license": "MIT",
+	"homepage": "https://www.3mo.de",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"dependencies": {
+		"@a11d/lit": "*",
+		"@3mo/font-importer": "*",
+		"tslib": "*"
+	}
+}

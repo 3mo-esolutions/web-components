@@ -81,12 +81,12 @@ describe('FieldSelect', () => {
 			const { changeSpy, dataChangeSpy, indexChangeSpy } = spyOnChangeEvents()
 
 			await new Promise(r => setTimeout(r, 0))
-			fixture.component.renderRoot.querySelector('mo-menu')?.change.dispatch([0])
+			fixture.component.renderRoot.querySelector('mo-menu')?.change.dispatch([1])
 
-			expect(fixture.component.options[0]!.selected).toBe(true)
-			expect(indexChangeSpy).toHaveBeenCalledWith(0)
+			expect(fixture.component.options[1]!.selected).toBe(true)
+			expect(indexChangeSpy).toHaveBeenCalledWith(1)
 			expect(changeSpy).toHaveBeenCalledOnceWith(1)
-			expect(dataChangeSpy).toHaveBeenCalledWith(people[0])
+			expect(dataChangeSpy).toHaveBeenCalledWith(people[1])
 		})
 
 		it('should not dispatch change events when values changed programmatically', async () => {
@@ -108,11 +108,11 @@ describe('FieldSelect', () => {
 			await waitUpdateAndOneTick()
 			expect(fixture.component.valueInputElement.value).toBe('')
 
-			fixture.component.options[0]!.value = '4'
+			fixture.component.options[1]!.value = '4'
 			await waitUpdateAndOneTick()
 			expect(fixture.component.valueInputElement.value).toBe('John')
 
-			fixture.component.options[0]!.value = '5'
+			fixture.component.options[1]!.value = '5'
 			await waitUpdateAndOneTick()
 			expect(fixture.component.valueInputElement.value).toBe('')
 
@@ -135,7 +135,7 @@ describe('FieldSelect', () => {
 
 		it('should select the option by value', async () => {
 			fixture.component.value = 2
-			await expectSelected(1)
+			await expectSelected(2)
 		})
 
 		it('should select the option by index', async () => {
@@ -164,17 +164,17 @@ describe('FieldSelect', () => {
 
 		it('should select the option by value', async () => {
 			fixture.component.value = [1, 3]
-			await expectSelected([0, 2])
+			await expectSelected([1, 3])
 		})
 
 		it('should select the option by index', async () => {
-			fixture.component.index = [0, 2]
-			await expectSelected([0, 2])
+			fixture.component.index = [1, 3]
+			await expectSelected([1, 3])
 		})
 
 		it('should select the option by data', async () => {
-			fixture.component.data = [people[0]!, people[2]!]
-			await expectSelected([0, 2])
+			fixture.component.data = [people[1]!, people[3]!]
+			await expectSelected([1, 3])
 		})
 	})
 })
