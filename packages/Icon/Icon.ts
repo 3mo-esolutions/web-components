@@ -1,4 +1,5 @@
 import { Component, html, component, property, css, style } from '@a11d/lit'
+import { FontImporter } from '@3mo/font-importer'
 import { type MaterialIcon } from './index.js'
 
 export const enum IconVariant {
@@ -23,14 +24,6 @@ export class Icon extends Component {
 		[IconVariant.Rounded, { name: 'Material Icons Round', url: 'https://fonts.googleapis.com/icon?family=Material+Icons+Round' }],
 	])
 
-	private static readonly fontStyleElement = document.createElement('style')
-	private static readonly fontUrls = new Set<string>()
-
-	static {
-		document.head.appendChild(Icon.fontStyleElement)
-		Icon.ensureAvailable(Icon.defaultVariant)
-	}
-
 	private static get(variant: IconVariant) {
 		const font = Icon.fontsByVariant.get(variant)
 
@@ -41,18 +34,7 @@ export class Icon extends Component {
 		return font
 	}
 
-	private static ensureAvailable(variant: IconVariant) {
-		const font = Icon.get(variant)
-		Icon.fontUrls.add(font.url)
-
-		const importStatements = [...Icon.fontUrls].map(url => `@import '${url}';`)
-
-		if (importStatements.some(statement => Icon.fontStyleElement.innerText.includes(statement) === false)) {
-			Icon.fontStyleElement.innerHTML = importStatements.join('\n')
-		}
-	}
-
-	@property({ updated(this: Icon) { Icon.ensureAvailable(this.variant) } }) variant = Icon.defaultVariant
+	@property({ updated(this: Icon) { FontImporter.import(Icon.get(this.variant).url) } }) variant = Icon.defaultVariant
 	@property() icon?: MaterialIcon
 
 	static override get styles() {
