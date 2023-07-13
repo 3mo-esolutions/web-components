@@ -1,11 +1,9 @@
-[![Storybook Demo](https://img.shields.io/badge/-Storybook%20Demo-pink.svg)](https://3mo-esolutions.github.io/web-components/)
+<div align="center">
+  <a href="https://3mo.de">
+    <img src="https://www.3mo.de/wp-content/themes/3mo/assets/images/logo_3mo.svg" alt="3MO Logo" width="80" height="80">
+  </a>
 
-## Introduction
+  <h3>3MO Web Components</h3>
 
-3MO started the journey to use Web Components to build its business-suite web applications a while back, and it did wonders for us!
-
-We are now ready to take the next step and develop micro-frontends and components,
-to be able to bring Web Components to each and every web-based project, not only our business-suite web applications.
-
-Browse example stories now by navigating to them in the sidebar.
-View their code in `*.stories.*` files to learn how they work.
+  [![Storybook Demo](https://img.shields.io/badge/-Storybook%20Demo-pink.svg)](https://3mo-esolutions.github.io/web-components/)
+</div>
