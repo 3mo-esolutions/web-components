@@ -177,7 +177,7 @@ describe('Popover', () => {
 				expectAlignment(popoverRect, anchorRect)
 			})
 
-			it(`should recorrect its position should it go out of bounds when placement is ${placement} and alignment is ${alignment}`, async () => {
+			it(`should re-correct its position should it go out of bounds when placement is ${placement} and alignment is ${alignment}`, async () => {
 				fixture.component.style.margin = oobcMargin
 				fixture.component.popover.placement = placement
 				fixture.component.popover.alignment = alignment
