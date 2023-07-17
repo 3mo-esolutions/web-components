@@ -9,7 +9,7 @@ import { observeMutation } from '@3mo/mutation-observer'
 import { MediaQueryController } from '@3mo/media-query-observer'
 import { observeResize } from '@3mo/resize-observer'
 import { Localizer, LanguageCode } from '@3mo/localization'
-import { contextMenu } from '@3mo/context-menu'
+import { ContextMenu } from '@3mo/context-menu'
 import { CsvGenerator, ColumnDefinition, DataGridCell, DataGridColumn, DataGridFooter, DataGridHeader, DataGridRow, DataGridSidePanel, DataGridSidePanelTab } from './index.js'
 
 Localizer.register(LanguageCode.English, {
@@ -799,7 +799,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 						${t('${count:pluralityNumber} entries selected', { count: this.selectedData.length })}
 					</div>
 					${!this.getRowContextMenuTemplate ? nothing : html`
-						<mo-flex id='flexActions' direction='horizontal' ${contextMenu(this.getRowContextMenuTemplate(this.selectedData))}>
+						<mo-flex id='flexActions' direction='horizontal' @click=${(e: PointerEvent) => ContextMenu.open(e, this.getRowContextMenuTemplate?.(this.selectedData) ?? nothing)}>
 							<div ${style({ width: '*' })}>${t('Options')}</div>
 							<mo-icon-button dense icon='arrow_drop_down' ${style({ display: 'flex', alignItems: 'center', justifyContent: 'center' })}></mo-icon-button>
 						</mo-flex>
