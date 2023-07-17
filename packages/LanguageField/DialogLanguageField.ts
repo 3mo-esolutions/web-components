@@ -7,17 +7,21 @@ export class DialogLanguageField<TValue, TLanguage extends Language> extends Dia
 	static override get styles() {
 		return css`
 			mo-flex { padding: 6px 0; }
-			img { padding-inline-end: 6px; }
+
+			img {
+				width: 30px;
+				padding-inline-end: 6px;
+			}
 		`
 	}
 
 	protected override get template() {
 		return html`
-			<mo-dialog heading=${this.parameters.languageField.label} primaryButtonText=${t('Apply')}>
+			<mo-dialog heading=${this.parameters.languageField.label} size=${ifDefined(this.parameters.languageField.dialogSize)} primaryButtonText=${t('Apply')}>
 				<mo-flex gap='4px'>
 					${this.parameters.languageField.languages.map(language => html`
 						<mo-grid columns='auto 1fr' alignItems='center' gap='4px'>
-							<img src=${ifDefined(language?.flagImageSource)} style='width: 30px'>
+							<img src=${ifDefined(language?.flagImageSource)}>
 							${this.parameters.languageField.getFieldTemplateByLanguage(language)}
 						</mo-grid>
 					`)}

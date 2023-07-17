@@ -1,5 +1,6 @@
 import { Component, event, html, ifDefined, property, css, nothing, style, HTMLTemplateResult, state } from '@a11d/lit'
 import { DialogLanguageField, type Language } from './index.js'
+import { DialogSize } from '@3mo/dialog'
 import { FieldPairMode } from '@3mo/field-pair'
 
 /**
@@ -10,6 +11,7 @@ import { FieldPairMode } from '@3mo/field-pair'
  * @attr selectedLanguage
  * @attr defaultLanguage
  * @attr fieldTemplate
+ * @attr dialogSize
  * @fires change
  * @fires languageChange
  * @fires languagesFetch
@@ -24,6 +26,7 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 	@property() mode = FieldPairMode.Attach
 	@property() valueKey: keyof TLanguage = 'id'
 	@property() label!: string
+	@property() dialogSize?: DialogSize
 	@property({ type: Object }) value = new Map<TLanguage[keyof TLanguage], TValue | undefined>()
 	@property({ type: Object }) selectedLanguage?: TLanguage
 	@property({ type: Object }) defaultLanguage?: TLanguage
@@ -106,6 +109,11 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 		)
 	}
 
+	async openDialog() {
+		await new DialogLanguageField({ languageField: this }).confirm()
+		this.requestUpdate()
+	}
+
 	protected get languageSelectorTemplate() {
 		return html`
 			${!this._languages.length ? nothing : html`
@@ -146,10 +154,5 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 	protected handleLanguageChange(language: TLanguage) {
 		this.selectedLanguage = language
 		this.languageChange.dispatch(language)
-	}
-
-	protected async openDialog() {
-		await new DialogLanguageField({ languageField: this }).confirm()
-		this.requestUpdate()
 	}
 }
