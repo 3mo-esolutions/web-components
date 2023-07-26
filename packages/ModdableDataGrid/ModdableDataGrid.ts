@@ -55,7 +55,7 @@ export abstract class ModdableDataGrid<TData, TDataFetcherParameters extends Fet
 			${super.styles}
 
 			:host {
-				--mo-data-grid-modebar-padding: var(--mo-data-grid-toolbar-padding);
+				--mo-data-grid-toolbar-padding: 14px;
 			}
 
 			mo-card {
@@ -68,7 +68,7 @@ export abstract class ModdableDataGrid<TData, TDataFetcherParameters extends Fet
 
 			#modebarFlex {
 				border-radius: var(--mo-border-radius) var(--mo-border-radius) 0 0;
-				padding: var(--mo-data-grid-modebar-padding);
+				padding: 14px;
 				background: var(--mo-color-transparent-gray-2);
 			}
 		`

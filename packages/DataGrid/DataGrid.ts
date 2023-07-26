@@ -435,7 +435,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 				--mo-data-grid-header-height: 32px;
 				--mo-data-grid-footer-min-height: 40px;
-				--mo-data-grid-toolbar-padding: 14px;
+				--mo-data-grid-toolbar-padding: 0px 14px 14px 14px;
 				--mo-data-grid-border: 1px solid var(--mo-color-transparent-gray-3);
 
 				/* --mo-data-grid-columns Generated in JS */
@@ -478,12 +478,12 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				--mo-data-grid-row-tree-line-width: 18px;
 			}
 
-			#flexToolbar {
+			#toolbar {
 				position: relative;
 				padding: var(--mo-data-grid-toolbar-padding);
 			}
 
-			#flexToolbar mo-icon-button {
+			#toolbar mo-icon-button {
 				align-self: flex-start;
 				color: var(--mo-color-gray);
 			}
@@ -761,7 +761,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	protected get toolbarTemplate() {
 		return this.hasToolbar === false ? nothing : html`
-			<mo-flex id='flexToolbar' direction='horizontal' gap='8px' wrap='wrap' justifyContent='end' alignItems='center'>
+			<mo-flex id='toolbar' direction='horizontal' gap='8px' wrap='wrap' justifyContent='end' alignItems='center'>
 				<mo-flex direction='horizontal' alignItems='inherit' gap='8px' wrap='wrap' ${style({ width: '*' })}>
 					<slot name='toolbar'>${this.toolbarDefaultTemplate}</slot>
 				</mo-flex>
