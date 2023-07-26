@@ -136,7 +136,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	@property({ type: Boolean, reflect: true }) headerHidden = false
 	@property({ type: Boolean, reflect: true }) preventVerticalContentScroll = false
 	@property({ type: Number }) page = 1
-	@property({ reflect: true, converter: (value: string | null) => Number.isNaN(Number(value)) ? value : Number(value) }) pagination?: DataGridPagination
+	@property({ reflect: true, converter: (value: string | null | undefined) => value === null || value === undefined ? undefined : Number.isNaN(Number(value)) ? value : Number(value) }) pagination?: DataGridPagination
 
 	@property({ type: Object }) sorting?: DataGridSorting<TData>
 
@@ -351,7 +351,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}
 
 	get hasFabs() {
-		const hasFabs = !!this.querySelector('* [slot=fab]') || !!this.renderRoot?.querySelector('#flexFab *:not(slot[name=fab])')
+		const hasFabs = !!this.querySelector('* [slot=fab]') || !!this.renderRoot?.querySelector('#fab *:not(slot[name=fab])')
 		this.toggleAttribute('hasFabs', hasFabs)
 		return hasFabs
 	}
@@ -383,7 +383,9 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}
 
 	get hasFooter() {
-		return this.hasPagination || this.hasSums
+		const value = this.hasPagination || this.hasSums
+		this.toggleAttribute('hasFooter', value)
+		return value
 	}
 
 	get dataLength() {
@@ -519,14 +521,18 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				max-height: 45px;
 			}
 
-			#flexFab {
+			#fab {
 				position: absolute;
-				top: -28px;
+				top: -72px;
 				inset-inline-end: 16px;
 				transition: var(--mo-data-grid-fab-transition, 250ms);
 			}
 
-			:host([fabSlotCollapsed][hasFabs]) #flexFab {
+			:host([hasFooter]) #fab {
+				top: -28px;
+			}
+
+			:host([fabSlotCollapsed][hasFabs]) #fab {
 				transform: scale(0);
 				opacity: 0;
 			}
@@ -722,7 +728,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	protected get footerTemplate() {
 		return html`
 			<mo-flex ${style({ position: 'relative' })}>
-				<mo-flex id='flexFab' direction='vertical-reversed' gap='8px'>
+				<mo-flex id='fab' direction='vertical-reversed' gap='8px'>
 					${this.fabTemplate}
 				</mo-flex>
 				${this.hasFooter === false ? nothing : html`

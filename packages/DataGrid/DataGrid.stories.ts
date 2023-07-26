@@ -1,5 +1,5 @@
 import { story, meta } from '../../.storybook/story.js'
-import { html } from '@a11d/lit'
+import { html, ifDefined } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 
@@ -127,6 +127,19 @@ export const Virtualization = story({
 	render: () => html`
 		<mo-data-grid .data=${thousandPeople} style='height: 500px'>
 			${columnsTemplate}
+		</mo-data-grid>
+	`
+})
+
+export const Fab = story({
+	args: {
+		label: 'Add',
+		withFooter: false,
+	},
+	render: ({ label, withFooter }) => html`
+		<mo-data-grid .data=${thousandPeople} style='height: 500px' pagination=${ifDefined(withFooter ? 'auto' : undefined)}>
+			${columnsTemplate}
+			<mo-fab slot='fab' icon='add'>${label}</mo-fab>
 		</mo-data-grid>
 	`
 })
