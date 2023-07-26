@@ -69,6 +69,10 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				background-color: var(--mo-color-accent);
 			}
 
+			:host([data-has-alternating-background]) {
+				background: var(--mo-data-grid-alternating-background);
+			}
+
 			#contentContainer {
 				cursor: pointer;
 				transition: 250ms;

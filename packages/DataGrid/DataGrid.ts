@@ -462,11 +462,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				--mo-data-grid-alternating-background: rgba(var(--mo-color-background-base), 0.2);
 			}
 
-			/* Don't try to use ":nth-child(even)" as it won't work for virtualized data-grids */
-			[mo-data-grid-row][data-has-alternating-background] {
-				background: var(--mo-data-grid-alternating-background);
-			}
-
 			:host([preventVerticalContentScroll]) mo-scroller {
 				overflow-y: hidden;
 			}
