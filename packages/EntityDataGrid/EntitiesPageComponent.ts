@@ -9,6 +9,10 @@ export abstract class EntitiesPageComponent<_TEntity extends object, T extends P
 				--mo-card-body-padding: 0px;
 				position: relative;
 			}
+
+			mo-card:not([hasHeader]) [instanceof*=mo-data-grid] {
+				--mo-data-grid-toolbar-padding: 14px;
+			}
 		`
 	}
 }

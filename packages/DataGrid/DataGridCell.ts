@@ -82,7 +82,7 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 				this.focusCell(event, this)
 				break
 			case 'c':
-				if (this.isEditing === false && event.ctrlKey) {
+				if (this.isEditing === false && (event.ctrlKey || event.metaKey)) {
 					event.preventDefault()
 					await navigator.clipboard.writeText(String(this.value))
 					NotificationHost.instance?.notifySuccess(t('Copied to clipboard'))
