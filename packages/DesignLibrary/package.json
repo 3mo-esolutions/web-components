@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/del",
-	"version": "0.0.19",
+	"version": "0.0.21",
 	"description": "3MO Design Library to build business-suite web applications",
 	"repository": {
 		"type": "git",
@@ -116,6 +116,7 @@
 		"@3mo/file-upload": "x",
 		"@3mo/file-upload-drop-area": "x",
 		"@3mo/safe-round": "x",
+		"@3mo/expander": "x",
 		"detect-browser": "x",
 		"@ts-stack/markdown": "x"
 	}

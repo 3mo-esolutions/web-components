@@ -8,6 +8,7 @@
 		"clean": "node ./scripts/clean.mjs",
 		"release": "node ./scripts/release.mjs",
 		"release:all": "node ./scripts/release-all.mjs",
+		"readme": "node ./scripts/readme.mjs",
 		"analyze": "cem analyze --globs \"packages/**/*.ts\" --exclude \"packages/**/*.(stories|test).ts\" --litelement"
 	},
 	"workspaces": [

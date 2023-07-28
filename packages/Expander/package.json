@@ -1,0 +1,30 @@
+{
+	"name": "@3mo/expander",
+	"version": "1.0.0",
+	"description": "An Expander web-component.",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/3mo-esolutions/web-components"
+	},
+	"keywords": [
+		"lit",
+		"web-component",
+		"expander"
+	],
+	"author": "3MO GmbH",
+	"license": "MIT",
+	"homepage": "https://www.3mo.de",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"dependencies": {
+		"@a11d/lit": "x",
+		"tslib": "x",
+		"@3mo/flex": "x",
+		"@3mo/expand-collapse-icon-button": "x",
+		"@3mo/heading": "x"
+	}
+}
