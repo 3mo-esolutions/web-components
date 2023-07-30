@@ -1,7 +1,13 @@
 import { eventListener, PropertyValues } from '@a11d/lit'
-import { DialogActionKey, DialogParameters } from '@a11d/lit-application'
+import { DialogActionKey, DialogParameters, NotificationHost } from '@a11d/lit-application'
+import { Localizer, LanguageCode } from '@3mo/localization'
 import { FetchableDialogComponentParameters, FetchableDialogComponent } from '@3mo/fetchable-dialog'
 import { EntityDialog } from './EntityDialog.js'
+
+Localizer.register(LanguageCode.German, {
+	'Saved successfully': 'Erfolgreich gespeichert',
+	'Open': 'Öffnen',
+})
 
 export abstract class EntityDialogComponent<
 	TEntity,
@@ -37,7 +43,17 @@ export abstract class EntityDialogComponent<
 	}
 
 	protected override async primaryAction() {
-		return (await this.save(this.entity) || undefined) as TResult | undefined
+		const result = (await this.save(this.entity) || undefined) as TResult | undefined
+		this.notifySuccess()
+		return result
+	}
+
+	protected notifySuccess() {
+		const DialogConstructor = this.constructor as Constructor<EntityDialogComponent<TEntity>>
+		NotificationHost.instance?.notifySuccess(t('Saved successfully'), {
+			title: t('Open'),
+			handleClick: () => void new DialogConstructor({ id: this.parameters.id }).confirm(),
+		})
 	}
 
 	protected override async secondaryAction() {
