@@ -31,30 +31,6 @@ describe('FieldSelect', () => {
 		return { changeSpy, dataChangeSpy, indexChangeSpy }
 	}
 
-	it('should open menu when clicked', async () => {
-		fixture.component.dispatchEvent(new MouseEvent('click', { bubbles: true }))
-
-		await fixture.updateComplete
-
-		expect(fixture.component.open).toBe(true)
-	})
-
-	it('should stay populated when an option selected', async () => {
-		expect(fixture.component.renderRoot.querySelector('mo-field')?.populated).toBe(false)
-
-		fixture.component.value = 1
-		await fixture.updateComplete
-		expect(fixture.component.renderRoot.querySelector('mo-field')?.populated).toBe(true)
-
-		fixture.component.value = 0
-		await fixture.updateComplete
-		expect(fixture.component.renderRoot.querySelector('mo-field')?.populated).toBe(true)
-
-		fixture.component.value = undefined
-		await fixture.updateComplete
-		expect(fixture.component.renderRoot.querySelector('mo-field')?.populated).toBe(false)
-	})
-
 	it('should render a default option when default property is set', async () => {
 		expect(getDefaultOption()).toBeUndefined()
 
@@ -66,14 +42,24 @@ describe('FieldSelect', () => {
 		expect(defaultOption?.textContent?.trim()).toBe('Select...')
 	})
 
-	it('should not open menu when disabled', async () => {
-		fixture.component.disabled = true
-		await fixture.updateComplete
+	describe('menu', () => {
+		it('should open when clicked', async () => {
+			fixture.component.dispatchEvent(new MouseEvent('click', { bubbles: true }))
 
-		fixture.component.dispatchEvent(new MouseEvent('click', { bubbles: true }))
-		await fixture.updateComplete
+			await fixture.updateComplete
 
-		expect(fixture.component.open).toBe(false)
+			expect(fixture.component.open).toBe(true)
+		})
+
+		it('should not open when disabled', async () => {
+			fixture.component.disabled = true
+			await fixture.updateComplete
+
+			fixture.component.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+			await fixture.updateComplete
+
+			expect(fixture.component.open).toBe(false)
+		})
 	})
 
 	describe('change event dispatching', () => {
@@ -147,6 +133,22 @@ describe('FieldSelect', () => {
 			fixture.component.data = people[1]!
 			await expectSelected(1)
 		})
+
+		it('should stay populated when an option selected', async () => {
+			expect(fixture.component.renderRoot.querySelector('mo-field')?.populated).toBe(false)
+
+			fixture.component.value = 1
+			await fixture.updateComplete
+			expect(fixture.component.renderRoot.querySelector('mo-field')?.populated).toBe(true)
+
+			fixture.component.value = 0
+			await fixture.updateComplete
+			expect(fixture.component.renderRoot.querySelector('mo-field')?.populated).toBe(true)
+
+			fixture.component.value = undefined
+			await fixture.updateComplete
+			expect(fixture.component.renderRoot.querySelector('mo-field')?.populated).toBe(false)
+		})
 	})
 
 	describe('multiple selection', () => {
@@ -175,6 +177,22 @@ describe('FieldSelect', () => {
 		it('should select the option by data', async () => {
 			fixture.component.data = [people[1]!, people[3]!]
 			await expectSelected([1, 3])
+		})
+
+		it('should stay populated when an option selected', async () => {
+			expect(fixture.component.renderRoot.querySelector('mo-field')?.populated).toBe(false)
+
+			fixture.component.value = [1, 3]
+			await fixture.updateComplete
+			expect(fixture.component.renderRoot.querySelector('mo-field')?.populated).toBe(true)
+
+			fixture.component.value = [0, 1]
+			await fixture.updateComplete
+			expect(fixture.component.renderRoot.querySelector('mo-field')?.populated).toBe(true)
+
+			fixture.component.value = []
+			await fixture.updateComplete
+			expect(fixture.component.renderRoot.querySelector('mo-field')?.populated).toBe(false)
 		})
 	})
 })
