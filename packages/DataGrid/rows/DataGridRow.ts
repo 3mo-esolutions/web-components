@@ -144,6 +144,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			<mo-grid id='contentContainer'
 				@click=${() => this.handleContentClick()}
 				@dblclick=${() => this.handleContentDoubleClick()}
+				@auxclick=${(e: PointerEvent) => e.button !== 1 ? void 0 : this.handleContentMiddleClick()}
 				@contextmenu=${(e: PointerEvent) => this.openContextMenu(e)}
 			>
 				${this.rowTemplate}
@@ -266,13 +267,21 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	}
 
 	protected async handleContentDoubleClick() {
-		if (this.dataGrid.primaryContextMenuItemOnDoubleClick === true && this.dataGrid.hasContextMenu === true && this.dataGrid.selectionMode === DataGridSelectionMode.None) {
+		await this.clickOnPrimaryContextMenuItemIfApplicable()
+		this.dataGrid.rowDoubleClick.dispatch(this)
+	}
+
+	protected async handleContentMiddleClick() {
+		await this.clickOnPrimaryContextMenuItemIfApplicable()
+		this.dataGrid.rowMiddleClick.dispatch(this)
+	}
+
+	private async clickOnPrimaryContextMenuItemIfApplicable() {
+		if (this.dataGrid.hasContextMenu === true && this.dataGrid.primaryContextMenuItemOnDoubleClick === true) {
 			await this.openContextMenu()
 			ContextMenu.openInstance?.items.find(item => item instanceof DataGridPrimaryContextMenuItem)?.click()
 			this.contextMenuOpen = false
 		}
-
-		this.dataGrid.rowDoubleClick.dispatch(this)
 	}
 
 	async openContextMenu(mouseEvent?: MouseEvent) {

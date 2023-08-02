@@ -1,4 +1,4 @@
-import { component, property, PropertyValues, html, nothing, TemplateResult } from '@a11d/lit'
+import { component, property, html, nothing, TemplateResult } from '@a11d/lit'
 import { FetchableDialogComponentParameters as EntityWithId } from '@3mo/fetchable-dialog'
 import { EntityDialogComponent } from '@3mo/entity-dialog'
 import { FetchableDataGridParametersType, FetchableDataGrid } from '@3mo/fetchable-data-grid'
@@ -10,7 +10,6 @@ type CreateOrEditAction<TEntity extends EntityWithId> = CreateAction | EditActio
 
 @component('mo-entity-data-grid')
 export class EntityDataGrid<TEntity extends EntityWithId, TDataFetcherParameters extends FetchableDataGridParametersType = Record<string, never>, TDetailsElement extends Element | undefined = undefined> extends FetchableDataGrid<TEntity, TDataFetcherParameters, TDetailsElement> {
-	@property({ type: Boolean }) disableEditOnClick = false
 	@property({ type: Object }) create?: CreateAction | Constructor<EntityDialogComponent<TEntity>>
 	@property({ type: Object }) edit?: EditAction<TEntity> | Constructor<EntityDialogComponent<TEntity>>
 	@property({ type: Object }) delete?: (...entities: Array<TEntity>) => void | PromiseLike<void>
@@ -27,6 +26,7 @@ export class EntityDataGrid<TEntity extends EntityWithId, TDataFetcherParameters
 		}
 	}) createOrEdit?: CreateOrEditAction<TEntity> | Constructor<EntityDialogComponent<TEntity>>
 
+	override readonly primaryContextMenuItemOnDoubleClick = true
 	override parameters = {} as TDataFetcherParameters
 
 	async createAndRefetch() {
@@ -57,11 +57,6 @@ export class EntityDataGrid<TEntity extends EntityWithId, TDataFetcherParameters
 		await this.requestFetch()
 	}
 
-	protected override firstUpdated(props: PropertyValues) {
-		super.firstUpdated(props)
-		this.setupRowClick()
-	}
-
 	protected override get fabTemplate() {
 		return html`
 			${!this.create || this.hideFab ? nothing : html`<mo-fab icon='add' @click=${() => this.createAndRefetch()}></mo-fab>`}
@@ -69,18 +64,10 @@ export class EntityDataGrid<TEntity extends EntityWithId, TDataFetcherParameters
 		`
 	}
 
-	private setupRowClick() {
-		this.rowClick.subscribe(row => {
-			if (this.disableEditOnClick === false) {
-				this.editAndRefetch(row.data)
-			}
-		})
-	}
-
 	override getRowContextMenuTemplate = (entities: Array<TEntity>) => {
 		return html`
 			${this.rowContextMenuTemplate?.(entities) ?? nothing}
-			${!this.edit || entities.length !== 1 ? nothing : html`<mo-context-menu-item icon='edit' data-test-id='edit' @click=${() => this.editAndRefetch(entities[0]!)}>${t('Edit')}</mo-context-menu-item>`}
+			${!this.edit || entities.length !== 1 ? nothing : html`<mo-data-grid-primary-context-menu-item icon='edit' data-test-id='edit' @click=${() => this.editAndRefetch(entities[0]!)}>${t('Edit')}</mo-data-grid-primary-context-menu-item>`}
 			${!this.delete ? nothing : html`<mo-context-menu-item icon='delete' data-test-id='delete' @click=${() => this.deleteAndRefetch(entities)}>${t('Delete')}</mo-context-menu-item>`}
 		`
 	}

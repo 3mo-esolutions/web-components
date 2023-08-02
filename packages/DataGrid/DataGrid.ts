@@ -109,6 +109,7 @@ export type DataGridSorting<TData> = {
  * @fires sortingChange {CustomEvent<DataGridSorting<TData>>}
  * @fires rowClick {CustomEvent<DataGridRow<TData, TDetailsElement>>}
  * @fires rowDoubleClick {CustomEvent<DataGridRow<TData, TDetailsElement>>}
+ * @fires rowMiddleClick {CustomEvent<DataGridRow<TData, TDetailsElement>>}
  * @fires cellEdit {CustomEvent<DataGridCell<any, TData, TDetailsElement>>}
  */
 @component('mo-data-grid')
@@ -128,6 +129,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	@event() readonly sortingChange!: EventDispatcher<DataGridSorting<TData> | undefined>
 	@event() readonly rowClick!: EventDispatcher<DataGridRow<TData, TDetailsElement>>
 	@event() readonly rowDoubleClick!: EventDispatcher<DataGridRow<TData, TDetailsElement>>
+	@event() readonly rowMiddleClick!: EventDispatcher<DataGridRow<TData, TDetailsElement>>
 	@event() readonly cellEdit!: EventDispatcher<DataGridCell<any, TData, TDetailsElement>>
 
 	@property({ type: Array }) data = new Array<TData>()
@@ -1006,6 +1008,7 @@ function subDataGridSelectorChanged<TData>(this: DataGrid<TData>) {
 			editability=${this.editability}
 			@rowClick=${(e: CustomEvent<DataGridRow<TData, undefined>>) => this.rowClick.dispatch(e.detail)}
 			@rowDoubleClick=${(e: CustomEvent<DataGridRow<TData, undefined>>) => this.rowDoubleClick.dispatch(e.detail)}
+			@rowMiddleClick=${(e: CustomEvent<DataGridRow<TData, undefined>>) => this.rowMiddleClick.dispatch(e.detail)}
 			@cellEdit=${(e: CustomEvent<DataGridCell<any, TData, undefined>>) => this.cellEdit.dispatch(e.detail)}
 		></mo-data-grid>
 	`
