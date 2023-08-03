@@ -1,15 +1,15 @@
-import { extractDateTimeOptions } from './Date.format.js'
+import { extractDateTimeFormatOptions } from './Date.format.js'
 import type { OptionsWithLanguage } from './OptionsWithLanguage.js'
 
 type DateFormatOptions = OptionsWithLanguage<Intl.DateTimeFormatOptions>
 
 Date.prototype.formatAsDate = function (this: Date, options?: DateFormatOptions) {
-	const [language, otherOptions] = extractDateTimeOptions(options)
-	return Intl.DateTimeFormat(language, otherOptions ?? {
+	const [language, opt] = extractDateTimeFormatOptions(this.calendarId, this.timeZoneId, options, {
 		year: 'numeric',
 		month: '2-digit',
 		day: '2-digit',
-	}).format(this)
+	})
+	return Intl.DateTimeFormat(language, opt).format(this)
 }
 
 declare global {
