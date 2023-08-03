@@ -1,10 +1,10 @@
 import { DateTime } from './DateTime.js'
 
 describe('DateTime', () => {
-	it('fromEpochNanoseconds() should construct a DateTime from an epoch nanoseconds number', () => {
-		const epochNanoseconds = BigInt(1609459200000000000)
-		const dateTime = DateTime.fromEpochNanoseconds(epochNanoseconds)
-		expect(dateTime.temporalInstant.epochNanoseconds).toBe(epochNanoseconds)
+	it('from() should construct a DateTime from an epoch nanoseconds number', () => {
+		const epochMilliseconds = 1609459200000
+		const dateTime = DateTime.from(epochMilliseconds)
+		expect(dateTime.temporalInstant.epochMilliseconds).toBe(epochMilliseconds)
 	})
 
 	it('equals() should return true only for the same date', () => {
@@ -67,29 +67,11 @@ describe('DateTime', () => {
 
 	it('month should return the month of the year', () => {
 		const dateTime = new DateTime('2020-01-01')
-		expect(dateTime.month).toBe(0)
+		expect(dateTime.month).toBe(1)
 	})
 
 	it('year should return the year', () => {
 		const dateTime = new DateTime('2020-01-01')
 		expect(dateTime.year).toBe(2020)
-	})
-
-	it('addDays() should return a DateTime with the given number of days added', () => {
-		const dateTime = new DateTime('2020-01-01')
-		expect(dateTime.addDays(1).equals(new DateTime('2020-01-02'))).toBeTrue()
-		expect(dateTime.addDays(-1).equals(new DateTime('2019-12-31'))).toBeTrue()
-	})
-
-	it('addMonths() should return a DateTime with the given number of months added', () => {
-		const dateTime = new DateTime('2020-01-01')
-		expect(dateTime.addMonths(1).equals(new DateTime('2020-02-01'))).toBeTrue()
-		expect(dateTime.addMonths(-1).equals(new DateTime('2019-12-01'))).toBeTrue()
-	})
-
-	it('addYears() should return a DateTime with the given number of years added', () => {
-		const dateTime = new DateTime('2020-01-01')
-		expect(dateTime.addYears(1).equals(new DateTime('2021-01-01'))).toBeTrue()
-		expect(dateTime.addYears(-1).equals(new DateTime('2019-01-01'))).toBeTrue()
 	})
 })

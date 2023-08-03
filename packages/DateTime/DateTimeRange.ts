@@ -1,4 +1,4 @@
-import { LanguageCode, Localizer, extractDateTimeOptions } from '@3mo/localization'
+import { LanguageCode, Localizer, extractDateTimeFormatOptions } from '@3mo/localization'
 
 export class DateTimeRange {
 	static parse(dateRange: string) {
@@ -41,6 +41,14 @@ export class DateTimeRange {
 		return !this.start && !this.end
 	}
 
+	get timeZoneId() {
+		return this.start?.timeZoneId ?? this.end?.timeZoneId ?? new DateTime().timeZoneId
+	}
+
+	get calendarId() {
+		return this.start?.calendarId ?? this.end?.calendarId ?? new DateTime().calendarId
+	}
+
 	includes(date: Date) {
 		return (!this.start || date >= this.start) && (!this.end || date <= this.end)
 	}
@@ -59,7 +67,11 @@ export class DateTimeRange {
 			return ''
 		}
 
-		const [language, otherOptions] = extractDateTimeOptions(options)
+		const [language, opt] = extractDateTimeFormatOptions(this.calendarId, this.timeZoneId, options, {
+			year: 'numeric',
+			month: '2-digit',
+			day: '2-digit',
+		})
 
 		if (!this.end) {
 			const start = this.start as Date
@@ -71,11 +83,7 @@ export class DateTimeRange {
 			return DateTimeRange.getUntilDelimiter(language)?.trimStart() + end.formatAsDate(options)
 		}
 
-		return Intl.DateTimeFormat(language, otherOptions ?? {
-			year: 'numeric',
-			month: '2-digit',
-			day: '2-digit',
-		}).formatRange(this.start, this.end)
+		return Intl.DateTimeFormat(language, opt).formatRange(this.start, this.end)
 	}
 }
 

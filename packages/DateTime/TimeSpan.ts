@@ -1,4 +1,4 @@
-import { LanguageCode, extractDateTimeOptions } from '@3mo/localization'
+import { LanguageCode, Localizer } from '@3mo/localization'
 
 export class TimeSpan {
 	static readonly ticksPerSecond = 1000
@@ -34,8 +34,11 @@ export class TimeSpan {
 	toString() { return this.format() }
 
 	format(options?: Intl.RelativeTimeFormatOptions & { readonly language?: LanguageCode }) {
-		const [language, otherOptions] = extractDateTimeOptions(options)
-		const formatter = new Intl.RelativeTimeFormat(language, otherOptions ?? { style: 'long', numeric: 'auto' })
+		const { language, ...explicitOptions } = options ?? {}
+		const formatter = new Intl.RelativeTimeFormat(
+			language ?? Localizer.currentLanguage,
+			explicitOptions ?? { style: 'long', numeric: 'auto' }
+		)
 		const format = (value: number, unit: Intl.RelativeTimeFormatUnit) => formatter.format(Math.sign(value) * Math.floor(Math.abs(value)), unit)
 		switch (true) {
 			case Math.abs(this.years) >= 1:
