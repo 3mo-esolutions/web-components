@@ -1,5 +1,5 @@
 import { story, meta } from '../../.storybook/story.js'
-import { html, ifDefined } from '@a11d/lit'
+import { html, ifDefined, style } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 
@@ -126,6 +126,17 @@ export const Editability = story({
 export const Virtualization = story({
 	render: () => html`
 		<mo-data-grid .data=${thousandPeople} style='height: 500px'>
+			${columnsTemplate}
+		</mo-data-grid>
+	`
+})
+
+export const MinVisibleRows = story({
+	args: {
+		minVisibleRows: 10
+	},
+	render: ({ minVisibleRows }) => html`
+		<mo-data-grid .data=${thousandPeople} ${style({ '--mo-data-grid-min-visible-rows': String(minVisibleRows) })}>
 			${columnsTemplate}
 		</mo-data-grid>
 	`

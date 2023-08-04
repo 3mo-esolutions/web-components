@@ -99,6 +99,8 @@ export type DataGridSorting<TData> = {
  * @slot fab - A wrapper at the bottom right edge, floating right above the footer, expecting Floating Action Button to be placed in.
  * @slot error-no-content - A slot for displaying an error message when no data is available.
  *
+ * @cssprop --mo-data-grid-min-visible-rows - The minimum number of visible rows. Default to 2.5.
+ *
  * @fires dataChange {CustomEvent<Array<TData>>}
  * @fires selectionChange {CustomEvent<Array<TData>>}
  * @fires pageChange {CustomEvent<number>}
@@ -663,7 +665,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		return html`
 			<mo-flex ${style({ width: '*', position: 'relative' })}>
 				<mo-grid ${style({ height: '*' })} rows='* auto'>
-					<mo-scroller ${style({ minHeight: 'var(--mo-data-grid-content-min-height, calc(2.5 * var(--mo-data-grid-row-height) + var(--mo-data-grid-header-height)))', paddingBottom: '2px' })}>
+					<mo-scroller ${style({ minHeight: 'var(--mo-data-grid-content-min-height, calc(var(--mo-data-grid-min-visible-rows, 2.5) * var(--mo-data-grid-row-height) + var(--mo-data-grid-header-height)))', paddingBottom: '2px' })}>
 						<mo-grid ${style({ height: '100%' })} rows='auto *'>
 							${this.headerTemplate}
 							${this.contentTemplate}
