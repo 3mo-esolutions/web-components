@@ -29,16 +29,16 @@ export class DateRangeParser {
 		switch (keyword) {
 			case 'w':
 			case 'dw': return new DateTimeRange(referenceDate.weekStart, referenceDate.weekEnd)
-			case 'nw': return new DateTimeRange(referenceDate.addWeeks(+1).weekStart, referenceDate.addWeeks(+1).weekEnd)
-			case 'lw': return new DateTimeRange(referenceDate.addWeeks(-1).weekStart, referenceDate.addWeeks(-1).weekEnd)
+			case 'nw': return new DateTimeRange(referenceDate.add({ weeks: +1 }).weekStart, referenceDate.add({ weeks: +1 }).weekEnd)
+			case 'lw': return new DateTimeRange(referenceDate.add({ weeks: -1 }).weekStart, referenceDate.add({ weeks: -1 }).weekEnd)
 			case 'm':
 			case 'dm': return new DateTimeRange(referenceDate.monthStart, referenceDate.monthEnd)
-			case 'lm': return new DateTimeRange(referenceDate.addMonths(-1).monthStart, referenceDate.addMonths(-1).monthEnd)
-			case 'nm': return new DateTimeRange(referenceDate.addMonths(+1).monthStart, referenceDate.addMonths(+1).monthEnd)
+			case 'lm': return new DateTimeRange(referenceDate.add({ months: -1 }).monthStart, referenceDate.add({ months: -1 }).monthEnd)
+			case 'nm': return new DateTimeRange(referenceDate.add({ months: +1 }).monthStart, referenceDate.add({ months: +1 }).monthEnd)
 			case 'j':
 			case 'dj': return new DateTimeRange(referenceDate.yearStart, referenceDate.yearEnd)
-			case 'lj': return new DateTimeRange(referenceDate.addYears(-1).yearStart, referenceDate.addYears(-1).yearEnd)
-			case 'nj': return new DateTimeRange(referenceDate.addYears(+1).yearStart, referenceDate.addYears(+1).yearEnd)
+			case 'lj': return new DateTimeRange(referenceDate.add({ years: -1 }).yearStart, referenceDate.add({ years: -1 }).yearEnd)
+			case 'nj': return new DateTimeRange(referenceDate.add({ years: +1 }).yearStart, referenceDate.add({ years: +1 }).yearEnd)
 			default: return undefined
 		}
 	}

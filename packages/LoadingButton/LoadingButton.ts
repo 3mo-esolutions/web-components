@@ -91,11 +91,6 @@ export class LoadingButton extends Button {
 	}
 }
 
-// TODO: How to integrate with Dialog in the future?
-// MaterialDialog.executingActionAdaptersByComponent.set(LoadingButton, (button, isExecuting) => {
-// 	(button as LoadingButton).loading = isExecuting
-// })
-
 declare global {
 	interface HTMLElementTagNameMap {
 		'mo-loading-button': LoadingButton

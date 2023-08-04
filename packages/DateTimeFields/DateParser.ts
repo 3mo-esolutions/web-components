@@ -59,12 +59,12 @@ export class DateParser {
 
 		if (!isNaN(Number(lastChar))) {
 			num = parseInt(dateText.substring(0, dateText.length))
-			return referenceDate.addDays(num)
+			return referenceDate.add({ days: num })
 		} else {
 			num = parseInt(dateText.substring(0, dateText.length - 1))
 			switch (lastChar) {
-				case 'y': return referenceDate.addYears(num)
-				case 'm': return referenceDate.addMonths(num)
+				case 'y': return referenceDate.add({ years: num })
+				case 'm': return referenceDate.add({ months: num })
 				default: return undefined
 			}
 		}
@@ -80,30 +80,30 @@ export class DateParser {
 	private static parseDateFromKeyword(keyword: string, referenceDate = new DateTime) {
 		switch (keyword) {
 			case 'h': return new DateTime(referenceDate)
-			case 'üm': return referenceDate.addDays(+2)
-			case 'm': return referenceDate.addDays(+1)
-			case 'üüm': return referenceDate.addDays(+3)
-			case 'g': return referenceDate.addDays(-1)
-			case 'vg': return referenceDate.addDays(-2)
-			case 'vvg': return referenceDate.addDays(-3)
+			case 'üm': return referenceDate.add({ days: +2 })
+			case 'm': return referenceDate.add({ days: +1 })
+			case 'üüm': return referenceDate.add({ days: +3 })
+			case 'g': return referenceDate.add({ days: -1 })
+			case 'vg': return referenceDate.add({ days: -2 })
+			case 'vvg': return referenceDate.add({ days: -3 })
 			case 'adw': return referenceDate.weekStart
 			case 'edw': return referenceDate.weekEnd
-			case 'anw': return referenceDate.addWeeks(+1).weekStart
-			case 'enw': return referenceDate.addWeeks(+1).weekEnd
-			case 'alw': return referenceDate.addWeeks(-1).weekStart
-			case 'elw': return referenceDate.addWeeks(-1).weekEnd
+			case 'anw': return referenceDate.add({ weeks: +1 }).weekStart
+			case 'enw': return referenceDate.add({ weeks: +1 }).weekEnd
+			case 'alw': return referenceDate.add({ weeks: -1 }).weekStart
+			case 'elw': return referenceDate.add({ weeks: -1 }).weekEnd
 			case 'adm': return referenceDate.monthStart
 			case 'edm': return referenceDate.monthEnd
-			case 'anm': return referenceDate.addMonths(+1).monthStart
-			case 'enm': return referenceDate.addMonths(+1).monthEnd
-			case 'alm': return referenceDate.addMonths(-1).monthStart
-			case 'elm': return referenceDate.addMonths(-1).monthEnd
+			case 'anm': return referenceDate.add({ months: +1 }).monthStart
+			case 'enm': return referenceDate.add({ months: +1 }).monthEnd
+			case 'alm': return referenceDate.add({ months: -1 }).monthStart
+			case 'elm': return referenceDate.add({ months: -1 }).monthEnd
 			case 'adj': return referenceDate.yearStart
 			case 'edj': return referenceDate.yearEnd
-			case 'anj': return referenceDate.addYears(+1).yearStart
-			case 'enj': return referenceDate.addYears(+1).yearEnd
-			case 'alj': return referenceDate.addYears(-1).yearStart
-			case 'elj': return referenceDate.addYears(-1).yearEnd
+			case 'anj': return referenceDate.add({ years: +1 }).yearStart
+			case 'enj': return referenceDate.add({ years: +1 }).yearEnd
+			case 'alj': return referenceDate.add({ years: -1 }).yearStart
+			case 'elj': return referenceDate.add({ years: -1 }).yearEnd
 			default: return undefined
 		}
 	}

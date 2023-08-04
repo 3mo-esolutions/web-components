@@ -3,8 +3,6 @@ import { SlotController } from '@3mo/slot-controller'
 import { ThemeController } from '@3mo/theme'
 import '@3mo/theme'
 
-// TODO: Always focus when clicking on everything
-
 /**
  * @element mo-field
  *

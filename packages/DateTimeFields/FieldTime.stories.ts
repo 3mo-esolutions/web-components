@@ -22,7 +22,7 @@ export default meta({
 	}
 })
 
-export const Time = story({
+export const FieldTime = story({
 	render: ({ label, required, disabled, dense, readonly }) => html`
 		<mo-field-time label=${label} ?required=${required} ?disabled=${disabled} ?readonly=${readonly} ?dense=${dense}></mo-field-time>
 	`

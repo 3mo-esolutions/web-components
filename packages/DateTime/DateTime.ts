@@ -63,8 +63,8 @@ export class DateTime extends Date {
 	get epochMicroseconds() { return this.zonedDateTime.epochMicroseconds }
 	get epochNanoseconds() { return this.zonedDateTime.epochNanoseconds }
 
-	get dayStart() { return DateTime.from(this.zonedDateTime.with({ hour: 0, minute: 0, second: 0, millisecond: 0, microsecond: 0, nanosecond: 0 })) }
-	get dayEnd() { return DateTime.from(this.zonedDateTime.with({ hour: 23, minute: 59, second: 59, millisecond: 999, microsecond: 999, nanosecond: 999 })) }
+	get dayStart() { return DateTime.from(this.zonedDateTime.startOfDay()) }
+	get dayEnd() { return DateTime.from(this.zonedDateTime.add({ days: 1 }).startOfDay().add({ nanoseconds: -1 })) }
 	get dayRange() { return new DateTimeRange(this.dayStart, this.dayEnd) }
 
 	get weekStart() { return this.subtract({ days: this.dayOfWeek - 1 }) }

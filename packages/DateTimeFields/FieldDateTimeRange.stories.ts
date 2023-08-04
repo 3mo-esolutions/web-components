@@ -5,10 +5,10 @@ import './index.js'
 import { FieldDateTimePrecision } from './FieldDateTimeBase.js'
 
 export default meta({
-	title: 'Field Date',
-	component: 'mo-field-date',
+	title: 'Field Date Time Range',
+	component: 'mo-field-date-time-range',
 	args: {
-		precision: FieldDateTimePrecision.Day,
+		precision: FieldDateTimePrecision.Second,
 		label: 'Label',
 		required: false,
 		dense: false,
@@ -23,6 +23,9 @@ export default meta({
 					FieldDateTimePrecision.Year,
 					FieldDateTimePrecision.Month,
 					FieldDateTimePrecision.Day,
+					FieldDateTimePrecision.Hour,
+					FieldDateTimePrecision.Minute,
+					FieldDateTimePrecision.Second,
 				]
 			}
 		}
@@ -36,15 +39,15 @@ export default meta({
 	}
 })
 
-export const FieldDate = story({
+export const FieldDateTimeRange = story({
 	render: ({ label, required, disabled, dense, readonly, precision }) => html`
-		<mo-field-date
+		<mo-field-date-time-range
 			label=${label}
+			precision=${precision}
 			?required=${required}
 			?disabled=${disabled}
 			?readonly=${readonly}
 			?dense=${dense}
-			precision=${precision}
-		></mo-field-date>
+		></mo-field-date-time-range>
 	`
 })

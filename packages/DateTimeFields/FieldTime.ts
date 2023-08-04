@@ -1,6 +1,8 @@
 import { component, html, style } from '@a11d/lit'
 import { FieldText } from '@3mo/text-fields'
 
+// TODO: Migrate to Temporal.PlainTime
+
 @component('mo-field-time')
 export class FieldTime extends FieldText {
 	override readonly inputType = 'time'
