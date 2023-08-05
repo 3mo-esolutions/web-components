@@ -36,6 +36,10 @@ export class Switch extends Component {
 				display: inline-flex;
 			}
 
+			:host([disabled]) {
+				pointer-events: none;
+			}
+
 			mwc-switch {
 				--mdc-theme-primary: var(--mo-switch-accent-color, var(--mo-color-accent));
 				--mdc-theme-secondary: var(--mdc-theme-primary);

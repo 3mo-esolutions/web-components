@@ -48,6 +48,10 @@ export class Button extends Component {
 				min-height: 36px;
 			}
 
+			:host([disabled]) {
+				pointer-events: none;
+			}
+
 			:host([type=normal]) mwc-button {
 				--mo-button-default-horizontal-padding: 12px;
 			}

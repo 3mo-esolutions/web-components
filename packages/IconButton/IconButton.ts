@@ -24,6 +24,10 @@ export class IconButton extends Component {
 				font-size: 20px;
 			}
 
+			:host([disabled]) {
+				pointer-events: none;
+			}
+
 			:host, mwc-icon-button {
 				display: inline-block;
 			}

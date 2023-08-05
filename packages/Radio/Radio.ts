@@ -34,6 +34,10 @@ export class Radio extends Component {
 				display: inline-flex;
 			}
 
+			:host([disabled]) {
+				pointer-events: none;
+			}
+
 			mwc-radio {
 				--mdc-theme-secondary: var(--mo-radio-accent-color, var(--mo-color-accent));
 				--mdc-radio-touch-target-size: 36px;

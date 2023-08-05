@@ -1,4 +1,4 @@
-import { css, LitElement, property, type UpdatedCallback } from '@a11d/lit'
+import { LitElement, property, type UpdatedCallback } from '@a11d/lit'
 
 const tabIndexBeforeDisabledSymbol = Symbol()
 
@@ -7,7 +7,6 @@ export const disabledProperty = (options?: {
 	updated?: UpdatedCallback<boolean> | undefined
 }) => {
 	return (prototype: LitElement, propertyKey: 'disabled') => {
-		const constructor = prototype.constructor as typeof LitElement
 		property({
 			type: Boolean,
 			reflect: true,
@@ -33,11 +32,5 @@ export const disabledProperty = (options?: {
 				}
 			}
 		})(prototype, propertyKey)
-
-		constructor.elementStyles.push(css`
-			:host([disabled]) {
-				pointer-events: none;
-			}
-		`)
 	}
 }

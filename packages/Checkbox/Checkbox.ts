@@ -57,6 +57,10 @@ export class Checkbox extends Component {
 				display: inline-flex;
 			}
 
+			:host([disabled]) {
+				pointer-events: none;
+			}
+
 			mwc-checkbox {
 				--mdc-theme-secondary: var(--mo-checkbox-accent-color, var(--mo-color-accent));
 				--mdc-checkbox-touch-target-size: 36px;

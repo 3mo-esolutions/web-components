@@ -22,6 +22,7 @@ export class SplitButton extends Component {
 	static override get styles() {
 		return css`
 			:host { display: inline-flex; }
+			:host([disabled]) { pointer-events: none; }
 			mo-button { --mo-button-horizontal-padding: 6px; }
 		`
 	}

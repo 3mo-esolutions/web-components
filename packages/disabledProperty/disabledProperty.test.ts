@@ -22,15 +22,6 @@ describe('disabledProperty', () => {
 		expect(baseFixture.component.getAttribute('aria-disabled')).toBe('true')
 	})
 
-	it('sets pointer-events to none when disabled', async () => {
-		expect(getComputedStyle(baseFixture.component).pointerEvents).toBe('auto')
-
-		baseFixture.component.disabled = true
-		await baseFixture.updateComplete
-
-		expect(getComputedStyle(baseFixture.component).pointerEvents).toBe('none')
-	})
-
 	describe('blockFocus', () => {
 		@component('mo-test-disabled-property-block-focus')
 		class TestComponentBlockFocus extends Component {

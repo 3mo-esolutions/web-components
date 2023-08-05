@@ -16,6 +16,12 @@ describe('Radio', () => {
 		expect(fixture.component.renderRoot.querySelector('mwc-radio')?.name).toBe('test')
 	})
 
+	it('should set pointer-events to "none" when disabled', async () => {
+		fixture.component.disabled = true
+		await fixture.updateComplete
+		expect(getComputedStyle(fixture.component).pointerEvents).toBe('none')
+	})
+
 	it('should tunnel "disabled" to the mwc-radio element', async () => {
 		fixture.component.disabled = true
 		await fixture.update()

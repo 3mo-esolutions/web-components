@@ -92,6 +92,10 @@ export class Menu extends Component {
 				position: static;
 			}
 
+			:host([disabled]) {
+				pointer-events: none;
+			}
+
 			mo-popover {
 				border-radius: var(--mo-toolbar-border-radius, var(--mo-border-radius));
 				background: var(--mo-color-surface);

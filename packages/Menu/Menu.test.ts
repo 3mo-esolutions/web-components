@@ -28,6 +28,14 @@ describe('Menu', () => {
 			expect(fixture.component.open).toBeFalse()
 		})
 
+		it('should set pointer-events to "none" when disabled', async () => {
+			fixture.component.disabled = true
+
+			await fixture.updateComplete
+
+			expect(getComputedStyle(fixture.component).pointerEvents).toBe('none')
+		})
+
 		it('should not close when a list-item other than menu item is clicked', () => {
 			fixture.component.open = true
 
