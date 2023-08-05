@@ -37,16 +37,27 @@ export class SplitButton extends Component {
 		return html`
 			<mo-button-group type='raised'>
 				<slot></slot>
-				<mo-button id='more' ?disabled=${this.disabled}>
-					<mo-icon icon='keyboard_arrow_down'></mo-icon>
-				</mo-button>
+				${this.moreButtonTemplate}
 			</mo-button-group>
 		`
 	}
 
+	protected get moreButtonTemplate() {
+		return html`
+			<mo-button ?disabled=${this.disabled} @click=${this.handleMoreClick}>
+				<mo-icon icon='keyboard_arrow_down'></mo-icon>
+			</mo-button>
+		`
+	}
+
+	private readonly handleMoreClick = (e: PointerEvent) => {
+		e.stopPropagation()
+		this.open = !this.open
+	}
+
 	protected get menuTemplate() {
 		return html`
-			<mo-menu opener='more' fixed .anchor=${this}
+			<mo-menu fixed .anchor=${this} manualOpen
 				?open=${this.open}
 				@openChange=${this.handleOpenChange}
 			>

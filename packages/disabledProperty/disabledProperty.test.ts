@@ -8,13 +8,7 @@ describe('disabledProperty', () => {
 		@disabledProperty() disabled?: boolean
 	}
 
-	@component('mo-test-disabled-property-block-focus')
-	class TestComponentBlockFocus extends Component {
-		@disabledProperty({ blockFocus: true }) disabled?: boolean
-	}
-
 	const baseFixture = new ComponentTestFixture(() => new TestComponent)
-	const blockFocusFixture = new ComponentTestFixture(() => new TestComponentBlockFocus)
 
 	it('sets up the "disabled" property which reflects to the "disabled" attribute', async () => {
 		expect(baseFixture.component.hasAttribute('disabled')).toBe(false)
@@ -37,23 +31,32 @@ describe('disabledProperty', () => {
 		expect(getComputedStyle(baseFixture.component).pointerEvents).toBe('none')
 	})
 
-	it('"blockFocus" option prevents focus when disabled', async () => {
-		const setDisabled = async (disabled: boolean) => {
-			blockFocusFixture.component.disabled = disabled
-			await blockFocusFixture.updateComplete
-			baseFixture.component.disabled = disabled
-			await baseFixture.updateComplete
+	describe('blockFocus', () => {
+		@component('mo-test-disabled-property-block-focus')
+		class TestComponentBlockFocus extends Component {
+			@disabledProperty({ blockFocus: true }) disabled?: boolean
 		}
 
-		blockFocusFixture.component.tabIndex = 5
-		baseFixture.component.tabIndex = 5
+		const blockFocusFixture = new ComponentTestFixture(() => new TestComponentBlockFocus)
 
-		await setDisabled(true)
-		expect(blockFocusFixture.component.tabIndex).toBe(-1)
-		expect(baseFixture.component.tabIndex).toBe(5)
+		it('"blockFocus" option prevents focus when disabled', async () => {
+			const setDisabled = async (disabled: boolean) => {
+				blockFocusFixture.component.disabled = disabled
+				await blockFocusFixture.updateComplete
+				baseFixture.component.disabled = disabled
+				await baseFixture.updateComplete
+			}
 
-		await setDisabled(false)
-		expect(blockFocusFixture.component.tabIndex).toBe(5)
-		expect(baseFixture.component.tabIndex).toBe(5)
+			blockFocusFixture.component.tabIndex = 5
+			baseFixture.component.tabIndex = 5
+
+			await setDisabled(true)
+			expect(blockFocusFixture.component.tabIndex).toBe(-1)
+			expect(baseFixture.component.tabIndex).toBe(5)
+
+			await setDisabled(false)
+			expect(blockFocusFixture.component.tabIndex).toBe(5)
+			expect(baseFixture.component.tabIndex).toBe(5)
+		})
 	})
 })
