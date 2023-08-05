@@ -62,7 +62,7 @@ export class SplitButton extends Component {
 				?open=${this.open}
 				@openChange=${this.handleOpenChange}
 			>
-				<slot name='more'></slot>
+				<slot name='more' @click=${(e: PointerEvent) => e.stopPropagation()}></slot>
 			</mo-menu>
 		`
 	}

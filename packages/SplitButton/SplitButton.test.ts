@@ -1,8 +1,15 @@
+import { html } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit/dist/test'
 import { SplitButton } from './SplitButton.js'
 
 describe('SplitButton', () => {
-	const fixture = new ComponentTestFixture<SplitButton>('mo-split-button')
+	const fixture = new ComponentTestFixture<SplitButton>(html`
+		<mo-split-button>
+			<mo-button>Button</mo-button>
+			<mo-list-item slot='more'>Item 1</mo-list-item>
+			<mo-list-item slot='more'>Item 2</mo-list-item>
+		</mo-split-button>
+	`)
 
 	it('should set pointer-events to "none" when disabled', async () => {
 		fixture.component.disabled = true
@@ -32,6 +39,15 @@ describe('SplitButton', () => {
 	describe('menu', () => {
 		it('should have "manualOpen" property', () => {
 			expect(fixture.component.renderRoot.querySelector('mo-menu')?.manualOpen).toBe(true)
+		})
+
+		it('should stop propagation of click event on any menu-item', () => {
+			const spy = jasmine.createSpy()
+			fixture.component.addEventListener('click', () => spy())
+
+			fixture.component.querySelector('mo-list-item')?.click()
+
+			expect(spy).not.toHaveBeenCalled()
 		})
 	})
 })
