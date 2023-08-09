@@ -82,6 +82,20 @@ export const ContextMenu = story({
 	`
 })
 
+export const Sums = story({
+	render: () => html`
+		<mo-data-grid .data=${generatePeople(50).map(x => ({ ...x, balance: Math.floor(Math.random() * 1000) }))} selectionMode='multiple' style='height: 500px' selectOnClick>
+			<mo-data-grid-column-number hidden nonEditable heading='ID' dataSelector='id'></mo-data-grid-column-number>
+			<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
+			<mo-data-grid-column-number heading='Age' dataSelector='age' sumHeading='Ages Total'></mo-data-grid-column-number>
+			<mo-data-grid-column-text heading='City' dataSelector='city'></mo-data-grid-column-text>
+			<mo-data-grid-column-currency heading='Balance' dataSelector='balance' sumHeading='Balances Total'></mo-data-grid-column-currency>
+
+			<mo-checkbox slot='toolbar'></mo-checkbox>
+		</mo-data-grid>
+	`
+})
+
 export const RowDetails = story({
 	args: {
 		multipleDetails: false,
