@@ -87,8 +87,23 @@ export const Scrollable = story({
 
 export const Header = story({
 	render: () => html`
+		<style>
+			span {
+				font-size: small;
+				color: gray;
+				background-color: rgba(255, 182, 193, 0.2);
+				color: rgba(255, 182, 193);
+				padding-inline: 3px;
+				border-radius: 4px;
+				margin-top: 5px;
+			}
+		</style>
 		<mo-dialog heading='Heading' open>
 			<mo-icon-button slot='header' icon='edit'></mo-icon-button>
+			<mo-flex slot='header' direction='horizontal' alignItems='center' style='flex: 1'>
+				<span>New!</span>
+			</mo-flex>
+
 			Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius quidem eaque earum obcaecati qui? Nihil quaerat,
 			repudiandae error delectus labore quasi inventore fugit corporis maxime eos aspernatur aliquid temporibus vitae.
 		</mo-dialog>

@@ -137,6 +137,10 @@ export class Dialog extends Component {
 			:host([size=large]) mwc-dialog::part(actions), :host([size=large]) mwc-dialog::part(heading) {
 				border-color: var(--mdc-dialog-scroll-divider-color);
 			}
+
+			mo-flex[slot=header] {
+				flex: 1;
+			}
 		`
 	}
 	override async disconnected() {
@@ -326,10 +330,14 @@ MwcDialog.elementStyles.push(css`
 		padding-inline-start: 24px;
 		padding-inline-end: 12px;
 		align-items: flex-start;
+		justify-content: space-between;
+	}
+
+	mo-flex[part=heading] > mo-flex {
+		flex: 1;
 	}
 
 	mo-heading {
-		flex: 1;
 		margin-block-start: 4px;
 		-webkit-font-smoothing: antialiased;
 		font-size: 1.25rem;
@@ -415,7 +423,9 @@ MwcDialog.addInitializer(element => {
 				return html`
 					<mo-flex part='heading' direction='horizontal' gap='4px'>
 						<mo-heading typography='heading4'>${this.heading}</mo-heading>
-						<slot name='header'></slot>
+						<mo-flex direction='horizontal-reversed' gap='4px'>
+							<slot name='header'></slot>
+						</mo-flex>
 					</mo-flex>
 				`
 			}

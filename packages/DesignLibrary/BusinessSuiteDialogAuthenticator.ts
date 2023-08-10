@@ -18,7 +18,6 @@ Localizer.register(LanguageCode.German, {
 })
 
 export type User = {
-	id: number
 	name?: string
 	email?: string
 }
