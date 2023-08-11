@@ -31,15 +31,37 @@ describe('FieldSelect', () => {
 		return { changeSpy, dataChangeSpy, indexChangeSpy }
 	}
 
-	it('should render a default option when default property is set', async () => {
-		expect(getDefaultOption()).toBeUndefined()
+	describe('default option', () => {
+		it('should not render by default', () => expect(getDefaultOption()).toBeUndefined())
 
-		fixture.component.default = 'Select...'
-		await fixture.updateComplete
+		it('should render when "default" property is set', async () => {
+			fixture.component.default = 'Select...'
+			await fixture.updateComplete
 
-		const defaultOption = getDefaultOption()
-		expect(defaultOption).toBeDefined()
-		expect(defaultOption?.textContent?.trim()).toBe('Select...')
+			const defaultOption = getDefaultOption()
+			expect(defaultOption).toBeDefined()
+			expect(defaultOption?.textContent?.trim()).toBe('Select...')
+		})
+
+		it('should not get populated when no default option is available even if "reflectDefault" is set', async () => {
+			fixture.component.default = ''
+			fixture.component.reflectDefault = true
+
+			await fixture.updateComplete
+
+			expect(fixture.component.renderRoot.querySelector('mo-field')?.populated).toBe(false)
+		})
+
+		it('should stay populated when selected if "reflectDefault" is set', async () => {
+			fixture.component.default = 'Select...'
+
+			await fixture.updateComplete
+			expect(fixture.component.renderRoot.querySelector('mo-field')?.populated).toBe(false)
+
+			fixture.component.reflectDefault = true
+			await fixture.updateComplete
+			expect(fixture.component.renderRoot.querySelector('mo-field')?.populated).toBe(true)
+		})
 	})
 
 	describe('menu', () => {
