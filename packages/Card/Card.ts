@@ -68,6 +68,7 @@ export class Card extends Component {
 
 			slot[name=header] {
 				display: flex;
+				align-items: center;
 				gap: 6px;
 				padding: var(--mo-card-header-padding, 16px);
 			}
