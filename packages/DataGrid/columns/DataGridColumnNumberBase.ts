@@ -13,5 +13,9 @@ export abstract class DataGridColumnNumberBase<TData> extends DataGridColumn<TDa
 		}
 	}
 
+	protected getNumber(value: number | undefined) {
+		return Number.isFinite(value) ? value : undefined
+	}
+
 	abstract getSumTemplate(sum: number): HTMLTemplateResult
 }

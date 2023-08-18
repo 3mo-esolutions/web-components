@@ -6,7 +6,7 @@ import { DataGridColumnNumberBase } from './DataGridColumnNumberBase.js'
 export class DataGridColumnNumber<TData> extends DataGridColumnNumberBase<TData> {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	getContentTemplate(value: number | undefined, _data: TData) {
-		return html`${Number.isFinite(value) ? value?.format() ?? nothing : nothing}`
+		return html`${this.getNumber(value)?.format() ?? nothing}`
 	}
 
 	getEditContentTemplate(value: number | undefined, data: TData) {

@@ -1,4 +1,4 @@
-import { component, html, ifDefined, property, style } from '@a11d/lit'
+import { component, html, ifDefined, nothing, property, style } from '@a11d/lit'
 import { Currency } from '@3mo/localization'
 import { DataGridColumnNumberBase } from './DataGridColumnNumberBase.js'
 
@@ -9,7 +9,7 @@ export class DataGridColumnCurrency<TData> extends DataGridColumnNumberBase<TDat
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	getContentTemplate(value: number | undefined, _data: TData) {
-		return html`${(value ?? 0).formatAsCurrency(this.currency)}`
+		return html`${this.getNumber(value)?.formatAsCurrency(this.currency) ?? nothing}`
 	}
 
 	getEditContentTemplate(value: number | undefined, data: TData) {

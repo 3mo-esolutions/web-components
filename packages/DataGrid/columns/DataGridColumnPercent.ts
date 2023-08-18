@@ -6,7 +6,7 @@ import { DataGridColumnNumberBase } from './DataGridColumnNumberBase.js'
 export class DataGridColumnPercent<TData> extends DataGridColumnNumberBase<TData> {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	getContentTemplate(value: number | undefined, _data: TData) {
-		return html`${Number.isFinite(value) ? value?.formatAsPercent() ?? nothing : nothing}`
+		return html`${this.getNumber(value)?.formatAsPercent() ?? nothing}`
 	}
 
 	getEditContentTemplate(value: number | undefined, data: TData) {
