@@ -128,7 +128,8 @@ export class DataGridHeader<TData> extends Component {
 	}
 
 	private getHeaderCellTemplate(column: ColumnDefinition<TData>) {
-		const sortIcon = !this.dataGrid.sorting || !column.dataSelector || this.dataGrid.sorting.selector !== column.dataSelector ? undefined
+		const sortDataSelector = column.sortDataSelector || column.dataSelector
+		const sortIcon = !this.dataGrid.sorting || !sortDataSelector || this.dataGrid.sorting.selector !== sortDataSelector ? undefined
 			: this.dataGrid.sorting.strategy === DataGridSortingStrategy.Ascending ? 'arrow_upward' : 'arrow_downward'
 
 		return html`
@@ -161,11 +162,12 @@ export class DataGridHeader<TData> extends Component {
 		}
 
 		const defaultSortingStrategy = DataGridSortingStrategy.Descending
+		const sortDataSelector = column.sortDataSelector || column.dataSelector
 
-		if (this.dataGrid.sorting?.selector !== column.dataSelector) {
-			this.dataGrid.handleSortChange({ selector: column.dataSelector, strategy: defaultSortingStrategy })
+		if (this.dataGrid.sorting?.selector !== sortDataSelector) {
+			this.dataGrid.handleSortChange({ selector: sortDataSelector, strategy: defaultSortingStrategy })
 		} else if (this.dataGrid.sorting.strategy === DataGridSortingStrategy.Descending) {
-			this.dataGrid.handleSortChange({ selector: column.dataSelector, strategy: DataGridSortingStrategy.Ascending })
+			this.dataGrid.handleSortChange({ selector: sortDataSelector, strategy: DataGridSortingStrategy.Ascending })
 		} else {
 			this.dataGrid.handleSortChange(undefined)
 		}

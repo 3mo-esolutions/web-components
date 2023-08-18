@@ -22,12 +22,14 @@ export abstract class DataGridColumn<TData, TValue> extends Component {
 	@property({ reflect: true }) textAlign = 'start'
 	@property({ reflect: true }) override title!: string
 	@property({ reflect: true }) dataSelector!: KeyPathOf<TData>
+	@property({ reflect: true }) sortDataSelector?: KeyPathOf<TData>
 	@property({ type: Boolean, reflect: true }) nonSortable = false
 	@property({ type: Boolean, reflect: true }) nonEditable = false
 
 	get definition(): ColumnDefinition<TData, TValue> {
 		return {
 			dataSelector: this.dataSelector,
+			sortDataSelector: this.sortDataSelector,
 			heading: this.heading,
 			title: this.title || undefined,
 			alignment: this.textAlign as 'start' | 'center' | 'end',

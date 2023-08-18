@@ -4,6 +4,7 @@ export type ColumnDefinition<TData, TValue = unknown> = {
 	heading: string
 	title?: string
 	dataSelector: KeyPathOf<TData>
+	sortDataSelector?: KeyPathOf<TData>
 	width?: string
 	alignment?: 'start' | 'center' | 'end'
 	hidden?: boolean

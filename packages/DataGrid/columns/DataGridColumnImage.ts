@@ -4,6 +4,9 @@ import { DataGridColumn } from './DataGridColumn.js'
 /** @element mo-data-grid-column-image */
 @component('mo-data-grid-column-image')
 export class DataGridColumnImage<TData> extends DataGridColumn<TData, string> {
+	override nonSortable = true
+	override nonEditable = true
+
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	getContentTemplate(value: string | undefined, _data: TData) {
 		return !value ? nothing : html`
