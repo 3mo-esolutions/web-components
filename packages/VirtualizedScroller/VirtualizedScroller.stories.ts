@@ -22,7 +22,7 @@ export const VirtualizedScroller = story({
 		return html`
 			<mo-virtualized-scroller ${style({ height: '400px' })}
 				.items=${items}
-				.getItemTemplate=${(number: number) => html`<mo-virtualized-scroller-story-box>Box #${number}</mo-virtualized-scroller-story-box>`}
+				.getItemTemplate=${(number: number) => html`<story-virtualized-scroller-box>Box #${number}</story-virtualized-scroller-box>`}
 			></mo-virtualized-scroller>
 		`
 	}
@@ -59,4 +59,4 @@ class Box extends Component {
 	}
 }
 
-customElements.define('mo-virtualized-scroller-story-box', Box)
+customElements.define('story-virtualized-scroller-box', Box)

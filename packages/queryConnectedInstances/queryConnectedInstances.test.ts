@@ -5,7 +5,7 @@ class QueryConnectedInstancesTestComponent extends Component {
 	@queryConnectedInstances() static readonly connectedInstances: Set<QueryConnectedInstancesTestComponent>
 }
 
-customElements.define('query-connected-instances-test-component', QueryConnectedInstancesTestComponent)
+customElements.define('test-query-connected-instances-test-component', QueryConnectedInstancesTestComponent)
 
 describe('queryConnectedInstances', () => {
 	it('should create a getter that returns the same instance of a Set ', () => {

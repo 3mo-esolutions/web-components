@@ -2,7 +2,7 @@ import { Component, css, html, query } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit/dist/test/index.js'
 import { Popover, PopoverPlacement, PopoverAlignment } from './index.js'
 
-class PopoverAbsoluteTest extends Component {
+class TestPopoverAbsolute extends Component {
 	static override get styles() {
 		return css`
 			:host {
@@ -26,9 +26,9 @@ class PopoverAbsoluteTest extends Component {
 	}
 }
 
-customElements.define('mo-popover-absolute-test', PopoverAbsoluteTest)
+customElements.define('test-popover-absolute', TestPopoverAbsolute)
 
-class PopoverFixedTest extends Component {
+class TestPopoverFixed extends Component {
 	@query('mo-popover') readonly popover!: Popover
 
 	protected override get template() {
@@ -36,10 +36,10 @@ class PopoverFixedTest extends Component {
 	}
 }
 
-customElements.define('mo-popover-fixed-test', PopoverFixedTest)
+customElements.define('test-popover-fixed', TestPopoverFixed)
 
 describe('Popover', () => {
-	const fixture = new ComponentTestFixture(() => new PopoverAbsoluteTest)
+	const fixture = new ComponentTestFixture(() => new TestPopoverAbsolute)
 
 	beforeAll(() => document.body.style.margin = '0')
 
@@ -112,7 +112,7 @@ describe('Popover', () => {
 	] as const
 
 	describe('with absolute positing', () => {
-		const fixture = new ComponentTestFixture(() => new PopoverAbsoluteTest)
+		const fixture = new ComponentTestFixture(() => new TestPopoverAbsolute)
 
 		it('should have absolute positioning', async () => {
 			await fixture.updateComplete
@@ -154,7 +154,7 @@ describe('Popover', () => {
 	})
 
 	describe('with fixed positioning', () => {
-		const fixture = new ComponentTestFixture(() => new PopoverFixedTest)
+		const fixture = new ComponentTestFixture(() => new TestPopoverFixed)
 
 		it('should have fixed positioning', async () => {
 			await fixture.updateComplete

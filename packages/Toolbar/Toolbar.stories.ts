@@ -60,7 +60,7 @@ export const Custom = story({
 	args: { itemCount: 4 },
 	render: ({ itemCount }) => {
 		return html`
-			<mo-custom-toolbar-story>
+			<story-custom-toolbar>
 				${[...range(0, itemCount)].map(i => html`
 					<mo-menu-item icon='arrow_circle_left' slot='left'>
 						<span>Left ${i + 1}</span>
@@ -71,11 +71,11 @@ export const Custom = story({
 						<span>Right ${i + 1}</span>
 					</mo-menu-item>
 				`)}
-			</mo-custom-toolbar-story>
+			</story-custom-toolbar>
 		`
 	}
 })
-class CustomToolbarStory extends Component {
+class StoryCustomToolbar extends Component {
 	@property({ type: Boolean, reflect: true }) open = false
 
 	protected readonly leftToolbarController = new ToolbarController(this, {
@@ -107,4 +107,4 @@ class CustomToolbarStory extends Component {
 	}
 }
 
-customElements.define('mo-custom-toolbar-story', CustomToolbarStory)
+customElements.define('story-custom-toolbar', StoryCustomToolbar)

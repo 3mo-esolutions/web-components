@@ -38,7 +38,7 @@ class DialogData extends EntityDialogComponent<Data> {
 	}
 }
 
-customElements.define('mo-test-dialog-data', DialogData)
+customElements.define('story-dialog-data', DialogData)
 
 export const DialogComponent = story({
 	render: () => html`

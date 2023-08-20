@@ -18,7 +18,7 @@ export default meta({
 
 interface Language extends LanguageBase { }
 
-class TestLanguageField extends LanguageFieldBase<string, Language> {
+class StoryLanguageField extends LanguageFieldBase<string, Language> {
 	protected fetch(): Promise<Language[]> {
 		return Promise.resolve([
 			{ id: 1, name: 'English', flagImageSource: 'https://flagsapi.com/GB/flat/64.png' },
@@ -28,11 +28,11 @@ class TestLanguageField extends LanguageFieldBase<string, Language> {
 
 }
 
-customElements.define('test-language-field', TestLanguageField)
+customElements.define('story-language-field', StoryLanguageField)
 
 export const ModeAttach = story({
 	render: () => html`
-		<test-language-field label='Label'
+		<story-language-field label='Label'
 			.fieldTemplate=${(value: string, handleChange: (value: string) => void, label: string, language: Language) => html`
 				<mo-field-text
 					label=${`${label} (${language.name})`}
@@ -40,13 +40,13 @@ export const ModeAttach = story({
 					@change=${(e: CustomEvent<string>) => handleChange(e.detail)}
 				></mo-field-text>
 			`}
-		></test-language-field>
+		></story-language-field>
 	`
 })
 
 export const ModeOverlay = story({
 	render: () => html`
-		<test-language-field label='Label' mode='overlay'
+		<story-language-field label='Label' mode='overlay'
 			.fieldTemplate=${(value: string, handleChange: (value: string) => void, label: string, language: Language) => html`
 				<mo-field-text-area
 					label=${`${label} (${language.name})`}
@@ -54,6 +54,6 @@ export const ModeOverlay = story({
 					@change=${(e: CustomEvent<string>) => handleChange(e.detail)}
 				></mo-field-text-area>
 			`}
-		></test-language-field>
+		></story-language-field>
 	`
 })

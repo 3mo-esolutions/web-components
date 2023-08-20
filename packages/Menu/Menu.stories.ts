@@ -31,7 +31,7 @@ export const WithContainer = story({
 
 export const Absolute = story({
 	render: () => html`
-		<mo-button-with-menu-story></mo-button-with-menu-story>
+		<story-button-with-menu></story-button-with-menu>
 		<!-- ENCAPSULATED CODE:
 			<mo-button id='button' type='outlined'>Click to open the menu</mo-button>
 			<mo-menu .anchor=\${this} opener='button'>\${items}</mo-menu>
@@ -41,7 +41,7 @@ export const Absolute = story({
 
 export const Fixed = story({
 	render: () => html`
-		<mo-button-with-menu-story fixed></mo-button-with-menu-story>
+		<story-button-with-menu fixed></story-button-with-menu>
 		<!-- ENCAPSULATED CODE:
 			<mo-button id='' type='outlined'>Click to open the menu</mo-button>
 			<mo-menu .anchor=\${this} opener='button'>\${items}</mo-menu>
@@ -114,8 +114,10 @@ class ContextMenuStory extends Component {
 
 	static override get styles() {
 		return css`
-			width: 100vw;
-			height: 100dvh;
+			:host {
+				width: 100vw;
+				height: 100dvh;
+			}
 		`
 	}
 
@@ -132,5 +134,5 @@ class ContextMenuStory extends Component {
 	}
 }
 
-customElements.define('mo-button-with-menu-story', ButtonWithMenuStory)
-customElements.define('mo-context-menu-story', ContextMenuStory)
+customElements.define('story-button-with-menu', ButtonWithMenuStory)
+customElements.define('story-context-menu', ContextMenuStory)
