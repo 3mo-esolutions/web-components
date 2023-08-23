@@ -35,8 +35,13 @@ export class Pdf extends Component {
 		return system?.os === 'Mac OS' || system?.name === 'safari'
 	}
 
+	private get isAndroidChromium() {
+		const system = System.detect()
+		return system?.os === 'Android OS' && system?.name !== 'firefox'
+	}
+
 	private get supportsLoading() {
-		return !this.isMacOrSafari
+		return !this.isMacOrSafari && !this.isAndroidChromium
 	}
 
 	private get supportsEmbed() {
