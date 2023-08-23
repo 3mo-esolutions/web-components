@@ -4,18 +4,18 @@ import { DateList } from './DateList.js'
 
 @component('mo-year-list')
 export class YearList extends DateList {
-	private years?: Array<number>
+	private readonly nowYear = new DateTime().year
+	private years = new Array(150)
+		.fill(undefined)
+		.map((_, i) => this.nowYear - 100 + i)
 
 	protected override get listItemsTemplate() {
-		this.years ??= new Array(150)
-			.fill(undefined)
-			.map((_, i) => this.navigatingValue.year - 100 + i)
 		return html`
 			${this.years.map(year => html`
 				<mo-selectable-list-item
 					?selected=${this.value?.year === year}
 					?data-now=${this.now.year === year}
-					@change=${(e: SelectionListItemChangeEvent<void>) => !e.selected || !this.value ? void 0 : this.change.dispatch(this.value.with({ year }))}
+					@change=${(e: SelectionListItemChangeEvent<void>) => !e.selected ? void 0 : this.change.dispatch((this.value ?? new DateTime).with({ year }))}
 				>${year.format()}</mo-selectable-list-item>
 			`)}
 		`
