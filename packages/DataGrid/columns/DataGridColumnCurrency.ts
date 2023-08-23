@@ -1,4 +1,4 @@
-import { component, html, ifDefined, nothing, property, style } from '@a11d/lit'
+import { component, html, ifDefined, nothing, property } from '@a11d/lit'
 import { Currency } from '@3mo/localization'
 import { DataGridColumnNumberBase } from './DataGridColumnNumberBase.js'
 
@@ -24,7 +24,7 @@ export class DataGridColumnCurrency<TData> extends DataGridColumnNumberBase<TDat
 
 	getSumTemplate(sum: number) {
 		return html`
-			<span ${style({ fontWeight: '500', color: 'var(--mo-color-accent)' })}>${sum.formatAsCurrency(this.currency)}</span>
+			<span style='font-weight: 500'>${sum.formatAsCurrency(this.currency)}</span>
 		`
 	}
 }

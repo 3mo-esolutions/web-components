@@ -17,13 +17,13 @@ export class DataGridFooterSum extends Component {
 				position: relative;
 				max-height: 100%;
 				line-height: 1em;
+				user-select: all;
 			}
 
 			div {
-				color: var(--mo-color-foreground-transparent);
-				font-size: x-small;
-				text-transform: uppercase;
-				text-align: center;
+				color: var(--mo-color-gray);
+				font-size: 0.75rem;
+				text-align: end;
 			}
 		`
 	}
@@ -31,7 +31,7 @@ export class DataGridFooterSum extends Component {
 	protected override get template() {
 		return html`
 			<div>${this.heading}</div>
-			<mo-flex direction='horizontal' justifyContent='center'>
+			<mo-flex direction='horizontal' justifyContent='center' alignItems='center'>
 				<slot></slot>
 			</mo-flex>
 		`

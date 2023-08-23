@@ -19,7 +19,7 @@ export class DataGridColumnNumber<TData> extends DataGridColumnNumberBase<TData>
 	}
 
 	getSumTemplate(sum: number) {
-		return html`<div ${style({ color: 'var(--mo-color-accent)', textAlign: 'center', fontWeight: '500' })}>${sum}</div>`
+		return html`<div ${style({ textAlign: 'center', fontWeight: '500' })}>${sum}</div>`
 	}
 }
 

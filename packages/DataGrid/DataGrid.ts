@@ -747,8 +747,16 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		`
 	}
 
+	get sumsData() {
+		return this.selectedData.length > 0 ? this.selectedData : this.renderData
+	}
+
 	get sumsTemplate() {
-		return html`${this.columns.map(column => this.getSumTemplate(column))}`
+		return html`
+			<mo-flex direction='horizontal' gap='10px' wrap='wrap-reverse' alignItems='center' ${style({ padding: '2px 4px' })}>
+				${this.columns.map(column => this.getSumTemplate(column))}
+			</mo-flex>
+		`
 	}
 
 	getSumTemplate(column: ColumnDefinition<TData>) {
@@ -756,14 +764,14 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			return
 		}
 
-		const sum = this.renderData
+		const sum = this.sumsData
 			.map(data => parseFloat(getValueByKeyPath(data, column.dataSelector) as unknown as string))
 			.filter(n => isNaN(n) === false)
 			.reduce(((a, b) => a + b), 0)
 			|| 0
 
 		return html`
-			<mo-data-grid-footer-sum heading=${column.sumHeading}>
+			<mo-data-grid-footer-sum heading=${column.sumHeading + ''} ${style({ color: this.selectedData.length > 0 ? 'var(--mo-color-accent)' : 'currentColor' })}>
 				${column.getSumTemplate(sum)}
 			</mo-data-grid-footer-sum>
 		`
