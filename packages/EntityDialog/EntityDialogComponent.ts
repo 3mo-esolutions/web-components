@@ -35,7 +35,7 @@ export abstract class EntityDialogComponent<
 	@eventListener({ target: window, type: 'keydown' })
 	protected override async handleKeyDown(e: KeyboardEvent) {
 		await super.handleKeyDown(e)
-		if (!this.dialogElement.preventPrimaryOnCtrlS && e.key === 's' && (e.metaKey || e.ctrlKey)) {
+		if (!this.dialogElement.preventPrimaryOnCtrlS && e.code === 'KeyS' && (e.metaKey || e.ctrlKey)) {
 			e.preventDefault();
 			(document.activeElement as HTMLElement)?.blur()
 			await this.handleAction(DialogActionKey.Primary)
