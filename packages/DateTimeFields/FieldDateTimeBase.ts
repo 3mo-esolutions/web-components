@@ -146,11 +146,10 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 
 	protected get calendarIconButtonTemplate() {
 		return this.hideDatePicker ? nothing : html`
-			<mo-icon-button tabindex='-1' dense slot='end'
+			<mo-icon tabindex='-1' dense slot='end'
 				icon=${this.calendarIconButtonIcon}
-				${style({ color: this.isActive ? 'var(--mo-color-accent)' : 'var(--mo-color-gray)' })}
-				@click=${() => this.open = !this.open}>
-			</mo-icon-button>
+				${style({ color: this.isActive ? 'var(--mo-color-accent)' : 'var(--mo-color-gray)', fontSize: '22px', marginTop: '2px' })}
+			></mo-icon>
 		`
 	}
 
