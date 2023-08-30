@@ -7,11 +7,13 @@ import { FieldPairMode } from '@3mo/field-pair'
  * @attr mode
  * @attr valueKey
  * @attr label
+ * @attr dense
  * @attr value
  * @attr selectedLanguage
  * @attr defaultLanguage
  * @attr fieldTemplate
  * @attr dialogSize
+ *
  * @fires change
  * @fires languageChange
  * @fires languagesFetch
@@ -27,6 +29,7 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 	@property() valueKey: keyof TLanguage = 'id'
 	@property() label!: string
 	@property() dialogSize?: DialogSize
+	@property({ type: Boolean }) dense = false
 	@property({ type: Object }) value = new Map<TLanguage[keyof TLanguage], TValue | undefined>()
 	@property({ type: Object }) selectedLanguage?: TLanguage
 	@property({ type: Object }) defaultLanguage?: TLanguage
@@ -117,7 +120,7 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 	protected get languageSelectorTemplate() {
 		return html`
 			${!this._languages.length ? nothing : html`
-				<mo-field-select slot='attachment' label=''
+				<mo-field-select slot='attachment' label='' ?dense=${this.dense}
 					value=${ifDefined(this.selectedLanguage?.[this.valueKey])}
 					@change=${(e: CustomEvent<TLanguage[keyof TLanguage]>) => this.handleLanguageChange(this._languages.find(l => l[this.valueKey] === e.detail) as TLanguage)}
 				>

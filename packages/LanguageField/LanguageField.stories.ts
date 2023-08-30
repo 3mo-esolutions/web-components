@@ -25,7 +25,6 @@ class StoryLanguageField extends LanguageFieldBase<string, Language> {
 			{ id: 2, name: 'German', flagImageSource: 'https://flagsapi.com/DE/flat/64.png' },
 		])
 	}
-
 }
 
 customElements.define('story-language-field', StoryLanguageField)
@@ -35,6 +34,20 @@ export const ModeAttach = story({
 		<story-language-field label='Label'
 			.fieldTemplate=${(value: string, handleChange: (value: string) => void, label: string, language: Language) => html`
 				<mo-field-text
+					label=${`${label} (${language.name})`}
+					value=${value}
+					@change=${(e: CustomEvent<string>) => handleChange(e.detail)}
+				></mo-field-text>
+			`}
+		></story-language-field>
+	`
+})
+
+export const DenseField = story({
+	render: () => html`
+		<story-language-field label='Label' mode='overlay' dense
+			.fieldTemplate=${(value: string, handleChange: (value: string) => void, label: string, language: Language) => html`
+				<mo-field-text dense
 					label=${`${label} (${language.name})`}
 					value=${value}
 					@change=${(e: CustomEvent<string>) => handleChange(e.detail)}
