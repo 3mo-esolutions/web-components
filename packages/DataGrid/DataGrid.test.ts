@@ -139,7 +139,9 @@ describe('DataGrid', () => {
 
 	describe('DetailElements', () => {
 		const fixture = new ComponentTestFixture<TestDataGrid>(html`
-			<test-data-grid></test-data-grid>
+			<test-data-grid .getRowDetailsTemplate=${() => html`
+				<div>Details</div>
+			`}></test-data-grid>
 		`)
 
 		it('should open the detail element on row-click only when detailsOnClick is true and there is defined row-details-template', () => {
@@ -159,6 +161,27 @@ describe('DataGrid', () => {
 
 			fixture.component.getRowDetailsTemplate = () => html`Something`
 			expectClickingLeadsTo(true)
+		})
+
+		it('should dispatch the "detailsOpenChange" event when a detail element of given row is opened or closed', async () => {
+			const row = fixture.component.rows[0] as DataGridRow<Person>
+			spyOn(row.detailsOpenChange, 'dispatch')
+			spyOn(fixture.component.rowDetailsOpen, 'dispatch')
+			spyOn(fixture.component.rowDetailsClose, 'dispatch')
+
+			row.renderRoot.querySelector('#detailsExpanderIconButton')?.dispatchEvent(new MouseEvent('click'))
+			await fixture.updateComplete
+			expect(row.detailsOpenChange.dispatch).toHaveBeenCalledTimes(1)
+			expect(row.detailsOpenChange.dispatch).toHaveBeenCalledWith(true)
+			expect(fixture.component.rowDetailsOpen.dispatch).toHaveBeenCalledTimes(1)
+			expect(fixture.component.rowDetailsOpen.dispatch).toHaveBeenCalledWith(row)
+
+			row.renderRoot.querySelector('#detailsExpanderIconButton')?.dispatchEvent(new MouseEvent('click'))
+			await fixture.updateComplete
+			expect(row.detailsOpenChange.dispatch).toHaveBeenCalledTimes(2)
+			expect(row.detailsOpenChange.dispatch).toHaveBeenCalledWith(false)
+			expect(fixture.component.rowDetailsClose.dispatch).toHaveBeenCalledTimes(1)
+			expect(fixture.component.rowDetailsClose.dispatch).toHaveBeenCalledWith(row)
 		})
 	})
 

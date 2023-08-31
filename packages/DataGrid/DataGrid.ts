@@ -109,6 +109,8 @@ export type DataGridSorting<TData> = {
  * @fires sidePanelOpen {CustomEvent<DataGridSidePanelTab>}
  * @fires sidePanelClose {CustomEvent}
  * @fires sortingChange {CustomEvent<DataGridSorting<TData>>}
+ * @fires rowDetailsOpen {CustomEvent<DataGridRow<TData, TDetailsElement>>}
+ * @fires rowDetailsClose {CustomEvent<DataGridRow<TData, TDetailsElement>>}
  * @fires rowClick {CustomEvent<DataGridRow<TData, TDetailsElement>>}
  * @fires rowDoubleClick {CustomEvent<DataGridRow<TData, TDetailsElement>>}
  * @fires rowMiddleClick {CustomEvent<DataGridRow<TData, TDetailsElement>>}
@@ -129,6 +131,8 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	@event() readonly sidePanelOpen!: EventDispatcher<DataGridSidePanelTab>
 	@event() readonly sidePanelClose!: EventDispatcher
 	@event() readonly sortingChange!: EventDispatcher<DataGridSorting<TData> | undefined>
+	@event() readonly rowDetailsOpen!: EventDispatcher<DataGridRow<TData, TDetailsElement>>
+	@event() readonly rowDetailsClose!: EventDispatcher<DataGridRow<TData, TDetailsElement>>
 	@event() readonly rowClick!: EventDispatcher<DataGridRow<TData, TDetailsElement>>
 	@event() readonly rowDoubleClick!: EventDispatcher<DataGridRow<TData, TDetailsElement>>
 	@event() readonly rowMiddleClick!: EventDispatcher<DataGridRow<TData, TDetailsElement>>
@@ -708,25 +712,23 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				?data-has-alternating-background=${this.hasAlternatingBackground && index % 2 === 1}
 				?selected=${live(this.selectedData.includes(data))}
 				?detailsOpen=${live(this.openDetailedData.includes(data))}
-				@detailsOpenChange=${(event: CustomEvent<boolean>) => this.handleRowDetailsOpenChange(data, event)}
+				@detailsOpenChange=${(event: CustomEvent<boolean>) => this.handleRowDetailsOpenChange(data, event.detail)}
 			></${this.rowElementTag}>
 		`
 	}
 
-	protected handleRowDetailsOpenChange(data: TData, event: CustomEvent<boolean>) {
+	private handleRowDetailsOpenChange(data: TData, open: boolean) {
 		if (this.hasDetail(data) === false) {
 			return
 		}
 
-		if (event.detail && this.multipleDetails === false) {
+		if (open && this.multipleDetails === false) {
 			this.closeRowDetails()
 		}
 
-		if (event.detail) {
-			this.openDetailedData = [...this.openDetailedData, data]
-		} else {
-			this.openDetailedData = this.openDetailedData.filter(d => d !== data)
-		}
+		this.openDetailedData = open
+			? [...this.openDetailedData, data]
+			: this.openDetailedData.filter(d => d !== data)
 	}
 
 	protected get footerTemplate() {

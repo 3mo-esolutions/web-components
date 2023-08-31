@@ -21,7 +21,19 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	@property({ type: Object }) dataGrid!: DataGrid<TData, TDetailsElement>
 	@property({ type: Object }) data!: TData
 	@property({ type: Boolean, reflect: true }) selected = false
-	@property({ type: Boolean, reflect: true }) detailsOpen = false
+	@property({
+		type: Boolean,
+		reflect: true,
+		updated(this: DataGridRow<TData, TDetailsElement>, detailsOpen: boolean, wasDetailsOpen?: boolean) {
+			if (wasDetailsOpen !== undefined) {
+				if (detailsOpen) {
+					this.dataGrid.rowDetailsOpen.dispatch(this)
+				} else {
+					this.dataGrid.rowDetailsClose.dispatch(this)
+				}
+			}
+		}
+	}) detailsOpen = false
 
 	@property({ type: Boolean, reflect: true }) protected contextMenuOpen = false
 
@@ -324,10 +336,10 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	}
 
 	protected toggleDetails() {
-		this.setDetails(!this.detailsOpen)
+		this.setDetailsOpen(!this.detailsOpen)
 	}
 
-	protected setDetails(value: boolean) {
+	protected setDetailsOpen(value: boolean) {
 		this.detailsOpen = value
 		this.detailsOpenChange.dispatch(value)
 	}
