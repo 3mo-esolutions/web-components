@@ -201,7 +201,7 @@ export class Dialog extends Component {
 			${this.boundToWindow || this.blocking ? nothing : html`
 				<mo-icon-button icon='close' ${tooltip(t('Close'))} @click=${() => this.handleAction(DialogActionKey.Cancellation)}></mo-icon-button>
 			`}
-			${this.boundToWindow || !this.poppable || true as boolean ? nothing : html`
+			${this.boundToWindow || !this.poppable ? nothing : html`
 				<mo-icon-button icon='launch' @click=${() => this.requestPopup.dispatch()}></mo-icon-button>
 			`}
 		`
