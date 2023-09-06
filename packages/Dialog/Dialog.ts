@@ -98,6 +98,10 @@ export class Dialog extends Component {
 				--mdc-dialog-scrim-color: var(--mo-dialog-scrim-color, rgba(0, 0, 0, 0.5));
 			}
 
+			mwc-dialog:not([open]) {
+				display: none;
+			}
+
 			:host([size=small]) mwc-dialog {
 				--mo-dialog-default-width: 480px;
 				--mo-dialog-default-height: auto;
