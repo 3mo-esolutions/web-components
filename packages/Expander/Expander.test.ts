@@ -43,14 +43,6 @@ describe('Expander', () => {
 
 			expect(fixture.component.renderRoot.querySelector('mo-expand-collapse-icon-button')?.open).toBe(true)
 		})
-
-		it('should open when clicked', async () => {
-			fixture.component.renderRoot.querySelector('mo-expand-collapse-icon-button')?.dispatchEvent(new Event('click'))
-
-			await fixture.updateComplete
-
-			expect(fixture.component.open).toBe(true)
-		})
 	})
 
 	describe('details', () => {

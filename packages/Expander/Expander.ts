@@ -1,4 +1,5 @@
 import { component, css, Component, property, html, query, event } from '@a11d/lit'
+import * as System from 'detect-browser'
 
 /**
  * @element mo-expander - A component that expands and collapses its content.
@@ -61,7 +62,7 @@ export class Expander extends Component {
 				</slot>
 				<mo-expand-collapse-icon-button part='expand-collapse-icon-button'
 					?open=${this.open}
-					@click=${() => this.setOpen(!this.open)}
+					@click=${() => System.detect()?.name !== 'firefox' ? void 0 : this.setOpen(!this.open)}
 				></mo-expand-collapse-icon-button>
 			</mo-flex>
 		`

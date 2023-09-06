@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/expander",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "An Expander web-component.",
 	"repository": {
 		"type": "git",
@@ -25,6 +25,7 @@
 		"tslib": "x",
 		"@3mo/flex": "x",
 		"@3mo/expand-collapse-icon-button": "x",
-		"@3mo/heading": "x"
+		"@3mo/heading": "x",
+		"detect-browser": "x"
 	}
 }
