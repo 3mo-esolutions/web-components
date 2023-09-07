@@ -97,6 +97,12 @@ export class FieldFetchableSelect<T, TDataFetcherParameters extends FieldFetchab
 	protected override get optionsTemplate() {
 		return html`
 			${super.optionsTemplate}
+			${this.fetchedOptionsTemplate}
+		`
+	}
+
+	protected get fetchedOptionsTemplate() {
+		return html`
 			${this.fetcherController.data?.slice(0, this.optionsRenderLimit)?.map((data, index, array) => this.optionTemplate?.(data, index, array) ?? html`
 				<mo-option .data=${data} value=${index} fetched>${data}</mo-option>
 			`)}
