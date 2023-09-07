@@ -36,6 +36,8 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 	private get cellIndex(): number { return this.row.cells.indexOf(this) }
 	private get rowIndex(): number { return this.dataGrid.rows.indexOf(this.row) }
 
+	private get valueTextContent() { return this.renderRoot.textContent || '' }
+
 	private get isEditable() {
 		return !!this.column.editable
 			&& this.dataGrid.editability !== DataGridEditability.Never
@@ -84,7 +86,7 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 			case 'c':
 				if (this.isEditing === false && (event.ctrlKey || event.metaKey)) {
 					event.preventDefault()
-					await navigator.clipboard.writeText(String(this.value))
+					await navigator.clipboard.writeText(this.valueTextContent)
 					NotificationHost.instance?.notifySuccess(t('Copied to clipboard'))
 				}
 				break
@@ -161,10 +163,7 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 		`
 	}
 
-	private get tooltip() {
-		const allowedTitleTypes = ['string', 'number', 'bigint', 'boolean']
-		return allowedTitleTypes.includes(typeof this.value) ? String(this.value) : ''
-	}
+	private get tooltip() { return this.valueTextContent }
 
 	protected override get template() {
 		this.title = this.tooltip
