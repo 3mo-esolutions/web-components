@@ -91,15 +91,8 @@ export class Dialog extends Component {
 
 	static override get styles() {
 		return css`
-			mwc-dialog {
-				--mdc-dialog-heading-ink-color: var(--mo-dialog-heading-color, var(--mo-color-foreground));
-				--mdc-dialog-content-ink-color: var(--mo-dialog-content-color, var(--mo-color-foreground-transparent));
-				--mdc-dialog-scroll-divider-color: var(--mo-dialog-divider-color, var(--mo-color-gray-transparent));
-				--mdc-dialog-scrim-color: var(--mo-dialog-scrim-color, rgba(0, 0, 0, 0.5));
-			}
-
-			mwc-dialog:not([open]) {
-				display: none;
+			:host {
+				--mo-dialog-default-foreground-content-color: var(--mo-color-foreground);
 			}
 
 			:host([size=small]) mwc-dialog {
@@ -140,6 +133,17 @@ export class Dialog extends Component {
 
 			:host([size=large]) mwc-dialog::part(actions), :host([size=large]) mwc-dialog::part(heading) {
 				border-color: var(--mdc-dialog-scroll-divider-color);
+			}
+
+			mwc-dialog {
+				--mdc-dialog-heading-ink-color: var(--mo-dialog-heading-color, var(--mo-color-foreground));
+				--mdc-dialog-content-ink-color: var(--mo-dialog-content-color, var(--mo-dialog-default-foreground-content-color, var(--mo-color-foreground)));
+				--mdc-dialog-scroll-divider-color: var(--mo-dialog-divider-color, var(--mo-color-gray-transparent));
+				--mdc-dialog-scrim-color: var(--mo-dialog-scrim-color, rgba(0, 0, 0, 0.5));
+			}
+
+			mwc-dialog:not([open]) {
+				display: none;
 			}
 
 			mo-flex[slot=header] {

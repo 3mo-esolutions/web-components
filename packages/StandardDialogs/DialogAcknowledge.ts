@@ -8,7 +8,7 @@ type Parameters = BaseDialogParameters & { readonly secondaryButtonText?: string
 export class DialogAcknowledge extends DialogComponent<Parameters, boolean> {
 	protected override get template() {
 		return html`
-			<mo-dialog
+			<mo-dialog style='--mo-dialog-default-foreground-content-color: var(--mo-color-foreground-transparent)'
 				heading=${this.parameters.heading}
 				primaryButtonText=${this.parameters.primaryButtonText ?? t('OK')}
 				secondaryButtonText=${this.parameters.secondaryButtonText ?? t('Cancel')}

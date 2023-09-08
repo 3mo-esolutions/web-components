@@ -32,7 +32,10 @@ export class DialogDeletion extends DialogComponent<Parameters> {
 
 	protected override get template() {
 		return html`
-			<mo-dialog heading=${t('Deletion Confirmation')} primaryButtonText=${t('Delete')}>
+			<mo-dialog style='--mo-dialog-default-foreground-content-color: var(--mo-color-foreground-transparent)'
+				heading=${t('Deletion Confirmation')}
+				primaryButtonText=${t('Delete')}
+			>
 				${this.parameters.content}
 			</mo-dialog>
 		`

@@ -6,7 +6,7 @@ import { BaseDialogParameters } from './BaseDialogParameters.js'
 export class DialogAlert extends DialogComponent<BaseDialogParameters> {
 	protected override get template() {
 		return html`
-			<mo-dialog
+			<mo-dialog style='--mo-dialog-default-foreground-content-color: var(--mo-color-foreground-transparent)'
 				heading=${this.parameters.heading}
 				primaryButtonText=${this.parameters.primaryButtonText ?? t('OK')}
 				?blocking=${this.parameters.blocking}
