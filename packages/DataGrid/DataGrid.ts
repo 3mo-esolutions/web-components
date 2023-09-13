@@ -1,4 +1,4 @@
-import { property, component, Component, html, css, live, query, nothing, ifDefined, PropertyValues, event, queryAll, style, literal, staticHtml, HTMLTemplateResult, cache } from '@a11d/lit'
+import { property, component, Component, html, css, live, query, nothing, ifDefined, PropertyValues, event, queryAll, style, literal, staticHtml, HTMLTemplateResult, cache, state } from '@a11d/lit'
 import { NotificationHost } from '@a11d/lit-application'
 import { LocalStorage } from '@a11d/local-storage'
 import { InstanceofAttributeController } from '@3mo/instanceof-attribute-controller'
@@ -119,6 +119,7 @@ export type DataGridSorting<TData> = {
 @component('mo-data-grid')
 export class DataGrid<TData, TDetailsElement extends Element | undefined = undefined> extends Component {
 	static readonly rowHeight = new LocalStorage<number>('DataGrid.RowHeight', 35)
+	static readonly cellRelativeFontSize = new LocalStorage<number>('DataGrid.CellRelativeFontSize', 0.8)
 	static readonly pageSize = new LocalStorage<Exclude<DataGridPagination, 'auto'>>('DataGrid.PageSize', 25)
 	static readonly hasAlternatingBackground = new LocalStorage('DataGrid.HasAlternatingBackground', true)
 	protected static readonly virtualizationThreshold: number = 50
@@ -174,6 +175,13 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	@property({ type: Boolean }) preventFabCollapse = false
 	@property({ type: Boolean, reflect: true }) protected fabSlotCollapsed = false
+
+	@state({
+		updated(this: DataGrid<TData, TDetailsElement>) {
+			const fontSize = Math.max(0.8, Math.min(1.2, this.cellFontSize))
+			this.style.setProperty('--mo-data-grid-cell-font-size', `${fontSize}rem`)
+		}
+	}) cellFontSize = DataGrid.cellRelativeFontSize.value
 
 	@queryAll('[mo-data-grid-row]') readonly rows!: Array<DataGridRow<TData, TDetailsElement>>
 	@query('mo-data-grid-header') readonly header?: DataGridHeader<TData>

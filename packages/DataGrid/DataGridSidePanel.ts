@@ -10,6 +10,8 @@ Localizer.register(LanguageCode.German, {
 	'Extended Filters': 'Weitere Filter',
 	'Export as Excel file': 'Als Excel-Datei Exportieren',
 	'Columns': 'Spalten',
+	'Font Size': 'Schriftgröße',
+	'Tools': 'Tools',
 })
 
 export const enum DataGridSidePanelTab {
@@ -74,6 +76,16 @@ export class DataGridSidePanel<TData> extends Component {
 			mo-section mo-icon-button {
 				margin-inline-start: -10px;
 			}
+
+			mo-flex[slot=heading] {
+				align-items: center;
+			}
+
+			mo-flex[slot=heading] div {
+				color: var(--mo-color-gray);
+				margin-inline-start: 8px;
+				font-size: small;
+			}
 		`
 	}
 
@@ -121,11 +133,27 @@ export class DataGridSidePanel<TData> extends Component {
 			<mo-flex gap='14px'>
 				<slot name='settings'></slot>
 
-				<mo-section heading=${t('Columns')}>
+				<mo-section>
+					<mo-flex slot='heading' direction='horizontal'>
+						<mo-heading typography='heading4'>${t('Columns')}</mo-heading>
+						<div>${this.dataGrid.visibleColumns.length.format()} / ${this.dataGrid.columns.length.format()}</div>
+					</mo-flex>
 					${this.dataGrid.columns.map(this.getColumnTemplate)}
 				</mo-section>
 
-				<mo-section heading='Tools'>
+				<mo-section>
+					<mo-flex slot='heading' direction='horizontal'>
+						<mo-heading typography='heading4'>${t('Font Size')}</mo-heading>
+						<div>${(this.dataGrid.cellFontSize * 100).formatAsPercent()}</div>
+					</mo-flex>
+
+					<mo-slider min='0.8' max='1.2' step='0.1'
+						value=${this.dataGrid.cellFontSize}
+						@input=${(e: CustomEvent<number>) => this.dataGrid.cellFontSize = e.detail}
+					></mo-slider>
+				</mo-section>
+
+				<mo-section heading=${t('Tools')}>
 					<mo-icon-button icon='file_download'
 						${tooltip('Export as Excel file')}
 						@click=${() => this.dataGrid.exportExcelFile()}

@@ -116,6 +116,11 @@ export class PagePreferencesUserInterface extends PageSettings {
 								></mo-field-select-data-grid-page-size>
 							</mo-list-item>
 
+							<mo-checkbox-list-item
+								?checked=${DataGrid.hasAlternatingBackground.value}
+								@change=${(e: CustomEvent<CheckboxValue>) => DataGrid.hasAlternatingBackground.value = e.detail === 'checked'}
+							>Wechselnder Hintergrund</mo-checkbox-list-item>
+
 							<mo-list-item>
 								Höhe der Zeilen
 								<mo-slider max='50' min='30' step='5'
@@ -125,10 +130,14 @@ export class PagePreferencesUserInterface extends PageSettings {
 								></mo-slider>
 							</mo-list-item>
 
-							<mo-checkbox-list-item
-								?checked=${DataGrid.hasAlternatingBackground.value}
-								@change=${(e: CustomEvent<CheckboxValue>) => DataGrid.hasAlternatingBackground.value = e.detail === 'checked'}
-							>Wechselnder Hintergrund</mo-checkbox-list-item>
+							<mo-list-item>
+								Schriftgröße
+								<mo-slider min='0.8' max='1.2' step='0.1'
+									${style({ width: '150px', margin: '0 -15px' })}
+									value=${DataGrid.cellRelativeFontSize.value}
+									@input=${(e: CustomEvent<number>) => DataGrid.cellRelativeFontSize.value = e.detail}
+								></mo-slider>
+							</mo-list-item>
 						</mo-flex>
 					</mo-section>
 

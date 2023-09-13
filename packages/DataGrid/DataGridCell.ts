@@ -129,7 +129,7 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 				white-space: nowrap;
 				overflow: hidden !important;
 				text-overflow: ellipsis;
-				font-size: small;
+				font-size: var(--mo-data-grid-cell-font-size);
 			}
 
 			:host(:not([isEditing]):focus) {
