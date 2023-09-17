@@ -1,5 +1,3 @@
-import { LanguageCode } from '../LanguageCode.js'
-
 describe('String.toNumber()', () => {
 	it('should return undefined when empty', () => {
 		expect(''.toNumber()).toBeUndefined()
@@ -10,7 +8,7 @@ describe('String.toNumber()', () => {
 	})
 
 	it('should parse numbers that include separators', () => {
-		expect('12.345,67'.toNumber(LanguageCode.German)).toBe(12345.67)
-		expect('12,345.67'.toNumber(LanguageCode.English)).toBe(12345.67)
+		expect('12.345,67'.toNumber('de')).toBe(12345.67)
+		expect('12,345.67'.toNumber('en')).toBe(12345.67)
 	})
 })

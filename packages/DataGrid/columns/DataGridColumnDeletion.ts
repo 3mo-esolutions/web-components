@@ -1,9 +1,9 @@
 import { component, html, event, nothing, property, style } from '@a11d/lit'
-import { Localizer, LanguageCode } from '@3mo/localization'
+import { Localizer } from '@3mo/localization'
 import { tooltip } from '@3mo/tooltip'
 import { DataGridColumn } from './DataGridColumn.js'
 
-Localizer.register(LanguageCode.German, {
+Localizer.register('de', {
 	'Delete position': 'Position entfernen'
 })
 

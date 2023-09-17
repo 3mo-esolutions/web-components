@@ -1,9 +1,9 @@
 import { component, TemplateResult, html } from '@a11d/lit'
 import { DialogComponent, NotificationHost } from '@a11d/lit-application'
 import { LocalStorage } from '@a11d/local-storage'
-import { Localizer, LanguageCode } from '@3mo/localization'
+import { Localizer } from '@3mo/localization'
 
-Localizer.register(LanguageCode.German, {
+Localizer.register('de', {
 	'Deletion Confirmation': 'Löschbestätigung',
 })
 

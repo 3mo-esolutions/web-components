@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 import { component, css, event, html, nothing, property, style } from '@a11d/lit'
 import { tooltip } from '@3mo/tooltip'
-import { Localizer, LanguageCode } from '@3mo/localization'
+import { Localizer } from '@3mo/localization'
 import { FetcherController } from '@3mo/fetcher-controller'
 import { DataGrid, DataGridSelectionBehaviorOnDataChange } from '@3mo/data-grid'
 
@@ -19,7 +19,7 @@ type PaginatedResult<TData> = Readonly<{ data: NonPaginatedResult<TData> } & ({
 
 type Result<TData> = PaginatedResult<TData> | NonPaginatedResult<TData>
 
-Localizer.register(LanguageCode.German, {
+Localizer.register('de', {
 	'Make a filter selection': 'Filterauswahl vornehmen',
 	'Refetch': 'Neu laden',
 })

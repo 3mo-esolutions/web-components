@@ -1,13 +1,13 @@
 import { component, property, Component, css, state, html, nothing, query, ifDefined, style } from '@a11d/lit'
 import { FieldNumber } from '@3mo/number-fields'
-import { Localizer, LanguageCode } from '@3mo/localization'
+import { Localizer } from '@3mo/localization'
 import { DataGrid, DataGridPagination, FieldSelectDataGridPageSize } from './index.js'
 
-Localizer.register(LanguageCode.German, {
+Localizer.register('de', {
 	'${page:number} of ${maxPage:number}': '${page} von ${maxPage}',
 })
 
-Localizer.register(LanguageCode.Farsi, {
+Localizer.register('fa', {
 	'${page:number} of ${maxPage:number}': '${page} از ${maxPage}',
 })
 

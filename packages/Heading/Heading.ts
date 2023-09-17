@@ -1,6 +1,6 @@
 import { component, css, Component, html, property } from '@a11d/lit'
 
-export const enum HeadingTypography {
+export enum HeadingTypography {
 	Heading1 = 'heading1',
 	Heading2 = 'heading2',
 	Heading3 = 'heading3',

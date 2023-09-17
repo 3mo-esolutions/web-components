@@ -2,7 +2,7 @@ import { component, css, Component, html, property, ifDefined, nothing, event } 
 import { MaterialIcon } from '@3mo/icon'
 import { SlotController } from '@3mo/slot-controller'
 
-export const enum AlertType {
+export enum AlertType {
 	Info = 'info',
 	Success = 'success',
 	Warning = 'warning',

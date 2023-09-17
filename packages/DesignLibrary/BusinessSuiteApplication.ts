@@ -1,7 +1,7 @@
 import { css, html, property, nothing, style, HTMLTemplateResult, ifDefined, query, repeat } from '@a11d/lit'
 import { Application, PageComponent, PwaHelper, RouteMatchMode, routerLink } from '@a11d/lit-application'
 import { Authentication } from '@a11d/lit-application-authentication'
-import { Localizer, LanguageCode } from '@3mo/localization'
+import { Localizer } from '@3mo/localization'
 import { DialogReleaseNotes, PagePreferences, Navigation } from './index.js'
 import { observeResize } from '@3mo/resize-observer'
 import { observeMutation } from '@3mo/mutation-observer'
@@ -9,7 +9,7 @@ import { Icon, IconVariant } from '@3mo/icon'
 
 Icon.defaultVariant = IconVariant.Sharp
 
-Localizer.register(LanguageCode.German, {
+Localizer.register('de', {
 	'User Settings': 'Benutzereinstellungen',
 	'Close': 'Schließen',
 	'Cancel': 'Abbrechen',

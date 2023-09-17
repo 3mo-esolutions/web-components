@@ -2,7 +2,7 @@ import { Component, html, component, property, css, style } from '@a11d/lit'
 import { FontImporter } from '@3mo/font-importer'
 import { type MaterialIcon } from './index.js'
 
-export const enum IconVariant {
+export enum IconVariant {
 	Filled = 'filled',
 	Outlined = 'outlined',
 	Sharp = 'sharp',

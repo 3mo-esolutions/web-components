@@ -1,6 +1,6 @@
 import { LocalStorage } from '@a11d/local-storage'
 
-export const enum Background {
+export enum Background {
 	System = 'system',
 	Light = 'light',
 	Dark = 'dark',

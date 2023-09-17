@@ -1,4 +1,3 @@
-import { LanguageCode } from '@3mo/localization'
 import { DateTimeRange } from './DateTimeRange.js'
 import { DateTime } from './DateTime.js'
 
@@ -75,22 +74,22 @@ describe('DateRange', () => {
 	it('.format() should return a formatted start date for a range with only a start date', () => {
 		const start = new DateTime('2020-01-02')
 		const range = new DateTimeRange(start)
-		expect(range.format({ language: LanguageCode.German }).replace(/\s/g, '')).toBe('02.01.2020–')
-		expect(range.format({ language: LanguageCode.Farsi })).toBe('۲۰۲۰/۰۱/۰۲ تا')
+		expect(range.format({ language: 'de' }).replace(/\s/g, '')).toBe('02.01.2020–')
+		expect(range.format({ language: 'fa' })).toBe('۲۰۲۰/۰۱/۰۲ تا')
 	})
 
 	it('.format() should return a formatted end date for a range with only an end date', () => {
 		const end = new DateTime('2020-01-02')
 		const range = new DateTimeRange(undefined, end)
-		expect(range.format({ language: LanguageCode.German }).replace(/\s/g, '')).toBe('–02.01.2020')
-		expect(range.format({ language: LanguageCode.Farsi })).toBe('تا ۲۰۲۰/۰۱/۰۲')
+		expect(range.format({ language: 'de' }).replace(/\s/g, '')).toBe('–02.01.2020')
+		expect(range.format({ language: 'fa' })).toBe('تا ۲۰۲۰/۰۱/۰۲')
 	})
 
 	it('.format() should return a formatted start and end date for a range with both dates', () => {
 		const start = new DateTime('2010-01-02')
 		const end = new DateTime('2020-01-04')
 		const range = new DateTimeRange(start, end)
-		expect(range.format({ language: LanguageCode.German }).replace(/\s/g, '')).toBe('02.01.2010–04.01.2020')
-		expect(range.format({ language: LanguageCode.Farsi })).toBe('۲۰۱۰/۱/۲ تا ۲۰۲۰/۱/۴')
+		expect(range.format({ language: 'de' }).replace(/\s/g, '')).toBe('02.01.2010–04.01.2020')
+		expect(range.format({ language: 'fa' })).toBe('۲۰۱۰/۱/۲ تا ۲۰۲۰/۱/۴')
 	})
 })

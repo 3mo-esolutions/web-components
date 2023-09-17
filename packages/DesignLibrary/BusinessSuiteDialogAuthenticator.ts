@@ -1,9 +1,9 @@
 import { html, nothing, state, style } from '@a11d/lit'
 import { DialogAuthenticator as DialogAuthenticatorBase } from '@a11d/lit-application-authentication'
-import { Localizer, LanguageCode } from '@3mo/localization'
+import { Localizer } from '@3mo/localization'
 import { LocalStorage } from '@a11d/local-storage'
 
-Localizer.register(LanguageCode.German, {
+Localizer.register('de', {
 	'Authenticated successfully': 'Erfolgreich authentifiziert',
 	'Incorrect Credentials': 'Ungültige Anmeldeinformationen',
 	'Password reset instructions have been sent to your email address': 'Anweisungen zum Zurücksetzen des Passworts wurden an Ihre E-Mail-Adresse gesendet',

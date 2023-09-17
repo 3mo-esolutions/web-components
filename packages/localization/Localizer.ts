@@ -35,7 +35,7 @@ type LocalizationParameters<T extends string> = {
 }
 
 export class Localizer {
-	static readonly defaultLanguage = LanguageCode.English
+	static readonly defaultLanguage = 'en'
 	static readonly pluralityIdentityType = 'pluralityNumber'
 
 	@event() static readonly languageChange: EventDispatcher<LanguageCode>
@@ -44,7 +44,7 @@ export class Localizer {
 		return window.location.search.split('lang=')[1]?.split('&')[0] as LanguageCode | undefined
 			|| Localizer.languageCodeStorage.value
 			|| navigator.language.split('-')[0] as LanguageCode | undefined
-			|| LanguageCode.English
+			|| 'en'
 	}
 
 	static set currentLanguage(value) {

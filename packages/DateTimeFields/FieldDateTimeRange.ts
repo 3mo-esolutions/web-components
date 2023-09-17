@@ -4,7 +4,7 @@ import { MaterialIcon } from '@3mo/icon'
 import { FieldDateTimeBase as FieldDateTimeBase, FieldDateTimePrecision } from './FieldDateTimeBase.js'
 import { DateRangeParser } from './DateRangeParser.js'
 
-const enum FieldDateRangeSelection {
+enum FieldDateRangeSelection {
 	Start = 'start',
 	End = 'end',
 }

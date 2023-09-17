@@ -8,16 +8,7 @@ export class DirectionsByLanguage {
 	private static readonly directions = new Map<LanguageCode, Direction>()
 
 	static {
-		DirectionsByLanguage.add('rtl',
-			LanguageCode.Arabic,
-			LanguageCode.Armenian,
-			LanguageCode.Azerbaijani,
-			LanguageCode.Farsi,
-			LanguageCode.Hebrew,
-			LanguageCode.Kurdish,
-			LanguageCode.Maldivian,
-			LanguageCode.Urdu,
-		)
+		DirectionsByLanguage.add('rtl', 'ar', 'hy', 'az', 'fa', 'he', 'ku', 'mdv', 'ur')
 	}
 
 	static {

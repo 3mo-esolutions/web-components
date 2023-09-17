@@ -1,10 +1,10 @@
 import { html, component, state, style } from '@a11d/lit'
 import { DialogComponent } from '@a11d/lit-application'
-import { Localizer, LanguageCode } from '@3mo/localization'
+import { Localizer } from '@3mo/localization'
 import { DialogDeletion } from '@3mo/standard-dialogs'
 import { ModdableDataGrid, Mode } from './index.js'
 
-Localizer.register(LanguageCode.German, {
+Localizer.register('de', {
 	'Mode ${name:string}': 'Ansicht "${name}"',
 	'New Mode': 'Neue Ansicht',
 	'Name': 'Bezeichnung',
@@ -14,7 +14,7 @@ Localizer.register(LanguageCode.German, {
 	'Delete': 'Löschen',
 })
 
-Localizer.register(LanguageCode.Farsi, {
+Localizer.register('fa', {
 	'Mode ${name:string}': 'نمایش "${name}"',
 	'New Mode': 'نمایش جدید',
 	'Name': 'نام',

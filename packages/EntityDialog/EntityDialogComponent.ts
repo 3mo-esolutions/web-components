@@ -1,10 +1,10 @@
 import { eventListener, PropertyValues } from '@a11d/lit'
 import { DialogActionKey, DialogParameters, NotificationHost } from '@a11d/lit-application'
-import { Localizer, LanguageCode } from '@3mo/localization'
+import { Localizer } from '@3mo/localization'
 import { FetchableDialogComponentParameters, FetchableDialogComponent } from '@3mo/fetchable-dialog'
 import { EntityDialog } from './EntityDialog.js'
 
-Localizer.register(LanguageCode.German, {
+Localizer.register('de', {
 	'Saved successfully': 'Erfolgreich gespeichert',
 	'Open': 'Öffnen',
 })

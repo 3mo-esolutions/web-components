@@ -10,7 +10,7 @@ export class SelectionListItemChangeEvent<T> extends CustomEvent<T> {
 	}
 }
 
-export const enum SelectableListSelectionMode {
+export enum SelectableListSelectionMode {
 	Single = 'single',
 	Multiple = 'multiple',
 }

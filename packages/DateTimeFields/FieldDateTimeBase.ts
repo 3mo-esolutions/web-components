@@ -3,7 +3,7 @@ import { HTMLTemplateResult, cache, css, html, live, nothing, property, style } 
 import { InputFieldComponent } from '@3mo/field'
 import type { MaterialIcon } from '@3mo/icon'
 
-export const enum FieldDateTimePrecision {
+export enum FieldDateTimePrecision {
 	Year = 'year',
 	Month = 'month',
 	Day = 'day',

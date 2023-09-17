@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/date-time",
-	"version": "0.3.1",
+	"version": "0.3.2",
 	"description": "Global DateTime, TimeSpan, and DateRange classes.",
 	"repository": {
 		"type": "git",

@@ -5,7 +5,7 @@ import { tooltip } from '@3mo/tooltip'
 import { SlotController } from '@3mo/slot-controller'
 import '@3mo/localization'
 
-export const enum DialogSize {
+export enum DialogSize {
 	Large = 'large',
 	Medium = 'medium',
 	Small = 'small',

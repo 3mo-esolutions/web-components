@@ -1,11 +1,11 @@
 import { component, style, Component, css, html, ifDefined, nothing, property } from '@a11d/lit'
-import { Localizer, LanguageCode } from '@3mo/localization'
+import { Localizer } from '@3mo/localization'
 import { tooltip } from '@3mo/tooltip'
 import { type Checkbox } from '@3mo/checkbox'
 import { ColumnDefinition } from './ColumnDefinition.js'
 import { DataGrid } from './DataGrid.js'
 
-Localizer.register(LanguageCode.German, {
+Localizer.register('de', {
 	'Settings': 'Einstellungen',
 	'Extended Filters': 'Weitere Filter',
 	'Export as Excel file': 'Als Excel-Datei Exportieren',
@@ -14,7 +14,7 @@ Localizer.register(LanguageCode.German, {
 	'Tools': 'Tools',
 })
 
-export const enum DataGridSidePanelTab {
+export enum DataGridSidePanelTab {
 	Settings = 'settings',
 	Filters = 'filters',
 }

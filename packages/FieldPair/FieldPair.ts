@@ -1,6 +1,6 @@
 import { Component, component, css, html, property } from '@a11d/lit'
 
-export const enum FieldPairMode {
+export enum FieldPairMode {
 	Attach = 'attach',
 	Overlay = 'overlay',
 }

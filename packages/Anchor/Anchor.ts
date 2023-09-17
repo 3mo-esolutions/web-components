@@ -1,7 +1,7 @@
 import { component, css, Component, html, property, eventListener, ifDefined } from '@a11d/lit'
 import '@3mo/theme'
 
-export const enum AnchorSpecialTarget {
+export enum AnchorSpecialTarget {
 	/** the current browsing context. (Default) */
 	Self = '_self',
 	/** Usually a new tab, but users can configure browsers to open a new window instead. */
@@ -12,7 +12,7 @@ export const enum AnchorSpecialTarget {
 	Top = '_top',
 }
 
-export const enum AnchorReferrerPolicy {
+export enum AnchorReferrerPolicy {
 	/** The Referer header will be omitted entirely. No referrer information is sent along with requests. */
 	NoReferrer = 'no-referrer',
 	/** The URL is sent as a referrer when the protocol security level stays the same (e.g.HTTP→HTTP, HTTPS→HTTPS), but isn't sent to a less secure destination (e.g. HTTPS→HTTP). */

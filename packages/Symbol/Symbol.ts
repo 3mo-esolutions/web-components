@@ -2,7 +2,7 @@ import { Component, html, component, property, css, style } from '@a11d/lit'
 import { FontImporter } from '@3mo/font-importer'
 import type { MaterialSymbol } from './MaterialSymbol.js'
 
-export const enum SymbolVariant {
+export enum SymbolVariant {
 	Outlined = 'outlined',
 	Sharp = 'sharp',
 	Rounded = 'rounded',

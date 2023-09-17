@@ -1,9 +1,9 @@
 import { component, Component, html, property, css, eventListener, state, nothing, HTMLTemplateResult } from '@a11d/lit'
 import { NotificationHost } from '@a11d/lit-application'
-import { Localizer, LanguageCode } from '@3mo/localization'
+import { Localizer } from '@3mo/localization'
 import { ColumnDefinition, DataGridEditability, DataGridRow } from './index.js'
 
-Localizer.register(LanguageCode.German, {
+Localizer.register('de', {
 	'Using the clipboard is not allowed in an insecure browser environment': 'In einer unsicheren Browser-Umgebung darf kein Text in die Zwischenablage kopiert werden',
 	'Copied to clipboard': 'In die Zwischenablage kopiert',
 })

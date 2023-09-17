@@ -6,11 +6,10 @@ type CloudflareStreamApi = {
 	pause(): Promise<void>
 }
 
-export const enum CloudflareStreamAutoPause {
-	WhenNotInViewport = 'when-not-in-viewport',
-	WhenQuarterInViewport = 'when-quarter-in-viewport',
-	WhenHalfInViewport = 'when-half-in-viewport',
-}
+export type CloudflareStreamAutoPause =
+	| 'when-not-in-viewport'
+	| 'when-quarter-in-viewport'
+	| 'when-half-in-viewport'
 
 const getViewportShallPausePredicate = (scale: number) => (rect: DOMRect) => {
 	const scaledHeight = Math.ceil(rect.height * (1 - scale))
@@ -24,10 +23,10 @@ const getViewportShallPausePredicate = (scale: number) => (rect: DOMRect) => {
 
 @component('mo-cloudflare-stream')
 export class CloudflareStream extends Component {
-	private static readonly shallPauseByStrategy = new Map([
-		[CloudflareStreamAutoPause.WhenNotInViewport, getViewportShallPausePredicate(0)],
-		[CloudflareStreamAutoPause.WhenQuarterInViewport, getViewportShallPausePredicate(0.25)],
-		[CloudflareStreamAutoPause.WhenHalfInViewport, getViewportShallPausePredicate(0.5)],
+	private static readonly shallPauseByStrategy = new Map<CloudflareStreamAutoPause, ReturnType<typeof getViewportShallPausePredicate>>([
+		['when-not-in-viewport', getViewportShallPausePredicate(0)],
+		['when-quarter-in-viewport', getViewportShallPausePredicate(0.25)],
+		['when-half-in-viewport', getViewportShallPausePredicate(0.5)],
 	])
 
 	static override get styles() {

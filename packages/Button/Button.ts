@@ -5,7 +5,7 @@ import { Button as MwcButton } from '@material/mwc-button'
 import { disabledProperty } from '@3mo/disabled-property'
 import '@3mo/theme'
 
-export const enum ButtonType {
+export enum ButtonType {
 	Normal = 'normal',
 	Outlined = 'outlined',
 	Raised = 'raised',

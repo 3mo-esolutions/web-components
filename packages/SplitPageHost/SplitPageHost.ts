@@ -1,7 +1,7 @@
 import { html, css, property, style, component, Component } from '@a11d/lit'
-import { Localizer, LanguageCode } from '@3mo/localization'
+import { Localizer } from '@3mo/localization'
 
-Localizer.register(LanguageCode.German, {
+Localizer.register('de', {
 	'Select a page': 'Wählen Sie eine Seite'
 })
 

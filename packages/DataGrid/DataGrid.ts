@@ -8,18 +8,18 @@ import { ThemeController } from '@3mo/theme'
 import { observeMutation } from '@3mo/mutation-observer'
 import { MediaQueryController } from '@3mo/media-query-observer'
 import { observeResize } from '@3mo/resize-observer'
-import { Localizer, LanguageCode } from '@3mo/localization'
+import { Localizer } from '@3mo/localization'
 import { ContextMenu } from '@3mo/context-menu'
 import { CsvGenerator, ColumnDefinition, DataGridCell, DataGridColumn, DataGridFooter, DataGridHeader, DataGridRow, DataGridSidePanel, DataGridSidePanelTab } from './index.js'
 
-Localizer.register(LanguageCode.English, {
+Localizer.register('en', {
 	'${count:pluralityNumber} entries selected': [
 		'1 entry selected',
 		'${count} entries selected',
 	]
 })
 
-Localizer.register(LanguageCode.German, {
+Localizer.register('de', {
 	'Exporting excel file': 'Die Excel-Datei wird exportiert',
 	'No results': 'Kein Ergebnis',
 	'${count:pluralityNumber} entries selected': [
@@ -33,24 +33,24 @@ Localizer.register(LanguageCode.German, {
 
 export type DataGridPagination = 'auto' | number
 
-export const enum DataGridSelectionMode {
+export enum DataGridSelectionMode {
 	None = 'none',
 	Single = 'single',
 	Multiple = 'multiple',
 }
 
-export const enum DataGridSortingStrategy {
+export enum DataGridSortingStrategy {
 	Descending = 'descending',
 	Ascending = 'ascending',
 }
 
-export const enum DataGridSelectionBehaviorOnDataChange {
+export enum DataGridSelectionBehaviorOnDataChange {
 	Reset = 'reset',
 	Prevent = 'prevent',
 	Maintain = 'maintain',
 }
 
-export const enum DataGridEditability {
+export enum DataGridEditability {
 	Never = 'never',
 	Cell = 'cell',
 	Always = 'always',

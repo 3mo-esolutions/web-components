@@ -1,10 +1,10 @@
 import { html, component, css, property, eventListener, Component, nothing, style, state } from '@a11d/lit'
 import { DialogAcknowledge, DialogAlert, DialogDeletion } from '@3mo/standard-dialogs'
 import { tooltip } from '@3mo/tooltip'
-import { Localizer, LanguageCode } from '@3mo/localization'
+import { Localizer } from '@3mo/localization'
 import { DialogDataGridMode, ModdableDataGrid, Mode } from './index.js'
 
-Localizer.register(LanguageCode.German, {
+Localizer.register('de', {
 	'Changing Filter': 'Filterwechsel',
 	'Save changes': 'Änderungen speichern',
 	'Discard changes': 'Änderungen verwerfen',

@@ -1,4 +1,4 @@
-export const enum PopoverPlacement {
+export enum PopoverPlacement {
 	BlockStart = 'block-start',
 	InlineEnd = 'inline-end',
 	BlockEnd = 'block-end',

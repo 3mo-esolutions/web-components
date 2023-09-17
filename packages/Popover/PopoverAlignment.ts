@@ -1,4 +1,4 @@
-export const enum PopoverAlignment {
+export enum PopoverAlignment {
 	Start = 'start',
 	Center = 'center',
 	End = 'end',
