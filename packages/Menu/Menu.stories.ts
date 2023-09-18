@@ -29,6 +29,19 @@ export const WithContainer = story({
 	}
 })
 
+export const WithContainerFixed = story({
+	render: () => {
+		return html`
+			<mo-popover-container placement='block-end' alignment='end' fixed>
+				<mo-button type='outlined'>Click to open the menu</mo-button>
+				<mo-menu slot='popover'>
+					${items}
+				</mo-menu>
+			</mo-popover-container>
+		`
+	}
+})
+
 export const Absolute = story({
 	render: () => html`
 		<story-button-with-menu></story-button-with-menu>

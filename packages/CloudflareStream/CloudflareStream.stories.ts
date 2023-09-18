@@ -1,6 +1,5 @@
 import { story, meta } from '../../.storybook/story.js'
 import { html } from '@a11d/lit'
-import { CloudflareStreamAutoPause } from './CloudflareStream.js'
 import '.'
 
 export default meta({
@@ -19,16 +18,16 @@ export const Default = story({
 
 export const AutoPause = story({
 	args: {
-		autoPause: CloudflareStreamAutoPause.WhenHalfInViewport,
+		autoPause: '',
 		source: defaultStreamSource
 	},
 	argTypes: {
 		autoPause: {
 			control: { type: 'select' },
 			options: [
-				CloudflareStreamAutoPause.WhenNotInViewport,
-				CloudflareStreamAutoPause.WhenQuarterInViewport,
-				CloudflareStreamAutoPause.WhenHalfInViewport,
+				'when-not-in-viewport',
+				'when-quarter-in-viewport',
+				'when-half-in-viewport',
 			],
 		},
 	},

@@ -13,6 +13,7 @@ import { type Popover, PopoverAlignment, PopoverPlacement } from './index.js'
  */
 @component('mo-popover-container')
 export class PopoverContainer extends Component {
+	@property({ type: Boolean, reflect: true, updated(this: PopoverContainer) { this.assignSlottedPopovers() } }) fixed = false
 	@property({ reflect: true, updated(this: PopoverContainer) { this.assignSlottedPopovers() } }) placement = PopoverPlacement.BlockEnd
 	@property({ reflect: true, updated(this: PopoverContainer) { this.assignSlottedPopovers() } }) alignment = PopoverAlignment.Start
 
@@ -22,7 +23,7 @@ export class PopoverContainer extends Component {
 		this.slotController.getAssignedElements('popover')
 			.forEach(x => {
 				const popover = x as Popover
-				popover.fixed = false
+				popover.fixed = this.fixed
 				popover.anchor = this
 				popover.placement = this.placement
 				popover.alignment = this.alignment
