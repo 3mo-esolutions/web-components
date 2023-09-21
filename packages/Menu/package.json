@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/menu",
-	"version": "0.0.32",
+	"version": "0.0.33",
 	"description": "A menu web-component.",
 	"repository": {
 		"type": "git",
