@@ -68,6 +68,7 @@ export type DataGridSorting<TData> = {
  * @attr columns - The columns to be displayed in the DataGrid. It is an array of objects, where each object represents a column.
  * @attr headerHidden - Whether the header should be hidden.
  * @attr preventVerticalContentScroll - Whether the content should be prevented from scrolling vertically.
+ * @attr virtualizationThreshold - The threshold from which the virtualization will kick in.
  * @attr page - The current page.
  * @attr pagination - The pagination mode. It can be either `auto` or a number.
  * @attr sorting - The sorting mode. It is an object with `selector` and `strategy` properties.
@@ -144,6 +145,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	@property({ type: Boolean, reflect: true }) headerHidden = false
 	@property({ type: Boolean, reflect: true }) preventVerticalContentScroll = false
+	@property({ type: Number }) virtualizationThreshold = DataGrid.virtualizationThreshold
 	@property({ type: Number }) page = 1
 	@property({ reflect: true, converter: (value: string | null | undefined) => value === null || value === undefined ? undefined : Number.isNaN(Number(value)) ? value : Number(value) }) pagination?: DataGridPagination
 
@@ -697,7 +699,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	private get rowsTemplate() {
 		const getRowTemplate = (data: TData, index: number) => this.getRowTemplate(data, index)
-		const shallVirtualize = !this.preventVerticalContentScroll && this.renderData.length > DataGrid.virtualizationThreshold
+		const shallVirtualize = !this.preventVerticalContentScroll && this.renderData.length > this.virtualizationThreshold
 		const content = shallVirtualize === false
 			? this.renderData.map(getRowTemplate)
 			: html`<mo-virtualized-scroller .items=${this.renderData} .getItemTemplate=${getRowTemplate as any}></mo-virtualized-scroller>`
