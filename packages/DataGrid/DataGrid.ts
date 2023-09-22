@@ -1,4 +1,4 @@
-import { property, component, Component, html, css, live, query, nothing, ifDefined, PropertyValues, event, queryAll, style, literal, staticHtml, HTMLTemplateResult, cache, state } from '@a11d/lit'
+import { property, component, Component, html, css, live, query, nothing, ifDefined, PropertyValues, event, queryAll, style, literal, staticHtml, HTMLTemplateResult, cache } from '@a11d/lit'
 import { NotificationHost } from '@a11d/lit-application'
 import { LocalStorage } from '@a11d/local-storage'
 import { InstanceofAttributeController } from '@3mo/instanceof-attribute-controller'
@@ -91,6 +91,8 @@ export type DataGridSorting<TData> = {
  * @attr selectionToolbarDisabled - Whether the selection toolbar should be disabled.
  * @attr hasAlternatingBackground - Whether the rows should have alternating background.
  * @attr preventFabCollapse - Whether the FAB should be prevented from collapsing.
+ * @attr cellFontSize - The font size of the cells relative to the default font size. Defaults @see DataGrid.cellFontSize 's value which defaults to 0.8.
+ * @attr rowHeight - The height of the rows in pixels. Defaults to @see DataGrid.rowHeight 's value which defaults to 35.
  *
  * @slot - Use this slot only for declarative DataGrid APIs e.g. setting ColumnDefinitions via `mo-data-grid-columns` tag.
  * @slot toolbar - The horizontal bar above DataGrid's contents.
@@ -178,12 +180,21 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	@property({ type: Boolean }) preventFabCollapse = false
 	@property({ type: Boolean, reflect: true }) protected fabSlotCollapsed = false
 
-	@state({
+	@property({
+		type: Number,
 		updated(this: DataGrid<TData, TDetailsElement>) {
 			const fontSize = Math.max(0.8, Math.min(1.2, this.cellFontSize))
 			this.style.setProperty('--mo-data-grid-cell-font-size', `${fontSize}rem`)
 		}
 	}) cellFontSize = DataGrid.cellRelativeFontSize.value
+
+	@property({
+		type: Number,
+		updated(this: DataGrid<TData, TDetailsElement>) {
+			const rowHeight = Math.max(30, Math.min(60, this.rowHeight))
+			this.style.setProperty('--mo-data-grid-row-height', `${rowHeight}px`)
+		}
+	}) rowHeight = DataGrid.rowHeight.value
 
 	@queryAll('[mo-data-grid-row]') readonly rows!: Array<DataGridRow<TData, TDetailsElement>>
 	@query('mo-data-grid-header') readonly header?: DataGridHeader<TData>
@@ -392,7 +403,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 		if (this.pagination === 'auto') {
 			const rowsHeight = this.rowsContainer?.clientHeight
-			const rowHeight = DataGrid.rowHeight.value
+			const rowHeight = this.rowHeight
 			const pageSize = Math.floor((rowsHeight || 0) / rowHeight) || 1
 			return dynamicPageSize(pageSize)
 		}
@@ -466,8 +477,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				--mo-data-grid-cell-padding: 3px;
 
 				--mo-data-grid-selection-background: rgba(var(--mo-color-accent-base), 0.5);
-
-				--mo-data-grid-row-height: ${DataGrid.rowHeight.value}px;
 				display: flex;
 				flex-direction: column;
 				height: 100%;

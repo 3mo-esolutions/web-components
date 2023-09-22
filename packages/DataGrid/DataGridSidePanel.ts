@@ -11,6 +11,7 @@ Localizer.register('de', {
 	'Export as Excel file': 'Als Excel-Datei Exportieren',
 	'Columns': 'Spalten',
 	'Font Size': 'Schriftgröße',
+	'Row Height': 'Zeilenhöhe',
 	'Tools': 'Tools',
 })
 
@@ -150,6 +151,18 @@ export class DataGridSidePanel<TData> extends Component {
 					<mo-slider min='0.8' max='1.2' step='0.1'
 						value=${this.dataGrid.cellFontSize}
 						@input=${(e: CustomEvent<number>) => this.dataGrid.cellFontSize = e.detail}
+					></mo-slider>
+				</mo-section>
+
+				<mo-section>
+					<mo-flex slot='heading' direction='horizontal'>
+						<mo-heading typography='heading4'>${t('Row Height')}</mo-heading>
+						<div>${this.dataGrid.rowHeight.format()} px</div>
+					</mo-flex>
+
+					<mo-slider min='30' max='60' step='5'
+						value=${this.dataGrid.rowHeight}
+						@input=${(e: CustomEvent<number>) => this.dataGrid.rowHeight = e.detail}
 					></mo-slider>
 				</mo-section>
 
