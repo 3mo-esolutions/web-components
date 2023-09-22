@@ -162,7 +162,7 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 
 	protected get flagTemplate() {
 		return !this.selectedLanguage?.flagImageSource ? nothing : html`
-			<img src=${ifDefined(this.selectedLanguage.flagImageSource)} style='width: 30px'>
+			<img src=${ifDefined(this.selectedLanguage.flagImageSource)} ${style({ width: '30px', marginLeft: this._languages.length < 2 ? '10px' : '0px' })}>
 		`
 	}
 
