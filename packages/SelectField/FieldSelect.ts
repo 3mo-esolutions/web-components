@@ -1,7 +1,8 @@
-import { html, property, css, event, component, live, query, nothing, eventListener, state } from '@a11d/lit'
+import { html, property, css, event, component, live, query, nothing, eventListener, state, ifDefined } from '@a11d/lit'
 import { FieldComponent } from '@3mo/field'
 import type { ListItem } from '@3mo/list'
 import type { Menu } from '@3mo/menu'
+import { PopoverAlignment } from '@3mo/popover'
 import { Option } from './Option.js'
 import { Data, FieldSelectValueController, Index, Value } from './SelectValueController.js'
 
@@ -15,6 +16,7 @@ import { Data, FieldSelectValueController, Index, Value } from './SelectValueCon
  * @attr value - Whether the options should be searchable.
  * @attr index - Whether the options should be searchable.
  * @attr data - Whether the options should be searchable.
+ * @attr alignment - Popover alignment
  *
  * @slot - The select options.
  *
@@ -31,6 +33,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 	@property({ type: Boolean }) reflectDefault = false
 	@property({ type: Boolean }) multiple = false
 	@property({ type: Boolean }) searchable = false
+	@property() menuAlignment?: PopoverAlignment
 	@property({
 		type: Boolean,
 		reflect: true,
@@ -181,6 +184,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 				fixed
 				selectionMode=${this.multiple ? 'multiple' : 'single'}
 				.anchor=${this}
+				alignment=${ifDefined(this.menuAlignment)}
 				?disabled=${this.disabled}
 				?open=${this.open}
 				@openChange=${(e: CustomEvent<boolean>) => this.open = e.detail}

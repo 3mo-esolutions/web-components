@@ -1,5 +1,5 @@
 import { story, meta } from '../../.storybook/story.js'
-import { html } from '@a11d/lit'
+import { html, ifDefined } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 import { Language as LanguageBase, LanguageField as LanguageFieldBase } from './index.js'
@@ -38,6 +38,26 @@ export const ModeAttach = story({
 					value=${value}
 					@change=${(e: CustomEvent<string>) => handleChange(e.detail)}
 				></mo-field-text>
+			`}
+		></story-language-field>
+	`
+})
+
+
+export const OptionTemplate = story({
+	render: () => html`
+		<story-language-field label='Label'
+			.fieldTemplate=${(value: string, handleChange: (value: string) => void, label: string, language: Language) => html`
+				<mo-field-text
+					label=${`${label} (${language.name})`}
+					value=${value}
+					@change=${(e: CustomEvent<string>) => handleChange(e.detail)}
+				></mo-field-text>
+			`}
+			.optionTemplate=${(language: Language) => html`
+				[${language.id}]
+				${language.name.toUpperCase()}
+				<img src=${ifDefined(language.flagImageSource)} style='width: 30px'>
 			`}
 		></story-language-field>
 	`

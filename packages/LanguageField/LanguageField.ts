@@ -7,12 +7,13 @@ import { FieldPairMode } from '@3mo/field-pair'
  * @attr mode
  * @attr valueKey
  * @attr label
+ * @attr dialogSize
  * @attr dense
  * @attr value
  * @attr selectedLanguage
  * @attr defaultLanguage
  * @attr fieldTemplate
- * @attr dialogSize
+ * @attr optionTemplate
  *
  * @fires change
  * @fires languageChange
@@ -34,6 +35,7 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 	@property({ type: Object }) selectedLanguage?: TLanguage
 	@property({ type: Object }) defaultLanguage?: TLanguage
 	@property({ type: Object }) fieldTemplate?: (value: TValue, handleChange: (value: TValue) => void, label: string, language: TLanguage) => HTMLTemplateResult
+	@property({ type: Object }) optionTemplate?: (language: TLanguage) => HTMLTemplateResult
 
 	@state() protected _languages = new Array<TLanguage>()
 	get languages() { return this._languages }
@@ -42,6 +44,10 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 
 	get getFieldTemplate() {
 		return this.fieldTemplate
+	}
+
+	get getOptionTemplate() {
+		return this.optionTemplate
 	}
 
 	protected override initialized() {
@@ -89,6 +95,10 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 			:host([single]) mo-field-pair {
 				--mo-field-pair-attachment-width: 50px;
 			}
+
+			:host([single]) mo-field-select {
+				pointer-events: none
+			}
 		`
 	}
 
@@ -119,8 +129,8 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 
 	protected get languageSelectorTemplate() {
 		return html`
-			${!this._languages.length ? nothing : html`
-				<mo-field-select slot='attachment' label='' ?dense=${this.dense}
+			${this._languages.length === 0 ? nothing : html`
+				<mo-field-select slot='attachment' label='' ?dense=${this.dense} menuAlignment='end'
 					value=${ifDefined(this.selectedLanguage?.[this.valueKey])}
 					@change=${(e: CustomEvent<TLanguage[keyof TLanguage]>) => this.handleLanguageChange(this._languages.find(l => l[this.valueKey] === e.detail) as TLanguage)}
 				>
@@ -130,8 +140,10 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 
 					${this._languages.map(language => html`
 						<mo-option value=${language[this.valueKey]} .data=${language}>
-							<img src=${ifDefined(language?.flagImageSource)} style='width: 30px'>
-							${language.name}
+							${this.getOptionTemplate ? this.getOptionTemplate(language) : html`
+								<img src=${ifDefined(language?.flagImageSource)} style='width: 30px'>
+								${language.name}
+							`}
 						</mo-option>
 					`)}
 				</mo-field-select>
@@ -150,7 +162,7 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 
 	protected get flagTemplate() {
 		return !this.selectedLanguage?.flagImageSource ? nothing : html`
-			<img src=${ifDefined(this.selectedLanguage.flagImageSource)} style='width: 30px'>
+			<img src=${ifDefined(this.selectedLanguage.flagImageSource)} ${style({ width: '30px', marginInlineStart: this._languages.length < 2 ? '10px' : '0px' })}>
 		`
 	}
 
