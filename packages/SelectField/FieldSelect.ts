@@ -16,6 +16,7 @@ import { PopoverAlignment } from '@3mo/popover'
  * @attr value - Whether the options should be searchable.
  * @attr index - Whether the options should be searchable.
  * @attr data - Whether the options should be searchable.
+ * @attr alignment - Popover alignment
  *
  * @slot - The select options.
  *
