@@ -2,9 +2,9 @@ import { html, property, css, event, component, live, query, nothing, eventListe
 import { FieldComponent } from '@3mo/field'
 import type { ListItem } from '@3mo/list'
 import type { Menu } from '@3mo/menu'
+import { PopoverAlignment } from '@3mo/popover'
 import { Option } from './Option.js'
 import { Data, FieldSelectValueController, Index, Value } from './SelectValueController.js'
-import { PopoverAlignment } from '@3mo/popover'
 
 /**
  * @element mo-field-select

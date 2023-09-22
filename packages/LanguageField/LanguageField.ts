@@ -7,12 +7,12 @@ import { FieldPairMode } from '@3mo/field-pair'
  * @attr mode
  * @attr valueKey
  * @attr label
+ * @attr dialogSize
  * @attr dense
  * @attr value
  * @attr selectedLanguage
  * @attr defaultLanguage
  * @attr fieldTemplate
- * @attr dialogSize
  * @attr optionTemplate
  *
  * @fires change
