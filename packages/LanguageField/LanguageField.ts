@@ -13,6 +13,7 @@ import { FieldPairMode } from '@3mo/field-pair'
  * @attr defaultLanguage
  * @attr fieldTemplate
  * @attr dialogSize
+ * @attr optionTemplate
  *
  * @fires change
  * @fires languageChange
@@ -34,6 +35,7 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 	@property({ type: Object }) selectedLanguage?: TLanguage
 	@property({ type: Object }) defaultLanguage?: TLanguage
 	@property({ type: Object }) fieldTemplate?: (value: TValue, handleChange: (value: TValue) => void, label: string, language: TLanguage) => HTMLTemplateResult
+	@property({ type: Object }) optionTemplate?: (language: TLanguage) => HTMLTemplateResult
 
 	@state() protected _languages = new Array<TLanguage>()
 	get languages() { return this._languages }
@@ -42,6 +44,10 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 
 	get getFieldTemplate() {
 		return this.fieldTemplate
+	}
+
+	get getOptionTemplate() {
+		return this.optionTemplate
 	}
 
 	protected override initialized() {
@@ -134,8 +140,10 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 
 					${this._languages.map(language => html`
 						<mo-option value=${language[this.valueKey]} .data=${language}>
-							<img src=${ifDefined(language?.flagImageSource)} style='width: 30px'>
-							${language.name}
+							${this.getOptionTemplate ? this.getOptionTemplate(language) : html`
+								<img src=${ifDefined(language?.flagImageSource)} style='width: 30px'>
+								${language.name}
+							`}
 						</mo-option>
 					`)}
 				</mo-field-select>
