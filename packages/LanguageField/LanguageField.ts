@@ -130,7 +130,7 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 	protected get languageSelectorTemplate() {
 		return html`
 			${this._languages.length === 0 ? nothing : html`
-				<mo-field-select slot='attachment' label='' ?dense=${this.dense} alignment='end'
+				<mo-field-select slot='attachment' label='' ?dense=${this.dense} menuAlignment='end'
 					value=${ifDefined(this.selectedLanguage?.[this.valueKey])}
 					@change=${(e: CustomEvent<TLanguage[keyof TLanguage]>) => this.handleLanguageChange(this._languages.find(l => l[this.valueKey] === e.detail) as TLanguage)}
 				>
@@ -162,7 +162,7 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 
 	protected get flagTemplate() {
 		return !this.selectedLanguage?.flagImageSource ? nothing : html`
-			<img src=${ifDefined(this.selectedLanguage.flagImageSource)} ${style({ width: '30px', marginLeft: this._languages.length < 2 ? '10px' : '0px' })}>
+			<img src=${ifDefined(this.selectedLanguage.flagImageSource)} ${style({ width: '30px', marginInlineStart: this._languages.length < 2 ? '10px' : '0px' })}>
 		`
 	}
 

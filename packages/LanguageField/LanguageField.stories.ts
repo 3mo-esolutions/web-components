@@ -55,6 +55,7 @@ export const OptionTemplate = story({
 				></mo-field-text>
 			`}
 			.optionTemplate=${(language: Language) => html`
+				[${language.id}]
 				${language.name.toUpperCase()}
 				<img src=${ifDefined(language.flagImageSource)} style='width: 30px'>
 			`}
