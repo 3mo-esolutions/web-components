@@ -120,7 +120,7 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 	protected get languageSelectorTemplate() {
 		return html`
 			${!this._languages.length ? nothing : html`
-				<mo-field-select slot='attachment' label='' ?dense=${this.dense}
+				<mo-field-select slot='attachment' label='' ?dense=${this.dense} alignment='end'
 					value=${ifDefined(this.selectedLanguage?.[this.valueKey])}
 					@change=${(e: CustomEvent<TLanguage[keyof TLanguage]>) => this.handleLanguageChange(this._languages.find(l => l[this.valueKey] === e.detail) as TLanguage)}
 				>

@@ -4,6 +4,7 @@ import type { ListItem } from '@3mo/list'
 import type { Menu } from '@3mo/menu'
 import { Option } from './Option.js'
 import { Data, FieldSelectValueController, Index, Value } from './SelectValueController.js'
+import { PopoverAlignment } from '@3mo/popover'
 
 /**
  * @element mo-field-select
@@ -31,6 +32,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 	@property({ type: Boolean }) reflectDefault = false
 	@property({ type: Boolean }) multiple = false
 	@property({ type: Boolean }) searchable = false
+	@property() alignment = PopoverAlignment.Start
 	@property({
 		type: Boolean,
 		reflect: true,
@@ -181,6 +183,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 				fixed
 				selectionMode=${this.multiple ? 'multiple' : 'single'}
 				.anchor=${this}
+				.alignment=${this.alignment}
 				?disabled=${this.disabled}
 				?open=${this.open}
 				@openChange=${(e: CustomEvent<boolean>) => this.open = e.detail}
