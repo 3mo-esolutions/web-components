@@ -28,7 +28,7 @@ export class SelectableCalendar extends Calendar {
 	protected override getDayElementClasses(day: DateTime) {
 		return {
 			...super.getDayElementClasses(day),
-			selected: !!this.value && day.dayStart.equals(this.value?.dayStart),
+			selected: !!this.value && day.year === this.value.year && day.month === this.value.month && day.day === this.value.day
 		}
 	}
 }

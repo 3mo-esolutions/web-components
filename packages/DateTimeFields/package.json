@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/date-time-fields",
-	"version": "0.1.7",
+	"version": "0.2.0",
 	"description": "A set of date-time related fields.",
 	"repository": {
 		"type": "git",
@@ -24,9 +24,6 @@
 		"dist"
 	],
 	"dependencies": {
-		"tslib": "x",
-		"@a11d/lit": "x",
-		"@a11d/array.prototype.group": "x",
 		"@3mo/date-time": "x",
 		"@3mo/field": "x",
 		"@3mo/flex": "x",
@@ -39,6 +36,10 @@
 		"@3mo/popover": "x",
 		"@3mo/scroller": "x",
 		"@3mo/tab": "x",
-		"@3mo/text-fields": "x"
+		"@3mo/text-fields": "x",
+		"@a11d/array.prototype.group": "x",
+		"@a11d/lit": "x",
+		"tslib": "x",
+		"typescript-memoize": "1.x"
 	}
 }

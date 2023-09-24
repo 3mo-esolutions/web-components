@@ -1,10 +1,22 @@
-import { Component, css, component, html, nothing, property, classMap, style, ClassInfo } from '@a11d/lit'
+import { Component, css, component, html, nothing, property, classMap, style, ClassInfo, state } from '@a11d/lit'
 import '@a11d/array.prototype.group'
+import { MemoizeExpiring as memoizeExpiring } from 'typescript-memoize'
 
 @component('mo-calendar')
 export class Calendar extends Component {
 	@property({ type: Boolean, reflect: true }) includeWeekNumbers = false
-	@property({ type: Object }) navigatingValue = new DateTime
+	@property({
+		type: Object,
+		updated(this: Calendar) {
+			const start = this.navigatingValue.monthStart.weekStart
+			const end = this.navigatingValue.monthEnd.weekEnd
+			const range = [...this.rangeOf(start, end)]
+			this.days = [...range.groupToMap(d => String(d.weekOfYear))]
+				.sort(([, dates1], [, dates2]) => dates1[0]?.isBefore(dates2[0]!) ? -1 : +1)
+		}
+	}) navigatingValue = new DateTime
+
+	@state() private days = new Array<[weekNumber: string, days: Array<DateTime>]>()
 
 	static override get styles() {
 		return css`
@@ -60,11 +72,6 @@ export class Calendar extends Component {
 	}
 
 	protected override get template() {
-		const start = this.navigatingValue.monthStart.weekStart
-		const end = this.navigatingValue.monthEnd.weekEnd
-		const range = [...this.rangeOf(start, end)]
-		const weekDaysInMonth = [...range.groupToMap(d => String(d.weekOfYear))]
-			.sort(([, dates1], [, dates2]) => dates1[0]?.isBefore(dates2[0]!) ? -1 : +1)
 		return html`
 			<mo-grid class='month'
 				rows='repeat(auto-fill, var(--mo-calendar-day-size))'
@@ -79,7 +86,7 @@ export class Calendar extends Component {
 					</div>
 				`)}
 
-				${weekDaysInMonth.map(([weekNumber, days]) => html`
+				${this.days.map(([weekNumber, days]) => html`
 					${this.includeWeekNumbers === false ? nothing : html`<div class='week'>${weekNumber}</div>`}
 					${days.map(day => this.getDayTemplate(day))}
 				`)}
@@ -106,11 +113,13 @@ export class Calendar extends Component {
 		day
 	}
 
+	@memoizeExpiring(60_000)
+	private get now() { return new DateTime }
+
 	protected getDayElementClasses(day: DateTime): ClassInfo {
-		const now = new DateTime()
 		return {
 			day: true,
-			today: now.dayStart.equals(day.dayStart),
+			today: this.now.year === day.year && this.now.month === day.month && this.now.day === day.day,
 			isInMonth: day.month === this.navigatingValue.month
 		}
 	}

@@ -1,5 +1,3 @@
-import { DateParser } from './DateParser.js'
-
 export class DateRangeParser {
 	static readonly dateRangeSeparator = ' – '
 	static readonly userDateRangeSeparators = [DateRangeParser.dateRangeSeparator, ' ', '-', '~']
@@ -19,8 +17,8 @@ export class DateRangeParser {
 
 		const [startDateText, endDateText] = dateRangeText.toLowerCase().split(separator)
 
-		const startDate = DateParser.parse(startDateText!, referenceDate)
-		const endDate = DateParser.parse(endDateText!, referenceDate)
+		const startDate = DateTime.parseAsDateTime(startDateText!, referenceDate)
+		const endDate = DateTime.parseAsDateTime(endDateText!, referenceDate)
 
 		return new DateTimeRange(startDate, endDate)
 	}

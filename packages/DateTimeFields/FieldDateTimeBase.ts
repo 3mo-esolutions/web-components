@@ -84,6 +84,10 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 		return super.isActive || this.open
 	}
 
+	protected get placeholder() {
+		return ''
+	}
+
 	static override get styles() {
 		return css`
 			${super.styles}
@@ -110,6 +114,14 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 				font-weight: 500;
 				color: var(--mo-color-gray);
 			}
+
+			input::placeholder {
+				color: transparent;
+			}
+
+			mo-field[active] input::placeholder {
+				color: var(--mo-color-gray);
+			}
 		`
 	}
 
@@ -134,6 +146,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 				?readonly=${this.readonly}
 				?required=${this.required}
 				?disabled=${this.disabled}
+				placeholder=${this.placeholder}
 				.value=${live(this.inputStringValue || '')}
 				@input=${(e: Event) => this.handleInput(this.inputValueToValue(this.inputElement.value || ''), e)}
 				@change=${(e: Event) => this.handleChange(this.inputValueToValue(this.inputElement.value || ''), e)}

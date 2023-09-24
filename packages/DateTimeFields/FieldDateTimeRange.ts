@@ -3,6 +3,7 @@ import { component, css, html, property } from '@a11d/lit'
 import { MaterialIcon } from '@3mo/icon'
 import { FieldDateTimeBase as FieldDateTimeBase, FieldDateTimePrecision } from './FieldDateTimeBase.js'
 import { DateRangeParser } from './DateRangeParser.js'
+import { Memoize as memoize } from 'typescript-memoize'
 
 enum FieldDateRangeSelection {
 	Start = 'start',
@@ -48,6 +49,11 @@ export class FieldDateTimeRange extends FieldDateTimeBase<DateTimeRange | undefi
 	}
 
 	protected override calendarIconButtonIcon: MaterialIcon = 'date_range'
+
+	@memoize()
+	protected override get placeholder() {
+		return new DateTimeRange(new DateTime().subtract({ years: 1 }), new DateTime()).format(this.formatOptions)
+	}
 
 	protected get calendarTemplate() {
 		return html`

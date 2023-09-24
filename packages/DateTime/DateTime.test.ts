@@ -1,4 +1,5 @@
 import { DateTime } from './DateTime.js'
+import { expectDateTimesEquals } from './expectDateTimesEquals.test.js'
 
 describe('DateTime', () => {
 	it('from() should construct a DateTime from an epoch nanoseconds number', () => {
@@ -73,5 +74,37 @@ describe('DateTime', () => {
 	it('year should return the year', () => {
 		const dateTime = new DateTime('2020-01-01')
 		expect(dateTime.year).toBe(2020)
+	})
+
+	it('getDateSeparator() should return the date separator of given language', () => {
+		expect(DateTime.getDateSeparator('en')).toBe('/')
+		expect(DateTime.getDateSeparator('de')).toBe('.')
+	})
+
+	it('getTimeSeparator() should return the time separator of given language', () => {
+		expect(DateTime.getTimeSeparator('en')).toBe(':')
+		expect(DateTime.getTimeSeparator('de')).toBe(':')
+	})
+
+	it('Zero parser is in place', () => {
+		expectDateTimesEquals(DateTime.parseAsDateTime('0'), new DateTime())
+	})
+
+	it('Operation parser is in place', () => {
+		expectDateTimesEquals(DateTime.parseAsDateTime('+1'), new DateTime().add({ days: 1 }))
+	})
+
+	it('Local parser is in place', () => {
+		expectDateTimesEquals(DateTime.parseAsDateTime('10.9', undefined, 'de'), new DateTime().with({ day: 10, month: 9 }))
+	})
+
+	it('Day and month shortcut parser is in place', () => {
+		expectDateTimesEquals(DateTime.parseAsDateTime('109', undefined, 'de'), new DateTime().with({ day: 10, month: 9 }))
+		expectDateTimesEquals(DateTime.parseAsDateTime('204', undefined, 'de'), new DateTime().with({ day: 20, month: 4 }))
+		expectDateTimesEquals(DateTime.parseAsDateTime('2', undefined, 'de'), new DateTime().with({ day: 2 }))
+	})
+
+	it('Native parser is in place', () => {
+		expectDateTimesEquals(DateTime.parseAsDateTime('2023-09-01', undefined, 'de'), new DateTime('2023-09-01'))
 	})
 })

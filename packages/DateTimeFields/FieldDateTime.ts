@@ -1,7 +1,7 @@
 
 import { component, html, property } from '@a11d/lit'
-import { DateParser } from './DateParser.js'
 import { FieldDateTimeBase, FieldDateTimePrecision } from './FieldDateTimeBase.js'
+import { Memoize as memoize } from 'typescript-memoize'
 
 /** @element mo-field-date-time */
 @component('mo-field-date-time')
@@ -10,6 +10,11 @@ export class FieldDateTime extends FieldDateTimeBase<Date | undefined> {
 	protected get selectedDate() { return this.value ? new DateTime(this.value) : undefined }
 
 	@property({ type: Object }) value?: Date
+
+	@memoize()
+	protected override get placeholder() {
+		return new DateTime().format(this.formatOptions)
+	}
 
 	protected get calendarTemplate() {
 		return html`
@@ -31,7 +36,7 @@ export class FieldDateTime extends FieldDateTimeBase<Date | undefined> {
 	}
 
 	protected inputValueToValue(value: string) {
-		return value ? DateParser.parse(value, this.shortcutReferenceDate) : undefined
+		return value ? DateTime.parseAsDateTime(value, this.shortcutReferenceDate) : undefined
 	}
 }
 
