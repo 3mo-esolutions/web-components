@@ -35,7 +35,9 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 		type: Boolean,
 		reflect: true,
 		updated(this: FieldDateTimeBase<T>, open: boolean, wasOpen?: boolean) {
-			if (open === false && wasOpen === true) {
+			if (open === true && wasOpen === false) {
+				this.lastValue = this.value
+			} else if (open === false && wasOpen === true && this.lastValue !== this.value) {
 				this.change.dispatch(this.value)
 			}
 		}
@@ -43,6 +45,8 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	@property({ type: Boolean }) hideDatePicker = false
 	@property({ type: Object }) shortcutReferenceDate = new DateTime
 	@property() precision = FieldDateTimePrecision.Minute
+
+	private lastValue?: T
 
 	protected readonly calendarIconButtonIcon: MaterialIcon = 'today'
 
