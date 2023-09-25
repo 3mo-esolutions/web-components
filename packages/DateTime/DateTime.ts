@@ -1,7 +1,7 @@
 import { Temporal, Intl } from '@js-temporal/polyfill'
 import { Localizer } from '@3mo/localization'
 import { TimeSpan } from './TimeSpan.js'
-import { DateTimeParser, DateTimeLocalParser, DateTimeDayMonthShortcutParser, DateTimeOperationParser, DateTimeNativeParser, DateTimeZeroParser } from './parsers/index.js'
+import { DateTimeParser, DateTimeLocalParser, DateTimeShortcutParser, DateTimeOperationParser, DateTimeNativeParser, DateTimeZeroParser } from './parsers/index.js'
 import { Memoize as memoize } from 'typescript-memoize'
 
 type DateTimeFromParameters =
@@ -57,7 +57,7 @@ export class DateTime extends Date {
 			new DateTimeZeroParser(language),
 			new DateTimeOperationParser(language),
 			new DateTimeLocalParser(language),
-			new DateTimeDayMonthShortcutParser(language),
+			new DateTimeShortcutParser(language),
 			new DateTimeNativeParser(language),
 			...DateTime.customParsers.map(parser => new parser(language)),
 		]
