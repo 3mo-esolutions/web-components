@@ -17,6 +17,9 @@ export class DateTimeKeywordParser extends DateTimeParser {
 			case 'enw': return referenceDate.add({ weeks: +1 }).weekEnd
 			case 'alw': return referenceDate.add({ weeks: -1 }).weekStart
 			case 'elw': return referenceDate.add({ weeks: -1 }).weekEnd
+			case 'flw': return referenceDate.add({ weeks: -1 }).weekEnd.add({ days: -2 })
+			case 'fdw': return referenceDate.weekEnd.add({ days: -2 })
+			case 'fnw': return referenceDate.add({ weeks: +1 }).weekEnd.add({ days: -2 })
 			case 'adm': return referenceDate.monthStart
 			case 'edm': return referenceDate.monthEnd
 			case 'anm': return referenceDate.add({ months: +1 }).monthStart
