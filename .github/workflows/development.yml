@@ -22,7 +22,7 @@ jobs:
         run: npm ci
 
       - name: Test 🧪
-        run: npm run test:ci
+        run: npm run test
 
   Docs:
     name: 📖 Deploy Documentation
