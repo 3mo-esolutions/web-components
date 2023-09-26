@@ -7,6 +7,12 @@ export class NoIntrinsicDimensionsController extends Controller {
 
 	override hostUpdated() {
 		const { width, height } = this.host.getBoundingClientRect()
+
+		// @ts-expect-error - environment is not defined in globalThis
+		if (globalThis.environment === 'test') {
+			return
+		}
+
 		if (width === 0 || height === 0) {
 			console.warn(`The following "${this.host.tagName.toLowerCase()}" element has no intrinsic dimensions and the parent element doesn't specify its dimensions.`, this.host)
 		}
