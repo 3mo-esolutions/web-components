@@ -44,5 +44,290 @@
 				}
 			}
 		]
-	}
+	},
+	"files": [],
+	"references": [
+		{
+			"path": "./packages/Alert"
+		},
+		{
+			"path": "./packages/Anchor"
+		},
+		{
+			"path": "./packages/Button"
+		},
+		{
+			"path": "./packages/ButtonGroup"
+		},
+		{
+			"path": "./packages/Card"
+		},
+		{
+			"path": "./packages/Checkbox"
+		},
+		{
+			"path": "./packages/CheckboxGroup"
+		},
+		{
+			"path": "./packages/Chip"
+		},
+		{
+			"path": "./packages/CircularProgress"
+		},
+		{
+			"path": "./packages/CloudflareStream"
+		},
+		{
+			"path": "./packages/CollapsibleCard"
+		},
+		{
+			"path": "./packages/Color"
+		},
+		{
+			"path": "./packages/ColorField"
+		},
+		{
+			"path": "./packages/ColorPicker"
+		},
+		{
+			"path": "./packages/Confetti"
+		},
+		{
+			"path": "./packages/ContextMenu"
+		},
+		{
+			"path": "./packages/DataGrid"
+		},
+		{
+			"path": "./packages/DateTime"
+		},
+		{
+			"path": "./packages/DateTimeFields"
+		},
+		{
+			"path": "./packages/DateTimeValueConstructor"
+		},
+		{
+			"path": "./packages/DesignLibrary"
+		},
+		{
+			"path": "./packages/Dialog"
+		},
+		{
+			"path": "./packages/disabledProperty"
+		},
+		{
+			"path": "./packages/Downloader"
+		},
+		{
+			"path": "./packages/Drawer"
+		},
+		{
+			"path": "./packages/EmptyState"
+		},
+		{
+			"path": "./packages/EntityDataGrid"
+		},
+		{
+			"path": "./packages/EntityDialog"
+		},
+		{
+			"path": "./packages/ExpandCollapseIconButton"
+		},
+		{
+			"path": "./packages/Expander"
+		},
+		{
+			"path": "./packages/Fab"
+		},
+		{
+			"path": "./packages/FabGroup"
+		},
+		{
+			"path": "./packages/FetchableDataGrid"
+		},
+		{
+			"path": "./packages/FetchableDialog"
+		},
+		{
+			"path": "./packages/FetchableSelectField"
+		},
+		{
+			"path": "./packages/FetcherController"
+		},
+		{
+			"path": "./packages/Field"
+		},
+		{
+			"path": "./packages/FieldPair"
+		},
+		{
+			"path": "./packages/FileUpload"
+		},
+		{
+			"path": "./packages/FileUploadDropArea"
+		},
+		{
+			"path": "./packages/Flex"
+		},
+		{
+			"path": "./packages/FocusController"
+		},
+		{
+			"path": "./packages/FontImporter"
+		},
+		{
+			"path": "./packages/Grid"
+		},
+		{
+			"path": "./packages/GroupBox"
+		},
+		{
+			"path": "./packages/Heading"
+		},
+		{
+			"path": "./packages/Icon"
+		},
+		{
+			"path": "./packages/IconButton"
+		},
+		{
+			"path": "./packages/InstanceofAttributeController"
+		},
+		{
+			"path": "./packages/IntersectionObserver"
+		},
+		{
+			"path": "./packages/IntervalController"
+		},
+		{
+			"path": "./packages/KeyboardController"
+		},
+		{
+			"path": "./packages/KeyPath"
+		},
+		{
+			"path": "./packages/LanguageField"
+		},
+		{
+			"path": "./packages/LinearProgress"
+		},
+		{
+			"path": "./packages/List"
+		},
+		{
+			"path": "./packages/LoadingButton"
+		},
+		{
+			"path": "./packages/LoadingButtonDialogAdapter"
+		},
+		{
+			"path": "./packages/LoadingDialog"
+		},
+		{
+			"path": "./packages/localization"
+		},
+		{
+			"path": "./packages/MediaQueryObserver"
+		},
+		{
+			"path": "./packages/Menu"
+		},
+		{
+			"path": "./packages/ModdableDataGrid"
+		},
+		{
+			"path": "./packages/MutationObserver"
+		},
+		{
+			"path": "./packages/NoIntrinsicDimensionsController"
+		},
+		{
+			"path": "./packages/NumberFields"
+		},
+		{
+			"path": "./packages/Pdf"
+		},
+		{
+			"path": "./packages/PointerController"
+		},
+		{
+			"path": "./packages/Popover"
+		},
+		{
+			"path": "./packages/queryConnectedInstances"
+		},
+		{
+			"path": "./packages/Radio"
+		},
+		{
+			"path": "./packages/ResizeObserver"
+		},
+		{
+			"path": "./packages/safeRound"
+		},
+		{
+			"path": "./packages/Scroller"
+		},
+		{
+			"path": "./packages/Section"
+		},
+		{
+			"path": "./packages/SelectField"
+		},
+		{
+			"path": "./packages/Slider"
+		},
+		{
+			"path": "./packages/SlotController"
+		},
+		{
+			"path": "./packages/Snackbar"
+		},
+		{
+			"path": "./packages/SplitButton"
+		},
+		{
+			"path": "./packages/SplitButtonDialogAdapter"
+		},
+		{
+			"path": "./packages/SplitPageHost"
+		},
+		{
+			"path": "./packages/Splitter"
+		},
+		{
+			"path": "./packages/StandardDialogs"
+		},
+		{
+			"path": "./packages/Switch"
+		},
+		{
+			"path": "./packages/Symbol"
+		},
+		{
+			"path": "./packages/Tab"
+		},
+		{
+			"path": "./packages/TextFields"
+		},
+		{
+			"path": "./packages/Theme"
+		},
+		{
+			"path": "./packages/Throttler"
+		},
+		{
+			"path": "./packages/Toolbar"
+		},
+		{
+			"path": "./packages/Tooltip"
+		},
+		{
+			"path": "./packages/VirtualizedList"
+		},
+		{
+			"path": "./packages/VirtualizedScroller"
+		},
+	],
 }

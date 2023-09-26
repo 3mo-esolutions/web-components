@@ -1,0 +1,48 @@
+{
+	"compileOnSave": true,
+	"compilerOptions": {
+		"baseUrl": ".",
+		"incremental": true,
+		"declaration": true,
+		"declarationMap": true,
+		"target": "ES2017",
+		"lib": [
+			"ES2017",
+			"ES2018",
+			"ES2020",
+			"ES2021",
+			"DOM",
+			"DOM.Iterable"
+		],
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"strict": true,
+		"importHelpers": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+		"allowSyntheticDefaultImports": true,
+		"resolveJsonModule": true,
+		"noEmitOnError": true,
+		"forceConsistentCasingInFileNames": true,
+		"noUncheckedIndexedAccess": true,
+		"noImplicitOverride": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"isolatedModules": true,
+		"experimentalDecorators": true,
+		"plugins": [
+			{
+				"name": "ts-lit-plugin",
+				"strict": true,
+				"rules": {
+					"no-missing-import": "off",
+					"no-unclosed-tag": "error",
+					"no-incompatible-type-binding": "warning",
+					"no-incompatible-property-type": "warning"
+				}
+			}
+		]
+	}
+}

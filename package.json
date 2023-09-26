@@ -9,6 +9,7 @@
 		"release": "node ./scripts/release.mjs",
 		"release:all": "node ./scripts/release-all.mjs",
 		"readme": "node ./scripts/readme.mjs",
+		"build": "npm run clean && tsc --build && npm run clean",
 		"analyze": "cem analyze --globs \"packages/**/*.ts\" --exclude \"packages/**/*.(stories|test).ts\" --litelement"
 	},
 	"workspaces": [
