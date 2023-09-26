@@ -145,3 +145,9 @@ export class Popover extends Component {
 		return html`<slot></slot>`
 	}
 }
+
+declare global {
+	interface HTMLElementTagNameMap {
+		'mo-popover': Popover
+	}
+}
