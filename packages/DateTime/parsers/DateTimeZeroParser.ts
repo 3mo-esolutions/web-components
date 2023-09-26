@@ -6,7 +6,7 @@ export class DateTimeZeroParser extends DateTimeParser {
 	parse(text: string, referenceDate = new DateTime) {
 		text = text.replace(DateTimeZeroParser.whiteSpaceRegex, '')
 
-		if (Number(text) === 0) {
+		if (text !== '' && Number(text) === 0) {
 			return referenceDate
 		}
 

@@ -1,5 +1,6 @@
 import { ComponentTestFixture } from '@a11d/lit/dist/test/index.js'
 import { Expander } from './Expander.js'
+import './Expander.js'
 import '@3mo/expand-collapse-icon-button'
 
 describe('Expander', () => {

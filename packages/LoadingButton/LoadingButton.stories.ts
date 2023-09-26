@@ -25,7 +25,10 @@ export default meta({
 	}
 })
 
-const handler = () => new Promise(resolve => setTimeout(resolve, 2000))
+const handler = async () => {
+	await new Promise(resolve => setTimeout(resolve, 2000))
+	alert('Done processing!')
+}
 
 export const LoadingButton = story({
 	render: ({ type, disabled, loading, preventClickEventInference }) => html`<mo-loading-button @click=${handler} type=${type} ?disabled=${disabled} ?loading=${loading} ?preventClickEventInference=${preventClickEventInference}>Button</mo-loading-button>`

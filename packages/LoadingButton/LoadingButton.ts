@@ -54,6 +54,7 @@ export class LoadingButton extends Button {
 	static override get styles() {
 		return css`
 			${super.styles}
+			:host([loading]) { pointer-events: none; }
 			mwc-button { position: relative; }
 		`
 	}

@@ -1,6 +1,7 @@
 import { html } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit/dist/test'
 import { SplitButton } from './SplitButton.js'
+import './index.js'
 
 describe('SplitButton', () => {
 	const fixture = new ComponentTestFixture<SplitButton>(html`

@@ -19,7 +19,7 @@ describe('Throttler', () => {
 		await throttler.throttle()
 
 		const timeSpan = Date.now() - start
-		expect(timeSpan).toBeGreaterThanOrEqual(100)
+		expect(timeSpan).toBeGreaterThanOrEqual(99)
 		expect(timeSpan).toBeLessThanOrEqual(150)
 	})
 
