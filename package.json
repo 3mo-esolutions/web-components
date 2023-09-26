@@ -44,7 +44,7 @@
 		"terser-webpack-plugin": "x",
 		"ts-loader": "x",
 		"tsconfig-paths-webpack-plugin": "x",
-		"typescript": "5.0.x",
+		"typescript": "5.x",
 		"webpack": "x",
 		"webpack-cli": "x",
 		"webpack-dev-server": "x"

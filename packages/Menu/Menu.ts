@@ -1,5 +1,5 @@
 import { Component, component, css, event, html, ifDefined, property, query, state } from '@a11d/lit'
-import { Popover, PopoverCoordinates } from '@3mo/popover'
+import { PopoverCoordinates } from '@3mo/popover'
 import { SlotController } from '@3mo/slot-controller'
 import { disabledProperty } from '@3mo/disabled-property'
 import { ListElement, ListItem, SelectableList } from '@3mo/list'
@@ -53,7 +53,6 @@ export class Menu extends Component {
 
 	@state() protected coordinates?: PopoverCoordinates
 
-	@query('mo-popover') readonly popover!: Popover
 	@query('mo-selectable-list') readonly list!: ListElement & SelectableList
 
 	get items() { return this.list.items as Array<ListItem & HTMLElement> }

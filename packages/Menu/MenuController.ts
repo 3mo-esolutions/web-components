@@ -6,8 +6,12 @@ export class MenuController extends Controller {
 		super(host)
 	}
 
-	get open() { return this.host.popover.open ?? false }
-	set open(value) { this.host.popover.setOpen(value) }
+	private get popover() {
+		return this.host.renderRoot.querySelector('mo-popover')!
+	}
+
+	get open() { return this.popover.open ?? false }
+	set open(value) { this.popover.setOpen(value) }
 
 	getItem(index: number) {
 		return this.host.list.getItem?.(index) ?? this.host.list.items[index]
