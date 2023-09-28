@@ -11,7 +11,7 @@ export class Meta extends Component {
 	@property() heading?: string
 	@property() label?: string
 	@property() icon?: MaterialIcon
-	@property() direction: Flex['direction'] = 'vertical'
+	@property({ reflect: true }) direction: Flex['direction'] = 'vertical'
 
 	protected override get template() {
 		return html`
@@ -29,7 +29,6 @@ export class Meta extends Component {
 				mo-heading {
 					color: var(--mo-color-gray);
 					font-size: small;
-					text-transform: uppercase;
 					font-weight: 400;
 					justify-content: end;
 					height: 20px;
