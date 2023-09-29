@@ -931,7 +931,9 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		const compare = (a: TData, b: TData) => {
 			const valueA = getValueByKeyPath(a, sorting.selector) ?? Infinity as any
 			const valueB = getValueByKeyPath(b, sorting.selector) ?? Infinity as any
-			return valueB?.localeCompare?.(valueA) ?? (valueB - valueA)
+			return typeof valueA === 'string' && typeof valueB === 'string'
+				? valueB?.localeCompare?.(valueA, Localizer.currentLanguage)
+				: valueB - valueA
 		}
 
 		switch (sorting.strategy) {

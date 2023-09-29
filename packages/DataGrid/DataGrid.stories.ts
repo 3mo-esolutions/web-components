@@ -34,7 +34,7 @@ const thousandPeople = generatePeople(1000)
 const columnsTemplate = html`
 	<mo-data-grid-column-number hidden nonEditable heading='ID' dataSelector='id'></mo-data-grid-column-number>
 	<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
-	<mo-data-grid-column-number heading='Age' dataSelector='age'></mo-data-grid-column-number>
+	<mo-data-grid-column-number .nonEditable=${(person: Person) => person.age > 30} heading='Age' dataSelector='age'></mo-data-grid-column-number>
 	<mo-data-grid-column-text heading='City' dataSelector='city'></mo-data-grid-column-text>
 `
 
@@ -128,6 +128,9 @@ export const Editability = story({
 		}
 	},
 	render: ({ editability }) => html`
+		<p>
+			This example also demonstrated how some columns can be partially editable by disabling the editability of people older than 30.
+		</p>
 		<mo-data-grid style='height: 500px'
 			.data=${fivePeople}
 			editability=${editability as any}

@@ -9,7 +9,7 @@ export type ColumnDefinition<TData, TValue = unknown> = {
 	alignment?: 'start' | 'center' | 'end'
 	hidden?: boolean
 	sortable?: boolean
-	editable?: boolean
+	editable?: boolean | Predicate<TData>
 	sumHeading?: string
 	getContentTemplate?(value: TValue, data: TData): HTMLTemplateResult
 	getEditContentTemplate?(value: TValue, data: TData): HTMLTemplateResult

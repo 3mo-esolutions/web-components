@@ -39,9 +39,9 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 	private get valueTextContent() { return this.renderRoot.textContent || '' }
 
 	private get isEditable() {
-		return !!this.column.editable
-			&& this.dataGrid.editability !== DataGridEditability.Never
+		return this.dataGrid.editability !== DataGridEditability.Never
 			&& [undefined, null, nothing].includes(this.editContentTemplate) === false
+			&& (this.column.editable === true || (typeof this.column.editable === 'function' && this.column.editable(this.data)))
 	}
 
 	get isEditing() {

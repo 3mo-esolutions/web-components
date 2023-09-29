@@ -24,9 +24,10 @@ export abstract class DataGridColumn<TData, TValue> extends Component {
 	@property({ reflect: true }) dataSelector!: KeyPathOf<TData>
 	@property({ reflect: true }) sortDataSelector?: KeyPathOf<TData>
 	@property({ type: Boolean, reflect: true }) nonSortable = false
-	@property({ type: Boolean, reflect: true }) nonEditable = false
+	@property({ type: Boolean, reflect: true }) nonEditable: boolean | Predicate<TData> = false
 
 	get definition(): ColumnDefinition<TData, TValue> {
+		const nonEditable = this.nonEditable
 		return {
 			dataSelector: this.dataSelector,
 			sortDataSelector: this.sortDataSelector,
@@ -36,7 +37,7 @@ export abstract class DataGridColumn<TData, TValue> extends Component {
 			hidden: this.hidden,
 			width: !AsteriskSyntaxStyleHandler.regex.test(this.width) ? this.width : `${AsteriskSyntaxStyleHandler.getProportion(this.width)}fr`,
 			sortable: !this.nonSortable,
-			editable: !this.nonEditable && this.getEditContentTemplate !== undefined,
+			editable: this.getEditContentTemplate !== undefined && (typeof nonEditable !== 'function' ? !nonEditable : x => !nonEditable(x)),
 			getContentTemplate: this.getContentTemplate.bind(this),
 			getEditContentTemplate: this.getEditContentTemplate?.bind(this),
 		}
