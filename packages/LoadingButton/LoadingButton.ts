@@ -1,4 +1,4 @@
-import { component, css, extractEventHandler, html, nothing, property, style } from '@a11d/lit'
+import { EventListenerController, component, css, extractEventHandler, html, nothing, property, queryAsync, style } from '@a11d/lit'
 import { Button } from '@3mo/button'
 import '@3mo/circular-progress'
 
@@ -11,45 +11,41 @@ export class LoadingButton extends Button {
 	@property({ type: Boolean, reflect: true }) loading = false
 	@property({ type: Boolean }) preventClickEventInference = false
 
-	private readonly eventListeners = new Array<{ readonly type: string, readonly handler: EventListenerOrEventListenerObject }>()
+	private readonly clickEventListeners = new Set<EventListenerOrEventListenerObject>()
 
-	override addEventListener(type: string, handler: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions) {
-		this.eventListeners.push({ type, handler })
-		super.addEventListener(type, handler, options)
+	override addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions) {
+		if (type === 'click') {
+			this.clickEventListeners.add(listener)
+		}
+		super.addEventListener(type, listener, options)
 	}
 
 	override removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions) {
-		this.eventListeners.forEach(({ handler: eventListener, type }, i) => {
-			if (type === type && eventListener === listener) {
-				delete this.eventListeners[i]
-			}
-		})
+		if (type === 'click') {
+			this.clickEventListeners.delete(listener)
+		}
 		super.removeEventListener(type, listener, options)
 	}
 
-	protected override initialized() {
-		this.renderRoot.querySelector('mwc-button')?.addEventListener<any>('click', this.clickHandler)
-	}
+	@queryAsync('mwc-button') private readonly button!: Promise<HTMLButtonElement>
 
-	protected override disconnected() {
-		this.renderRoot.querySelector('mwc-button')?.removeEventListener<any>('click', this.clickHandler)
-	}
-
-	private readonly clickHandler = async (e: PointerEvent) => {
-		if (this.preventClickEventInference === false) {
-			const clickEventHandlers = this.eventListeners
-				.filter(({ type }) => type === 'click')
-				.map(({ handler }) => extractEventHandler(handler))
-				.map(handler => handler(e))
-				.filter(Boolean)
-			if (clickEventHandlers.length > 0 && this.loading === false) {
-				e.stopImmediatePropagation()
-				this.loading = true
-				await Promise.allSettled(clickEventHandlers)
-				this.loading = false
+	protected readonly clickEventListenerController = new EventListenerController(this, {
+		type: 'click',
+		target: () => this.button,
+		listener: async (e: PointerEvent) => {
+			if (this.preventClickEventInference === false) {
+				const results = [...this.clickEventListeners]
+					.map(listener => extractEventHandler(listener)(e))
+					.filter(Boolean)
+				if (results.length > 0 && this.loading === false) {
+					e.stopImmediatePropagation()
+					this.loading = true
+					await Promise.allSettled(results)
+					this.loading = false
+				}
 			}
-		}
-	}
+		},
+	})
 
 	static override get styles() {
 		return css`
