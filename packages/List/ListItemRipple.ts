@@ -1,7 +1,5 @@
 import { Component, component, css, eventListener, html, property, query } from '@a11d/lit'
-import { ripple } from '@material/web/ripple/directive.js'
-import { Ripple } from '@material/web/ripple/lib/ripple.js'
-import '@material/web/ripple/ripple.js'
+import { MdRipple } from '@material/web/ripple/ripple.js'
 
 /**
  * @element mo-list-item-ripple
@@ -17,15 +15,15 @@ export class ListItemRipple extends Component {
 		updated(this: ListItemRipple) {
 			if (!this.disabled) {
 				if (this.focused) {
-					this.ripple.handleFocusin()
+					this.ripple['hovered'] = true
 				} else {
-					this.ripple.handleFocusout()
+					this.ripple['hovered'] = false
 				}
 			}
 		}
 	}) focused = false
 
-	@query('md-ripple') readonly ripple!: Ripple
+	@query('md-ripple') readonly ripple!: MdRipple
 
 	static override get styles() {
 		return css`
@@ -58,8 +56,8 @@ export class ListItemRipple extends Component {
 
 	protected override get template() {
 		return html`
-			<div ${ripple(() => this.ripple)}></div>
-			<md-ripple ?disabled=${this.disabled}></md-ripple>
+			<div></div>
+			<md-ripple .control=${this} ?disabled=${this.disabled}></md-ripple>
 		`
 	}
 
@@ -71,14 +69,14 @@ export class ListItemRipple extends Component {
 
 		if (event.key === 'Enter' || event.key === ' ') {
 			event.stopPropagation()
-			this.ripple['startPressAnimation'](event)
+			this.ripple['pressed'] = true
 			this.dispatchEvent(new MouseEvent('click', { bubbles: true, composed: true }))
 		}
 	}
 
 	@eventListener({ target: window, type: 'keyup' })
 	protected handleKeyUp() {
-		this.ripple['endPressAnimation']()
+		this.ripple['pressed'] = false
 	}
 }
 
