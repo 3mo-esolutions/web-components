@@ -62,9 +62,19 @@ export class AccentStorage extends LocalStorage<Color | ColorSet | undefined> {
 					--mo-color-accent-gradient-1: ${unsafeCSS(firstColor?.rgb)};
 					--mo-color-accent-gradient-2: ${unsafeCSS(secondColor?.rgb)};
 					--mo-color-accent-gradient-3: ${unsafeCSS(thirdColor?.rgb)};
+					--mo-color-on-accent-base: ${unsafeCSS(this.onAccentColorBase)};
 				}
 			`,
 			this.styleElement
 		)
+	}
+
+	private get onAccentColorBase() {
+		if (!this.medianColor) {
+			return '0 0 0'
+		}
+		const { r, g, b } = this.medianColor
+		const sum = Math.round((r * 299 + g * 587 + b * 114) / 1000)
+		return sum > 128 ? '0 0 0' : '255 255 255'
 	}
 }

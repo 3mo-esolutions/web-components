@@ -49,9 +49,9 @@ RootCssInjector.inject(css`
 		--mo-color-red: rgb(var(--mo-color-red-base));
 		--mo-color-blue-base: 0, 119, 200;
 		/* TODO: Replace with @color-contrast when available: https://caniuse.com/mdn-css_types_color_color-contrast */
-		/* More info: https://css-tricks.com/css-variables-calc-rgb-enforcing-high-contrast-colors/ */
-		--mo-color-on-accent-base-value: calc(((((var(--mo-color-accent-base-r) * 299) + (var(--mo-color-accent-base-g) * 587) + (var(--mo-color-accent-base-b) * 114)) / 1000) - 128) * -1000);
-		--mo-color-on-accent-base: var(--mo-color-on-accent-base-value), var(--mo-color-on-accent-base-value), var(--mo-color-on-accent-base-value);
+		/* The solution presented in https://css-tricks.com/css-variables-calc-rgb-enforcing-high-contrast-colors/ doesn't work in Chrome as of late-2023 */
+		/* --mo-color-on-accent-base-value: calc(((((var(--mo-color-accent-base-r) * 299) + (var(--mo-color-accent-base-g) * 587) + (var(--mo-color-accent-base-b) * 114)) / 1000) - 128) * -1000); */
+		/* --mo-color-on-accent-base: var(--mo-color-on-accent-base-value), var(--mo-color-on-accent-base-value), var(--mo-color-on-accent-base-value); */
 		--mo-color-on-accent: rgb(var(--mo-color-on-accent-base));
 		--mo-color-accent-base: var(--mo-color-accent-base-r), var(--mo-color-accent-base-g), var(--mo-color-accent-base-b);
 		--mo-color-accent: rgb(var(--mo-color-accent-base));
