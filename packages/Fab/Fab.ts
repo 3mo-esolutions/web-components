@@ -1,9 +1,8 @@
 import { Component, component, css, html, ifDefined, property } from '@a11d/lit'
 import { MutationController } from '@3mo/mutation-observer'
 import { InstanceofAttributeController } from '@3mo/instanceof-attribute-controller'
-import { disabledProperty } from '@3mo/disabled-property'
 import { MaterialIcon } from '@3mo/icon'
-import { Fab as MwcFab } from '@material/mwc-fab'
+import { MdFab } from '@material/web/fab/fab.js'
 import '@3mo/theme'
 
 /**
@@ -12,20 +11,20 @@ import '@3mo/theme'
  * @attr icon
  * @attr label
  * @attr dense
- * @attr disabled
  * @attr iconAtEnd
  *
  * @slot - The default slot is used to provide the label for the button.
  * @slot icon - The icon slot is used to provide the icon for the button.
  *
- * @cssprop --mo-fab-color
+ * @csspart button - The button element
+ * @csspart ripple - The ripple element
+ * @csspart focus-ring - The focus-ring element
  */
 @component('mo-fab')
 export class Fab extends Component {
 	@property() icon?: MaterialIcon
 	@property({ type: Boolean }) iconAtEnd = false
 	@property({ type: Boolean }) dense = false
-	@disabledProperty() disabled = false
 
 	protected readonly instanceofAttributeController = new InstanceofAttributeController(this)
 	protected readonly mutationController = new MutationController(this, {
@@ -42,8 +41,26 @@ export class Fab extends Component {
 				display: inline-block;
 			}
 
-			mwc-fab {
-				--mdc-theme-secondary: var(--mo-fab-color, var(--mo-color-accent));
+			md-fab {
+				--md-fab-label-text-size: medium;
+
+				--md-fab-background-color: var(--mo-color-accent);
+				--md-fab-foreground-color: var(--mo-color-on-accent);
+				--md-focus-ring-color: var(--mo-color-accent);
+
+				--md-fab-primary-state-layer-color: var(--mo-color-on-accent);
+				--md-fab-primary-hover-state-layer-color: var(--mo-color-on-accent);
+				--md-fab-primary-focus-state-layer-color: var(--mo-color-on-accent);
+				--md-fab-primary-pressed-state-layer-color: var(--mo-color-on-accent);
+			}
+
+			md-fab::part(button) {
+				gap: 8px;
+			}
+
+			:host([iconAtEnd]) md-fab::part(button) {
+				flex-direction: row-reverse;
+				padding-inline: 20px 16px;
 			}
 		`
 	}
@@ -52,33 +69,29 @@ export class Fab extends Component {
 
 	override get template() {
 		return html`
-			<mwc-fab
+			<md-fab exportparts='button,ripple,focus-ring' variant='primary'
 				label=${ifDefined(this.label)}
-				?showIconAtEnd=${this.iconAtEnd}
-				?mini=${this.dense}
-				?disabled=${this.disabled}
-				?extended=${!!this.label}
+				size=${this.dense ? 'small' : 'medium'}
 			>
 				<slot name='icon' slot='icon'>
 					<mo-icon icon=${ifDefined(this.icon)}></mo-icon>
 				</slot>
-			</mwc-fab>
+			</md-fab>
 		`
 	}
 }
 
-MwcFab.elementStyles.push(css`
-	.mdc-fab {
-		margin: 0px !important;
+MdFab.addInitializer(fab => fab.addController({
+	hostUpdated: () => {
+		fab.renderRoot.querySelector('button')?.part.add('button')
+		fab.renderRoot.querySelector('md-ripple')?.part.add('ripple')
+		fab.renderRoot.querySelector('md-focus-ring')?.part.add('focus-ring')
 	}
+}))
 
-	.mdc-fab__touch {
-		display: none !important;
-	}
-
-	.mdc-fab--mini {
-		height: 40px !important;
-	}
+MdFab.elementStyles.push(css`
+	button { background: var(--md-fab-background-color) !important; }
+	.icon, .label { color: var(--md-fab-foreground-color) !important; }
 `)
 
 
