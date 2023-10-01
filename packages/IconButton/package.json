@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/icon-button",
-	"version": "1.0.11",
+	"version": "1.1.0",
 	"description": "Icon Button Web Component based on Material Icon Button.",
 	"repository": {
 		"type": "git",
@@ -26,6 +26,6 @@
 		"tslib": "x",
 		"@3mo/disabled-property": "x",
 		"@3mo/icon": "x",
-		"@material/mwc-icon-button": "x"
+		"@material/web": "1.x"
 	}
 }

@@ -80,5 +80,7 @@ RootCssInjector.inject(css`
 		--md-sys-color-secondary-container: var(--mo-color-accent-transparent);
 		--md-sys-color-surface: var(--mo-color-surface);
 		--md-sys-color-surface-container: var(--mo-color-accent);
+		--md-sys-color-on-surface: var(--mo-color-on-surface);
+		--md-sys-color-on-surface-variant: var(--mo-color-on-surface);
 	}
 `)

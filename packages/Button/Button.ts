@@ -111,7 +111,7 @@ export class Button extends Component {
 				--md-text-button-focus-label-text-color: var(--mo-button-accent-color, var(--mo-color-accent));
 				--md-text-button-pressed-label-text-color: var(--mo-button-accent-color, var(--mo-color-accent));
 
-				--md-text-button-state-layer-color: var(--mo-button-disabled-color, var(--mo-color-gray));
+				--md-text-button-disabled-state-layer-color: var(--mo-button-disabled-color, var(--mo-color-gray));
 				--md-text-button-state-layer-color: var(--mo-button-accent-color, var(--mo-color-accent));
 				--md-text-button-hover-state-layer-color: var(--mo-button-accent-color, var(--mo-color-accent));
 				--md-text-button-focus-state-layer-color: var(--mo-button-accent-color, var(--mo-color-accent));
@@ -126,7 +126,7 @@ export class Button extends Component {
 				--md-outlined-button-focus-label-text-color: var(--mo-button-accent-color, var(--mo-color-accent));
 				--md-outlined-button-pressed-label-text-color: var(--mo-button-accent-color, var(--mo-color-accent));
 
-				--md-outlined-button-state-layer-color: var(--mo-button-disabled-color, var(--mo-color-gray));
+				--md-outlined-button-disabled-state-layer-color: var(--mo-button-disabled-color, var(--mo-color-gray));
 				--md-outlined-button-state-layer-color: var(--mo-button-accent-color, var(--mo-color-accent));
 				--md-outlined-button-hover-state-layer-color: var(--mo-button-accent-color, var(--mo-color-accent));
 				--md-outlined-button-focus-state-layer-color: var(--mo-button-accent-color, var(--mo-color-accent));
@@ -148,6 +148,7 @@ export class Button extends Component {
 				--md-filled-button-focus-label-text-color: var(--mo-button-on-accent-color, var(--mo-color-on-accent));
 				--md-filled-button-pressed-label-text-color: var(--mo-button-on-accent-color, var(--mo-color-on-accent));
 
+				--md-outlined-button-disabled-state-layer-color: var(--mo-button-disabled-color, var(--mo-color-gray));
 				--md-filled-button-state-layer-color: var(--mo-button-on-accent-color, var(--mo-color-on-accent));
 				--md-filled-button-hover-state-layer-color: var(--mo-button-on-accent-color, var(--mo-color-on-accent));
 				--md-filled-button-hover-state-layer-opacity: 0.15;
@@ -179,6 +180,7 @@ export class Button extends Component {
 				--md-elevated-button-focus-label-text-color: var(--mo-button-on-accent-color, var(--mo-color-on-accent));
 				--md-elevated-button-pressed-label-text-color: var(--mo-button-on-accent-color, var(--mo-color-on-accent));
 
+				--md-outlined-button-disabled-state-layer-color: var(--mo-button-disabled-color, var(--mo-color-gray));
 				--md-elevated-button-state-layer-color: var(--mo-button-on-accent-color, var(--mo-color-on-accent));
 				--md-elevated-button-hover-state-layer-color: var(--mo-button-on-accent-color, var(--mo-color-on-accent));
 				--md-elevated-button-hover-state-layer-opacity: 0.15;

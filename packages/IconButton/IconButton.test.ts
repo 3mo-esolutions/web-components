@@ -4,9 +4,13 @@ import { IconButton } from './IconButton.js'
 describe('IconButton', () => {
 	const fixture = new ComponentTestFixture<IconButton>('mo-icon-button')
 
-	const getMwcIconButton = () => fixture.component.renderRoot.querySelector('mwc-icon-button')
+	const getMdIconButton = () => fixture.component.renderRoot.querySelector('md-icon-button')
 
-	const getButton = () => getMwcIconButton()?.renderRoot.querySelector('button') as HTMLButtonElement
+	const getButton = () => getMdIconButton()?.renderRoot.querySelector('button') as HTMLButtonElement
+
+	const getRipple = () => getMdIconButton()?.renderRoot.querySelector('md-ripple')
+
+	const getFocusRing = () => getMdIconButton()?.renderRoot.querySelector('md-focus-ring')
 
 	it('should have a default font-size of 20px', () => {
 		expect(getComputedStyle(fixture.component).fontSize).toBe('20px')
@@ -17,14 +21,24 @@ describe('IconButton', () => {
 	})
 
 	it('should export css part "button"', () => {
-		expect(getMwcIconButton()?.getAttribute('exportparts')).toContain('button')
+		expect(getMdIconButton()?.getAttribute('exportparts')).toContain('button')
 		expect(getButton()?.getAttribute('part')).toContain('button')
 	})
 
-	it('should reflect "disabled" onto the mwc-icon-button element', async () => {
+	it('should export css part "ripple"', () => {
+		expect(getMdIconButton()?.getAttribute('exportparts')).toContain('ripple')
+		expect(getRipple()?.getAttribute('part')).toContain('ripple')
+	})
+
+	it('should export css part "focus-ring"', () => {
+		expect(getMdIconButton()?.getAttribute('exportparts')).toContain('focus-ring')
+		expect(getFocusRing()?.getAttribute('part')).toContain('focus-ring')
+	})
+
+	it('should reflect "disabled" onto the md-icon-button element', async () => {
 		fixture.component.disabled = true
 		await fixture.update()
-		expect(getMwcIconButton()?.disabled).toBe(true)
+		expect(getMdIconButton()?.disabled).toBe(true)
 	})
 
 	it('should set pointer-events to "none" when disabled', async () => {

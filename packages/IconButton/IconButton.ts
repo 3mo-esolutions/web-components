@@ -1,7 +1,7 @@
 import { component, Component, css, html, property } from '@a11d/lit'
 import { disabledProperty } from '@3mo/disabled-property'
 import { type MaterialIcon } from '@3mo/icon'
-import { IconButton as MwcIconButton } from '@material/mwc-icon-button'
+import { MdIconButton } from '@material/web/iconbutton/icon-button.js'
 
 /**
  * @attr icon - The icon to display.
@@ -11,6 +11,8 @@ import { IconButton as MwcIconButton } from '@material/mwc-icon-button'
  * @slot icon - Use The icon to be displayed inside the button.
  *
  * @csspart button - The native button element wrapping the icon-button.
+ * @csspart ripple - The ripple effect of the icon-button.
+ * @csspart focus-ring - The focus ring of the icon-button.
  */
 @component('mo-icon-button')
 export class IconButton extends Component {
@@ -21,6 +23,7 @@ export class IconButton extends Component {
 	static override get styles() {
 		return css`
 			:host {
+				display: inline-block;
 				font-size: 20px;
 			}
 
@@ -28,15 +31,11 @@ export class IconButton extends Component {
 				pointer-events: none;
 			}
 
-			:host, mwc-icon-button {
-				display: inline-block;
-			}
-
-			mwc-icon-button::part(button) {
+			md-icon-button::part(button) {
 				padding: 0.4em;
 			}
 
-			:host([dense]) mwc-icon-button::part(button) {
+			:host([dense]) md-icon-button::part(button) {
 				padding: 0.2em;
 			}
 
@@ -48,19 +47,20 @@ export class IconButton extends Component {
 
 	protected override get template() {
 		return html`
-			<mwc-icon-button exportparts='button' ?disabled=${this.disabled}>
+			<md-icon-button exportparts='button,ripple,focus-ring' ?disabled=${this.disabled}>
 				<slot name='icon'>
 					<mo-icon icon=${this.icon}></mo-icon>
 				</slot>
-			</mwc-icon-button>
+			</md-icon-button>
 		`
 	}
 }
 
-MwcIconButton.elementStyles.push(css`
-	span { display: inline-grid !important; }
-
-	i { display: none !important; }
+MdIconButton.elementStyles.push(css`
+	:host {
+		height: unset !important;
+		width: unset !important;
+	}
 
 	button {
 		width: unset !important;
@@ -71,12 +71,17 @@ MwcIconButton.elementStyles.push(css`
 	::slotted(*) {
 		width: unset !important;
 		height: unset !important;
+		font-size: inherit !important;
 	}
 `)
 
-MwcIconButton.addInitializer(instance => {
-	instance.updateComplete.then(() => (instance as MwcIconButton).buttonElement.part.add('button'))
-})
+MdIconButton.addInitializer(instance => instance.addController({
+	hostUpdated() {
+		instance.renderRoot.querySelector('button')?.part.add('button')
+		instance.renderRoot.querySelector('md-ripple')?.part.add('ripple')
+		instance.renderRoot.querySelector('md-focus-ring')?.part.add('focus-ring')
+	}
+}))
 
 declare global {
 	interface HTMLElementTagNameMap {
