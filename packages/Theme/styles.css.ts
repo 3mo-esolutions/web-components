@@ -73,5 +73,12 @@ RootCssInjector.inject(css`
 		--mdc-theme-text-hint-on-background: var(--mo-color-foreground-transparent) !important;
 		--mdc-theme-text-icon-on-background: var(--mo-color-gray) !important;
 		--mdc-theme-text-primary-on-background: var(--mo-color-foreground) !important;
+		/* Override Material Design variables */
+		--md-sys-color-primary: var(--mo-color-accent);
+		--md-sys-color-primary-container: var(--mo-color-accent-transparent);
+		--md-sys-color-secondary: var(--mo-color-accent);
+		--md-sys-color-secondary-container: var(--mo-color-accent-transparent);
+		--md-sys-color-surface: var(--mo-color-surface);
+		--md-sys-color-surface-container: var(--mo-color-accent);
 	}
 `)

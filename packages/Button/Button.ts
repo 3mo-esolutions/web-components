@@ -1,9 +1,13 @@
-import { component, property, css, Component, html, nothing, style } from '@a11d/lit'
+import { component, property, css, Component, html, nothing, literal, staticHtml } from '@a11d/lit'
 import { InstanceofAttributeController } from '@3mo/instanceof-attribute-controller'
 import { type MaterialIcon } from '@3mo/icon'
-import { Button as MwcButton } from '@material/mwc-button'
+import { MdTextButton } from '@material/web/button/text-button.js'
+import { MdOutlinedButton } from '@material/web/button/outlined-button.js'
+import { MdFilledButton } from '@material/web/button/filled-button.js'
+import { MdElevatedButton } from '@material/web/button/elevated-button.js'
 import { disabledProperty } from '@3mo/disabled-property'
 import '@3mo/theme'
+import '@3mo/flex'
 
 export enum ButtonType {
 	Normal = 'normal',
@@ -23,15 +27,24 @@ export enum ButtonType {
  * @slot trailing - The trailing content of the button.
  *
  * @cssprop --mo-button-accent-color
+ * @cssprop --mo-button-on-accent-color
  * @cssprop --mo-button-horizontal-padding
  * @cssprop --mo-button-disabled-background-color
  * @cssprop --mo-button-disabled-color
  *
  * @csspart button - The composed native button element.
  * @csspart ripple - The ripple element.
+ * @csspart focus-ring - The focus ring element.
  */
 @component('mo-button')
 export class Button extends Component {
+	private static readonly tagByType = new Map([
+		[ButtonType.Normal, literal`md-text-button`],
+		[ButtonType.Outlined, literal`md-outlined-button`],
+		[ButtonType.Raised, literal`md-elevated-button`],
+		[ButtonType.Unelevated, literal`md-filled-button`],
+	])
+
 	@property({ reflect: true }) type = ButtonType.Normal
 	@disabledProperty() disabled = false
 
@@ -42,7 +55,6 @@ export class Button extends Component {
 		return css`
 			:host {
 				display: inline-block;
-				text-transform: uppercase;
 				text-align: center;
 				border-radius: var(--mo-border-radius);
 				min-height: 36px;
@@ -52,12 +64,22 @@ export class Button extends Component {
 				pointer-events: none;
 			}
 
-			:host([type=normal]) mwc-button {
+			:host([type=normal]) [md-button] {
 				--mo-button-default-horizontal-padding: 12px;
 			}
 
-			:host(:not([type=normal])) mwc-button {
+			:host(:not([type=normal])) [md-button] {
 				--mo-button-default-horizontal-padding: 16px;
+			}
+
+			slot:not([name]) {
+				display: inline-block;
+				flex: 1;
+				place-self: center;
+			}
+
+			slot[name=leading] {
+				place-self: center start;
 			}
 
 			slot[name=leading] *, slot[name=leading]::slotted(*) {
@@ -65,21 +87,119 @@ export class Button extends Component {
 				margin-inline-start: calc(var(--mo-button-horizontal-padding, var(--mo-button-default-horizontal-padding)) * -0.5);
 			}
 
+			slot[name=trailing] {
+				place-self: center end;
+			}
+
 			slot[name=trailing] *, slot[name=trailing]::slotted(*) {
 				margin-inline-start: calc(var(--mo-button-horizontal-padding, var(--mo-button-default-horizontal-padding)) * 0.5);
 				margin-inline-end: calc(var(--mo-button-horizontal-padding, var(--mo-button-default-horizontal-padding)) * -0.5);
 			}
 
-			mwc-button {
+			[md-button] {
 				min-height: inherit;
 				text-align: inherit;
-				--mdc-button-horizontal-padding: var(--mo-button-horizontal-padding, var(--mo-button-default-horizontal-padding));
-				--mdc-theme-primary: var(--mo-button-accent-color, var(--mo-color-accent));
-				--mdc-button-outline-color: var(--mo-button-accent-color, var(--mo-color-accent));
-				--mdc-button-disabled-fill-color: var(--mo-button-disabled-background-color);
-				--mdc-button-disabled-ink-color: var(--mo-button-disabled-color, var(--mo-color-gray-transparent));
-				--mdc-button-disabled-outline-color: var(--mo-button-disabled-color, var(--mo-color-gray-transparent));
-				--mdc-shape-small: inherit;
+				font-size: 0.95rem;
+				--md-focus-ring-color: var(--mo-button-accent-color, var(--mo-color-accent));
+			}
+
+			md-text-button {
+				--md-text-button-disabled-label-text-opacity: 0.5;
+				--md-text-button-disabled-label-text-color: var(--mo-button-disabled-color, var(--mo-color-gray));
+				--md-text-button-label-text-color: var(--mo-button-accent-color, var(--mo-color-accent));
+				--md-text-button-hover-label-text-color: var(--mo-button-accent-color, var(--mo-color-accent));
+				--md-text-button-focus-label-text-color: var(--mo-button-accent-color, var(--mo-color-accent));
+				--md-text-button-pressed-label-text-color: var(--mo-button-accent-color, var(--mo-color-accent));
+
+				--md-text-button-state-layer-color: var(--mo-button-disabled-color, var(--mo-color-gray));
+				--md-text-button-state-layer-color: var(--mo-button-accent-color, var(--mo-color-accent));
+				--md-text-button-hover-state-layer-color: var(--mo-button-accent-color, var(--mo-color-accent));
+				--md-text-button-focus-state-layer-color: var(--mo-button-accent-color, var(--mo-color-accent));
+				--md-text-button-pressed-state-layer-color: var(--mo-button-accent-color, var(--mo-color-accent));
+			}
+
+			md-outlined-button {
+				--md-outlined-button-disabled-label-text-opacity: 0.5;
+				--md-outlined-button-disabled-label-text-color: var(--mo-button-disabled-color, var(--mo-color-gray));
+				--md-outlined-button-label-text-color: var(--mo-button-accent-color, var(--mo-color-accent));
+				--md-outlined-button-hover-label-text-color: var(--mo-button-accent-color, var(--mo-color-accent));
+				--md-outlined-button-focus-label-text-color: var(--mo-button-accent-color, var(--mo-color-accent));
+				--md-outlined-button-pressed-label-text-color: var(--mo-button-accent-color, var(--mo-color-accent));
+
+				--md-outlined-button-state-layer-color: var(--mo-button-disabled-color, var(--mo-color-gray));
+				--md-outlined-button-state-layer-color: var(--mo-button-accent-color, var(--mo-color-accent));
+				--md-outlined-button-hover-state-layer-color: var(--mo-button-accent-color, var(--mo-color-accent));
+				--md-outlined-button-focus-state-layer-color: var(--mo-button-accent-color, var(--mo-color-accent));
+				--md-outlined-button-pressed-state-layer-color: var(--mo-button-accent-color, var(--mo-color-accent));
+
+				--md-outlined-button-disabled-outline-opacity: 0.5;
+				--md-outlined-button-disabled-outline-color: var(--mo-button-disabled-color, var(--mo-color-gray));
+				--md-outlined-button-outline-color: var(--mo-button-accent-color, var(--mo-color-accent));
+				--md-outlined-button-hover-outline-color: var(--mo-button-accent-color, var(--mo-color-accent));
+				--md-outlined-button-focus-outline-color: var(--mo-button-accent-color, var(--mo-color-accent));
+				--md-outlined-button-pressed-outline-color: var(--mo-button-accent-color, var(--mo-color-accent));
+			}
+
+			md-filled-button {
+				--md-filled-button-disabled-label-text-opacity: 0.5;
+				--md-filled-button-disabled-label-text-color: var(--mo-button-disabled-color, var(--mo-color-gray));
+				--md-filled-button-label-text-color: var(--mo-button-on-accent-color, var(--mo-color-on-accent));
+				--md-filled-button-hover-label-text-color: var(--mo-button-on-accent-color, var(--mo-color-on-accent));
+				--md-filled-button-focus-label-text-color: var(--mo-button-on-accent-color, var(--mo-color-on-accent));
+				--md-filled-button-pressed-label-text-color: var(--mo-button-on-accent-color, var(--mo-color-on-accent));
+
+				--md-filled-button-state-layer-color: var(--mo-button-on-accent-color, var(--mo-color-on-accent));
+				--md-filled-button-hover-state-layer-color: var(--mo-button-on-accent-color, var(--mo-color-on-accent));
+				--md-filled-button-hover-state-layer-opacity: 0.15;
+				--md-filled-button-focus-state-layer-color: var(--mo-button-on-accent-color, var(--mo-color-on-accent));
+				--md-filled-button-focus-state-layer-opacity: 0.15;
+				--md-filled-button-pressed-state-layer-color: var(--mo-button-on-accent-color, var(--mo-color-on-accent));
+				--md-filled-button-pressed-state-layer-opacity: 0.3;
+
+				--md-filled-button-disabled-outline-opacity: 0.5;
+				--md-filled-button-disabled-outline-color: var(--mo-button-disabled-color, var(--mo-color-gray));
+				--md-filled-button-outline-color: var(--mo-button-accent-color, var(--mo-color-accent));
+				--md-filled-button-hover-outline-color: var(--mo-button-accent-color, var(--mo-color-accent));
+				--md-filled-button-focus-outline-color: var(--mo-button-accent-color, var(--mo-color-accent));
+				--md-filled-button-pressed-outline-color: var(--mo-button-accent-color, var(--mo-color-accent));
+
+				--md-filled-button-disabled-container-opacity: 0.25;
+				--md-filled-button-disabled-container-color: var(--mo-button-disabled-background-color, var(--mo-color-gray));
+				--md-filled-button-container-color: var(--mo-button-accent-color, var(--mo-color-accent));
+				--md-filled-button-hover-container-color: var(--mo-button-accent-color, var(--mo-color-accent));
+				--md-filled-button-focus-container-color: var(--mo-button-accent-color, var(--mo-color-accent));
+				--md-filled-button-pressed-container-color: var(--mo-button-accent-color, var(--mo-color-accent));
+			}
+
+			md-elevated-button {
+				--md-elevated-button-disabled-label-text-opacity: 0.5;
+				--md-elevated-button-disabled-label-text-color: var(--mo-button-disabled-color, var(--mo-color-gray));
+				--md-elevated-button-label-text-color: var(--mo-button-on-accent-color, var(--mo-color-on-accent));
+				--md-elevated-button-hover-label-text-color: var(--mo-button-on-accent-color, var(--mo-color-on-accent));
+				--md-elevated-button-focus-label-text-color: var(--mo-button-on-accent-color, var(--mo-color-on-accent));
+				--md-elevated-button-pressed-label-text-color: var(--mo-button-on-accent-color, var(--mo-color-on-accent));
+
+				--md-elevated-button-state-layer-color: var(--mo-button-on-accent-color, var(--mo-color-on-accent));
+				--md-elevated-button-hover-state-layer-color: var(--mo-button-on-accent-color, var(--mo-color-on-accent));
+				--md-elevated-button-hover-state-layer-opacity: 0.15;
+				--md-elevated-button-focus-state-layer-color: var(--mo-button-on-accent-color, var(--mo-color-on-accent));
+				--md-elevated-button-focus-state-layer-opacity: 0.15;
+				--md-elevated-button-pressed-state-layer-color: var(--mo-button-on-accent-color, var(--mo-color-on-accent));
+				--md-elevated-button-pressed-state-layer-opacity: 0.3;
+
+				--md-elevated-button-disabled-outline-opacity: 0.5;
+				--md-elevated-button-disabled-outline-color: var(--mo-button-disabled-color, var(--mo-color-gray));
+				--md-elevated-button-outline-color: var(--mo-button-accent-color, var(--mo-color-accent));
+				--md-elevated-button-hover-outline-color: var(--mo-button-accent-color, var(--mo-color-accent));
+				--md-elevated-button-focus-outline-color: var(--mo-button-accent-color, var(--mo-color-accent));
+				--md-elevated-button-pressed-outline-color: var(--mo-button-accent-color, var(--mo-color-accent));
+
+				--md-elevated-button-disabled-container-opacity: 0.25;
+				--md-elevated-button-disabled-container-color: var(--mo-button-disabled-background-color, var(--mo-color-gray));
+				--md-elevated-button-container-color: var(--mo-button-accent-color, var(--mo-color-accent));
+				--md-elevated-button-hover-container-color: var(--mo-button-accent-color, var(--mo-color-accent));
+				--md-elevated-button-focus-container-color: var(--mo-button-accent-color, var(--mo-color-accent));
+				--md-elevated-button-pressed-container-color: var(--mo-button-accent-color, var(--mo-color-accent));
 			}
 		`
 	}
@@ -87,15 +207,13 @@ export class Button extends Component {
 	protected readonly instanceofAttributeController = new InstanceofAttributeController(this)
 
 	protected override get template() {
+		const buttonTag = Button.tagByType.get(this.type) ?? literal`md-text-button`
 		return html`
-			<mwc-button exportparts='button,ripple' expandContent
-				?raised=${this.type === ButtonType.Raised}
-				?outlined=${this.type === ButtonType.Outlined}
-				?unelevated=${this.type === ButtonType.Unelevated}
-				?disabled=${this.isDisabled}
-			>
-				${this.contentTemplate}
-			</mwc-button>
+			${staticHtml`
+				<${buttonTag} exportparts='button,ripple,focus-ring' ?disabled=${this.isDisabled}>
+					${this.contentTemplate}
+				</${buttonTag}>
+			`}
 		`
 	}
 
@@ -105,15 +223,17 @@ export class Button extends Component {
 
 	protected get contentTemplate() {
 		return html`
-			${this.leadingSlotTemplate}
-			${this.slotTemplate}
-			${this.trailingSlotTemplate}
+			<mo-flex direction='horizontal' alignItems='center'>
+				${this.leadingSlotTemplate}
+				${this.slotTemplate}
+				${this.trailingSlotTemplate}
+			</mo-flex>
 		`
 	}
 
 	protected get leadingSlotTemplate() {
 		return html`
-			<slot name='leading' slot='icon'>
+			<slot name='leading'>
 				${this.leadingIconTemplate}
 			</slot>
 		`
@@ -124,12 +244,12 @@ export class Button extends Component {
 	}
 
 	protected get slotTemplate() {
-		return html`<slot ${style({ width: '*' })}></slot>`
+		return html`<slot></slot>`
 	}
 
 	protected get trailingSlotTemplate() {
 		return html`
-			<slot name='trailing' slot='trailingIcon'>
+			<slot name='trailing'>
 				${this.trailingIconTemplate}
 			</slot>
 		`
@@ -140,17 +260,24 @@ export class Button extends Component {
 	}
 }
 
-MwcButton.addInitializer(element => {
+const Buttons = [MdTextButton, MdOutlinedButton, MdFilledButton, MdElevatedButton]
+
+Buttons.forEach(Button => Button.addInitializer(element => {
 	element.addController({
 		hostUpdated: () => {
+			element.toggleAttribute('md-button', true)
 			element.renderRoot.querySelector('button')?.setAttribute('part', 'button')
-			element.renderRoot.querySelector('mwc-ripple')?.setAttribute('part', 'ripple')
+			element.renderRoot.querySelector('md-ripple')?.setAttribute('part', 'ripple')
 		}
 	})
-})
+}))
 
-MwcButton.elementStyles.push(css`
+Buttons.forEach(Button => Button.elementStyles.push(css`
 	:host {
+		--_container-height: inherit;
+		--_line-height: inherit;
+		--_leading-space: var(--mo-button-horizontal-padding, var(--mo-button-default-horizontal-padding));
+		--_trailing-space: var(--mo-button-horizontal-padding, var(--mo-button-default-horizontal-padding));
 		display: inline-grid !important;
 		width: 100% !important;
 		height: 100% !important;
@@ -165,31 +292,19 @@ MwcButton.elementStyles.push(css`
 		padding-top: 4px !important;
 		padding-bottom: 4px !important;
 		text-transform: unset !important;
-		border-radius: inherit !important;
 		text-align: inherit !important;
 	}
 
-	.mdc-button__label {
-		display: none;
+	.button__label {
+		width: 100%;
+		letter-spacing: 0.06rem;
+		line-height: normal;
 	}
 
-	.trailing-icon, .leading-icon {
-		display: inline-flex;
-		align-items: center;
+	.button, .button__outline, md-ripple, md-focus-ring {
+		border-radius: inherit !important;
 	}
-
-	.trailing-icon ::slotted(*), .leading-icon ::slotted(*) {
-		margin-inline-start: unset;
-		margin-inline-end: unset;
-		display: unset;
-		position: unset;
-		vertical-align: unset;
-		font-size: unset;
-		height: unset;
-		width: unset;
-	}
-`)
-
+`))
 
 declare global {
 	interface HTMLElementTagNameMap {

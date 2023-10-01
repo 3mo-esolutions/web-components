@@ -1,5 +1,6 @@
 import { component, css, html, Component } from '@a11d/lit'
 import '@3mo/theme'
+import '@3mo/button'
 
 /**
  * @element mo-chip

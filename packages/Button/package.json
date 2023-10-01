@@ -1,7 +1,7 @@
 {
 	"name": "@3mo/button",
-	"version": "0.3.4",
-	"description": "A button web-component based on Material Web Components (MWC).",
+	"version": "0.4.1",
+	"description": "A button web-component based on Material Web Components.",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/3mo-esolutions/web-components"
@@ -25,9 +25,10 @@
 		"@a11d/lit": "x",
 		"tslib": "x",
 		"@3mo/theme": "x",
+		"@3mo/flex": "x",
 		"@3mo/icon": "x",
 		"@3mo/instanceof-attribute-controller": "x",
 		"@3mo/disabled-property": "x",
-		"@material/mwc-button": "0.27.x"
+		"@material/web": "1.x"
 	}
 }

@@ -36,8 +36,25 @@ export const WithoutRipple = story({
 	`
 })
 
+export const WithoutFocusRing = story({
+	render: ({ type, disabled }) => html`
+		<style>
+			mo-button::part(focus-ring) { display: none; }
+		</style>
+		<mo-button type=${type} ?disabled=${disabled}>Button</mo-button>
+	`
+})
+
 export const WithCustomBorderRadius = story({
 	render: ({ type, disabled }) => html`<mo-button type=${type} ?disabled=${disabled} ${style({ borderRadius: '100px' })}>Custom Border Radius</mo-button>`
+})
+
+export const WithCustomDisabledColors = story({
+	render: ({ type, disabled }) => html`<mo-button type=${type} ?disabled=${disabled} ${style({ '--mo-button-disabled-background-color': 'pink', '--mo-button-disabled-color': 'red' })}>Custom Disabled Colors</mo-button>`
+})
+
+export const WithCustomHorizontalPadding = story({
+	render: ({ type, disabled }) => html`<mo-button type=${type} ?disabled=${disabled} ${style({ '--mo-button-horizontal-padding': '80px' })}>Custom horizontal Padding</mo-button>`
 })
 
 export const WithLeadingIcon = story({
@@ -87,9 +104,9 @@ export const WithComplexContentAndTrailingContent = story({
 	`
 })
 
-export const WithCustomizedAccentColor = story({
+export const WithCustomAccentColors = story({
 	render: ({ type, disabled }) => html`
-		<mo-button type=${type} ?disabled=${disabled} ${style({ '--mo-button-accent-color': 'red' })}>
+		<mo-button type=${type} ?disabled=${disabled} ${style({ '--mo-button-accent-color': 'var(--mo-color-red)', '--mo-button-on-accent-color': 'rgb(255, 189, 46)' })}>
 			<span slot='leading' ${style({ fontSize: '36px' })}>⚠️</span>
 			<mo-flex>
 				<div ${style({ fontSize: '12px' })}>Danger</div>

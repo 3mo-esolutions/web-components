@@ -27,7 +27,7 @@ export class LoadingButton extends Button {
 		super.removeEventListener(type, listener, options)
 	}
 
-	@queryAsync('mwc-button') private readonly button!: Promise<HTMLButtonElement>
+	@queryAsync('[md-button]') private readonly button!: Promise<HTMLButtonElement>
 
 	protected readonly clickEventListenerController = new EventListenerController(this, {
 		type: 'click',
@@ -51,7 +51,7 @@ export class LoadingButton extends Button {
 		return css`
 			${super.styles}
 			:host([loading]) { pointer-events: none; }
-			mwc-button { position: relative; }
+			[md-button] { position: relative; }
 		`
 	}
 

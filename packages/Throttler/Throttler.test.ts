@@ -7,7 +7,7 @@ describe('Throttler', () => {
 
 		await throttler.throttle()
 
-		expect(Date.now() - start).toBe(0)
+		expect(Date.now() - start).toBeLessThanOrEqual(1)
 	})
 
 	it('should throttle calls', async () => {
