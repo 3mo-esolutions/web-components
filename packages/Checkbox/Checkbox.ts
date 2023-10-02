@@ -1,7 +1,6 @@
 import { component, property, css, Component, html, event } from '@a11d/lit'
-import { Formfield as FormField } from '@material/mwc-formfield'
 import { disabledProperty } from '@3mo/disabled-property'
-import '@material/mwc-checkbox'
+import '@material/web/checkbox/checkbox.js'
 import '@3mo/theme'
 
 /**
@@ -15,8 +14,6 @@ import '@3mo/theme'
  *
  * @cssprop --mo-checkbox-accent-color
  * @cssprop --mo-checkbox-disabled-color
- * @cssprop --mo-checkbox-unchecked-color
- * @cssprop --mo-checkbox-ink-color
  *
  * @fires change - Fired when the checked state of the checkbox changes.
  */
@@ -61,37 +58,64 @@ export class Checkbox extends Component {
 				pointer-events: none;
 			}
 
-			mwc-checkbox {
-				--mdc-theme-secondary: var(--mo-checkbox-accent-color, var(--mo-color-accent));
-				--mdc-checkbox-touch-target-size: 36px;
-				--mdc-checkbox-ripple-size: 36px;
-				--mdc-checkbox-disabled-color: var(--mo-checkbox-disabled-color, var(--mo-color-gray-transparent));
-				--mdc-checkbox-unchecked-color: var(--mo-checkbox-unchecked-color, var(--mo-color-foreground-transparent));
-				--mdc-checkbox-ink-color: var(--mo-checkbox-ink-color, var(--mo-color-on-accent));
+			md-checkbox {
+				margin-block: 7px;
+				--md-checkbox-container-shape: var(--mo-border-radius);
+
+				--md-checkbox-selected-disabled-container-color: var(--mo-checkbox-disabled-color, var(--mo-color-gray));
+				--md-checkbox-selected-disabled-container-opacity: 0.5;
+				--md-checkbox-selected-container-color: var(--mo-checkbox-accent-color, var(--mo-color-accent));
+				--md-checkbox-selected-hover-container-color: var(--mo-checkbox-accent-color, var(--mo-color-accent));
+				--md-checkbox-selected-focus-container-color: var(--mo-checkbox-accent-color, var(--mo-color-accent));
+				--md-checkbox-selected-pressed-container-color: var(--mo-checkbox-accent-color, var(--mo-color-accent));
+
+				--md-checkbox-state-layer-color: var(--mo-checkbox-accent-color, var(--mo-color-accent));
+				--md-checkbox-hover-state-layer-color: var(--mo-checkbox-accent-color, var(--mo-color-accent));
+				--md-checkbox-focus-state-layer-color: var(--mo-checkbox-accent-color, var(--mo-color-accent));
+				--md-checkbox-pressed-state-layer-color: var(--mo-checkbox-accent-color, var(--mo-color-accent));
+
+				--md-focus-ring-color: var(--mo-checkbox-accent-color, var(--mo-color-accent));
 			}
 
-			mwc-formfield::part(label) {
-				padding-inline-start: 0px;
-				text-align: start;
+			label {
+				display: flex;
+				align-items: center;
+				gap: 8px;
 				color: var(--mo-color-foreground);
+				font-size: 0.875rem;
+				line-height: 1.25rem;
+				letter-spacing: 0.0178571429em;
+				-webkit-font-smoothing: antialiased;
 			}
 
-			:host([disabled]) mwc-formfield::part(label) {
-				color: var(--mo-checkbox-disabled-color, var(--mo-color-gray-transparent));
+			label > md-checkbox {
+				--md-checkbox-selected-disabled-container-opacity: 1;
+			}
+
+			:host([disabled]) label {
+				color: var(--mo-checkbox-disabled-color, var(--mo-color-gray));
+				opacity: 0.5;
 			}
 		`
 	}
 
 	protected override get template() {
+		return !this.label ? this.checkboxTemplate : html`
+			<label>
+				${this.checkboxTemplate}
+				${this.label}
+			</label>
+		`
+	}
+
+	protected get checkboxTemplate() {
 		return html`
-			<mwc-formfield label=${this.label}>
-				<mwc-checkbox reducedTouchTarget
-					?disabled=${this.disabled}
-					?indeterminate=${this.indeterminate}
-					?checked=${this.checked}
-					@change=${this.handleChange.bind(this)}
-				></mwc-checkbox>
-			</mwc-formfield>
+			<md-checkbox
+				?disabled=${this.disabled}
+				?indeterminate=${this.indeterminate}
+				?checked=${this.checked}
+				@change=${this.handleChange.bind(this)}
+			></md-checkbox>
 		`
 	}
 
@@ -103,12 +127,6 @@ export class Checkbox extends Component {
 		this.change.dispatch(this.value)
 	}
 }
-
-FormField.addInitializer(async element => {
-	const formField = element as FormField
-	await formField.updateComplete
-	formField.renderRoot.querySelector('label')?.setAttribute('part', 'label')
-})
 
 declare global {
 	type CheckboxValue = 'checked' | 'unchecked' | 'indeterminate'

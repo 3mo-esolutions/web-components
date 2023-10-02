@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/del",
-	"version": "0.0.28",
+	"version": "0.0.29",
 	"description": "3MO Design Library to build business-suite web applications",
 	"repository": {
 		"type": "git",
@@ -73,8 +73,8 @@
 		"@3mo/tab": "x",
 		"@3mo/chip": "x",
 		"@3mo/tooltip": "x",
-		"@3mo/dialog": "x",
-		"@3mo/loading-dialog": "x",
+		"@3mo/dialog": "0.0.x",
+		"@3mo/loading-dialog": "0.0.x",
 		"@3mo/snackbar": "x",
 		"@3mo/list": "x",
 		"@3mo/menu": "x",

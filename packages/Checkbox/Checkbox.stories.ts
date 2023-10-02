@@ -34,3 +34,13 @@ export const Checkbox = story({
 		></mo-checkbox>
 	`
 })
+
+export const WithCustomAccentColor = story({
+	render: ({ label, disabled, value }) => html`
+		<mo-checkbox style='--mo-checkbox-accent-color: var(--mo-color-red)'
+			label=${label}
+			?disabled=${disabled}
+			value=${value}
+		></mo-checkbox>
+	`
+})
