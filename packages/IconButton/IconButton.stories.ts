@@ -42,6 +42,12 @@ export const Default = story({
 			?disabled=${disabled}
 			?dense=${dense}
 		></mo-icon-button>
+
+		<mo-icon-button ${style({ fontSize, color: 'var(--mo-color-green)' })}
+			icon=${icon}
+			?disabled=${disabled}
+			?dense=${dense}
+		></mo-icon-button>
 	`
 })
 

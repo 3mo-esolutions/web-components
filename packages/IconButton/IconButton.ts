@@ -31,6 +31,19 @@ export class IconButton extends Component {
 				pointer-events: none;
 			}
 
+			md-icon-button {
+				--md-icon-button-icon-color: currentColor;
+				--md-icon-button-hover-icon-color: currentColor;
+				--md-icon-button-focus-icon-color: currentColor;
+				--md-icon-button-pressed-icon-color: currentColor;
+
+				--md-icon-button-state-layer-color: currentColor;
+				--md-icon-button-hover-state-layer-color: currentColor;
+				--md-icon-button-focus-state-layer-color: currentColor;
+				--md-icon-button-pressed-state-layer-color: currentColor;
+				--md-focus-ring-color: currentColor;
+			}
+
 			md-icon-button::part(button) {
 				padding: 0.4em;
 			}
