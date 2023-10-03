@@ -1,5 +1,5 @@
 import { eventListener, PropertyValues } from '@a11d/lit'
-import { DialogActionKey, DialogParameters, NotificationHost } from '@a11d/lit-application'
+import { DialogActionKey, DialogParameters, NotificationComponent } from '@a11d/lit-application'
 import { Localizer } from '@3mo/localization'
 import { FetchableDialogComponentParameters, FetchableDialogComponent } from '@3mo/fetchable-dialog'
 import { EntityDialog } from './EntityDialog.js'
@@ -50,7 +50,7 @@ export abstract class EntityDialogComponent<
 
 	protected notifySuccess() {
 		const DialogConstructor = this.constructor as Constructor<EntityDialogComponent<TEntity>>
-		NotificationHost.instance?.notifySuccess(t('Saved successfully'), {
+		NotificationComponent.notifySuccess(t('Saved successfully'), {
 			title: t('Open'),
 			handleClick: () => void new DialogConstructor({ id: this.parameters.id }).confirm(),
 		})

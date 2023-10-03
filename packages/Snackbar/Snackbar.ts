@@ -1,13 +1,12 @@
 import { component, html, css, ifDefined, nothing, unsafeCSS, style, property } from '@a11d/lit'
-import { Notification, NotificationComponent, NotificationHost, NotificationType } from '@a11d/lit-application'
-import { NonInertableComponent } from '@a11d/non-inertable-component'
+import { Notification, NotificationComponent, NotificationType } from '@a11d/lit-application'
 import { MaterialIcon } from '@3mo/icon'
 import { Snackbar as MwcSnackbar } from '@material/mwc-snackbar'
 import { PeriodicTimer } from './PeriodicTimer.js'
 
 @component('mo-snackbar')
-@NotificationHost.notificationComponent()
-export class Snackbar extends NonInertableComponent implements NotificationComponent {
+@NotificationComponent.defaultComponent()
+export class Snackbar extends NotificationComponent {
 	private static readonly defaultDuration = 5_000
 
 	private static readonly defaultTimerPeriodByType = new Map<NotificationType, number>([

@@ -1,5 +1,5 @@
 import { property, component, Component, html, css, live, query, nothing, ifDefined, PropertyValues, event, queryAll, style, literal, staticHtml, HTMLTemplateResult, cache } from '@a11d/lit'
-import { NotificationHost } from '@a11d/lit-application'
+import { NotificationComponent } from '@a11d/lit-application'
 import { LocalStorage } from '@a11d/local-storage'
 import { InstanceofAttributeController } from '@3mo/instanceof-attribute-controller'
 import { SlotController } from '@3mo/slot-controller'
@@ -342,9 +342,9 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		try {
 			const selectors = this.visibleColumns.map(c => c.dataSelector)
 			CsvGenerator.generate(this.data, selectors)
-			NotificationHost.instance?.notifyInfo(t('Exporting excel file'))
+			NotificationComponent.notifyInfo(t('Exporting excel file'))
 		} catch (error: any) {
-			NotificationHost.instance?.notifyError(error.message)
+			NotificationComponent.notifyError(error.message)
 			throw error
 		}
 	}

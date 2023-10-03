@@ -44,16 +44,16 @@ export class LoadingDialog extends Dialog {
 		`
 	}
 
-	protected override get contentSlotTemplate() {
+	protected override get contentTemplate() {
 		return html`
-			${super.contentSlotTemplate}
+			${super.contentTemplate}
 			${this.loadingTemplate}
 		`
 	}
 
 	protected get loadingTemplate() {
 		return !this.isLoading ? nothing : html`
-			<slot name='loading' part='loading'>
+			<slot slot='content' name='loading' part='loading'>
 				<mo-circular-progress></mo-circular-progress>
 			</slot>
 		`

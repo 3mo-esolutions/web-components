@@ -21,11 +21,15 @@ describe('DialogAlert', () => {
 		expect((fixture.component.dialogElement as Dialog).size).toBe(parameters.size!)
 	})
 
-	it('should not have secondary button', () => {
+	it('should not have secondary button', async () => {
+		fixture.component.dialogElement.open = true
+		await fixture.component.updateComplete
 		expect(fixture.component.secondaryActionElement).toBeUndefined()
 	})
 
 	it('should return "true" if primary button is clicked', async () => {
+		fixture.component.dialogElement.open = true
+		await fixture.component.updateComplete
 		const confirmationPromise = fixture.component.confirm()
 		fixture.component.primaryActionElement?.click()
 		await expectAsync(confirmationPromise).toBeResolved()

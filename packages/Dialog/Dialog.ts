@@ -1,6 +1,6 @@
 import { component, property, query, html, css, nothing, event, state, Component } from '@a11d/lit'
 import { DialogActionKey, DialogComponent } from '@a11d/lit-application'
-import { Dialog as MwcDialog } from '@material/mwc-dialog'
+import { MdDialog } from '@material/web/dialog/dialog.js'
 import { tooltip } from '@3mo/tooltip'
 import { SlotController } from '@3mo/slot-controller'
 import '@3mo/localization'
@@ -9,6 +9,17 @@ export enum DialogSize {
 	Large = 'large',
 	Medium = 'medium',
 	Small = 'small',
+}
+
+const queryActionElement = (slotName: string) => {
+	return (prototype: Component, propertyKey: string) => {
+		Object.defineProperty(prototype, propertyKey, {
+			get(this: Component) {
+				return this.querySelector<HTMLElement>(`[slot=${slotName}]`)
+					?? this.renderRoot.querySelector<HTMLElement>(`slot[name=${slotName}] > *`) ?? undefined
+			}
+		})
+	}
 }
 
 /**
@@ -22,8 +33,6 @@ export enum DialogSize {
  * @attr manualClose
  * @attr primaryButtonText
  * @attr secondaryButtonText
- * @attr scrimClickAction
- * @attr preventCancellationOnEscape
  * @attr preventCancellationOnEscape
  * @attr poppable
  * @attr boundToWindow
@@ -34,10 +43,13 @@ export enum DialogSize {
  * @slot header - Header of the dialog
  * @slot footer - Footer of the dialog
  *
+ * @csspart heading - Dialog heading
+ * @csspart header - Dialog footer
+ * @csspart content - Dialog content
+ * @csspart footer - Dialog footer
+ *
  * @cssprop --mo-dialog-heading-color - Color of the dialog heading
  * @cssprop --mo-dialog-content-color - Color of the dialog content
- * @cssprop --mo-dialog-divider-color - Color of the dialog divider
- * @cssprop --mo-dialog-scrim-color - Color of the dialog scrim
  * @cssprop --mo-dialog-scrim-color - Color of the dialog scrim
  * @cssprop --mo-dialog-divider-color - Color of the dialog divider
  * @cssprop --mo-dialog-height - Height of the dialog
@@ -45,6 +57,7 @@ export enum DialogSize {
  * @cssprop --mo-dialog-heading-line-height - Line height of the dialog heading
  *
  * @i18n "Close"
+ * @i18n "Open as Popup"
  *
  * @fires dialogHeadingChange - Dispatched when the dialog heading changes
  * @fires requestPopup - Dispatched when the dialog is requested to be popped up
@@ -57,7 +70,15 @@ export class Dialog extends Component {
 	@event({ bubbles: true, cancelable: true, composed: true }) readonly dialogHeadingChange!: EventDispatcher<string>
 	@event() readonly requestPopup!: EventDispatcher
 
-	@property({ type: Boolean }) open = false
+	@property({
+		type: Boolean,
+		async updated(this: Dialog) {
+			if (this.open === true) {
+				await new Promise(resolve => setTimeout(resolve))
+				this.querySelector<any>('[autofocus]')?.focus()
+			}
+		}
+	}) open = false
 	@property({ updated(this: Dialog) { this.dialogHeadingChange.dispatch(this.heading) } }) heading = ''
 	@property({ reflect: true }) size = DialogSize.Small
 	@property({ type: Boolean }) blocking = false
@@ -83,6 +104,8 @@ export class Dialog extends Component {
 		}
 	}) executingAction?: DialogActionKey
 
+	@queryActionElement('primaryAction') readonly primaryActionElement!: HTMLElement
+	@queryActionElement('secondaryAction') readonly secondaryActionElement!: HTMLElement
 	@query('mo-icon-button[icon=close]') readonly cancellationActionElement!: HTMLElement
 
 	handleAction!: (key: DialogActionKey) => void | Promise<void>
@@ -91,78 +114,123 @@ export class Dialog extends Component {
 
 	static override get styles() {
 		return css`
-			:host {
-				--mo-dialog-default-foreground-content-color: var(--mo-color-foreground);
+			:host([size=small]) {
+				--mo-dialog-width: 480px;
+				--mo-dialog-height: min-content;
 			}
 
-			:host([size=small]) mwc-dialog {
-				--mo-dialog-default-width: 480px;
-				--mo-dialog-default-height: auto;
+			:host([size=medium]) {
+				--mo-dialog-width: 1024px;
+				--mo-dialog-height: 768px;
 			}
 
-			:host([size=medium]) mwc-dialog {
-				--mo-dialog-default-width: 1024px;
-				--mo-dialog-default-height: 768px;
+			:host([size=large]) {
+				--mo-dialog-width: 1680px;
+				--mo-dialog-height: 100vh;
+				--mo-dialog-height: 100dvh;
 			}
 
-			:host([size=large]) mwc-dialog {
-				--mo-dialog-default-width: 1680px;
-				--mo-dialog-default-height: 100vh;
-				--mo-dialog-default-height: 100dvh;
-			}
-
-			:host([boundToWindow][size=large]) mwc-dialog {
+			:host([boundToWindow][size=large]) md-dialog {
 				--mo-dialog-default-width: 100vw;
 				--mo-dialog-default-height: 100vh;
 				--mo-dialog-default-height: 100dvh;
 			}
 
-			:host([boundToWindow]) mwc-dialog {
-				--mdc-dialog-scrim-color: var(--mo-dialog-scrim-color, var(--mo-color-background));
-			}
-
-			:host([size=large]) mwc-dialog::part(heading) {
-				padding-bottom: 15px;
-				border-bottom: 1px solid;
-			}
-
-			:host([size=large]) mwc-dialog::part(content) {
+			:host([size=large]) md-dialog::part(content) {
 				padding-top: 8px;
 				padding-bottom: 8px;
 			}
 
-			:host([size=large]) mwc-dialog::part(actions), :host([size=large]) mwc-dialog::part(heading) {
-				border-color: var(--mdc-dialog-scroll-divider-color);
+			md-dialog {
+				--md-dialog-scroll-divider-color: var(--mo-dialog-divider-color, var(--mo-color-gray-transparent));
+				--md-sys-color-surface-container-high: var(--mo-color-surface);
+				border-radius: var(--mo-border-radius);
 			}
 
-			mwc-dialog {
-				--mdc-dialog-heading-ink-color: var(--mo-dialog-heading-color, var(--mo-color-foreground));
-				--mdc-dialog-content-ink-color: var(--mo-dialog-content-color, var(--mo-dialog-default-foreground-content-color, var(--mo-color-foreground)));
-				--mdc-dialog-scroll-divider-color: var(--mo-dialog-divider-color, var(--mo-color-gray-transparent));
-				--mdc-dialog-scrim-color: var(--mo-dialog-scrim-color, rgba(0, 0, 0, 0.5));
+			:host([size=large]) md-dialog::part(divider) {
+				display: inline-flex !important;
 			}
 
-			mwc-dialog:not([open]) {
+			md-dialog::part(scrim) {
+				background-color: var(--mo-dialog-scrim-color, rgba(0, 0, 0, 0.5));
+			}
+
+			md-dialog:not([open]) {
 				display: none;
 			}
 
-			mo-flex[slot=header] {
+			mo-flex[slot=headline] {
+				padding-block: 14px 10px;
+				padding-inline: 24px 12px;
+			}
+
+			:host([size=large]) mo-flex[slot=headline] {
+				padding-bottom: 15px;
+			}
+
+			mo-heading {
+				margin-block-start: 4px;
+				-webkit-font-smoothing: antialiased;
+				font-size: 1.25rem;
+				line-height: var(--mo-dialog-heading-line-height, 2rem);
+				font-weight: 500;
+				letter-spacing: 0.0125em;
+				text-decoration: inherit;
+				text-transform: inherit;
+				color: var(--mo-dialog-heading-color, var(--mo-color-foreground));
+			}
+
+			mo-flex[slot=actions] {
+				padding: 16px;
+			}
+
+			form[slot=content] {
+				padding: 20px 24px;
+				-webkit-font-smoothing: antialiased;
+				font-size: 1rem;
+				line-height: 1.5rem;
+				font-weight: 400;
+				letter-spacing: 0.03125em;
+				text-decoration: inherit;
+				text-transform: inherit;
+				color: var(--mo-dialog-content-color, var(--mo-color-foreground));
+			}
+
+			slot[name=footer] {
+				display: flex;
 				flex: 1;
+				align-items: center;
+				gap: 8px;
+			}
+
+			md-dialog::part(dialog) {
+				height: var(--mo-dialog-height);
+				max-height: calc(100vh - 32px);
+				max-height: calc(100dvh - 32px);
+
+				width: var(--mo-dialog-width);
+				max-width: calc(100vw - 32px);
+
+				overflow: hidden;
+				justify-content: center;
+
+				box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.2), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 9px 46px 8px rgba(0, 0, 0, 0.12);
+			}
+
+			:host([boundToWindow]) md-dialog::part(dialog) {
+				max-height: 100vh !important;
+				max-height: 100dvh !important;
+				max-width: 100vw !important;
+			}
+
+			@media (max-width: 1024px), (max-height: 768px) {
+				md-dialog::part(dialog) {
+					max-height: 100vh !important;
+					max-height: 100dvh !important;
+					max-width: 100vw !important;
+				}
 			}
 		`
-	}
-	override async disconnected() {
-		const host = await DialogComponent.getHost()
-		const dialogComponents = [...host.children].filter(e => e instanceof DialogComponent)
-		if (dialogComponents.length === 0) {
-			document.body.style.removeProperty('overflow')
-		}
-	}
-
-	private get shallHideActions() {
-		return !this.primaryActionElement
-			&& !this.secondaryActionElement
-			&& !this.slotController.hasAssignedContent('footer')
 	}
 
 	protected get dialogHeading() {
@@ -171,26 +239,29 @@ export class Dialog extends Component {
 
 	protected override get template() {
 		return html`
-			<mwc-dialog
-				heading=${this.dialogHeading || ' '}
-				initialFocusAttribute='data-focus'
-				scrimClickAction=''
-				escapeKeyAction=''
-				defaultAction=''
-				exportparts='heading,surface,footer,scrim,content,actions'
-				?open=${this.open}
-				?hideActions=${this.shallHideActions}
-				@requestClose=${() => this.handleAction(DialogActionKey.Cancellation)}
-			>
-				<mo-flex slot='header' direction='horizontal-reversed' alignItems='center' gap='4px'>
+			<md-dialog exportparts='scrim' ?open=${this.open} @cancel=${(e: Event) => e.preventDefault()}>
+				${this.headerTemplate}
+				${this.contentTemplate}
+				${this.footerTemplate}
+			</md-dialog>
+		`
+	}
+
+	protected get headerTemplate() {
+		return html`
+			<mo-flex slot='headline' part='header' direction='horizontal'>
+				${this.headingTemplate}
+				<mo-flex direction='horizontal-reversed' alignItems='center' gap='4px' style='flex: 1'>
 					${this.headerOptionsTemplate}
 					${this.headerSlotTemplate}
 				</mo-flex>
-				${this.contentSlotTemplate}
-				${this.footerSlotTemplate}
-				${this.primaryActionSlotTemplate}
-				${this.secondaryActionSlotTemplate}
-			</mwc-dialog>
+			</mo-flex>
+		`
+	}
+
+	protected get headingTemplate() {
+		return html`
+			<mo-heading part='heading' typography='heading4'>${this.dialogHeading}</mo-heading>
 		`
 	}
 
@@ -210,14 +281,17 @@ export class Dialog extends Component {
 				<mo-icon-button icon='close' ${tooltip(t('Close'))} @click=${() => this.handleAction(DialogActionKey.Cancellation)}></mo-icon-button>
 			`}
 			${this.boundToWindow || !this.poppable ? nothing : html`
-				<mo-icon-button icon='launch' @click=${() => this.requestPopup.dispatch()}></mo-icon-button>
+				<mo-icon-button icon='launch' ${tooltip(t('Open as Popup'))} @click=${() => this.requestPopup.dispatch()}></mo-icon-button>
 			`}
 		`
 	}
 
-	protected get contentSlotTemplate() {
+	protected get contentTemplate() {
 		return html`
-			<slot>${this.contentDefaultTemplate}</slot>
+			<form slot='content' part='content' method='dialog'>
+				<slot>${this.contentDefaultTemplate}</slot>
+			</form>
+			<lit-application-top-layer slot='content'></lit-application-top-layer>
 		`
 	}
 
@@ -225,9 +299,27 @@ export class Dialog extends Component {
 		return nothing
 	}
 
+	private get shallHideFooter() {
+		return !this.primaryActionElement
+			&& !this.primaryButtonText
+			&& !this.secondaryActionElement
+			&& !this.secondaryButtonText
+			&& !this.slotController.hasAssignedContent('footer')
+	}
+
+	protected get footerTemplate() {
+		return this.shallHideFooter ? nothing : html`
+			<mo-flex slot='actions' part='footer' direction='horizontal-reversed'>
+				${this.primaryActionSlotTemplate}
+				${this.secondaryActionSlotTemplate}
+				${this.footerSlotTemplate}
+			</mo-flex>
+		`
+	}
+
 	protected get footerSlotTemplate() {
 		return html`
-			<slot name='footer' slot='footer'>${this.footerDefaultTemplate}</slot>
+			<slot name='footer'>${this.footerDefaultTemplate}</slot>
 		`
 	}
 
@@ -237,7 +329,7 @@ export class Dialog extends Component {
 
 	protected get primaryActionSlotTemplate() {
 		return html`
-			<slot name='primaryAction' slot='primaryAction' @click=${() => this.handleAction(DialogActionKey.Primary)}>
+			<slot name='primaryAction' @click=${() => this.handleAction(DialogActionKey.Primary)}>
 				${this.primaryActionDefaultTemplate}
 			</slot>
 		`
@@ -251,14 +343,9 @@ export class Dialog extends Component {
 		`
 	}
 
-	get primaryActionElement() {
-		return this.querySelector<HTMLElement>('[slot=primaryAction]')
-			?? this.renderRoot.querySelector<HTMLElement>('slot[name=primaryAction] > *') ?? undefined
-	}
-
 	protected get secondaryActionSlotTemplate() {
 		return html`
-			<slot name='secondaryAction' slot='secondaryAction' @click=${() => this.handleAction(DialogActionKey.Secondary)}>
+			<slot name='secondaryAction' @click=${() => this.handleAction(DialogActionKey.Secondary)}>
 				${this.secondaryActionDefaultTemplate}
 			</slot>
 		`
@@ -271,193 +358,33 @@ export class Dialog extends Component {
 			</mo-loading-button>
 		`
 	}
-
-	get secondaryActionElement() {
-		return this.querySelector<HTMLElement>('[slot=secondaryAction]')
-			?? this.renderRoot.querySelector<HTMLElement>('slot[name=secondaryAction] > *') ?? undefined
-	}
 }
 
-MwcDialog.elementStyles.push(css`
-	.mdc-dialog .mdc-dialog__surface {
-		height: var(--mo-dialog-height, var(--mo-dialog-default-height));
-		max-height: calc(100vh - 32px);
-		max-height: calc(100dvh - 32px);
-
-		width: var(--mo-dialog-width, var(--mo-dialog-default-width));
-		max-width: calc(100vw - 32px);
-		overflow: hidden;
-	}
-
-	@media (max-width: 1024px), (max-height: 768px) {
-		.mdc-dialog .mdc-dialog__surface {
-			max-height: 100vh;
-			max-height: 100dvh;
-			max-width: 100vw;
-		}
-	}
-
-	.mdc-dialog__actions {
-		padding: 16px;
-	}
-
-	#actions {
-		gap: 12px;
-	}
-
-	#title {
-		padding-inline-end: 48px;
-	}
-
-	slot[name=footer] {
-		flex: 1;
-	}
-
-	#content {
-		scrollbar-color: rgba(128, 128, 128, 0.75) transparent;
-		scrollbar-width: thin;
-	}
-
-	#content::-webkit-scrollbar {
+MdDialog.elementStyles.push(css`
+	.scroller::-webkit-scrollbar {
 		width: 5px;
 		height: 5px;
 	}
 
-	#content::-webkit-scrollbar-thumb {
+	.scroller::-webkit-scrollbar-thumb {
 		background: rgba(128, 128, 128, 0.75);
 	}
 
-	#title {
-		padding: 0;
-		margin: 0;
+	md-divider {
+		--md-divider-color: var(--md-dialog-scroll-divider-color);
 	}
 
-	mo-flex[part=heading] {
-		padding-top: 14px;
-		padding-bottom: 10px;
-		padding-inline-start: 24px;
-		padding-inline-end: 12px;
-		align-items: flex-start;
-		justify-content: space-between;
-	}
-
-	mo-flex[part=heading] > mo-flex {
-		flex: 1;
-	}
-
-	mo-heading {
-		margin-block-start: 4px;
-		-webkit-font-smoothing: antialiased;
-		font-size: 1.25rem;
-		line-height: var(--mo-dialog-heading-line-height, 2rem);
-		font-weight: 500;
-		letter-spacing: 0.0125em;
-		text-decoration: inherit;
-		text-transform: inherit;
-	}
-
-	slot[name=footer] {
-		display: flex;
-	}
-
-	slot[name=footer]::slotted(*) {
-		margin-left: initial !important;
-	}
-
-	.mdc-dialog--scrollable [part=heading] {
-		padding-bottom: 15px;
-		border-bottom: 1px solid var(--mdc-dialog-scroll-divider-color);
+	.scrim {
+		opacity: 1;
 	}
 `)
 
-MwcDialog.addInitializer(element => {
-	element.addController(new class {
-		private get dialog() { return element as MwcDialog }
-		private get footerElement() { return this.dialog.renderRoot.querySelector('footer') }
-		private get surfaceElement() { return this.dialog.renderRoot.querySelector('.mdc-dialog__surface') }
-		private get contentElement() { return this.dialog['contentElement'] }
-		private get titleElement() { return this.dialog.renderRoot.querySelector('#title') }
-		private get scrimElement() { return this.dialog.renderRoot.querySelector('.mdc-dialog__scrim') }
-		private get actionsElement() { return this.dialog.renderRoot.querySelector('#actions') }
-
-		constructor() {
-			this.overrideKeydownBehavior()
-		}
-
-		overrideKeydownBehavior() {
-			const setEventListenersBase = this.dialog['setEventListeners']
-			this.dialog['setEventListeners'] = () => {
-				this.dialog['boundHandleKeydown'] = null
-				setEventListenersBase.call(this.dialog)
-			}
-		}
-
-		async hostConnected() {
-			this.dialog.addEventListener('closed', this.handleClosed)
-			this.replaceHeader()
-			await this.dialog.updateComplete
-			this.titleElement?.setAttribute('part', 'heading')
-			this.surfaceElement?.setAttribute('part', 'surface')
-			this.footerElement?.setAttribute('part', 'footer')
-			this.scrimElement?.setAttribute('part', 'scrim')
-			this.contentElement.setAttribute('part', 'content')
-			this.actionsElement?.setAttribute('part', 'actions')
-			this.addFooterSlot()
-			this.overrideKeydownBehavior()
-		}
-
-		hostDisconnected() {
-			this.dialog.removeEventListener('closed', this.handleClosed)
-		}
-
-		protected handleClosed(e: Event) {
-			// Google MWC has events in some of their components
-			// which dispatch a "closed" event with "bubbles" option set to true
-			// thus reaching the MwcDialog. This is blocked here.
-			if (e.target instanceof MwcDialog === false) {
-				e.stopImmediatePropagation()
-				return
-			}
-		}
-
-		private addFooterSlot() {
-			const footer = document.createElement('slot')
-			footer.name = 'footer'
-			this.footerElement?.insertBefore(footer, this.footerElement.firstChild)
-		}
-
-		private replaceHeader() {
-			this.dialog['renderHeading'] = function (this: MwcDialog) {
-				return html`
-					<mo-flex part='heading' direction='horizontal' gap='4px'>
-						<mo-heading typography='heading4'>${this.heading}</mo-heading>
-						<mo-flex direction='horizontal-reversed' gap='4px'>
-							<slot name='header'></slot>
-						</mo-flex>
-					</mo-flex>
-				`
-			}
-		}
-
-		async hostUpdated() {
-			await this.dialog.updateComplete
-			this.overrideCloseBehavior()
-		}
-
-		private overrideCloseBehavior() {
-			const isDialogActionKey = (key: string): key is DialogActionKey => {
-				return key === DialogActionKey.Primary || key === DialogActionKey.Secondary || key === DialogActionKey.Cancellation
-			}
-			const foundation = this.dialog['mdcFoundation']
-			const closeBase = foundation.close
-			foundation.close = async (action?: string) => {
-				const host = await DialogComponent.getHost()
-				const dialogComponents = [...host.children].filter(e => e instanceof DialogComponent)
-				if (action && dialogComponents.reverse()[0] === this.dialog && isDialogActionKey(action)) {
-					closeBase.call(foundation, action)
-					this.dialog.dispatchEvent(new CustomEvent('requestClose'))
-				}
-			}
+MdDialog.addInitializer(element => {
+	element.addController({
+		hostUpdated() {
+			element.renderRoot.querySelector('dialog')?.part.add('dialog')
+			element.renderRoot.querySelector('.scrim')?.part.add('scrim')
+			element.renderRoot.querySelectorAll('md-divider')?.forEach(divider => divider.part.add('divider'))
 		}
 	})
 })

@@ -1,7 +1,7 @@
 import { directive, AsyncDirective, type ElementPart, type HTMLTemplateResult, type PartInfo, PartType, render, nothing } from '@a11d/lit'
 import { Tooltip } from './Tooltip.js'
 import { TooltipPlacement } from './TooltipPlacement.js'
-import { PopoverHost } from '@3mo/popover'
+import { Application } from '@a11d/lit-application'
 
 type TooltipDirectiveParameters = [content: string | HTMLTemplateResult, placement?: TooltipPlacement]
 
@@ -31,7 +31,7 @@ export class TooltipDirective extends AsyncDirective {
 
 			render(content, this.tooltip)
 
-			PopoverHost.instance.appendChild(this.tooltip)
+			Application.topLayer.appendChild(this.tooltip)
 		}
 
 		return super.update(part, [content, placement])

@@ -2,6 +2,7 @@ import { story, meta } from '../../.storybook/story.js'
 import { html } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
+import { ContextMenu } from '@3mo/context-menu'
 
 export default meta({
 	title: 'Dialog',
@@ -26,7 +27,7 @@ export const Dialog = story({
 
 export const Scrollable = story({
 	render: () => html`
-		<mo-dialog heading='Heading' open>
+		<mo-dialog heading='Heading' primaryButtonText='Done' open>
 			Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius quidem eaque earum obcaecati qui? Nihil quaerat,
 			repudiandae error delectus labore quasi inventore fugit corporis maxime eos aspernatur aliquid temporibus vitae.
 
@@ -161,6 +162,32 @@ export const SizeLarge = story({
 export const BoundToWindow = story({
 	render: () => html`
 		<mo-dialog heading='Heading' size='large' boundToWindow open>
+			Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius quidem eaque earum obcaecati qui? Nihil quaerat,
+			repudiandae error delectus labore quasi inventore fugit corporis maxime eos aspernatur aliquid temporibus vitae.
+		</mo-dialog>
+	`
+})
+
+export const AutoFocus = story({
+	render: () => html`
+		<mo-dialog heading='Heading' open>
+			<mo-flex gap='6px'>
+				<mo-field-text label='Without Auto Focus'></mo-field-text>
+				<mo-field-text label='With Auto Focus' autofocus></mo-field-text>
+			</mo-flex>
+		</mo-dialog>
+	`
+})
+
+export const Scrim = story({
+	render: () => html`
+		<style>
+			#scrim::part(scrim) {
+				background: url("https://www.wallpaperhub.app/_next/image?url=https%3A%2F%2Fcdn.wallpaperhub.app%2Fcloudcache%2F1%2Fe%2Fd%2Fb%2Fc%2Fc%2F1edbcc1b1f9d3afd76da8168fc7e927215af9695.jpg&w=3240&h=2160&q=100");
+				background-size: cover;
+			}
+		</style>
+		<mo-dialog id='scrim' heading='Heading' open>
 			Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius quidem eaque earum obcaecati qui? Nihil quaerat,
 			repudiandae error delectus labore quasi inventore fugit corporis maxime eos aspernatur aliquid temporibus vitae.
 		</mo-dialog>

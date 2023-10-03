@@ -1,5 +1,5 @@
 import { HTMLTemplateResult, render } from '@a11d/lit'
-import { PopoverHost } from '@3mo/popover'
+import { Application } from '@a11d/lit-application'
 import { ContextMenu } from './ContextMenu.js'
 
 export type ContextMenuTemplate = HTMLTemplateResult | (() => HTMLTemplateResult)
@@ -35,7 +35,7 @@ export class ContextMenuLazyInitializer {
 				? this.template()
 				: this.template
 			render(template, this.contextMenu)
-			PopoverHost.instance.appendChild(this.contextMenu)
+			Application.topLayer.appendChild(this.contextMenu)
 		} else {
 			this.preventUnsubscription = true
 			this.contextMenu.remove()

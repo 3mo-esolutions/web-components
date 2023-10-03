@@ -2,6 +2,7 @@ import { html, nothing, state, style } from '@a11d/lit'
 import { DialogAuthenticator as DialogAuthenticatorBase } from '@a11d/lit-application-authentication'
 import { Localizer } from '@3mo/localization'
 import { LocalStorage } from '@a11d/local-storage'
+import { NotificationComponent } from '@a11d/lit-application'
 
 Localizer.register('de', {
 	'Authenticated successfully': 'Erfolgreich authentifiziert',
@@ -92,9 +93,9 @@ export abstract class BusinessSuiteDialogAuthenticator extends DialogAuthenticat
 	async resetPassword() {
 		try {
 			await this.requestPasswordReset()
-			notificationHost.notifyInfo('Password reset instructions have been sent to your email address')
+			NotificationComponent.notifyInfo('Password reset instructions have been sent to your email address')
 		} catch (error: any) {
-			notificationHost.notifyError(error.message ?? 'Password could not be reset')
+			NotificationComponent.notifyError(error.message ?? 'Password could not be reset')
 			throw error
 		}
 	}

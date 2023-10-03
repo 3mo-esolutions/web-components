@@ -1,5 +1,5 @@
 import { component, TemplateResult, html } from '@a11d/lit'
-import { DialogComponent, NotificationHost } from '@a11d/lit-application'
+import { DialogComponent, NotificationComponent } from '@a11d/lit-application'
 import { LocalStorage } from '@a11d/local-storage'
 import { Localizer } from '@3mo/localization'
 
@@ -22,7 +22,7 @@ export class DialogDeletion extends DialogComponent<Parameters> {
 				await this.parameters.deletionAction?.()
 				return
 			} catch (e: any) {
-				NotificationHost.instance?.notifyError(e.message)
+				NotificationComponent.notifyError(e.message)
 				throw e
 			}
 		}

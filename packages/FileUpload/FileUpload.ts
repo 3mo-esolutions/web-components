@@ -1,5 +1,5 @@
 import { Component, component, event, html, property, query, state } from '@a11d/lit'
-import { NotificationHost } from '@a11d/lit-application'
+import { NotificationComponent } from '@a11d/lit-application'
 import '@3mo/localization'
 
 /**
@@ -20,7 +20,7 @@ export class FileUpload<TResult> extends Component {
 	@event() readonly uploadingChange!: EventDispatcher<boolean>
 	@event() readonly fileChange!: EventDispatcher<File | undefined>
 
-	@property({ type: Function }) upload!: (file: File) => Promise<TResult>
+	@property({ type: Object }) upload!: (file: File) => Promise<TResult>
 	@property({ type: Boolean }) uploadOnSelection = false
 
 	@state() protected isUploading = false
@@ -40,7 +40,7 @@ export class FileUpload<TResult> extends Component {
 			this.change.dispatch(result)
 			return result
 		} catch (error) {
-			NotificationHost.instance?.notifyError(t('Upload has failed. Try again.'))
+			NotificationComponent.notifyError(t('Upload has failed. Try again.'))
 			this.change.dispatch(undefined)
 			throw error
 		} finally {

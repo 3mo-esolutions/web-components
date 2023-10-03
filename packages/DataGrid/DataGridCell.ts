@@ -1,5 +1,5 @@
 import { component, Component, html, property, css, eventListener, state, nothing, HTMLTemplateResult } from '@a11d/lit'
-import { NotificationHost } from '@a11d/lit-application'
+import { NotificationComponent } from '@a11d/lit-application'
 import { Localizer } from '@3mo/localization'
 import { ColumnDefinition, DataGridEditability, DataGridRow } from './index.js'
 
@@ -87,7 +87,7 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 				if (this.isEditing === false && (event.ctrlKey || event.metaKey)) {
 					event.preventDefault()
 					await navigator.clipboard.writeText(this.valueTextContent)
-					NotificationHost.instance?.notifySuccess(t('Copied to clipboard'))
+					NotificationComponent.notifySuccess(t('Copied to clipboard'))
 				}
 				break
 			case 'Tab':

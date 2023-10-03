@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/dialog",
-	"version": "0.0.22",
+	"version": "0.1.5",
 	"description": "A dialog component based on Material Web Components (MWC).",
 	"repository": {
 		"type": "git",
@@ -25,7 +25,7 @@
 		"tslib": "x",
 		"@a11d/lit": "x",
 		"@a11d/lit-application": "x",
-		"@material/mwc-dialog": "x",
+		"@material/web": "1.x",
 		"@3mo/slot-controller": "x",
 		"@3mo/theme": "x",
 		"@3mo/flex": "x",

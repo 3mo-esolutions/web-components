@@ -36,9 +36,6 @@ export class SplitPageHost extends Component {
 
 			lit-page-host {
 				padding: 0 14px;
-			}
-
-			lit-page-host::part(pageHolder) {
 				min-height: 100%;
 			}
 
