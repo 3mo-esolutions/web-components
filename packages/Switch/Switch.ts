@@ -1,8 +1,8 @@
 import { component, property, css, Component, html, event } from '@a11d/lit'
-import { Formfield as FormField } from '@material/mwc-formfield'
 import { disabledProperty } from '@3mo/disabled-property'
-import '@material/mwc-switch'
+import '@material/web/switch/switch.js'
 import '@3mo/theme'
+import { MdSwitch } from '@material/web/switch/switch.js'
 
 /**
  * @element mo-switch
@@ -11,12 +11,8 @@ import '@3mo/theme'
  * @attr disabled
  * @attr selected
  *
- * @cssprop --mo-switch-unchecked-color
  * @cssprop --mo-switch-accent-color
- * @cssprop --mo-switch-disabled-color
- * @cssprop --mo-switch-unselected-handle-color
- * @cssprop --mo-switch-unselected-track-color
- * @cssprop --mo-switch-selected-track-color
+ * @cssprop --mo-switch-unselected-color
  *
  * @cssprop --mo-switch-selected-icon-color
  *
@@ -40,65 +36,98 @@ export class Switch extends Component {
 				pointer-events: none;
 			}
 
-			mwc-switch {
-				--mdc-theme-primary: var(--mo-switch-accent-color, var(--mo-color-accent));
-				--mdc-theme-secondary: var(--mdc-theme-primary);
-				--mdc-switch-touch-target-size: 36px;
-				--mdc-switch-ripple-size: 36px;
+			md-switch {
+				margin-block: 7px;
+				padding-inline-start: 3px;
+				--md-switch-container-shape: var(--mo-border-radius);
 
-				--mdc-switch-selected-handle-color: var(--mdc-theme-primary);
-				--mdc-switch-selected-focus-handle-color: var(--mdc-switch-selected-handle-color);
-				--mdc-switch-selected-hover-handle-color: var(--mdc-switch-selected-handle-color);
-				--mdc-switch-selected-pressed-handle-color: var(--mdc-switch-selected-handle-color);
+				--md-switch-state-layer-color: var(--mo-switch-accent-color, var(--mo-color-accent));
+				--md-switch-hover-state-layer-color: var(--mo-switch-accent-color, var(--mo-color-accent));
+				--md-switch-focus-state-layer-color: var(--mo-switch-accent-color, var(--mo-color-accent));
+				--md-switch-pressed-state-layer-color: var(--mo-switch-accent-color, var(--mo-color-accent));
 
-				--mdc-switch-selected-track-color: var(--mo-switch-selected-track-color, rgba(var(--mo-color-accent-base), 0.5));
-				--mdc-switch-selected-focus-track-color: var(--mdc-switch-selected-track-color);
-				--mdc-switch-selected-hover-track-color: var(--mdc-switch-selected-track-color);
-				--mdc-switch-selected-pressed-track-color: var(--mdc-switch-selected-track-color);
+				--md-switch-selected-state-layer-color: var(--mo-switch-accent-color, var(--mo-color-accent));
+				--md-switch-selected-hover-state-layer-color: var(--mo-switch-accent-color, var(--mo-color-accent));
+				--md-switch-selected-focus-state-layer-color: var(--mo-switch-accent-color, var(--mo-color-accent));
+				--md-switch-selected-pressed-state-layer-color: var(--mo-switch-accent-color, var(--mo-color-accent));
 
-				--mdc-switch-selected-focus-state-layer-color: var(--mdc-theme-primary);
-				--mdc-switch-selected-hover-state-layer-color: var(--mdc-theme-primary);
-				--mdc-switch-selected-pressed-state-layer-color: var(--mdc-theme-primary);
-				--mdc-switch-selected-icon-color: var(--mo-switch-selected-icon-color, var(--mo-color-on-accent));
+				--md-switch-disabled-handle-color: var(--mo-switch-unselected-color, var(--mo-color-foreground));
+				--md-switch-handle-color: var(--mo-switch-unselected-color, var(--mo-color-foreground));
+				--md-switch-hover-handle-color: var(--mo-switch-unselected-color, var(--mo-color-foreground));
+				--md-switch-focus-handle-color: var(--mo-switch-unselected-color, var(--mo-color-foreground));
+				--md-switch-pressed-handle-color: var(--mo-switch-unselected-color, var(--mo-color-foreground));
 
-				--mdc-switch-unselected-handle-color: var(--mo-switch-unselected-handle-color, var(--mo-color-foreground));
-				--mdc-switch-unselected-focus-handle-color: var(--mdc-switch-unselected-handle-color);
-				--mdc-switch-unselected-hover-handle-color: var(--mdc-switch-unselected-handle-color);
-				--mdc-switch-unselected-pressed-handle-color: var(--mdc-switch-unselected-handle-color);
+				--md-switch-disabled-track-color: var(--mo-switch-unselected-color, var(--mo-color-foreground));
+				--md-switch-track-color: var(--mo-switch-unselected-color, var(--mo-color-foreground));
+				--md-switch-hover-track-color: var(--mo-switch-unselected-color, var(--mo-color-foreground));
+				--md-switch-focus-track-color: var(--mo-switch-unselected-color, var(--mo-color-foreground));
+				--md-switch-pressed-track-color: var(--mo-switch-unselected-color, var(--mo-color-foreground));
 
-				--mdc-switch-unselected-track-color: var(--mo-switch-unselected-track-color, rgba(var(--mo-color-foreground-base), 0.25));
-				--mdc-switch-unselected-focus-track-color: var(--mdc-switch-unselected-track-color);
-				--mdc-switch-unselected-hover-track-color: var(--mdc-switch-unselected-track-color);
-				--mdc-switch-unselected-pressed-track-color: var(--mdc-switch-unselected-track-color);
+				--md-focus-ring-color: var(--mo-switch-accent-color, var(--mo-color-accent));
 
-				--mdc-switch-unselected-state-layer-color: var(--mo-switch-unselected-state-layer-color, var(--mo-color-foreground));
-				--mdc-switch-unselected-focus-state-layer-color: var(--mdc-switch-unselected-state-layer-color);
-				--mdc-switch-unselected-hover-state-layer-color: var(--mdc-switch-unselected-state-layer-color);
-				--mdc-switch-unselected-pressed-state-layer-color: var(--mdc-switch-unselected-state-layer-color);
+				--md-switch-disabled-selected-track-color: var(--mo-switch-accent-color, var(--mo-color-accent));
+				--md-switch-selected-track-color: var(--mo-switch-accent-color, var(--mo-color-accent));
+				--md-switch-selected-hover-track-color: var(--mo-switch-accent-color, var(--mo-color-accent));
+				--md-switch-selected-focus-track-color: var(--mo-switch-accent-color, var(--mo-color-accent));
+				--md-switch-selected-pressed-track-color: var(--mo-switch-accent-color, var(--mo-color-accent));
 
-				--mdc-switch-unselected-icon-color: var(--mo-color-background);
+				--md-switch-disabled-selected-handle-color: var(--mo-switch-accent-color, var(--mo-color-accent));
+				--md-switch-selected-handle-color: var(--mo-switch-accent-color, var(--mo-color-accent));
+				--md-switch-selected-hover-handle-color: var(--mo-switch-accent-color, var(--mo-color-accent));
+				--md-switch-selected-focus-handle-color: var(--mo-switch-accent-color, var(--mo-color-accent));
+				--md-switch-selected-pressed-handle-color: var(--mo-switch-accent-color, var(--mo-color-accent));
+
+				--md-switch-disabled-handle-opacity: 1;
+				--md-switch-handle-opacity: 1;
+				--md-switch-hover-handle-opacity: 1;
+				--md-switch-focus-handle-opacity: 1;
+				--md-switch-pressed-handle-opacity: 1;
+
+				--md-switch-track-height: 14px;
+				--md-switch-track-width: 36px;
+				--md-switch-handle-height: 20px;
+				--md-switch-handle-width: 20px;
+				--md-switch-track-outline-width: 0px;
 			}
 
-			mwc-formfield::part(label) {
-				padding-inline-start: 0px;
-				text-align: start;
+			md-switch::part(track)::before {
+				opacity: 0.5;
 			}
 
-			:host([disabled]) mwc-formfield::part(label) {
-				color: var(--mo-switch-disabled-color, var(--mo-color-gray-transparent));
+			label {
+				display: flex;
+				align-items: center;
+				gap: 11px;
+				color: var(--mo-color-foreground);
+				font-size: 0.875rem;
+				line-height: 1.25rem;
+				letter-spacing: 0.0178571429em;
+				-webkit-font-smoothing: antialiased;
+			}
+
+			:host([disabled]) label {
+				color: var(--mo-color-gray);
+				opacity: 0.5;
 			}
 		`
 	}
 
 	protected override get template() {
+		return !this.label ? this.switchTemplate : html`
+			<label>
+				${this.switchTemplate}
+				${this.label}
+			</label>
+		`
+	}
+
+	protected get switchTemplate() {
 		return html`
-			<mwc-formfield label=${this.label}>
-				<mwc-switch
-					?disabled=${this.disabled}
-					?selected=${this.selected}
-					@click=${this.handleClick.bind(this)}
-				></mwc-switch>
-			</mwc-formfield>
+			<md-switch
+				?disabled=${this.disabled}
+				?selected=${this.selected}
+				@click=${this.handleClick.bind(this)}
+			></md-switch>
 		`
 	}
 
@@ -108,11 +137,9 @@ export class Switch extends Component {
 	}
 }
 
-FormField.addInitializer(async element => {
-	const formField = element as FormField
-	await formField.updateComplete
-	formField.renderRoot.querySelector('label')?.setAttribute('part', 'label')
-})
+MdSwitch.addInitializer(s => s.addController({
+	hostUpdated: () => s.renderRoot.querySelector('.track')?.part.add('track'),
+}))
 
 declare global {
 	interface HTMLElementTagNameMap {

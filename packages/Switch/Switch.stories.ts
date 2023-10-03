@@ -34,3 +34,23 @@ export const Switch = story({
 		></mo-switch>
 	`
 })
+
+export const WithCustomAccentColor = story({
+	render: ({ label, disabled, selected }) => html`
+		<mo-switch style='--mo-switch-accent-color: var(--mo-color-yellow)'
+			label=${label}
+			?disabled=${disabled}
+			?selected=${selected}
+		></mo-switch>
+	`
+})
+
+export const WithCustomUncheckedAndAccentAccentColor = story({
+	render: ({ label, disabled, selected }) => html`
+		<mo-switch style='--mo-switch-accent-color: var(--mo-color-green); --mo-switch-unselected-color: var(--mo-color-red)'
+			label=${label}
+			?disabled=${disabled}
+			?selected=${selected}
+		></mo-switch>
+	`
+})
