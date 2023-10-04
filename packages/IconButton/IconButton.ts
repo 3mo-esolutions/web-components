@@ -86,6 +86,12 @@ MdIconButton.elementStyles.push(css`
 		height: unset !important;
 		font-size: inherit !important;
 	}
+
+	.touch {
+		position: fixed;
+		height: 48px;
+		width: 48px;
+	}
 `)
 
 MdIconButton.addInitializer(instance => instance.addController({
