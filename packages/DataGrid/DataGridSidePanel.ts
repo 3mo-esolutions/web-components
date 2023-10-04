@@ -70,14 +70,6 @@ export class DataGridSidePanel<TData> extends Component {
 				width: calc(100% - calc(2 * 14px));
 			}
 
-			mo-section mo-checkbox {
-				margin-inline-start: -6px;
-			}
-
-			mo-section mo-icon-button {
-				margin-inline-start: -10px;
-			}
-
 			mo-flex[slot=heading] {
 				align-items: center;
 			}
@@ -148,7 +140,7 @@ export class DataGridSidePanel<TData> extends Component {
 						<div>${(this.dataGrid.cellFontSize * 100).formatAsPercent()}</div>
 					</mo-flex>
 
-					<mo-slider min='0.8' max='1.2' step='0.1' discrete
+					<mo-slider min='0.8' max='1.2' step='0.1'
 						value=${this.dataGrid.cellFontSize}
 						@input=${(e: CustomEvent<number>) => this.dataGrid.cellFontSize = e.detail}
 					></mo-slider>
@@ -160,7 +152,7 @@ export class DataGridSidePanel<TData> extends Component {
 						<div>${this.dataGrid.rowHeight.format()} px</div>
 					</mo-flex>
 
-					<mo-slider min='30' max='60' step='5' discrete
+					<mo-slider min='30' max='60' step='5'
 						value=${this.dataGrid.rowHeight}
 						@input=${(e: CustomEvent<number>) => this.dataGrid.rowHeight = e.detail}
 					></mo-slider>
