@@ -16,7 +16,7 @@ describe('DialogAcknowledge', () => {
 
 	it('should have used parameters to customize dialog', () => {
 		expect(fixture.component.dialogElement.heading).toBe(parameters.heading)
-		expect(fixture.component.dialogElement.innerText).toBe(parameters.content as string)
+		expect(fixture.component.dialogElement.textContent?.trim()).toBe(parameters.content as string)
 		expect((fixture.component.dialogElement as Dialog).primaryButtonText).toBe(parameters.primaryButtonText)
 		expect((fixture.component.dialogElement as Dialog).blocking).toBe(parameters.blocking!)
 		expect((fixture.component.dialogElement as Dialog).size).toBe(parameters.size!)

@@ -25,7 +25,7 @@ describe('LoadingDialog', () => {
 		fixture.component.loading = true
 		await fixture.updateComplete
 
-		expect(fixture.component.renderRoot.querySelector('mwc-dialog')?.heading).toBe('Loading ...')
+		expect(fixture.component.renderRoot.querySelector('mo-heading')?.textContent).toBe('Loading ...')
 	})
 
 	it('should be able to have custom loading heading', async () => {
@@ -33,6 +33,6 @@ describe('LoadingDialog', () => {
 		fixture.component.loadingHeading = 'Custom Loading Heading'
 		await fixture.updateComplete
 
-		expect(fixture.component.renderRoot.querySelector('mwc-dialog')?.heading).toBe('Custom Loading Heading ...')
+		expect(fixture.component.renderRoot.querySelector('mo-heading')?.textContent).toBe('Custom Loading Heading ...')
 	})
 })

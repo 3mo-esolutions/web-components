@@ -3,7 +3,7 @@ import { FieldSearch } from './FieldSearch.js'
 import { expectSlotRendersOnlyWithAssignedContent } from '../Field/FieldComponent.test.js'
 import { expectFieldPropertyTunnelsToInput, expectInputEventTunnelsToField } from '../Field/InputFieldComponent.test.js'
 
-xdescribe('FieldSearch', () => {
+describe('FieldSearch', () => {
 	const fixture = new ComponentTestFixture<FieldSearch>('mo-field-search')
 	it('should set the part attribute', () => expect(fixture.component.inputElement.getAttribute('part')).toBe('input'))
 	it('should tunnel disabled', () => expectFieldPropertyTunnelsToInput(fixture, { value: true, key: 'disabled' }))

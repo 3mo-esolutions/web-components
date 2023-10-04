@@ -104,6 +104,8 @@ export class Dialog extends Component {
 		}
 	}) executingAction?: DialogActionKey
 
+	@state() showTopLayer = false
+
 	@queryActionElement('primaryAction') readonly primaryActionElement!: HTMLElement
 	@queryActionElement('secondaryAction') readonly secondaryActionElement!: HTMLElement
 	@query('mo-icon-button[icon=close]') readonly cancellationActionElement!: HTMLElement
@@ -185,6 +187,7 @@ export class Dialog extends Component {
 			}
 
 			form[slot=content] {
+				flex: 1;
 				padding: 20px 24px;
 				-webkit-font-smoothing: antialiased;
 				font-size: 1rem;
@@ -239,7 +242,10 @@ export class Dialog extends Component {
 
 	protected override get template() {
 		return html`
-			<md-dialog exportparts='scrim' ?open=${this.open} @cancel=${(e: Event) => e.preventDefault()}>
+			<md-dialog exportparts='scrim' ?open=${this.open} @cancel=${(e: Event) => e.preventDefault()}
+				@open=${() => this.showTopLayer = true}
+				@close=${() => this.showTopLayer = false}
+			>
 				${this.headerTemplate}
 				${this.contentTemplate}
 				${this.footerTemplate}
@@ -291,7 +297,7 @@ export class Dialog extends Component {
 			<form slot='content' part='content' method='dialog'>
 				<slot>${this.contentDefaultTemplate}</slot>
 			</form>
-			<lit-application-top-layer slot='content'></lit-application-top-layer>
+			${!this.showTopLayer ? nothing : html`<lit-application-top-layer slot='content'></lit-application-top-layer>`}
 		`
 	}
 
@@ -302,8 +308,10 @@ export class Dialog extends Component {
 	private get shallHideFooter() {
 		return !this.primaryActionElement
 			&& !this.primaryButtonText
+			&& this.primaryActionDefaultTemplate === nothing
 			&& !this.secondaryActionElement
 			&& !this.secondaryButtonText
+			&& this.secondaryActionDefaultTemplate === nothing
 			&& !this.slotController.hasAssignedContent('footer')
 	}
 
@@ -361,6 +369,19 @@ export class Dialog extends Component {
 }
 
 MdDialog.elementStyles.push(css`
+	.content {
+		display: flex;
+		flex-direction: column;
+		min-height: 100%;
+	}
+
+	.scroller {
+		/* MdDialog removes overflow whenever the dialog doesn't need a scroll.
+		 * This leads to "min-height: 100%" of the ".content" element not working anymore.
+		 */
+		overflow: auto;
+	}
+
 	.scroller::-webkit-scrollbar {
 		width: 5px;
 		height: 5px;
@@ -380,6 +401,9 @@ MdDialog.elementStyles.push(css`
 `)
 
 MdDialog.addInitializer(element => {
+	if ((globalThis as any).environment === 'test') {
+		HTMLDialogElement.prototype.showModal = () => undefined
+	}
 	element.addController({
 		hostUpdated() {
 			element.renderRoot.querySelector('dialog')?.part.add('dialog')
