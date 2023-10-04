@@ -1,3 +1,3 @@
 # Button
 
-A button web-component based on Material Web Components (MWC).
+A button web-component based on Material Web Components.

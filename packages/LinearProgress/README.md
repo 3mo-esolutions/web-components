@@ -1,3 +1,3 @@
 # Linear Progress
 
-A linear progress web-component based on Material Web Components (MWC).
+A linear progress web-component based on Material Web Components.

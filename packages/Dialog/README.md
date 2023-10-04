@@ -1,3 +1,3 @@
 # Dialog
 
-A dialog component based on Material Web Components (MWC).
+A dialog component based on Material Web Components.
