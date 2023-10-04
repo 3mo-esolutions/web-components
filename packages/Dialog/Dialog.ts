@@ -132,6 +132,10 @@ export class Dialog extends Component {
 				--mo-dialog-height: 100dvh;
 			}
 
+			:host([boundToWindow]) {
+				--mo-dialog-default-scrim-color: var(--mo-color-background);
+			}
+
 			:host([boundToWindow][size=large]) md-dialog {
 				--mo-dialog-default-width: 100vw;
 				--mo-dialog-default-height: 100vh;
@@ -154,7 +158,7 @@ export class Dialog extends Component {
 			}
 
 			md-dialog::part(scrim) {
-				background-color: var(--mo-dialog-scrim-color, rgba(0, 0, 0, 0.5));
+				background-color: var(--mo-dialog-scrim-color, var(--mo-dialog-default-scrim-color, rgba(0, 0, 0, 0.5)));
 			}
 
 			md-dialog:not([open]) {
