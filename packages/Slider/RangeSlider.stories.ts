@@ -9,6 +9,7 @@ export default meta({
 	args: {
 		disabled: false,
 		discrete: false,
+		ticks: false,
 		valueStart: 40,
 		valueEnd: 60,
 		step: 1,
@@ -20,6 +21,7 @@ export default meta({
 		valueEnd: { control: 'number' },
 		disabled: { control: 'boolean' },
 		discrete: { control: 'boolean' },
+		ticks: { control: 'boolean' },
 		step: { control: 'number' },
 		min: { control: 'number' },
 		max: { control: 'number' },
@@ -34,9 +36,24 @@ export default meta({
 })
 
 export const RangeSlider = story({
-	render: ({ disabled, discrete, valueStart, valueEnd, step, min, max }) => html`
+	render: ({ disabled, discrete, ticks, valueStart, valueEnd, step, min, max }) => html`
 		<mo-range-slider ${style({ marginTop: '20px' })}
 			?discrete=${discrete}
+			?ticks=${ticks}
+			?disabled=${disabled}
+			.value=${[valueStart, valueEnd]}
+			step=${step}
+			min=${min}
+			max=${max}
+		></mo-range-slider>
+	`
+})
+
+export const WithCustomAccentColors = story({
+	render: ({ disabled, discrete, ticks, valueStart, valueEnd, step, min, max }) => html`
+		<mo-range-slider ${style({ marginTop: '20px', '--mo-slider-accent-color': 'var(--mo-color-red)' })}
+			?discrete=${discrete}
+			?ticks=${ticks}
 			?disabled=${disabled}
 			.value=${[valueStart, valueEnd]}
 			step=${step}

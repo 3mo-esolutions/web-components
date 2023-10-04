@@ -11,7 +11,6 @@ import { SliderBase } from './SliderBase.js'
  * @attr min
  * @attr max
  *
- * @csspart parts
  * @csspart thumb
  *
  * @fires input {CustomEvent<number>}
@@ -23,8 +22,9 @@ export class Slider extends SliderBase<number> {
 
 	protected override get template() {
 		return html`
-			<mwc-slider withTickMarks exportparts='marks,thumb'
-				?discrete=${this.discrete}
+			<md-slider exportparts='thumb'
+				?labeled=${this.discrete}
+				?ticks=${this.ticks}
 				?disabled=${this.disabled}
 				value=${this.value}
 				step=${ifDefined(this.step)}
@@ -32,12 +32,12 @@ export class Slider extends SliderBase<number> {
 				max=${ifDefined(this.max)}
 				@input=${this.handleInput.bind(this)}
 				@change=${this.handleChange.bind(this)}
-			></mwc-slider>
+			></md-slider>
 		`
 	}
 
-	protected updateValue(value: number) {
-		this.value = value
+	protected updateValue() {
+		this.value = this.slider.value as number
 	}
 }
 

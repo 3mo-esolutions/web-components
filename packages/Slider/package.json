@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/slider",
-	"version": "0.0.6",
+	"version": "0.1.1",
 	"description": "A slider and range-slider web-component based on Material Web Components (MWC).",
 	"repository": {
 		"type": "git",
@@ -27,6 +27,6 @@
 		"tslib": "x",
 		"@3mo/theme": "x",
 		"@3mo/disabled-property": "x",
-		"@material/mwc-slider": "x"
+		"@material/web": "x"
 	}
 }

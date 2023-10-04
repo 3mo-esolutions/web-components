@@ -9,6 +9,7 @@ export default meta({
 	args: {
 		disabled: false,
 		discrete: false,
+		ticks: false,
 		value: 15,
 		step: 1,
 		min: 0,
@@ -18,6 +19,7 @@ export default meta({
 		value: { control: 'number' },
 		disabled: { control: 'boolean' },
 		discrete: { control: 'boolean' },
+		ticks: { control: 'boolean' },
 		step: { control: 'number' },
 		min: { control: 'number' },
 		max: { control: 'number' },
@@ -31,10 +33,25 @@ export default meta({
 	}
 })
 
-export const slider = story({
-	render: ({ disabled, value, step, min, max, discrete }) => html`
+export const Slider = story({
+	render: ({ disabled, value, step, min, max, discrete, ticks }) => html`
 		<mo-slider ${style({ marginTop: '20px' })}
 			?discrete=${discrete}
+			?ticks=${ticks}
+			?disabled=${disabled}
+			value=${value}
+			step=${step}
+			min=${min}
+			max=${max}
+		></mo-slider>
+	`
+})
+
+export const WithCustomAccentColors = story({
+	render: ({ disabled, value, step, min, max, discrete, ticks }) => html`
+		<mo-slider ${style({ marginTop: '20px', '--mo-slider-accent-color': 'var(--mo-color-red)' })}
+			?discrete=${discrete}
+			?ticks=${ticks}
 			?disabled=${disabled}
 			value=${value}
 			step=${step}

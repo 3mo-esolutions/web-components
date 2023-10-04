@@ -123,7 +123,7 @@ export class PagePreferencesUserInterface extends PageSettings {
 
 							<mo-list-item>
 								Höhe der Zeilen
-								<mo-slider max='50' min='30' step='5'
+								<mo-slider max='50' min='30' step='5' discrete
 									${style({ width: '150px', margin: '0 -15px' })}
 									value=${DataGrid.rowHeight.value}
 									@change=${(e: CustomEvent<number>) => DataGrid.rowHeight.value = e.detail}
@@ -132,7 +132,7 @@ export class PagePreferencesUserInterface extends PageSettings {
 
 							<mo-list-item>
 								Schriftgröße
-								<mo-slider min='0.8' max='1.2' step='0.1'
+								<mo-slider min='0.8' max='1.2' step='0.1' discrete
 									${style({ width: '150px', margin: '0 -15px' })}
 									value=${DataGrid.cellRelativeFontSize.value}
 									@input=${(e: CustomEvent<number>) => DataGrid.cellRelativeFontSize.value = e.detail}

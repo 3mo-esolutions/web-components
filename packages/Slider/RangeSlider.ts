@@ -1,6 +1,5 @@
 import { component, property, html, ifDefined } from '@a11d/lit'
 import { SliderBase } from './SliderBase.js'
-import { Thumb } from '@material/mwc-slider/slider-range.js'
 
 export type RangeSliderValue = [start: number, end: number]
 
@@ -14,7 +13,6 @@ export type RangeSliderValue = [start: number, end: number]
  * @attr min
  * @attr max
  *
- * @csspart parts
  * @csspart thumb
  *
  * @fires input {CustomEvent<[start: number, end: number]>}
@@ -22,13 +20,14 @@ export type RangeSliderValue = [start: number, end: number]
  */
 @component('mo-range-slider')
 export class RangeSlider extends SliderBase<RangeSliderValue> {
-	@property({ type: Object }) value: RangeSliderValue = [0, 0]
+	@property({ type: Array }) value: RangeSliderValue = [0, 0]
 
 	protected override get template() {
 		const [start, end] = this.value
 		return html`
-			<mwc-slider-range withTickMarks exportparts='marks,thumb'
-				?discrete=${this.discrete}
+			<md-slider range exportparts='thumb'
+				?labeled=${this.discrete}
+				?ticks=${this.ticks}
 				?disabled=${this.disabled}
 				valueStart=${start}
 				valueEnd=${end}
@@ -37,15 +36,14 @@ export class RangeSlider extends SliderBase<RangeSliderValue> {
 				max=${ifDefined(this.max)}
 				@input=${this.handleInput.bind(this)}
 				@change=${this.handleChange.bind(this)}
-			></mwc-slider-range>
+			></md-slider>
 		`
 	}
 
-	protected updateValue(value: number, thumb: Thumb) {
-		const [start, end] = this.value
+	protected updateValue() {
 		this.value = [
-			thumb === Thumb.START ? value : start,
-			thumb === Thumb.END ? value : end
+			this.slider.valueStart as number,
+			this.slider.valueEnd as number,
 		]
 	}
 }

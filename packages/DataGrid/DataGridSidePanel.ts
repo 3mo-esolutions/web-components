@@ -148,7 +148,7 @@ export class DataGridSidePanel<TData> extends Component {
 						<div>${(this.dataGrid.cellFontSize * 100).formatAsPercent()}</div>
 					</mo-flex>
 
-					<mo-slider min='0.8' max='1.2' step='0.1'
+					<mo-slider min='0.8' max='1.2' step='0.1' discrete
 						value=${this.dataGrid.cellFontSize}
 						@input=${(e: CustomEvent<number>) => this.dataGrid.cellFontSize = e.detail}
 					></mo-slider>
@@ -160,7 +160,7 @@ export class DataGridSidePanel<TData> extends Component {
 						<div>${this.dataGrid.rowHeight.format()} px</div>
 					</mo-flex>
 
-					<mo-slider min='30' max='60' step='5'
+					<mo-slider min='30' max='60' step='5' discrete
 						value=${this.dataGrid.rowHeight}
 						@input=${(e: CustomEvent<number>) => this.dataGrid.rowHeight = e.detail}
 					></mo-slider>
