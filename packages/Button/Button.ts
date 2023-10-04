@@ -291,8 +291,7 @@ Buttons.forEach(Button => Button.elementStyles.push(css`
 		height: 100% !important;
 		min-width: unset !important;
 		line-height: unset !important;
-		padding-top: 4px !important;
-		padding-bottom: 4px !important;
+		padding-block: 4px !important;
 		text-transform: unset !important;
 		text-align: inherit !important;
 	}
