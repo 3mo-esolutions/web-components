@@ -83,7 +83,6 @@ export abstract class BusinessSuiteApplication extends Application {
 		return html`
 			${super.template}
 			<mo-confetti></mo-confetti>
-			<mo-popover-host></mo-popover-host>
 		`
 	}
 
