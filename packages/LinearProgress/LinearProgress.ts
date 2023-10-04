@@ -1,13 +1,12 @@
 import { component, Component, css, html, ifDefined, property } from '@a11d/lit'
-import { LinearProgress as MwcLinearProgress } from '@material/mwc-linear-progress'
+import { MdLinearProgress } from '@material/web/progress/linear-progress.js'
 import '@3mo/theme'
 
 /**
  * @attr progress
  * @attr buffer
  *
- * @cssprop --mo-linear-progress-accent
- * @cssprop --mdc-linear-progress-buffer-color
+ * @cssprop --mo-linear-progress-accent-color
  */
 @component('mo-linear-progress')
 export class LinearProgress extends Component {
@@ -22,37 +21,46 @@ export class LinearProgress extends Component {
 				height: 4px;
 			}
 
-			mwc-linear-progress {
+			md-linear-progress {
 				width: 100%;
 				height: 100%;
 				border-radius: inherit;
-				--mdc-theme-primary: var(--mo-linear-progress-accent, var(--mo-color-accent));
-				--mdc-linear-progress-buffer-color: var(--mo-linear-progress-buffer-color, var(--mo-color-gray-transparent));
+				--md-linear-progress-active-indicator-color: var(--mo-linear-progress-accent-color, var(--mo-color-accent));
+				--md-linear-progress-active-indicator-height: 100%;
+				--md-linear-progress-track-color: var(--mo-color-gray);
+				--md-linear-progress-track-height: 100%;
+				--md-linear-progress-track-shape: var(--mo-border-radius);
 			}
 		`
 	}
 
 	protected override get template() {
 		return html`
-			<mwc-linear-progress
+			<md-linear-progress
 				?indeterminate=${this.progress === undefined && this.buffer === undefined}
-				progress=${ifDefined(this.progress)}
+				value=${ifDefined(this.progress)}
 				buffer=${ifDefined(this.buffer)}
-			></mwc-linear-progress>
+			></md-linear-progress>
 		`
 	}
 }
 
-MwcLinearProgress.elementStyles.push(css`
-	.mdc-linear-progress {
-		height: 100% !important;
-		border-radius: inherit;
+MdLinearProgress.elementStyles.push(css`
+	:host(:not([buffer])) .dots {
+		display: none;
 	}
 
-	.mdc-linear-progress__bar-inner {
-		border: none !important;
-		height: 100%;
-		background: var(--mdc-theme-primary);
+	.dots {
+		animation-name: absolute-buffering;
+	}
+
+	@keyframes absolute-buffering {
+		0% { transform: translateX(10px) }
+	}
+
+	progress {
+		height: 100% !important;
+		border-radius: inherit;
 	}
 `)
 

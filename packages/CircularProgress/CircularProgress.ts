@@ -39,7 +39,7 @@ export class CircularProgress extends Component {
 }
 
 MdCircularProgress.elementStyles.push(css`
-	.mdc-circular-progress {
+	.progress {
 		width: 100% !important;
 		height: 100% !important;
 	}
