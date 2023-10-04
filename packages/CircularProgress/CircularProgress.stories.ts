@@ -19,6 +19,10 @@ export const Indeterminate = story({
 	render: () => html`<mo-circular-progress></mo-circular-progress>`
 })
 
+export const WithCustomColor = story({
+	render: () => html`<mo-circular-progress style='--mo-circular-progress-accent-color: var(--mo-color-red)'></mo-circular-progress>`
+})
+
 export const WithProgress = story({
 	args: { progress: 0.75 },
 	argTypes: { progress: { control: 'number' } },

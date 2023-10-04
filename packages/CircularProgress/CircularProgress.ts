@@ -1,11 +1,10 @@
 import { Component, component, css, html, ifDefined, property } from '@a11d/lit'
-import { CircularProgress as MwcCircularProgress } from '@material/mwc-circular-progress'
+import { MdCircularProgress } from '@material/web/progress/circular-progress.js'
 import '@3mo/theme'
 
 /**
  * @attr progress - The progress of the circular progress indicator. Unset to display an indeterminate progress indicator.
  *
- * @cssprop --mo-circular-progress-track-color
  * @cssprop --mo-circular-progress-accent-color
  */
 @component('mo-circular-progress')
@@ -21,26 +20,25 @@ export class CircularProgress extends Component {
 				aspect-ratio: 1;
 			}
 
-			mwc-circular-progress {
+			md-circular-progress {
 				width: 100%;
 				height: 100%;
-				--mdc-circular-progress-track-color: var(--mo-circular-progress-track-color, transparent);
-				--mdc-theme-primary: var(--mo-circular-progress-accent-color, var(--mo-color-accent));
+				--md-circular-progress-active-indicator-color: var(--mo-circular-progress-accent-color, var(--mo-color-accent));
 			}
 		`
 	}
 
 	protected override get template() {
 		return html`
-			<mwc-circular-progress
+			<md-circular-progress
 				?indeterminate=${this.progress === undefined}
-				progress=${ifDefined(this.progress)}
-			></mwc-circular-progress>
+				value=${ifDefined(this.progress)}
+			></md-circular-progress>
 		`
 	}
 }
 
-MwcCircularProgress.elementStyles.push(css`
+MdCircularProgress.elementStyles.push(css`
 	.mdc-circular-progress {
 		width: 100% !important;
 		height: 100% !important;
