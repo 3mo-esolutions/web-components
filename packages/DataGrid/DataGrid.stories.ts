@@ -140,6 +140,15 @@ export const Editability = story({
 	`
 })
 
+export const WithFiltersWithoutToolbar = story({
+	render: () => html`
+		<mo-data-grid .data=${thousandPeople} style='height: 500px'>
+			${columnsTemplate}
+			<mo-checkbox slot='filter' label='Something'></mo-checkbox>
+		</mo-data-grid>
+	`
+})
+
 export const Virtualization = story({
 	render: () => html`
 		<mo-data-grid .data=${thousandPeople} style='height: 500px'>

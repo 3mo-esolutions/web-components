@@ -69,8 +69,8 @@ export class FieldDateTimeRange extends FieldDateTimeBase<DateTimeRange | undefi
 		return html`
 			<mo-flex>
 				<mo-tab-bar value=${this.selection} @change=${(e: CustomEvent<FieldDateRangeSelection>) => this.selection = e.detail}>
-					<mo-tab value=${FieldDateRangeSelection.Start} label=${t('Start')}></mo-tab>
-					<mo-tab value=${FieldDateRangeSelection.End} label=${t('End')}></mo-tab>
+					<mo-tab value=${FieldDateRangeSelection.Start}>${t('Start')}</mo-tab>
+					<mo-tab value=${FieldDateRangeSelection.End}>${t('End')}</mo-tab>
 				</mo-tab-bar>
 			</mo-flex>
 

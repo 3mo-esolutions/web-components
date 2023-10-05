@@ -86,12 +86,18 @@ export class DataGridSidePanel<TData> extends Component {
 		return html`
 			<mo-flex ${style({ height: '100%' })}>
 				${this.dataGrid.hasToolbar || this.dataGrid.hasFilters === false ? nothing : html`
-					<mo-tab-bar
+					<mo-tab-bar ${style({ height: '60px' })}
 						value=${ifDefined(this.dataGrid.sidePanelTab)}
 						@change=${(e: CustomEvent<DataGridSidePanelTab | undefined>) => this.dataGrid.navigateToSidePanelTab(e.detail ?? DataGridSidePanelTab.Settings)}
 					>
-						<mo-tab icon='filter_list' value=${DataGridSidePanelTab.Filters}></mo-tab>
-						<mo-tab icon='settings' value=${DataGridSidePanelTab.Settings}></mo-tab>
+						<mo-tab value=${DataGridSidePanelTab.Filters}>
+							<mo-icon icon='filter_list'></mo-icon>
+							${t('Extended Filters')}
+						</mo-tab>
+						<mo-tab value=${DataGridSidePanelTab.Settings}>
+							<mo-icon icon='settings'></mo-icon>
+							${t('Settings')}
+						</mo-tab>
 					</mo-tab-bar>
 				`}
 
