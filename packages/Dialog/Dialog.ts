@@ -1,5 +1,5 @@
 import { component, property, query, html, css, nothing, event, state, Component } from '@a11d/lit'
-import { DialogActionKey, DialogComponent } from '@a11d/lit-application'
+import { ApplicationTopLayer, DialogActionKey, DialogComponent } from '@a11d/lit-application'
 import { MdDialog } from '@material/web/dialog/dialog.js'
 import { tooltip } from '@3mo/tooltip'
 import { SlotController } from '@3mo/slot-controller'
@@ -106,6 +106,7 @@ export class Dialog extends Component {
 
 	@state() showTopLayer = false
 
+	@query('lit-application-top-layer') readonly topLayerElement!: ApplicationTopLayer
 	@queryActionElement('primaryAction') readonly primaryActionElement!: HTMLElement
 	@queryActionElement('secondaryAction') readonly secondaryActionElement!: HTMLElement
 	@query('mo-icon-button[icon=close]') readonly cancellationActionElement!: HTMLElement
