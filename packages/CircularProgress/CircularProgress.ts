@@ -39,9 +39,15 @@ export class CircularProgress extends Component {
 }
 
 MdCircularProgress.elementStyles.push(css`
+	:host {
+		min-block-size: 100% !important;
+		min-inline-size: 100% !important;
+	}
+
 	.progress {
 		width: 100% !important;
 		height: 100% !important;
+		margin: 0 !important;
 	}
 `)
 
