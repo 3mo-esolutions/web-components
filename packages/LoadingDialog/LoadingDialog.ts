@@ -35,11 +35,11 @@ export class LoadingDialog extends Dialog {
 			slot[name=loading] {
 				display: grid;
 				position: absolute;
-				inset: 50px 0 0 0;
+				inset: 0;
 				z-index: 1;
 				place-items: center;
 				backdrop-filter: blur(5px);
-				background: rgba(var(--mo-color-surface-base),0.5);
+				background: rgba(var(--mo-color-surface-base), 0.8);
 			}
 		`
 	}

@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/loading-button",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"description": "A button web-component with a loading state and capable of inferring the loading state from click event handler promises.",
 	"repository": {
 		"type": "git",
