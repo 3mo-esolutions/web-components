@@ -1,3 +1,4 @@
+import '@a11d/lit-application'
 import '@3mo/empty-state'
 import '@3mo/flex'
 import '@3mo/grid'

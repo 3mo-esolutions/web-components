@@ -30,13 +30,10 @@ export class SplitPageHost extends Component {
 
 	static override get styles() {
 		return css`
-			lit-page-host *::part(pageHeader) {
-				display: none;
-			}
-
 			lit-page-host {
-				padding: 0 14px;
 				min-height: 100%;
+				padding-inline-start: 14px;
+				width: calc(100% - 14px);
 			}
 
 			mo-grid {
@@ -54,6 +51,11 @@ export class SplitPageHost extends Component {
 			@media (max-width: 900px) {
 				mo-grid {
 					grid-template-columns: 1fr;
+				}
+
+				lit-page-host {
+					padding-inline-start: 0px;
+					width: 100%;
 				}
 
 				:host([isContentOpen]) #sidebar {

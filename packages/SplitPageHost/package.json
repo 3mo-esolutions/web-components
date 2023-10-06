@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/split-page-host",
-	"version": "0.0.5",
+	"version": "0.0.6",
 	"description": "A page host consisting of pane and content.",
 	"repository": {
 		"type": "git",
@@ -23,6 +23,7 @@
 	"dependencies": {
 		"tslib": "x",
 		"@a11d/lit": "x",
+		"@a11d/lit-application": "x",
 		"@3mo/localization": "x",
 		"@3mo/flex": "x",
 		"@3mo/grid": "x",
