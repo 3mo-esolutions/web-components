@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/dialog",
-	"version": "0.1.11",
+	"version": "0.1.12",
 	"description": "A dialog component based on Material Web Components.",
 	"repository": {
 		"type": "git",

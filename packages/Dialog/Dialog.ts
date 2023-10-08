@@ -104,7 +104,7 @@ export class Dialog extends Component {
 		}
 	}) executingAction?: DialogActionKey
 
-	@state() showTopLayer = false
+	@state() private showTopLayer = false
 
 	@query('lit-application-top-layer') readonly topLayerElement!: ApplicationTopLayer
 	@queryActionElement('primaryAction') readonly primaryActionElement!: HTMLElement
@@ -254,6 +254,7 @@ export class Dialog extends Component {
 				${this.headerTemplate}
 				${this.contentTemplate}
 				${this.footerTemplate}
+				${this.topLayerTemplate}
 			</md-dialog>
 		`
 	}
@@ -302,7 +303,12 @@ export class Dialog extends Component {
 			<form slot='content' part='content' method='dialog'>
 				<slot>${this.contentDefaultTemplate}</slot>
 			</form>
-			${!this.showTopLayer ? nothing : html`<lit-application-top-layer slot='content'></lit-application-top-layer>`}
+		`
+	}
+
+	protected get topLayerTemplate() {
+		return !this.showTopLayer ? nothing : html`
+			<lit-application-top-layer slot='top-layer'></lit-application-top-layer>
 		`
 	}
 
@@ -403,17 +409,31 @@ MdDialog.elementStyles.push(css`
 	.scrim {
 		opacity: 1;
 	}
+
+	.headline, .actions {
+		/* .content has a default z-index of 1 in Material */
+		z-index: 2;
+	}
 `)
 
 MdDialog.addInitializer(element => {
 	if ((globalThis as any).environment === 'test') {
 		HTMLDialogElement.prototype.showModal = () => undefined
 	}
-	element.addController({
+	element.addController(new class {
 		hostUpdated() {
 			element.renderRoot.querySelector('dialog')?.part.add('dialog')
 			element.renderRoot.querySelector('.scrim')?.part.add('scrim')
 			element.renderRoot.querySelectorAll('md-divider')?.forEach(divider => divider.part.add('divider'))
+			this.renderTopLayerSlot()
+		}
+
+		private renderTopLayerSlot() {
+			if (!element.renderRoot.querySelector('slot[name=top-layer]')) {
+				const topLayerSlot = document.createElement('slot')
+				topLayerSlot.name = 'top-layer'
+				element.renderRoot.querySelector('dialog')?.appendChild(topLayerSlot)
+			}
 		}
 	})
 })
