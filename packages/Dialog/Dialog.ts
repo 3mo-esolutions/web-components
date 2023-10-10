@@ -1,4 +1,4 @@
-import { component, property, query, html, css, nothing, event, state, Component } from '@a11d/lit'
+import { component, property, query, html, css, event, state, Component } from '@a11d/lit'
 import { ApplicationTopLayer, DialogActionKey, DialogComponent } from '@a11d/lit-application'
 import { MdDialog } from '@material/web/dialog/dialog.js'
 import { tooltip } from '@3mo/tooltip'
@@ -284,15 +284,15 @@ export class Dialog extends Component {
 	}
 
 	protected get headerDefaultTemplate() {
-		return nothing
+		return html.nothing
 	}
 
 	protected get headerOptionsTemplate() {
 		return html`
-			${this.boundToWindow || this.blocking ? nothing : html`
+			${this.boundToWindow || this.blocking ? html.nothing : html`
 				<mo-icon-button icon='close' ${tooltip(t('Close'))} @click=${() => this.handleAction(DialogActionKey.Cancellation)}></mo-icon-button>
 			`}
-			${this.boundToWindow || !this.poppable ? nothing : html`
+			${this.boundToWindow || !this.poppable ? html.nothing : html`
 				<mo-icon-button icon='launch' ${tooltip(t('Open as Popup'))} @click=${() => this.requestPopup.dispatch()}></mo-icon-button>
 			`}
 		`
@@ -307,27 +307,27 @@ export class Dialog extends Component {
 	}
 
 	protected get topLayerTemplate() {
-		return !this.showTopLayer ? nothing : html`
+		return !this.showTopLayer ? html.nothing : html`
 			<lit-application-top-layer slot='top-layer'></lit-application-top-layer>
 		`
 	}
 
 	protected get contentDefaultTemplate() {
-		return nothing
+		return html.nothing
 	}
 
 	private get shallHideFooter() {
 		return !this.primaryActionElement
 			&& !this.primaryButtonText
-			&& this.primaryActionDefaultTemplate === nothing
+			&& this.primaryActionDefaultTemplate === html.nothing
 			&& !this.secondaryActionElement
 			&& !this.secondaryButtonText
-			&& this.secondaryActionDefaultTemplate === nothing
+			&& this.secondaryActionDefaultTemplate === html.nothing
 			&& !this.slotController.hasAssignedContent('footer')
 	}
 
 	protected get footerTemplate() {
-		return this.shallHideFooter ? nothing : html`
+		return this.shallHideFooter ? html.nothing : html`
 			<mo-flex slot='actions' part='footer' direction='horizontal-reversed'>
 				${this.primaryActionSlotTemplate}
 				${this.secondaryActionSlotTemplate}
@@ -343,7 +343,7 @@ export class Dialog extends Component {
 	}
 
 	protected get footerDefaultTemplate() {
-		return nothing
+		return html.nothing
 	}
 
 	protected get primaryActionSlotTemplate() {
@@ -355,7 +355,7 @@ export class Dialog extends Component {
 	}
 
 	protected get primaryActionDefaultTemplate() {
-		return !this.primaryButtonText ? nothing : html`
+		return !this.primaryButtonText ? html.nothing : html`
 			<mo-loading-button type='raised'>
 				${this.primaryButtonText}
 			</mo-loading-button>
@@ -371,7 +371,7 @@ export class Dialog extends Component {
 	}
 
 	protected get secondaryActionDefaultTemplate() {
-		return !this.secondaryButtonText ? nothing : html`
+		return !this.secondaryButtonText ? html.nothing : html`
 			<mo-loading-button>
 				${this.secondaryButtonText}
 			</mo-loading-button>

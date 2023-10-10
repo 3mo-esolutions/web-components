@@ -1,4 +1,4 @@
-import { component, property, html, nothing, TemplateResult } from '@a11d/lit'
+import { component, property, html, TemplateResult } from '@a11d/lit'
 import { FetchableDialogComponentParameters as EntityWithId } from '@3mo/fetchable-dialog'
 import { EntityDialogComponent } from '@3mo/entity-dialog'
 import { FetchableDataGridParametersType, FetchableDataGrid } from '@3mo/fetchable-data-grid'
@@ -75,14 +75,14 @@ export class EntityDataGrid<TEntity extends EntityWithId, TDataFetcherParameters
 
 	protected override get fabTemplate() {
 		return html`
-			${!this.create || this.hideFab ? nothing : html`<mo-fab icon='add' @click=${() => this.createAndRefetch()}></mo-fab>`}
+			${!this.create || this.hideFab ? html.nothing : html`<mo-fab icon='add' @click=${() => this.createAndRefetch()}></mo-fab>`}
 			${super.fabTemplate}
 		`
 	}
 
 	override getRowContextMenuTemplate = (entities: Array<TEntity>) => {
 		return html`
-			${this.rowContextMenuTemplate?.(entities) ?? nothing}
+			${this.rowContextMenuTemplate?.(entities) ?? html.nothing}
 			${this.getEditContextMenuItemTemplate(entities)}
 			${this.getDeleteContextMenuItemTemplate(entities)}
 		`
@@ -90,7 +90,7 @@ export class EntityDataGrid<TEntity extends EntityWithId, TDataFetcherParameters
 
 	private getEditContextMenuItemTemplate(entities: Array<TEntity>) {
 		const nonEditable = !this.edit || entities.length !== 1 || this.isEntityEditable?.(entities[0]!) === false
-		return nonEditable ? nothing : html`
+		return nonEditable ? html.nothing : html`
 			<mo-data-grid-primary-context-menu-item icon='edit' data-test-id='edit' @click=${() => this.editAndRefetch(entities[0]!)}>
 				${t('Edit')}
 			</mo-data-grid-primary-context-menu-item>
@@ -99,7 +99,7 @@ export class EntityDataGrid<TEntity extends EntityWithId, TDataFetcherParameters
 
 	private getDeleteContextMenuItemTemplate(entities: Array<TEntity>) {
 		const nonDeletable = !this.delete || entities.some(entity => this.isEntityDeletable?.(entity) === false)
-		return nonDeletable ? nothing : html`
+		return nonDeletable ? html.nothing : html`
 			<mo-context-menu-item icon='delete' data-test-id='delete' @click=${() => this.deleteAndRefetch(entities)}>
 				${t('Delete')}
 			</mo-context-menu-item>

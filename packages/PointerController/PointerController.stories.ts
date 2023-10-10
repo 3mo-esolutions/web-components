@@ -1,5 +1,5 @@
 import { story, meta } from '../../.storybook/story.js'
-import { Component, css, html, nothing, state } from '@a11d/lit'
+import { Component, css, html, state } from '@a11d/lit'
 import p from './package.json'
 import { PointerController as PointerC } from './PointerController.js'
 
@@ -30,7 +30,7 @@ class StoryPointerController extends Component {
 	protected override get template() {
 		return html`
 			<mo-button type='raised' @click=${() => this.toggled = !this.toggled}>
-				Content ${!this.pointerController.hover ? nothing : '(Hovered)'} ${!this.toggled ? nothing : '(Toggle)'}
+				Content ${!this.pointerController.hover ? html.nothing : '(Hovered)'} ${!this.toggled ? html.nothing : '(Toggle)'}
 			</mo-button>
 		`
 	}

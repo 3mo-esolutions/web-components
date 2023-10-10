@@ -1,4 +1,4 @@
-import { ComponentTestFixture } from '@a11d/lit/dist/test/index.js'
+import { ComponentTestFixture } from '@a11d/lit-testing'
 import { Expander } from './Expander.js'
 import './Expander.js'
 import '@3mo/expand-collapse-icon-button'

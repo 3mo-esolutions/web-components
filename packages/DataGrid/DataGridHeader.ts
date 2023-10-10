@@ -1,4 +1,4 @@
-import { component, Component, css, html, ifDefined, property, event, join, style, nothing } from '@a11d/lit'
+import { component, Component, css, html, ifDefined, property, event, join, style } from '@a11d/lit'
 import { Checkbox } from '@3mo/checkbox'
 import { DataGridSelectionMode, DataGridSortingStrategy, ColumnDefinition, DataGrid, DataGridSidePanelTab } from './index.js'
 
@@ -90,9 +90,9 @@ export class DataGridHeader<TData> extends Component {
 	}
 
 	private get detailsExpanderTemplate() {
-		return this.dataGrid.hasDetails === false ? nothing : html`
+		return this.dataGrid.hasDetails === false ? html.nothing : html`
 			<mo-flex justifyContent='center' alignItems='center'>
-				${!this.dataGrid.hasDetails || !this.dataGrid.multipleDetails ? nothing : html`
+				${!this.dataGrid.hasDetails || !this.dataGrid.multipleDetails ? html.nothing : html`
 					<mo-icon-button dense ${style({ padding: '-10px 0px 0 -10px' })}
 						${style({ display: 'inherit' })}
 						icon=${this.dataGrid.allRowDetailsOpen ? 'unfold_less' : 'unfold_more'}
@@ -104,9 +104,9 @@ export class DataGridHeader<TData> extends Component {
 	}
 
 	private get selectionTemplate() {
-		return this.dataGrid.hasSelection === false || this.dataGrid.selectionCheckboxesHidden ? nothing : html`
+		return this.dataGrid.hasSelection === false || this.dataGrid.selectionCheckboxesHidden ? html.nothing : html`
 			<mo-flex justifyContent='center' alignItems='center'>
-				${this.dataGrid.selectionMode !== DataGridSelectionMode.Multiple ? nothing : html`
+				${this.dataGrid.selectionMode !== DataGridSelectionMode.Multiple ? html.nothing : html`
 					<mo-checkbox ${style({ position: 'absolute' })} value=${this.selection} @change=${this.handleSelectionChange}></mo-checkbox>
 				`}
 			</mo-flex>
@@ -139,7 +139,7 @@ export class DataGridHeader<TData> extends Component {
 			>
 				<div class='headerContent' ${style({ width: '100%', textAlign: column.alignment })} title=${column.title || column.heading}>${column.heading}</div>
 
-				${sortIcon === undefined ? nothing : html`
+				${sortIcon === undefined ? html.nothing : html`
 					<mo-icon ${style({ color: 'var(--mo-color-accent)' })} icon=${ifDefined(sortIcon)}></mo-icon>
 				`}
 			</mo-flex>
@@ -147,7 +147,7 @@ export class DataGridHeader<TData> extends Component {
 	}
 
 	private get moreTemplate() {
-		return this.dataGrid.hasToolbar || this.dataGrid.sidePanelHidden ? nothing : html`
+		return this.dataGrid.hasToolbar || this.dataGrid.sidePanelHidden ? html.nothing : html`
 			<mo-flex alignItems='center' justifyContent='center' ${style({ marginInlineEnd: '8px', cursor: 'pointer', position: 'relative' })}>
 				<mo-icon-button dense icon='settings' ${style({ color: 'var(--mo-color-accent)', fontSize: 'large' })}
 					@click=${() => this.dataGrid.navigateToSidePanelTab(this.dataGrid.sidePanelTab ? undefined : DataGridSidePanelTab.Settings)}

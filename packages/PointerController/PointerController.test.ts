@@ -1,5 +1,5 @@
 import { component, Component, html } from '@a11d/lit'
-import { ComponentTestFixture } from '@a11d/lit/dist/test/index.js'
+import { ComponentTestFixture } from '@a11d/lit-testing'
 import { PointerController } from './PointerController.js'
 
 @component('pointer-controller-test-component')

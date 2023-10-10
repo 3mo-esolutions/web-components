@@ -1,4 +1,4 @@
-import { component, html, property, Component, nothing, style } from  '@a11d/lit'
+import { component, html, property, Component, style } from  '@a11d/lit'
 import type { MaterialIcon } from '@3mo/icon'
 import type { Flex } from '@3mo/flex'
 
@@ -79,14 +79,14 @@ export class Meta extends Component {
 				<mo-heading typography='subtitle2' part='heading'>${this.heading}</mo-heading>
 				<span>
 					<slot></slot>
-					${!this.label ? nothing : html`<mo-label part='label'>${this.label}</mo-label>`}
+					${!this.label ? html.nothing : html`<mo-label part='label'>${this.label}</mo-label>`}
 				</span>
 			</mo-flex>
 		`
 	}
 
 	private get iconTemplate() {
-		return !this.icon ? nothing : html`
+		return !this.icon ? html.nothing : html`
 			<mo-icon part='icon' icon=${this.icon}></mo-icon>
 		`
 	}

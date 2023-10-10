@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/member-ordering */
-import { css, html, nothing, property, event, style } from '@a11d/lit'
+import { css, html, property, event, style } from '@a11d/lit'
 import { LocalStorage } from '@a11d/local-storage'
 import { contextMenu } from '@3mo/context-menu'
 import { tooltip } from '@3mo/tooltip'
@@ -100,7 +100,7 @@ export abstract class ModdableDataGrid<TData, TDataFetcherParameters extends Fet
 
 	protected override get template() {
 		return html`
-			${!this.hasModebar ? nothing : html`
+			${!this.hasModebar ? html.nothing : html`
 				<mo-flex id='modebarFlex' direction='horizontal'>
 					${this.modebarTemplate}
 				</mo-flex>
@@ -115,7 +115,7 @@ export abstract class ModdableDataGrid<TData, TDataFetcherParameters extends Fet
 
 	protected override get toolbarActionsTemplate() {
 		return html`
-			${this.hasModebar || ModdableDataGrid.disableModes ? nothing : html`<mo-icon-button icon='visibility' @click=${this.createNewMode} ${tooltip(t('New Mode'))}></mo-icon-button>`}
+			${this.hasModebar || ModdableDataGrid.disableModes ? html.nothing : html`<mo-icon-button icon='visibility' @click=${this.createNewMode} ${tooltip(t('New Mode'))}></mo-icon-button>`}
 			${super.toolbarActionsTemplate}
 		`
 	}
@@ -146,7 +146,7 @@ export abstract class ModdableDataGrid<TData, TDataFetcherParameters extends Fet
 				<mo-icon-button icon='add' ${tooltip('New Mode')} @click=${this.createNewMode}></mo-icon-button>
 			</mo-flex>
 
-			${this.modesRepository.getArchived().length === 0 ? nothing : html`
+			${this.modesRepository.getArchived().length === 0 ? html.nothing : html`
 				<mo-icon-button icon='more_vert' ${contextMenu(this.archiveMenuTemplate)}></mo-icon-button>
 			`}
 		`
@@ -160,7 +160,7 @@ export abstract class ModdableDataGrid<TData, TDataFetcherParameters extends Fet
 	}
 
 	private get temporarySelectedModeTab() {
-		return !this.mode || this.modes.includes(this.mode) || this.mode.isArchived === false ? nothing : html`
+		return !this.mode || this.modes.includes(this.mode) || this.mode.isArchived === false ? html.nothing : html`
 			<mo-data-grid-mode-chip data-non-sortable .moddableDataGrid=${this as any} .mode=${this.mode} selected></mo-data-grid-mode-chip>
 		`
 	}

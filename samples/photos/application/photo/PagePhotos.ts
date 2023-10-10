@@ -1,4 +1,4 @@
-import { nothing, PageComponent, component, html, route, state, cache, style, tooltip, contextMenu } from '@3mo/del'
+import { PageComponent, component, html, route, state, cache, style, tooltip, contextMenu } from '@3mo/del'
 import { Photo } from '../../sdk/index.js'
 
 const enum Tab {
@@ -42,7 +42,7 @@ export class PagePhotos extends PageComponent {
 		return html`
 			<mo-flex direction='horizontal' alignItems='center' ${style({ height: '40px' })}>
 				<mo-heading typography='heading4' ${style({ color: 'var(--mo-color-accent)', width: '*' })}>${this.selectedPhotos.length > 0 ? `${this.selectedPhotos.length} Photo${this.selectedPhotos.length > 1 ? 's' : ''} selected` : 'Photos'}</mo-heading>
-				${this.selectedPhotos.length === 0 ? nothing : html`
+				${this.selectedPhotos.length === 0 ? html.nothing : html`
 					<mo-icon-button icon='edit'
 						${tooltip(html`
 							<mo-card heading='Tooltip'>

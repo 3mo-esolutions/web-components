@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/card",
-	"version": "0.2.7",
+	"version": "0.2.8",
 	"description": "A card web-component based on Material Design.",
 	"repository": {
 		"type": "git",
@@ -28,5 +28,8 @@
 		"@3mo/slot-controller": "x",
 		"@3mo/flex": "x",
 		"@3mo/heading": "x"
+	},
+	"devDependencies": {
+		"@a11d/lit-testing": "x"
 	}
 }

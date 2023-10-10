@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/snackbar",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "A snackbar web-component based on Material Web Components (MWC).",
 	"repository": {
 		"type": "git",
@@ -30,5 +30,8 @@
 		"@3mo/icon-button": "x",
 		"@3mo/button": "x",
 		"@3mo/linear-progress": "x"
+	},
+	"devDependencies": {
+		"@a11d/lit-testing": "x"
 	}
 }

@@ -1,4 +1,4 @@
-import { component, html, event, nothing, property, style } from '@a11d/lit'
+import { component, html, event, property, style } from '@a11d/lit'
 import { Localizer } from '@3mo/localization'
 import { tooltip } from '@3mo/tooltip'
 import { DataGridColumn } from './DataGridColumn.js'
@@ -24,7 +24,7 @@ export class DataGridColumnDeletion<TData> extends DataGridColumn<TData, never> 
 	override nonSortable = true
 	override nonEditable = true
 
-	getContentTemplate = (_: never, data?: TData) => this.prevent ? nothing : html`
+	getContentTemplate = (_: never, data?: TData) => this.prevent ? html.nothing : html`
 		<mo-icon-button icon='delete' ${tooltip('Delete position')}
 			${style({ color: 'var(--mo-color-gray)', height: '40px' })}
 			@click=${() => !data ? void 0 : this.delete.dispatch(data)}

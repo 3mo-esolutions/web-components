@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/switch",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "A switch web-component based on Material Web Components.",
 	"repository": {
 		"type": "git",
@@ -27,5 +27,8 @@
 		"@3mo/theme": "x",
 		"@3mo/disabled-property": "x",
 		"@material/web": "x"
+	},
+	"devDependencies": {
+		"@a11d/lit-testing": "x"
 	}
 }

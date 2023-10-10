@@ -1,4 +1,4 @@
-import { component, property, css, html, nothing, eventListener, event } from '@a11d/lit'
+import { component, property, css, html, eventListener, event } from '@a11d/lit'
 import { SelectionListItem } from '@3mo/list'
 
 @component('mo-option')
@@ -69,7 +69,7 @@ export class Option<T> extends SelectionListItem {
 	}
 
 	protected get checkboxTemplate() {
-		return !this.multiple ? nothing : html`
+		return !this.multiple ? html.nothing : html`
 			<mo-checkbox tabindex='-1'
 				?checked=${this.selected}
 				@click=${(e: MouseEvent) => e.stopImmediatePropagation()}

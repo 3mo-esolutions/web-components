@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/fetchable-dialog",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"description": "An extension of @3mo/loading-dialog that fetches an entity.",
 	"repository": {
 		"type": "git",

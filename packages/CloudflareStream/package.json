@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/cloudflare-stream",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Lit-based web-component for cloudflare stream service.",
 	"repository": {
 		"type": "git",
@@ -24,5 +24,8 @@
 	"dependencies": {
 		"@a11d/lit": "x",
 		"tslib": "x"
+	},
+	"devDependencies": {
+		"@a11d/lit-testing": "x"
 	}
 }

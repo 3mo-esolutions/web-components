@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/resize-observer",
-	"version": "0.0.6",
+	"version": "0.0.7",
 	"description": "A lit controller and directive for observing resizes.",
 	"repository": {
 		"type": "git",

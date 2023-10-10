@@ -1,4 +1,4 @@
-import { component, html, event, ifDefined, nothing, property, css, Component, query } from '@a11d/lit'
+import { component, html, event, ifDefined, property, css, Component, query } from '@a11d/lit'
 import { Color } from '@3mo/color'
 
 /**
@@ -59,7 +59,7 @@ export class ColorPicker extends Component {
 	}
 
 	private get datalistTemplate() {
-		return !this.presetColors?.length ? nothing : html`
+		return !this.presetColors?.length ? html.nothing : html`
 			<datalist id='presetColors'>
 				${this.presetColors.map(color => html`<option>${color.hex}</option>`)}
 			</datalist>

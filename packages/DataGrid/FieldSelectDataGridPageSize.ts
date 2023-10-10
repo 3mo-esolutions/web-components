@@ -1,4 +1,4 @@
-import { component, html, property, nothing } from '@a11d/lit'
+import { component, html, property } from '@a11d/lit'
 import { FieldSelect } from '@3mo/select-field'
 import { DataGrid, DataGridPagination } from './DataGrid.js'
 
@@ -10,7 +10,7 @@ export class FieldSelectDataGridPageSize extends FieldSelect<DataGridPagination>
 
 	override get optionsTemplate() {
 		return html`
-			${!this.dataGrid || !this.dataGrid.supportsDynamicPageSize ? nothing : html`
+			${!this.dataGrid || !this.dataGrid.supportsDynamicPageSize ? html.nothing : html`
 				<mo-option value='auto'>Auto</mo-option>
 			`}
 			${FieldSelectDataGridPageSize.data.map(size => html`

@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/intersection-observer",
-	"version": "1.0.4",
+	"version": "1.0.5",
 	"description": "A lit controller and directive for observing intersections.",
 	"repository": {
 		"type": "git",
@@ -25,5 +25,8 @@
 		"@a11d/lit": "x",
 		"tslib": "x",
 		"@lit-labs/observers": "x"
+	},
+	"devDependencies": {
+		"@a11d/lit-testing": "x"
 	}
 }

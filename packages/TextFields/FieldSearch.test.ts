@@ -1,4 +1,4 @@
-import { ComponentTestFixture } from '@a11d/lit/dist/test/index.js'
+import { ComponentTestFixture } from '@a11d/lit-testing'
 import { FieldSearch } from './FieldSearch.js'
 import { expectSlotRendersOnlyWithAssignedContent } from '../Field/FieldComponent.test.js'
 import { expectFieldPropertyTunnelsToInput, expectInputEventTunnelsToField } from '../Field/InputFieldComponent.test.js'

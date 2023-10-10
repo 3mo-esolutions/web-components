@@ -1,4 +1,4 @@
-import { component, html, ifDefined, live, nothing, property, style } from '@a11d/lit'
+import { component, html, ifDefined, live, property, style } from '@a11d/lit'
 import { InputFieldComponent } from '@3mo/field'
 
 export type FieldTextAutoComplete =
@@ -111,7 +111,7 @@ export class FieldText extends InputFieldComponent<string> {
 
 	protected get lengthTemplate() {
 		if (!this.maxLength) {
-			return nothing
+			return html.nothing
 		}
 		const remainingLength = this.maxLength - (this.inputValue?.length ?? 0)
 		return html`

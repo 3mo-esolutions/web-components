@@ -1,5 +1,5 @@
 import { Dialog, DialogSize } from '@3mo/dialog'
-import { ComponentTestFixture } from '@a11d/lit/dist/test/index.js'
+import { ComponentTestFixture } from '@a11d/lit-testing'
 import { DialogAcknowledge } from './DialogAcknowledge.js'
 
 describe('DialogAcknowledge', () => {

@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/anchor",
-	"version": "1.0.6",
+	"version": "1.0.7",
 	"description": "An anchor web-component.",
 	"repository": {
 		"type": "git",
@@ -24,5 +24,8 @@
 		"@a11d/lit": "x",
 		"tslib": "x",
 		"@3mo/theme": "x"
+	},
+	"devDependencies": {
+		"@a11d/lit-testing": "x"
 	}
 }

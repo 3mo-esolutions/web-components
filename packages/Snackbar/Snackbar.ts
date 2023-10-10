@@ -1,4 +1,4 @@
-import { component, html, css, ifDefined, nothing, unsafeCSS, style, property } from '@a11d/lit'
+import { component, html, css, ifDefined, unsafeCSS, style, property } from '@a11d/lit'
 import { Notification, NotificationComponent, NotificationType } from '@a11d/lit-application'
 import { MaterialIcon } from '@3mo/icon'
 import { Snackbar as MwcSnackbar } from '@material/mwc-snackbar'
@@ -74,7 +74,7 @@ export class Snackbar extends NotificationComponent {
 	}
 
 	protected get iconTemplate() {
-		return !this.type ? nothing : html`
+		return !this.type ? html.nothing : html`
 			<mo-icon slot='icon'
 				icon=${ifDefined(Snackbar.iconByType.get(this.type))}
 				${style({ color: 'rgba(var(--mo-snackbar-color-base), 0.75)' })}
@@ -97,7 +97,7 @@ export class Snackbar extends NotificationComponent {
 	}
 
 	protected get progressBarTemplate() {
-		return !this.timer ? nothing : html`
+		return !this.timer ? html.nothing : html`
 			<mo-linear-progress slot='progress' progress=${1 - this.timer.remainingTimeToNextTick / this.timer.interval + 0.075}></mo-linear-progress>
 		`
 	}

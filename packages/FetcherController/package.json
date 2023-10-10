@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/fetcher-controller",
-	"version": "0.1.4",
+	"version": "0.1.5",
 	"description": "Fetcher Controller enqueues and throttles fetch requests and gives you information about the status and the result thereof.",
 	"repository": {
 		"type": "git",

@@ -1,4 +1,4 @@
-import { component, html, nothing, css } from '@a11d/lit'
+import { component, html, css } from '@a11d/lit'
 import { Section } from '@3mo/section'
 import '@3mo/card'
 
@@ -32,7 +32,7 @@ export class GroupBox extends Section {
 	}
 
 	protected get defaultFooterTemplate() {
-		return nothing
+		return html.nothing
 	}
 }
 

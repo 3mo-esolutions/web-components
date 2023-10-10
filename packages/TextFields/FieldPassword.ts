@@ -1,4 +1,4 @@
-import { component, nothing, property } from '@a11d/lit'
+import { html, component, property } from '@a11d/lit'
 import { FieldText, FieldTextAutoComplete } from './FieldText.js'
 
 /**
@@ -13,7 +13,7 @@ export class FieldPassword extends FieldText {
 	@property() override autoComplete: FieldTextAutoComplete = 'current-password'
 
 	protected override get lengthTemplate() {
-		return nothing
+		return html.nothing
 	}
 }
 

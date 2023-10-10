@@ -1,4 +1,4 @@
-import { component, property, Component, css, state, html, nothing, query, ifDefined, style } from '@a11d/lit'
+import { component, property, Component, css, state, html, query, ifDefined, style } from '@a11d/lit'
 import { FieldNumber } from '@3mo/number-fields'
 import { Localizer } from '@3mo/localization'
 import { DataGrid, DataGridPagination, FieldSelectDataGridPageSize } from './index.js'
@@ -75,7 +75,7 @@ export class DataGridFooter<TData> extends Component {
 
 	protected override get template() {
 		this.toggleAttribute('hideTopBorder', this.dataGrid.hasFooter === false)
-		return this.dataGrid.hasFooter === false ? nothing : html`
+		return this.dataGrid.hasFooter === false ? html.nothing : html`
 			<mo-flex direction='horizontal' justifyContent='space-between' alignItems='center' wrap='wrap-reverse' gap='6px' ${style({ flex: '1', padding: '0 6px' })}>
 				<mo-flex direction='horizontal' alignItems='center' gap='1vw' ${style({ flexBasis: 'auto' })}>
 					${this.paginationTemplate}
@@ -99,7 +99,7 @@ export class DataGridFooter<TData> extends Component {
 			`${(Math.min(from, to)).format()}-${to.format()}`,
 			hasUnknownDataLength ? undefined : this.dataGrid.dataLength.format(),
 		].filter(Boolean).join(' / ')
-		return !this.dataGrid.hasPagination ? nothing : html`
+		return !this.dataGrid.hasPagination ? html.nothing : html`
 			<mo-flex direction='horizontal' gap='4px' alignItems='center' justifyContent='center'>
 				<mo-icon-button dense icon=${isRtl ? 'last_page' : 'first_page'}
 					?disabled=${this.page === 1}

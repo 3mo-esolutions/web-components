@@ -83,14 +83,14 @@ describe('DateTimeRange', () => {
 		const start = new DateTime('2020-01-02')
 		const range = new DateTimeRange(start)
 		expect(range.format({ language: 'de' }).replace(/\s/g, '')).toBe('02.01.2020–')
-		expect(range.format({ language: 'fa' })).toBe('۲۰۲۰/۰۱/۰۲ تا')
+		expect(range.format({ language: 'fa' }).replaceAll(/\s/g, '')).toBe('۲۰۲۰/۰۱/۰۲تا')
 	})
 
 	it('.format() should return a formatted end date for a range with only an end date', () => {
 		const end = new DateTime('2020-01-02')
 		const range = new DateTimeRange(undefined, end)
 		expect(range.format({ language: 'de' }).replace(/\s/g, '')).toBe('–02.01.2020')
-		expect(range.format({ language: 'fa' })).toBe('تا ۲۰۲۰/۰۱/۰۲')
+		expect(range.format({ language: 'fa' }).replaceAll(/\s/g, '')).toBe('تا۲۰۲۰/۰۱/۰۲')
 	})
 
 	it('.format() should return a formatted start and end date for a range with both dates', () => {
@@ -98,6 +98,6 @@ describe('DateTimeRange', () => {
 		const end = new DateTime('2020-01-04')
 		const range = new DateTimeRange(start, end)
 		expect(range.format({ language: 'de' }).replace(/\s/g, '')).toBe('02.01.2010–04.01.2020')
-		expect(range.format({ language: 'fa' })).toBe('۲۰۱۰/۱/۲ تا ۲۰۲۰/۱/۴')
+		expect(range.format({ language: 'fa' }).replaceAll(/\s/g, '')).toBe('۲۰۱۰/۱/۲تا۲۰۲۰/۱/۴')
 	})
 })

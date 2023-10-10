@@ -1,4 +1,4 @@
-import { component, html, nothing, property, query } from '@a11d/lit'
+import { component, html, property, query } from '@a11d/lit'
 import { type GetItemTemplate, VirtualizedScroller } from '@3mo/virtualized-scroller'
 import { List, isListItem } from '@3mo/list'
 
@@ -13,7 +13,7 @@ import { List, isListItem } from '@3mo/list'
 @component('mo-virtualized-list')
 export class VirtualizedList<T = unknown> extends List {
 	@property({ type: Array }) data = new Array<T>()
-	@property({ type: Object }) getItemTemplate: GetItemTemplate<T> = (() => nothing)
+	@property({ type: Object }) getItemTemplate: GetItemTemplate<T> = (() => html.nothing)
 
 	@query('mo-virtualized-scroller') protected readonly virtualizedScroller!: VirtualizedScroller
 

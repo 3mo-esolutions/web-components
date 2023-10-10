@@ -1,4 +1,4 @@
-import { nothing, component, html, ifDefined, style } from '@a11d/lit'
+import { component, html, ifDefined, style } from '@a11d/lit'
 import { DataGridColumnNumberBase } from './DataGridColumnNumberBase.js'
 
 /** @element mo-data-grid-column-number */
@@ -6,7 +6,7 @@ import { DataGridColumnNumberBase } from './DataGridColumnNumberBase.js'
 export class DataGridColumnNumber<TData> extends DataGridColumnNumberBase<TData> {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	getContentTemplate(value: number | undefined, _data: TData) {
-		return html`${this.getNumber(value)?.format() ?? nothing}`
+		return html`${this.getNumber(value)?.format() ?? html.nothing}`
 	}
 
 	getEditContentTemplate(value: number | undefined, data: TData) {

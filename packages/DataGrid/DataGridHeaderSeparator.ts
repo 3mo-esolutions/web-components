@@ -1,4 +1,4 @@
-import { Component, component, property, html, css, state, event, eventListener, nothing, style } from '@a11d/lit'
+import { Component, component, property, html, css, state, event, eventListener, style } from '@a11d/lit'
 import type { ColumnDefinition, DataGrid } from './index.js'
 
 /** @fires columnUpdate {CustomEvent} */
@@ -61,7 +61,7 @@ export class DataGridHeaderSeparator extends Component {
 				<div class='knob'></div>
 			</div>
 
-			${this.isResizing === false ? nothing : html`
+			${this.isResizing === false ? html.nothing : html`
 				<div class='resizerOverlay' ${style({ marginInlineStart: `${this.delta}px` })}></div>
 			`}
 		`

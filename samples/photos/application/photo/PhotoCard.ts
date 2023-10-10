@@ -1,4 +1,4 @@
-import { component, Component, html, nothing, property, event, style } from '@3mo/del'
+import { component, Component, html, property, event, style } from '@3mo/del'
 import { Photo } from '../../sdk/index.js'
 import { DialogPhoto } from './DialogPhoto.js'
 
@@ -9,7 +9,7 @@ export class PhotoCard extends Component {
 	@property({ type: Boolean, reflect: true }) selected = false
 
 	protected override get template() {
-		return !this.photo ? nothing : html`
+		return !this.photo ? html.nothing : html`
 			<style>
 				:host {
 					height: 100%;

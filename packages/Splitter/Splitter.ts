@@ -1,4 +1,4 @@
-import { component, html, property, Component, css, styleMap, nothing, queryAll, ifDefined, eventListener, style } from '@a11d/lit'
+import { component, html, property, Component, css, styleMap, queryAll, ifDefined, eventListener, style } from '@a11d/lit'
 import { Flex } from '@3mo/flex'
 import { MutationController } from '@3mo/mutation-observer'
 import { SplitterItem, SplitterResizerHost } from './index.js'
@@ -114,7 +114,7 @@ export class Splitter extends Component {
 	}
 
 	private getResizerHostTemplate(item: SplitterItem, index: number) {
-		return index === this.items.length - 1 ? nothing : html`
+		return index === this.items.length - 1 ? html.nothing : html`
 			<mo-splitter-resizer-host part='resizer-host'
 				?locked=${item.locked}
 				direction=${this.direction}

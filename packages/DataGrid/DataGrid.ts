@@ -1,4 +1,4 @@
-import { property, component, Component, html, css, live, query, nothing, ifDefined, PropertyValues, event, queryAll, style, literal, staticHtml, HTMLTemplateResult, cache } from '@a11d/lit'
+import { property, component, Component, html, css, live, query, ifDefined, PropertyValues, event, queryAll, style, literal, staticHtml, HTMLTemplateResult, cache } from '@a11d/lit'
 import { NotificationComponent } from '@a11d/lit-application'
 import { LocalStorage } from '@a11d/local-storage'
 import { InstanceofAttributeController } from '@3mo/instanceof-attribute-controller'
@@ -611,7 +611,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			<mo-splitter direction='horizontal-reversed' ${style({ height: '100%' })} .resizerTemplate=${html`
 				<mo-splitter-resizer-line style='--mo-splitter-resizer-line-thickness: 1px; --mo-splitter-resizer-line-idle-background: var(--mo-color-transparent-gray-3); --mo-splitter-resizer-line-horizontal-transform: scaleX(5);'></mo-splitter-resizer-line>
 			`}>
-				${cache(this.sidePanelTab === undefined ? nothing : html`
+				${cache(this.sidePanelTab === undefined ? html.nothing : html`
 					<mo-splitter-item size='min(25%, 300px)' min='max(15%, 250px)' max='clamp(100px, 50%, 750px)'>
 						${this.sidePanelTemplate}
 					</mo-splitter-item>
@@ -628,7 +628,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		return html`
 			<mo-flex id='overlayModeContainer'>
 				${this.dataGridTemplate}
-				${this.sidePanelTab === undefined ? nothing : this.sidePanelTemplate}
+				${this.sidePanelTab === undefined ? html.nothing : this.sidePanelTemplate}
 			</mo-flex>
 		`
 	}
@@ -646,15 +646,15 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}
 
 	protected get settingsDefaultTemplate() {
-		return nothing
+		return html.nothing
 	}
 
 	protected get filtersDefaultTemplate() {
-		return nothing
+		return html.nothing
 	}
 
 	protected get columnsTemplate() {
-		return nothing
+		return html.nothing
 	}
 
 	protected get rowElementTag() {
@@ -701,7 +701,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}
 
 	protected get headerTemplate() {
-		return this.headerHidden ? nothing : html`
+		return this.headerHidden ? html.nothing : html`
 			<mo-data-grid-header .dataGrid=${this as any}></mo-data-grid-header>
 		`
 	}
@@ -756,7 +756,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				<mo-flex id='fab' direction='vertical-reversed' gap='8px'>
 					${this.fabTemplate}
 				</mo-flex>
-				${this.hasFooter === false ? nothing : html`
+				${this.hasFooter === false ? html.nothing : html`
 					<mo-data-grid-footer
 						.dataGrid=${this as any}
 						page=${this.page}
@@ -799,7 +799,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}
 
 	protected get toolbarTemplate() {
-		return this.hasToolbar === false ? nothing : html`
+		return this.hasToolbar === false ? html.nothing : html`
 			<mo-flex id='toolbar' direction='horizontal' gap='8px' wrap='wrap' justifyContent='end' alignItems='center'>
 				<mo-flex direction='horizontal' alignItems='inherit' gap='8px' wrap='wrap' ${style({ width: '*' })}>
 					<slot name='toolbar'>${this.toolbarDefaultTemplate}</slot>
@@ -814,26 +814,26 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}
 
 	protected get toolbarDefaultTemplate() {
-		return nothing
+		return html.nothing
 	}
 
 	protected get toolbarActionDefaultTemplate() {
-		return nothing
+		return html.nothing
 	}
 
 	protected get sumDefaultTemplate() {
-		return nothing
+		return html.nothing
 	}
 
 	protected get selectionToolbarTemplate() {
-		return this.selectionToolbarDisabled === true || this.selectedData.length === 0 ? nothing : html`
+		return this.selectionToolbarDisabled === true || this.selectedData.length === 0 ? html.nothing : html`
 			<mo-flex id='flexSelectionToolbar'>
 				<mo-flex direction='horizontal' gap='30px' ${style({ placeSelf: 'stretch' })}>
 					<div ${style({ fontWeight: '500', margin: '0 6px' })}>
 						${t('${count:pluralityNumber} entries selected', { count: this.selectedData.length })}
 					</div>
-					${!this.getRowContextMenuTemplate ? nothing : html`
-						<mo-flex id='flexActions' direction='horizontal' @click=${(e: PointerEvent) => ContextMenu.open(e, this.getRowContextMenuTemplate?.(this.selectedData) ?? nothing)}>
+					${!this.getRowContextMenuTemplate ? html.nothing : html`
+						<mo-flex id='flexActions' direction='horizontal' @click=${(e: PointerEvent) => ContextMenu.open(e, this.getRowContextMenuTemplate?.(this.selectedData) ?? html.nothing)}>
 							<div ${style({ width: '*' })}>${t('Options')}</div>
 							<mo-icon-button dense icon='arrow_drop_down' ${style({ display: 'flex', alignItems: 'center', justifyContent: 'center' })}></mo-icon-button>
 						</mo-flex>
@@ -850,7 +850,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	protected get toolbarActionsTemplate() {
 		return html`
-			${!this.hasFilters ? nothing : html`
+			${!this.hasFilters ? html.nothing : html`
 				<mo-icon-button icon='filter_list'
 					${tooltip(t('More Filters'))}
 					${style({ color: this.sidePanelTab === DataGridSidePanelTab.Filters ? 'var(--mo-color-accent)' : 'var(--mo-color-gray)' })}

@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/button",
-	"version": "0.4.3",
+	"version": "0.4.4",
 	"description": "A button web-component based on Material Web Components.",
 	"repository": {
 		"type": "git",
@@ -30,5 +30,8 @@
 		"@3mo/instanceof-attribute-controller": "x",
 		"@3mo/disabled-property": "x",
 		"@material/web": "1.x"
+	},
+	"devDependencies": {
+		"@a11d/lit-testing": "x"
 	}
 }

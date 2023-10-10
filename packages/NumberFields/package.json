@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/number-fields",
-	"version": "0.0.5",
+	"version": "0.0.6",
 	"description": "A set of number field web components.",
 	"repository": {
 		"type": "git",
@@ -34,5 +34,8 @@
 		"@3mo/localization": "x",
 		"@3mo/slot-controller": "x",
 		"@3mo/field": "x"
+	},
+	"devDependencies": {
+		"@a11d/lit-testing": "x"
 	}
 }

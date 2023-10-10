@@ -1,4 +1,4 @@
-import { css, html, property, Component, component, nothing } from '@a11d/lit'
+import { css, html, property, Component, component } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
 import { ThemeController } from '@3mo/theme'
 import '@3mo/theme'
@@ -225,12 +225,12 @@ export class Field extends Component {
 	protected override get template() {
 		this.style.setProperty('--mo-field-label-transform-origin', getComputedStyle(this).direction === 'rtl' ? 'right top' : 'left top')
 		return html`
-			${!this.slotController.hasAssignedContent('start') ? nothing : html`<slot name='start'></slot>`}
+			${!this.slotController.hasAssignedContent('start') ? html.nothing : html`<slot name='start'></slot>`}
 			<div part='container'>
 				<span>${this.label} ${this.required ? '*' : ''}</span>
 				<slot></slot>
 			</div>
-			${!this.slotController.hasAssignedContent('end') ? nothing : html`<slot name='end'></slot>`}
+			${!this.slotController.hasAssignedContent('end') ? html.nothing : html`<slot name='end'></slot>`}
 		`
 	}
 }

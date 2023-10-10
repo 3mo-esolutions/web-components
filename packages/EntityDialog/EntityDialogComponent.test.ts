@@ -1,5 +1,5 @@
 import { component, html } from '@a11d/lit'
-import { ComponentTestFixture } from '@a11d/lit/dist/test/index.js'
+import { ComponentTestFixture } from '@a11d/lit-testing'
 import { EntityDialogComponent } from './index.js'
 
 class Entity { }

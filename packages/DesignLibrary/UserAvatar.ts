@@ -1,4 +1,4 @@
-import { html, component, Component, css, nothing, join } from '@a11d/lit'
+import { html, component, Component, css, join } from '@a11d/lit'
 import { Authentication } from '@a11d/lit-application-authentication'
 import { BusinessSuiteDialogAuthenticator, User } from './BusinessSuiteDialogAuthenticator.js'
 
@@ -70,19 +70,19 @@ export class UserAvatar extends Component {
 	}
 
 	private get avatarTemplate() {
-		return !BusinessSuiteDialogAuthenticator.authenticatedUserStorage.value ? nothing : html`
+		return !BusinessSuiteDialogAuthenticator.authenticatedUserStorage.value ? html.nothing : html`
 			<mo-flex direction='horizontal' gap='20px' style='padding: 15px'>
 				<mo-avatar>${this.avatarContentTemplate}</mo-avatar>
 				<mo-flex justifyContent='center'>
 					<span style='font-size: 16px'>${this.name}</span>
-					${!this.user?.email ? nothing : html`<span>${this.user.email}</span>`}
+					${!this.user?.email ? html.nothing : html`<span>${this.user.email}</span>`}
 				</mo-flex>
 			</mo-flex>
 		`
 	}
 
 	private get signOutTemplate() {
-		return !Authentication.hasAuthenticator() || !this.user ? nothing : html`
+		return !Authentication.hasAuthenticator() || !this.user ? html.nothing : html`
 			<mo-menu-item @click=${() => Authentication.unauthenticate()}>
 				<mo-icon icon='exit_to_app'></mo-icon>
 				Sign out

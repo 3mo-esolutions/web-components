@@ -1,4 +1,4 @@
-import { html, nothing, state, style } from '@a11d/lit'
+import { html, state, style } from '@a11d/lit'
 import { DialogAuthenticator as DialogAuthenticatorBase } from '@a11d/lit-application-authentication'
 import { Localizer } from '@3mo/localization'
 import { LocalStorage } from '@a11d/local-storage'
@@ -45,13 +45,13 @@ export abstract class BusinessSuiteDialogAuthenticator extends DialogAuthenticat
 	}
 
 	protected get additionalTemplate() {
-		return nothing
+		return html.nothing
 	}
 
 	protected get applicationInfoTemplate() {
-		return !manifest ? nothing : html`
+		return !manifest ? html.nothing : html`
 			<mo-heading typography='subtitle1' ${style({ color: 'var(--mo-color-gray)' })}>
-				${manifest.name} ${!manifest.version ? nothing : html`v${manifest.version}`}
+				${manifest.name} ${!manifest.version ? html.nothing : html`v${manifest.version}`}
 			</mo-heading>
 		`
 	}

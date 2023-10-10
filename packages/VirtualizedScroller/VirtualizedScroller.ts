@@ -1,9 +1,9 @@
-import { Component, component, css, html, nothing, property, query, queryAll } from '@a11d/lit'
+import { Component, component, css, html, property, query, queryAll } from '@a11d/lit'
 import { LitVirtualizer } from '@lit-labs/virtualizer'
 import { type RenderItemFunction, virtualizerRef } from '@lit-labs/virtualizer/virtualize.js'
 import { Scroller } from '@3mo/scroller'
 
-LitVirtualizer.elementStyles.push(Scroller.scrollbarStyles)
+LitVirtualizer.elementStyles.push(Scroller.scrollbarStyles as any)
 
 export type GetItemTemplate<T> = RenderItemFunction<T>
 
@@ -18,7 +18,7 @@ export interface VirtualizedElement {
 @component('mo-virtualized-scroller')
 export class VirtualizedScroller<T = unknown> extends Component {
 	@property({ type: Array }) items = new Array<T>()
-	@property({ type: Object }) getItemTemplate: GetItemTemplate<T> = (() => nothing)
+	@property({ type: Object }) getItemTemplate: GetItemTemplate<T> = (() => html.nothing)
 
 	static override get styles() {
 		return css`

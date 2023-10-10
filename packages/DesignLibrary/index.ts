@@ -1,4 +1,4 @@
-export * from '@lit-labs/task'
+export * from '@lit/task'
 export * from '@a11d/lit'
 export * from '@a11d/lit-application'
 export * from '@a11d/lit-application-authentication'

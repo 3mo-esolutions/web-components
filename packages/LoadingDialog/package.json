@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/loading-dialog",
-	"version": "0.1.2",
+	"version": "0.1.3",
 	"description": "An extension of @3mo/dialog with a loading state.",
 	"repository": {
 		"type": "git",
@@ -29,5 +29,8 @@
 		"@3mo/dialog": "x",
 		"@3mo/localization": "x",
 		"@3mo/circular-progress": "x"
+	},
+	"devDependencies": {
+		"@a11d/lit-testing": "x"
 	}
 }

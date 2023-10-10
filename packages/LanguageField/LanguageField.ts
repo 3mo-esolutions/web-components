@@ -1,4 +1,4 @@
-import { Component, event, html, ifDefined, property, css, nothing, style, HTMLTemplateResult, state } from '@a11d/lit'
+import { Component, event, html, ifDefined, property, css, style, HTMLTemplateResult, state } from '@a11d/lit'
 import { DialogLanguageField, type Language } from './index.js'
 import { DialogSize } from '@3mo/dialog'
 import { FieldPairMode } from '@3mo/field-pair'
@@ -105,7 +105,7 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 	protected override get template() {
 		const single = this._languages.length === 1
 		this.toggleAttribute('single', single)
-		return !this.selectedLanguage ? nothing : html`
+		return !this.selectedLanguage ? html.nothing : html`
 			<mo-field-pair mode=${this.mode} ${style({ height: '100%' })}>
 				${this.getFieldTemplateByLanguage(this.selectedLanguage)}
 				${this.languageSelectorTemplate}
@@ -114,7 +114,7 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 	}
 
 	getFieldTemplateByLanguage(language: TLanguage) {
-		return !this.getFieldTemplate ? nothing : this.getFieldTemplate(
+		return !this.getFieldTemplate ? html.nothing : this.getFieldTemplate(
 			this.value.get(language?.[this.valueKey]!)!,
 			value => this.handleFieldChange(language, value),
 			this.label,
@@ -129,7 +129,7 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 
 	protected get languageSelectorTemplate() {
 		return html`
-			${this._languages.length === 0 ? nothing : html`
+			${this._languages.length === 0 ? html.nothing : html`
 				<mo-field-select slot='attachment' label='' ?dense=${this.dense} menuAlignment='end'
 					value=${ifDefined(this.selectedLanguage?.[this.valueKey])}
 					@change=${(e: CustomEvent<TLanguage[keyof TLanguage]>) => this.handleLanguageChange(this._languages.find(l => l[this.valueKey] === e.detail) as TLanguage)}
@@ -153,7 +153,7 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 
 	protected get languageSelectorStartTemplate() {
 		return html`
-			${this._languages.length === 1 ? nothing : html`
+			${this._languages.length === 1 ? html.nothing : html`
 				<mo-icon-button icon='launch' ${style({ display: 'flex', alignItems: 'center' })} @click=${(e: PointerEvent) => { e.stopPropagation(); this.openDialog() }}></mo-icon-button>
 			`}
 			${this.flagTemplate}
@@ -161,7 +161,7 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 	}
 
 	protected get flagTemplate() {
-		return !this.selectedLanguage?.flagImageSource ? nothing : html`
+		return !this.selectedLanguage?.flagImageSource ? html.nothing : html`
 			<img src=${ifDefined(this.selectedLanguage.flagImageSource)} ${style({ width: '30px', marginInlineStart: this._languages.length < 2 ? '10px' : '0px' })}>
 		`
 	}

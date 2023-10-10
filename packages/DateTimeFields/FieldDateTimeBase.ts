@@ -1,5 +1,5 @@
 
-import { HTMLTemplateResult, cache, css, html, live, nothing, property, style } from '@a11d/lit'
+import { HTMLTemplateResult, cache, css, html, live, property, style } from '@a11d/lit'
 import { InputFieldComponent } from '@3mo/field'
 import type { MaterialIcon } from '@3mo/icon'
 
@@ -162,7 +162,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	protected abstract override valueToInputValue(value: T | undefined): string
 
 	protected get calendarIconButtonTemplate() {
-		return this.hideDatePicker ? nothing : html`
+		return this.hideDatePicker ? html.nothing : html`
 			<mo-icon tabindex='-1' dense slot='end'
 				icon=${this.calendarIconButtonIcon}
 				${style({ color: this.isActive ? 'var(--mo-color-accent)' : 'var(--mo-color-gray)', fontSize: '22px', marginTop: '2px' })}
@@ -171,12 +171,12 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	}
 
 	protected get popoverTemplate() {
-		return this.hideDatePicker ? nothing : html`
+		return this.hideDatePicker ? html.nothing : html`
 			<mo-popover tabindex='-1' fixed openOnFocus
 				.anchor=${this}
 				?open=${this.open}
 				@openChange=${(e: CustomEvent<boolean>) => this.open = e.detail}
-			>${cache(!this.open ? nothing : this.popoverContentTemplate)}</mo-popover>
+			>${cache(!this.open ? html.nothing : this.popoverContentTemplate)}</mo-popover>
 		`
 	}
 
@@ -208,7 +208,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	}
 
 	private get monthListTemplate() {
-		return [FieldDateTimePrecision.Year].includes(this.precision) ? nothing : html`
+		return [FieldDateTimePrecision.Year].includes(this.precision) ? html.nothing : html`
 			<mo-month-list
 				.navigatingValue=${this.navigatingDate}
 				.value=${this.selectedDate}
@@ -218,13 +218,13 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	}
 
 	private get dayTemplate() {
-		return [FieldDateTimePrecision.Year, FieldDateTimePrecision.Month].includes(this.precision) ? nothing : this.calendarTemplate
+		return [FieldDateTimePrecision.Year, FieldDateTimePrecision.Month].includes(this.precision) ? html.nothing : this.calendarTemplate
 	}
 
 	protected abstract get calendarTemplate(): HTMLTemplateResult
 
 	private get timeTemplate() {
-		return [FieldDateTimePrecision.Year, FieldDateTimePrecision.Month, FieldDateTimePrecision.Day].includes(this.precision) ? nothing : html`
+		return [FieldDateTimePrecision.Year, FieldDateTimePrecision.Month, FieldDateTimePrecision.Day].includes(this.precision) ? html.nothing : html`
 			<mo-flex gap='6px'>
 				<div class='timezone'>
 					${this.navigatingDate?.formatToParts({ timeZoneName: 'long' }).find(x => x.type === 'timeZoneName')?.value}
@@ -250,7 +250,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	}
 
 	private get minuteListTemplate() {
-		return [FieldDateTimePrecision.Hour].includes(this.precision) ? nothing : html`
+		return [FieldDateTimePrecision.Hour].includes(this.precision) ? html.nothing : html`
 			<mo-minute-list style='flex: 1'
 				.navigatingValue=${this.navigatingDate}
 				.value=${this.selectedDate}
@@ -260,7 +260,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	}
 
 	private get secondListTemplate() {
-		return [FieldDateTimePrecision.Hour, FieldDateTimePrecision.Minute].includes(this.precision) ? nothing : html`
+		return [FieldDateTimePrecision.Hour, FieldDateTimePrecision.Minute].includes(this.precision) ? html.nothing : html`
 			<mo-second-list style='flex: 1'
 				.navigatingValue=${this.navigatingDate}
 				.value=${this.selectedDate}

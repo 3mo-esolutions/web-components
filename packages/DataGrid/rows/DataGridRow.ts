@@ -1,4 +1,4 @@
-import { nothing, css, property, Component, html, queryAll, style, HTMLTemplateResult, LitElement, event } from '@a11d/lit'
+import { css, property, Component, html, queryAll, style, HTMLTemplateResult, LitElement, event } from '@a11d/lit'
 import { ContextMenu } from '@3mo/context-menu'
 import { KeyboardController } from '@3mo/keyboard-controller'
 import { ColumnDefinition } from '../ColumnDefinition.js'
@@ -161,19 +161,19 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			>
 				${this.rowTemplate}
 			</mo-grid>
-			<slot id='detailsContainer'>${this.detailsOpen ? this.detailsTemplate : nothing}</slot>
+			<slot id='detailsContainer'>${this.detailsOpen ? this.detailsTemplate : html.nothing}</slot>
 		`
 	}
 
 	protected abstract get rowTemplate(): HTMLTemplateResult
 
 	protected get detailsExpanderTemplate() {
-		return this.dataGrid.hasDetails === false ? nothing : html`
+		return this.dataGrid.hasDetails === false ? html.nothing : html`
 			<mo-flex justifyContent='center' alignItems='center' ${style({ width: 'var(--mo-data-grid-column-details-width)' })}
 				@click=${(e: Event) => e.stopPropagation()}
 				@dblclick=${(e: Event) => e.stopPropagation()}
 			>
-			${this.hasDetails === false ? nothing : html`
+			${this.hasDetails === false ? html.nothing : html`
 				<mo-icon-button id='detailsExpanderIconButton' ${style({ color: 'var(--mo-color-foreground)' })}
 					icon=${getComputedStyle(this).direction === 'rtl' ? 'keyboard_arrow_left' : 'keyboard_arrow_right'}
 					?disabled=${this.dataGrid.hasDataDetail?.(this.data) === false}
@@ -185,7 +185,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	}
 
 	protected get selectionTemplate() {
-		return this.dataGrid.hasSelection === false || this.dataGrid.selectionCheckboxesHidden ? nothing : html`
+		return this.dataGrid.hasSelection === false || this.dataGrid.selectionCheckboxesHidden ? html.nothing : html`
 			<mo-flex id='selectionContainer' ${style({ width: 'var(--mo-data-grid-column-selection-width)' })} justifyContent='center' alignItems='center'
 				@click=${(e: Event) => e.stopPropagation()}
 				@dblclick=${(e: Event) => e.stopPropagation()}
@@ -201,7 +201,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	}
 
 	protected getCellTemplate(column: ColumnDefinition<TData, KeyPathValueOf<TData, KeyPathOf<TData>>>) {
-		return column.hidden ? nothing : html`
+		return column.hidden ? html.nothing : html`
 			<mo-data-grid-cell
 				.row=${this as any}
 				.column=${column}
@@ -211,7 +211,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	}
 
 	protected get contextMenuIconButtonTemplate() {
-		return this.dataGrid.hasContextMenu === false ? nothing : html`
+		return this.dataGrid.hasContextMenu === false ? html.nothing : html`
 			<mo-flex justifyContent='center' alignItems='center'
 				@click=${this.openContextMenu}
 				@dblclick=${(e: Event) => e.stopPropagation()}
@@ -223,9 +223,9 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 
 	protected get detailsTemplate() {
 		return !this.hasDetails
-			? nothing
+			? html.nothing
 			: this.dataGrid.getRowDetailsTemplate?.(this.data)
-			?? nothing
+			?? html.nothing
 	}
 
 	private setSelection(value: boolean) {
@@ -327,7 +327,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	}
 
 	private get contextMenuTemplate() {
-		return this.dataGrid.getRowContextMenuTemplate?.(this.contextMenuData) ?? nothing
+		return this.dataGrid.getRowContextMenuTemplate?.(this.contextMenuData) ?? html.nothing
 	}
 
 	async closeContextMenu() {

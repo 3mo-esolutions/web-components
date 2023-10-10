@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/select-field",
-	"version": "0.2.6",
+	"version": "0.2.7",
 	"description": "A select field web component",
 	"repository": {
 		"type": "git",
@@ -29,5 +29,8 @@
 		"@3mo/field": "x",
 		"@3mo/menu": "x",
 		"@3mo/list": "x"
+	},
+	"devDependencies": {
+		"@a11d/lit-testing": "x"
 	}
 }

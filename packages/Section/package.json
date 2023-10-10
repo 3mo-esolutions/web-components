@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/section",
-	"version": "0.1.7",
+	"version": "0.1.8",
 	"description": "A section web-component based on Material Design.",
 	"repository": {
 		"type": "git",

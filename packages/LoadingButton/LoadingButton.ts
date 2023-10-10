@@ -1,4 +1,4 @@
-import { EventListenerController, component, css, extractEventHandler, html, nothing, property, queryAsync, style } from '@a11d/lit'
+import { EventListenerController, component, css, extractEventHandler, html, property, queryAsync, style } from '@a11d/lit'
 import { Button } from '@3mo/button'
 import '@3mo/circular-progress'
 
@@ -58,7 +58,7 @@ export class LoadingButton extends Button {
 	protected override get contentTemplate() {
 		return html`
 			${super.contentTemplate}
-			${!this.circularProgressReplacesLeadingIcon && this.loading ? this.circularProgressTemplate : nothing}
+			${!this.circularProgressReplacesLeadingIcon && this.loading ? this.circularProgressTemplate : html.nothing}
 		`
 	}
 

@@ -1,4 +1,4 @@
-import { Component, component, css, html, nothing, property, style } from '@a11d/lit'
+import { Component, component, css, html, property, style } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
 import '@3mo/heading'
 
@@ -77,11 +77,11 @@ export class Section extends Component {
 	}
 
 	protected get defaultActionTemplate() {
-		return nothing
+		return html.nothing
 	}
 
 	protected get contentTemplate() {
-		return !this.slotController.hasAssignedContent('') ? nothing : html`
+		return !this.slotController.hasAssignedContent('') ? html.nothing : html`
 			<mo-grid ${style({ height: '100%' })}>
 				<slot></slot>
 			</mo-grid>

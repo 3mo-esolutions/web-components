@@ -1,4 +1,4 @@
-import { component, html, ifDefined, nothing } from '@a11d/lit'
+import { component, html, ifDefined } from '@a11d/lit'
 import { DataGridColumnNumberBase } from './DataGridColumnNumberBase.js'
 
 /** @element mo-data-grid-column-percent */
@@ -6,7 +6,7 @@ import { DataGridColumnNumberBase } from './DataGridColumnNumberBase.js'
 export class DataGridColumnPercent<TData> extends DataGridColumnNumberBase<TData> {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	getContentTemplate(value: number | undefined, _data: TData) {
-		return html`${this.getNumber(value)?.formatAsPercent() ?? nothing}`
+		return html`${this.getNumber(value)?.formatAsPercent() ?? html.nothing}`
 	}
 
 	getEditContentTemplate(value: number | undefined, data: TData) {

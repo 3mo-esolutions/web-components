@@ -1,4 +1,4 @@
-import { Component, component, eventListener, html, nothing, property, style, TemplateResult } from '@a11d/lit'
+import { Component, component, eventListener, html, property, style, TemplateResult } from '@a11d/lit'
 import { Key, PageComponent, routerLink } from '@a11d/lit-application'
 import { Navigation } from './Navigation.js'
 
@@ -10,8 +10,8 @@ export class NavigationItem extends Component {
 	override tabIndex = 0
 
 	private get menuContentTemplate() {
-		const getItemTemplate = (navigation: Navigation): TemplateResult => navigation.hidden ? nothing : !navigation.children ? html`
-			<mo-navigation-menu-item ${!navigation.component ? nothing : routerLink({
+		const getItemTemplate = (navigation: Navigation): TemplateResult => navigation.hidden ? html.nothing : !navigation.children ? html`
+			<mo-navigation-menu-item ${!navigation.component ? html.nothing : routerLink({
 			component: navigation.component as PageComponent,
 			matchMode: navigation.matchMode,
 			invocationHandler: () => this.open = false
@@ -25,7 +25,7 @@ export class NavigationItem extends Component {
 			</mo-nested-menu-item>
 		`
 
-		return !this.navigation.children || this.navigation.hidden ? nothing : html`
+		return !this.navigation.children || this.navigation.hidden ? html.nothing : html`
 			${this.navigation.children.map(child => getItemTemplate(child))}
 		`
 	}
@@ -78,7 +78,7 @@ export class NavigationItem extends Component {
 			</style>
 			<mo-flex direction='horizontal' alignItems='center' justifyContent='center' gap='2px'>
 				<span>${this.navigation.label}</span>
-				${!this.navigation.children ? nothing : html`
+				${!this.navigation.children ? html.nothing : html`
 					<mo-icon icon=${this.open ? 'keyboard_arrow_up' : 'keyboard_arrow_down'} ${style({ fontSize: 'large' })}></mo-icon>
 				`}
 			</mo-flex>

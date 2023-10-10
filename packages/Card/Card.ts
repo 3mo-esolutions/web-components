@@ -1,4 +1,4 @@
-import { component, html, property, Component, css, nothing, style, unsafeCSS } from '@a11d/lit'
+import { component, html, property, Component, css, style, unsafeCSS } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
 import '@3mo/theme'
 import '@3mo/heading'
@@ -136,9 +136,9 @@ export class Card extends Component {
 
 	protected get mediaTemplate() {
 		const hasMedia = !!this.image || this.slotController.hasAssignedElements('media')
-		return !hasMedia ? nothing : html`
+		return !hasMedia ? html.nothing : html`
 			<slot part='media' name='media'>
-				${!this.image ? nothing : html`<img part='media' src=${this.image} />`}
+				${!this.image ? html.nothing : html`<img part='media' src=${this.image} />`}
 			</slot>
 		`
 	}
@@ -149,7 +149,7 @@ export class Card extends Component {
 			|| this.slotController.hasAssignedElements('avatar') || this.slotController.hasAssignedElements('heading')
 			|| this.slotController.hasAssignedElements('subHeading') || this.slotController.hasAssignedElements('action')
 		this.toggleAttribute('hasHeader', hasHeader)
-		return !hasHeader ? nothing : html`
+		return !hasHeader ? html.nothing : html`
 			<slot part='header' name='header'>
 				${this.defaultHeaderAvatarTemplate}
 				<mo-flex justifyContent='space-around' ${style({ width: '*' })}>
@@ -164,7 +164,7 @@ export class Card extends Component {
 	protected get defaultHeaderAvatarTemplate() {
 		return html`
 			<slot name='avatar'>
-				${!this.avatar ? nothing : html`
+				${!this.avatar ? html.nothing : html`
 					<div part='avatar' ${style({ marginInlineEnd: '6px' })}>${this.avatar}</div>
 				`}
 			</slot>
@@ -174,7 +174,7 @@ export class Card extends Component {
 	protected get defaultHeaderHeadingTemplate() {
 		return html`
 			<slot name='heading'>
-				${!this.heading ? nothing : html`
+				${!this.heading ? html.nothing : html`
 					<mo-heading part='heading' typography='heading4' ${style({ fontWeight: '500' })}>${this.heading}</mo-heading>
 				`}
 			</slot>
@@ -184,7 +184,7 @@ export class Card extends Component {
 	protected get defaultHeaderSubHeadingTemplate() {
 		return html`
 			<slot name='subHeading'>
-				${!this.subHeading ? nothing : html`
+				${!this.subHeading ? html.nothing : html`
 					<mo-heading part='subHeading' typography='heading6' ${style({ fontWeight: '400', color: 'rgb(121, 121, 121)' })}>${this.subHeading}</mo-heading>
 				`}
 			</slot>
@@ -201,7 +201,7 @@ export class Card extends Component {
 	}
 
 	protected get footerTemplate() {
-		return !this.slotController.hasAssignedElements('footer') ? nothing : html`<slot part='footer' name='footer'></slot>`
+		return !this.slotController.hasAssignedElements('footer') ? html.nothing : html`<slot part='footer' name='footer'></slot>`
 	}
 }
 

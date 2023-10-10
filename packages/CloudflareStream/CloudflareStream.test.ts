@@ -1,4 +1,4 @@
-import { ComponentTestFixture } from '@a11d/lit/dist/test/index.js'
+import { ComponentTestFixture } from '@a11d/lit-testing'
 import './CloudflareStream.js'
 
 describe('CloudflareStream', () => {

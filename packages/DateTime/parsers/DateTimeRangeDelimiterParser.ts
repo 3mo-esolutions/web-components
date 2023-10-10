@@ -1,7 +1,7 @@
 import { DateTime } from '../DateTime.js'
 import { DateTimeRange } from '../DateTimeRange.js'
 import { DateTimeRangeParser } from './DateTimeRangeParser.js'
-import { Localizer } from '@3mo/localization/Localizer.js'
+import { Localizer } from '@3mo/localization'
 
 export class DateTimeRangeDelimiterParser extends DateTimeRangeParser {
 	private static readonly delimiters = ['–', '~'] as const

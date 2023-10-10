@@ -1,4 +1,4 @@
-import { component, property, css, Component, html, nothing, literal, staticHtml } from '@a11d/lit'
+import { component, property, css, Component, html, literal, staticHtml } from '@a11d/lit'
 import { InstanceofAttributeController } from '@3mo/instanceof-attribute-controller'
 import { type MaterialIcon } from '@3mo/icon'
 import { MdTextButton } from '@material/web/button/text-button.js'
@@ -242,7 +242,7 @@ export class Button extends Component {
 	}
 
 	protected get leadingIconTemplate() {
-		return !this.leadingIcon ? nothing : html`<mo-icon icon=${this.leadingIcon}></mo-icon>`
+		return !this.leadingIcon ? html.nothing : html`<mo-icon icon=${this.leadingIcon}></mo-icon>`
 	}
 
 	protected get slotTemplate() {
@@ -258,7 +258,7 @@ export class Button extends Component {
 	}
 
 	protected get trailingIconTemplate() {
-		return !this.trailingIcon ? nothing : html`<mo-icon icon=${this.trailingIcon}></mo-icon>`
+		return !this.trailingIcon ? html.nothing : html`<mo-icon icon=${this.trailingIcon}></mo-icon>`
 	}
 }
 

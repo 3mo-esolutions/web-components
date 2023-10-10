@@ -1,4 +1,4 @@
-import { html, component, Component, property, nothing, css } from '@a11d/lit'
+import { html, component, Component, property, css } from '@a11d/lit'
 import { MaterialIcon } from '@3mo/icon'
 
 /**
@@ -38,7 +38,7 @@ export class EmptyState extends Component {
 	protected override get template() {
 		return html`
 			<mo-flex gap='8px'>
-				${!this.icon ? nothing : html`<mo-icon icon=${this.icon}></mo-icon>`}
+				${!this.icon ? html.nothing : html`<mo-icon icon=${this.icon}></mo-icon>`}
 				<mo-heading>
 					<slot></slot>
 				</mo-heading>

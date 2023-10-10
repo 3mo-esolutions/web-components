@@ -1,5 +1,5 @@
 import { Component, css, html, query } from '@a11d/lit'
-import { ComponentTestFixture } from '@a11d/lit/dist/test/index.js'
+import { ComponentTestFixture } from '@a11d/lit-testing'
 import { Popover, PopoverPlacement, PopoverAlignment } from './index.js'
 
 class TestPopoverAbsolute extends Component {

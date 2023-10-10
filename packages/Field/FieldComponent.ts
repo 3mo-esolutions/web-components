@@ -1,4 +1,4 @@
-import { html, property, event, nothing, Component, HTMLTemplateResult, state, css, PropertyValues } from '@a11d/lit'
+import { html, property, event, Component, HTMLTemplateResult, state, css, PropertyValues } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
 import { FocusController } from '@3mo/focus-controller'
 
@@ -113,7 +113,7 @@ export abstract class FieldComponent<T> extends Component {
 	}
 
 	protected get startSlotTemplate() {
-		return !this.slotController.hasAssignedElements('start') ? nothing : html`
+		return !this.slotController.hasAssignedElements('start') ? html.nothing : html`
 			<slot slot='start' name='start'></slot>
 		`
 	}
@@ -121,7 +121,7 @@ export abstract class FieldComponent<T> extends Component {
 	protected abstract get inputTemplate(): HTMLTemplateResult
 
 	protected get endSlotTemplate() {
-		return !this.slotController.hasAssignedElements('end') ? nothing : html`
+		return !this.slotController.hasAssignedElements('end') ? html.nothing : html`
 			<slot slot='end' name='end'></slot>
 		`
 	}

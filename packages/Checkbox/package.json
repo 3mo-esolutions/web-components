@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/checkbox",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"description": "A checkbox web-component based on Material Web Components.",
 	"repository": {
 		"type": "git",
@@ -26,5 +26,8 @@
 		"tslib": "x",
 		"@3mo/theme": "x",
 		"@material/web": "x"
+	},
+	"devDependencies": {
+		"@a11d/lit-testing": "x"
 	}
 }

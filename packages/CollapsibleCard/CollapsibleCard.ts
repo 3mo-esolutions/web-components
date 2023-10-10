@@ -1,4 +1,4 @@
-import { component, css, html, property, nothing, event } from '@a11d/lit'
+import { component, css, html, property, event } from '@a11d/lit'
 import { Card } from '@3mo/card'
 import { tooltip } from '@3mo/tooltip'
 
@@ -38,7 +38,7 @@ export class CollapsibleCard extends Card {
 	}
 
 	protected override get defaultHeaderSubHeadingTemplate() {
-		return this.showSubHeadingOnlyWhenCollapsed && !this.collapsed ? nothing : super.defaultHeaderSubHeadingTemplate
+		return this.showSubHeadingOnlyWhenCollapsed && !this.collapsed ? html.nothing : super.defaultHeaderSubHeadingTemplate
 	}
 
 	protected override get defaultHeaderActionTemplate() {
@@ -55,7 +55,7 @@ export class CollapsibleCard extends Card {
 	}
 
 	protected override get bodyTemplate() {
-		return this.collapsed ? nothing : super.bodyTemplate
+		return this.collapsed ? html.nothing : super.bodyTemplate
 	}
 
 	protected toggleCollapse() {

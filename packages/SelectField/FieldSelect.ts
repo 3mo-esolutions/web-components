@@ -1,4 +1,4 @@
-import { html, property, css, event, component, live, query, nothing, eventListener, state, ifDefined } from '@a11d/lit'
+import { html, property, css, event, component, live, query, eventListener, state, ifDefined } from '@a11d/lit'
 import { FieldComponent } from '@3mo/field'
 import type { ListItem } from '@3mo/list'
 import type { Menu } from '@3mo/menu'
@@ -205,7 +205,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 	}
 
 	protected get defaultOptionTemplate() {
-		return !this.default ? nothing : html`
+		return !this.default ? html.nothing : html`
 			<mo-list-item value='' @click=${() => this.handleSelection([])}>
 				${this.default}
 			</mo-list-item>

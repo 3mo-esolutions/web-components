@@ -1,4 +1,4 @@
-import { component, html, Component, nothing, property, css } from '@a11d/lit'
+import { component, html, Component, property, css } from '@a11d/lit'
 import * as System from 'detect-browser'
 
 @component('mo-pdf')
@@ -53,14 +53,14 @@ export class Pdf extends Component {
 	}
 
 	protected override get template() {
-		return !this.pdfSource ? nothing : html`
+		return !this.pdfSource ? html.nothing : html`
 			${this.loaderTemplate}
 			${this.pdfTemplate}
 		`
 	}
 
 	protected get loaderTemplate() {
-		return !this.loading ? nothing : html`<mo-circular-progress indeterminate></mo-circular-progress>`
+		return !this.loading ? html.nothing : html`<mo-circular-progress indeterminate></mo-circular-progress>`
 	}
 
 	protected get pdfTemplate() {

@@ -1,4 +1,4 @@
-import { EventListenerController, component, event, html, nothing, property } from '@a11d/lit'
+import { EventListenerController, component, event, html, property } from '@a11d/lit'
 import { ListItem } from '@3mo/list'
 import { MaterialIcon } from '@3mo/icon'
 
@@ -22,7 +22,7 @@ export class MenuItem extends ListItem {
 	}
 
 	protected get iconTemplate() {
-		return !this.icon ? nothing : html`
+		return !this.icon ? html.nothing : html`
 			<mo-icon style='opacity: 0.66' icon=${this.icon}></mo-icon>
 		`
 	}

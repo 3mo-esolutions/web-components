@@ -1,5 +1,5 @@
 import { CollapsibleCard } from './CollapsibleCard.js'
-import { ComponentTestFixture } from '@a11d/lit/dist/test/index.js'
+import { ComponentTestFixture } from '@a11d/lit-testing'
 import '@3mo/expand-collapse-icon-button'
 
 describe('CollapsibleCard', () => {

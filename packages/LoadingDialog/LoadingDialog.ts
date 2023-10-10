@@ -1,4 +1,4 @@
-import { component, css, html, property, nothing } from '@a11d/lit'
+import { component, css, html, property } from '@a11d/lit'
 import { Dialog } from '@3mo/dialog'
 
 /**
@@ -52,7 +52,7 @@ export class LoadingDialog extends Dialog {
 	}
 
 	protected get loadingTemplate() {
-		return !this.isLoading ? nothing : html`
+		return !this.isLoading ? html.nothing : html`
 			<slot slot='content' name='loading' part='loading'>
 				<mo-circular-progress></mo-circular-progress>
 			</slot>

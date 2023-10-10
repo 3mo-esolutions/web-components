@@ -1,5 +1,5 @@
 import { HTMLTemplateResult, html, live, query } from '@a11d/lit'
-import { ComponentTestFixture } from '@a11d/lit/dist/test/index.js'
+import { ComponentTestFixture } from '@a11d/lit-testing'
 import { FieldComponent } from './FieldComponent.js'
 
 class TestFieldComponent extends FieldComponent<string> {

@@ -1,4 +1,4 @@
-import { Component, HTMLTemplateResult, css, event, html, nothing, property, query } from '@a11d/lit'
+import { Component, HTMLTemplateResult, css, event, html, property, query } from '@a11d/lit'
 import { IntervalController } from '@3mo/interval-controller'
 import { SelectableListItem } from '@3mo/list'
 
@@ -47,7 +47,7 @@ export abstract class DateList extends Component {
 	}
 
 	protected override get template() {
-		return this.navigatingValue === undefined ? nothing : html`
+		return this.navigatingValue === undefined ? html.nothing : html`
 			<mo-scroller @pointerenter=${() => this.preventIntervalScrolling = true} @pointerleave=${() => this.preventIntervalScrolling = false}>
 				<mo-selectable-list @change=${() => this.scrollIntoSelectedItem()}>
 					<div class='pad'></div>

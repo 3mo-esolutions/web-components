@@ -1,4 +1,4 @@
-import { ComponentTestFixture } from '@a11d/lit/dist/test/index.js'
+import { ComponentTestFixture } from '@a11d/lit-testing'
 
 type KeyProperty = { key: string, fieldKey?: undefined, inputKey?: undefined } | { key?: undefined, fieldKey: string, inputKey: string }
 type ValueProperty = { value: any, inputValue?: undefined, fieldValue?: undefined } | { value?: undefined, inputValue: string, fieldValue: any }

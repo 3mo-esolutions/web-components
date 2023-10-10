@@ -1,4 +1,4 @@
-import { component, css, Component, html, property, ifDefined, nothing, event } from '@a11d/lit'
+import { component, css, Component, html, property, ifDefined, event } from '@a11d/lit'
 import { MaterialIcon } from '@3mo/icon'
 import { SlotController } from '@3mo/slot-controller'
 
@@ -131,13 +131,13 @@ export class Alert extends Component {
 	}
 
 	protected get headingTemplate() {
-		return !this.heading ? nothing : html`
+		return !this.heading ? html.nothing : html`
 			<mo-heading part='heading' typography='heading4'>${this.heading}</mo-heading>
 		`
 	}
 
 	protected get expandIconTemplate() {
-		return !this.collapsible || !this.heading ? nothing : html`
+		return !this.collapsible || !this.heading ? html.nothing : html`
 			<mo-expand-collapse-icon-button
 				?open=${this.open}
 				@click=${() => this.toggleOpen()}
@@ -151,7 +151,7 @@ export class Alert extends Component {
 	}
 
 	protected get slotTemplate() {
-		return !this.slotController.hasAssignedContent('') ? nothing : html`<slot></slot>`
+		return !this.slotController.hasAssignedContent('') ? html.nothing : html`<slot></slot>`
 	}
 }
 

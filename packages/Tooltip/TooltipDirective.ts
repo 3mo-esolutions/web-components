@@ -1,4 +1,4 @@
-import { directive, AsyncDirective, type ElementPart, type HTMLTemplateResult, type PartInfo, PartType, render, nothing } from '@a11d/lit'
+import { directive, AsyncDirective, type ElementPart, type HTMLTemplateResult, type PartInfo, PartType, render, html } from '@a11d/lit'
 import { Tooltip } from './Tooltip.js'
 import { TooltipPlacement } from './TooltipPlacement.js'
 import { Application } from '@a11d/lit-application'
@@ -39,7 +39,7 @@ export class TooltipDirective extends AsyncDirective {
 
 	render(...parameters: TooltipDirectiveParameters) {
 		parameters
-		return nothing
+		return html.nothing
 	}
 
 	protected override disconnected() {

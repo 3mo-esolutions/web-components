@@ -1,4 +1,4 @@
-import { html, component, css, property, eventListener, Component, nothing, style, state } from '@a11d/lit'
+import { html, component, css, property, eventListener, Component, style, state } from '@a11d/lit'
 import { DialogAcknowledge, DialogAlert, DialogDeletion } from '@3mo/standard-dialogs'
 import { tooltip } from '@3mo/tooltip'
 import { Localizer } from '@3mo/localization'
@@ -118,9 +118,9 @@ export class DataGridModeChip extends Component {
 	}
 
 	protected get trailingSlotTemplate() {
-		return this.readOnly || !this.selected ? nothing : html`
+		return this.readOnly || !this.selected ? html.nothing : html`
 			<mo-flex direction='horizontal' slot='trailing'>
-				${this.moddableDataGrid.modesRepository.isSelectedModeSaved ? nothing : html`
+				${this.moddableDataGrid.modesRepository.isSelectedModeSaved ? html.nothing : html`
 					<span id='spanUnsaved'>*</span>
 
 					<mo-icon-button icon='undo' tabindex='-1' dense ${style({ marginInlineStart: '0 0 0 12px' })}
@@ -150,7 +150,7 @@ export class DataGridModeChip extends Component {
 				?open=${this.open}
 				@openChange=${(e: CustomEvent<boolean>) => this.open = e.detail}
 			>
-				${this.moddableDataGrid.modesRepository.isSelectedModeSaved ? nothing : html`
+				${this.moddableDataGrid.modesRepository.isSelectedModeSaved ? html.nothing : html`
 					<mo-menu-item icon='undo' @click=${this.discardChanges}>${t('Discard changes')}</mo-menu-item>
 					<mo-menu-item icon='save' @click=${this.saveChanges}>${t('Save changes')}</mo-menu-item>
 					<mo-line ${style({ margin: '4px 0' })}></mo-line>

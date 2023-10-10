@@ -1,5 +1,5 @@
 import { html, render } from '@a11d/lit'
-import { ComponentTestFixture } from '@a11d/lit/dist/test/index.js'
+import { ComponentTestFixture } from '@a11d/lit-testing'
 import { Card } from './Card.js'
 
 describe('Card', () => {

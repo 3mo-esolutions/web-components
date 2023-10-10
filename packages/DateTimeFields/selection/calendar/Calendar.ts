@@ -1,4 +1,4 @@
-import { Component, css, component, html, nothing, property, classMap, style, ClassInfo, state } from '@a11d/lit'
+import { Component, css, component, html, property, classMap, style, ClassInfo, state } from '@a11d/lit'
 import '@a11d/array.prototype.group'
 import { MemoizeExpiring as memoizeExpiring } from 'typescript-memoize'
 
@@ -78,7 +78,7 @@ export class Calendar extends Component {
 				columns=${this.includeWeekNumbers ? 'var(--mo-calendar-week-number-width) repeat(7, var(--mo-calendar-day-size))' : 'repeat(7, var(--mo-calendar-day-size))'}
 				${style({ alignItems: 'center', justifyItems: 'center' })}
 			>
-				${this.includeWeekNumbers === false ? nothing : html`<div></div>`}
+				${this.includeWeekNumbers === false ? html.nothing : html`<div></div>`}
 
 				${this.navigatingValue.weekDayNames.map(dayName => html`
 					<div class='monthHeader'>
@@ -87,7 +87,7 @@ export class Calendar extends Component {
 				`)}
 
 				${this.days.map(([weekNumber, days]) => html`
-					${this.includeWeekNumbers === false ? nothing : html`<div class='week'>${weekNumber}</div>`}
+					${this.includeWeekNumbers === false ? html.nothing : html`<div class='week'>${weekNumber}</div>`}
 					${days.map(day => this.getDayTemplate(day))}
 				`)}
 			</mo-grid>

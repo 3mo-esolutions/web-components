@@ -1,4 +1,4 @@
-import { css, html, property, nothing, style, HTMLTemplateResult, ifDefined, query, repeat } from '@a11d/lit'
+import { css, html, property, style, HTMLTemplateResult, ifDefined, query, repeat } from '@a11d/lit'
 import { Application, PageComponent, PwaHelper, RouteMatchMode, routerLink } from '@a11d/lit-application'
 import { Authentication } from '@a11d/lit-application-authentication'
 import { Localizer } from '@3mo/localization'
@@ -167,8 +167,8 @@ export abstract class BusinessSuiteApplication extends Application {
 	}
 
 	protected getNavigationItemTemplate(navigation: Navigation) {
-		return navigation.hidden ? nothing : html`
-			<mo-navigation-item .navigation=${navigation} ${!navigation.component ? nothing : routerLink({
+		return navigation.hidden ? html.nothing : html`
+			<mo-navigation-item .navigation=${navigation} ${!navigation.component ? html.nothing : routerLink({
 				component: navigation.component as PageComponent,
 				matchMode: navigation.matchMode,
 				invocationHandler: () => this.drawerOpen = false
@@ -183,7 +183,7 @@ export abstract class BusinessSuiteApplication extends Application {
 	}
 
 	protected get userAvatarTemplate() {
-		return !Authentication.hasAuthenticator() ? nothing : html`
+		return !Authentication.hasAuthenticator() ? html.nothing : html`
 			<mo-user-avatar style='color: var(--mo-color-on-accent)'>
 				${this.userAvatarMenuItemsTemplate}
 			</mo-user-avatar>
@@ -222,10 +222,10 @@ export abstract class BusinessSuiteApplication extends Application {
 
 	private getNavigationListItemTemplate(navigation: Navigation, detailsSlot = false): HTMLTemplateResult {
 		if (navigation.hidden) {
-			return nothing
+			return html.nothing
 		}
 
-		const iconTemplate = !navigation.icon ? nothing : html`
+		const iconTemplate = !navigation.icon ? html.nothing : html`
 			<mo-icon icon=${navigation.icon} style='opacity: 0.75; font-size: 24px'></mo-icon>
 		`
 
@@ -242,7 +242,7 @@ export abstract class BusinessSuiteApplication extends Application {
 		return html`
 			<mo-navigation-list-item
 				slot=${ifDefined(detailsSlot ? 'details' : undefined)}
-				${!navigation.component ? nothing : routerLink({ component: navigation.component as PageComponent, matchMode: RouteMatchMode.IgnoreParameters, invocationHandler: () => this.drawerOpen = false })}
+				${!navigation.component ? html.nothing : routerLink({ component: navigation.component as PageComponent, matchMode: RouteMatchMode.IgnoreParameters, invocationHandler: () => this.drawerOpen = false })}
 			>
 				${iconTemplate}
 				${navigation.label}
@@ -259,6 +259,6 @@ export abstract class BusinessSuiteApplication extends Application {
 	}
 
 	protected get drawerFooterTemplate() {
-		return nothing
+		return html.nothing
 	}
 }

@@ -1,4 +1,4 @@
-import { html, component, nothing } from '@a11d/lit'
+import { html, component } from '@a11d/lit'
 import { DialogDeletion } from '@3mo/standard-dialogs'
 import { PagePreferences, PageSettings } from './index.js'
 import { route } from '@a11d/lit-application'
@@ -22,7 +22,7 @@ export class PagePreferencesSecurity extends PageSettings {
 						@change=${(e: CustomEvent<CheckboxValue>) => BusinessSuiteDialogAuthenticator.shallRememberStorage.value = e.detail === 'checked'}
 					>Passwort merken & eingeloggt bleiben</mo-checkbox-list-item>
 
-					${!Authentication.hasAuthenticator() ? nothing : html`
+					${!Authentication.hasAuthenticator() ? html.nothing : html`
 						<mo-list-item @click=${() => Authentication['authenticator']?.resetPassword()}>Passwort ändern</mo-list-item>
 					`}
 				</mo-flex>

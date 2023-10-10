@@ -1,4 +1,4 @@
-import { component, Component, html, property, css, eventListener, state, nothing, HTMLTemplateResult } from '@a11d/lit'
+import { component, Component, html, property, css, eventListener, state, HTMLTemplateResult } from '@a11d/lit'
 import { NotificationComponent } from '@a11d/lit-application'
 import { Localizer } from '@3mo/localization'
 import { ColumnDefinition, DataGridEditability, DataGridRow } from './index.js'
@@ -40,7 +40,7 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 
 	private get isEditable() {
 		return this.dataGrid.editability !== DataGridEditability.Never
-			&& [undefined, null, nothing].includes(this.editContentTemplate) === false
+			&& [undefined, null].includes(this.editContentTemplate as any) === false
 			&& (this.column.editable === true || (typeof this.column.editable === 'function' && this.column.editable(this.data)))
 	}
 

@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/split-button-dialog-adapter",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"description": "The @3mo/dialog adapter of the @3mo/split-button component",
 	"repository": {
 		"type": "git",

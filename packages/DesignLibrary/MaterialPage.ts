@@ -1,4 +1,4 @@
-import { component, html, css, property, Component, event, nothing } from '@a11d/lit'
+import { component, html, css, property, Component, event } from '@a11d/lit'
 import { PageComponent } from '@a11d/lit-application'
 import { SlotController } from '@3mo/slot-controller'
 
@@ -95,7 +95,7 @@ export class MaterialPage extends Component {
 	}
 
 	protected get headingContentTemplate() {
-		return !this.hasHeading && !this.hasHeadingDetails ? nothing : html`
+		return !this.hasHeading && !this.hasHeadingDetails ? html.nothing : html`
 			<slot name='heading' part='heading'>${this.heading}</slot>
 			<slot name='headingDetails' part='headingDetails'></slot>
 		`

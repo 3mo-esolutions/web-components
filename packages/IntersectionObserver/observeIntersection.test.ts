@@ -1,5 +1,5 @@
-import { component, Component, html, nothing, query, state } from '@a11d/lit'
-import { ComponentTestFixture } from '@a11d/lit/dist/test/index.js'
+import { component, Component, html, query, state } from '@a11d/lit'
+import { ComponentTestFixture } from '@a11d/lit-testing'
 import { observeIntersection } from './observeIntersection.js'
 
 @component('observe-intersection-test-component')
@@ -12,7 +12,7 @@ class ObserveIntersectionTestComponent extends Component {
 	@state() shallRender = true
 
 	protected override get template() {
-		return !this.shallRender ? nothing : html`
+		return !this.shallRender ? html.nothing : html`
 			<div id='with-observer' ${observeIntersection(this.callback)}></div>
 			<div id='without-observer'></div>
 		`

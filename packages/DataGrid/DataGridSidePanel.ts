@@ -1,4 +1,4 @@
-import { component, style, Component, css, html, ifDefined, nothing, property } from '@a11d/lit'
+import { component, style, Component, css, html, ifDefined, property } from '@a11d/lit'
 import { Localizer } from '@3mo/localization'
 import { tooltip } from '@3mo/tooltip'
 import { type Checkbox } from '@3mo/checkbox'
@@ -85,7 +85,7 @@ export class DataGridSidePanel<TData> extends Component {
 	protected override get template() {
 		return html`
 			<mo-flex ${style({ height: '100%' })}>
-				${this.dataGrid.hasToolbar || this.dataGrid.hasFilters === false ? nothing : html`
+				${this.dataGrid.hasToolbar || this.dataGrid.hasFilters === false ? html.nothing : html`
 					<mo-tab-bar ${style({ height: '60px' })}
 						value=${ifDefined(this.dataGrid.sidePanelTab)}
 						@change=${(e: CustomEvent<DataGridSidePanelTab | undefined>) => this.dataGrid.navigateToSidePanelTab(e.detail ?? DataGridSidePanelTab.Settings)}
@@ -101,7 +101,7 @@ export class DataGridSidePanel<TData> extends Component {
 					</mo-tab-bar>
 				`}
 
-				${this.dataGrid.hasToolbar === false && this.dataGrid.hasFilters === true ? nothing : html`
+				${this.dataGrid.hasToolbar === false && this.dataGrid.hasFilters === true ? html.nothing : html`
 					<mo-flex id='flexHeading' direction='horizontal' alignItems='center'>
 						<mo-heading typography='heading6' ${style({ width: '*', color: 'var(--mo-color-on-surface)' })}>${t(this.dataGrid.sidePanelTab === DataGridSidePanelTab.Filters ? 'Extended Filters' : 'Settings')}</mo-heading>
 						<mo-icon-button icon='close' dense

@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/instanceof-attribute-controller",
-	"version": "0.1.3",
+	"version": "0.1.4",
 	"description": "A controller that writes extended classes' tag names into the \"instanceof\" attribute.",
 	"repository": {
 		"type": "git",

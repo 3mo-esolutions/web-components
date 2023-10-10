@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/standard-dialogs",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "A package containing standard dialogs for web applications.",
 	"repository": {
 		"type": "git",
@@ -30,5 +30,8 @@
 		"@3mo/dialog": "x",
 		"@3mo/localization": "x",
 		"@3mo/text-fields": "x"
+	},
+	"devDependencies": {
+		"@a11d/lit-testing": "x"
 	}
 }

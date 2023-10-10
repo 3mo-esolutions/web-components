@@ -1,4 +1,4 @@
-import { component, css, html, nothing, property } from '@a11d/lit'
+import { component, css, html, property } from '@a11d/lit'
 import { ListItem } from '@3mo/list'
 import { MaterialIcon } from '@3mo/icon'
 
@@ -25,7 +25,7 @@ export class NavigationListItem extends ListItem {
 
 	protected override get template() {
 		return html`
-			${!this.icon ? nothing : html`<mo-icon icon=${this.icon}></mo-icon>`}
+			${!this.icon ? html.nothing : html`<mo-icon icon=${this.icon}></mo-icon>`}
 			${super.template}
 		`
 	}

@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/loading-button-dialog-adapter",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"description": "The @3mo/dialog adapter of the @3mo/loading-button component",
 	"repository": {
 		"type": "git",

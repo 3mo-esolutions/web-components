@@ -1,4 +1,4 @@
-import { directive, AsyncDirective, PartType, nothing, type ElementPart, type PartInfo } from '@a11d/lit'
+import { directive, AsyncDirective, PartType, type ElementPart, type PartInfo, html } from '@a11d/lit'
 import { ContextMenu } from './ContextMenu.js'
 import { ContextMenuLazyInitializer, ContextMenuTemplate } from './ContextMenuLazyInitializer.js'
 
@@ -26,7 +26,7 @@ export class ContextMenuDirective extends AsyncDirective {
 
 	render(...parameters: ContextMenuDirectiveParameters) {
 		parameters
-		return nothing
+		return html.nothing
 	}
 
 	protected override disconnected() {
