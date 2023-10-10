@@ -1,7 +1,15 @@
 import { DateTimeRange } from './DateTimeRange.js'
 import { DateTime } from './DateTime.js'
 
-describe('DateRange', () => {
+describe('DateTimeRange', () => {
+	describe('static parse()', () => {
+		it('should parse a date range with multiple delimeters', () => {
+			const expected = new DateTimeRange(new DateTime('2020-01-01'), new DateTime('2021-09-02'))
+			expect(DateTimeRange.parse('2020-01-01 – 2021-09-02')).toEqual(expected)
+			expect(DateTimeRange.parse('2020-01-01 ~ 2021-09-02')).toEqual(expected)
+		})
+	})
+
 	it('should construct without any dates', () => {
 		const range = new DateTimeRange()
 		expect(range.start).toBeUndefined()

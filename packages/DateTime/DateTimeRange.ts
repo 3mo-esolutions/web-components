@@ -1,13 +1,32 @@
 import { LanguageCode, Localizer, extractDateTimeFormatOptions } from '@3mo/localization'
+import { DateTimeRangeParser } from './parsers/DateTimeRangeParser.js'
+import { DateTimeRangeDelimiterParser } from './index.js'
 
 export class DateTimeRange {
-	static parse(dateRange: string) {
-		const probableUntilDelimiters = new Set(['–', '–', '~', DateTimeRange.getUntilDelimiter()])
-		const [start, end] = dateRange.split(new RegExp(`[${[...probableUntilDelimiters].join('')}]+`))
-		return new DateTimeRange(
-			start ? new Date(start) : undefined,
-			end ? new Date(end) : undefined
-		)
+	private static readonly customParsers = new Array<Constructor<DateTimeRangeParser>>()
+
+	static addParser(parser: Constructor<DateTimeRangeParser>) {
+		this.customParsers.push(parser)
+	}
+
+	static parse(text: string, referenceDate = new DateTime, language = Localizer.currentLanguage) {
+		if (!text.trim()) {
+			return undefined
+		}
+
+		const parsers = [
+			new DateTimeRangeDelimiterParser(language),
+			...DateTimeRange.customParsers.map(parser => new parser(language)),
+		]
+
+		for (const parser of parsers) {
+			const dateTimeRange = parser.parse(text, referenceDate)
+			if (dateTimeRange) {
+				return dateTimeRange
+			}
+		}
+
+		return undefined
 	}
 
 	private static getUntilDelimiter(language: LanguageCode = Localizer.currentLanguage) {
@@ -15,7 +34,7 @@ export class DateTimeRange {
 			new Date('2010-01-01T00:00:00.000Z'),
 			new Date('2020-01-01T00:00:00.000Z')
 		)
-		return parts.find(part => part.source === 'shared')?.value
+		return parts.find(part => part.source === 'shared')?.value.trim()
 	}
 
 	private static sort(start?: DateTime, end?: DateTime) {
