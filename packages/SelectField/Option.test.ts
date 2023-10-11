@@ -1,3 +1,4 @@
+import { html } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { Option } from './Option.js'
 
@@ -25,5 +26,22 @@ describe('Option', () => {
 
 		fixture.component.dispatchEvent(new MouseEvent('click'))
 		expect(fixture.component.selected).toBeFalse()
+	})
+
+	describe('textMatches', () => {
+		const fixture = new ComponentTestFixture<Option<unknown>>(html`<mo-option>[Tag] Text Content</mo-option>`)
+
+		it('should match with text content only', () => {
+			expect(fixture.component.textMatches('extcon')).toBeTrue()
+			expect(fixture.component.textMatches('content')).toBeTrue()
+			expect(fixture.component.textMatches('tag')).toBeTrue()
+		})
+
+		it('should match with text content only', () => {
+			fixture.component.inputText = 'Text Content'
+			expect(fixture.component.textMatches('extcon')).toBeTrue()
+			expect(fixture.component.textMatches('content')).toBeTrue()
+			expect(fixture.component.textMatches('tag')).toBeTrue()
+		})
 	})
 })

@@ -149,7 +149,7 @@ MwcSnackbar.elementStyles.push(css`
 		padding-inline-start: 8px;
 		color: rgba(var(--mo-color-background-base), 0.87)
 	}
-`)
+` as any)
 
 MwcSnackbar.addInitializer(snackbar => snackbar.addController(new class {
 	private get surfaceElement() {

@@ -40,7 +40,10 @@ export class Option<T> extends SelectionListItem {
 	}
 
 	textMatches(text: string) {
-		return this.text.toLowerCase().includes(text.toLowerCase())
+		return [this.textContent, this.inputText]
+			.map(text => text?.replaceAll(/\s+/g, '').toLowerCase())
+			.filter(Boolean)
+			.some(keyword => keyword!.includes(text.toLowerCase()))
 	}
 
 	static override get styles() {

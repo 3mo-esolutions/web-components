@@ -71,7 +71,7 @@ MwcDrawer.elementStyles.push(css`
 	.mdc-drawer__content::-webkit-scrollbar-thumb {
 		background: rgba(128, 128, 128, 0.75);
 	}
-`)
+` as any)
 
 declare global {
 	interface HTMLElementTagNameMap {
