@@ -1,4 +1,4 @@
-import { ComponentTestFixture } from '@a11d/lit/dist/test'
+import { ComponentTestFixture } from '@a11d/lit-testing'
 import { DataGrid, DataGridRow, DataGridSelectionMode } from './index.js'
 import { html } from '@a11d/lit'
 

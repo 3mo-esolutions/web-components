@@ -1,4 +1,4 @@
-import { ComponentTestFixture } from '@a11d/lit/dist/test'
+import { ComponentTestFixture } from '@a11d/lit-testing'
 import { LoadingButton } from './LoadingButton.js'
 import './index.js'
 

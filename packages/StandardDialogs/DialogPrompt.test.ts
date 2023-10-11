@@ -1,4 +1,4 @@
-import { ComponentTestFixture } from '@a11d/lit/dist/test/ComponentTestFixture.js'
+import { ComponentTestFixture } from '@a11d/lit-testing'
 import { Dialog, DialogSize } from '@3mo/dialog'
 import { DialogPrompt } from './DialogPrompt.js'
 

@@ -3,7 +3,7 @@
 
 /*
 import { html } from '@a11d/lit'
-import { ComponentTestFixture } from '@a11d/lit/dist/test'
+import { ComponentTestFixture } from '@a11d/lit-testing'
 import { Toolbar } from './index.js'
 
 describe('Toolbar', () => {
