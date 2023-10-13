@@ -27,6 +27,12 @@ Localizer.register('de', {
 /**
  * @element mo-fetchable-data-grid
  *
+ * @attr fetch - A function that fetches the data from the server.
+ * @attr silentFetch - If set, the DataGrid's content will not be cleared when the fetch is initiated.
+ * @attr parameters - The parameters that are passed to the fetch function.
+ * @attr paginationParameters - The parameters that are passed to the fetch function when the page changes. This enables server-side pagination.
+ * @attr sortParameters - The parameters that are passed to the fetch function when the sort changes. This enables server-side sorting.
+ *
  * @slot error-no-selection - A slot for displaying an error message when user action is required in order for DataGrid to initiate the fetch.
  *
  * @fires parametersChange {CustomEvent<TDataFetcherParameters>}
