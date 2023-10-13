@@ -24,7 +24,13 @@ export abstract class DataGridColumn<TData, TValue> extends Component {
 	@property({ reflect: true }) dataSelector!: KeyPathOf<TData>
 	@property({ reflect: true }) sortDataSelector?: KeyPathOf<TData>
 	@property({ type: Boolean, reflect: true }) nonSortable = false
-	@property({ type: Boolean, reflect: true }) nonEditable: boolean | Predicate<TData> = false
+	@property({
+		type: Number,
+		reflect: true,
+		hasChanged(value: boolean | Predicate<TData>, oldValue: boolean | Predicate<TData>) {
+			return String(value) !== String(oldValue)
+		}
+	}) nonEditable: boolean | Predicate<TData> = false
 
 	get definition(): ColumnDefinition<TData, TValue> {
 		const nonEditable = this.nonEditable

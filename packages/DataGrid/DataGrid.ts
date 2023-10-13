@@ -10,7 +10,7 @@ import { MediaQueryController } from '@3mo/media-query-observer'
 import { observeResize } from '@3mo/resize-observer'
 import { Localizer } from '@3mo/localization'
 import { ContextMenu } from '@3mo/context-menu'
-import { CsvGenerator, ColumnDefinition, DataGridCell, DataGridColumn, DataGridFooter, DataGridHeader, DataGridRow, DataGridSidePanel, DataGridSidePanelTab } from './index.js'
+import { CsvGenerator, DataGridColumn, DataGridSidePanelTab, type ColumnDefinition, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, type DataGridSidePanel } from './index.js'
 
 Localizer.register('en', {
 	'${count:pluralityNumber} entries selected': [
