@@ -1,6 +1,6 @@
 import '@3mo/flex'
 import '@3mo/grid'
-import '@3mo/key-path'
+import '@a11d/key-path'
 import '@3mo/icon'
 import '@3mo/icon-button'
 import '@3mo/checkbox'
