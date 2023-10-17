@@ -22,7 +22,7 @@ export abstract class FieldComponent<T> extends Component {
 	@event() readonly input!: EventDispatcher<T | undefined>
 	@event() readonly validityChange!: EventDispatcher<boolean>
 
-	@property({ type: Object }) abstract value?: T | undefined
+	@property({ type: Object, bindingDefault: true }) abstract value?: T | undefined
 	@property() label = ''
 	@property({ type: Boolean }) readonly = false
 	@property({ type: Boolean }) disabled = false
