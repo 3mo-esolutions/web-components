@@ -26,7 +26,7 @@ function isDateTimePrecisionSmaller(precision: FieldDateTimePrecision, other: Fi
 
 /**
  * @attr open - Whether the date picker is open
- * @attr hideDatePicker - Hide the date picker
+ * @attr pickerHidden - Hide the date picker
  * @attr shortcutReferenceDate - The date to use as a reference for shortcuts
  * @attr precision - The precision of the date picker. Defaults to 'minute'
  */
@@ -42,7 +42,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 			}
 		}
 	}) open = false
-	@property({ type: Boolean }) hideDatePicker = false
+	@property({ type: Boolean }) pickerHidden = false
 	@property({ type: Object }) shortcutReferenceDate = new DateTime
 	@property() precision = FieldDateTimePrecision.Minute
 
@@ -162,7 +162,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	protected abstract override valueToInputValue(value: T | undefined): string
 
 	protected get calendarIconButtonTemplate() {
-		return this.hideDatePicker ? html.nothing : html`
+		return this.pickerHidden ? html.nothing : html`
 			<mo-icon tabindex='-1' dense slot='end'
 				icon=${this.calendarIconButtonIcon}
 				${style({ color: this.isActive ? 'var(--mo-color-accent)' : 'var(--mo-color-gray)', fontSize: '22px', marginTop: '2px' })}
@@ -171,7 +171,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	}
 
 	protected get popoverTemplate() {
-		return this.hideDatePicker ? html.nothing : html`
+		return this.pickerHidden ? html.nothing : html`
 			<mo-popover tabindex='-1' fixed openOnFocus
 				.anchor=${this}
 				?open=${this.open}
