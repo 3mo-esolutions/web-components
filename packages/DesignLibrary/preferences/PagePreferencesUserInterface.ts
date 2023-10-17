@@ -117,8 +117,8 @@ export class PagePreferencesUserInterface extends PageSettings {
 							</mo-list-item>
 
 							<mo-checkbox-list-item
-								?checked=${DataGrid.hasAlternatingBackground.value}
-								@change=${(e: CustomEvent<CheckboxValue>) => DataGrid.hasAlternatingBackground.value = e.detail === 'checked'}
+								?selected=${DataGrid.hasAlternatingBackground.value}
+								@change=${(e: CustomEvent<boolean>) => DataGrid.hasAlternatingBackground.value = e.detail}
 							>Wechselnder Hintergrund</mo-checkbox-list-item>
 
 							<mo-list-item>

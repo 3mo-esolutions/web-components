@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/checkbox-group",
-	"version": "0.0.8",
+	"version": "0.1.0",
 	"description": "A checkbox-group web-component based on Material Web Components.",
 	"repository": {
 		"type": "git",

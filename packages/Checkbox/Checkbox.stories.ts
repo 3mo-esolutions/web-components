@@ -9,12 +9,12 @@ export default meta({
 	args: {
 		disabled: false,
 		label: 'Label',
-		value: 'unchecked',
+		selected: false,
 	},
 	argTypes: {
 		disabled: { control: 'boolean' },
 		label: { control: 'text' },
-		value: { control: { type: 'select', options: ['checked', 'indeterminate', 'unchecked'] } },
+		selected: { control: { type: 'select', options: [true, false, 'indeterminate'] } },
 	},
 	parameters: {
 		docs: {
@@ -26,21 +26,21 @@ export default meta({
 })
 
 export const Checkbox = story({
-	render: ({ label, disabled, value }) => html`
+	render: ({ label, disabled, selected }) => html`
 		<mo-checkbox
 			label=${label}
 			?disabled=${disabled}
-			value=${value}
+			.selected=${selected}
 		></mo-checkbox>
 	`
 })
 
 export const WithCustomAccentColor = story({
-	render: ({ label, disabled, value }) => html`
+	render: ({ label, disabled, selected }) => html`
 		<mo-checkbox style='--mo-checkbox-accent-color: var(--mo-color-red)'
 			label=${label}
 			?disabled=${disabled}
-			value=${value}
+			.selected=${selected}
 		></mo-checkbox>
 	`
 })

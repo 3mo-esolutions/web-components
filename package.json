@@ -58,5 +58,10 @@
 		"webpack": "x",
 		"webpack-cli": "x",
 		"webpack-dev-server": "x"
+	},
+	"overrides": {
+		"@storybook/web-components": {
+			"lit-html": "3.x"
+		}
 	}
 }

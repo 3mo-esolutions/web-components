@@ -13,13 +13,13 @@ export class PagePreferencesSecurity extends PageSettings {
 			<mo-page heading='Sicherheit'>
 				<mo-flex gap='6px'>
 					<mo-checkbox-list-item
-						?checked=${DialogDeletion.deletionConfirmation.value}
-						@change=${(e: CustomEvent<CheckboxValue>) => DialogDeletion.deletionConfirmation.value = e.detail === 'checked'}
+						?selected=${DialogDeletion.deletionConfirmation.value}
+						@change=${(e: CustomEvent<boolean>) => DialogDeletion.deletionConfirmation.value = e.detail}
 					>Vor dem Löschen bestätigen</mo-checkbox-list-item>
 
 					<mo-checkbox-list-item
-						?checked=${BusinessSuiteDialogAuthenticator.shallRememberStorage.value}
-						@change=${(e: CustomEvent<CheckboxValue>) => BusinessSuiteDialogAuthenticator.shallRememberStorage.value = e.detail === 'checked'}
+						?selected=${BusinessSuiteDialogAuthenticator.shallRememberStorage.value}
+						@change=${(e: CustomEvent<boolean>) => BusinessSuiteDialogAuthenticator.shallRememberStorage.value = e.detail}
 					>Passwort merken & eingeloggt bleiben</mo-checkbox-list-item>
 
 					${!Authentication.hasAuthenticator() ? html.nothing : html`

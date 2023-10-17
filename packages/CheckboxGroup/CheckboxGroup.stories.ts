@@ -26,14 +26,14 @@ export default meta({
 export const CheckboxGroup = story({
 	render: ({ label, direction }) => html`
 		<mo-checkbox-group label=${label} direction=${direction}>
-			<mo-checkbox label='Checkbox 1' value='checked'></mo-checkbox>
+			<mo-checkbox label='Checkbox 1' selected></mo-checkbox>
 			<mo-checkbox-group label='Checkbox 2'>
-				<mo-checkbox label='Checkbox 2.1' value='checked'></mo-checkbox>
-				<mo-checkbox label='Checkbox 2.2' value='indeterminate'></mo-checkbox>
-				<mo-checkbox label='Checkbox 2.3' value='unchecked'></mo-checkbox>
+				<mo-checkbox label='Checkbox 2.1' selected></mo-checkbox>
+				<mo-checkbox label='Checkbox 2.2' selected='indeterminate'></mo-checkbox>
+				<mo-checkbox label='Checkbox 2.3'></mo-checkbox>
 			</mo-checkbox-group>
-			<mo-checkbox label='Checkbox 3' value='unchecked'></mo-checkbox>
-			<mo-checkbox label='Checkbox 4' value='unchecked'></mo-checkbox>
+			<mo-checkbox label='Checkbox 3'></mo-checkbox>
+			<mo-checkbox label='Checkbox 4'></mo-checkbox>
 		</mo-checkbox-group>
 	`
 })

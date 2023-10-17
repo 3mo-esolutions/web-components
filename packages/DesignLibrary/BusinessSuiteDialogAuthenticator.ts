@@ -80,8 +80,8 @@ export abstract class BusinessSuiteDialogAuthenticator extends DialogAuthenticat
 				<mo-flex direction='horizontal' justifyContent='space-between' alignItems='center' wrap='wrap-reverse'>
 					<mo-checkbox
 						label=${t('Remember Password')}
-						?checked=${this.shallRememberPassword}
-						@change=${(e: CustomEvent<CheckboxValue>) => this.shallRememberPassword = e.detail === 'checked'}
+						?selected=${this.shallRememberPassword}
+						@change=${(e: CustomEvent<boolean>) => this.shallRememberPassword = e.detail}
 					></mo-checkbox>
 
 					<mo-anchor ${style({ fontSize: 'small' })} @click=${() => this.resetPassword()}>${t('Reset Password')}</mo-anchor>

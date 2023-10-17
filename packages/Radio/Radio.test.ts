@@ -28,8 +28,8 @@ describe('Radio', () => {
 		expect(fixture.component.renderRoot.querySelector('mwc-radio')?.disabled).toBe(true)
 	})
 
-	it('should tunnel "checked" to the mwc-radio element', async () => {
-		fixture.component.checked = true
+	it('should tunnel "selected" to the mwc-radio element', async () => {
+		fixture.component.selected = true
 		await fixture.update()
 		expect(fixture.component.renderRoot.querySelector('mwc-radio')?.checked).toBe(true)
 	})
@@ -49,18 +49,18 @@ describe('Radio', () => {
 		const fixture2 = new ComponentTestFixture<Radio>('mo-radio')
 		const fixture3 = new ComponentTestFixture<Radio>('mo-radio')
 
-		it('should set "checked" to false when another radio is checked', async () => {
-			fixture1.component.checked = true
+		it('should set "selected" to false when another radio is selected', async () => {
+			fixture1.component.selected = true
 			await fixture1.component.updateComplete
-			fixture2.component.checked = true
+			fixture2.component.selected = true
 			await fixture2.component.updateComplete
 
-			expect(fixture1.component.checked).toBe(false)
-			expect(fixture2.component.checked).toBe(true)
+			expect(fixture1.component.selected).toBe(false)
+			expect(fixture2.component.selected).toBe(true)
 		})
 
 		it('should fire "change" event when deselected due to another radio being selected', async () => {
-			fixture1.component.checked = true
+			fixture1.component.selected = true
 			await fixture1.component.updateComplete
 
 			let changed1 = false
@@ -71,7 +71,7 @@ describe('Radio', () => {
 			const spy2 = jasmine.createSpy('change').and.callFake((e: CustomEvent<boolean>) => changed2 = e.detail)
 			fixture2.component.addEventListener('change', spy2)
 
-			fixture3.component.checked = true
+			fixture3.component.selected = true
 			await fixture3.component.updateComplete
 
 			expect(changed1).toBe(false)

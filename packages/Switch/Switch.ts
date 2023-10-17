@@ -16,7 +16,7 @@ import { MdSwitch } from '@material/web/switch/switch.js'
  *
  * @cssprop --mo-switch-selected-icon-color
  *
- * @fires change - Fired when the checked state of the switch changes.
+ * @fires change - Fired when the selection state of the switch changes.
  */
 @component('mo-switch')
 export class Switch extends Component {
@@ -24,7 +24,7 @@ export class Switch extends Component {
 
 	@property() label = ''
 	@disabledProperty() disabled = false
-	@property({ type: Boolean }) selected = false
+	@property({ type: Boolean, bindingDefault: true, event: 'change' }) selected = false
 
 	static override get styles() {
 		return css`

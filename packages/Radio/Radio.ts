@@ -10,14 +10,14 @@ import '@3mo/theme'
  * @attr label
  * @attr name
  * @attr disabled
- * @attr checked
+ * @attr selected
  *
  * @cssprop --mo-radio-accent-color
  * @cssprop --mo-radio-disabled-color
  * @cssprop --mo-radio-unchecked-color
  * @cssprop --mo-radio-ink-color
  *
- * @fires change - Fired when the checked state of the radio changes.
+ * @fires change - Fired when the selected state of the radio changes.
  */
 @component('mo-radio')
 export class Radio extends Component {
@@ -26,7 +26,7 @@ export class Radio extends Component {
 	@property() label = ''
 	@property() name = ''
 	@disabledProperty() disabled = false
-	@property({ type: Boolean }) checked = false
+	@property({ type: Boolean, bindingDefault: true, event: 'change' }) selected = false
 
 	static override get styles() {
 		return css`
@@ -65,7 +65,7 @@ export class Radio extends Component {
 				<mwc-radio reducedTouchTarget global
 					name=${this.name}
 					?disabled=${this.disabled}
-					?checked=${this.checked}
+					?checked=${this.selected}
 					@checked=${this.handleChange.bind(this)}
 				></mwc-radio>
 			</mwc-formfield>
@@ -74,8 +74,8 @@ export class Radio extends Component {
 
 	protected handleChange(event: Event) {
 		event.stopImmediatePropagation()
-		this.checked = (event.target as HTMLInputElement).checked
-		this.change.dispatch(this.checked)
+		this.selected = (event.target as HTMLInputElement).checked
+		this.change.dispatch(this.selected)
 	}
 }
 

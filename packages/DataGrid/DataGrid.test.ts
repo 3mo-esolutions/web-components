@@ -17,8 +17,8 @@ class TestDataGrid extends DataGrid<Person> {
 	get rowsSelectionCheckboxes() { return this.rows.map(row => row.renderRoot.querySelector('mo-checkbox') ?? undefined).filter(Boolean) }
 
 	isRowSelected(row: DataGridRow<Person>, skipCheckboxCheck = false) {
-		const checkboxChecked = row.renderRoot.querySelector('mo-checkbox')?.checked ?? false
-		return row.selected && (skipCheckboxCheck || checkboxChecked)
+		const checkboxSelected = row.renderRoot.querySelector('mo-checkbox')?.selected ?? false
+		return row.selected && (skipCheckboxCheck || checkboxSelected)
 	}
 }
 

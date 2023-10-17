@@ -176,7 +176,7 @@ export class DataGridSidePanel<TData> extends Component {
 
 	private readonly getColumnTemplate = (column: ColumnDefinition<TData>) => {
 		const change = async (e: CustomEvent<undefined>) => {
-			column.hidden = (e.target as Checkbox)?.checked === false
+			column.hidden = (e.target as Checkbox)?.selected === false
 			this.dataGrid.setColumns(this.dataGrid.columns)
 			this.dataGrid.requestUpdate()
 			await this.dataGrid.updateComplete
@@ -184,7 +184,7 @@ export class DataGridSidePanel<TData> extends Component {
 		return html`
 			<mo-checkbox ${style({ height: '30px' })}
 				label=${column.heading}
-				?checked=${column.hidden === false}
+				?selected=${column.hidden === false}
 				@change=${change}
 			></mo-checkbox>
 		`

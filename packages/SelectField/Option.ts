@@ -74,25 +74,21 @@ export class Option<T> extends SelectionListItem {
 	protected get checkboxTemplate() {
 		return !this.multiple ? html.nothing : html`
 			<mo-checkbox tabindex='-1'
-				?checked=${this.selected}
+				?selected=${this.selected}
 				@click=${(e: MouseEvent) => e.stopImmediatePropagation()}
-				@change=${(e: CustomEvent<CheckboxValue>) => this.handleChange(e.detail)}
+				@change=${(e: CustomEvent<boolean>) => this.handleChange(e.detail)}
 			></mo-checkbox>
 		`
 	}
 
 	@eventListener('click')
 	protected handleClick() {
-		this.handleChange(
-			this.multiple
-				? this.selected ? 'unchecked' : 'checked'
-				: 'checked'
-		)
+		this.handleChange(!this.multiple ? true : !this.selected)
 	}
 
-	protected handleChange(value: CheckboxValue) {
-		this.selected = value === 'checked'
-		this.change.dispatch(this.selected)
+	protected handleChange(value: boolean) {
+		this.selected = value
+		this.change.dispatch(value)
 	}
 }
 

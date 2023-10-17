@@ -90,8 +90,6 @@ export const Sums = story({
 			<mo-data-grid-column-number heading='Age' dataSelector='age' sumHeading='Ages Total'></mo-data-grid-column-number>
 			<mo-data-grid-column-text heading='City' dataSelector='city'></mo-data-grid-column-text>
 			<mo-data-grid-column-currency heading='Balance' dataSelector='balance' sumHeading='Balances Total'></mo-data-grid-column-currency>
-
-			<mo-checkbox slot='toolbar'></mo-checkbox>
 		</mo-data-grid>
 	`
 })

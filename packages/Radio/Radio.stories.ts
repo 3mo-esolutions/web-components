@@ -9,12 +9,12 @@ export default meta({
 	args: {
 		disabled: false,
 		label: 'Label',
-		checked: false,
+		selected: false,
 	},
 	argTypes: {
 		disabled: { control: 'boolean' },
 		label: { control: 'text' },
-		checked: { control: 'boolean' },
+		selected: { control: 'boolean' },
 	},
 	parameters: {
 		docs: {
@@ -26,11 +26,11 @@ export default meta({
 })
 
 export const Radio = story({
-	render: ({ label, disabled, checked }) => html`
+	render: ({ label, disabled, selected }) => html`
 		<mo-radio
 			label=${label}
 			?disabled=${disabled}
-			?checked=${checked}
+			?selected=${selected}
 		></mo-radio>
 	`
 })

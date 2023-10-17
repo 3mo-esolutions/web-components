@@ -16,31 +16,31 @@ export class CheckboxGroup extends Checkbox {
 		return [...this.children].filter((child): child is Checkbox => child instanceof Checkbox)
 	}
 
-	private get childrenValue(): CheckboxValue {
-		if (this.checkboxes.every(e => e.value === 'checked')) {
-			return 'checked'
-		} else if (this.checkboxes.every(e => e.value === 'unchecked')) {
-			return 'unchecked'
+	private get childrenSelected(): CheckboxSelection {
+		if (this.checkboxes.every(e => e.selected === true)) {
+			return true
+		} else if (this.checkboxes.every(e => e.selected === false)) {
+			return false
 		} else {
 			return 'indeterminate'
 		}
 	}
 
-	private set childrenValue(value: CheckboxValue) {
-		if (value === 'indeterminate') {
+	private set childrenSelected(selected: CheckboxSelection) {
+		if (selected === 'indeterminate') {
 			return
 		}
 
 		this.checkboxes.forEach(checkbox => {
-			if (checkbox.value !== value) {
-				checkbox.value = value
-				checkbox.change.dispatch(value)
+			if (checkbox.selected !== selected) {
+				checkbox.selected = selected
+				checkbox.change.dispatch(selected)
 			}
 		})
 	}
 
 	@eventListener('change')
-	protected changed = () => this.childrenValue = this.value
+	protected changed = () => this.childrenSelected = this.selected
 
 	static override get styles() {
 		return css`
@@ -69,10 +69,10 @@ export class CheckboxGroup extends Checkbox {
 
 	private readonly handleSlotChange = () => {
 		const updateValue = () => {
-			const value = this.childrenValue
-			if (value !== this.value) {
-				this.value = value
-				this.change.dispatch(value)
+			const selected = this.childrenSelected
+			if (selected !== this.selected) {
+				this.selected = selected
+				this.change.dispatch(selected)
 			}
 		}
 

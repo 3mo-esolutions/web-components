@@ -204,9 +204,6 @@
 			"path": "./packages/KeyboardController"
 		},
 		{
-			"path": "./packages/KeyPath"
-		},
-		{
 			"path": "./packages/LanguageField"
 		},
 		{

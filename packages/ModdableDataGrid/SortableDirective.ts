@@ -43,12 +43,10 @@ class SortableDirective<T> extends Directive {
 		return html`${this.parameters.data.map(parameters.getItemTemplate)}`
 	}
 
-	// @ts-expect-error There is a conflict between Lit 2 and Lit 3 types
 	override update(part: ChildPart, parameters: DirectiveParameters<this>) {
 		for (const element of this.elements) {
 			this.registerEvents(element)
 		}
-		// @ts-expect-error There is a conflict between Lit 2 and Lit 3 types
 		return super.update(part, parameters)
 	}
 

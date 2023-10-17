@@ -1,52 +1,43 @@
-import { component, eventListener, html, ifDefined, property } from '@a11d/lit'
+import { component, eventListener, html, property } from '@a11d/lit'
 import { SelectionListItemWithControl } from './SelectionListItemWithControl.js'
 import '@3mo/checkbox'
+import { Checkbox } from '@3mo/checkbox'
 
 /**
  * @element mo-checkbox-list-item
  *
  * @attr selectionControlAlignment - The alignment of the checkbox relative to the list item content
- * @attr checked - Whether the checkbox is checked
  * @attr indeterminate - Whether the checkbox is indeterminate
- * @attr value - The value of the checkbox
+ * @attr selected - The value of the checkbox
  *
  * @slot - Default slot for content
  *
  * @event change - Dispatched when the checkbox value changes
  */
 @component('mo-checkbox-list-item')
-export class CheckboxListItem extends SelectionListItemWithControl<CheckboxValue> {
-	@property({ type: Boolean, reflect: true }) checked = false
-	@property({ type: Boolean, reflect: true }) indeterminate = false
-	@property() value?: CheckboxValue
-
-	get selected() { return this.checked }
-	set selected(value) { this.checked = value }
+export class CheckboxListItem extends SelectionListItemWithControl<CheckboxSelection> {
+	@property({ type: Boolean, converter: Checkbox.selectedPropertyConverter }) override selected: CheckboxSelection = false
 
 	override role = 'menuitemcheckbox'
 
 	protected get selectionControlTemplate() {
 		return html`
 			<mo-checkbox tabindex='-1'
-				?checked=${this.checked}
-				?indeterminate=${this.indeterminate}
-				value=${ifDefined(this.value)}
+				.selected=${this.selected || false}
 				@click=${(e: MouseEvent) => e.stopImmediatePropagation()}
-				@change=${(e: CustomEvent<CheckboxValue>) => this.handleChange(e.detail)}
+				@change=${(e: CustomEvent<CheckboxSelection>) => this.handleChange(e.detail)}
 			></mo-checkbox>
 		`
 	}
 
 	@eventListener('click')
 	protected handleClick() {
-		this.handleChange(this.checked ? 'unchecked' : 'checked')
+		this.handleChange(!this.selected)
 	}
 
-	protected handleChange(value: CheckboxValue) {
-		this.checked = value === 'checked'
-		this.indeterminate = value === 'indeterminate'
-		this.value = value
-		this.change.dispatch(value)
+	protected handleChange(selected: CheckboxSelection) {
+		this.selected = selected
+		this.change.dispatch(selected)
 	}
 }
 

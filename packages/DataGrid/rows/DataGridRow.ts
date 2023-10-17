@@ -193,8 +193,8 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				<mo-checkbox
 					tabindex='-1'
 					?disabled=${this.dataGrid.isDataSelectable?.(this.data) === false}
-					?checked=${this.selected}
-					@change=${(e: CustomEvent<CheckboxValue>) => this.setSelection(e.detail === 'checked')}
+					?selected=${this.selected}
+					@change=${(e: CustomEvent<boolean>) => this.setSelection(e.detail)}
 				></mo-checkbox>
 			</mo-flex>
 		`

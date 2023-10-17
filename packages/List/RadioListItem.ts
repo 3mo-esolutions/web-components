@@ -7,7 +7,7 @@ import '@3mo/radio'
  *
  * @attr selectionControlAlignment - The alignment of the radio relative to the list item content
  * @attr name - The name of the radio
- * @attr checked - Whether the radio is checked
+ * @attr selected - Whether the radio is selected
  *
  * @slot - Default slot for content
  *
@@ -16,10 +16,7 @@ import '@3mo/radio'
 @component('mo-radio-list-item')
 export class RadioListItem extends SelectionListItemWithControl {
 	@property() name?: string
-	@property({ type: Boolean }) checked = false
-
-	get selected() { return this.checked }
-	set selected(value) { this.checked = value }
+	@property({ type: Boolean }) selected = false
 
 	override role = 'menuitemradio'
 
@@ -27,7 +24,7 @@ export class RadioListItem extends SelectionListItemWithControl {
 		return html`
 			<mo-radio tabindex='-1'
 				name=${ifDefined(this.name)}
-				?checked=${this.checked}
+				?selected=${this.selected}
 				@click=${(e: MouseEvent) => e.stopImmediatePropagation()}
 				@change=${(e: CustomEvent<boolean>) => this.handleChange(e.detail)}
 			></mo-radio>
@@ -40,8 +37,8 @@ export class RadioListItem extends SelectionListItemWithControl {
 	}
 
 	protected handleChange(value: boolean) {
-		if (this.checked !== value) {
-			this.checked = value
+		if (this.selected !== value) {
+			this.selected = value
 			this.change.dispatch(value)
 		}
 	}

@@ -8,11 +8,11 @@ class SelectionListItemEventDispatcher<T> extends HTMLElementEventDispatcher<T> 
 	}
 
 	override dispatch(value: T) {
-		super.dispatch(new SelectionListItemChangeEvent<T>(value, this.element?.selected))
+		super.dispatch(new SelectionListItemChangeEvent<T>(value, !!this.element?.selected))
 	}
 }
 
 export abstract class SelectionListItem<T = boolean> extends ListItem {
-	readonly change = new SelectionListItemEventDispatcher<T>(this)
-	abstract selected: boolean
+	readonly change = new SelectionListItemEventDispatcher(this)
+	abstract selected: T
 }

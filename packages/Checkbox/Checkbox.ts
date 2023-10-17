@@ -6,47 +6,29 @@ import '@3mo/theme'
 /**
  * @element mo-checkbox
  *
- * @attr label
- * @attr disabled
- * @attr value
- * @attr checked
- * @attr indeterminate
+ * @attr label - The label of the checkbox.
+ * @attr disabled - Whether the checkbox is disabled or not.
+ * @attr selected - Whether the checkbox is selected or not. This can be set to 'indeterminate' to show a dash instead of a check-mark.
  *
  * @cssprop --mo-checkbox-accent-color
  * @cssprop --mo-checkbox-disabled-color
  *
- * @fires change - Fired when the checked state of the checkbox changes.
+ * @fires change - Fired when the selection state of the checkbox changes.
  */
 @component('mo-checkbox')
 export class Checkbox extends Component {
-	@event() readonly change!: EventDispatcher<CheckboxValue>
+	static selectedPropertyConverter = (value: unknown) => value === 'indeterminate' ? value : value === ''
+
+	@event() readonly change!: EventDispatcher<CheckboxSelection>
 
 	@property() label = ''
 	@disabledProperty() disabled = false
-	@property({ type: Boolean }) checked = false
-	@property({ type: Boolean }) indeterminate = false
-	@property()
-	get value(): CheckboxValue {
-		if (this.indeterminate) {
-			return 'indeterminate'
-		} else if (this.checked) {
-			return 'checked'
-		} else {
-			return 'unchecked'
-		}
-	}
-
-	set value(value: CheckboxValue) {
-		if (value === 'indeterminate') {
-			this.indeterminate = true
-		} else if (value === 'checked') {
-			this.indeterminate = false
-			this.checked = true
-		} else {
-			this.indeterminate = false
-			this.checked = false
-		}
-	}
+	@property({
+		type: Boolean,
+		bindingDefault: true,
+		event: 'change',
+		converter: Checkbox.selectedPropertyConverter,
+	}) selected: CheckboxSelection = false
 
 	static override get styles() {
 		return css`
@@ -112,8 +94,8 @@ export class Checkbox extends Component {
 		return html`
 			<md-checkbox
 				?disabled=${this.disabled}
-				?indeterminate=${this.indeterminate}
-				?checked=${this.checked}
+				?indeterminate=${this.selected === 'indeterminate'}
+				?checked=${this.selected === true}
 				@change=${this.handleChange.bind(this)}
 			></md-checkbox>
 		`
@@ -122,14 +104,14 @@ export class Checkbox extends Component {
 	protected handleChange(event: Event) {
 		event.stopImmediatePropagation()
 		const checkbox = event.target as HTMLInputElement
-		this.checked = checkbox.checked
-		this.indeterminate = checkbox.indeterminate
-		this.change.dispatch(this.value)
+		const selection = checkbox.indeterminate ? 'indeterminate' : checkbox.checked
+		this.selected = selection
+		this.change.dispatch(selection)
 	}
 }
 
 declare global {
-	type CheckboxValue = 'checked' | 'unchecked' | 'indeterminate'
+	type CheckboxSelection = boolean | 'indeterminate'
 	interface HTMLElementTagNameMap {
 		'mo-checkbox': Checkbox
 	}

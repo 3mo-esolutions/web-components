@@ -8,7 +8,7 @@ export class DataGridHeader<TData> extends Component {
 	@event() readonly modeSelectionChange!: EventDispatcher<string>
 
 	@property({ type: Object }) dataGrid!: DataGrid<TData, any>
-	@property() selection: CheckboxValue = 'unchecked'
+	@property() selection: CheckboxSelection = false
 	@property({ type: Boolean, reflect: true }) overlayOpen = false
 
 	protected override connected() {
@@ -27,9 +27,9 @@ export class DataGridHeader<TData> extends Component {
 
 	private readonly handleDataGridSelectionChange = (selectedData: Array<TData>) => {
 		if (selectedData.length === 0) {
-			this.selection = 'unchecked'
+			this.selection = false
 		} else if (selectedData.length === this.dataGrid.dataLength) {
-			this.selection = 'checked'
+			this.selection = true
 		} else {
 			this.selection = 'indeterminate'
 		}
@@ -107,7 +107,7 @@ export class DataGridHeader<TData> extends Component {
 		return this.dataGrid.hasSelection === false || this.dataGrid.selectionCheckboxesHidden ? html.nothing : html`
 			<mo-flex justifyContent='center' alignItems='center'>
 				${this.dataGrid.selectionMode !== DataGridSelectionMode.Multiple ? html.nothing : html`
-					<mo-checkbox ${style({ position: 'absolute' })} value=${this.selection} @change=${this.handleSelectionChange}></mo-checkbox>
+					<mo-checkbox ${style({ position: 'absolute' })} .selected=${this.selection} @change=${this.handleSelectionChange}></mo-checkbox>
 				`}
 			</mo-flex>
 		`
@@ -181,10 +181,10 @@ export class DataGridHeader<TData> extends Component {
 	}
 
 	private readonly handleSelectionChange = (e: CustomEvent) => {
-		const selection = (e.target as Checkbox).value
-		if (selection === 'checked') {
+		const selected = (e.target as Checkbox).selected
+		if (selected === true) {
 			this.dataGrid.selectAll()
-		} else if (selection === 'unchecked') {
+		} else if (selected === false) {
 			this.dataGrid.deselectAll()
 		}
 	}
