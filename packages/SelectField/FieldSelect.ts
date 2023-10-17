@@ -35,12 +35,14 @@ import { closeWhenOutOfViewport } from './closeWhenOutOfViewport.js'
  * @fires change
  * @fires input
  * @fires dataChange
+ * @fires endReached {CustomEvent<void>}
  * @fires indexChange
  */
 @component('mo-field-select')
 export class FieldSelect<T> extends FieldComponent<Value> {
 	@event() readonly dataChange!: EventDispatcher<Data<T>>
 	@event() readonly indexChange!: EventDispatcher<Index>
+	@event() readonly endReached!: EventDispatcher<void>
 
 	@property() default?: string
 	@property({ type: Boolean }) dense = false
@@ -240,6 +242,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 				.value=${this.valueController.menuValue}
 				@change=${(e: CustomEvent<Array<number>>) => this.handleSelection(e.detail)}
 				@itemsChange=${() => this.handleItemsChange()}
+				@endReached=${() => this.endReached.dispatch()}
 				.positionMiddleware=${this.positionMiddleware}
 			>
 				${this.noResultsOptionTemplate}
