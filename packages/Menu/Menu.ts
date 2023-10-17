@@ -21,18 +21,21 @@ export function isMenu(element: EventTarget): element is HTMLElement {
  * @attr selectionMode - The selection mode of the menu.
  * @attr value - The value of the menu.
  * @attr disabled - Whether the menu is disabled.
+ * @attr threshold - How far from the end (in units of visible length of the list) the bottom edge of the list must be from the end of the content to trigger the `@endReached` callback.
  *
  * @slot - Default slot for list items
  *
  * @fires change - Fired when the menu value changes.
  * @fires openChange - Fired when the menu open state changes.
  * @fires itemsChange - Fired when the menu items change.
+ * @fires endReached - Fires when user reaches the bottom edge of the menu
  */
 @component('mo-menu')
 export class Menu extends Component {
 	@event() readonly change!: EventDispatcher<Array<number>>
 	@event() readonly openChange!: EventDispatcher<boolean>
 	@event() readonly itemsChange!: EventDispatcher<Array<ListItem & HTMLElement>>
+	@event() readonly endReached!: EventDispatcher<void>
 
 	override readonly role = 'menu'
 	override readonly tabIndex = -1
@@ -49,6 +52,7 @@ export class Menu extends Component {
 	@property() opener?: string
 	@property() selectionMode?: SelectableList['selectionMode']
 	@property({ type: Array }) value?: SelectableList['value']
+	@property({ type: Number }) threshold = 0.6
 	@disabledProperty() disabled = false
 
 	@state() protected coordinates?: PopoverCoordinates
@@ -115,6 +119,7 @@ export class Menu extends Component {
 				@openChange=${(e: CustomEvent<boolean>) => this.setOpen(e.detail)}
 				?fixed=${this.fixed}
 				.coordinates=${this.coordinates}
+				@scroll=${this.handleScroll}
 			>
 				<mo-selectable-list
 					selectionMode=${ifDefined(this.selectionMode)}
@@ -128,6 +133,13 @@ export class Menu extends Component {
 				</mo-selectable-list>
 			</mo-popover>
 		`
+	}
+
+	protected handleScroll(e: UIEvent) {
+		const target = e.target as HTMLElement
+		if (target.scrollTop + target.offsetHeight >= target.scrollHeight * this.threshold) {
+			this.endReached.dispatch()
+		}
 	}
 
 	protected handleChange(e: CustomEvent<Array<number>>) {
