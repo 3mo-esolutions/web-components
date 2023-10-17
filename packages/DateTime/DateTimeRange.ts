@@ -2,6 +2,8 @@ import { LanguageCode, Localizer, extractDateTimeFormatOptions } from '@3mo/loca
 import { DateTimeRangeParser } from './parsers/DateTimeRangeParser.js'
 import { DateTimeRangeDelimiterParser } from './index.js'
 
+type FormatOptions = Intl.DateTimeFormatOptions & { readonly language?: LanguageCode }
+
 export class DateTimeRange {
 	private static readonly customParsers = new Array<Constructor<DateTimeRangeParser>>()
 
@@ -81,25 +83,52 @@ export class DateTimeRange {
 		return this.format()
 	}
 
-	format(options?: Intl.DateTimeFormatOptions & { readonly language?: LanguageCode }) {
+	formatAsDateRange(options?: FormatOptions) {
+		return this._format({
+			options,
+			formatter: (dateTime, options) => dateTime.formatAsDate(options),
+			defaultOptions: {
+				year: 'numeric',
+				month: '2-digit',
+				day: '2-digit',
+			}
+		})
+	}
+
+	format(options?: FormatOptions) {
+		return this._format({
+			options,
+			formatter: (dateTime, options) => dateTime.format(options),
+			defaultOptions: {
+				year: 'numeric',
+				month: '2-digit',
+				day: '2-digit',
+				hour: '2-digit',
+				minute: '2-digit',
+			}
+		})
+	}
+
+	private _format({ formatter, options, defaultOptions }: {
+		formatter: (dateTime: DateTime, options: FormatOptions | undefined) => string
+		options: FormatOptions | undefined
+		defaultOptions: Intl.DateTimeFormatOptions
+	}
+	) {
 		if (!this.start && !this.end) {
 			return ''
 		}
 
-		const [language, opt] = extractDateTimeFormatOptions(this.calendarId, this.timeZoneId, options, {
-			year: 'numeric',
-			month: '2-digit',
-			day: '2-digit',
-		})
+		const [language, opt] = extractDateTimeFormatOptions(this.calendarId, this.timeZoneId, options, defaultOptions)
+
+		const delimiter = DateTimeRange.getUntilDelimiter(language)
 
 		if (!this.end) {
-			const start = this.start as Date
-			return start.formatAsDate(options) + DateTimeRange.getUntilDelimiter(language)?.trimEnd()
+			return formatter(this.start as DateTime, options) + delimiter?.trimEnd()
 		}
 
 		if (!this.start) {
-			const end = this.end as Date
-			return DateTimeRange.getUntilDelimiter(language)?.trimStart() + end.formatAsDate(options)
+			return delimiter?.trimStart() + formatter(this.end as DateTime, options)
 		}
 
 		return Intl.DateTimeFormat(language, opt).formatRange(this.start, this.end)
