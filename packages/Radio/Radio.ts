@@ -1,6 +1,5 @@
 import { component, property, css, Component, html, event } from '@a11d/lit'
 import { disabledProperty } from '@3mo/disabled-property'
-import { Formfield as FormField } from '@material/mwc-formfield'
 import '@material/mwc-radio'
 import '@3mo/theme'
 
@@ -47,28 +46,40 @@ export class Radio extends Component {
 				--mdc-radio-ink-color: var(--mo-radio-ink-color, var(--mo-color-on-accent));
 			}
 
-			mwc-formfield::part(label) {
-				padding-inline-start: 0px;
-				margin-inline-start: -2px;
-				text-align: start;
+			label {
+				display: flex;
+				align-items: center;
+				color: var(--mo-color-foreground);
+				font-size: 0.875rem;
+				line-height: 1.25rem;
+				letter-spacing: 0.0178571429em;
+				-webkit-font-smoothing: antialiased;
 			}
 
-			:host([disabled]) mwc-formfield::part(label) {
-				color: var(--mo-radio-disabled-color, var(--mo-color-gray-transparent));
+			:host([disabled]) label {
+				color: var(--mo-radio-disabled-color, var(--mo-color-gray));
+				opacity: 0.5;
 			}
 		`
 	}
 
 	protected override get template() {
+		return !this.label ? this.radioTemplate : html`
+			<label>
+				${this.radioTemplate}
+				${this.label}
+			</label>
+		`
+	}
+
+	protected get radioTemplate() {
 		return html`
-			<mwc-formfield label=${this.label}>
-				<mwc-radio reducedTouchTarget global
-					name=${this.name}
-					?disabled=${this.disabled}
-					?checked=${this.selected}
-					@checked=${this.handleChange.bind(this)}
-				></mwc-radio>
-			</mwc-formfield>
+			<mwc-radio reducedTouchTarget global
+				name=${this.name}
+				?disabled=${this.disabled}
+				?checked=${this.selected}
+				@checked=${this.handleChange.bind(this)}
+			></mwc-radio>
 		`
 	}
 
@@ -78,12 +89,6 @@ export class Radio extends Component {
 		this.change.dispatch(this.selected)
 	}
 }
-
-FormField.addInitializer(async element => {
-	const formField = element as FormField
-	await formField.updateComplete
-	formField.renderRoot.querySelector('label')?.setAttribute('part', 'label')
-})
 
 declare global {
 	interface HTMLElementTagNameMap {

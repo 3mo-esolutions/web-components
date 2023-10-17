@@ -4,10 +4,10 @@ import { Radio } from './Radio.js'
 describe('Radio', () => {
 	const fixture = new ComponentTestFixture<Radio>('mo-radio')
 
-	it('should tunnel "label" to the mwc-formfield element', async () => {
+	it('should tunnel "label" to the label element', async () => {
 		fixture.component.label = 'test'
 		await fixture.update()
-		expect(fixture.component.renderRoot.querySelector('mwc-formfield')?.label).toBe('test')
+		expect(fixture.component.renderRoot.querySelector('label')?.textContent?.trim()).toBe('test')
 	})
 
 	it('should tunnel "name" to the mwc-radio element', async () => {
