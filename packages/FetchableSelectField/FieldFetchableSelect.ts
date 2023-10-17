@@ -1,4 +1,4 @@
-import { component, css, property, event, html, HTMLTemplateResult, PropertyValues } from '@a11d/lit'
+import { component, css, property, event, html, HTMLTemplateResult, PropertyValues, eventListener } from '@a11d/lit'
 import { FetcherController } from '@3mo/fetcher-controller'
 import { FieldSelect } from '@3mo/select-field'
 
@@ -11,17 +11,23 @@ export type FieldFetchableSelectParametersType = Record<string, unknown> | void
  * @attr parameters - The parameters to pass to the fetch function.
  * @attr searchParameters - The parameters to pass to the fetch function when searching.
  * @attr fetch - The function to fetch the data.
+ * @attr threshold - How far from the end (in units of visible length of the list) the bottom edge of the list must be from the end of the content to trigger the `@endReached` callback.
+ * @attr paginated - If `true`, will trigger `@pageChange` on user reaches the bottom the edge of the list
  * @attr optionTemplate - The template to render the options.
  *
  * @fires parametersChange {CustomEvent<TDataFetcherParameters | undefined>}
  * @fires dataFetch {CustomEvent<Array<T>>}
+ * @fires pageChange {CustomEvent<void>}
  */
 @component('mo-field-fetchable-select')
 export class FieldFetchableSelect<T, TDataFetcherParameters extends FieldFetchableSelectParametersType = void> extends FieldSelect<T> {
 	private static readonly fetchedOptionsRenderLimit = 250
 
 	@event() readonly dataFetch!: EventDispatcher<Array<T>>
+	@event() readonly pageChange!: EventDispatcher<void>
 
+	@property({ type: Number }) threshold = 0.8
+	@property({ type: Boolean }) paginated = false
 	@property({ type: Number }) optionsRenderLimit = FieldFetchableSelect.fetchedOptionsRenderLimit
 	@property({ type: Object }) optionTemplate?: (data: T, index: number, array: Array<T>) => HTMLTemplateResult
 
@@ -43,6 +49,13 @@ export class FieldFetchableSelect<T, TDataFetcherParameters extends FieldFetchab
 			return data
 		},
 	})
+
+	@eventListener('endReached')
+	protected onEndReached() {
+		if (this.paginated) {
+			this.pageChange.dispatch()
+		}
+	}
 
 	static override get styles() {
 		return css`

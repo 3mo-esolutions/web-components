@@ -21,12 +21,14 @@ import { Data, FieldSelectValueController, Index, Value } from './SelectValueCon
  * @slot - The select options.
  *
  * @fires dataChange {CustomEvent<Data<T>>}
+ * @fires endReached {CustomEvent<void>}
  * @fires indexChange {CustomEvent<Index>}
  */
 @component('mo-field-select')
 export class FieldSelect<T> extends FieldComponent<Value> {
 	@event() readonly dataChange!: EventDispatcher<Data<T>>
 	@event() readonly indexChange!: EventDispatcher<Index>
+	@event() readonly endReached!: EventDispatcher<void>
 
 	@property() default?: string
 	@property({ type: Boolean }) dense = false
@@ -191,6 +193,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 				.value=${this.valueController.menuValue}
 				@change=${(e: CustomEvent<Array<number>>) => this.handleSelection(e.detail)}
 				@itemsChange=${() => this.handleItemsChange()}
+				@endReached=${() => this.endReached.dispatch()}
 			>
 				${this.defaultOptionTemplate}
 				${this.optionsTemplate}
