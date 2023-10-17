@@ -15,7 +15,7 @@ export class ColorPicker extends Component {
 	@event() readonly input!: EventDispatcher<Color | undefined>
 	@event() readonly change!: EventDispatcher<Color | undefined>
 
-	@property({ type: Object }) value?: Color
+	@property({ type: Object, bindingDefault: true }) value?: Color
 	@property({ type: Array }) presets?: Array<Color | string>
 
 	@query('input') protected readonly inputElement!: HTMLInputElement
