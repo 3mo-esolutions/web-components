@@ -23,12 +23,14 @@ export function isMenu(element: EventTarget): element is HTMLElement {
  * @attr selectionMode - The selection mode of the menu.
  * @attr value - The value of the menu.
  * @attr disabled - Whether the menu is disabled.
+ * @attr threshold - How far from the end (in units of visible length of the list) the bottom edge of the list must be from the end of the content to trigger the `@endReached` callback.
  *
  * @slot - Default slot for list items
  *
  * @fires change - Dispatched when the menu value changes.
  * @fires openChange - Dispatched when the menu open state changes.
  * @fires itemsChange - Dispatched when the menu items change.
+ * @fires endReached - Fires when user reaches the bottom edge of the menu
  *
  * @csspart popover - The popover part of the menu.
  * @csspart list - The list part of the menu.
@@ -40,6 +42,7 @@ export class Menu extends Component {
 	@event() readonly change!: EventDispatcher<Array<number>>
 	@event() readonly openChange!: EventDispatcher<boolean>
 	@event() readonly itemsChange!: EventDispatcher<Array<ListItem & HTMLElement>>
+	@event() readonly endReached!: EventDispatcher<void>
 
 	override readonly role = 'menu'
 	override readonly tabIndex = -1
@@ -95,6 +98,7 @@ export class Menu extends Component {
 	@property({ type: Boolean }) preventOpenOnAnchorEnter = false
 	@property() selectionMode?: SelectableList['selectionMode']
 	@property({ type: Array, bindingDefault: true }) value?: SelectableList['value']
+	@property({ type: Number }) threshold = 0.6
 	@disabledProperty() disabled = false
 
 	@state() protected coordinates?: PopoverCoordinates
@@ -163,6 +167,7 @@ export class Menu extends Component {
 				?open=${this.open}
 				@openChange=${(e: CustomEvent<boolean>) => this.setOpen(e.detail)}
 				.coordinates=${this.coordinates}
+				@scroll=${this.handleScroll}
 				.shouldOpen=${this.shouldOpen}
 				.positionMiddleware=${this.positionMiddleware}
 			>
@@ -178,6 +183,13 @@ export class Menu extends Component {
 				</mo-selectable-list>
 			</mo-popover>
 		`
+	}
+
+	protected handleScroll(e: UIEvent) {
+		const target = e.target as HTMLElement
+		if (target.scrollTop + target.offsetHeight >= target.scrollHeight * this.threshold) {
+			this.endReached.dispatch()
+		}
 	}
 
 	private shouldOpen = (e: Event) => {
