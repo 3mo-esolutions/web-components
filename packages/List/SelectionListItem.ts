@@ -1,4 +1,4 @@
-import { HTMLElementEventDispatcher } from '@a11d/lit'
+import { HTMLElementEventDispatcher, property } from '@a11d/lit'
 import { ListItem } from './ListItem.js'
 import { SelectionListItemChangeEvent } from './SelectableList.js'
 
@@ -14,5 +14,5 @@ class SelectionListItemEventDispatcher<T> extends HTMLElementEventDispatcher<T> 
 
 export abstract class SelectionListItem<T = boolean> extends ListItem {
 	readonly change = new SelectionListItemEventDispatcher(this)
-	abstract selected: T
+	@property({ type: Boolean, bindingDefault: true, event: 'change' }) abstract selected: T
 }
