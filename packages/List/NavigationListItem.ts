@@ -5,6 +5,7 @@ import { MaterialIcon } from '@3mo/icon'
 /**
  * @element mo-navigation-list-item
  * @attr icon
+ * @csspart icon
  */
 @component('mo-navigation-list-item')
 export class NavigationListItem extends ListItem {
@@ -25,7 +26,7 @@ export class NavigationListItem extends ListItem {
 
 	protected override get template() {
 		return html`
-			${!this.icon ? html.nothing : html`<mo-icon icon=${this.icon}></mo-icon>`}
+			${!this.icon ? html.nothing : html`<mo-icon part='icon' icon=${this.icon}></mo-icon>`}
 			${super.template}
 		`
 	}
