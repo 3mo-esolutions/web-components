@@ -410,9 +410,13 @@ MdDialog.elementStyles.push(css`
 		opacity: 1;
 	}
 
-	.headline, .actions {
+	.headline {
 		/* .content has a default z-index of 1 in Material */
 		z-index: 2;
+	}
+
+	.actions {
+		z-index: 0;
 	}
 `)
 
