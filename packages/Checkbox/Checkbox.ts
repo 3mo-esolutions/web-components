@@ -42,6 +42,7 @@ export class Checkbox extends Component {
 
 			md-checkbox {
 				margin-block: 7px;
+				flex-shrink: 0;
 				--md-checkbox-container-shape: var(--mo-border-radius);
 
 				--md-checkbox-selected-disabled-container-color: var(--mo-checkbox-disabled-color, var(--mo-color-gray));
