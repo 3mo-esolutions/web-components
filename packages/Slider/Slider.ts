@@ -18,7 +18,7 @@ import { SliderBase } from './SliderBase.js'
  */
 @component('mo-slider')
 export class Slider extends SliderBase<number> {
-	@property({ type: Number }) value = 0
+	@property({ type: Number, bindingDefault: true }) value = 0
 
 	protected override get template() {
 		return html`

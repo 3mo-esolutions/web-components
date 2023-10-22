@@ -20,7 +20,7 @@ export type RangeSliderValue = [start: number, end: number]
  */
 @component('mo-range-slider')
 export class RangeSlider extends SliderBase<RangeSliderValue> {
-	@property({ type: Array }) value: RangeSliderValue = [0, 0]
+	@property({ type: Array, bindingDefault: true }) value: RangeSliderValue = [0, 0]
 
 	protected override get template() {
 		const [start, end] = this.value

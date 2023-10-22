@@ -48,7 +48,7 @@ export class Menu extends Component {
 	@property({ type: Boolean }) manualOpen = false
 	@property() opener?: string
 	@property() selectionMode?: SelectableList['selectionMode']
-	@property({ type: Array }) value?: SelectableList['value']
+	@property({ type: Array, bindingDefault: true }) value?: SelectableList['value']
 	@disabledProperty() disabled = false
 
 	@state() protected coordinates?: PopoverCoordinates

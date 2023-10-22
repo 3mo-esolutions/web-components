@@ -4,7 +4,7 @@ import { InputFieldComponent } from '@3mo/field'
 
 @component('mo-field-net-gross-currency')
 export class FieldNetGrossCurrency extends InputFieldComponent<NetGrossCurrency> {
-	@property({ type: Object }) value: NetGrossCurrency = [undefined, false]
+	@property({ type: Object, bindingDefault: true }) value: NetGrossCurrency = [undefined, false]
 	@property({ type: Boolean }) isGross = false
 	@property({ type: Object }) currency = Currency.EUR
 	@property() currencySymbol?: string

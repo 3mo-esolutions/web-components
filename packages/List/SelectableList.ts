@@ -29,7 +29,7 @@ export enum SelectableListSelectionMode {
 export class SelectableList extends List {
 	@event() readonly change!: EventDispatcher<Array<number>>
 
-	@property({ type: Array }) value = new Array<number>()
+	@property({ type: Array, bindingDefault: true }) value = new Array<number>()
 	@property() selectionMode = SelectableListSelectionMode.Single
 
 	@queryAsync('slot') protected readonly slotElement!: Promise<HTMLSlotElement>
