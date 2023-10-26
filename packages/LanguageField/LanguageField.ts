@@ -32,7 +32,7 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 	@property() dialogSize?: DialogSize
 	@property({ type: Boolean }) dense = false
 	@property({ type: Object, bindingDefault: true }) value = new Map<TLanguage[keyof TLanguage], TValue | undefined>()
-	@property({ type: Object }) selectedLanguage?: TLanguage
+	@property({ type: Object, event: 'languageChange' }) selectedLanguage?: TLanguage
 	@property({ type: Object }) defaultLanguage?: TLanguage
 	@property({ type: Object }) fieldTemplate?: (value: TValue, handleChange: (value: TValue) => void, label: string, language: TLanguage) => HTMLTemplateResult
 	@property({ type: Object }) optionTemplate?: (language: TLanguage) => HTMLTemplateResult
