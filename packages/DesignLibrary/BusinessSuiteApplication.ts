@@ -184,7 +184,7 @@ export abstract class BusinessSuiteApplication extends Application {
 
 	protected get userAvatarTemplate() {
 		return !Authentication.hasAuthenticator() ? html.nothing : html`
-			<mo-user-avatar style='color: var(--mo-color-on-accent)'>
+			<mo-user-avatar style='color: var(--mo-color-on-accent); margin-inline-end: var(--mo-thickness-xl)'>
 				${this.userAvatarMenuItemsTemplate}
 			</mo-user-avatar>
 		`
