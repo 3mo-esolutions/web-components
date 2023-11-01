@@ -48,19 +48,10 @@ export class DateTimeLocalParser extends DateTimeParser {
 
 		referenceDate ??= DateTime.from(undefined, this.calendar, this.timeZone)
 
-		const year = getValueOf('year') ?? referenceDate.year
-
-		const month = getValueOf('month') ?? 0
-
-		if (month <= 0 || month > referenceDate.yearEnd.month) {
-			return undefined
-		}
-
-		const day = getValueOf('day') ?? 0
-		if (day <= 0 || day > referenceDate.monthEnd.day) {
-			return undefined
-		}
-
-		return referenceDate.with({ day, month, year })
+		return referenceDate.with({
+			year: getValueOf('year') ?? referenceDate.year,
+			month: getValueOf('month') ?? 0,
+			day: getValueOf('day') ?? 0,
+		})
 	}
 }

@@ -62,6 +62,12 @@ describe('DateTimeLocalParser', () => {
 			expectDateTimesEquals(new DateTimeLocalParser('de').parse('02.09.2020'), expected)
 			expectDateTimesEquals(new DateTimeLocalParser('de').parse(' 02  . 09 . 2 02 0 '), expected)
 		})
+
+		it('can handle 31st', () => {
+			const expected = DateTime.from(undefined, 'gregory').with({ year: 2020, month: 10, day: 31 })
+
+			expectDateTimesEquals(new DateTimeLocalParser('de').parse('31.10.2020'), expected)
+		})
 	})
 
 	describe('handles persian calendar', () => {
