@@ -25,7 +25,7 @@ export abstract class DataGridColumn<TData, TValue> extends Component {
 	@property({ reflect: true }) sortDataSelector?: KeyPathOf<TData>
 	@property({ type: Boolean, reflect: true }) nonSortable = false
 	@property({
-		type: Number,
+		type: Boolean,
 		reflect: true,
 		hasChanged(value: boolean | Predicate<TData>, oldValue: boolean | Predicate<TData>) {
 			return String(value) !== String(oldValue)
