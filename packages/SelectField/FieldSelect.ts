@@ -44,7 +44,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 			}
 		}
 	}) open = false
-	@property({ type: String, updated(this: FieldSelect<T>) { this.valueController.value = this.value } }) value: Value
+	@property({ type: String, bindingDefault: true, updated(this: FieldSelect<T>) { this.valueController.value = this.value } }) value: Value
 	@property({ type: Number, updated(this: FieldSelect<T>) { this.valueController.index = this.index } }) index: Index
 	@property({ type: Object, updated(this: FieldSelect<T>) { this.valueController.data = this.data } }) data: Data<T>
 
