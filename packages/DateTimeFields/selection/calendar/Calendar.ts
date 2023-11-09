@@ -95,7 +95,7 @@ export class Calendar extends Component {
 	}
 
 	private * rangeOf(start: DateTime, end: DateTime) {
-		while (start.isBefore(end)) {
+		while (!start.isAfter(end)) {
 			yield start
 			start = start.add({ days: 1 })
 		}
