@@ -1,4 +1,5 @@
 import { component, Component, css, html, ifDefined, property, event, join, style } from '@a11d/lit'
+import { KeyboardController } from '@3mo/keyboard-controller'
 import { Checkbox } from '@3mo/checkbox'
 import { DataGridSelectionMode, DataGridSortingStrategy, ColumnDefinition, DataGrid, DataGridSidePanelTab } from './index.js'
 
@@ -61,6 +62,18 @@ export class DataGridHeader<TData> extends Component {
 				line-height: var(--mo-data-grid-header-height);
 				white-space: nowrap;
 				text-overflow: ellipsis;
+			}
+
+			.sort-rank {
+				background: var(--mo-color-transparent-gray-3);
+				color: var(--mo-color-foreground);
+				border: 1px solid var(--mo-color-gray-transparent);
+				border-radius: 50%;
+				width: 20px;
+				height: 20px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
 			}
 		`
 	}
@@ -128,9 +141,9 @@ export class DataGridHeader<TData> extends Component {
 	}
 
 	private getHeaderCellTemplate(column: ColumnDefinition<TData>) {
-		const sortDataSelector = column.sortDataSelector || column.dataSelector
-		const sortIcon = !this.dataGrid.sorting || !sortDataSelector || this.dataGrid.sorting.selector !== sortDataSelector ? undefined
-			: this.dataGrid.sorting.strategy === DataGridSortingStrategy.Ascending ? 'arrow_upward' : 'arrow_downward'
+		const sortingDefinition = this.dataGrid.getSortingDefinition(column)
+		const sortIcon = !sortingDefinition ? undefined : sortingDefinition.strategy === DataGridSortingStrategy.Ascending ? 'arrow_upward' : 'arrow_downward'
+		const sortingRank = !sortingDefinition || this.dataGrid.getSorting().length <= 1 ? undefined : sortingDefinition.rank
 
 		return html`
 			<mo-flex direction=${column.alignment === 'end' ? 'horizontal-reversed' : 'horizontal'} alignItems='center'
@@ -140,6 +153,7 @@ export class DataGridHeader<TData> extends Component {
 				<div class='headerContent' ${style({ width: '100%', textAlign: column.alignment })} title=${column.title || column.heading}>${column.heading}</div>
 
 				${sortIcon === undefined ? html.nothing : html`
+					${!sortingRank ? html.nothing : html`<span class='sort-rank'>${sortingRank}</span>`}
 					<mo-icon ${style({ color: 'var(--mo-color-accent)' })} icon=${ifDefined(sortIcon)}></mo-icon>
 				`}
 			</mo-flex>
@@ -164,12 +178,30 @@ export class DataGridHeader<TData> extends Component {
 		const defaultSortingStrategy = DataGridSortingStrategy.Descending
 		const sortDataSelector = column.sortDataSelector || column.dataSelector
 
-		if (this.dataGrid.sorting?.selector !== sortDataSelector) {
-			this.dataGrid.handleSortChange({ selector: sortDataSelector, strategy: defaultSortingStrategy })
-		} else if (this.dataGrid.sorting.strategy === DataGridSortingStrategy.Descending) {
-			this.dataGrid.handleSortChange({ selector: sortDataSelector, strategy: DataGridSortingStrategy.Ascending })
+		const sortingDefinition = this.dataGrid.getSortingDefinition(column)
+
+		if (KeyboardController.shift || KeyboardController.meta || KeyboardController.ctrl) {
+			const sortings = this.dataGrid.getSorting()
+			if (sortingDefinition?.selector !== sortDataSelector) {
+				this.dataGrid.handleSortChange([...sortings, { selector: sortDataSelector, strategy: defaultSortingStrategy }])
+			} else if (sortingDefinition.strategy === DataGridSortingStrategy.Descending) {
+				this.dataGrid.handleSortChange(
+					sortings.map(x => x.selector !== sortDataSelector ? x : {
+						selector: sortDataSelector,
+						strategy: DataGridSortingStrategy.Ascending,
+					})
+				)
+			} else {
+				this.dataGrid.handleSortChange(this.dataGrid.getSorting().filter(x => x.selector !== sortDataSelector))
+			}
 		} else {
-			this.dataGrid.handleSortChange(undefined)
+			if (sortingDefinition?.selector !== sortDataSelector) {
+				this.dataGrid.handleSortChange({ selector: sortDataSelector, strategy: defaultSortingStrategy })
+			} else if (sortingDefinition.strategy === DataGridSortingStrategy.Descending) {
+				this.dataGrid.handleSortChange({ selector: sortDataSelector, strategy: DataGridSortingStrategy.Ascending })
+			} else {
+				this.dataGrid.handleSortChange(undefined)
+			}
 		}
 
 		this.requestUpdate()

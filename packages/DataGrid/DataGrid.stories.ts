@@ -2,6 +2,7 @@ import { story, meta } from '../../.storybook/story.js'
 import { html, ifDefined, style } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
+import { DataGridSortingStrategy } from './index.js'
 
 export default meta({
 	title: 'DataGrid',
@@ -85,6 +86,18 @@ export const ContextMenu = story({
 export const Sums = story({
 	render: () => html`
 		<mo-data-grid .data=${generatePeople(50).map(x => ({ ...x, balance: Math.floor(Math.random() * 1000) }))} selectionMode='multiple' style='height: 500px' selectOnClick>
+			<mo-data-grid-column-number hidden nonEditable heading='ID' dataSelector='id'></mo-data-grid-column-number>
+			<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
+			<mo-data-grid-column-number heading='Age' dataSelector='age' sumHeading='Ages Total'></mo-data-grid-column-number>
+			<mo-data-grid-column-text heading='City' dataSelector='city'></mo-data-grid-column-text>
+			<mo-data-grid-column-currency heading='Balance' dataSelector='balance' sumHeading='Balances Total'></mo-data-grid-column-currency>
+		</mo-data-grid>
+	`
+})
+
+export const Sorting = story({
+	render: () => html`
+		<mo-data-grid .data=${thousandPeople} pagination='auto' selectionMode='multiple' style='height: 500px' selectOnClick .sorting=${[{ selector: 'name', strategy: DataGridSortingStrategy.Ascending }, { selector: 'age', strategy: DataGridSortingStrategy.Descending }]}>
 			<mo-data-grid-column-number hidden nonEditable heading='ID' dataSelector='id'></mo-data-grid-column-number>
 			<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
 			<mo-data-grid-column-number heading='Age' dataSelector='age' sumHeading='Ages Total'></mo-data-grid-column-number>

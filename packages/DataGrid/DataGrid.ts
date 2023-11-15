@@ -56,10 +56,14 @@ export enum DataGridEditability {
 	Always = 'always',
 }
 
-export type DataGridSorting<TData> = {
+export type DataGridSortingDefinition<TData> = {
 	selector: KeyPathOf<TData>
 	strategy: DataGridSortingStrategy
 }
+
+export type DataGridRankedSortDefinition<TData> = DataGridSortingDefinition<TData> & { rank: number }
+
+export type DataGridSorting<TData> = DataGridSortingDefinition<TData> | Array<DataGridSortingDefinition<TData>>
 
 /**
  * @element mo-data-grid
@@ -919,29 +923,48 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		}
 	}
 
+	getSorting() {
+		return !this.sorting
+			? []
+			: Array.isArray(this.sorting)
+				? this.sorting
+				: [this.sorting]
+	}
+
+	getSortingDefinition(column: ColumnDefinition<TData>): DataGridRankedSortDefinition<TData> | undefined {
+		const sorting = this.getSorting()
+		const definition = sorting.find(s => s.selector === (column.sortDataSelector || column.dataSelector))
+		return !definition ? undefined : {
+			...definition,
+			rank: sorting.indexOf(definition) + 1
+		}
+	}
+
 	protected get sortedData() {
-		const sorting = this.sorting
+		const sorting = this.getSorting()
 
-		if (!sorting) {
-			return this.data
+		const sortedData = [...this.data]
+
+		if (!sorting?.length) {
+			return sortedData
 		}
 
-		const dataClone = [...this.data]
+		return sortedData.sort((a, b) => {
+			for (const sortCriteria of sorting) {
+				const { selector, strategy } = sortCriteria
+				const aValue = getValueByKeyPath(a, selector) ?? Infinity as any
+				const bValue = getValueByKeyPath(b, selector) ?? Infinity as any
 
-		const compare = (a: TData, b: TData) => {
-			const valueA = getValueByKeyPath(a, sorting.selector) ?? Infinity as any
-			const valueB = getValueByKeyPath(b, sorting.selector) ?? Infinity as any
-			return typeof valueA === 'string' && typeof valueB === 'string'
-				? valueB?.localeCompare?.(valueA, Localizer.currentLanguage)
-				: valueB - valueA
-		}
+				if (aValue < bValue) {
+					return strategy === DataGridSortingStrategy.Ascending ? -1 : 1
+				} else if (aValue > bValue) {
+					return strategy === DataGridSortingStrategy.Ascending ? 1 : -1
+				}
+				// If values are equal, continue to the next level of sorting
+			}
 
-		switch (sorting.strategy) {
-			case DataGridSortingStrategy.Ascending:
-				return dataClone.sort((a, b) => compare(a, b))
-			case DataGridSortingStrategy.Descending:
-				return dataClone.sort((a, b) => compare(b, a))
-		}
+			return 0 // Items are equal in all sorting criteria
+		})
 	}
 
 	get renderData() {
