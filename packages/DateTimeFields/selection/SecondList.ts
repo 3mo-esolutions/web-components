@@ -11,7 +11,7 @@ export class SecondList extends DateList {
 					?selected=${this.value?.second === second}
 					?data-now=${this.now.second === second}
 					@change=${(e: SelectionListItemChangeEvent<void>) => !e.selected ? void 0 : this.change.dispatch((this.value ?? new DateTime).with({ second }))}
-				>${second.format().padStart(2, 0.0.format())}</mo-selectable-list-item>
+				>${second.format().padStart(2, this.zero.format())}</mo-selectable-list-item>
 			`)}
 		`
 	}

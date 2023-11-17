@@ -11,7 +11,7 @@ export class MinuteList extends DateList {
 					?selected=${this.value?.minute === minute}
 					?data-now=${this.now.minute === minute}
 					@change=${(e: SelectionListItemChangeEvent<void>) => !e.selected ? void 0 : this.change.dispatch((this.value ?? new DateTime).with({ minute }))}
-				>${minute.format().padStart(2, 0.0.format())}</mo-selectable-list-item>
+				>${minute.format().padStart(2, this.zero.format())}</mo-selectable-list-item>
 			`)}
 		`
 	}

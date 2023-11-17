@@ -12,6 +12,8 @@ export abstract class DateList extends Component {
 
 	get now() { return new DateTime() }
 
+	get zero() { return 0 }
+
 	readonly intervalController = new IntervalController(this, 1000, () => {
 		this.requestUpdate()
 		if (this.preventIntervalScrolling === false) {
