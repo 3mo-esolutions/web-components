@@ -36,7 +36,7 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 	private get cellIndex(): number { return this.row.cells.indexOf(this) }
 	private get rowIndex(): number { return this.dataGrid.rows.indexOf(this.row) }
 
-	private get valueTextContent() { return this.renderRoot.textContent || '' }
+	private get valueTextContent() { return this.renderRoot.textContent?.trim() || '' }
 
 	private get isEditable() {
 		return this.dataGrid.editability !== DataGridEditability.Never
