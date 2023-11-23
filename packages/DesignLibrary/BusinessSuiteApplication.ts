@@ -102,7 +102,7 @@ export abstract class BusinessSuiteApplication extends Application {
 				</mo-flex>
 
 				<mo-flex id='navbarNavigations' direction='horizontal' alignItems='center' gap='8px'
-					${style({ flex: '1', overflow: 'hidden' })}
+					${style({ flex: '1', overflow: 'hidden', opacity: '0' })}
 					${observeResize(() => this.checkNavigationOverflow())}
 					${observeMutation(() => this.checkNavigationOverflow())}
 				>
@@ -116,7 +116,10 @@ export abstract class BusinessSuiteApplication extends Application {
 		`
 	}
 
-	private checkNavigationOverflow() {
+	private async checkNavigationOverflow() {
+		// As the items render using a "repeat" directive, they are not immediately available in the DOM sometimes.
+		await new Promise(resolve => setTimeout(resolve))
+
 		const lastNavigationItem = this.navigationsContainer.style.flexDirection === 'row-reverse'
 			? this.navigationsContainer.firstElementChild
 			: this.navigationsContainer.lastElementChild
@@ -127,6 +130,8 @@ export abstract class BusinessSuiteApplication extends Application {
 
 		const scrollWidth = (lastNavigationItem?.getBoundingClientRect().right ?? 0) - (firstNavigationItem?.getBoundingClientRect().left ?? 0)
 		this.mobileNavigation = this.navigationsContainer.clientWidth < scrollWidth
+
+		this.navigationsContainer.style.opacity = '1'
 	}
 
 	protected get navbarStartTemplate() {
@@ -162,7 +167,7 @@ export abstract class BusinessSuiteApplication extends Application {
 
 	protected get navbarNavigationTemplate() {
 		return html`
-			${repeat(this.navigations, navigation => navigation.key, navigation => this.getNavigationItemTemplate(navigation))}
+			${repeat(this.navigations, n => n.key ?? n, navigation => this.getNavigationItemTemplate(navigation))}
 		`
 	}
 

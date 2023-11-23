@@ -1,5 +1,5 @@
-import { Component, component, eventListener, html, property, style, TemplateResult } from '@a11d/lit'
-import { Key, PageComponent, routerLink } from '@a11d/lit-application'
+import { bind, Component, component, html, property, repeat, style, TemplateResult } from '@a11d/lit'
+import { PageComponent, routerLink } from '@a11d/lit-application'
 import { Navigation } from './Navigation.js'
 
 @component('mo-navigation-item')
@@ -12,36 +12,24 @@ export class NavigationItem extends Component {
 	private get menuContentTemplate() {
 		const getItemTemplate = (navigation: Navigation): TemplateResult => navigation.hidden ? html.nothing : !navigation.children ? html`
 			<mo-navigation-menu-item ${!navigation.component ? html.nothing : routerLink({
-			component: navigation.component as PageComponent,
-			matchMode: navigation.matchMode,
-			invocationHandler: () => this.open = false
-			})}>${navigation.label} ${navigation.openInNewPage ? '...' : ''}</mo-navigation-menu-item>
+				component: navigation.component as PageComponent,
+				matchMode: navigation.matchMode,
+				invocationHandler: () => this.open = false,
+			})}>
+				${navigation.label} ${navigation.openInNewPage ? '...' : ''}
+			</mo-navigation-menu-item>
 		` : html`
 			<mo-nested-menu-item>
 				${navigation.label}
-				<mo-context-menu activatable absolute slot='submenu'>
-					${navigation.children.map(child => getItemTemplate(child))}
+				<mo-context-menu slot='submenu'>
+					${repeat(navigation.children, c => c.key ?? c, child => getItemTemplate(child))}
 				</mo-context-menu>
 			</mo-nested-menu-item>
 		`
 
 		return !this.navigation.children || this.navigation.hidden ? html.nothing : html`
-			${this.navigation.children.map(child => getItemTemplate(child))}
+			${repeat(this.navigation.children, c => c.key ?? c, child => getItemTemplate(child))}
 		`
-	}
-
-	@eventListener('click')
-	protected readonly clickHandler = () => this.open = true
-
-	@eventListener('keydown')
-	protected keyDownHandler(e: KeyboardEvent) {
-		if (e.keyCode === 32) {
-			this.open = !this.open
-		} else if (e.key === Key.Enter) {
-			this.open = true
-		} else if (e.key === Key.Escape) {
-			this.open = false
-		}
 	}
 
 	protected override get template() {
@@ -82,7 +70,7 @@ export class NavigationItem extends Component {
 					<mo-icon icon=${this.open ? 'keyboard_arrow_up' : 'keyboard_arrow_down'} ${style({ fontSize: 'large' })}></mo-icon>
 				`}
 			</mo-flex>
-			<mo-menu fixed .anchor=${this}>
+			<mo-menu fixed .anchor=${this} ?open=${bind(this, 'open')}>
 				${this.menuContentTemplate}
 			</mo-menu>
 		`
