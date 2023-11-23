@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/member-ordering */
-import { component, css, event, html, property, style } from '@a11d/lit'
+import { Binder, component, css, event, html, property, style } from '@a11d/lit'
 import { tooltip } from '@3mo/tooltip'
 import { Localizer } from '@3mo/localization'
 import { FetcherController } from '@3mo/fetcher-controller'
@@ -67,6 +67,8 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 	@property({ type: Object }) paginationParameters?: () => Partial<TDataFetcherParameters>
 	@property({ type: Object }) sortParameters?: () => Partial<TDataFetcherParameters>
 	// protected filterParameters?: () => TDataFetcherParameters
+
+	protected readonly parametersBinder = new Binder(this, 'parameters')
 
 	protected fetchDirty?(parameters: TDataFetcherParameters): Array<TData> | undefined
 
