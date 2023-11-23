@@ -1,4 +1,4 @@
-import { PropertyValues, state } from '@a11d/lit'
+import { PropertyValues, state, Binder } from '@a11d/lit'
 import { DialogComponent, DialogParameters } from '@a11d/lit-application'
 import { FetchableDialog } from './FetchableDialog.js'
 
@@ -14,6 +14,8 @@ export abstract class FetchableDialogComponent<
 	protected abstract fetch(id: EntityId): TEntity | PromiseLike<TEntity>
 
 	get fetcherController() { return this.dialogElement.fetcherController }
+
+	protected readonly entityBinder = new Binder<TEntity>(this, 'entity')
 
 	// @ts-expect-error Property stays readonly
 	override get dialogElement() {
