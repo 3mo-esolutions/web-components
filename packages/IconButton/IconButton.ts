@@ -88,9 +88,16 @@ MdIconButton.elementStyles.push(css`
 	}
 
 	.touch {
-		position: fixed;
-		height: 48px;
-		width: 48px;
+		/*
+		There are 2 issues with the touch layer
+		- It leads to containers scrolling as the touch layer is not fixed by default
+		- Making it fixed lead to it staying on the screen relative to the window and losing its position relative to the button when scrolling
+		Therefore we hide it for now.
+		*/
+		display: none;
+		/* position: fixed; */
+		/* height: 48px; */
+		/* width: 48px; */
 	}
 `)
 
