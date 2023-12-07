@@ -1,17 +1,17 @@
-import { component, html, ifDefined } from '@a11d/lit'
+import { HTMLTemplateResult, component, html, ifDefined } from '@a11d/lit'
 import { DialogAction, DialogComponent } from '@a11d/lit-application'
-import { BaseDialogParameters, getContentTemplate } from './BaseDialogParameters.js'
+import { BaseDialogParameters, getContentTemplate } from '@3mo/dialog'
 
-type Parameters<TResult> = BaseDialogParameters & { readonly secondaryButtonText?: string } & {
-	readonly primaryAction?: () => DialogAction<TResult>
+interface Parameters<TResult> extends BaseDialogParameters<GenericDialog<TResult>> {
 	readonly secondaryButtonText?: string
+	readonly primaryAction?: () => DialogAction<TResult>
 	readonly secondaryAction?: () => DialogAction<TResult>
 	readonly cancellationAction?: () => DialogAction<TResult>
 }
 
 @component('mo-generic-dialog')
 export class GenericDialog<TResult = void> extends DialogComponent<Parameters<TResult>, TResult> {
-	protected override get template() {
+	protected override get template(): HTMLTemplateResult {
 		const { heading, primaryButtonText, secondaryButtonText, blocking, size, content } = this.parameters
 		return html`
 			<mo-dialog
@@ -22,7 +22,7 @@ export class GenericDialog<TResult = void> extends DialogComponent<Parameters<TR
 				?blocking=${blocking}
 				primaryOnEnter
 			>
-				${getContentTemplate(content)}
+				${getContentTemplate(this, content)}
 			</mo-dialog>
 		`
 	}

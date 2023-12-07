@@ -1,10 +1,10 @@
-import { component, html, ifDefined } from '@a11d/lit'
+import { HTMLTemplateResult, component, html, ifDefined } from '@a11d/lit'
 import { DialogComponent } from '@a11d/lit-application'
-import { BaseDialogParameters, getContentTemplate as getContentTemplate } from './BaseDialogParameters.js'
+import { BaseDialogParameters, getContentTemplate as getContentTemplate } from '@3mo/dialog'
 
 @component('mo-dialog-alert')
-export class DialogAlert extends DialogComponent<BaseDialogParameters> {
-	protected override get template() {
+export class DialogAlert extends DialogComponent<BaseDialogParameters<DialogAlert>> {
+	protected override get template(): HTMLTemplateResult {
 		const { heading, primaryButtonText, blocking, size, content } = this.parameters
 		return html`
 			<mo-dialog style='--mo-dialog-default-foreground-content-color: var(--mo-color-foreground-transparent)'
@@ -14,7 +14,7 @@ export class DialogAlert extends DialogComponent<BaseDialogParameters> {
 				size=${ifDefined(size)}
 				primaryOnEnter
 			>
-				${getContentTemplate(content)}
+				${getContentTemplate(this, content)}
 			</mo-dialog>
 		`
 	}

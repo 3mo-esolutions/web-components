@@ -1,12 +1,14 @@
-import { component, html, ifDefined } from '@a11d/lit'
+import { HTMLTemplateResult, component, html, ifDefined } from '@a11d/lit'
 import { DialogComponent } from '@a11d/lit-application'
-import { BaseDialogParameters, getContentTemplate } from './BaseDialogParameters.js'
+import { BaseDialogParameters, getContentTemplate } from '@3mo/dialog'
 
-type Parameters = BaseDialogParameters & { readonly secondaryButtonText?: string }
+interface Parameters extends BaseDialogParameters<DialogAcknowledge> {
+	readonly secondaryButtonText?: string
+}
 
 @component('mo-dialog-acknowledge')
 export class DialogAcknowledge extends DialogComponent<Parameters, boolean> {
-	protected override get template() {
+	protected override get template(): HTMLTemplateResult {
 		const { heading, primaryButtonText, secondaryButtonText, blocking, size, content } = this.parameters
 		return html`
 			<mo-dialog style='--mo-dialog-default-foreground-content-color: var(--mo-color-foreground-transparent)'
@@ -17,7 +19,7 @@ export class DialogAcknowledge extends DialogComponent<Parameters, boolean> {
 				size=${ifDefined(size)}
 				primaryOnEnter
 			>
-				${getContentTemplate(content)}
+				${getContentTemplate(this, content)}
 			</mo-dialog>
 		`
 	}

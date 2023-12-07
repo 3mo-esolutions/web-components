@@ -1,8 +1,8 @@
-import { state, component, html, ifDefined, query, style } from '@a11d/lit'
+import { state, component, html, ifDefined, query, style, HTMLTemplateResult } from '@a11d/lit'
 import { FieldText, FieldTextArea } from '@3mo/text-fields'
 import { DialogComponent } from '@a11d/lit-application'
 import { Localizer } from '@3mo/localization'
-import { BaseDialogParameters, getContentTemplate } from './BaseDialogParameters.js'
+import { BaseDialogParameters, getContentTemplate } from '@3mo/dialog'
 
 Localizer.register('de', {
 	'OK': 'OK',
@@ -18,7 +18,7 @@ Localizer.register('fa', {
 	'Input': 'ورودی'
 })
 
-type Parameters = BaseDialogParameters & {
+interface Parameters extends BaseDialogParameters<DialogPrompt> {
 	readonly inputLabel?: string
 	readonly value?: string
 	readonly isTextArea?: boolean
@@ -30,7 +30,7 @@ export class DialogPrompt extends DialogComponent<Parameters, string> {
 
 	@query('#inputElement') readonly inputElement!: FieldText | FieldTextArea
 
-	protected override get template() {
+	protected override get template(): HTMLTemplateResult {
 		const { heading, primaryButtonText, blocking, size, content } = this.parameters
 		return html`
 			<mo-dialog style='--mo-dialog-default-foreground-content-color: var(--mo-color-foreground-transparent)'
@@ -41,7 +41,7 @@ export class DialogPrompt extends DialogComponent<Parameters, string> {
 				primaryOnEnter
 			>
 				<mo-flex ${style({ width: '100%', height: '100%' })} gap='6px'>
-					${getContentTemplate(content)}
+					${getContentTemplate(this, content)}
 					${this.textFieldTemplate}
 				</mo-flex>
 			</mo-dialog>
