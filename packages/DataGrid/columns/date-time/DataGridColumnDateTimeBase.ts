@@ -6,10 +6,15 @@ import { DataGridColumn } from '../DataGridColumn.js'
  * @attr pickerHidden - Hides the date/time picker
  */
 export abstract class DataGridColumnDateTimeBase<TData, TDate extends { format(options: unknown): string }> extends DataGridColumn<TData, TDate> {
+	static defaultFormatOptions?: Parameters<Date['format']>[0]
 	abstract readonly fieldTag: ReturnType<typeof literal>
 
 	@property({ type: Object }) formatOptions?: Parameters<TDate['format']>[0]
 	@property({ type: Boolean }) pickerHidden = false
+
+	protected get formatOptionsValue() {
+		return this.formatOptions ?? (this.constructor as typeof DataGridColumnDateTimeBase).defaultFormatOptions
+	}
 
 	getEditContentTemplate(value: TDate | undefined, data: TData) {
 		return html`
