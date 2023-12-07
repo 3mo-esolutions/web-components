@@ -2,7 +2,7 @@ import { state, component, html, ifDefined, query, style } from '@a11d/lit'
 import { FieldText, FieldTextArea } from '@3mo/text-fields'
 import { DialogComponent } from '@a11d/lit-application'
 import { Localizer } from '@3mo/localization'
-import { BaseDialogParameters } from './BaseDialogParameters.js'
+import { BaseDialogParameters, getContentTemplate } from './BaseDialogParameters.js'
 
 Localizer.register('de', {
 	'OK': 'OK',
@@ -31,16 +31,17 @@ export class DialogPrompt extends DialogComponent<Parameters, string> {
 	@query('#inputElement') readonly inputElement!: FieldText | FieldTextArea
 
 	protected override get template() {
+		const { heading, primaryButtonText, blocking, size, content } = this.parameters
 		return html`
 			<mo-dialog style='--mo-dialog-default-foreground-content-color: var(--mo-color-foreground-transparent)'
-				heading=${this.parameters.heading}
-				primaryButtonText=${this.parameters.primaryButtonText ?? t('Apply')}
-				?blocking=${this.parameters.blocking}
-				size=${ifDefined(this.parameters.size)}
+				heading=${heading}
+				primaryButtonText=${primaryButtonText ?? t('Apply')}
+				?blocking=${blocking}
+				size=${ifDefined(size)}
 				primaryOnEnter
 			>
 				<mo-flex ${style({ width: '100%', height: '100%' })} gap='6px'>
-					${this.parameters.content}
+					${getContentTemplate(content)}
 					${this.textFieldTemplate}
 				</mo-flex>
 			</mo-dialog>

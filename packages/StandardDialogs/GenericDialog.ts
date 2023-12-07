@@ -1,6 +1,6 @@
 import { component, html, ifDefined } from '@a11d/lit'
 import { DialogAction, DialogComponent } from '@a11d/lit-application'
-import { BaseDialogParameters } from './BaseDialogParameters.js'
+import { BaseDialogParameters, getContentTemplate } from './BaseDialogParameters.js'
 
 type Parameters<TResult> = BaseDialogParameters & { readonly secondaryButtonText?: string } & {
 	readonly primaryAction?: () => DialogAction<TResult>
@@ -9,19 +9,20 @@ type Parameters<TResult> = BaseDialogParameters & { readonly secondaryButtonText
 	readonly cancellationAction?: () => DialogAction<TResult>
 }
 
-@component('mo-dialog-default')
-export class DialogDefault<TResult = void> extends DialogComponent<Parameters<TResult>, TResult> {
+@component('mo-generic-dialog')
+export class GenericDialog<TResult = void> extends DialogComponent<Parameters<TResult>, TResult> {
 	protected override get template() {
+		const { heading, primaryButtonText, secondaryButtonText, blocking, size, content } = this.parameters
 		return html`
 			<mo-dialog
-				heading=${this.parameters.heading}
-				size=${ifDefined(this.parameters.size)}
-				primaryButtonText=${this.parameters.primaryButtonText ?? t('OK')}
-				secondaryButtonText=${this.parameters.secondaryButtonText ?? t('Cancel')}
-				?blocking=${this.parameters.blocking}
+				heading=${heading}
+				size=${ifDefined(size)}
+				primaryButtonText=${primaryButtonText ?? t('OK')}
+				secondaryButtonText=${secondaryButtonText ?? t('Cancel')}
+				?blocking=${blocking}
 				primaryOnEnter
 			>
-				${this.parameters.content}
+				${getContentTemplate(content)}
 			</mo-dialog>
 		`
 	}

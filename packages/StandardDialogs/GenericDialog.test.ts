@@ -1,11 +1,11 @@
 import { Dialog, DialogSize } from '@3mo/dialog'
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { DialogDefault } from './DialogDefault.js'
+import { GenericDialog } from './GenericDialog.js'
 
-describe('DialogDefault', () => {
-	const fixture = new ComponentTestFixture(() => new DialogDefault(parameters))
+describe('GenericDialog', () => {
+	const fixture = new ComponentTestFixture(() => new GenericDialog(parameters))
 
-	const parameters: DialogDefault<string>['parameters'] = {
+	const parameters: GenericDialog<string>['parameters'] = {
 		heading: 'Heading',
 		content: 'Content',
 		blocking: true,

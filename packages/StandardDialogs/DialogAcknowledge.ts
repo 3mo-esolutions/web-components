@@ -1,22 +1,23 @@
 import { component, html, ifDefined } from '@a11d/lit'
 import { DialogComponent } from '@a11d/lit-application'
-import { BaseDialogParameters } from './BaseDialogParameters.js'
+import { BaseDialogParameters, getContentTemplate } from './BaseDialogParameters.js'
 
 type Parameters = BaseDialogParameters & { readonly secondaryButtonText?: string }
 
 @component('mo-dialog-acknowledge')
 export class DialogAcknowledge extends DialogComponent<Parameters, boolean> {
 	protected override get template() {
+		const { heading, primaryButtonText, secondaryButtonText, blocking, size, content } = this.parameters
 		return html`
 			<mo-dialog style='--mo-dialog-default-foreground-content-color: var(--mo-color-foreground-transparent)'
-				heading=${this.parameters.heading}
-				primaryButtonText=${this.parameters.primaryButtonText ?? t('OK')}
-				secondaryButtonText=${this.parameters.secondaryButtonText ?? t('Cancel')}
-				?blocking=${this.parameters.blocking}
-				size=${ifDefined(this.parameters.size)}
+				heading=${heading}
+				primaryButtonText=${primaryButtonText ?? t('OK')}
+				secondaryButtonText=${secondaryButtonText ?? t('Cancel')}
+				?blocking=${blocking}
+				size=${ifDefined(size)}
 				primaryOnEnter
 			>
-				${this.parameters.content}
+				${getContentTemplate(content)}
 			</mo-dialog>
 		`
 	}

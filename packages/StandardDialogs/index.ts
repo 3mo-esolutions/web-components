@@ -1,6 +1,6 @@
 import '@3mo/dialog'
 import '@3mo/field'
-export * from './DialogDefault.js'
+export * from './GenericDialog.js'
 export * from './DialogPrompt.js'
 export * from './DialogAcknowledge.js'
 export * from './DialogAlert.js'
