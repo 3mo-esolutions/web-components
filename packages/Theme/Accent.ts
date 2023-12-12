@@ -1,4 +1,4 @@
-import { css, unsafeCSS } from '@a11d/lit'
+import { css, isServer, unsafeCSS } from '@a11d/lit'
 import { RootCssInjector } from '@a11d/root-css-injector'
 import { LocalStorage } from '@a11d/local-storage'
 import { Color } from '@3mo/color'
@@ -17,7 +17,7 @@ export class AccentStorage extends LocalStorage<Color | ColorSet | undefined> {
 
 		value = this.parseColor(value) || this.parseColorSet(value)
 
-		if (!value) {
+		if (!isServer && !value) {
 			window.localStorage.removeItem(this.name)
 		}
 

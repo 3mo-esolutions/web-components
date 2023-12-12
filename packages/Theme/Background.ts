@@ -1,3 +1,4 @@
+import { isServer } from '@a11d/lit'
 import { LocalStorage } from '@a11d/local-storage'
 
 export enum Background {
@@ -9,6 +10,7 @@ export enum Background {
 export class BackgroundStorage extends LocalStorage<Background> {
 	constructor() {
 		super('Theme.Background', Background.System)
+		if (isServer) return
 		window.matchMedia('(prefers-color-scheme: dark)').onchange = () => this.updateAttributeValue()
 		window.matchMedia('(prefers-color-scheme: light)').onchange = () => this.updateAttributeValue()
 		this.updateAttributeValue()
@@ -18,7 +20,7 @@ export class BackgroundStorage extends LocalStorage<Background> {
 	get calculatedValue() {
 		return this.value !== Background.System
 			? this.value
-			: window.matchMedia('(prefers-color-scheme: dark)').matches
+			: (!isServer && window.matchMedia('(prefers-color-scheme: dark)').matches)
 				? Background.Dark
 				: Background.Light
 	}
