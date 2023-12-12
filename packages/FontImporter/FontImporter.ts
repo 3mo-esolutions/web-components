@@ -1,7 +1,11 @@
 export class FontImporter {
-	private static readonly styleElement = document.createElement('style')
+	private static readonly styleElement = globalThis.document?.createElement('style') as HTMLStyleElement | undefined
 
-	static { document.head.appendChild(FontImporter.styleElement) }
+	static {
+		if (FontImporter.styleElement) {
+			globalThis.document?.head.appendChild(FontImporter.styleElement)
+		}
+	}
 
 	private static readonly urls = new Set<string>()
 
@@ -11,7 +15,7 @@ export class FontImporter {
 
 		const importStatements = [...FontImporter.urls].map(url => `@import '${url}';`)
 
-		if (importStatements.some(statement => FontImporter.styleElement.innerText.includes(statement) === false)) {
+		if (FontImporter.styleElement && importStatements.some(statement => FontImporter.styleElement?.innerText.includes(statement) === false)) {
 			FontImporter.styleElement.innerHTML = importStatements.join('\n')
 		}
 	}
