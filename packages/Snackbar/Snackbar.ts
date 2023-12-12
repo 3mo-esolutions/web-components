@@ -44,7 +44,7 @@ export class Snackbar extends NotificationComponent {
 			}
 			if (i >= 5) {
 				rootNode.style.opacity = '0'
-				setTimeout(() => notification.dispose(), 150)
+				setTimeout(() => notification.dispose(), 200)
 			}
 			const height = rootNode?.getBoundingClientRect()?.height ?? 0
 			rootNode.style.bottom = `-${height}px`
@@ -177,7 +177,7 @@ MwcSnackbar.elementStyles.push(css`
 
 	.mdc-snackbar {
 		transform: translateY(var(--y-offset));
-		transition: transform 0.3s ease-in-out, opacity 0.15s linear;
+		transition: transform 0.3s, opacity 0.2s;
 	}
 
 	.mdc-snackbar__surface {
