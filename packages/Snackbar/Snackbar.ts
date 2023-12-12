@@ -34,16 +34,20 @@ export class Snackbar extends NotificationComponent {
 
 	recalculateOffset() {
 		let offsetY = 0;
-		[...document.querySelectorAll('mo-snackbar')].reverse().map((notification) => {
+		[...document.querySelectorAll('mo-snackbar')].reverse().map((notification, i) => {
 			if (!notification.open) {
 				return
 			}
-			const rootNode = notification.shadowRoot?.firstElementChild?.shadowRoot?.firstElementChild
+			const rootNode = notification.shadowRoot?.firstElementChild?.shadowRoot?.firstElementChild as HTMLElement
 			if (!rootNode) {
 				return
 			}
+			if (i >= 5) {
+				rootNode.style.opacity = '0'
+				setTimeout(() => notification.dispose(), 150)
+			}
 			const height = rootNode?.getBoundingClientRect()?.height ?? 0
-			;(rootNode as HTMLElement).style.bottom = `-${height}px`
+			rootNode.style.bottom = `-${height}px`
 			offsetY -= height
 			notification.offsetY = offsetY
 			offsetY -= Snackbar.offsetY
@@ -173,7 +177,7 @@ MwcSnackbar.elementStyles.push(css`
 
 	.mdc-snackbar {
 		transform: translateY(var(--y-offset));
-		transition: transform 0.3s ease-in-out;
+		transition: transform 0.3s ease-in-out, opacity 0.15s linear;
 	}
 
 	.mdc-snackbar__surface {
