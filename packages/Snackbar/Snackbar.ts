@@ -15,7 +15,7 @@ export class Snackbar extends NotificationComponent {
 		[NotificationType.Info, 5_000],
 		[NotificationType.Success, 5_000],
 		[NotificationType.Warning, 10_000],
-		[NotificationType.Error, 150_000],
+		[NotificationType.Error, 15_000],
 	])
 
 	private static readonly iconByType = new Map<NotificationType, MaterialIcon>([
