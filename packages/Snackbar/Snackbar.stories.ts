@@ -2,6 +2,7 @@ import { story, meta } from '../../.storybook/story.js'
 import { html } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
+import { NotificationComponent } from '@a11d/lit-application'
 
 export default meta({
 	title: 'Snackbar',
@@ -17,24 +18,24 @@ export default meta({
 
 export const Info = story({
 	render: () => html`
-		<mo-snackbar text='Info' open></mo-snackbar>
+		<mo-button @click=${() => NotificationComponent.notifyInfo('Info')}>Info</mo-button>
 	`
 })
 
 export const Success = story({
 	render: () => html`
-		<mo-snackbar type='success' text='Success' open></mo-snackbar>
+		<mo-button @click=${() => NotificationComponent.notifySuccess('Success')}>Success</mo-button>
 	`
 })
 
 export const Warning = story({
 	render: () => html`
-		<mo-snackbar type='warning' text='Warning' open></mo-snackbar>
+		<mo-button @click=${() => NotificationComponent.notifyWarning('Warning')}>Warning</mo-button>
 	`
 })
 
 export const Error = story({
 	render: () => html`
-		<mo-snackbar type='error' text='Error' open></mo-snackbar>
+		<mo-button @click=${() => NotificationComponent.notifyError('Error')}>Error</mo-button>
 	`
 })
