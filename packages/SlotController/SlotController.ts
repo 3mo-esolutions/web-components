@@ -1,13 +1,14 @@
-import { Controller, type ReactiveControllerHost } from '@a11d/lit'
+import { Controller, isServer, type ReactiveControllerHost } from '@a11d/lit'
 
 export class SlotController extends Controller {
-	protected readonly mutationObserver = new MutationObserver(this.handleMutation.bind(this)).observe(this.host, {
-		childList: true,
-		subtree: true,
-	})
-
 	constructor(protected override readonly host: ReactiveControllerHost & Element, private readonly slotChangeCallback?: () => void) {
 		super(host)
+		if (isServer === false) {
+			new MutationObserver(this.handleMutation.bind(this)).observe(this.host, {
+				childList: true,
+				subtree: true,
+			})
+		}
 	}
 
 	getAssignedNodes(slotName: string) {
@@ -39,7 +40,7 @@ export class SlotController extends Controller {
 	}
 
 	private extractNodesFromChildren(slotName: string) {
-		return [...this.host.childNodes]
+		return isServer ? [] : [...this.host.childNodes]
 			.filter(node => node instanceof Element || (node instanceof Text && !!node.textContent?.trim()))
 			.filter(child => child instanceof Element ? child.slot === slotName : !slotName)
 			.flatMap(child => child instanceof HTMLSlotElement ? child.assignedNodes() : [child])
