@@ -1,13 +1,19 @@
-import { component, html, css, ifDefined, unsafeCSS, style, property } from '@a11d/lit'
+import { component, html, css, ifDefined, unsafeCSS, style, property, query } from '@a11d/lit'
 import { Notification, NotificationComponent, NotificationType } from '@a11d/lit-application'
+import { queryConnectedInstances } from '@3mo/query-connected-instances'
 import { MaterialIcon } from '@3mo/icon'
 import { Snackbar as MwcSnackbar } from '@material/mwc-snackbar'
 import { PeriodicTimer } from './PeriodicTimer.js'
+import '@3mo/icon-button'
+import '@3mo/button'
+import '@3mo/linear-progress'
 
 @component('mo-snackbar')
 @NotificationComponent.defaultComponent()
 export class Snackbar extends NotificationComponent {
+	@queryConnectedInstances() private static readonly connectedInstances: Set<Snackbar>
 	private static readonly defaultDuration = 5_000
+	private static readonly offsetY = 8
 
 	private static readonly defaultTimerPeriodByType = new Map<NotificationType, number>([
 		[NotificationType.Info, 5_000],
@@ -27,7 +33,35 @@ export class Snackbar extends NotificationComponent {
 
 	@property() text = ''
 	@property({ reflect: true }) type = NotificationType.Info
-	@property({ type: Boolean }) open = false
+	@property({
+		type: Boolean,
+		updated(this: Snackbar) { this.recalculateOffset() }
+	}) open = false
+
+	private async recalculateOffset() {
+		await new Promise(resolve => setTimeout(resolve, 0))
+		let offsetY = 0;
+		[...Snackbar.connectedInstances].reverse().map((notification, i) => {
+			if (!notification.open) {
+				return
+			}
+			const container = notification.snackbar?.renderRoot?.firstElementChild as HTMLElement
+			if (!container) {
+				return
+			}
+			if (i >= 5) {
+				container.style.opacity = '0'
+				setTimeout(() => notification.close(), 200)
+			}
+			const height = container?.getBoundingClientRect()?.height ?? 0
+			container.style.bottom = `-${height}px`
+			offsetY -= height
+			notification.snackbar.style.setProperty('--y-offset', `${offsetY}px`)
+			offsetY -= Snackbar.offsetY
+		})
+	}
+
+	@query('mwc-snackbar') private readonly snackbar!: MwcSnackbar
 
 	private timer?: PeriodicTimer
 	private intervalId?: number
@@ -84,7 +118,10 @@ export class Snackbar extends NotificationComponent {
 
 	protected get dismissIconButtonTemplate() {
 		return html`
-			<mo-icon-button slot='dismiss' icon='close' ${style({ color: 'var(--mo-color-background)', fontSize: '18px' })}></mo-icon-button>
+			<mo-icon-button slot='dismiss' icon='close'
+				${style({ color: 'var(--mo-color-background)', fontSize: '18px' })}
+				@click=${() => this.close()}
+			></mo-icon-button>
 		`
 	}
 
@@ -100,6 +137,11 @@ export class Snackbar extends NotificationComponent {
 		return !this.timer ? html.nothing : html`
 			<mo-linear-progress slot='progress' progress=${1 - this.timer.remainingTimeToNextTick / this.timer.interval + 0.075}></mo-linear-progress>
 		`
+	}
+
+	private close() {
+		this.timer?.dispose()
+		this.open = false
 	}
 
 	async show() {
@@ -139,6 +181,11 @@ MwcSnackbar.elementStyles.push(css`
 
 	slot[name=progress]::slotted(*) {
 		width: 100%;
+	}
+
+	.mdc-snackbar {
+		transform: translateY(var(--y-offset));
+		transition: transform 0.3s, opacity 0.2s;
 	}
 
 	.mdc-snackbar__surface {
