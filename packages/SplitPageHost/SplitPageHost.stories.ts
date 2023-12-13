@@ -4,8 +4,8 @@ import p from './package.json'
 import './index.js'
 
 export default meta({
-	title: 'Snackbar',
-	component: 'mo-snackbar',
+	title: 'SplitPageHost',
+	component: 'mo-split-page-host',
 	parameters: {
 		docs: {
 			description: {
