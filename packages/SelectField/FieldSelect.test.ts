@@ -84,6 +84,20 @@ describe('FieldSelect', () => {
 		})
 	})
 
+	describe('freeInput', () => {
+		it('should get populated when freeInput is set and the input is not empty even if no option is selected', async () => {
+			fixture.component.freeInput = true
+			await fixture.updateComplete
+
+			const input = fixture.component.searchInputElement!
+			input.value = 'John'
+			input.dispatchEvent(new Event('input', { bubbles: true }))
+			await fixture.updateComplete
+
+			expect(fixture.component.renderRoot.querySelector('mo-field')?.populated).toBe(true)
+		})
+	})
+
 	describe('change event dispatching', () => {
 		it('should dispatch change events and select the option on user interaction', async () => {
 			const { changeSpy, dataChangeSpy, indexChangeSpy } = spyOnChangeEvents()

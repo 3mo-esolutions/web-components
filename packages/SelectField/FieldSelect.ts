@@ -13,6 +13,7 @@ import { Data, FieldSelectValueController, Index, Value } from './SelectValueCon
  * @attr reflectDefault - Whether the default value should be reflected to the attribute.
  * @attr multiple - Whether multiple options can be selected.
  * @attr searchable - Whether the options should be searchable.
+ * @attr freeInput - Whether the options should be searchable.
  * @attr value - Whether the options should be searchable.
  * @attr index - Whether the options should be searchable.
  * @attr data - Whether the options should be searchable.
@@ -20,6 +21,8 @@ import { Data, FieldSelectValueController, Index, Value } from './SelectValueCon
  *
  * @slot - The select options.
  *
+ * @fires change {CustomEvent<Value>}
+ * @fires input {CustomEvent<string>}
  * @fires dataChange {CustomEvent<Data<T>>}
  * @fires indexChange {CustomEvent<Index>}
  */
@@ -33,12 +36,13 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 	@property({ type: Boolean }) reflectDefault = false
 	@property({ type: Boolean }) multiple = false
 	@property({ type: Boolean }) searchable = false
+	@property({ type: Boolean }) freeInput = false
 	@property() menuAlignment?: PopoverAlignment
 	@property({
 		type: Boolean,
 		reflect: true,
 		updated(this: FieldSelect<T>) {
-			if (this.searchable) {
+			if (this.open && this.searchable) {
 				this.searchInputElement?.setSelectionRange(0, this.searchString?.length ?? 0)
 				this.searchInputElement?.focus()
 			}
@@ -66,7 +70,8 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 		const valueNotNullOrEmpty = ['', undefined, null].includes(this.value as any) === false
 			&& (!this.multiple || (this.value instanceof Array && this.value.length > 0))
 		const hasDefaultOptionAndReflectsDefault = !!this.default && this.reflectDefault
-		return valueNotNullOrEmpty || hasDefaultOptionAndReflectsDefault
+		const hasInputValueInFreeInputMode = this.freeInput && !!this.searchString?.trim()
+		return valueNotNullOrEmpty || hasDefaultOptionAndReflectsDefault || hasInputValueInFreeInputMode
 	}
 
 	protected override get isDense() {
@@ -149,7 +154,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 	}
 
 	protected override get inputTemplate() {
-		return !this.open || !this.searchable ? html`
+		return (!this.open || !this.searchable) && !this.freeInput ? html`
 			<input
 				id='value'
 				type='text'
@@ -165,7 +170,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 				?readonly=${!this.searchable}
 				?disabled=${this.disabled}
 				.value=${live(this.searchString || '')}
-				@input=${(e: Event) => { this.searchString = (e.target as HTMLInputElement).value; this.search() }}
+				@input=${(e: Event) => { this.handleInput((e.target as HTMLInputElement).value, e) }}
 			>
 		`
 	}
@@ -231,18 +236,23 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 				.map(o => o.text).join(', ')
 	}
 
-	protected override handleFocus() {
+	protected override async handleFocus() {
 		super.handleFocus()
 		if (this.searchable) {
+			// As menu "toggles" the open when clicked on the document
+			// here we make sure to run after that toggle
+			// as this is only required for a keyboard focus
+			await new Promise(r => setTimeout(r, 100))
 			this.open = true
 		}
 	}
 
-	protected override handleBlur() {
+	protected override async handleBlur() {
 		super.handleBlur()
 		if (this.searchable) {
-			this.open = false
 			this.resetSearch()
+			await new Promise(r => setTimeout(r, 100))
+			this.open = false
 		}
 	}
 
@@ -251,6 +261,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 		this.change.dispatch(this.value)
 		this.dataChange.dispatch(this.data)
 		this.indexChange.dispatch(this.index)
+		this.handleInput(this.valueToInputValue(this.value))
 		this.resetSearch()
 		if (!this.multiple) {
 			this.open = false
@@ -277,6 +288,12 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 		return this.searchString?.toLowerCase().trim() || ''
 	}
 
+	protected override async handleInput(value: Value, e?: Event | undefined) {
+		this.searchString = value as string
+		super.handleInput(value, e)
+		await this.search()
+	}
+
 	protected search() {
 		const matchedValues = this.options
 			.filter(option => option.textMatches(this.searchKeyword))
@@ -290,7 +307,9 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 	}
 
 	protected resetSearch() {
-		this.searchString = this.valueToInputValue(this.value)
+		if (!this.freeInput) {
+			this.searchString = this.valueToInputValue(this.value)
+		}
 		for (const option of this.options) {
 			option.removeAttribute('data-search-no-match')
 			option.disabled = false

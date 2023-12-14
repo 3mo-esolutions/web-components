@@ -35,6 +35,21 @@ export const Select = story({
 	`
 })
 
+export const FreeInput = story({
+	render: ({ multiple, defaultText }) => html`
+		<mo-card style='max-width: 300px'>
+			<mo-field-select label='Countries' searchable freeInput ?multiple=${multiple} default=${defaultText} @change=${console.log} @dataChange=${console.log} @indexChange=${console.log} @input=${console.log}>
+				${countries.map(country => html`
+					<mo-option value=${country.code} .data=${country}>
+						<img width='25px' src=${`https://flagcdn.com/h40/${country.code.toLowerCase()}.png`} />
+						${country.label}
+					</mo-option>
+				`)}
+			</mo-field-select>
+		</mo-card>
+	`
+})
+
 export const PreSelectedValue = story({
 	render: ({ searchable, multiple, defaultText }) => html`
 		<mo-card style='max-width: 300px'>
