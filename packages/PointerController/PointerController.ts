@@ -1,44 +1,24 @@
-import { Controller, EventListenerController, EventListenerTarget, ReactiveElement, extractEventTargets } from '@a11d/lit'
-import { ResizeController } from '@3mo/resize-observer'
+import { Controller, ReactiveElement } from '@a11d/lit'
+import { PointerHoverController, PointerHoverControllerOptions } from './PointerHoverController.js'
+import { PointerPressController, PointerPressControllerOptions } from './PointerPressController.js'
 
-export interface PointerControllerOptions {
-	target?: EventListenerTarget
-	handleHoverChange?(hover: boolean): void
-}
+export interface PointerControllerOptions extends PointerPressControllerOptions, PointerHoverControllerOptions { }
 
 export class PointerController extends Controller {
 	constructor(protected override readonly host: ReactiveElement, protected readonly options?: PointerControllerOptions) {
 		super(host)
 	}
 
-	protected _hover = false
-	get hover() { return this._hover }
+	get hover() { return this.hoverController.hover }
+	get press() { return this.pressController.press }
 
-	protected async checkHover() {
-		await new Promise(resolve => setTimeout(resolve))
-		const elements = await extractEventTargets.call(this.host, this.options?.target) as Array<Element>
-		const hover = elements.some(e => e.matches(':hover'))
-		if (this._hover !== hover) {
-			this._hover = hover
-			this.options?.handleHoverChange?.(hover)
-			this.host.requestUpdate()
-		}
-	}
-
-	protected readonly pointerEnter = new EventListenerController(this.host, {
-		type: 'pointerenter',
+	private readonly hoverController = new PointerHoverController(this.host, {
 		target: this.options?.target,
-		listener: () => this.checkHover()
+		handleHoverChange: this.options?.handleHoverChange
 	})
 
-	protected readonly pointerLeave = new EventListenerController(this.host, {
-		type: 'pointerleave',
+	private readonly pressController = new PointerPressController(this.host, {
 		target: this.options?.target,
-		listener: () => this.checkHover()
-	})
-
-	protected readonly resizeController = new ResizeController(this.host, {
-		target: this.host,
-		callback: () => this.checkHover()
+		handlePressChange: this.options?.handlePressChange
 	})
 }

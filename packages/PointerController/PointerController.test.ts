@@ -14,16 +14,30 @@ class PointerControllerTestComponent extends Component {
 describe('PointerController', () => {
 	const fixture = new ComponentTestFixture(() => new PointerControllerTestComponent())
 
-	// How to test :hover state?
-	xit('should track state when hovered', () => {
+	it('should track hover state', async () => {
+		let browserHovered = false
+		spyOn(fixture.component, 'matches').and.callFake(() => browserHovered)
+
+		expect(fixture.component.pointerController?.hover).toBe(false)
+
+		browserHovered = true
 		fixture.component.dispatchEvent(new PointerEvent('pointerenter'))
+		await new Promise(r => setTimeout(r, 20))
 		expect(fixture.component.pointerController?.hover).toBe(true)
+
+		browserHovered = false
+		fixture.component.dispatchEvent(new PointerEvent('pointerleave'))
+		await new Promise(r => setTimeout(r, 20))
+		expect(fixture.component.pointerController?.hover).toBe(false)
 	})
 
-	it('should track state when not hovered', () => {
-		expect(fixture.component.pointerController?.hover).toBe(false)
-		fixture.component.dispatchEvent(new PointerEvent('pointerenter'))
-		fixture.component.dispatchEvent(new PointerEvent('pointerleave'))
-		expect(fixture.component.pointerController?.hover).toBe(false)
+	it('should track press state', () => {
+		expect(fixture.component.pointerController?.press).toBe(false)
+
+		fixture.component.dispatchEvent(new PointerEvent('pointerdown'))
+		expect(fixture.component.pointerController?.press).toBe(true)
+
+		fixture.component.dispatchEvent(new PointerEvent('pointerup', { bubbles: true }))
+		expect(fixture.component.pointerController?.press).toBe(false)
 	})
 })
