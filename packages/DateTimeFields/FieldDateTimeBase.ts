@@ -123,7 +123,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 				color: transparent;
 			}
 
-			mo-field[active] input::placeholder {
+			mo-field[active]:not([dense]) input::placeholder {
 				color: var(--mo-color-gray);
 			}
 		`

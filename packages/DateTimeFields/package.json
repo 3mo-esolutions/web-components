@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/date-time-fields",
-	"version": "0.3.3",
+	"version": "0.3.4",
 	"description": "A set of date-time related fields.",
 	"repository": {
 		"type": "git",
