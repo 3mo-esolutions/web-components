@@ -76,7 +76,7 @@ export class DataGridFooter<TData> extends Component {
 	protected override get template() {
 		this.toggleAttribute('hideTopBorder', this.dataGrid.hasFooter === false)
 		return this.dataGrid.hasFooter === false ? html.nothing : html`
-			<mo-flex direction='horizontal' justifyContent='space-between' alignItems='center' wrap='wrap-reverse' gap='6px' ${style({ flex: '1', padding: '0 6px' })}>
+			<mo-flex direction='horizontal' justifyContent='space-between' alignItems='center' wrap='wrap-reverse' gap='6px' ${style({ flex: '1', padding: '0 6px', height: '100%' })}>
 				<mo-flex direction='horizontal' alignItems='center' gap='1vw' ${style({ flexBasis: 'auto' })}>
 					${this.paginationTemplate}
 				</mo-flex>
