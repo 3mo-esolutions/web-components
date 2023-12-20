@@ -1,14 +1,30 @@
 import { Controller, EventListenerController, EventListenerTarget, ReactiveElement } from '@a11d/lit'
 
+export type FocusMethod = 'pointer' | 'keyboard' | 'programmatic'
+
 export interface FocusControllerOptions {
 	target?: EventListenerTarget
-	handleChange?(focused: boolean, bubbled: boolean): void
+	handleChange?(focused: boolean, bubbled: boolean, method: FocusMethod): void
 }
 
 export class FocusController extends Controller {
 	constructor(protected override readonly host: ReactiveElement, protected readonly options?: FocusControllerOptions) {
 		super(host)
 	}
+
+	private method: FocusMethod = 'programmatic'
+
+	protected readonly pointerDown = new EventListenerController(this.host, {
+		type: 'pointerdown',
+		target: document,
+		listener: () => this.method = 'pointer'
+	})
+
+	protected readonly keyDown = new EventListenerController(this.host, {
+		type: 'keydown',
+		target: document,
+		listener: () => this.method = 'keyboard'
+	})
 
 	private bubbled = false
 
@@ -17,8 +33,9 @@ export class FocusController extends Controller {
 	protected set focused(value) {
 		if (value !== this._focused) {
 			this._focused = value
-			this.options?.handleChange?.(value, this.bubbled)
+			this.options?.handleChange?.(value, this.bubbled, this.method)
 			this.host.requestUpdate()
+			this.method = 'programmatic'
 		}
 	}
 
