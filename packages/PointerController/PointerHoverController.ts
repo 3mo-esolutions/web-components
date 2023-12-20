@@ -44,4 +44,22 @@ export class PointerHoverController extends Controller {
 		target: this.host,
 		callback: () => this.checkHover()
 	})
+
+	protected readonly pointerDown = new EventListenerController(this.host, {
+		type: 'pointerdown',
+		target: document,
+		listener: () => this.checkHover()
+	})
+
+	protected readonly pointerUp = new EventListenerController(this.host, {
+		type: 'pointerup',
+		target: document,
+		listener: () => this.checkHover()
+	})
+
+	protected readonly pointerCancel = new EventListenerController(this.host, {
+		type: 'pointercancel',
+		target: document,
+		listener: () => this.checkHover()
+	})
 }

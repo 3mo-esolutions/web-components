@@ -32,4 +32,10 @@ export class PointerPressController extends Controller {
 		target: document,
 		listener: () => this.setPress(false)
 	})
+
+	protected readonly pointerCancel = new EventListenerController(this.host, {
+		type: 'pointercancel',
+		target: document,
+		listener: () => this.setPress(false)
+	})
 }
