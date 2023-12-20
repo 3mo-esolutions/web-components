@@ -280,10 +280,8 @@ Buttons.forEach(Button => Button.elementStyles.push(css`
 		--_line-height: inherit;
 		--_leading-space: var(--mo-button-horizontal-padding, var(--mo-button-default-horizontal-padding));
 		--_trailing-space: var(--mo-button-horizontal-padding, var(--mo-button-default-horizontal-padding));
-		display: inline-grid !important;
 		width: 100% !important;
 		height: 100% !important;
-		border-radius: inherit !important;
 	}
 
 	button {
@@ -296,13 +294,14 @@ Buttons.forEach(Button => Button.elementStyles.push(css`
 		text-align: inherit !important;
 	}
 
-	.button__label {
+	.label {
 		width: 100%;
 		letter-spacing: 0.06rem;
 		line-height: normal;
+		overflow: unset;
 	}
 
-	.button, .button__outline, md-ripple, md-focus-ring {
+	:host, .outline, md-ripple, md-focus-ring {
 		border-radius: inherit !important;
 	}
 `))

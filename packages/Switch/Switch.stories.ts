@@ -45,7 +45,7 @@ export const WithCustomAccentColor = story({
 	`
 })
 
-export const WithCustomUncheckedAndAccentAccentColor = story({
+export const WithCustomUncheckedAndAccentColor = story({
 	render: ({ label, disabled, selected }) => html`
 		<mo-switch style='--mo-switch-accent-color: var(--mo-color-green); --mo-switch-unselected-color: var(--mo-color-red)'
 			label=${label}

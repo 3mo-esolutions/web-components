@@ -19,9 +19,11 @@ export abstract class FetchableDialogComponent<
 
 	// @ts-expect-error Property stays readonly
 	override get dialogElement() {
+		// @ts-expect-error Accessing the super dialogElement's getter
 		if (super.dialogElement instanceof FetchableDialog === false) {
 			throw new Error('FetchableDialogComponent must be used with an mo-fetchable-dialog element or a subclass thereof')
 		}
+		// @ts-expect-error Accessing the super dialogElement's getter
 		return super.dialogElement as FetchableDialog<TEntity>
 	}
 
