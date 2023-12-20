@@ -26,14 +26,14 @@ export default meta({
 
 export const Currency = story({
 	render: ({ label, required, disabled, dense, readonly, value }) => html`
-		<mo-field-currency label=${label} ?required=${required} ?disabled=${disabled} ?readonly=${readonly} ?dense=${dense} value=${value}></mo-field-currency>
+		<mo-field-currency currency='EUR' label=${label} ?required=${required} ?disabled=${disabled} ?readonly=${readonly} ?dense=${dense} value=${value}></mo-field-currency>
 	`
 })
 
-export const CurrencySign = story({
-	render: () => html`<mo-field-currency label='Currency' .currency=${LCurrency.USD}></mo-field-currency>`
+export const WithAnotherCurrency = story({
+	render: () => html`<mo-field-currency label='Currency' .currency=${LCurrency.GBP}></mo-field-currency>`
 })
 
-export const CurrencySymbol = story({
-	render: () => html`<mo-field-currency label='Currency' currencySymbol='₿'></mo-field-currency>`
+export const WithoutCurrency = story({
+	render: () => html`<mo-field-currency label='Currency' .currency=${undefined}></mo-field-currency>`
 })

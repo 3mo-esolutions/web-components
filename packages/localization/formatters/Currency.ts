@@ -12,6 +12,7 @@ export class Currency {
 	}
 
 	constructor(readonly code: CurrencyCode) {
+		code = code.toUpperCase() as CurrencyCode
 		if (!currencyCodes.includes(code)) {
 			throw new Error(`Invalid currency code: ${code}`)
 		}
