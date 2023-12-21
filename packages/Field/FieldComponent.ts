@@ -18,6 +18,8 @@ import { FocusController, type FocusMethod } from '@3mo/focus-controller'
  * @fires validityChange
  */
 export abstract class FieldComponent<T> extends Component {
+	static override readonly shadowRootOptions = { ...Component.shadowRootOptions, delegatesFocus: true }
+
 	static {
 		property({ type: Object, bindingDefault: true })(FieldComponent.prototype, 'value')
 	}

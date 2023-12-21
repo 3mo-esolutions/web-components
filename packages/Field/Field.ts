@@ -20,6 +20,8 @@ import '@3mo/theme'
  */
 @component('mo-field')
 export class Field extends Component {
+	static override readonly shadowRootOptions = { ...Component.shadowRootOptions, delegatesFocus: true }
+
 	@property({ reflect: true }) label = ''
 	@property({ type: Boolean, reflect: true }) readonly = false
 	@property({ type: Boolean, reflect: true }) disabled = false
