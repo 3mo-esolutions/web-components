@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/button",
-	"version": "0.4.6",
+	"version": "0.4.7",
 	"description": "A button web-component based on Material Web Components.",
 	"repository": {
 		"type": "git",

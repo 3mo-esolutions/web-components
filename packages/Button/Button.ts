@@ -38,6 +38,8 @@ export enum ButtonType {
  */
 @component('mo-button')
 export class Button extends Component {
+	static override shadowRootOptions: ShadowRootInit = { ...Component.shadowRootOptions, delegatesFocus: true }
+
 	private static readonly tagByType = new Map([
 		[ButtonType.Normal, literal`md-text-button`],
 		[ButtonType.Outlined, literal`md-outlined-button`],
