@@ -17,16 +17,6 @@ export class MenuController extends Controller {
 		return this.host.list.getItem?.(index) ?? this.host.list.items[index]
 	}
 
-	protected documentClickEventController = new EventListenerController(this.host, {
-		type: 'click',
-		target: document,
-		listener: (event: PointerEvent) => {
-			if (event.pointerType !== '') {
-				this.setOpen(event, !this.open)
-			}
-		},
-	})
-
 	protected anchorKeyDownEventController = new EventListenerController(this.host, {
 		type: 'keydown',
 		target: () => this.host.anchor || [],
@@ -49,11 +39,7 @@ export class MenuController extends Controller {
 				case 'PageDown':
 					this.setOpen(event, true, true)
 					break
-				case 'Esc':
-				case 'Escape':
-					this.setOpen(event, false)
-					event.stopPropagation()
-					break
+				// TODO: This seems not to be the responsibility of the menu but rather the popover
 				case 'Tab':
 					this.setOpen(event, false)
 					break

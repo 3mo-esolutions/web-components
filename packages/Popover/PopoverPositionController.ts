@@ -1,16 +1,16 @@
 import { Controller } from '@a11d/lit'
-import { PointerController } from '@3mo/pointer-controller'
-import { FocusController } from '@3mo/focus-controller'
 import { ResizeController } from '@3mo/resize-observer'
 import { PopoverPlacement } from './PopoverPlacement.js'
 import { Popover } from './Popover.js'
 import { PopoverAlignment } from './PopoverAlignment.js'
+import { FocusController } from '@3mo/focus-controller'
+import { PointerController } from '@3mo/pointer-controller'
 
 function targetAnchor(this: Popover) {
 	return this.anchor || []
 }
 
-export class PopoverController extends Controller {
+export class PopoverPositionController extends Controller {
 	static readonly marginToViewport = 8
 
 	constructor(protected override readonly host: Popover) {
@@ -19,44 +19,24 @@ export class PopoverController extends Controller {
 
 	protected readonly anchorFocusController = new FocusController(this.host, {
 		target: targetAnchor,
-		handleChange: () => this.update(),
+		handleChange: () => this.updatePosition(),
 	})
 
 	protected readonly pointerController = new PointerController(this.host, {
-		handleHoverChange: () => this.update(),
+		handleHoverChange: () => this.updatePosition(),
 	})
 
 	protected readonly anchorPointerController = new PointerController(this.host, {
 		target: targetAnchor,
-		handleHoverChange: () => this.update(),
+		handleHoverChange: () => this.updatePosition(),
 	})
 
 	protected readonly resizeController = new ResizeController(this.host, {
-		callback: () => this.update()
+		callback: () => this.updatePosition()
 	})
 
 	override hostUpdated() {
-		this.update()
-	}
-
-	private update() {
-		this.openIfApplicable()
 		this.updatePosition()
-	}
-
-	private openIfApplicable() {
-		const openOnFocus = this.host?.openOnFocus ?? false
-		const openOnHover = this.host?.openOnHover ?? false
-
-		if (!openOnFocus && !openOnHover) {
-			return
-		}
-
-		const open =
-			(openOnHover && (this.pointerController?.hover || this.anchorPointerController?.hover || false)) ||
-			(openOnFocus && (this.anchorFocusController?.focused || false))
-
-		this.host.setOpen(open)
 	}
 
 	updatePosition() {
@@ -85,28 +65,28 @@ export class PopoverController extends Controller {
 		switch (this.host.placement) {
 			case PopoverPlacement.BlockStart:
 				this.host.setAttribute('data-placement',
-					anchorRect.y - popoverHeight < PopoverController.marginToViewport
+					anchorRect.y - popoverHeight < PopoverPositionController.marginToViewport
 						? PopoverPlacement.BlockEnd
 						: PopoverPlacement.BlockStart
 				)
 				break
 			case PopoverPlacement.BlockEnd:
 				this.host.setAttribute('data-placement',
-					anchorRect.y + anchorRect.height + popoverHeight > window.innerHeight + PopoverController.marginToViewport
+					anchorRect.y + anchorRect.height + popoverHeight > window.innerHeight + PopoverPositionController.marginToViewport
 						? PopoverPlacement.BlockStart
 						: PopoverPlacement.BlockEnd
 				)
 				break
 			case PopoverPlacement.InlineStart:
 				this.host.setAttribute('data-placement',
-					anchorRect.x - popoverWidth < PopoverController.marginToViewport
+					anchorRect.x - popoverWidth < PopoverPositionController.marginToViewport
 						? PopoverPlacement.InlineEnd
 						: PopoverPlacement.InlineStart
 				)
 				break
 			case PopoverPlacement.InlineEnd:
 				this.host.setAttribute('data-placement',
-					anchorRect.x + anchorRect.width + popoverWidth > window.innerWidth + PopoverController.marginToViewport
+					anchorRect.x + anchorRect.width + popoverWidth > window.innerWidth + PopoverPositionController.marginToViewport
 						? PopoverPlacement.InlineStart
 						: PopoverPlacement.InlineEnd
 				)
@@ -118,21 +98,21 @@ export class PopoverController extends Controller {
 		switch (this.host.getAttribute('data-placement')) {
 			case PopoverPlacement.InlineStart:
 			case PopoverPlacement.InlineEnd:
-				if (anchorRect.y + popoverHeight > window.innerHeight + PopoverController.marginToViewport) {
+				if (anchorRect.y + popoverHeight > window.innerHeight + PopoverPositionController.marginToViewport) {
 					this.host.setAttribute('data-alignment', PopoverAlignment.End)
 				}
 
-				if (anchorRect.y + anchorRect.height - popoverHeight < PopoverController.marginToViewport) {
+				if (anchorRect.y + anchorRect.height - popoverHeight < PopoverPositionController.marginToViewport) {
 					this.host.setAttribute('data-alignment', PopoverAlignment.Start)
 				}
 				break
 			case PopoverPlacement.BlockStart:
 			case PopoverPlacement.BlockEnd:
-				if (anchorRect.x + popoverWidth > window.innerWidth + PopoverController.marginToViewport) {
+				if (anchorRect.x + popoverWidth > window.innerWidth + PopoverPositionController.marginToViewport) {
 					this.host.setAttribute('data-alignment', PopoverAlignment.End)
 				}
 
-				if (anchorRect.x + anchorRect.width - popoverWidth < PopoverController.marginToViewport) {
+				if (anchorRect.x + anchorRect.width - popoverWidth < PopoverPositionController.marginToViewport) {
 					this.host.setAttribute('data-alignment', PopoverAlignment.Start)
 				}
 				break
@@ -194,8 +174,8 @@ export class PopoverController extends Controller {
 		}
 
 		const [x, y] = [
-			Math.max(0, Math.min(left, window.innerWidth - popoverRect.width + PopoverController.marginToViewport)),
-			Math.max(0, Math.min(top, window.innerHeight - popoverRect.height + PopoverController.marginToViewport))
+			Math.max(0, Math.min(left, window.innerWidth - popoverRect.width + PopoverPositionController.marginToViewport)),
+			Math.max(0, Math.min(top, window.innerHeight - popoverRect.height + PopoverPositionController.marginToViewport))
 		]
 
 		this.host.style.left = `${x}px`

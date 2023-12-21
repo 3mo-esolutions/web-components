@@ -2,6 +2,7 @@ import { html, property, css, event, component, live, query, eventListener, stat
 import { FieldComponent } from '@3mo/field'
 import type { ListItem } from '@3mo/list'
 import type { Menu } from '@3mo/menu'
+import type { FocusMethod } from '@3mo/focus-controller'
 import { PopoverAlignment } from '@3mo/popover'
 import { Option } from './Option.js'
 import { Data, FieldSelectValueController, Index, Value } from './SelectValueController.js'
@@ -13,10 +14,10 @@ import { Data, FieldSelectValueController, Index, Value } from './SelectValueCon
  * @attr reflectDefault - Whether the default value should be reflected to the attribute.
  * @attr multiple - Whether multiple options can be selected.
  * @attr searchable - Whether the options should be searchable.
- * @attr freeInput - Whether the options should be searchable.
- * @attr value - Whether the options should be searchable.
- * @attr index - Whether the options should be searchable.
- * @attr data - Whether the options should be searchable.
+ * @attr freeInput - Whether the user can input values that are not in the options.
+ * @attr value - The selected value.
+ * @attr index - The selected index.
+ * @attr data - The selected data.
  * @attr alignment - Popover alignment
  *
  * @slot - The select options.
@@ -38,16 +39,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 	@property({ type: Boolean }) searchable = false
 	@property({ type: Boolean }) freeInput = false
 	@property() menuAlignment?: PopoverAlignment
-	@property({
-		type: Boolean,
-		reflect: true,
-		updated(this: FieldSelect<T>) {
-			if (this.open && this.searchable) {
-				this.searchInputElement?.setSelectionRange(0, this.searchString?.length ?? 0)
-				this.searchInputElement?.focus()
-			}
-		}
-	}) open = false
+	@property({ type: Boolean, reflect: true }) open = false
 	@property({ type: String, bindingDefault: true, updated(this: FieldSelect<T>) { this.valueController.value = this.value } }) value: Value
 	@property({ type: Number, updated(this: FieldSelect<T>) { this.valueController.index = this.index } }) index: Index
 	@property({ type: Object, updated(this: FieldSelect<T>) { this.valueController.data = this.data } }) data: Data<T>
@@ -154,7 +146,19 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 	}
 
 	protected override get inputTemplate() {
-		return (!this.open || !this.searchable) && !this.freeInput ? html`
+		if (this.freeInput) {
+			return this.searchInputTemplate
+		}
+
+		if (this.searchable && this.focusController.focused) {
+			return this.searchInputTemplate
+		}
+
+		return this.valueInputTemplate
+	}
+
+	private get valueInputTemplate() {
+		return html`
 			<input
 				id='value'
 				type='text'
@@ -162,7 +166,11 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 				readonly
 				value=${this.valueToInputValue(this.value) || ''}
 			>
-		` : html`
+		`
+	}
+
+	private get searchInputTemplate() {
+		return html`
 			<input
 				id='search'
 				type='text'
@@ -203,6 +211,24 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 		`
 	}
 
+	/**
+	 * "delegateFocus" doesn't work for slotted elements, therefore the focusout event is dispatched
+	 * when interacting with the slotted options. This will prevent the menu from closing.
+	 */
+	@eventListener({
+		target(this: FieldSelect<T>) { return this.renderRoot },
+		type: 'focusout',
+		options: { capture: true }
+	})
+	protected handleFocusOut(e: FocusEvent) {
+		const elementLosingFocus = e.target as HTMLElement | null
+		const elementReceivingFocus = e.relatedTarget as HTMLElement | null
+		const contains = (element: HTMLElement | null) => !element || this.renderRoot.contains(element) || this.contains(element)
+		if (this.open && (elementLosingFocus?.tagName.toLowerCase() !== 'mo-option' || contains(elementLosingFocus) && contains(elementReceivingFocus))) {
+			e.stopPropagation()
+		}
+	}
+
 	protected get optionsTemplate() {
 		return html`
 			<slot></slot>
@@ -236,24 +262,20 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 				.map(o => o.text).join(', ')
 	}
 
-	protected override async handleFocus() {
-		super.handleFocus()
-		if (this.searchable) {
-			// As menu "toggles" the open when clicked on the document
-			// here we make sure to run after that toggle
-			// as this is only required for a keyboard focus
-			await new Promise(r => setTimeout(r, 100))
+	protected override async handleFocus(bubbled: boolean, method: FocusMethod) {
+		super.handleFocus(bubbled, method)
+		if (method === 'pointer') {
 			this.open = true
 		}
+		await this.updateComplete
+		this.searchInputElement?.setSelectionRange(0, this.searchString?.length ?? 0)
+		this.searchInputElement?.focus()
 	}
 
-	protected override async handleBlur() {
-		super.handleBlur()
-		if (this.searchable) {
-			this.resetSearch()
-			await new Promise(r => setTimeout(r, 100))
-			this.open = false
-		}
+	protected override handleBlur(bubbled: boolean, method: FocusMethod) {
+		super.handleBlur(bubbled, method)
+		this.resetSearch()
+		this.open = false
 	}
 
 	protected handleSelection(menuValue: Array<number>) {
@@ -289,6 +311,9 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 	}
 
 	protected override async handleInput(value: Value, e?: Event | undefined) {
+		if (this.open === false) {
+			this.open = true
+		}
 		this.searchString = value as string
 		super.handleInput(value, e)
 		await this.search()

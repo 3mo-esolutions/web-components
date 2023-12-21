@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/date-time-fields",
-	"version": "0.3.4",
+	"version": "0.4.0",
 	"description": "A set of date-time related fields.",
 	"repository": {
 		"type": "git",
@@ -31,6 +31,7 @@
 		"@3mo/icon": "x",
 		"@3mo/icon-button": "x",
 		"@3mo/interval-controller": "x",
+		"@3mo/focus-controller": "x",
 		"@3mo/list": "x",
 		"@3mo/localization": "x",
 		"@3mo/popover": "x",

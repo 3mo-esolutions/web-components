@@ -1,20 +1,22 @@
-import { Component, component, css, event, html, property } from '@a11d/lit'
+import { Component, component, css, event, eventListener, html, property } from '@a11d/lit'
 import { PopoverPlacement } from './PopoverPlacement.js'
-import { PopoverController } from './PopoverController.js'
+import { PopoverPositionController } from './PopoverPositionController.js'
 import { PopoverAlignment } from './PopoverAlignment.js'
 import { PopoverCoordinates } from './PopoverCoordinates.js'
+import { queryConnectedInstances } from '@3mo/query-connected-instances'
 
 /**
  * @element mo-popover
  *
  * @attr fixed - Whether the popover is fixed.
+ * @attr coordinates - The coordinates of the popover.
  * @attr anchor - The anchor element for the popover.
  * @attr placement - The placement of the popover relative to the anchor.
  * @attr alignment - The alignment of the popover relative to the anchor.
  * @attr open - Whether the popover is open.
- * @attr openOnHover - Whether the popover should open on hover.
- * @attr openOnFocus - Whether the popover should open on focus.
- * @attr coordinates - The coordinates of the popover.
+ * @attr manual - Whether the popover is manually controlled:
+ * 	- When true, the popover is only opened or closed when the open attribute is set.
+ * 	- When true, the popover is not opened when the anchor is clicked and not closed when outside of the popover is clicked.
  *
  * @slot - Default slot for popover content
  *
@@ -22,6 +24,10 @@ import { PopoverCoordinates } from './PopoverCoordinates.js'
  */
 @component('mo-popover')
 export class Popover extends Component {
+	static override shadowRootOptions: ShadowRootInit = { ...Component.shadowRootOptions, delegatesFocus: true }
+
+	@queryConnectedInstances() private static readonly instances: Set<Popover>
+
 	@event() readonly openChange!: EventDispatcher<boolean>
 
 	@property({ type: Boolean, reflect: true }) fixed = false
@@ -30,15 +36,19 @@ export class Popover extends Component {
 	@property({ reflect: true }) placement = PopoverPlacement.BlockEnd
 	@property({ reflect: true }) alignment = PopoverAlignment.Start
 	@property({ type: Boolean, reflect: true, updated(this: Popover) { this.openChanged() } }) open = false
-	@property({ type: Boolean }) openOnHover?: boolean
-	@property({ type: Boolean }) openOnFocus?: boolean
+	@property({ type: Boolean }) manual = false
 
-	protected readonly popoverController = new PopoverController(this)
+	protected readonly positionController = new PopoverPositionController(this)
 
 	setOpen(open: boolean) {
 		if (this.open !== open) {
 			this.open = open
 			this.openChange.dispatch(open)
+			if (open) {
+				this.updateComplete.then(() => this.focus())
+			} else {
+				this.anchor?.focus()
+			}
 		}
 	}
 
@@ -54,6 +64,45 @@ export class Popover extends Component {
 		}
 
 		this.toggleAttribute('displayOpen', this.open)
+	}
+
+	@eventListener({ target: document, type: 'keydown', options: { capture: true } })
+	protected handleKeyDown(e: KeyboardEvent) {
+		if (this.manual || this.open === false) {
+			return
+		}
+
+		if ([...Popover.instances].filter(i => i.open).at(-1) !== this) {
+			return
+		}
+
+		if (e.key === 'Escape' || e.key === 'Esc') {
+			e.stopPropagation()
+			this.setOpen(false)
+		}
+	}
+
+	@eventListener({ target: document, type: 'click' })
+	protected handleClick(e: MouseEvent) {
+		if (this.manual) {
+			return
+		}
+
+		if (this.open && e.composedPath().includes(this) === false) {
+			e.stopPropagation()
+			this.setOpen(false)
+		}
+
+		if (this.open === false && this.anchor && e.composedPath().includes(this.anchor)) {
+			e.stopPropagation()
+			this.setOpen(true)
+		}
+	}
+
+	override focus(options?: FocusOptions | undefined) {
+		super.focus(options)
+		const focusable = (this.querySelector('[autofocus]') ?? this.children[0]) as HTMLElement | undefined
+		focusable?.focus?.()
 	}
 
 	static get translationStyles() {

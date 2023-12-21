@@ -1,5 +1,5 @@
 import { story, meta } from '../../.storybook/story.js'
-import { Component, css, html, property, query } from '@a11d/lit'
+import { Component, css, html, property } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 import { PopoverAlignment, PopoverPlacement } from './index.js'
@@ -35,6 +35,14 @@ export default meta({
 })
 
 const content = html`
+		<input />
+
+<style>
+	mo-button:focus {
+		transform: scale(1.1);
+		transition: transform .3s ease;
+	}
+</style>
 	<mo-card heading='Popover'>
 		Here some content
 	</mo-card>
@@ -45,10 +53,21 @@ const handleClick = (e: Event) => {
 	popover?.toggleAttribute('open')
 }
 
-export const Absolute = story({
+export const Manual = story({
 	render: ({ placement, alignment }) => {
 		return html`
 			<mo-popover-container placement=${placement} alignment=${alignment} @click=${handleClick}>
+				<mo-button type='outlined'>Click to open the popover</mo-button>
+				<mo-popover manual slot='popover'>${content}</mo-popover>
+			</mo-popover-container>
+		`
+	}
+})
+
+export const Absolute = story({
+	render: ({ placement, alignment }) => {
+		return html`
+			<mo-popover-container placement=${placement} alignment=${alignment}>
 				<mo-button type='outlined'>Click to open the popover</mo-button>
 				<mo-popover slot='popover'>${content}</mo-popover>
 			</mo-popover-container>
@@ -119,7 +138,7 @@ class StoryPopoverCatalog extends Component {
 
 	protected getCardTemplate(alignment: PopoverAlignment, placement: PopoverPlacement) {
 		return html`
-			<mo-popover .anchor=${this} ?fixed=${this.fixed} open placement=${placement} alignment=${alignment}>
+			<mo-popover manual .anchor=${this} ?fixed=${this.fixed} open placement=${placement} alignment=${alignment}>
 				<mo-card>
 					<code>${alignment} / ${placement}</code>
 				</mo-card>
