@@ -1,4 +1,5 @@
 import { property, query, state } from '@a11d/lit'
+import type { FocusMethod } from '@3mo/focus-controller'
 import { FieldComponent } from './FieldComponent.js'
 
 /**
@@ -40,8 +41,8 @@ export abstract class InputFieldComponent<T> extends FieldComponent<T> {
 
 	protected abstract valueToInputValue(value?: T): string | undefined
 
-	protected override handleFocus() {
-		super.handleFocus()
+	protected override handleFocus(bubbled: boolean, method: FocusMethod) {
+		super.handleFocus(bubbled, method)
 		if (this.selectOnFocus) {
 			this.select()
 		}

@@ -13,6 +13,10 @@ class SelectionListItemEventDispatcher<T> extends HTMLElementEventDispatcher<T> 
 }
 
 export abstract class SelectionListItem<T = boolean> extends ListItem {
+	static {
+		property({ type: Boolean, bindingDefault: true, event: 'change' })(SelectionListItem.prototype, 'selected')
+	}
+
 	readonly change = new SelectionListItemEventDispatcher(this)
-	@property({ type: Boolean, bindingDefault: true, event: 'change' }) abstract selected: T
+	abstract selected: T
 }

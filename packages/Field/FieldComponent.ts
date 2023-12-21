@@ -1,6 +1,6 @@
 import { html, property, event, Component, HTMLTemplateResult, state, css, PropertyValues } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
-import { FocusController } from '@3mo/focus-controller'
+import { FocusController, type FocusMethod } from '@3mo/focus-controller'
 
 /**
  * @attr value - The field's value
@@ -18,11 +18,15 @@ import { FocusController } from '@3mo/focus-controller'
  * @fires validityChange
  */
 export abstract class FieldComponent<T> extends Component {
+	static {
+		property({ type: Object, bindingDefault: true })(FieldComponent.prototype, 'value')
+	}
+
 	@event() readonly change!: EventDispatcher<T | undefined>
 	@event() readonly input!: EventDispatcher<T | undefined>
 	@event() readonly validityChange!: EventDispatcher<boolean>
 
-	@property({ type: Object, bindingDefault: true }) abstract value?: T | undefined
+	abstract value?: T | undefined
 	@property() label = ''
 	@property({ type: Boolean }) readonly = false
 	@property({ type: Boolean }) disabled = false
@@ -34,9 +38,9 @@ export abstract class FieldComponent<T> extends Component {
 
 	protected readonly slotController = new SlotController(this)
 	protected readonly focusController = new FocusController(this, {
-		handleChange: focused => {
+		handleChange: (focused, bubbled, method) => {
 			this.focused = focused
-			focused ? this.handleFocus() : this.handleBlur()
+			focused ? this.handleFocus(bubbled, method) : this.handleBlur(bubbled, method)
 		}
 	})
 
@@ -52,9 +56,15 @@ export abstract class FieldComponent<T> extends Component {
 		this.validate()
 	}
 
-	protected handleFocus() { }
+	protected handleFocus(bubbled: boolean, method: FocusMethod) {
+		bubbled
+		method
+	}
 
-	protected handleBlur() { }
+	protected handleBlur(bubbled: boolean, method: FocusMethod) {
+		bubbled
+		method
+	}
 
 	protected handleInput(value: T | undefined, e?: Event) {
 		e?.stopPropagation()

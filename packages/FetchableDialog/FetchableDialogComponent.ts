@@ -9,8 +9,12 @@ export abstract class FetchableDialogComponent<
 	TEntity,
 	TParameters extends Exclude<DialogParameters, void> = FetchableDialogComponentParameters,
 	TResult = void
-> extends DialogComponent<TParameters, TResult> {
-	@state() protected abstract entity: TEntity
+	> extends DialogComponent<TParameters, TResult> {
+	static {
+		state()(FetchableDialogComponent.prototype, 'entity')
+	}
+
+	protected abstract entity: TEntity
 	protected abstract fetch(id: EntityId): TEntity | PromiseLike<TEntity>
 
 	get fetcherController() { return this.dialogElement.fetcherController }
