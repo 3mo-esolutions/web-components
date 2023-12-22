@@ -718,7 +718,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			: html`<mo-virtualized-scroller .items=${this.renderData} .getItemTemplate=${getRowTemplate as any}></mo-virtualized-scroller>`
 		return html`
 			<mo-scroller id='rowsContainer'
-				${style({ gridRow: '2', gridColumn: '1 / last-line' })}
+				${style({ gridRow: '2', gridColumn: '1 / last-line', overflowX: 'hidden' })}
 				${observeResize(() => this.requestUpdate())}
 				@scroll=${this.handleScroll}
 			>
