@@ -3,7 +3,7 @@ import { disabledProperty } from './disabledProperty.js'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 
 describe('disabledProperty', () => {
-	@component('mo-test-disabled-property')
+	@component('test-disabled-property')
 	class TestComponent extends Component {
 		@disabledProperty() disabled?: boolean
 	}

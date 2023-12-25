@@ -1,12 +1,12 @@
-import { LitElement, property, type UpdatedCallback } from '@a11d/lit'
+import { property, ReactiveElement, type UpdatedCallback } from '@a11d/lit'
 
-const tabIndexBeforeDisabledSymbol = Symbol()
+const tabIndexBeforeDisabledSymbol = Symbol('tabIndexBeforeDisabledSymbol')
 
 export const disabledProperty = (options?: {
 	blockFocus?: boolean
 	updated?: UpdatedCallback<boolean> | undefined
 }) => {
-	return (prototype: LitElement, propertyKey: 'disabled') => {
+	return (prototype: ReactiveElement, propertyKey: 'disabled') => {
 		property({
 			type: Boolean,
 			reflect: true,

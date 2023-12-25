@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/flex",
-	"version": "1.0.9",
+	"version": "1.1.1",
 	"description": "A simple wrapper web-component for CSS Flexible Box Layout.",
 	"repository": {
 		"type": "git",
@@ -22,6 +22,8 @@
 	],
 	"dependencies": {
 		"@a11d/lit": "x",
+		"@a11d/bidirectional-map": "x",
+		"@3mo/style-property": "x",
 		"tslib": "x",
 		"csstype": "x"
 	},

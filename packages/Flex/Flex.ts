@@ -1,9 +1,25 @@
-import { component, Component, property, css, html } from '@a11d/lit'
+import { component, Component, css, html } from '@a11d/lit'
+import { styleProperty } from '@3mo/style-property'
 import type * as CSS from 'csstype'
+import '@a11d/bidirectional-map'
 
 export type FlexDirection = 'horizontal' | 'vertical' | 'horizontal-reversed' | 'vertical-reversed'
 
+const flexDirectionByDirections = new BidirectionalMap<FlexDirection, string>([
+	['horizontal', 'row'],
+	['horizontal-reversed', 'row-reverse'],
+	['vertical', 'column'],
+	['vertical-reversed', 'column-reverse'],
+])
+
+const flexDirectionConverter = {
+	fromStyle: (value: string) => flexDirectionByDirections.getKey(value) || 'vertical',
+	toStyle: (value: FlexDirection) => flexDirectionByDirections.get(value) || 'column',
+}
+
 /**
+ * @element mo-flex
+ *
  * @attr direction
  * @attr wrap
  * @attr gap
@@ -16,40 +32,13 @@ export type FlexDirection = 'horizontal' | 'vertical' | 'horizontal-reversed' | 
  */
 @component('mo-flex')
 export class Flex extends Component {
-	private static readonly flexDirectionByDirections = new Map<FlexDirection, string>([
-		['horizontal', 'row'],
-		['horizontal-reversed', 'row-reverse'],
-		['vertical', 'column'],
-		['vertical-reversed', 'column-reverse'],
-	])
-
-	@property()
-	get direction() { return [...Flex.flexDirectionByDirections].find(([, flexDirection]) => this.style.flexDirection === flexDirection)?.[0] || 'vertical' }
-	set direction(value) { this.style.flexDirection = Flex.flexDirectionByDirections.get(value) || 'column' }
-
-	@property()
-	get wrap() { return this.style.flexWrap as CSS.Property.FlexWrap }
-	set wrap(value) { this.style.flexWrap = value }
-
-	@property()
-	get gap() { return this.style.gap as CSS.Property.Gap<string> }
-	set gap(value) { this.style.gap = value }
-
-	@property()
-	get justifyItems() { return this.style.justifyItems as CSS.Property.JustifyItems }
-	set justifyItems(value) { this.style.justifyItems = value }
-
-	@property()
-	get justifyContent() { return this.style.justifyContent as CSS.Property.JustifyContent }
-	set justifyContent(value) { this.style.justifyContent = value }
-
-	@property()
-	get alignItems() { return this.style.alignItems as CSS.Property.AlignItems }
-	set alignItems(value) { this.style.alignItems = value }
-
-	@property()
-	get alignContent() { return this.style.alignContent as CSS.Property.AlignContent }
-	set alignContent(value) { this.style.alignContent = value }
+	@styleProperty({ styleKey: 'flexDirection', styleConverter: flexDirectionConverter }) direction!: FlexDirection
+	@styleProperty({ styleKey: 'flexWrap' }) wrap!: CSS.Property.FlexWrap
+	@styleProperty() gap!: CSS.Property.Gap<string>
+	@styleProperty() justifyItems!: CSS.Property.JustifyItems
+	@styleProperty() justifyContent!: CSS.Property.JustifyContent
+	@styleProperty() alignItems!: CSS.Property.AlignItems
+	@styleProperty() alignContent!: CSS.Property.AlignContent
 
 	static override get styles() {
 		return css`
