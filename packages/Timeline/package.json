@@ -1,0 +1,31 @@
+{
+	"name": "@3mo/timeline",
+	"version": "0.0.1",
+	"description": "A timeline web components supporting horizontal and vertical layouts.",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/3mo-esolutions/web-components"
+	},
+	"keywords": [
+		"lit",
+		"web-components",
+		"timeline"
+	],
+	"author": "3MO GmbH",
+	"license": "MIT",
+	"homepage": "https://www.3mo.de",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"dependencies": {
+		"tslib": "x",
+		"@a11d/lit": "x",
+		"@3mo/flex": "x",
+		"@3mo/resize-observer": "x",
+		"@3mo/instanceof-attribute-controller": "x",
+		"@3mo/slot-controller": "x"
+	}
+}
