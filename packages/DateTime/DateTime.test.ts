@@ -87,24 +87,24 @@ describe('DateTime', () => {
 	})
 
 	it('Zero parser is in place', () => {
-		expectDateTimesEquals(DateTime.parseAsDateTime('0'), new DateTime())
+		expectDateTimesEquals(DateTime.parse('0'), new DateTime())
 	})
 
 	it('Operation parser is in place', () => {
-		expectDateTimesEquals(DateTime.parseAsDateTime('+1'), new DateTime().add({ days: 1 }))
+		expectDateTimesEquals(DateTime.parse('+1'), new DateTime().add({ days: 1 }))
 	})
 
 	it('Local parser is in place', () => {
-		expectDateTimesEquals(DateTime.parseAsDateTime('10.9', undefined, 'de'), new DateTime().with({ day: 10, month: 9 }))
+		expectDateTimesEquals(DateTime.parse('10.9', undefined, 'de'), new DateTime().with({ day: 10, month: 9 }))
 	})
 
 	it('Day and month shortcut parser is in place', () => {
-		expectDateTimesEquals(DateTime.parseAsDateTime('109', undefined, 'de'), new DateTime().with({ day: 10, month: 9 }))
-		expectDateTimesEquals(DateTime.parseAsDateTime('204', undefined, 'de'), new DateTime().with({ day: 20, month: 4 }))
-		expectDateTimesEquals(DateTime.parseAsDateTime('2', undefined, 'de'), new DateTime().with({ day: 2 }))
+		expectDateTimesEquals(DateTime.parse('109', undefined, 'de'), new DateTime().with({ day: 10, month: 9 }))
+		expectDateTimesEquals(DateTime.parse('204', undefined, 'de'), new DateTime().with({ day: 20, month: 4 }))
+		expectDateTimesEquals(DateTime.parse('2', undefined, 'de'), new DateTime().with({ day: 2 }))
 	})
 
 	it('Native parser is in place', () => {
-		expectDateTimesEquals(DateTime.parseAsDateTime('2023-09-01', undefined, 'de'), new DateTime('2023-09-01'))
+		expectDateTimesEquals(DateTime.parse('2023-09-01', undefined, 'de'), new DateTime('2023-09-01'))
 	})
 })

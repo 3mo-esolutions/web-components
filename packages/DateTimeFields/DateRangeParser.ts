@@ -17,8 +17,8 @@ export class DateRangeParser {
 
 		const [startDateText, endDateText] = dateRangeText.toLowerCase().split(separator)
 
-		const startDate = DateTime.parseAsDateTime(startDateText!, referenceDate)
-		const endDate = DateTime.parseAsDateTime(endDateText!, referenceDate)
+		const startDate = DateTime.parse(startDateText!, referenceDate)
+		const endDate = DateTime.parse(endDateText!, referenceDate)
 
 		return new DateTimeRange(startDate, endDate)
 	}

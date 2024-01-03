@@ -15,7 +15,7 @@ export class DateTimeLocalParser extends DateTimeParser {
 	private readonly calendar = DateTime.getCalendar(this.language)
 	private readonly timeZone = DateTime.getTimeZone(this.language)
 
-	private readonly order = DateTime.from(undefined, this.calendar, this.timeZone)
+	private readonly order = new DateTime({ calendar: this.calendar, timeZone: this.timeZone })
 		.formatToParts({ language: this.language, year: 'numeric', month: 'numeric', day: 'numeric' })
 		.filter(x => x.type !== 'literal')
 		.map(x => x.type) as [DatePart, DatePart, DatePart]
@@ -46,7 +46,7 @@ export class DateTimeLocalParser extends DateTimeParser {
 			return !value ? undefined : parseInt(value)
 		}
 
-		referenceDate ??= DateTime.from(undefined, this.calendar, this.timeZone)
+		referenceDate ??= new DateTime({ calendar: this.calendar, timeZone: this.timeZone })
 
 		return referenceDate.with({
 			year: getValueOf('year') ?? referenceDate.year,
