@@ -51,9 +51,9 @@ export class DateTimeRange {
 	readonly start?: DateTime
 	readonly end?: DateTime
 
-	constructor(startDate?: Date, endDate?: Date) {
-		const startD = startDate ? new DateTime(startDate) : undefined
-		const endD = endDate ? new DateTime(endDate) : undefined
+	constructor(startDate?: Date | DateTime, endDate?: Date | DateTime) {
+		const startD = startDate ? new DateTime(+startDate) : undefined
+		const endD = endDate ? new DateTime(+endDate) : undefined
 		const { start, end } = DateTimeRange.sort(startD, endD)
 		this.start = start
 		this.end = end
@@ -72,7 +72,7 @@ export class DateTimeRange {
 	}
 
 	includes(date: Date) {
-		return (!this.start || date >= this.start) && (!this.end || date <= this.end)
+		return (!this.start || +date >= +this.start) && (!this.end || +date <= +this.end)
 	}
 
 	equals(other: DateTimeRange) {
@@ -132,7 +132,7 @@ export class DateTimeRange {
 			return delimiter?.trimStart() + formatter(this.end as DateTime, ...options)
 		}
 
-		return Intl.DateTimeFormat(language, explicitOptions).formatRange(this.start, this.end)
+		return Intl.DateTimeFormat(language, explicitOptions).formatRange(+this.start, +this.end)
 	}
 }
 

@@ -14,11 +14,12 @@ Localizer.dictionaries.add('de', {
  * @i18n "Date & Time"
  */
 @component('mo-field-date-time')
-export class FieldDateTime extends FieldDateTimeBase<Date | undefined> {
-	protected get selectedDate() { return this.value ? new DateTime(this.value) : undefined }
+export class FieldDateTime extends FieldDateTimeBase<DateTime | undefined> {
+	protected get navigatingDate() { return this.value ? new DateTime(+this.value) : new DateTime() }
+	protected get selectedDate() { return this.value ? new DateTime(+this.value) : undefined }
 
 	@property() override label = t('Date & Time')
-	@property({ type: Object }) value?: Date
+	@property({ type: Object }) value?: DateTime
 
 	@memoize()
 	protected override get placeholder() {
@@ -44,12 +45,12 @@ export class FieldDateTime extends FieldDateTimeBase<Date | undefined> {
 		super.handleSelectedDateChange(date, precision)
 	}
 
-	protected valueToInputValue(value: Date | undefined) {
+	protected valueToInputValue(value: DateTime | undefined) {
 		return value ? value.format(this.formatOptions) ?? '' : ''
 	}
 
 	protected inputValueToValue(value: string) {
-		return value ? DateTime.parseAsDateTime(value, this.shortcutReferenceDate) : undefined
+		return value ? DateTime.parse(value, this.shortcutReferenceDate) : undefined
 	}
 }
 

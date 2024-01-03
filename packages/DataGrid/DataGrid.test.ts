@@ -5,9 +5,9 @@ import { DataGrid, type DataGridRow, DataGridSelectionMode, DataGridColumn, Data
 type Person = { id: number, name: string, birthDate: DateTime, children?: Array<Person> }
 
 const testData: Array<Person> = [
-	{ id: 1, name: 'John', birthDate: new DateTime(2000, 0, 0) },
-	{ id: 2, name: 'Jane', birthDate: new DateTime(2000, 0, 0) },
-	{ id: 3, name: 'Joe', birthDate: new DateTime(2000, 0, 0) },
+	{ id: 1, name: 'John', birthDate: DateTime.parse('2000-01-01')! },
+	{ id: 2, name: 'Jane', birthDate: DateTime.parse('2000-01-01')! },
+	{ id: 3, name: 'Joe', birthDate: DateTime.parse('2000-01-01')! },
 ]
 
 class TestDataGrid extends DataGrid<Person> {

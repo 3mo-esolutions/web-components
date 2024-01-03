@@ -1,55 +1,62 @@
 import { Temporal, Intl } from 'temporal-polyfill'
-import { Localizer } from '@3mo/localization'
+import { LanguageCode, Localizer } from '@3mo/localization'
 import { TimeSpan } from './TimeSpan.js'
 import { type DateTimeParser, DateTimeLocalParser, DateTimeShortcutParser, DateTimeOperationParser, DateTimeNativeParser, DateTimeZeroParser } from './parsers/index.js'
 import { Memoize as memoize } from 'typescript-memoize'
-import { type ParsingParameters, extractParsingParameters } from './extractParsingParameters.js'
 
-type DateTimeFromParameters =
-	| [epochMilliseconds?: number, calendar?: Temporal.CalendarLike, timeZone?: Temporal.TimeZoneLike]
+const parametersAndLanguageHashFunction = (...parameters: Array<unknown>) => [...parameters, Localizer.currentLanguage].join('')
+
+type DateTimeConstructorParameters =
+	| []
+	| [options: { calendar?: Temporal.CalendarLike, timeZone?: Temporal.TimeZoneLike }]
 	| [zonedDateTime: Temporal.ZonedDateTime]
+	| [epochMilliseconds: number]
+	| [epochMilliseconds: number, language: LanguageCode]
+	| [epochMilliseconds: number, options: { calendar?: Temporal.CalendarLike, timeZone?: Temporal.TimeZoneLike }]
 
-export class DateTime extends Date {
-	static readonly isoRegularExpression = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*))(?:Z|(\+|-)([\d|:]*))?$/
+export class DateTime implements Date {
+	static readonly isoRegularExpression = /^(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})T(?<hour>\d{2}):(?<minute>\d{2}):(?<second>\d{2}(?:\.\d*))(?:Z|(?<offsetSign>\+|-)(?<offset>[\d|:]*))?$/
 
-	private static readonly customParsers = new Array<Constructor<DateTimeParser>>()
+	private static readonly parsers = new Array<Constructor<DateTimeParser>>()
 
 	static addParser(parser: Constructor<DateTimeParser>) {
-		DateTime.customParsers.push(parser)
+		DateTime.parsers.push(parser)
 	}
 
-	@memoize()
+	@memoize(parametersAndLanguageHashFunction)
 	static getResolvedOptions(language = Localizer.languages.current) {
 		return Intl.DateTimeFormat(language).resolvedOptions()
 	}
 
-	@memoize()
+	@memoize(parametersAndLanguageHashFunction)
 	static getCalendar(language = Localizer.languages.current) {
-		return DateTime.getResolvedOptions(language).calendar
+		const { calendar } = DateTime.getResolvedOptions(language)
+		return Temporal.Calendar.from(calendar)
 	}
 
-	@memoize()
-	static getTimeZone(language = Localizer.languages.current) {
-		return DateTime.getResolvedOptions(language).timeZone
+	@memoize(parametersAndLanguageHashFunction)
+	static getTimeZone(language = Localizer.currentLanguage) {
+		const { timeZone } = DateTime.getResolvedOptions(language)
+		return Temporal.TimeZone.from(timeZone)
 	}
 
-	@memoize()
+	@memoize(parametersAndLanguageHashFunction)
 	static getDateSeparator(language = Localizer.languages.current) {
 		return Intl.DateTimeFormat(language)
-			.formatToParts(new DateTime)
+			.formatToParts(new Date)
 			.find(part => part.type === 'literal')
 			?.value as string
 	}
 
-	@memoize()
+	@memoize(parametersAndLanguageHashFunction)
 	static getTimeSeparator(language = Localizer.languages.current) {
 		return Intl.DateTimeFormat(language, { timeStyle: 'short' })
-			.formatToParts(new DateTime)
+			.formatToParts(new Date)
 			.find(part => part.type === 'literal')
 			?.value as string
 	}
 
-	static parseAsDateTime(...parameters: ParsingParameters) {
+	static parse(...parameters: ParsingParameters) {
 		const [text, language, referenceDate] = extractParsingParameters(parameters)
 
 		if (!text.trim()) {
@@ -62,7 +69,7 @@ export class DateTime extends Date {
 			new DateTimeLocalParser(language),
 			new DateTimeShortcutParser(language),
 			new DateTimeNativeParser(language),
-			...DateTime.customParsers.map(parser => new parser(language)),
+			...DateTime.parsers.map(parser => new parser(language)),
 		]
 
 		for (const parser of parsers) {
@@ -75,24 +82,60 @@ export class DateTime extends Date {
 		return undefined
 	}
 
-	static from(...parameters: DateTimeFromParameters): DateTime {
+	private readonly _epochMilliseconds: number
+	readonly calendar: Temporal.Calendar | Temporal.CalendarProtocol
+	readonly timeZone: Temporal.TimeZoneProtocol | Temporal.TimeZone
+
+	constructor(...parameters: DateTimeConstructorParameters) {
+		if (parameters.length === 0) {
+			[this._epochMilliseconds, this.calendar, this.timeZone] = [Date.now(), DateTime.getCalendar(), DateTime.getTimeZone()]
+			return
+		}
+
 		if (parameters.length === 1 && parameters[0] instanceof Temporal.ZonedDateTime) {
 			const zonedDateTime = parameters[0]
-			return DateTime.from(zonedDateTime.epochMilliseconds, zonedDateTime.getCalendar(), zonedDateTime.getTimeZone())
+			const { epochMilliseconds, getCalendar, getTimeZone } = zonedDateTime;
+			[this._epochMilliseconds, this.calendar, this.timeZone] = [epochMilliseconds, getCalendar(), getTimeZone()]
+			return
 		}
-		const [epochMilliseconds, calendar, timeZone] = parameters
-		const dateTime = typeof epochMilliseconds === 'number' ? new DateTime(epochMilliseconds) : new DateTime
-		// @ts-expect-error Setting readonly property while initialization
-		!calendar ? void 0 : dateTime.calendar = Temporal.Calendar.from(calendar)
-		// @ts-expect-error Setting readonly property while initialization
-		!timeZone ? void 0 : dateTime.timeZone = Temporal.TimeZone.from(timeZone)
-		return dateTime
+
+		if (parameters.length === 1 && typeof parameters[0] === 'object') {
+			const options = parameters[0] as { calendar?: Temporal.CalendarLike, timeZone?: Temporal.TimeZoneLike };
+			[this._epochMilliseconds, this.calendar, this.timeZone] = [
+				Date.now(),
+				options.calendar ? Temporal.Calendar.from(options.calendar) : DateTime.getCalendar(),
+				options.timeZone ? Temporal.TimeZone.from(options.timeZone) : DateTime.getTimeZone(),
+			]
+			return
+		}
+
+		if (parameters.length === 1 && typeof parameters[0] === 'number') {
+			[this._epochMilliseconds, this.calendar, this.timeZone] = [parameters[0], DateTime.getCalendar(), DateTime.getTimeZone()]
+			return
+		}
+
+		if (parameters.length === 2 && typeof parameters[0] === 'number' && typeof parameters[1] === 'string') {
+			const [value, language] = parameters;
+			[this._epochMilliseconds, this.calendar, this.timeZone] = [value, DateTime.getCalendar(language), DateTime.getTimeZone(language)]
+			return
+		}
+
+		if (parameters.length === 2 && typeof parameters[0] === 'number' && typeof parameters[1] === 'object') {
+			const [value, options] = parameters;
+			[this._epochMilliseconds, this.calendar, this.timeZone] = [
+				value,
+				options.calendar ? Temporal.Calendar.from(options.calendar) : DateTime.getCalendar(),
+				options.timeZone ? Temporal.TimeZone.from(options.timeZone) : DateTime.getTimeZone(),
+			]
+			return
+		}
+
+		throw new Error('Invalid parameters')
 	}
 
-	readonly calendar = Temporal.Calendar.from(DateTime.getCalendar())
-	readonly timeZone = Temporal.TimeZone.from(DateTime.getTimeZone())
+	@memoize() private get date() { return new Date(this.epochMilliseconds) }
 
-	@memoize() get temporalInstant() { return Temporal.Instant.fromEpochMilliseconds(this.valueOf()) }
+	@memoize() get temporalInstant() { return Temporal.Instant.fromEpochMilliseconds(this._epochMilliseconds) }
 
 	@memoize() get zonedDateTime() { return this.temporalInstant.toZonedDateTime({ calendar: this.calendar, timeZone: this.timeZone }) }
 
@@ -108,8 +151,8 @@ export class DateTime extends Date {
 	@memoize() get millisecond() { return this.zonedDateTime.millisecond }
 	@memoize() get microsecond() { return this.zonedDateTime.microsecond }
 	@memoize() get nanosecond() { return this.zonedDateTime.nanosecond }
-	@memoize() override get timeZoneId() { return this.zonedDateTime.timeZoneId }
-	@memoize() override get calendarId() { return this.zonedDateTime.calendarId }
+	@memoize() get timeZoneId() { return this.zonedDateTime.timeZoneId }
+	@memoize() get calendarId() { return this.zonedDateTime.calendarId }
 	@memoize() get dayOfWeek() { return this.zonedDateTime.dayOfWeek }
 	@memoize() get dayOfYear() { return this.zonedDateTime.dayOfYear }
 	@memoize() get weekOfYear() { return this.zonedDateTime.weekOfYear }
@@ -127,8 +170,8 @@ export class DateTime extends Date {
 	@memoize() get epochMicroseconds() { return this.zonedDateTime.epochMicroseconds }
 	@memoize() get epochNanoseconds() { return this.zonedDateTime.epochNanoseconds }
 
-	@memoize() get dayStart() { return DateTime.from(this.zonedDateTime.startOfDay()) }
-	@memoize() get dayEnd() { return DateTime.from(this.zonedDateTime.add({ days: 1 }).startOfDay().add({ nanoseconds: -1 })) }
+	@memoize() get dayStart() { return new DateTime(this.zonedDateTime.startOfDay()) }
+	@memoize() get dayEnd() { return new DateTime(this.zonedDateTime.add({ days: 1 }).startOfDay().add({ nanoseconds: -1 })) }
 	@memoize() get dayRange() { return new DateTimeRange(this.dayStart, this.dayEnd) }
 
 	@memoize() get weekStart() { return this.subtract({ days: this.dayOfWeek - 1 }) }
@@ -169,25 +212,58 @@ export class DateTime extends Date {
 	}
 
 	add(...parameters: Parameters<Temporal.ZonedDateTime['add']>) {
-		return DateTime.from(this.zonedDateTime.add(...parameters))
+		return new DateTime(this.zonedDateTime.add(...parameters))
 	}
 
 	subtract(...parameters: Parameters<Temporal.ZonedDateTime['subtract']>) {
-		return DateTime.from(this.zonedDateTime.subtract(...parameters))
+		return new DateTime(this.zonedDateTime.subtract(...parameters))
 	}
 
 	round(...parameters: Parameters<Temporal.ZonedDateTime['round']>) {
-		return DateTime.from(this.zonedDateTime.round(...parameters))
+		return new DateTime(this.zonedDateTime.round(...parameters))
 	}
 
 	with(...parameters: Parameters<Temporal.ZonedDateTime['with']>) {
-		return DateTime.from(this.zonedDateTime.with(...parameters))
+		return new DateTime(this.zonedDateTime.with(...parameters))
 	}
 
 	@memoize() get weekDayNames() {
 		return new Array<DateTime>(this.daysInWeek)
 			.fill(this.weekStart)
 			.map((d, i) => d.add({ days: i }).format({ weekday: 'long' }))
+	}
+
+	// @ts-expect-error - toPrimitive relies on the Date prototype
+	[Symbol.toPrimitive](hint: 'default' | 'number' | 'string') {
+		return this.date[Symbol.toPrimitive](hint)
+	}
+
+	valueOf() {
+		return this.epochMilliseconds
+	}
+
+	format(...parameters: Parameters<Date['format']>) {
+		return this.date.format(...parameters)
+	}
+
+	formatAsDate(...parameters: Parameters<Date['formatAsDate']>) {
+		return this.date.formatAsDate(...parameters)
+	}
+
+	formatAsTime(...parameters: Parameters<Date['formatAsTime']>) {
+		return this.date.formatAsTime(...parameters)
+	}
+
+	formatToParts(...parameters: Parameters<Date['formatToParts']>) {
+		return this.date.formatToParts(...parameters)
+	}
+
+	toISOString(...parameters: Parameters<Date['toISOString']>) {
+		return this.date.toISOString(...parameters)
+	}
+
+	toString() {
+		return this.format()
 	}
 }
 

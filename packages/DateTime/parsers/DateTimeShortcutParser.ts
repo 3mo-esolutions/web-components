@@ -11,7 +11,7 @@ export class DateTimeShortcutParser extends DateTimeParser {
 	private readonly threePartOrder = this.getOrder('day', 'month', 'year') as [DatePart, DatePart, DatePart]
 
 	private getOrder(...parts: Array<DatePart>) {
-		return DateTime.from(undefined, this.calendar, this.timeZone)
+		return new DateTime({ calendar: this.calendar, timeZone: this.timeZone })
 			.formatToParts(this.language, parts.map(x => ({ [x]: 'numeric' })).reduce((a, b) => ({ ...a, ...b }), {}))
 			.filter(x => x.type !== 'literal')
 			.map(x => x.type)
@@ -25,7 +25,7 @@ export class DateTimeShortcutParser extends DateTimeParser {
 			return undefined
 		}
 
-		referenceDate ??= DateTime.from(undefined, this.calendar, this.timeZone)
+		referenceDate ??= new DateTime({ calendar: this.calendar, timeZone: this.timeZone })
 
 		const tryGetValue = (...parts: [number, number, number?]) => {
 			const ref = referenceDate!
