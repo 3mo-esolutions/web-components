@@ -38,7 +38,7 @@ describe('DateTimeLocalParser', () => {
 
 	describe('handles gregory calendar', () => {
 		it('with day and month', () => {
-			const expected = DateTime.from(undefined, 'gregory').with({ month: 2, day: 11 })
+			const expected = new DateTime({ calendar: 'gregory' }).with({ month: 2, day: 11 })
 
 			expectDateTimesEquals(new DateTimeLocalParser('en-US' as any).parse('02/11'), expected)
 			expectDateTimesEquals(new DateTimeLocalParser('en-US' as any).parse('  2 / 11  '), expected)
@@ -50,7 +50,7 @@ describe('DateTimeLocalParser', () => {
 		})
 
 		it('with day, month and year', () => {
-			const expected = DateTime.from(undefined, 'gregory').with({ year: 2020, month: 9, day: 2 })
+			const expected = new DateTime({ calendar: 'gregory' }).with({ year: 2020, month: 9, day: 2 })
 
 			expectDateTimesEquals(new DateTimeLocalParser('en-US' as any).parse('09/02/2020'), expected)
 			expectDateTimesEquals(new DateTimeLocalParser('en-US' as any).parse('  9 / 02 / 2 0  2 0 '), expected)
@@ -75,7 +75,7 @@ describe('DateTimeLocalParser', () => {
 		})
 
 		it('can handle 31st', () => {
-			const expected = DateTime.from(undefined, 'gregory').with({ year: 2020, month: 10, day: 31 })
+			const expected = new DateTime({ calendar: 'gregory' }).with({ year: 2020, month: 10, day: 31 })
 
 			expectDateTimesEquals(new DateTimeLocalParser('de').parse('31.10.2020'), expected)
 		})
@@ -83,12 +83,12 @@ describe('DateTimeLocalParser', () => {
 
 	describe('handles persian calendar', () => {
 		it('with day and month', () => {
-			const expected = DateTime.from(undefined, 'persian').with({ month: 2, day: 1 })
+			const expected = new DateTime({ calendar: 'persian' }).with({ month: 2, day: 1 })
 			expectDateTimesEquals(new DateTimeLocalParser('fa').parse(' 02 / 1 '), expected)
 		})
 
 		it('with day, month and year', () => {
-			const expected = DateTime.from(undefined, 'persian').with({ year: 1400, month: 2, day: 1 })
+			const expected = new DateTime({ calendar: 'persian' }).with({ year: 1400, month: 2, day: 1 })
 			expectDateTimesEquals(new DateTimeLocalParser('fa').parse('1400/02/01'), expected)
 			expectDateTimesEquals(new DateTimeLocalParser('fa').parse('1400/2/1'), expected)
 			expectDateTimesEquals(new DateTimeLocalParser('fa').parse(' 14 0 0 / 02 / 1 '), expected)

@@ -28,7 +28,7 @@ describe('DateTimeShortcutParser', () => {
 
 	describe('parsing by day', () => {
 		it('should work for gregory calendar', () => {
-			const expected = DateTime.from(undefined, 'gregory').with({ day: 15 })
+			const expected = new DateTime({ calendar: 'gregory' }).with({ day: 15 })
 			expectDateTimesEquals(gregorianGermanParser.parse('15'), expected)
 			expectDateTimesEquals(gregorianGermanParser.parse('  1   5  '), expected)
 			expectDateTimesEquals(gregorianEnglishParser.parse('15'), expected)
@@ -36,7 +36,7 @@ describe('DateTimeShortcutParser', () => {
 		})
 
 		it('should work for persian calendar', () => {
-			const expected = DateTime.from(undefined, 'persian').with({ day: 11 })
+			const expected = new DateTime({ calendar: 'persian' }).with({ day: 11 })
 			expectDateTimesEquals(persianParser.parse(' 1 1 '), expected)
 			expectDateTimesEquals(persianParser.parse('11'), expected)
 		})
@@ -44,53 +44,53 @@ describe('DateTimeShortcutParser', () => {
 
 	describe('parsing by day and month', () => {
 		it('should work for gregory calendar', () => {
-			expectDateTimesEquals(gregorianEnglishParser.parse('0203'), DateTime.from(undefined, 'gregory').with({ month: 2, day: 3 }))
-			expectDateTimesEquals(gregorianEnglishParser.parse('0110'), DateTime.from(undefined, 'gregory').with({ month: 1, day: 10 }))
-			expectDateTimesEquals(gregorianGermanParser.parse('0203'), DateTime.from(undefined, 'gregory').with({ month: 3, day: 2 }))
-			expectDateTimesEquals(gregorianGermanParser.parse('0110'), DateTime.from(undefined, 'gregory').with({ month: 10, day: 1 }))
+			expectDateTimesEquals(gregorianEnglishParser.parse('0203'), new DateTime({ calendar: 'gregory' }).with({ month: 2, day: 3 }))
+			expectDateTimesEquals(gregorianEnglishParser.parse('0110'), new DateTime({ calendar: 'gregory' }).with({ month: 1, day: 10 }))
+			expectDateTimesEquals(gregorianGermanParser.parse('0203'), new DateTime({ calendar: 'gregory' }).with({ month: 3, day: 2 }))
+			expectDateTimesEquals(gregorianGermanParser.parse('0110'), new DateTime({ calendar: 'gregory' }).with({ month: 10, day: 1 }))
 		})
 
 		it('should work for persian calendar', () => {
-			expectDateTimesEquals(persianParser.parse('0110'), DateTime.from(undefined, 'persian').with({ month: 1, day: 10 }))
-			expectDateTimesEquals(persianParser.parse('0203'), DateTime.from(undefined, 'persian').with({ month: 2, day: 3 }))
+			expectDateTimesEquals(persianParser.parse('0110'), new DateTime({ calendar: 'persian' }).with({ month: 1, day: 10 }))
+			expectDateTimesEquals(persianParser.parse('0203'), new DateTime({ calendar: 'persian' }).with({ month: 2, day: 3 }))
 		})
 	})
 
 	describe('parsing by ambiguous day and month', () => {
 		it('should work for gregory calendar', () => {
-			expectDateTimesEquals(gregorianGermanParser.parse('32'), DateTime.from(undefined, 'gregory').with({ month: 2, day: 3 }))
-			expectDateTimesEquals(gregorianGermanParser.parse('032'), DateTime.from(undefined, 'gregory').with({ month: 2, day: 3 }))
-			expectDateTimesEquals(gregorianGermanParser.parse('98'), DateTime.from(undefined, 'gregory').with({ month: 8, day: 9 }))
-			expectDateTimesEquals(gregorianGermanParser.parse('098'), DateTime.from(undefined, 'gregory').with({ month: 8, day: 9 }))
-			expectDateTimesEquals(gregorianGermanParser.parse('204'), DateTime.from(undefined, 'gregory').with({ month: 4, day: 20 }))
+			expectDateTimesEquals(gregorianGermanParser.parse('32'), new DateTime({ calendar: 'gregory' }).with({ month: 2, day: 3 }))
+			expectDateTimesEquals(gregorianGermanParser.parse('032'), new DateTime({ calendar: 'gregory' }).with({ month: 2, day: 3 }))
+			expectDateTimesEquals(gregorianGermanParser.parse('98'), new DateTime({ calendar: 'gregory' }).with({ month: 8, day: 9 }))
+			expectDateTimesEquals(gregorianGermanParser.parse('098'), new DateTime({ calendar: 'gregory' }).with({ month: 8, day: 9 }))
+			expectDateTimesEquals(gregorianGermanParser.parse('204'), new DateTime({ calendar: 'gregory' }).with({ month: 4, day: 20 }))
 
-			expectDateTimesEquals(gregorianEnglishParser.parse('32'), DateTime.from(undefined, 'gregory').with({ month: 3, day: 2 }))
-			expectDateTimesEquals(gregorianEnglishParser.parse('032'), DateTime.from(undefined, 'gregory').with({ month: 3, day: 2 }))
-			expectDateTimesEquals(gregorianEnglishParser.parse('98'), DateTime.from(undefined, 'gregory').with({ month: 9, day: 8 }))
-			expectDateTimesEquals(gregorianEnglishParser.parse('098'), DateTime.from(undefined, 'gregory').with({ month: 9, day: 8 }))
-			expectDateTimesEquals(gregorianEnglishParser.parse('204'), DateTime.from(undefined, 'gregory').with({ month: 2, day: 4 }))
+			expectDateTimesEquals(gregorianEnglishParser.parse('32'), new DateTime({ calendar: 'gregory' }).with({ month: 3, day: 2 }))
+			expectDateTimesEquals(gregorianEnglishParser.parse('032'), new DateTime({ calendar: 'gregory' }).with({ month: 3, day: 2 }))
+			expectDateTimesEquals(gregorianEnglishParser.parse('98'), new DateTime({ calendar: 'gregory' }).with({ month: 9, day: 8 }))
+			expectDateTimesEquals(gregorianEnglishParser.parse('098'), new DateTime({ calendar: 'gregory' }).with({ month: 9, day: 8 }))
+			expectDateTimesEquals(gregorianEnglishParser.parse('204'), new DateTime({ calendar: 'gregory' }).with({ month: 2, day: 4 }))
 		})
 
 		it('should work for persian calendar', () => {
-			expectDateTimesEquals(persianParser.parse('32'), DateTime.from(undefined, 'persian').with({ month: 3, day: 2 }))
-			expectDateTimesEquals(persianParser.parse('032'), DateTime.from(undefined, 'persian').with({ month: 3, day: 2 }))
-			expectDateTimesEquals(persianParser.parse('98'), DateTime.from(undefined, 'persian').with({ month: 9, day: 8 }))
-			expectDateTimesEquals(persianParser.parse('098'), DateTime.from(undefined, 'persian').with({ month: 9, day: 8 }))
-			expectDateTimesEquals(persianParser.parse('204'), DateTime.from(undefined, 'persian').with({ month: 2, day: 4 }))
+			expectDateTimesEquals(persianParser.parse('32'), new DateTime({ calendar: 'persian' }).with({ month: 3, day: 2 }))
+			expectDateTimesEquals(persianParser.parse('032'), new DateTime({ calendar: 'persian' }).with({ month: 3, day: 2 }))
+			expectDateTimesEquals(persianParser.parse('98'), new DateTime({ calendar: 'persian' }).with({ month: 9, day: 8 }))
+			expectDateTimesEquals(persianParser.parse('098'), new DateTime({ calendar: 'persian' }).with({ month: 9, day: 8 }))
+			expectDateTimesEquals(persianParser.parse('204'), new DateTime({ calendar: 'persian' }).with({ month: 2, day: 4 }))
 		})
 	})
 
 	describe('parsing by day, month and year', () => {
 		it('should work for gregory calendar', () => {
-			expectDateTimesEquals(gregorianEnglishParser.parse('020122'), DateTime.from(undefined, 'gregory').with({ year: 2022, month: 2, day: 1, }))
-			expectDateTimesEquals(gregorianEnglishParser.parse('02012022'), DateTime.from(undefined, 'gregory').with({ year: 2022, month: 2, day: 1, }))
-			expectDateTimesEquals(gregorianGermanParser.parse('020122'), DateTime.from(undefined, 'gregory').with({ year: 2022, month: 1, day: 2, }))
-			expectDateTimesEquals(gregorianGermanParser.parse('02012022'), DateTime.from(undefined, 'gregory').with({ year: 2022, month: 1, day: 2, }))
+			expectDateTimesEquals(gregorianEnglishParser.parse('020122'), new DateTime({ calendar: 'gregory' }).with({ year: 2022, month: 2, day: 1, }))
+			expectDateTimesEquals(gregorianEnglishParser.parse('02012022'), new DateTime({ calendar: 'gregory' }).with({ year: 2022, month: 2, day: 1, }))
+			expectDateTimesEquals(gregorianGermanParser.parse('020122'), new DateTime({ calendar: 'gregory' }).with({ year: 2022, month: 1, day: 2, }))
+			expectDateTimesEquals(gregorianGermanParser.parse('02012022'), new DateTime({ calendar: 'gregory' }).with({ year: 2022, month: 1, day: 2, }))
 		})
 
 		it('should work for persian calendar', () => {
-			expectDateTimesEquals(persianParser.parse('030201'), DateTime.from(undefined, 'persian').with({ year: 1403, month: 2, day: 1, }))
-			expectDateTimesEquals(persianParser.parse('14030201'), DateTime.from(undefined, 'persian').with({ year: 1403, month: 2, day: 1, }))
+			expectDateTimesEquals(persianParser.parse('030201'), new DateTime({ calendar: 'persian' }).with({ year: 1403, month: 2, day: 1, }))
+			expectDateTimesEquals(persianParser.parse('14030201'), new DateTime({ calendar: 'persian' }).with({ year: 1403, month: 2, day: 1, }))
 		})
 	})
 })

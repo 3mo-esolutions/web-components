@@ -7,6 +7,6 @@ export class DateTimeNativeParser extends DateTimeParser {
 		if (isNaN(millisecondsFromEpoch)) {
 			return undefined
 		}
-		return DateTime.from(millisecondsFromEpoch, referenceDate?.calendar, referenceDate?.timeZone)
+		return new DateTime(millisecondsFromEpoch, { calendar: referenceDate?.calendar, timeZone: referenceDate?.timeZone })
 	}
 }

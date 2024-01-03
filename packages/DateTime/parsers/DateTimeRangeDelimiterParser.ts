@@ -25,8 +25,8 @@ export class DateTimeRangeDelimiterParser extends DateTimeRangeParser {
 	override parse(text: string, referenceDate?: DateTime) {
 		const { start, end } = this.regex.exec(text)?.groups ?? {}
 		return new DateTimeRange(
-			start ? DateTime.parseAsDateTime(start, referenceDate) : undefined,
-			end ? DateTime.parseAsDateTime(end, referenceDate) : undefined
+			start ? DateTime.parse(start, referenceDate) : undefined,
+			end ? DateTime.parse(end, referenceDate) : undefined
 		)
 	}
 }
