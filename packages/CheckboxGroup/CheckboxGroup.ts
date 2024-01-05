@@ -1,6 +1,5 @@
 import { component, property, css, html, style, eventListener } from '@a11d/lit'
 import { Checkbox } from '@3mo/checkbox'
-import { observeMutation } from '@3mo/mutation-observer'
 import type { Flex } from '@3mo/flex'
 
 /**
@@ -61,7 +60,7 @@ export class CheckboxGroup extends Checkbox {
 			<mo-flex>
 				${super.template}
 				<mo-flex direction=${this.direction} ${style({ height: '*' })}>
-					<slot ${observeMutation(this.handleSlotChange)}></slot>
+					<slot @slotchange=${() => this.handleSlotChange()}></slot>
 				</mo-flex>
 			</mo-flex>
 		`

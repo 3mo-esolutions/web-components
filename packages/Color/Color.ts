@@ -1,5 +1,10 @@
 import ColorString from 'color-string'
 
+/**
+ * An immutable color class that can be used to represent a color in various formats.
+ *
+ * @ssr true
+ */
 export class Color {
 	readonly color: ColorString.Color
 

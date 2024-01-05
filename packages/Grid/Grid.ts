@@ -10,6 +10,8 @@ const asteriskSyntaxConverter = {
 /**
  * @element mo-grid
  *
+ * @ssr true
+ *
  * @attr rows
  * @attr columns
  * @attr autoRows

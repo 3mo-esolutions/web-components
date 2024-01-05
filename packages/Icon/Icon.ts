@@ -10,6 +10,10 @@ export enum IconVariant {
 }
 
 /**
+ * @element mo-icon
+ *
+ * @ssr true - The font should be provided manually when using SSR.
+ *
  * @attr variant - The variant of the icon tied to a specific font.
  * @attr icon - The icon to display.
  */

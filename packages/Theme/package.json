@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/theme",
-	"version": "0.0.19",
+	"version": "0.0.20",
 	"description": "Tools & tokens for theming 3MO components & applications.",
 	"repository": {
 		"type": "git",

@@ -1,5 +1,14 @@
 import { isServer, property, ReactiveElement } from '@a11d/lit'
 
+/**
+ * A decorator factory that defines a property that reflects a style property.
+ *
+ * @ssr true
+ *
+ * @param options - Options for configuring the property.
+ * @param options.styleKey - The name of the style property to reflect.
+ * @param options.styleConverter - An object with two functions to convert the value to and from the style property.
+ */
 export const styleProperty = (options?: Parameters<typeof property>[0] & {
 	styleKey: keyof CSSStyleDeclaration & string
 	styleConverter?: {

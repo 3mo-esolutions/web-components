@@ -41,9 +41,9 @@ export class Localizer {
 	@event() static readonly languageChange: EventDispatcher<LanguageCode>
 
 	static get currentLanguage() {
-		return window.location.search.split('lang=')[1]?.split('&')[0] as LanguageCode | undefined
+		return window?.location.search.split('lang=')[1]?.split('&')[0] as LanguageCode | undefined
 			|| Localizer.languageCodeStorage.value
-			|| navigator.language.split('-')[0] as LanguageCode | undefined
+			|| navigator?.language.split('-')[0] as LanguageCode | undefined
 			|| 'en'
 	}
 

@@ -1,4 +1,4 @@
-import { component, html, property, Component, css, style, unsafeCSS } from '@a11d/lit'
+import { component, html, property, Component, css, style, unsafeCSS, isServer } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
 import '@3mo/theme'
 import '@3mo/heading'
@@ -11,6 +11,8 @@ export enum CardType {
 
 /**
  * @element mo-card
+ *
+ * @ssr true
  *
  * @attr type
  * @attr heading
@@ -136,7 +138,7 @@ export class Card extends Component {
 
 	protected get mediaTemplate() {
 		const hasMedia = !!this.image || this.slotController.hasAssignedElements('media')
-		return !hasMedia ? html.nothing : html`
+		return !isServer && !hasMedia ? html.nothing : html`
 			<slot part='media' name='media'>
 				${!this.image ? html.nothing : html`<img part='media' src=${this.image} />`}
 			</slot>
@@ -148,8 +150,10 @@ export class Card extends Component {
 			|| !!this.avatar || !!this.heading || !!this.subHeading
 			|| this.slotController.hasAssignedElements('avatar') || this.slotController.hasAssignedElements('heading')
 			|| this.slotController.hasAssignedElements('subHeading') || this.slotController.hasAssignedElements('action')
-		this.toggleAttribute('hasHeader', hasHeader)
-		return !hasHeader ? html.nothing : html`
+		if (isServer === false) {
+			this.toggleAttribute('hasHeader', hasHeader)
+		}
+		return !isServer && !hasHeader ? html.nothing : html`
 			<slot part='header' name='header'>
 				${this.defaultHeaderAvatarTemplate}
 				<mo-flex justifyContent='space-around' ${style({ width: '*' })}>
@@ -196,12 +200,14 @@ export class Card extends Component {
 	}
 
 	protected get bodyTemplate() {
-		this.toggleAttribute('hasBody', this.slotController.hasAssignedContent(''))
+		if (isServer === false) {
+			this.toggleAttribute('hasBody', this.slotController.hasAssignedContent(''))
+		}
 		return html`<slot></slot>`
 	}
 
 	protected get footerTemplate() {
-		return !this.slotController.hasAssignedElements('footer') ? html.nothing : html`<slot part='footer' name='footer'></slot>`
+		return !isServer && !this.slotController.hasAssignedElements('footer') ? html.nothing : html`<slot part='footer' name='footer'></slot>`
 	}
 }
 

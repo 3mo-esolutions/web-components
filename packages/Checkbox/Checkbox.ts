@@ -6,6 +6,8 @@ import '@3mo/theme'
 /**
  * @element mo-checkbox
  *
+ * @ssr true
+ *
  * @attr label - The label of the checkbox.
  * @attr disabled - Whether the checkbox is disabled or not.
  * @attr selected - Whether the checkbox is selected or not. This can be set to 'indeterminate' to show a dash instead of a check-mark.

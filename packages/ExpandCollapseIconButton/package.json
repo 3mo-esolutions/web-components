@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/expand-collapse-icon-button",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"description": "A web component that provides an expand/collapse icon-button.",
 	"repository": {
 		"type": "git",

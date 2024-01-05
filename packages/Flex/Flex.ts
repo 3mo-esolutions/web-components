@@ -20,6 +20,8 @@ const flexDirectionConverter = {
 /**
  * @element mo-flex
  *
+ * @ssr true
+ *
  * @attr direction
  * @attr wrap
  * @attr gap

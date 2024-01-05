@@ -4,6 +4,8 @@ import '@3mo/icon-button'
 /**
  * @element mo-expand-collapse-icon-button
  *
+ * @ssr true
+ *
  * @attr disabled
  * @attr open
  */

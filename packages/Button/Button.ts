@@ -17,6 +17,10 @@ export enum ButtonType {
 }
 
 /**
+ * @element mo-button
+ *
+ * @ssr true
+ *
  * @attr type
  * @attr disabled
  * @attr leadingIcon

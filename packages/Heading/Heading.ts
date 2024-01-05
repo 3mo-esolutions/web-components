@@ -14,6 +14,8 @@ export enum HeadingTypography {
 /**
  * @element mo-heading
  *
+ * @ssr true
+ *
  * @attr typography - The typography of the heading.
  *
  * @slot - The content of the heading.

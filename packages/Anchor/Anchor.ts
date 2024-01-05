@@ -32,6 +32,10 @@ export enum AnchorReferrerPolicy {
 }
 
 /**
+ * @element mo-anchor
+ *
+ * @ssr true
+ *
  * @attr href
  * @attr target
  * @attr target
@@ -47,6 +51,7 @@ export class Anchor extends Component {
 	private static readonly voidHref = ''
 
 	@property() href = Anchor.voidHref
+	// eslint-disable-next-line @typescript-eslint/ban-types
 	@property() target?: AnchorSpecialTarget | (string & {})
 	@property() download?: string
 	@property() ping?: string

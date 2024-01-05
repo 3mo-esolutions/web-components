@@ -1,10 +1,16 @@
-import { component, css, Component, html, property } from '@a11d/lit'
+import { component, css, Component, html, property, queryAssignedElements } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
 import { Button, ButtonType } from '@3mo/button'
 import type { Flex } from '@3mo/flex'
-import '@3mo/theme'
 
 /**
+ * @element mo-button-group
+ *
+ * @ssr true - In SSR all buttons should get their type explicitly.
+ *
+ * @attr direction - The direction of the buttons.
+ * @attr type - The type of the buttons which will be passed down to all buttons.
+ *
  * @cssprop --mo-button-group-border-radius
  * @cssprop --mo-button-group-separator-color
  *
@@ -13,7 +19,9 @@ import '@3mo/theme'
 @component('mo-button-group')
 export class ButtonGroup extends Component {
 	@property({ reflect: true }) direction: Flex['direction'] = 'horizontal'
-	@property({ reflect: true, updated(this: ButtonGroup) { this.updateButtons() } }) type = ButtonType.Normal
+	@property({ reflect: true }) type = ButtonType.Normal
+
+	@queryAssignedElements({ selector: '[instanceof*=mo-button]' }) readonly buttons!: Array<Button>
 
 	static override get styles() {
 		return css`
@@ -134,18 +142,11 @@ export class ButtonGroup extends Component {
 		`
 	}
 
-	protected readonly slotController = new SlotController(this, () => this.updateButtons())
+	protected readonly slotController = new SlotController(this)
 
-	protected get buttonElements() {
-		return this.slotController.getAssignedElements('').filter((element): element is Button => element instanceof Button)
-	}
-
-	protected updateButtons() {
-		for (const [index, button] of this.buttonElements.entries()) {
-			button.type = this.type
-			button.toggleAttribute('data-mo-button-group-first', index === 0)
-			button.toggleAttribute('data-mo-button-group-last', index === this.buttonElements.length - 1)
-		}
+	protected override updated(...parameters: Parameters<Component['updated']>) {
+		super.updated(...parameters)
+		this.updateButtons()
 	}
 
 	protected override get template() {
@@ -154,6 +155,14 @@ export class ButtonGroup extends Component {
 				<slot></slot>
 			</mo-flex>
 		`
+	}
+
+	protected updateButtons() {
+		for (const [index, button] of this.buttons.entries()) {
+			button.type = this.type
+			button.toggleAttribute('data-mo-button-group-first', index === 0)
+			button.toggleAttribute('data-mo-button-group-last', index === this.buttons.length - 1)
+		}
 	}
 }
 

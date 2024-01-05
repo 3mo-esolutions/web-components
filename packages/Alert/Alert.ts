@@ -1,4 +1,4 @@
-import { component, css, Component, html, property, ifDefined, event } from '@a11d/lit'
+import { component, css, Component, html, property, ifDefined, event, isServer } from '@a11d/lit'
 import { MaterialIcon } from '@3mo/icon'
 import { SlotController } from '@3mo/slot-controller'
 
@@ -11,6 +11,8 @@ export enum AlertType {
 
 /**
  * @element mo-alert
+ *
+ * @ssr true
  *
  * @attr heading
  * @attr type
@@ -151,7 +153,7 @@ export class Alert extends Component {
 	}
 
 	protected get slotTemplate() {
-		return !this.slotController.hasAssignedContent('') ? html.nothing : html`<slot></slot>`
+		return !isServer && !this.slotController.hasAssignedContent('') ? html.nothing : html`<slot></slot>`
 	}
 }
 

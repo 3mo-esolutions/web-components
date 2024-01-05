@@ -4,6 +4,8 @@ import { Color } from '@3mo/color'
 /**
  * @element mo-color-picker
  *
+ * @ssr true
+ *
  * @attr value - The current color.
  * @attr presets - A list of preset colors.
  *

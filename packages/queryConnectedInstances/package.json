@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/query-connected-instances",
-	"version": "1.0.3",
+	"version": "1.0.4",
 	"description": "A decorator to query all connected instances of a web component",
 	"repository": {
 		"type": "git",

@@ -8,6 +8,18 @@ export enum SymbolVariant {
 	Rounded = 'rounded',
 }
 
+/**
+ * @element mo-symbol
+ *
+ * @ssr true - The font should be provided manually when using SSR.
+ *
+ * @attr variant - The variant of the symbol tied to a specific font.
+ * @attr icon - The symbol to display.
+ * @attr fill - The fill of the symbol.
+ * @attr weight - The weight of the symbol.
+ * @attr grade - The grade of the symbol.
+ * @attr opticalScale - The optical scale of the symbol.
+ */
 @component('mo-symbol')
 export class Symbol extends Component {
 	static defaultVariant = SymbolVariant.Rounded

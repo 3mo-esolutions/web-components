@@ -4,6 +4,10 @@ import { type MaterialIcon } from '@3mo/icon'
 import { MdIconButton } from '@material/web/iconbutton/icon-button.js'
 
 /**
+ * @element mo-icon-button
+ *
+ * @ssr true
+ *
  * @attr icon - The icon to display.
  * @attr disabled - Disables the icon-button.
  * @attr dense - Reduces the size of the icon-button.

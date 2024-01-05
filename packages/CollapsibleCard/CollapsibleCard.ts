@@ -5,6 +5,8 @@ import { tooltip } from '@3mo/tooltip'
 /**
  * @element mo-collapsible-card
  *
+ * @ssr true
+ *
  * @attr collapsed
  * @attr disableCollapse
  * @attr showSubHeadingOnlyWhenCollapsed

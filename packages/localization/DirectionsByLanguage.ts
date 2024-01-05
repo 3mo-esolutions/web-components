@@ -21,8 +21,8 @@ export class DirectionsByLanguage {
 	}
 
 	static updateAttributes() {
-		window.document.body.setAttribute('lang', Localizer.currentLanguage)
-		window.document.body.setAttribute('dir', DirectionsByLanguage.get(Localizer.currentLanguage))
+		window?.document.body.setAttribute('lang', Localizer.currentLanguage)
+		window?.document.body.setAttribute('dir', DirectionsByLanguage.get(Localizer.currentLanguage))
 	}
 
 	private static add(direction: Direction, ...languageCodes: Array<LanguageCode>) {
