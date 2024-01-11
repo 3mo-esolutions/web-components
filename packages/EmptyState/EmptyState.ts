@@ -1,5 +1,5 @@
 import { html, component, Component, property, css } from '@a11d/lit'
-import { MaterialIcon } from '@3mo/icon'
+import type { MaterialIcon } from '@3mo/icon'
 
 /**
  * @element mo-empty-state
@@ -26,10 +26,12 @@ export class EmptyState extends Component {
 			}
 
 			mo-heading {
+				opacity: 0.33;
 				font-weight: 600;
 			}
 
 			mo-icon {
+				opacity: 0.33;
 				font-size: 48px;
 			}
 		`
