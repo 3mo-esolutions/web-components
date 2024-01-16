@@ -4,7 +4,7 @@ import { component, property, Component, html, css, style } from '@a11d/lit'
  * @element mo-data-grid-footer-sum
  *
  * @attr heading
- * @attr textAlign
+ * @attr align
  * @attr weight
  *
  * @slot - Sum of values
