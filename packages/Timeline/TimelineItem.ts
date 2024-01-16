@@ -26,14 +26,16 @@ export class TimelineItem extends Component {
 		return items[index - 1]
 	}
 
+	private get nextItem() {
+		const items = this.timeline?.items ?? []
+		const index = items.indexOf(this)
+		return items[index + 1]
+	}
+
 	static override get styles() {
 		const sharedStyles = css`
 			:host {
 				display: grid;
-			}
-
-			:host(:first-of-type) .leading, :host(:last-of-type) .trailing {
-				visibility: hidden;
 			}
 
 			.line {
@@ -191,7 +193,7 @@ export class TimelineItem extends Component {
 				</div>
 				${this.iconTemplate}
 				<div class='trailing'>
-					${this.getLineTemplate()}
+					${!this.nextItem ? html.nothing : this.getLineTemplate()}
 				</div>
 			</mo-flex>
 		`
