@@ -96,8 +96,7 @@ export const Sums = story({
 			<mo-data-grid-column-number heading='Age' dataSelector='age' sumHeading='Ages Total'></mo-data-grid-column-number>
 			<mo-data-grid-column-text heading='City' dataSelector='city'></mo-data-grid-column-text>
 			<mo-data-grid-column-currency heading='Balance' dataSelector='balance' sumHeading='Balances Total'></mo-data-grid-column-currency>
-			<mo-data-grid-footer-sum heading='Gestamt' slot='sum' align='center' ${style({ fontSize: '13px', gap: '4px' })}>1 Ware</mo-data-grid-footer-sum>
-			<mo-data-grid-footer-sum heading='Preis' slot='sum' align='end' weight='800' ${style({ fontSize: '13px', gap: '4px' })}>199,99 €</mo-data-grid-footer-sum>
+			<mo-data-grid-footer-sum slot='sum' heading='Customized Sum Maybe!' ${style({ alignItems: 'center', fontWeight: '800' })}>199,99 €</mo-data-grid-footer-sum>
 		</mo-data-grid>
 	`
 })

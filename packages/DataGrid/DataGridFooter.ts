@@ -53,6 +53,7 @@ export class DataGridFooter<TData> extends Component {
 				grid-column: 1 / last-line;
 				grid-row: 3;
 				min-height: var(--mo-data-grid-footer-min-height);
+				background: var(--mo-data-grid-footer-background);
 			}
 
 			:host(:not([hideTopBorder])) {
