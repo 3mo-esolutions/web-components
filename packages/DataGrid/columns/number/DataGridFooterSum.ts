@@ -2,7 +2,9 @@ import { component, property, Component, html, css } from '@a11d/lit'
 
 /**
  * @element mo-data-grid-footer-sum
+ *
  * @attr heading
+ *
  * @slot - Sum of values
  */
 @component('mo-data-grid-footer-sum')
@@ -18,12 +20,12 @@ export class DataGridFooterSum extends Component {
 				max-height: 100%;
 				line-height: 1em;
 				user-select: all;
+				align-items: flex-end;
 			}
 
 			div {
 				color: var(--mo-color-gray);
 				font-size: 0.75rem;
-				text-align: end;
 			}
 		`
 	}
@@ -31,7 +33,7 @@ export class DataGridFooterSum extends Component {
 	protected override get template() {
 		return html`
 			<div>${this.heading}</div>
-			<mo-flex direction='horizontal' justifyContent='center' alignItems='center'>
+			<mo-flex direction='horizontal' justifyContent='center'>
 				<slot></slot>
 			</mo-flex>
 		`

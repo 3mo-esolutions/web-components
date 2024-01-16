@@ -10,6 +10,7 @@ import type { ColumnDefinition } from '../ColumnDefinition.js'
  * @attr textAlign - The text alignment of the column
  * @attr title - The title of the column
  * @attr dataSelector - The data selector of the column
+ * @attr sortDataSelector - The data selector of the column
  * @attr nonSortable - Whether the column is sortable
  * @attr nonEditable - Whether the column is editable
  */

@@ -107,6 +107,7 @@ export type DataGridSorting<TData> = DataGridSortingDefinition<TData> | Array<Da
  * @slot error-no-content - A slot for displaying an error message when no data is available.
  *
  * @cssprop --mo-data-grid-min-visible-rows - The minimum number of visible rows. Default to 2.5.
+ * @cssprop --mo-data-grid-footer-background - The background of the footer.
  *
  * @fires dataChange {CustomEvent<Array<TData>>}
  * @fires selectionChange {CustomEvent<Array<TData>>}
