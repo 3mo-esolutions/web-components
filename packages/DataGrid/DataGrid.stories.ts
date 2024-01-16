@@ -85,12 +85,19 @@ export const ContextMenu = story({
 
 export const Sums = story({
 	render: () => html`
-		<mo-data-grid .data=${generatePeople(50).map(x => ({ ...x, balance: Math.floor(Math.random() * 1000) }))} selectionMode='multiple' style='height: 500px' selectOnClick>
+		<mo-data-grid
+			.data=${generatePeople(50).map(x => ({ ...x, balance: Math.floor(Math.random() * 1000) }))}
+			selectionMode='multiple'
+			style='height: 500px; --mo-data-grid-footer-background: var(--mo-color-transparent-gray-3)'
+			selectOnClick
+		>
 			<mo-data-grid-column-number hidden nonEditable heading='ID' dataSelector='id'></mo-data-grid-column-number>
 			<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
 			<mo-data-grid-column-number heading='Age' dataSelector='age' sumHeading='Ages Total'></mo-data-grid-column-number>
 			<mo-data-grid-column-text heading='City' dataSelector='city'></mo-data-grid-column-text>
 			<mo-data-grid-column-currency heading='Balance' dataSelector='balance' sumHeading='Balances Total'></mo-data-grid-column-currency>
+			<mo-data-grid-footer-sum heading='Gestamt' slot='sum' align='center' ${style({ fontSize: '13px', gap: '4px' })}>1 Ware</mo-data-grid-footer-sum>
+			<mo-data-grid-footer-sum heading='Preis' slot='sum' align='end' weight='800' ${style({ fontSize: '13px', gap: '4px' })}>199,99 €</mo-data-grid-footer-sum>
 		</mo-data-grid>
 	`
 })

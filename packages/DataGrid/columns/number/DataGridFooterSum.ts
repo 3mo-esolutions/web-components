@@ -1,13 +1,19 @@
-import { component, property, Component, html, css } from '@a11d/lit'
+import { component, property, Component, html, css, style } from '@a11d/lit'
 
 /**
  * @element mo-data-grid-footer-sum
+ *
  * @attr heading
+ * @attr textAlign
+ * @attr weight
+ *
  * @slot - Sum of values
  */
 @component('mo-data-grid-footer-sum')
 export class DataGridFooterSum extends Component {
 	@property() heading = ''
+	@property() align: 'start' | 'end' | 'center' = 'center'
+	@property() weight = '400'
 
 	static override get styles() {
 		return css`
@@ -23,15 +29,19 @@ export class DataGridFooterSum extends Component {
 			div {
 				color: var(--mo-color-gray);
 				font-size: 0.75rem;
-				text-align: end;
 			}
 		`
 	}
 
 	protected override get template() {
 		return html`
-			<div>${this.heading}</div>
-			<mo-flex direction='horizontal' justifyContent='center' alignItems='center'>
+			<style>
+				* {
+					font-weight: ${this.weight};
+				}
+			</style>
+			<div ${style({ textAlign: this.align })}>${this.heading}</div>
+			<mo-flex direction='horizontal' justifyContent='center' alignItems=${this.align}>
 				<slot></slot>
 			</mo-flex>
 		`

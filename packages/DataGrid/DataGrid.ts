@@ -570,6 +570,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 			mo-data-grid-footer {
 				transition: var(--mo-data-grid-fab-transition, 250ms);
+				background-color: var(--mo-data-grid-footer-background, transparent);
 			}
 
 			:host([hasSums][hasFabs]:not([fabSlotCollapsed])) mo-data-grid-footer {
