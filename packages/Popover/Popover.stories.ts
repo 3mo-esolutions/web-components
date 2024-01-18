@@ -35,14 +35,7 @@ export default meta({
 })
 
 const content = html`
-		<input />
-
-<style>
-	mo-button:focus {
-		transform: scale(1.1);
-		transition: transform .3s ease;
-	}
-</style>
+	<input />
 	<mo-card heading='Popover'>
 		Here some content
 	</mo-card>
@@ -59,6 +52,20 @@ export const Manual = story({
 			<mo-popover-container placement=${placement} alignment=${alignment} @click=${handleClick}>
 				<mo-button type='outlined'>Click to open the popover</mo-button>
 				<mo-popover manual slot='popover'>${content}</mo-popover>
+			</mo-popover-container>
+		`
+	}
+})
+
+export const Target = story({
+	render: ({ placement, alignment }) => {
+		return html`
+			<mo-popover-container placement=${placement} alignment=${alignment}>
+				<mo-button type='outlined'>
+					Click on the icon-button to open the popover
+					<mo-icon-button id='icon-button' slot='trailing' icon='expand_more'></mo-icon-button>
+				</mo-button>
+				<mo-popover slot='popover' target='icon-button'>${content}</mo-popover>
 			</mo-popover-container>
 		`
 	}

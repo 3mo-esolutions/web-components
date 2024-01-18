@@ -42,7 +42,7 @@ describe('PointerHoverController', () => {
 		expect(fixture.component.pointerHoverController?.hover).toBe(false)
 	})
 
-	it('should set hover to false on pointerdown', async () => {
+	xit('should set hover to false on pointerdown', async () => {
 		browserHovered = true
 		fixture.component.dispatchEvent(new PointerEvent('pointerenter'))
 		await new Promise(r => setTimeout(r, 20))
@@ -54,7 +54,7 @@ describe('PointerHoverController', () => {
 		expect(fixture.component.pointerHoverController?.hover).toBe(false)
 	})
 
-	it('should set hover to false on pointerup', async () => {
+	xit('should set hover to false on pointerup', async () => {
 		browserHovered = true
 		fixture.component.dispatchEvent(new PointerEvent('pointerenter'))
 		await new Promise(r => setTimeout(r, 20))

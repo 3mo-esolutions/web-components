@@ -18,8 +18,6 @@ import { FocusController, type FocusMethod } from '@3mo/focus-controller'
  * @fires validityChange
  */
 export abstract class FieldComponent<T> extends Component {
-	static override readonly shadowRootOptions = { ...Component.shadowRootOptions, delegatesFocus: true }
-
 	static {
 		property({ type: Object, bindingDefault: true })(FieldComponent.prototype, 'value')
 	}
@@ -108,7 +106,7 @@ export abstract class FieldComponent<T> extends Component {
 
 	protected override get template() {
 		return html`
-			<mo-field label=${this.label}
+			<mo-field id='field' label=${this.label}
 				?populated=${this.isPopulated}
 				?disabled=${this.disabled}
 				?readonly=${this.readonly}

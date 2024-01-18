@@ -1,4 +1,4 @@
-import { component, css, Component, html, property, queryAssignedElements } from '@a11d/lit'
+import { component, css, Component, html, property } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
 import { Button, ButtonType } from '@3mo/button'
 import type { Flex } from '@3mo/flex'
@@ -20,8 +20,6 @@ import type { Flex } from '@3mo/flex'
 export class ButtonGroup extends Component {
 	@property({ reflect: true }) direction: Flex['direction'] = 'horizontal'
 	@property({ reflect: true }) type = ButtonType.Normal
-
-	@queryAssignedElements({ selector: '[instanceof*=mo-button]' }) readonly buttons!: Array<Button>
 
 	static override get styles() {
 		return css`
@@ -152,17 +150,19 @@ export class ButtonGroup extends Component {
 	protected override get template() {
 		return html`
 			<mo-flex direction=${this.direction}>
-				<slot></slot>
+				<slot @slotchange=${this.updateButtons.bind(this)}></slot>
 			</mo-flex>
 		`
 	}
 
 	protected updateButtons() {
-		for (const [index, button] of this.buttons.entries()) {
-			button.type = this.type
-			button.toggleAttribute('data-mo-button-group-first', index === 0)
-			button.toggleAttribute('data-mo-button-group-last', index === this.buttons.length - 1)
-		}
+		this.slotController.getAssignedElements('')
+			.filter((e): e is Button => e instanceof Button)
+			.forEach((button, index, buttons) => {
+				button.type = this.type
+				button.toggleAttribute('data-mo-button-group-first', index === 0)
+				button.toggleAttribute('data-mo-button-group-last', index === buttons.length - 1)
+			})
 	}
 }
 

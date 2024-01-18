@@ -30,8 +30,26 @@ describe('Popover', () => {
 			}
 		}
 
+		@component('test-custom-target-popover')
+		class CustomTargetPopover extends Component {
+			@query('mo-popover') readonly popoverElement!: Popover
+			@query('#target') readonly target!: HTMLButtonElement
+			@query('#non-target') readonly nonTarget!: HTMLButtonElement
+
+			@property({ type: Boolean }) autoFocus = false
+
+			protected override get template() {
+				return html`
+					<button id='non-target'>Don't Open</button>
+					<button id='target'>Open</button>
+					<mo-popover target='target' .anchor=${this}></mo-popover>
+				`
+			}
+		}
+
 		const generic = new ComponentTestFixture(() => new GenericPopover)
 		const autoFocus = new ComponentTestFixture(() => new FocusPopover)
+		const customTarget = new ComponentTestFixture(() => new CustomTargetPopover)
 
 		it('should set open and dispatch openChange event when setOpen is called', () => {
 			const openChangeSpy = jasmine.createSpy()
@@ -41,6 +59,35 @@ describe('Popover', () => {
 
 			expect(generic.component.popoverElement.open).toBe(true)
 			expect(openChangeSpy).toHaveBeenCalledWith(true)
+		})
+
+		it('should open when the target is given and the target is clicked', async () => {
+			customTarget.component.target.click()
+
+			await customTarget.updateComplete
+
+			expect(customTarget.component.popoverElement.open).toBe(true)
+		})
+
+		it('should not open when the target is given and the something with the target id is clicked outside the anchor', async () => {
+			const div = document.createElement('div')
+			div.id = 'target'
+			document.body.appendChild(div)
+			div.click()
+
+			await customTarget.updateComplete
+
+			expect(customTarget.component.popoverElement.open).toBe(false)
+			document.body.removeChild(div)
+		})
+
+		it('should not open when the target is given and something else is clicked', async () => {
+			customTarget.component.click()
+			customTarget.component.nonTarget.click()
+
+			await customTarget.updateComplete
+
+			expect(customTarget.component.popoverElement.open).toBe(false)
 		})
 
 		it('should open when the anchor is clicked', async () => {

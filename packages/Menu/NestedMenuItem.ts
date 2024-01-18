@@ -28,6 +28,11 @@ export class NestedMenuItem extends MenuItem {
 		}
 	}
 
+	protected override disconnected() {
+		super.disconnected()
+		this.open = false
+	}
+
 	static override get styles() {
 		return css`
 			${super.styles}

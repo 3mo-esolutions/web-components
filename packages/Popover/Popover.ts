@@ -11,6 +11,7 @@ import { queryConnectedInstances } from '@3mo/query-connected-instances'
  * @attr fixed - Whether the popover is fixed.
  * @attr coordinates - The coordinates of the popover.
  * @attr anchor - The anchor element for the popover.
+ * @attr target - The target element for the popover.
  * @attr placement - The placement of the popover relative to the anchor.
  * @attr alignment - The alignment of the popover relative to the anchor.
  * @attr open - Whether the popover is open.
@@ -26,6 +27,13 @@ import { queryConnectedInstances } from '@3mo/query-connected-instances'
 export class Popover extends Component {
 	static override shadowRootOptions: ShadowRootInit = { ...Component.shadowRootOptions, delegatesFocus: true }
 
+	static readonly isSyntheticClickEvent = Symbol('isSyntheticClickEvent')
+	static shouldOpen(this: { anchor?: HTMLElement, target?: string }, e: Event) {
+		return !!this.anchor
+			&& e.composedPath().includes(this.anchor)
+			&& (!this.target || e.composedPath().some(target => target instanceof Element && target.id === this.target))
+	}
+
 	@queryConnectedInstances() private static readonly instances: Set<Popover>
 
 	@event() readonly openChange!: EventDispatcher<boolean>
@@ -33,10 +41,12 @@ export class Popover extends Component {
 	@property({ type: Boolean, reflect: true }) fixed = false
 	@property({ type: Array }) coordinates?: PopoverCoordinates
 	@property({ type: Object }) anchor?: HTMLElement
+	@property() target?: string
 	@property({ reflect: true }) placement = PopoverPlacement.BlockEnd
 	@property({ reflect: true }) alignment = PopoverAlignment.Start
 	@property({ type: Boolean, reflect: true, updated(this: Popover) { this.openChanged() } }) open = false
 	@property({ type: Boolean }) manual = false
+	@property({ type: Object }) shouldOpen?: (e: Event) => boolean
 
 	protected readonly positionController = new PopoverPositionController(this)
 
@@ -67,7 +77,7 @@ export class Popover extends Component {
 	}
 
 	@eventListener({ target: document, type: 'keydown', options: { capture: true } })
-	protected handleKeyDown(e: KeyboardEvent) {
+	protected handleDocumentKeyDown(e: KeyboardEvent) {
 		if (this.manual || this.open === false) {
 			return
 		}
@@ -82,8 +92,22 @@ export class Popover extends Component {
 		}
 	}
 
+	@eventListener({
+		target(this: Popover) { return this.anchor ?? [] },
+		type: 'keydown'
+	})
+	protected handleAnchorKeyDown(e: KeyboardEvent) {
+		if (this.open === false && e.key === 'Enter') {
+			(e as any)[Popover.isSyntheticClickEvent] = true
+			// Prevent synthetic click event by the browser
+			// because this will only happen when the anchor is focusable
+			// but we need to intercept the event regardless
+			this.handleClick(e, true)
+		}
+	}
+
 	@eventListener({ target: document, type: 'click' })
-	protected handleClick(e: MouseEvent) {
+	protected handleClick(e: Event, preventDefault = false) {
 		if (this.manual) {
 			return
 		}
@@ -93,8 +117,12 @@ export class Popover extends Component {
 			this.setOpen(false)
 		}
 
-		if (this.open === false && this.anchor && e.composedPath().includes(this.anchor)) {
+		const shouldOpen = this.shouldOpen ?? Popover.shouldOpen.bind(this)
+		if (this.open === false && shouldOpen(e)) {
 			e.stopPropagation()
+			if (preventDefault) {
+				e.preventDefault()
+			}
 			this.setOpen(true)
 		}
 	}

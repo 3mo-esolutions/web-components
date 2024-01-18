@@ -19,8 +19,16 @@ export class ContextMenu extends Menu {
 		return contextMenu
 	}
 
-	override readonly manualOpen = true
+	override readonly manual = true
 	override readonly fixed = true
+
+	@eventListener({ target: document, type: 'click' })
+	protected handleClick(e: PointerEvent) {
+		if (this.open && e.composedPath().includes(this) === false) {
+			e.stopPropagation()
+			this.setOpen(false)
+		}
+	}
 
 	@eventListener({ type: 'contextmenu', target(this: ContextMenu) { return this.anchor || [] } })
 	protected handleAnchorContextMenu(event: PointerEvent) {

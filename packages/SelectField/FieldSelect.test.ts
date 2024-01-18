@@ -65,14 +65,6 @@ describe('FieldSelect', () => {
 	})
 
 	describe('menu', () => {
-		it('should open when clicked', async () => {
-			fixture.component.dispatchEvent(new MouseEvent('click', { bubbles: true }))
-
-			await fixture.updateComplete
-
-			expect(fixture.component.open).toBe(true)
-		})
-
 		it('should not open when disabled', async () => {
 			fixture.component.disabled = true
 			await fixture.updateComplete

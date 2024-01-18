@@ -38,8 +38,8 @@ describe('SplitButton', () => {
 	})
 
 	describe('menu', () => {
-		it('should have "manualOpen" property', () => {
-			expect(fixture.component.renderRoot.querySelector('mo-menu')?.manualOpen).toBe(true)
+		it('should have "preventOpenOnAnchorEnter" property', () => {
+			expect(fixture.component.renderRoot.querySelector('mo-menu')?.preventOpenOnAnchorEnter).toBe(true)
 		})
 
 		it('should stop propagation of click event on any menu-item', () => {

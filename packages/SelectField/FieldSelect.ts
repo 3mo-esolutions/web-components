@@ -195,6 +195,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 		return html`
 			<mo-menu
 				fixed
+				target='field'
 				selectionMode=${this.multiple ? 'multiple' : 'single'}
 				.anchor=${this}
 				alignment=${ifDefined(this.menuAlignment)}
@@ -209,24 +210,6 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 				${this.optionsTemplate}
 			</mo-menu>
 		`
-	}
-
-	/**
-	 * "delegateFocus" doesn't work for slotted elements, therefore the focusout event is dispatched
-	 * when interacting with the slotted options. This will prevent the menu from closing.
-	 */
-	@eventListener({
-		target(this: FieldSelect<T>) { return this.renderRoot },
-		type: 'focusout',
-		options: { capture: true }
-	})
-	protected handleFocusOut(e: FocusEvent) {
-		const elementLosingFocus = e.target as HTMLElement | null
-		const elementReceivingFocus = e.relatedTarget as HTMLElement | null
-		const contains = (element: HTMLElement | null) => !element || this.renderRoot.contains(element) || this.contains(element)
-		if (this.open && (elementLosingFocus?.tagName.toLowerCase() !== 'mo-option' || contains(elementLosingFocus) && contains(elementReceivingFocus))) {
-			e.stopPropagation()
-		}
 	}
 
 	protected get optionsTemplate() {
@@ -275,7 +258,9 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 	protected override handleBlur(bubbled: boolean, method: FocusMethod) {
 		super.handleBlur(bubbled, method)
 		this.resetSearch()
-		this.open = false
+		if (method !== 'pointer' && !this.searchable) {
+			this.open = false
+		}
 	}
 
 	protected handleSelection(menuValue: Array<number>) {

@@ -1,9 +1,8 @@
-import { Component, component, css, event, html, ifDefined, property, query, state } from '@a11d/lit'
-import { PopoverCoordinates } from '@3mo/popover'
+import { Component, EventListenerController, component, css, event, html, ifDefined, property, query, state } from '@a11d/lit'
+import { Popover, PopoverCoordinates } from '@3mo/popover'
 import { SlotController } from '@3mo/slot-controller'
 import { disabledProperty } from '@3mo/disabled-property'
 import { ListElement, ListItem, SelectableList } from '@3mo/list'
-import { MenuController } from './MenuController.js'
 import type { MenuPlacement, MenuAlignment } from './index.js'
 
 export function isMenu(element: EventTarget): element is HTMLElement {
@@ -17,7 +16,9 @@ export function isMenu(element: EventTarget): element is HTMLElement {
  * @attr anchor - The element that the menu is anchored to.
  * @attr placement - The placement of the menu.
  * @attr open - Whether the menu is open.
- * @attr opener - The element id that opens the menu.
+ * @attr target - The target of the menu.
+ * @attr fixed - Whether the menu's position is fixed.
+ * @attr manual - Whether the menu is opened manually. This won't affect the opening triggers via the keyboard.
  * @attr selectionMode - The selection mode of the menu.
  * @attr value - The value of the menu.
  * @attr disabled - Whether the menu is disabled.
@@ -37,16 +38,55 @@ export class Menu extends Component {
 	override readonly role = 'menu'
 	override readonly tabIndex = -1
 
-	readonly slotController = new SlotController(this)
-	readonly menuController = new MenuController(this)
+	protected readonly slotController = new SlotController(this)
+	protected readonly anchorKeyDownEventController = new EventListenerController(this, {
+		type: 'keydown',
+		target: () => this.anchor || [],
+		listener: (event: KeyboardEvent) => {
+			if (event.ctrlKey || event.shiftKey) {
+				return
+			}
 
-	@property({ type: Object }) anchor!: HTMLElement
+			switch (event.key) {
+				case 'Down':
+				case 'ArrowDown':
+				case 'Up':
+				case 'ArrowUp':
+				case 'Home':
+				case 'PageUp':
+				case 'End':
+				case 'PageDown':
+					if (this.open === false) {
+						// Prevent scrolling the page
+						event.preventDefault()
+						event.stopPropagation()
+						this.setOpen(true)
+					}
+					break
+				case 'Tab':
+					if (this.open === true) {
+						event.stopPropagation()
+						this.setOpen(false)
+					}
+					break
+				default:
+					break
+			}
+		}
+	})
+
+
+	@property({
+		type: Object,
+		updated(this: Menu) { this.anchorKeyDownEventController.resubscribe() },
+	}) anchor!: HTMLElement
 	@property() placement?: MenuPlacement
 	@property() alignment?: MenuAlignment
 	@property({ type: Boolean, reflect: true, updated(this: Menu) { this.openUpdated() } }) open = false
+	@property() target?: string
 	@property({ type: Boolean }) fixed = false
-	@property({ type: Boolean }) manualOpen = false
-	@property() opener?: string
+	@property({ type: Boolean }) manual = false
+	@property({ type: Boolean }) preventOpenOnAnchorEnter = false
 	@property() selectionMode?: SelectableList['selectionMode']
 	@property({ type: Array, bindingDefault: true }) value?: SelectableList['value']
 	@disabledProperty() disabled = false
@@ -108,12 +148,15 @@ export class Menu extends Component {
 		return html`
 			<mo-popover part='popover'
 				.anchor=${this.anchor}
+				?fixed=${this.fixed}
+				?manual=${this.manual}
+				target=${ifDefined(this.target)}
 				placement=${ifDefined(this.placement)}
 				alignment=${ifDefined(this.alignment)}
 				?open=${this.open}
 				@openChange=${(e: CustomEvent<boolean>) => this.setOpen(e.detail)}
-				?fixed=${this.fixed}
 				.coordinates=${this.coordinates}
+				.shouldOpen=${this.shouldOpen}
 			>
 				<mo-selectable-list
 					selectionMode=${ifDefined(this.selectionMode)}
@@ -127,6 +170,11 @@ export class Menu extends Component {
 				</mo-selectable-list>
 			</mo-popover>
 		`
+	}
+
+	private shouldOpen = (e: Event) => {
+		return Popover.shouldOpen.call(this, e)
+			|| ((e as any)[Popover.isSyntheticClickEvent] === true && this.preventOpenOnAnchorEnter === false)
 	}
 
 	protected handleChange(e: CustomEvent<Array<number>>) {

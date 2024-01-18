@@ -42,12 +42,28 @@ export const WithContainerFixed = story({
 	}
 })
 
+export const WithCustomTarget = story({
+	render: () => {
+		return html`
+			<mo-popover-container placement='block-end' alignment='end' fixed>
+				<mo-button type='outlined'>
+					Click on the icon-button to open the menu
+					<mo-icon-button id='icon-button' slot='trailing' icon='more_vert'></mo-icon-button>
+				</mo-button>
+				<mo-menu slot='popover' target='icon-button'>
+					${items}
+				</mo-menu>
+			</mo-popover-container>
+		`
+	}
+})
+
 export const Absolute = story({
 	render: () => html`
 		<story-button-with-menu></story-button-with-menu>
 		<!-- ENCAPSULATED CODE:
 			<mo-button id='button' type='outlined'>Click to open the menu</mo-button>
-			<mo-menu .anchor=\${this} opener='button'>\${items}</mo-menu>
+			<mo-menu .anchor=\${this} target='button'>\${items}</mo-menu>
 		-->
 	`
 })
@@ -57,7 +73,7 @@ export const Fixed = story({
 		<story-button-with-menu fixed></story-button-with-menu>
 		<!-- ENCAPSULATED CODE:
 			<mo-button id='' type='outlined'>Click to open the menu</mo-button>
-			<mo-menu .anchor=\${this} opener='button'>\${items}</mo-menu>
+			<mo-menu .anchor=\${this} target='button'>\${items}</mo-menu>
 		-->
 	`
 })
@@ -117,7 +133,7 @@ class ButtonWithMenuStory extends Component {
 	protected override get template() {
 		return html`
 			<mo-button id='button' type='outlined'>Click to open the menu</mo-button>
-			<mo-menu .anchor=${this} opener='button' ?fixed=${this.fixed} placement='inline-end' alignment='start'>${items}</mo-menu>
+			<mo-menu .anchor=${this} target='button' ?fixed=${this.fixed} placement='inline-end' alignment='start'>${items}</mo-menu>
 		`
 	}
 }
@@ -142,7 +158,7 @@ class ContextMenuStory extends Component {
 			>
 				Right click anywhere
 			</div>
-			<mo-menu fixed manualOpen .anchor=${this}>${items}</mo-menu>
+			<mo-menu fixed manual .anchor=${this}>${items}</mo-menu>
 		`
 	}
 }
