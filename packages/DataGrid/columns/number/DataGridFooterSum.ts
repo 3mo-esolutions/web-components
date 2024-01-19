@@ -1,4 +1,4 @@
-import { component, property, Component, html, css, style } from '@a11d/lit'
+import { component, property, Component, html, css } from '@a11d/lit'
 
 /**
  * @element mo-data-grid-footer-sum
@@ -10,8 +10,6 @@ import { component, property, Component, html, css, style } from '@a11d/lit'
 @component('mo-data-grid-footer-sum')
 export class DataGridFooterSum extends Component {
 	@property() heading = ''
-	@property() align: 'start' | 'end' | 'center' = 'center'
-	@property() weight = '400'
 
 	static override get styles() {
 		return css`
