@@ -48,6 +48,10 @@ export class Pdf extends Component {
 		return !this.isMacOrSafari
 	}
 
+	private get isImage() {
+		return !this.source?.endsWith('pdf')
+	}
+
 	protected get pdfSource() {
 		return this.source
 	}
@@ -64,6 +68,14 @@ export class Pdf extends Component {
 	}
 
 	protected get pdfTemplate() {
+		if (this.isImage) {
+			return html`
+				<div data-pdf>
+					<img src=${this.pdfSource} style='max-width: 100%' />
+				</div>
+			`
+		}
+
 		return this.supportsEmbed
 			? html`<embed data-pdf type='application/pdf' src=${this.pdfSource} @load=${() => this.loading = false} />`
 			: html`<iframe data-pdf type='application/pdf' src=${this.pdfSource} @load=${() => this.loading = false}></iframe>`
