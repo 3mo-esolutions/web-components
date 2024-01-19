@@ -209,7 +209,7 @@ export abstract class BusinessSuiteApplication extends Application {
 				<mo-flex ${style({ height: '100%' })}>
 					${this.drawerTitleTemplate}
 
-					<mo-list ${style({ height: '*' })}>
+					<mo-list ${style({ flex: '1' })}>
 						${this.drawerContentTemplate}
 					</mo-list>
 

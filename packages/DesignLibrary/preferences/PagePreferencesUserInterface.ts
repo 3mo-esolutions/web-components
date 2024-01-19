@@ -85,9 +85,9 @@ export class PagePreferencesUserInterface extends PageSettings {
 			<mo-page heading='User-Interface'>
 				<mo-flex gap='18px'>
 					<mo-section heading='Farbthemen'>
-						<mo-card ${style({ height: '*', alignItems: 'center' })}>
+						<mo-card ${style({ flex: '1', alignItems: 'center' })}>
 							<mo-flex direction='horizontal' gap='10px'>
-								<mo-flex direction='horizontal' gap='10px' ${style({ width: '*' })}>
+								<mo-flex direction='horizontal' gap='10px' ${style({ flex: '1' })}>
 									${this.getBackgroundColorTemplate(Background.System)}
 									${this.getBackgroundColorTemplate(Background.Light)}
 									${this.getBackgroundColorTemplate(Background.Dark)}
@@ -163,7 +163,7 @@ export class PagePreferencesUserInterface extends PageSettings {
 			}
 		}
 		return html`
-			<mo-flex ${style({ width: '*' })} gap='var(--mo-thickness-l)' alignItems='center'>
+			<mo-flex ${style({ flex: '1' })} gap='var(--mo-thickness-l)' alignItems='center'>
 				<button class='themePreview'
 					data-background=${background}
 					?data-active=${Theme.background.value === background}

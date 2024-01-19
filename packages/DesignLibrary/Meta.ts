@@ -75,7 +75,7 @@ export class Meta extends Component {
 				${this.iconTemplate}
 			</slot>
 
-			<mo-flex ${style({ width: '*' })} gap='var(--mo-meta-gap)' direction=${this.direction}>
+			<mo-flex ${style({ flex: '1' })} gap='var(--mo-meta-gap)' direction=${this.direction}>
 				<mo-heading typography='subtitle2' part='heading'>${this.heading}</mo-heading>
 				<span>
 					<slot></slot>

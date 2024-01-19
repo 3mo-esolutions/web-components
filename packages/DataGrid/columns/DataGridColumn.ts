@@ -1,5 +1,4 @@
 import { Component, property, HTMLTemplateResult } from '@a11d/lit'
-import { AsteriskSyntaxStyleHandler } from '@3mo/flex'
 import { DataGrid } from '../DataGrid.js'
 import type { ColumnDefinition } from '../ColumnDefinition.js'
 
@@ -15,6 +14,12 @@ import type { ColumnDefinition } from '../ColumnDefinition.js'
  * @attr nonEditable - Whether the column is editable
  */
 export abstract class DataGridColumn<TData, TValue> extends Component {
+	static readonly regex = /^\s*(0|[1-9][0-9]*)?\s*\*\s*$/
+
+	private static getProportion(value: string) {
+		return Number(value.replace(DataGridColumn.regex, '$1') || 1)
+	}
+
 	@property({ type: Object }) dataGrid?: DataGrid<TData, any> | undefined
 
 	@property() width = 'minmax(100px, 1fr)'
@@ -42,7 +47,7 @@ export abstract class DataGridColumn<TData, TValue> extends Component {
 			title: this.title || undefined,
 			alignment: this.textAlign as 'start' | 'center' | 'end',
 			hidden: this.hidden,
-			width: !AsteriskSyntaxStyleHandler.regex.test(this.width) ? this.width : `${AsteriskSyntaxStyleHandler.getProportion(this.width)}fr`,
+			width: !DataGridColumn.regex.test(this.width) ? this.width : `${DataGridColumn.getProportion(this.width)}fr`,
 			sortable: !this.nonSortable,
 			editable: this.getEditContentTemplate !== undefined && (typeof nonEditable !== 'function' ? !nonEditable : x => !nonEditable(x)),
 			getContentTemplate: this.getContentTemplate.bind(this),

@@ -87,9 +87,9 @@ export const Flex = story({
 		return html`
 			<mo-flex direction=${direction} wrap=${wrap} gap=${gap} justifyItems=${justifyItems} justifyContent=${justifyContent} alignItems=${alignItems} alignContent=${alignContent}>
 				<div ${style({ [orientationX ? 'width' : 'height']: '100px' })}>100px</div>
-				<div ${style({ width: '2*' })}>2*</div>
+				<div ${style({ flex: '2' })}>2*</div>
 				<div>auto</div>
-				<div ${style({ width: '*' })}>*</div>
+				<div ${style({ flex: '1' })}>*</div>
 			</mo-flex>
 		`
 	}

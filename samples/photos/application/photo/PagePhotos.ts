@@ -41,7 +41,7 @@ export class PagePhotos extends PageComponent {
 	private get cardTemplate() {
 		return html`
 			<mo-flex direction='horizontal' alignItems='center' ${style({ height: '40px' })}>
-				<mo-heading typography='heading4' ${style({ color: 'var(--mo-color-accent)', width: '*' })}>${this.selectedPhotos.length > 0 ? `${this.selectedPhotos.length} Photo${this.selectedPhotos.length > 1 ? 's' : ''} selected` : 'Photos'}</mo-heading>
+				<mo-heading typography='heading4' ${style({ color: 'var(--mo-color-accent)', flex: '1' })}>${this.selectedPhotos.length > 0 ? `${this.selectedPhotos.length} Photo${this.selectedPhotos.length > 1 ? 's' : ''} selected` : 'Photos'}</mo-heading>
 				${this.selectedPhotos.length === 0 ? html.nothing : html`
 					<mo-icon-button icon='edit'
 						${tooltip(html`

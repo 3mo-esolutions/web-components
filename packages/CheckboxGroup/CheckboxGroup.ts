@@ -59,7 +59,7 @@ export class CheckboxGroup extends Checkbox {
 		return html`
 			<mo-flex>
 				${super.template}
-				<mo-flex direction=${this.direction} ${style({ height: '*' })}>
+				<mo-flex direction=${this.direction} ${style({ flex: '1' })}>
 					<slot @slotchange=${() => this.handleSlotChange()}></slot>
 				</mo-flex>
 			</mo-flex>

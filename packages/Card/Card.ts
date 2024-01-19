@@ -156,7 +156,7 @@ export class Card extends Component {
 		return !isServer && !hasHeader ? html.nothing : html`
 			<slot part='header' name='header'>
 				${this.defaultHeaderAvatarTemplate}
-				<mo-flex justifyContent='space-around' ${style({ width: '*' })}>
+				<mo-flex justifyContent='space-around' ${style({ flex: '1' })}>
 					${this.defaultHeaderHeadingTemplate}
 					${this.defaultHeaderSubHeadingTemplate}
 				</mo-flex>

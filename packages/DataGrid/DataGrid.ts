@@ -691,8 +691,8 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		this.provideCssColumnsProperties()
 		this.toggleAttribute('hasDetails', this.hasDetails)
 		return html`
-			<mo-flex ${style({ width: '*', position: 'relative' })}>
-				<mo-grid ${style({ height: '*' })} rows='* auto'>
+			<mo-flex ${style({ flex: '1', position: 'relative' })}>
+				<mo-grid ${style({ flex: '1' })} rows='* auto'>
 					<mo-scroller ${style({ minHeight: 'var(--mo-data-grid-content-min-height, calc(var(--mo-data-grid-min-visible-rows, 2.5) * var(--mo-data-grid-row-height) + var(--mo-data-grid-header-height)))', paddingBottom: '2px' })}>
 						<mo-grid ${style({ height: '100%' })} rows='auto *'>
 							${this.headerTemplate}
@@ -806,7 +806,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	protected get toolbarTemplate() {
 		return this.hasToolbar === false ? html.nothing : html`
 			<mo-flex id='toolbar' direction='horizontal' gap='8px' wrap='wrap' justifyContent='end' alignItems='center'>
-				<mo-flex direction='horizontal' alignItems='inherit' gap='8px' wrap='wrap' ${style({ width: '*' })}>
+				<mo-flex direction='horizontal' alignItems='inherit' gap='8px' wrap='wrap' ${style({ flex: '1' })}>
 					<slot name='toolbar'>${this.toolbarDefaultTemplate}</slot>
 				</mo-flex>
 				<mo-flex direction='horizontal' gap='8px'>
@@ -839,11 +839,11 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 					</div>
 					${!this.getRowContextMenuTemplate ? html.nothing : html`
 						<mo-flex id='flexActions' direction='horizontal' @click=${(e: PointerEvent) => ContextMenu.open(e, this.getRowContextMenuTemplate?.(this.selectedData) ?? html.nothing)}>
-							<div ${style({ width: '*' })}>${t('Options')}</div>
+							<div ${style({ flex: '1' })}>${t('Options')}</div>
 							<mo-icon-button dense icon='arrow_drop_down' ${style({ display: 'flex', alignItems: 'center', justifyContent: 'center' })}></mo-icon-button>
 						</mo-flex>
 					`}
-					<div ${style({ width: '*' })}></div>
+					<div ${style({ flex: '1' })}></div>
 					<mo-icon-button icon='close'
 						${tooltip(t('Deselect All'))}
 						@click=${() => this.deselectAll()}

@@ -58,13 +58,15 @@ export abstract class BusinessSuiteDialogAuthenticator extends DialogAuthenticat
 
 	protected get logoTemplate() {
 		return html`
-			<mo-application-logo ${style({ height: '100px', maxWidth: '75%', padding: '15px 0 0 0' })}></mo-application-logo>
+			<mo-application-logo tabindex='-1'
+				${style({ height: '100px', maxWidth: '75%', padding: '15px 0 0 0', pointerEvents: 'none' })}
+			></mo-application-logo>
 		`
 	}
 
 	protected get contentTemplate() {
 		return html`
-			<mo-flex gap='var(--mo-thickness-l)' ${style({ height: '*', width: '100%', paddingBottom: '25px' })}>
+			<mo-flex gap='var(--mo-thickness-l)' ${style({ flex: '1', width: '100%', paddingBottom: '25px' })}>
 				<mo-field-text data-focus
 					label=${t('Username')}
 					.value=${this.username}

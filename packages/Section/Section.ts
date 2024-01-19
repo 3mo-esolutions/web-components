@@ -69,7 +69,7 @@ export class Section extends Component {
 	}
 
 	protected get defaultHeadingTemplate() {
-		return html`<mo-heading part='heading' typography='heading4' ${style({ width: '*' })}>${this.heading}</mo-heading>`
+		return html`<mo-heading part='heading' typography='heading4' ${style({ flex: '1' })}>${this.heading}</mo-heading>`
 	}
 
 	protected get actionTemplate() {
