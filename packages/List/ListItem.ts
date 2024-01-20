@@ -7,12 +7,14 @@ import './ListItemRipple.js'
  * @element mo-list-item
  *
  * @attr disabled - Whether the list item is disabled
+ * @attr preventClickOnSpace - Whether the list item should prevent click on space
  *
  * @slot - Default slot for content
  */
 @component('mo-list-item')
 export class ListItem extends Component {
 	@disabledProperty({ blockFocus: true }) disabled = false
+	@property({ type: Boolean }) preventClickOnSpace = false
 	@property({ type: Boolean, reflect: true }) protected focused = false
 
 	protected readonly focusController = new FocusController(this, {
@@ -61,7 +63,7 @@ export class ListItem extends Component {
 
 	protected override get template() {
 		return html`
-			<mo-list-item-ripple ?focused=${this.focused} ?disabled=${this.disabled}></mo-list-item-ripple>
+			<mo-list-item-ripple ?focused=${this.focused} ?disabled=${this.disabled} ?preventClickOnSpace=${this.preventClickOnSpace}></mo-list-item-ripple>
 			<slot></slot>
 		`
 	}

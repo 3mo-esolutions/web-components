@@ -5,11 +5,13 @@ import { MdRipple } from '@material/web/ripple/ripple.js'
  * @element mo-list-item-ripple
  *
  * @attr disabled - Whether the ripple is disabled
+ * @attr preventClickOnSpace - Whether the ripple should prevent click on space
  * @attr focused - Whether the ripple is focused
  */
 @component('mo-list-item-ripple')
 export class ListItemRipple extends Component {
 	@property({ type: Boolean }) disabled = false
+	@property({ type: Boolean }) preventClickOnSpace = false
 	@property({
 		type: Boolean,
 		updated(this: ListItemRipple) {
@@ -67,7 +69,7 @@ export class ListItemRipple extends Component {
 			return
 		}
 
-		if (event.key === 'Enter' || event.key === ' ') {
+		if (event.key === 'Enter' || (event.key === ' ' && !this.preventClickOnSpace)) {
 			event.stopPropagation()
 			this.ripple['pressed'] = true
 			this.dispatchEvent(new MouseEvent('click', { bubbles: true, composed: true }))

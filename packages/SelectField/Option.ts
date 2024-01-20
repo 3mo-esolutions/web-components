@@ -15,6 +15,8 @@ export class Option<T> extends SelectionListItem {
 	@property({ type: Boolean, reflect: true }) multiple = false
 	@property() inputText?: string
 
+	override readonly preventClickOnSpace = true
+
 	dataMatches(data: T | undefined) {
 		return JSON.stringify(this.data) === JSON.stringify(data)
 	}
@@ -83,7 +85,7 @@ export class Option<T> extends SelectionListItem {
 
 	@eventListener('click')
 	protected handleClick() {
-		this.handleChange(!this.multiple ? true : !this.selected)
+		this.handleChange(!this.multiple || !this.selected)
 	}
 
 	protected handleChange(value: boolean) {
