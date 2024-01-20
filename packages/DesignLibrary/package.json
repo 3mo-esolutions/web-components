@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/del",
-	"version": "0.1.12",
+	"version": "0.1.13",
 	"description": "3MO Design Library to build business-suite web applications",
 	"repository": {
 		"type": "git",
@@ -59,7 +59,6 @@
 		"@3mo/fab": "x",
 		"@3mo/checkbox": "x",
 		"@3mo/checkbox-group": "x",
-		"@3mo/query-connected-instances": "x",
 		"@3mo/radio": "x",
 		"@3mo/slider": "x",
 		"@3mo/switch": "x",

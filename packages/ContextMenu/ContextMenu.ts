@@ -1,5 +1,4 @@
-import { component, eventListener } from '@a11d/lit'
-import { queryConnectedInstances } from '@3mo/query-connected-instances'
+import { component, eventListener, queryConnectedInstances } from '@a11d/lit'
 import { Menu } from '@3mo/menu'
 import { ContextMenuLazyInitializer } from './ContextMenuLazyInitializer.js'
 

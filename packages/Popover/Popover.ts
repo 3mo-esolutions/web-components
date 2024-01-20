@@ -1,9 +1,8 @@
-import { Component, component, css, event, eventListener, html, property } from '@a11d/lit'
+import { Component, component, css, event, eventListener, html, property, queryConnectedInstances } from '@a11d/lit'
 import { PopoverPlacement } from './PopoverPlacement.js'
 import { PopoverPositionController } from './PopoverPositionController.js'
 import { PopoverAlignment } from './PopoverAlignment.js'
 import { PopoverCoordinates } from './PopoverCoordinates.js'
-import { queryConnectedInstances } from '@3mo/query-connected-instances'
 
 /**
  * @element mo-popover
