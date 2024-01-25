@@ -693,7 +693,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		return html`
 			<mo-flex ${style({ flex: '1', position: 'relative' })}>
 				<mo-grid ${style({ flex: '1' })} rows='* auto'>
-					<mo-scroller ${style({ minHeight: 'var(--mo-data-grid-content-min-height, calc(var(--mo-data-grid-min-visible-rows, 2.5) * var(--mo-data-grid-row-height) + var(--mo-data-grid-header-height)))', paddingBottom: '2px' })}>
+					<mo-scroller ${style({ minHeight: 'var(--mo-data-grid-content-min-height, calc(var(--mo-data-grid-min-visible-rows, 2.5) * var(--mo-data-grid-row-height) + var(--mo-data-grid-header-height)))' })}>
 						<mo-grid ${style({ height: '100%' })} rows='auto *'>
 							${this.headerTemplate}
 							${this.contentTemplate}
