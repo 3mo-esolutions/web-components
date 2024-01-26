@@ -247,7 +247,9 @@ export class Dialog extends Component {
 
 	protected override get template() {
 		return html`
-			<md-dialog exportparts='scrim' ?open=${this.open} @cancel=${(e: Event) => e.preventDefault()}
+			<md-dialog exportparts='scrim' ?open=${this.open}
+				@scroll=${(e: Event) => this.dispatchEvent(new Event('scroll', e))}
+				@cancel=${(e: Event) => e.preventDefault()}
 				@open=${() => this.showTopLayer = true}
 				@close=${() => this.showTopLayer = false}
 			>
@@ -425,6 +427,21 @@ MdDialog.addInitializer(element => {
 		HTMLDialogElement.prototype.showModal = () => undefined
 	}
 	element.addController(new class {
+		private get scrollerElement() {
+			return element.renderRoot.querySelector('.scroller')
+		}
+
+		async hostConnected() {
+			await element.updateComplete
+			this.scrollerElement?.addEventListener('scroll', this.handleScroll)
+		}
+
+		hostDisconnected() {
+			this.scrollerElement?.removeEventListener('scroll', this.handleScroll)
+		}
+
+		private handleScroll = (scrollEvent: Event) => element.dispatchEvent(new Event('scroll', scrollEvent))
+
 		hostUpdated() {
 			element.renderRoot.querySelector('dialog')?.part.add('dialog')
 			element.renderRoot.querySelector('.scrim')?.part.add('scrim')

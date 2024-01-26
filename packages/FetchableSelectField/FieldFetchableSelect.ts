@@ -34,10 +34,7 @@ export class FieldFetchableSelect<T, TDataFetcherParameters extends FieldFetchab
 		throttle: 500,
 		fetch: async () => {
 			const searchParameters = this.searchParameters?.(this.searchKeyword) ?? {}
-			const parameters = {
-				...this.parameters,
-				...searchParameters
-			} as TDataFetcherParameters
+			const parameters = { ...this.parameters, ...searchParameters } as TDataFetcherParameters
 			const data = await this.fetch?.(parameters) || []
 			this.dataFetch.dispatch(data)
 			return data
