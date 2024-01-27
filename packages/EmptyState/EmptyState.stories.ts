@@ -23,6 +23,17 @@ export const EmptyState = story({
 	`
 })
 
+export const WithActions = story({
+	render: () => html`
+		<mo-empty-state icon='youtube_searched_for' style='height: 400px'>
+			<mo-flex gap='4px'>
+				Nothing Found
+				<mo-button type='outlined'>Create New</mo-button>
+			</mo-flex>
+		</mo-empty-state>
+	`
+})
+
 export const EmptyStateFile = story({
 	render: () => html`
 		<mo-empty-state icon='folder' style='height: 400px'>
