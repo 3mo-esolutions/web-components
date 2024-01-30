@@ -1,4 +1,4 @@
-import { component, css, property, html, unsafeCSS, Component, ifDefined, state } from '@a11d/lit'
+import { component, css, property, html, unsafeCSS, Component, ifDefined, state, style } from '@a11d/lit'
 import { PopoverPlacement } from '@3mo/popover'
 import { TooltipPlacement } from './TooltipPlacement.js'
 import { FocusMethod, FocusController } from '@3mo/focus-controller'
@@ -22,6 +22,7 @@ export class Tooltip extends Component {
 	@property({ type: Object }) anchor?: HTMLElement
 
 	@property({ type: Boolean, reflect: true }) protected rich?: boolean
+	@property({ type: Boolean, reflect: true }) navigator = false
 
 	@state() private open = false
 
@@ -94,10 +95,53 @@ export class Tooltip extends Component {
 			:host(:not([rich])) mo-popover {
 				pointer-events: none;
 				background: var(--mo-tooltip-surface-color, var(--mo-color-surface));
-				backdrop-filter: blur(40px);
 				color: var(--mo-color-foreground);
-				box-shadow: var(--mo-tooltip-shadow, var(--mo-shadow-deep));
+				backdrop-filter: blur(40px);
+				box-shadow: 0 0 12px 0 rgba(var(--mo-shadow-base), 0.2);
 				padding: 8px;
+			}
+
+			:host([navigator]) mo-popover {
+				background: rgba(0, 0, 0, 0.5);
+				color: white;
+			}
+
+			* {
+				font-size: 14px;
+			}
+
+			#triangle {
+				clip-path: polygon(50% 0, 100% 100%, 0 100%);
+				width: 15px;
+				height: 7px;
+				margin: 0 auto;
+				position: absolute;
+				background-color: white;
+				color: white;
+				transform: translateX(-50%);
+				left: 50%;
+				top: -7px;
+			}
+
+			:host([navigator]) #triangle {
+				background: rgba(0, 0, 0, 0.5);
+			}
+
+			mo-popover[placement="${unsafeCSS(PopoverPlacement.BlockStart)}"] #triangle {
+				top: 100%;
+				transform: scaleY(-1) translateX(-50%);
+			}
+
+			mo-popover[placement="${unsafeCSS(PopoverPlacement.InlineStart)}"] #triangle {
+				top: calc(50% - 3.5px);
+				left: calc(100% - 4px);
+				transform: rotate(90deg);
+			}
+
+			mo-popover[placement="${unsafeCSS(PopoverPlacement.InlineEnd)}"] #triangle {
+				top: calc(50% - 3.5px);
+				left: -11px;
+				transform: rotate(-90deg);
 			}
 		`
 	}
@@ -111,6 +155,7 @@ export class Tooltip extends Component {
 				placement=${ifDefined(this.placement)}
 				alignment='center'
 			>
+				<div id='triangle'></div>
 				<slot @slotChange=${() => this.rich = this.childElementCount > 0}></slot>
 			</mo-popover>
 		`

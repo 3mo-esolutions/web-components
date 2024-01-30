@@ -2,7 +2,7 @@ import { story, meta } from '../../.storybook/story.js'
 import { html } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
-import { tooltip } from './index.js'
+import { tooltip, TooltipPlacement } from './index.js'
 
 export default meta({
 	title: 'Tooltip',
@@ -19,11 +19,13 @@ export default meta({
 export const Tooltip = story({
 	render: () => html`
 		<h3>Hover or focus on the following elements to see their tooltip</h3>
-		<mo-icon-button icon='skip_previous' ${tooltip('Previous')}></mo-icon-button>
-		<mo-icon-button icon='fast_rewind' ${tooltip('Rewind')}></mo-icon-button>
-		<mo-icon-button icon='play_arrow' ${tooltip('Play')}></mo-icon-button>
-		<mo-icon-button icon='fast_forward' ${tooltip('Forward')}></mo-icon-button>
-		<mo-icon-button icon='skip_next' ${tooltip('Next')}></mo-icon-button>
+		<div></div>
+			<mo-icon-button icon='skip_previous' ${tooltip('Previous', TooltipPlacement.BlockStart, true)}></mo-icon-button>
+			<mo-icon-button icon='fast_rewind' ${tooltip('Rewind', TooltipPlacement.BlockEnd, true)}></mo-icon-button>
+			<mo-icon-button icon='play_arrow' ${tooltip('Play', TooltipPlacement.InlineStart)}></mo-icon-button>
+			<mo-icon-button icon='fast_forward' ${tooltip('Forward', TooltipPlacement.InlineEnd)}></mo-icon-button>
+			<mo-icon-button icon='skip_next' ${tooltip('Next')}></mo-icon-button>
+		</div>
 	`
 })
 
