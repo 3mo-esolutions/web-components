@@ -1,0 +1,28 @@
+{
+	"name": "@3mo/screen-size",
+	"version": "0.0.2",
+	"description": "Lit directives and utilities to depend UI on screen size",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/3mo-esolutions/web-components"
+	},
+	"keywords": [
+		"lit",
+		"web-component",
+		"directive",
+		"screen-size"
+	],
+	"author": "3MO GmbH",
+	"license": "MIT",
+	"homepage": "https://www.3mo.de",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"dependencies": {
+		"@a11d/lit": "x",
+		"tslib": "x"
+	}
+}
