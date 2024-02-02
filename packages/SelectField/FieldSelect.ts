@@ -22,6 +22,9 @@ import { Data, FieldSelectValueController, Index, Value } from './SelectValueCon
  *
  * @slot - The select options.
  *
+ * @csspart input - The input element.
+ * @csspart dropDownIcon - The dropdown icon.
+ *
  * @fires change {CustomEvent<Value>}
  * @fires input {CustomEvent<string>}
  * @fires dataChange {CustomEvent<Data<T>>}
