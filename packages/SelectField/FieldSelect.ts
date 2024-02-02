@@ -160,6 +160,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 	private get valueInputTemplate() {
 		return html`
 			<input
+				part='input'
 				id='value'
 				type='text'
 				autocomplete='off'
@@ -172,6 +173,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 	private get searchInputTemplate() {
 		return html`
 			<input
+				part='input'
 				id='search'
 				type='text'
 				autocomplete='off'
