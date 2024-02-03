@@ -1,4 +1,4 @@
-import { component, html, style } from '@a11d/lit'
+import { component, html, property, style } from '@a11d/lit'
 import { FieldText } from './FieldText.js'
 
 /**
@@ -7,6 +7,8 @@ import { FieldText } from './FieldText.js'
 @component('mo-field-search')
 export class FieldSearch extends FieldText {
 	override readonly inputType = 'search'
+
+	@property({ event: 'input' }) override value?: string
 
 	protected override get startSlotTemplate() {
 		return html`

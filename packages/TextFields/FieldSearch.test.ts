@@ -2,6 +2,7 @@ import { ComponentTestFixture } from '@a11d/lit-testing'
 import { FieldSearch } from './FieldSearch.js'
 import { expectSlotRendersOnlyWithAssignedContent } from '../Field/FieldComponent.test.js'
 import { expectFieldPropertyTunnelsToInput, expectInputEventTunnelsToField } from '../Field/InputFieldComponent.test.js'
+import { associatedEventsByPropertiesKey } from '@a11d/lit'
 
 describe('FieldSearch', () => {
 	const fixture = new ComponentTestFixture<FieldSearch>('mo-field-search')
@@ -14,4 +15,9 @@ describe('FieldSearch', () => {
 	it('should proxy change event', () => expectInputEventTunnelsToField(fixture, 'change', 'test'))
 	it('should render an start slot only if there are assigned elements', () => expectSlotRendersOnlyWithAssignedContent(fixture, 'start'))
 	it('should render an end slot only if there are assigned elements', () => expectSlotRendersOnlyWithAssignedContent(fixture, 'end'))
+
+	it('should have "input" instead of "change" as the associated event to the "value" default binding property', () => {
+		const associatedEvent = FieldSearch[associatedEventsByPropertiesKey].get('value')
+		expect(associatedEvent).toBe('input')
+	})
 })
