@@ -44,7 +44,9 @@ export abstract class EntityDialogComponent<
 
 	protected override async primaryAction() {
 		const result = (await this.save(this.entity) || undefined) as TResult | undefined
-		this.notifySuccess()
+		if (!this.dialogElement.silent) {
+			this.notifySuccess()
+		}
 		return result
 	}
 

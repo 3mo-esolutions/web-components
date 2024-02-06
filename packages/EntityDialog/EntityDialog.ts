@@ -1,9 +1,14 @@
 import { component, html, property } from '@a11d/lit'
 import { FetchableDialog } from '@3mo/fetchable-dialog'
 
+/**
+ * @attr preventPrimaryOnCtrlS
+ * @attr silent - If true, then a success message will not be displayed
+ */
 @component('mo-entity-dialog')
 export class EntityDialog<TEntity> extends FetchableDialog<TEntity> {
 	@property({ type: Boolean }) preventPrimaryOnCtrlS = false
+	@property({ type: Boolean }) silent = false
 	@property({ type: Object }) save!: () => (TEntity | void) | PromiseLike<TEntity | void>
 	@property({ type: Object }) delete?: () => void | PromiseLike<void>
 
