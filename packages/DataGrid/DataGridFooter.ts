@@ -1,10 +1,13 @@
 import { component, property, Component, css, state, html, query, ifDefined, style } from '@a11d/lit'
 import { FieldNumber } from '@3mo/number-fields'
 import { Localizer } from '@3mo/localization'
+import { TooltipPlacement, tooltip } from '@3mo/tooltip'
 import { DataGrid, DataGridPagination, FieldSelectDataGridPageSize } from './index.js'
+import excelSvg from './excel.svg.js'
 
 Localizer.register('de', {
 	'${page:number} of ${maxPage:number}': '${page} von ${maxPage}',
+	'Export as Excel file': 'Als Excel-Datei exportieren'
 })
 
 Localizer.register('fa', {
@@ -59,18 +62,6 @@ export class DataGridFooter<TData> extends Component {
 			:host(:not([hideTopBorder])) {
 				border-top: var(--mo-data-grid-border);
 			}
-
-			img {
-				height: 100%;
-				transition: .25s;
-				-webkit-filter: grayscale(100%);
-				filter: grayscale(100%);
-			}
-
-			img:hover {
-				-webkit-filter: grayscale(0%);
-				filter: grayscale(0%);
-			}
 		`
 	}
 
@@ -78,8 +69,9 @@ export class DataGridFooter<TData> extends Component {
 		this.toggleAttribute('hideTopBorder', this.dataGrid.hasFooter === false)
 		return this.dataGrid.hasFooter === false ? html.nothing : html`
 			<mo-flex direction='horizontal' justifyContent='space-between' alignItems='center' wrap='wrap-reverse' gap='6px' ${style({ flex: '1', padding: '0 6px', height: '100%' })}>
-				<mo-flex direction='horizontal' alignItems='center' gap='1vw' ${style({ flexBasis: 'auto' })}>
+				<mo-flex direction='horizontal' alignItems='center' gap='3vw' ${style({ flexBasis: 'auto' })}>
 					${this.paginationTemplate}
+					${this.exportTemplate}
 				</mo-flex>
 
 				<mo-flex direction='horizontal' alignItems='center' gap='10px' wrap='wrap-reverse' ${style({ paddingInlineEnd: 'var(--mo-data-grid-footer-trailing-padding)' })}>
@@ -101,50 +93,52 @@ export class DataGridFooter<TData> extends Component {
 			hasUnknownDataLength ? undefined : this.dataGrid.dataLength.format(),
 		].filter(Boolean).join(' / ')
 		return !this.dataGrid.hasPagination ? html.nothing : html`
-			<mo-flex direction='horizontal' gap='4px' alignItems='center' justifyContent='center'>
-				<mo-icon-button dense icon=${isRtl ? 'last_page' : 'first_page'}
-					?disabled=${this.page === 1}
-					@click=${() => this.setPage(1)}
-				></mo-icon-button>
+			<mo-flex direction='horizontal' alignItems='center' gap='1vw'>
+				<mo-flex direction='horizontal' gap='4px' alignItems='center' justifyContent='center'>
+					<mo-icon-button dense icon=${isRtl ? 'last_page' : 'first_page'}
+						?disabled=${this.page === 1}
+						@click=${() => this.setPage(1)}
+					></mo-icon-button>
 
-				<mo-icon-button dense icon=${isRtl ? 'keyboard_arrow_right' : 'keyboard_arrow_left'}
-					?disabled=${this.page === 1}
-					@click=${() => this.setPage(this.page - 1)}
-				></mo-icon-button>
+					<mo-icon-button dense icon=${isRtl ? 'keyboard_arrow_right' : 'keyboard_arrow_left'}
+						?disabled=${this.page === 1}
+						@click=${() => this.setPage(this.page - 1)}
+					></mo-icon-button>
 
-				<div ${style({ cursor: 'pointer', width: hasUnknownDataLength ? '40px' : '75px', textAlign: 'center' })}>
-					${this.manualPagination ? html`
-						<mo-field-number dense
-							value=${this.page}
-							@change=${(e: CustomEvent<number>) => this.handleManualPageChange(e.detail)}>
-						</mo-field-number>
+					<div ${style({ cursor: 'pointer', width: hasUnknownDataLength ? '40px' : '75px', textAlign: 'center' })}>
+						${this.manualPagination ? html`
+							<mo-field-number dense
+								value=${this.page}
+								@change=${(e: CustomEvent<number>) => this.handleManualPageChange(e.detail)}>
+							</mo-field-number>
+						` : html`
+							<div ${style({ fontSize: 'small' })} @click=${() => this.manualPagination = hasUnknownDataLength === false}>${pageText}</div>
+						`}
+					</div>
+
+					<mo-icon-button dense icon=${isRtl ? 'keyboard_arrow_left' : 'keyboard_arrow_right'}
+						?disabled=${!this.dataGrid.hasNextPage}
+						@click=${() => this.setPage(this.page + 1)}
+					></mo-icon-button>
+
+					<mo-icon-button dense icon=${isRtl ? 'first_page' : 'last_page'}
+						?disabled=${hasUnknownDataLength || this.page === this.dataGrid.maxPage}
+						@click=${() => this.setPage(this.dataGrid.maxPage ?? 1)}
+					></mo-icon-button>
+				</mo-flex>
+
+				<div ${style({ color: 'var(--mo-color-gray)', marginInlineStart: '8px' })}>
+					${!this.manualPageSize ? html`
+						<div ${style({ fontSize: 'small' })} @click=${() => this.manualPageSize = true}>${pageSizeText}</div>
 					` : html`
-						<div ${style({ fontSize: 'small' })} @click=${() => this.manualPagination = hasUnknownDataLength === false}>${pageText}</div>
+						<mo-field-select-data-grid-page-size dense ${style({ width: '90px' })}
+							.dataGrid=${this.dataGrid}
+							value=${ifDefined(this.dataGrid.pagination)}
+							@change=${(e: CustomEvent<DataGridPagination>) => this.handlePaginationChange(e.detail)}>
+						</mo-field-select-data-grid-page-size>
 					`}
 				</div>
-
-				<mo-icon-button dense icon=${isRtl ? 'keyboard_arrow_left' : 'keyboard_arrow_right'}
-					?disabled=${!this.dataGrid.hasNextPage}
-					@click=${() => this.setPage(this.page + 1)}
-				></mo-icon-button>
-
-				<mo-icon-button dense icon=${isRtl ? 'first_page' : 'last_page'}
-					?disabled=${hasUnknownDataLength || this.page === this.dataGrid.maxPage}
-					@click=${() => this.setPage(this.dataGrid.maxPage ?? 1)}
-				></mo-icon-button>
 			</mo-flex>
-
-			<div ${style({ color: 'var(--mo-color-gray)', marginInlineStart: '8px' })}>
-				${!this.manualPageSize ? html`
-					<div ${style({ fontSize: 'small' })} @click=${() => this.manualPageSize = true}>${pageSizeText}</div>
-				` : html`
-					<mo-field-select-data-grid-page-size dense ${style({ width: '90px' })}
-						.dataGrid=${this.dataGrid}
-						value=${ifDefined(this.dataGrid.pagination)}
-						@change=${(e: CustomEvent<DataGridPagination>) => this.handlePaginationChange(e.detail)}>
-					</mo-field-select-data-grid-page-size>
-				`}
-			</div>
 		`
 	}
 
@@ -163,6 +157,32 @@ export class DataGridFooter<TData> extends Component {
 
 		this.setPage(value)
 		this.manualPagination = false
+	}
+
+	private get exportTemplate() {
+		return !this.dataGrid.exportable ? html.nothing : html`
+			<style>
+				#export {
+					height: 21px;
+					width: 21px;
+					aspect-ratio: 1 / 1;
+					transition: .25s;
+					-webkit-filter: grayscale(100%);
+					filter: grayscale(100%);
+					cursor: pointer;
+				}
+
+				#export:hover {
+					-webkit-filter: grayscale(0%);
+					filter: grayscale(0%);
+				}
+			</style>
+			<img id='export'
+				src=${`data:image/svg+xml,${encodeURIComponent(excelSvg)}`}
+				${tooltip('Export as Excel file', TooltipPlacement.BlockStart)}
+				@click=${() => this.dataGrid.exportExcelFile()}
+			/>
+		`
 	}
 
 	private setPage(value: number) {

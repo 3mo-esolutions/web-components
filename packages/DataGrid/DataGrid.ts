@@ -97,6 +97,7 @@ export type DataGridSorting<TData> = DataGridSortingDefinition<TData> | Array<Da
  * @attr preventFabCollapse - Whether the FAB should be prevented from collapsing.
  * @attr cellFontSize - The font size of the cells relative to the default font size. Defaults @see DataGrid.cellFontSize 's value which defaults to 0.8.
  * @attr rowHeight - The height of the rows in pixels. Defaults to @see DataGrid.rowHeight 's value which defaults to 35.
+ * @attr exportable - Whether the DataGrid is exportable. This will show an export button in the footer.
  *
  * @slot - Use this slot only for declarative DataGrid APIs e.g. setting ColumnDefinitions via `mo-data-grid-columns` tag.
  * @slot toolbar - The horizontal bar above DataGrid's contents.
@@ -184,6 +185,8 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	@property({ type: Boolean }) preventFabCollapse = false
 	@property({ type: Boolean, reflect: true }) protected fabSlotCollapsed = false
+
+	@property({ type: Boolean }) exportable = false
 
 	@property({
 		type: Number,
@@ -345,8 +348,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	exportExcelFile() {
 		try {
-			const selectors = this.visibleColumns.map(c => c.dataSelector)
-			CsvGenerator.generate(this.data, selectors)
+			CsvGenerator.generate(this)
 			NotificationComponent.notifyInfo(t('Exporting excel file'))
 		} catch (error: any) {
 			NotificationComponent.notifyError(error.message)
@@ -417,7 +419,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}
 
 	get hasFooter() {
-		const value = this.hasPagination || this.hasSums
+		const value = this.hasPagination || this.hasSums || this.exportable
 		this.toggleAttribute('hasFooter', value)
 		return value
 	}

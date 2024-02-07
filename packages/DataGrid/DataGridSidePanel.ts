@@ -163,13 +163,6 @@ export class DataGridSidePanel<TData> extends Component {
 						@input=${(e: CustomEvent<number>) => this.dataGrid.rowHeight = e.detail}
 					></mo-slider>
 				</mo-section>
-
-				<mo-section heading=${t('Tools')}>
-					<mo-icon-button icon='file_download'
-						${tooltip('Export as Excel file')}
-						@click=${() => this.dataGrid.exportExcelFile()}
-					></mo-icon-button>
-				</mo-section>
 			</mo-flex>
 		`
 	}

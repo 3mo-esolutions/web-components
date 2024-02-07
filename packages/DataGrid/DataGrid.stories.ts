@@ -197,3 +197,11 @@ export const Fab = story({
 		</mo-data-grid>
 	`
 })
+
+export const Exportable = story({
+	render: () => html`
+		<mo-data-grid exportable pagination='auto' .data=${thousandPeople} style='height: 500px'>
+			${columnsTemplate}
+		</mo-data-grid>
+	`
+})
