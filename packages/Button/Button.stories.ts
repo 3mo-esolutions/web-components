@@ -81,6 +81,14 @@ export const WithNonTextContent = story({
 	`
 })
 
+export const WithOverflowingContent = story({
+	render: ({ type, disabled }) => html`
+		<mo-button type=${type} ?disabled=${disabled} style='max-width: 200px'>
+			Something very very long that will overflow
+		</mo-button>
+	`
+})
+
 export const WithComplexContent = story({
 	render: ({ type, disabled }) => html`
 		<mo-button type=${type} ?disabled=${disabled} ${style({ minHeight: '50px', minWidth: '250px' })}>

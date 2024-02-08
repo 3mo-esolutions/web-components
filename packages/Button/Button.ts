@@ -82,6 +82,9 @@ export class Button extends Component {
 				display: inline-block;
 				flex: 1;
 				place-self: center;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
 			}
 
 			slot[name=leading] {
