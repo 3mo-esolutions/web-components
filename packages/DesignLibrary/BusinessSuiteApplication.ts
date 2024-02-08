@@ -189,16 +189,25 @@ export abstract class BusinessSuiteApplication extends Application {
 
 	protected get userAvatarTemplate() {
 		return !Authentication.hasAuthenticator() ? html.nothing : html`
-			<mo-user-avatar style='color: var(--mo-color-on-accent); margin-inline-end: var(--mo-thickness-xl)'>
+			<mo-user-avatar
+				style='color: var(--mo-color-on-accent); margin-inline-end: var(--mo-thickness-xl)'
+				@openChange=${(e: CustomEvent<boolean>) => this.handleUserAvatarOpenChange(e.detail)}
+			>
 				${this.userAvatarMenuItemsTemplate}
 			</mo-user-avatar>
 		`
 	}
 
+	private handleUserAvatarOpenChange(open: boolean) {
+		if (open === false) {
+			this.drawerOpen = false
+		}
+	}
+
 	protected get userAvatarMenuItemsTemplate() {
 		return html`
 			<mo-navigation-menu-item icon='manage_accounts'
-				${routerLink({ component: new PagePreferences, matchMode: RouteMatchMode.IgnoreParameters, invocationHandler: () => this.drawerOpen = false })}
+				${routerLink({ component: new PagePreferences, matchMode: RouteMatchMode.IgnoreParameters })}
 			>${t('User Settings')}</mo-navigation-menu-item>
 		`
 	}
