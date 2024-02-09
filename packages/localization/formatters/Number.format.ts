@@ -1,19 +1,20 @@
 import { Localizer } from '../Localizer.js'
-import type { OptionsWithLanguage } from './OptionsWithLanguage.js'
+import { extractFormatOptions, type FormatOptionsWithLanguage } from './OptionsWithLanguage.js'
 
-type NumberFormatOptions = OptionsWithLanguage<Intl.NumberFormatOptions>
+type NumberFormatOptions = FormatOptionsWithLanguage<Intl.NumberFormatOptions>
 
-Number.prototype.format = function(this: number, options?: NumberFormatOptions) {
-	return Intl.NumberFormat(options?.language ?? Localizer.currentLanguage, {
+Number.prototype.format = function (this: number, ...options: NumberFormatOptions) {
+	const [language, explicitOptions] = extractFormatOptions(options)
+	return Intl.NumberFormat(language ?? Localizer.currentLanguage, {
 		maximumFractionDigits: 16,
 		minimumFractionDigits: 0,
 		useGrouping: false,
-		...options,
+		...explicitOptions,
 	}).format(this || 0)
 }
 
 declare global {
 	interface Number {
-		format(options?: NumberFormatOptions): string
+		format(...options: NumberFormatOptions): string
 	}
 }

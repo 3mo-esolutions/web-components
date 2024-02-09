@@ -252,7 +252,7 @@
 			"path": "./packages/Popover"
 		},
 		{
-			"path": "./packages/queryConnectedInstances"
+			"path": "./packages/ScreenSize"
 		},
 		{
 			"path": "./packages/Radio"

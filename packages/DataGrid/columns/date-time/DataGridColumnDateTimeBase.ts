@@ -5,11 +5,11 @@ import { DataGridColumn } from '../DataGridColumn.js'
  * @attr formatOptions - Options to pass to Date.prototype.format()
  * @attr pickerHidden - Hides the date/time picker
  */
-export abstract class DataGridColumnDateTimeBase<TData, TDate extends { format(options: unknown): string }> extends DataGridColumn<TData, TDate> {
-	static defaultFormatOptions?: Parameters<Date['format']>[0]
+export abstract class DataGridColumnDateTimeBase<TData, TDate extends { format(...options: any[]): string }> extends DataGridColumn<TData, TDate> {
+	static defaultFormatOptions?: Intl.DateTimeFormatOptions
 	abstract readonly fieldTag: ReturnType<typeof literal>
 
-	@property({ type: Object }) formatOptions?: Parameters<TDate['format']>[0]
+	@property({ type: Object }) formatOptions?: Intl.DateTimeFormatOptions
 	@property({ type: Boolean }) pickerHidden = false
 
 	protected get formatOptionsValue() {

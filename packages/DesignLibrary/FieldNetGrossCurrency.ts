@@ -11,7 +11,7 @@ export class FieldNetGrossCurrency extends InputFieldComponent<NetGrossCurrency>
 
 	protected valueToInputValue(value?: NetGrossCurrency) {
 		this.isGross = value?.[1] ?? false
-		return typeof value?.[0] === 'number' ? value[0].formatAsCurrency() : ''
+		return typeof value?.[0] === 'number' ? value[0].formatAsCurrency(undefined) : ''
 	}
 
 	protected toValue(value: string): NetGrossCurrency {

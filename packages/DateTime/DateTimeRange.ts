@@ -2,8 +2,6 @@ import { LanguageCode, Localizer, extractDateTimeFormatOptions } from '@3mo/loca
 import { DateTimeRangeParser } from './parsers/DateTimeRangeParser.js'
 import { DateTimeRangeDelimiterParser } from './index.js'
 
-type FormatOptions = Intl.DateTimeFormatOptions & { readonly language?: LanguageCode }
-
 export class DateTimeRange {
 	private static readonly customParsers = new Array<Constructor<DateTimeRangeParser>>()
 
@@ -83,10 +81,10 @@ export class DateTimeRange {
 		return this.format()
 	}
 
-	formatAsDateRange(options?: FormatOptions) {
+	formatAsDateRange(...options: Parameters<DateTime['formatAsDate']>) {
 		return this._format({
 			options,
-			formatter: (dateTime, options) => dateTime.formatAsDate(options),
+			formatter: (dateTime, ...options) => dateTime.formatAsDate(...options),
 			defaultOptions: {
 				year: 'numeric',
 				month: '2-digit',
@@ -95,10 +93,10 @@ export class DateTimeRange {
 		})
 	}
 
-	format(options?: FormatOptions) {
+	format(...options: Parameters<DateTime['format']>) {
 		return this._format({
 			options,
-			formatter: (dateTime, options) => dateTime.format(options),
+			formatter: (dateTime, ...options) => dateTime.format(...options),
 			defaultOptions: {
 				year: 'numeric',
 				month: '2-digit',
@@ -110,8 +108,8 @@ export class DateTimeRange {
 	}
 
 	private _format({ formatter, options, defaultOptions }: {
-		formatter: (dateTime: DateTime, options: FormatOptions | undefined) => string
-		options: FormatOptions | undefined
+		formatter: (dateTime: DateTime, ...options: Parameters<DateTime['format']>) => string
+		options: Parameters<DateTime['format']>
 		defaultOptions: Intl.DateTimeFormatOptions
 	}
 	) {
@@ -119,19 +117,19 @@ export class DateTimeRange {
 			return ''
 		}
 
-		const [language, opt] = extractDateTimeFormatOptions(this.calendarId, this.timeZoneId, options, defaultOptions)
+		const [language, explicitOptions] = extractDateTimeFormatOptions(this.calendarId, this.timeZoneId, options, defaultOptions)
 
 		const delimiter = DateTimeRange.getUntilDelimiter(language)
 
 		if (!this.end) {
-			return formatter(this.start as DateTime, options) + delimiter?.trimEnd()
+			return formatter(this.start as DateTime, ...options) + delimiter?.trimEnd()
 		}
 
 		if (!this.start) {
-			return delimiter?.trimStart() + formatter(this.end as DateTime, options)
+			return delimiter?.trimStart() + formatter(this.end as DateTime, ...options)
 		}
 
-		return Intl.DateTimeFormat(language, opt).formatRange(this.start, this.end)
+		return Intl.DateTimeFormat(language, explicitOptions).formatRange(this.start, this.end)
 	}
 }
 

@@ -12,7 +12,7 @@ export class DateTimeShortcutParser extends DateTimeParser {
 
 	private getOrder(...parts: Array<DatePart>) {
 		return DateTime.from(undefined, this.calendar, this.timeZone)
-			.formatToParts({ language: this.language, ...parts.map(x => ({ [x]: 'numeric' })).reduce((a, b) => ({ ...a, ...b }), {}) })
+			.formatToParts(this.language, parts.map(x => ({ [x]: 'numeric' })).reduce((a, b) => ({ ...a, ...b }), {}))
 			.filter(x => x.type !== 'literal')
 			.map(x => x.type)
 	}

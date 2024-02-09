@@ -15,7 +15,7 @@ export class FieldCurrency extends FieldNumber {
 
 	@property({ type: Object, converter: FieldCurrency.currencyConverter }) currency = FieldCurrency.defaultCurrency
 
-	protected override format = (value: number) => value.formatAsCurrency()
+	protected override format = (value: number) => value.formatAsCurrency(undefined)
 
 	static override get styles() {
 		return css`

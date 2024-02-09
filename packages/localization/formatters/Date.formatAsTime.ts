@@ -1,9 +1,9 @@
 import { extractDateTimeFormatOptions } from './Date.format.js'
-import type { OptionsWithLanguage } from './OptionsWithLanguage.js'
+import type { FormatOptionsWithLanguage } from './OptionsWithLanguage.js'
 
-type DateFormatOptions = OptionsWithLanguage<Intl.DateTimeFormatOptions>
+type DateFormatOptions = FormatOptionsWithLanguage<Intl.DateTimeFormatOptions>
 
-Date.prototype.formatAsTime = function (this: Date, options?: DateFormatOptions) {
+Date.prototype.formatAsTime = function (this: Date, ...options: DateFormatOptions) {
 	const [language, opt] = extractDateTimeFormatOptions(this.calendarId, this.timeZoneId, options, {
 		hour: '2-digit',
 		minute: '2-digit',
@@ -16,6 +16,6 @@ Date.prototype.formatAsTime = function (this: Date, options?: DateFormatOptions)
 
 declare global {
 	interface Date {
-		formatAsTime(options?: DateFormatOptions): string
+		formatAsTime(...options: DateFormatOptions): string
 	}
 }

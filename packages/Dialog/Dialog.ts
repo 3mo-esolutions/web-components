@@ -423,9 +423,6 @@ MdDialog.elementStyles.push(css`
 `)
 
 MdDialog.addInitializer(element => {
-	if ((globalThis as any).environment === 'test') {
-		HTMLDialogElement.prototype.showModal = () => undefined
-	}
 	element.addController(new class {
 		private get scrollerElement() {
 			return element.renderRoot.querySelector('.scroller')

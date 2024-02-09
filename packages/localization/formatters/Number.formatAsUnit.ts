@@ -1,13 +1,13 @@
-import { Localizer } from '../Localizer.js'
-import type { OptionsWithLanguage } from './OptionsWithLanguage.js'
+import { extractFormatOptions, type FormatOptionsWithLanguage } from './OptionsWithLanguage.js'
 
-type FormatAsUnitOptions = OptionsWithLanguage<Omit<Intl.NumberFormatOptions, 'style' | 'currency' | 'currencyDisplay' | 'currencySign'>>
+type FormatAsUnitOptions = FormatOptionsWithLanguage<Omit<Intl.NumberFormatOptions, 'style' | 'currency' | 'currencyDisplay' | 'currencySign'>>
 
-Number.prototype.formatAsUnit = function (this: number, unit: Unit, options?: FormatAsUnitOptions) {
-	return Intl.NumberFormat(options?.language ?? Localizer.currentLanguage, {
+Number.prototype.formatAsUnit = function (this: number, unit: Unit, ...options: FormatAsUnitOptions) {
+	const [language, explicitOptions] = extractFormatOptions(options)
+	return Intl.NumberFormat(language, {
 		style: 'unit',
 		unit,
-		...options,
+		...explicitOptions,
 	}).format(this || 0)
 }
 
@@ -58,7 +58,7 @@ type SingleUnit =
 
 declare global {
 	interface Number {
-		formatAsUnit(unit: Unit, options?: FormatAsUnitOptions): string
+		formatAsUnit(unit: Unit, ...options: FormatAsUnitOptions): string
 	}
 
 	type Unit = SingleUnit | `${SingleUnit}-per-${SingleUnit}`

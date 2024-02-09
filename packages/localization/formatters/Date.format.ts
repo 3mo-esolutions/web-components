@@ -1,18 +1,17 @@
-import { Localizer } from '../Localizer.js'
-import type { OptionsWithLanguage } from './OptionsWithLanguage.js'
+import { extractFormatOptions, type FormatOptionsWithLanguage } from './OptionsWithLanguage.js'
 
-type DateFormatOptions = OptionsWithLanguage<Intl.DateTimeFormatOptions>
+type DateFormatOptions = FormatOptionsWithLanguage<Intl.DateTimeFormatOptions>
 
-export function extractDateTimeFormatOptions(calendarId?: string, timeZoneId?: string, explicitOptions?: DateFormatOptions, defaultOptions?: DateFormatOptions) {
-	const { language, ...otherExplicitOptions } = explicitOptions ?? {}
-	return [language ?? Localizer.currentLanguage, {
+export function extractDateTimeFormatOptions(calendarId?: string, timeZoneId?: string, explicitOptions?: DateFormatOptions, defaultOptions?: Intl.DateTimeFormatOptions) {
+	const [language, otherExplicitOptions] = extractFormatOptions(explicitOptions)
+	return [language, {
 		calendar: calendarId,
 		timeZone: timeZoneId,
-		...(Object.keys(otherExplicitOptions).length === 0 ? undefined : otherExplicitOptions) ?? defaultOptions
+		...(otherExplicitOptions ?? defaultOptions)
 	}] as const
 }
 
-const defaultOptions: DateFormatOptions = {
+const defaultOptions: Intl.DateTimeFormatOptions = {
 	year: 'numeric',
 	month: '2-digit',
 	day: '2-digit',
@@ -23,12 +22,12 @@ const defaultOptions: DateFormatOptions = {
 	timeZoneName: 'shortOffset'
 }
 
-Date.prototype.format = function (this: Date, options?: DateFormatOptions) {
+Date.prototype.format = function (this: Date, ...options: DateFormatOptions) {
 	const [language, opt] = extractDateTimeFormatOptions(this.calendarId, this.timeZoneId, options, defaultOptions)
 	return Intl.DateTimeFormat(language, opt).format(this)
 }
 
-Date.prototype.formatToParts = function (this: Date, options?: DateFormatOptions) {
+Date.prototype.formatToParts = function (this: Date, ...options: DateFormatOptions) {
 	const [language, opt] = extractDateTimeFormatOptions(this.calendarId, this.timeZoneId, options, defaultOptions)
 	return Intl.DateTimeFormat(language, opt).formatToParts(this)
 }
@@ -37,7 +36,7 @@ declare global {
 	interface Date {
 		readonly calendarId?: string
 		readonly timeZoneId?: string
-		format(options?: DateFormatOptions): string
-		formatToParts(options?: DateFormatOptions): Intl.DateTimeFormatPart[]
+		format(...options: DateFormatOptions): string
+		formatToParts(...options: DateFormatOptions): Intl.DateTimeFormatPart[]
 	}
 }
