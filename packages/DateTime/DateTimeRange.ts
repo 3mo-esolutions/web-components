@@ -1,6 +1,7 @@
 import { LanguageCode, Localizer, extractDateTimeFormatOptions } from '@3mo/localization'
 import { DateTimeRangeParser } from './parsers/DateTimeRangeParser.js'
 import { DateTimeRangeDelimiterParser } from './index.js'
+import { ParsingParameters, extractParsingParameters } from './extractParsingParameters.js'
 
 export class DateTimeRange {
 	private static readonly customParsers = new Array<Constructor<DateTimeRangeParser>>()
@@ -9,7 +10,9 @@ export class DateTimeRange {
 		this.customParsers.push(parser)
 	}
 
-	static parse(text: string, referenceDate = new DateTime, language = Localizer.currentLanguage) {
+	static parse(...parameters: ParsingParameters) {
+		const [text, language, referenceDate] = extractParsingParameters(parameters)
+
 		if (!text.trim()) {
 			return undefined
 		}

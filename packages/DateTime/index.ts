@@ -1,4 +1,6 @@
 export * from './parsers/index.js'
 export * from './DateTime.js'
+export * from './String.toDateTime.js'
 export * from './DateTimeRange.js'
+export * from './String.toDateTimeRange.js'
 export * from './TimeSpan.js'

@@ -3,6 +3,7 @@ import { Localizer } from '@3mo/localization'
 import { TimeSpan } from './TimeSpan.js'
 import { DateTimeParser, DateTimeLocalParser, DateTimeShortcutParser, DateTimeOperationParser, DateTimeNativeParser, DateTimeZeroParser } from './parsers/index.js'
 import { Memoize as memoize } from 'typescript-memoize'
+import { ParsingParameters, extractParsingParameters } from './extractParsingParameters.js'
 
 type DateTimeFromParameters =
 	| [epochMilliseconds?: number, calendar?: Temporal.CalendarLike, timeZone?: Temporal.TimeZoneLike]
@@ -48,7 +49,9 @@ export class DateTime extends Date {
 			?.value as string
 	}
 
-	static parseAsDateTime(text: string, referenceDate = new DateTime, language = Localizer.currentLanguage) {
+	static parseAsDateTime(...parameters: ParsingParameters) {
+		const [text, language, referenceDate] = extractParsingParameters(parameters)
+
 		if (!text.trim()) {
 			return undefined
 		}
