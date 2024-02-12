@@ -4,7 +4,7 @@ import { MaterialIcon } from '@3mo/icon'
 import { FieldDateTimeBase as FieldDateTimeBase, FieldDateTimePrecision } from './FieldDateTimeBase.js'
 import { DateRangeParser } from './DateRangeParser.js'
 import { Memoize as memoize } from 'typescript-memoize'
-import { Localizer } from '@3mo/localization/Localizer.js'
+import { Localizer } from '@3mo/localization'
 
 Localizer.register('de', {
 	'Start': 'Von',
