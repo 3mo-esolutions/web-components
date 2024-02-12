@@ -7,7 +7,7 @@ import excelSvg from './excel.svg.js'
 
 Localizer.register('de', {
 	'${page:number} of ${maxPage:number}': '${page} von ${maxPage}',
-	'Export as Excel file': 'Als Excel-Datei exportieren'
+	'Export as Excel file': 'Aktuelle Ansicht nach Excel exportieren'
 })
 
 Localizer.register('fa', {
