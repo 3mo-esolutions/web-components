@@ -93,11 +93,39 @@ export class Tooltip extends Component {
 
 			:host(:not([rich])) mo-popover {
 				pointer-events: none;
-				background: var(--mo-tooltip-surface-color, var(--mo-color-surface));
-				backdrop-filter: blur(40px);
-				color: var(--mo-color-foreground);
-				box-shadow: var(--mo-tooltip-shadow, var(--mo-shadow-deep));
-				padding: 8px;
+				background: var(--mo-tooltip-color-surface, rgb(109, 109, 109));
+				color: white;
+				padding: var(--mo-tooltip-spacing, 0.3125rem 0.5rem);
+				font-size: var(--mo-tooltip-font-size, 0.75rem);
+			}
+
+			#tip {
+				clip-path: polygon(-5% 0px, -5% 100%, 50% 50%);
+				width: 8px;
+				height: 8px;
+				margin: 0 auto;
+				position: absolute;
+				background-color: var(--mo-tooltip-color-surface, rgb(109, 109, 109));
+				z-index: 9999;
+				top: 0;
+				transform: translate(-50%, -100%) rotate(-90deg);
+				left: 50%;
+			}
+
+			mo-popover[placement="${unsafeCSS(PopoverPlacement.BlockStart)}"] #tip {
+				top: 100%;
+				transform: translateX(-50%) scale(-1) rotate(-90deg);
+			}
+
+			mo-popover[placement="${unsafeCSS(PopoverPlacement.InlineStart)}"] #tip {
+				transform: rotate(360deg) translateY(-50%);
+    		left: 100%;
+    		top: 50%;
+			}
+
+			mo-popover[placement="${unsafeCSS(PopoverPlacement.InlineEnd)}"] #tip {
+				left: -8px;
+				transform: rotate(180deg) translateY(-100%);
 			}
 		`
 	}
@@ -111,6 +139,7 @@ export class Tooltip extends Component {
 				placement=${ifDefined(this.placement)}
 				alignment='center'
 			>
+				<div id='tip'></div>
 				<slot @slotChange=${() => this.rich = this.childElementCount > 0}></slot>
 			</mo-popover>
 		`
