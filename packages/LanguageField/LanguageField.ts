@@ -108,7 +108,7 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 		return !this.selectedLanguage ? html.nothing : html`
 			<mo-field-pair mode=${this.mode} ${style({ height: '100%' })}>
 				${this.getFieldTemplateByLanguage(this.selectedLanguage)}
-				${this._languages.length < 2 ? html.nothing : this.languageSelectorTemplate}
+				${single ? html.nothing : this.languageSelectorTemplate}
 			</mo-field-pair>
 		`
 	}
