@@ -60,9 +60,9 @@ export abstract class DateList extends Component {
 		`
 	}
 
-	protected async scrollIntoSelectedItem() {
+	protected async scrollIntoSelectedItem(smoothly = true) {
 		await this.updateComplete
-		window.setTimeout(() => (this.selectedListItem ?? this.nowListItem)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 10)
+		window.setTimeout(() => (this.selectedListItem ?? this.nowListItem)?.scrollIntoView({ behavior: smoothly ? 'smooth' : 'instant', block: 'center' }), 10)
 	}
 
 	protected abstract get listItemsTemplate(): HTMLTemplateResult

@@ -9,6 +9,10 @@ export class YearList extends DateList {
 		.fill(undefined)
 		.map((_, i) => this.nowYear - 100 + i)
 
+	protected override connected() {
+		this.scrollIntoSelectedItem(false)
+	}
+
 	protected override get listItemsTemplate() {
 		const now = this.now
 		return html`
