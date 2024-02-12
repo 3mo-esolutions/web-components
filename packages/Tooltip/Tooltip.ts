@@ -69,6 +69,7 @@ export class Tooltip extends Component {
 				border-radius: var(--mo-toolbar-border-radius, var(--mo-border-radius));
 				transition-duration: 175ms;
 				transition-property: opacity, transform;
+				box-shadow: none;
 			}
 
 			mo-popover[placement="${unsafeCSS(PopoverPlacement.BlockStart)}"] {
