@@ -1,6 +1,4 @@
-import { component, css, property, html, unsafeCSS, Component, ifDefined, state } from '@a11d/lit'
-import { PopoverPlacement } from '@3mo/popover'
-import { TooltipPlacement } from './TooltipPlacement.js'
+import { component, css, property, html, Component, state } from '@a11d/lit'
 import { FocusMethod, FocusController } from '@3mo/focus-controller'
 import { PointerController } from '@3mo/pointer-controller'
 
@@ -11,14 +9,12 @@ function targetAnchor(this: Tooltip) {
 /**
  * @element mo-tooltip
  *
- * @attr placement - The placement of the tooltip.
  * @attr anchor - The element id that the tooltip is anchored to.
  *
  * @slot - Default slot for tooltip content
  */
 @component('mo-tooltip')
 export class Tooltip extends Component {
-	@property() placement?: TooltipPlacement
 	@property({ type: Object }) anchor?: HTMLElement
 
 	@property({ type: Boolean, reflect: true }) protected rich?: boolean
@@ -66,67 +62,26 @@ export class Tooltip extends Component {
 			}
 
 			mo-popover {
+				pointer-events: none;
+				color: white;
+				padding: var(--mo-tooltip-spacing, 0.3125rem 0.5rem);
+				font-size: var(--mo-tooltip-font-size, 0.75rem);
 				border-radius: var(--mo-toolbar-border-radius, var(--mo-border-radius));
 				transition-duration: 175ms;
 				transition-property: opacity, transform;
 				box-shadow: none;
-			}
-
-			mo-popover[placement="${unsafeCSS(PopoverPlacement.BlockStart)}"] {
-				transform: translateY(+10px);
-			}
-
-			mo-popover[placement="${unsafeCSS(PopoverPlacement.BlockEnd)}"] {
-				transform: translateY(-10px);
-			}
-
-			mo-popover[placement="${unsafeCSS(PopoverPlacement.InlineStart)}"] {
-				transform: translateX(+10px);
-			}
-
-			mo-popover[placement="${unsafeCSS(PopoverPlacement.InlineEnd)}"] {
-				transform: translateX(-10px);
-			}
-
-			mo-popover[open] {
-				transform: translate(0);
-			}
-
-			:host(:not([rich])) mo-popover {
-				pointer-events: none;
-				background: var(--mo-tooltip-color-surface, rgb(109, 109, 109));
-				color: white;
-				padding: var(--mo-tooltip-spacing, 0.3125rem 0.5rem);
-				font-size: var(--mo-tooltip-font-size, 0.75rem);
+				transform: translateZ(0);
 			}
 
 			#tip {
-				clip-path: polygon(-5% 0px, -5% 100%, 50% 50%);
-				width: 8px;
-				height: 8px;
-				margin: 0 auto;
+				transform: rotate(45deg);
 				position: absolute;
+				width: 6px;
+  			height: 6px;
+			}
+
+			mo-popover, #tip {
 				background-color: var(--mo-tooltip-color-surface, rgb(109, 109, 109));
-				z-index: 9999;
-				top: 0;
-				transform: translate(-50%, -100%) rotate(-90deg);
-				left: 50%;
-			}
-
-			mo-popover[placement="${unsafeCSS(PopoverPlacement.BlockStart)}"] #tip {
-				top: 100%;
-				transform: translateX(-50%) scale(-1) rotate(-90deg);
-			}
-
-			mo-popover[placement="${unsafeCSS(PopoverPlacement.InlineStart)}"] #tip {
-				transform: rotate(360deg) translateY(-50%);
-    		left: 100%;
-    		top: 50%;
-			}
-
-			mo-popover[placement="${unsafeCSS(PopoverPlacement.InlineEnd)}"] #tip {
-				left: -8px;
-				transform: rotate(180deg) translateY(-100%);
 			}
 		`
 	}
@@ -134,13 +89,11 @@ export class Tooltip extends Component {
 	protected override get template() {
 		return html`
 			<mo-popover fixed manual
-				?open=${this.open}
 				@openChange=${(e: CustomEvent<boolean>) => this.open = e.detail}
 				.anchor=${this.anchor}
-				placement=${ifDefined(this.placement)}
 				alignment='center'
 			>
-				<div id='tip'></div>
+				<div id='tip' part='arrow'></div>
 				<slot @slotChange=${() => this.rich = this.childElementCount > 0}></slot>
 			</mo-popover>
 		`

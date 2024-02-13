@@ -21,13 +21,14 @@
 		"dist"
 	],
 	"dependencies": {
-		"@a11d/lit": "x",
-		"@a11d/non-inertable-component": "x",
-		"tslib": "x",
-		"@3mo/theme": "x",
 		"@3mo/focus-controller": "x",
 		"@3mo/pointer-controller": "x",
-		"@3mo/resize-observer": "x"
+		"@3mo/resize-observer": "x",
+		"@3mo/theme": "x",
+		"@a11d/lit": "x",
+		"@a11d/non-inertable-component": "x",
+		"@floating-ui/dom": "^1.6.3",
+		"tslib": "x"
 	},
 	"devDependencies": {
 		"@a11d/lit-testing": "x"

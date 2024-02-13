@@ -1,9 +1,8 @@
 import { directive, AsyncDirective, type ElementPart, type HTMLTemplateResult, type PartInfo, PartType, render, html } from '@a11d/lit'
 import { Tooltip } from './Tooltip.js'
-import { TooltipPlacement } from './TooltipPlacement.js'
 import { Application } from '@a11d/lit-application'
 
-type TooltipDirectiveParameters = [content: string | HTMLTemplateResult, placement?: TooltipPlacement]
+type TooltipDirectiveParameters = [content: string | HTMLTemplateResult]
 
 export class TooltipDirective extends AsyncDirective {
 	private tooltip?: Tooltip
@@ -16,14 +15,10 @@ export class TooltipDirective extends AsyncDirective {
 		}
 	}
 
-	override update(part: ElementPart, [content, placement]: TooltipDirectiveParameters) {
+	override update(part: ElementPart, [content]: TooltipDirectiveParameters) {
 		if (this.isConnected) {
 			this.tooltip ??= new Tooltip()
 			this.tooltip.anchor = part.element as HTMLElement
-
-			if (placement) {
-				this.tooltip.placement = placement
-			}
 
 			if (typeof content === 'string') {
 				part.element.ariaLabel = content
@@ -34,7 +29,7 @@ export class TooltipDirective extends AsyncDirective {
 			Application.topLayer.appendChild(this.tooltip)
 		}
 
-		return super.update(part, [content, placement])
+		return super.update(part, [content])
 	}
 
 	render(...parameters: TooltipDirectiveParameters) {

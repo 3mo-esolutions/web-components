@@ -1,6 +1,6 @@
 import { Component, component, css, event, eventListener, html, property, queryConnectedInstances } from '@a11d/lit'
 import { PopoverPlacement } from './PopoverPlacement.js'
-import { PopoverPositionController } from './PopoverPositionController.js'
+import { PopoverController } from './PopoverController.js'
 import { PopoverAlignment } from './PopoverAlignment.js'
 import { PopoverCoordinates } from './PopoverCoordinates.js'
 
@@ -45,9 +45,10 @@ export class Popover extends Component {
 	@property({ reflect: true }) alignment = PopoverAlignment.Start
 	@property({ type: Boolean, reflect: true, updated(this: Popover) { this.openChanged() } }) open = false
 	@property({ type: Boolean }) manual = false
+	@property({ type: Number }) offset = 8
 	@property({ type: Object }) shouldOpen?: (e: Event) => boolean
 
-	protected readonly positionController = new PopoverPositionController(this)
+	protected readonly controller = new PopoverController(this)
 
 	setOpen(open: boolean) {
 		if (this.open !== open) {

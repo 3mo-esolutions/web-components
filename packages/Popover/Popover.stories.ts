@@ -35,7 +35,6 @@ export default meta({
 })
 
 const content = html`
-	<input />
 	<mo-card heading='Popover'>
 		Here some content
 	</mo-card>

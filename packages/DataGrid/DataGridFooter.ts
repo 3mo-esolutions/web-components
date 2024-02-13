@@ -1,7 +1,7 @@
 import { component, property, Component, css, state, html, query, ifDefined, style } from '@a11d/lit'
 import { FieldNumber } from '@3mo/number-fields'
 import { Localizer } from '@3mo/localization'
-import { TooltipPlacement, tooltip } from '@3mo/tooltip'
+import { tooltip } from '@3mo/tooltip'
 import { DataGrid, DataGridPagination, FieldSelectDataGridPageSize } from './index.js'
 import excelSvg from './excel.svg.js'
 
@@ -179,7 +179,7 @@ export class DataGridFooter<TData> extends Component {
 			</style>
 			<img id='export'
 				src=${`data:image/svg+xml,${encodeURIComponent(excelSvg)}`}
-				${tooltip('Export as Excel file', TooltipPlacement.BlockStart)}
+				${tooltip('Export as Excel file')}
 				@click=${() => this.dataGrid.exportExcelFile()}
 			/>
 		`
