@@ -7,8 +7,8 @@ import { Memoize as memoize } from 'typescript-memoize'
 import { Localizer } from '@3mo/localization'
 
 Localizer.register('de', {
-	'Start': 'Von',
-	'End': 'Bis',
+	'Start': 'Start',
+	'End': 'Ende',
 })
 
 enum FieldDateRangeSelection {
