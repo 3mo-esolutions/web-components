@@ -21,7 +21,7 @@ export class Tooltip extends Component {
 	@property() placement?: TooltipPlacement
 	@property({ type: Object }) anchor?: HTMLElement
 
-	@property({ type: Boolean, reflect: true }) protected rich?: boolean
+	@property({ type: Boolean, reflect: true }) rich = false
 
 	@state() private open = false
 
@@ -66,9 +66,12 @@ export class Tooltip extends Component {
 			}
 
 			mo-popover {
-				border-radius: var(--mo-toolbar-border-radius, var(--mo-border-radius));
+				border-radius: var(--mo-toolbar-border-radius, calc(var(--mo-border-radius) - 1px));
 				transition-duration: 175ms;
 				transition-property: opacity, transform;
+				padding: var(--mo-tooltip-spacing, 0.3125rem 0.5rem);
+				font-size: var(--mo-tooltip-font-size, 0.82rem);
+				background: var(--mo-tooltip-surface-color, var(--_tooltip-default-background));
 			}
 
 			mo-popover[placement="${unsafeCSS(PopoverPlacement.BlockStart)}"] {
@@ -93,11 +96,41 @@ export class Tooltip extends Component {
 
 			:host(:not([rich])) mo-popover {
 				pointer-events: none;
-				background: var(--mo-tooltip-surface-color, var(--mo-color-surface));
-				backdrop-filter: blur(40px);
-				color: var(--mo-color-foreground);
-				box-shadow: var(--mo-tooltip-shadow, var(--mo-shadow-deep));
-				padding: 8px;
+				color: var(--mo-color-background);
+				--_tooltip-default-background: var(--mo-color-foreground);
+			}
+
+			:host([rich]) mo-popover {
+				--_tooltip-default-background: var(--mo-color-surface);
+			}
+
+			#tip {
+				clip-path: polygon(-5% 0px, -5% 100%, 50% 50%);
+				width: 8px;
+				height: 8px;
+				margin: 0 auto;
+				position: absolute;
+				background: var(--mo-tooltip-surface-color, var(--_tooltip-default-background));
+				z-index: 1;
+				inset-block-start: 0;
+				transform: translate(-50%, -100%) rotate(-90deg);
+				inset-inline-start: 50%;
+			}
+
+			mo-popover[placement="${unsafeCSS(PopoverPlacement.BlockStart)}"] #tip {
+				inset-block-start: 100%;
+				transform: translateX(-50%) scale(-1) rotate(-90deg);
+			}
+
+			mo-popover[placement="${unsafeCSS(PopoverPlacement.InlineStart)}"] #tip {
+				transform: rotate(360deg) translateY(-50%);
+				inset-inline-start: 100%;
+				inset-block-start: 50%;
+			}
+
+			mo-popover[placement="${unsafeCSS(PopoverPlacement.InlineEnd)}"] #tip {
+				inset-inline-start: -8px;
+				transform: rotate(180deg) translateY(-100%);
 			}
 		`
 	}
@@ -111,7 +144,8 @@ export class Tooltip extends Component {
 				placement=${ifDefined(this.placement)}
 				alignment='center'
 			>
-				<slot @slotChange=${() => this.rich = this.childElementCount > 0}></slot>
+				<div id='tip'></div>
+				<slot></slot>
 			</mo-popover>
 		`
 	}
