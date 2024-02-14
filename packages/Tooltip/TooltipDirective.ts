@@ -1,4 +1,4 @@
-import { directive, AsyncDirective, type ElementPart, type HTMLTemplateResult, type PartInfo, PartType, render, html } from '@a11d/lit'
+import { directive, AsyncDirective, type ElementPart, HTMLTemplateResult, type PartInfo, PartType, render, html } from '@a11d/lit'
 import { Tooltip } from './Tooltip.js'
 import { TooltipPlacement } from './TooltipPlacement.js'
 import { Application } from '@a11d/lit-application'
@@ -30,6 +30,8 @@ export class TooltipDirective extends AsyncDirective {
 			}
 
 			render(content, this.tooltip)
+
+			this.tooltip.rich = this.tooltip.childElementCount > 0
 
 			Application.topLayer.appendChild(this.tooltip)
 		}

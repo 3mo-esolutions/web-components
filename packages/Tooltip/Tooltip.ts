@@ -21,7 +21,7 @@ export class Tooltip extends Component {
 	@property() placement?: TooltipPlacement
 	@property({ type: Object }) anchor?: HTMLElement
 
-	@property({ type: Boolean, reflect: true }) protected rich?: boolean
+	@property({ type: Boolean, reflect: true }) rich = false
 
 	@state() private open = false
 
@@ -69,6 +69,9 @@ export class Tooltip extends Component {
 				border-radius: var(--mo-toolbar-border-radius, calc(var(--mo-border-radius) - 1px));
 				transition-duration: 175ms;
 				transition-property: opacity, transform;
+				padding: var(--mo-tooltip-spacing, 0.3125rem 0.5rem);
+				font-size: var(--mo-tooltip-font-size, 0.82rem);
+				background: var(--mo-tooltip-surface-color, var(--_tooltip-default-background));
 			}
 
 			mo-popover[placement="${unsafeCSS(PopoverPlacement.BlockStart)}"] {
@@ -93,10 +96,12 @@ export class Tooltip extends Component {
 
 			:host(:not([rich])) mo-popover {
 				pointer-events: none;
-				background: var(--mo-tooltip-surface-color, var(--mo-color-foreground));
 				color: var(--mo-color-background);
-				padding: var(--mo-tooltip-spacing, 0.3125rem 0.5rem);
-				font-size: var(--mo-tooltip-font-size, 0.82rem);
+				--_tooltip-default-background: var(--mo-color-foreground);
+			}
+
+			:host([rich]) mo-popover {
+				--_tooltip-default-background: var(--mo-color-surface);
 			}
 
 			#tip {
@@ -105,7 +110,7 @@ export class Tooltip extends Component {
 				height: 8px;
 				margin: 0 auto;
 				position: absolute;
-				background: var(--mo-tooltip-surface-color, var(--mo-color-foreground));
+				background: var(--mo-tooltip-surface-color, var(--_tooltip-default-background));
 				z-index: 1;
 				inset-block-start: 0;
 				transform: translate(-50%, -100%) rotate(-90deg);
@@ -140,7 +145,7 @@ export class Tooltip extends Component {
 				alignment='center'
 			>
 				<div id='tip'></div>
-				<slot @slotChange=${() => this.rich = this.childElementCount > 0}></slot>
+				<slot></slot>
 			</mo-popover>
 		`
 	}
