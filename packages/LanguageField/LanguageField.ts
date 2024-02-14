@@ -105,12 +105,19 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 	protected override get template() {
 		const single = this._languages.length === 1
 		this.toggleAttribute('single', single)
-		return !this.selectedLanguage ? html.nothing : html`
-			<mo-field-pair mode=${this.mode} ${style({ height: '100%' })}>
-				${this.getFieldTemplateByLanguage(this.selectedLanguage)}
-				${this.languageSelectorTemplate}
-			</mo-field-pair>
-		`
+		switch (true) {
+			case !this.selectedLanguage:
+				return html.nothing
+			case single:
+				return this.getFieldTemplateByLanguage(this.selectedLanguage)
+			default:
+				return html`
+					<mo-field-pair mode=${this.mode} ${style({ height: '100%' })}>
+						${this.getFieldTemplateByLanguage(this.selectedLanguage)}
+						${this.languageSelectorTemplate}
+					</mo-field-pair>
+				`
+		}
 	}
 
 	getFieldTemplateByLanguage(language: TLanguage) {
