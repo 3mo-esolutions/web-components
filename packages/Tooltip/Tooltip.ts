@@ -66,10 +66,9 @@ export class Tooltip extends Component {
 			}
 
 			mo-popover {
-				border-radius: var(--mo-toolbar-border-radius, var(--mo-border-radius));
+				border-radius: var(--mo-toolbar-border-radius, calc(var(--mo-border-radius) - 1px));
 				transition-duration: 175ms;
 				transition-property: opacity, transform;
-				box-shadow: none;
 			}
 
 			mo-popover[placement="${unsafeCSS(PopoverPlacement.BlockStart)}"] {
@@ -94,10 +93,10 @@ export class Tooltip extends Component {
 
 			:host(:not([rich])) mo-popover {
 				pointer-events: none;
-				background: var(--mo-tooltip-color-surface, rgb(109, 109, 109));
-				color: white;
+				background: var(--mo-tooltip-surface-color, var(--mo-color-foreground));
+				color: var(--mo-color-background);
 				padding: var(--mo-tooltip-spacing, 0.3125rem 0.5rem);
-				font-size: var(--mo-tooltip-font-size, 0.75rem);
+				font-size: var(--mo-tooltip-font-size, 0.82rem);
 			}
 
 			#tip {
@@ -106,26 +105,26 @@ export class Tooltip extends Component {
 				height: 8px;
 				margin: 0 auto;
 				position: absolute;
-				background-color: var(--mo-tooltip-color-surface, rgb(109, 109, 109));
-				z-index: 9999;
-				top: 0;
+				background: var(--mo-tooltip-surface-color, var(--mo-color-foreground));
+				z-index: 1;
+				inset-block-start: 0;
 				transform: translate(-50%, -100%) rotate(-90deg);
-				left: 50%;
+				inset-inline-start: 50%;
 			}
 
 			mo-popover[placement="${unsafeCSS(PopoverPlacement.BlockStart)}"] #tip {
-				top: 100%;
+				inset-block-start: 100%;
 				transform: translateX(-50%) scale(-1) rotate(-90deg);
 			}
 
 			mo-popover[placement="${unsafeCSS(PopoverPlacement.InlineStart)}"] #tip {
 				transform: rotate(360deg) translateY(-50%);
-    		left: 100%;
-    		top: 50%;
+				inset-inline-start: 100%;
+				inset-block-start: 50%;
 			}
 
 			mo-popover[placement="${unsafeCSS(PopoverPlacement.InlineEnd)}"] #tip {
-				left: -8px;
+				inset-inline-start: -8px;
 				transform: rotate(180deg) translateY(-100%);
 			}
 		`
