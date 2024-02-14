@@ -16,7 +16,7 @@ export class TooltipDirective extends AsyncDirective {
 		}
 	}
 
-	override update(part: ElementPart, [content, placement]: TooltipDirectiveParameters) {
+	override async update(part: ElementPart, [content, placement]: TooltipDirectiveParameters) {
 		if (this.isConnected) {
 			this.tooltip ??= new Tooltip()
 			this.tooltip.anchor = part.element as HTMLElement
@@ -28,6 +28,8 @@ export class TooltipDirective extends AsyncDirective {
 			if (typeof content === 'string') {
 				part.element.ariaLabel = content
 			}
+
+			await new Promise(r => setTimeout(r))
 
 			render(content, this.tooltip)
 

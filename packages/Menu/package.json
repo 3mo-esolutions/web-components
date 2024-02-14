@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/menu",
-	"version": "0.3.0",
+	"version": "0.6.0",
 	"description": "A menu web-component.",
 	"repository": {
 		"type": "git",
@@ -28,7 +28,8 @@
 		"@3mo/popover": "x",
 		"@3mo/list": "x",
 		"@3mo/disabled-property": "x",
-		"@3mo/slot-controller": "x"
+		"@3mo/slot-controller": "x",
+		"@floating-ui/dom": "1.x"
 	},
 	"devDependencies": {
 		"@a11d/lit-testing": "x"

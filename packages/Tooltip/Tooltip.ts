@@ -1,8 +1,8 @@
-import { component, css, property, html, unsafeCSS, Component, ifDefined, state } from '@a11d/lit'
-import { PopoverPlacement } from '@3mo/popover'
+import { component, css, property, html, Component, state, bind, ifDefined, query } from '@a11d/lit'
 import { TooltipPlacement } from './TooltipPlacement.js'
 import { FocusMethod, FocusController } from '@3mo/focus-controller'
 import { PointerController } from '@3mo/pointer-controller'
+import { type ComputePositionReturn, arrow, Middleware } from '@floating-ui/core'
 
 function targetAnchor(this: Tooltip) {
 	return this.anchor || []
@@ -18,12 +18,21 @@ function targetAnchor(this: Tooltip) {
  */
 @component('mo-tooltip')
 export class Tooltip extends Component {
+	private static readonly tipSideByPlacement = new Map([
+		['top', 'bottom'],
+		['right', 'left'],
+		['bottom', 'top'],
+		['left', 'right'],
+	])
+
 	@property() placement?: TooltipPlacement
 	@property({ type: Object }) anchor?: HTMLElement
 
 	@property({ type: Boolean, reflect: true }) rich = false
 
-	@state() private open = false
+	@state() open = false
+
+	@query('#tip') private readonly arrowElement!: HTMLDivElement
 
 	protected lastFocusMethod?: FocusMethod
 	protected readonly anchorFocusController = new FocusController(this, {
@@ -61,37 +70,14 @@ export class Tooltip extends Component {
 
 	static override get styles() {
 		return css`
-			:host {
-				display: inline-block;
-			}
-
 			mo-popover {
-				border-radius: var(--mo-toolbar-border-radius, calc(var(--mo-border-radius) - 1px));
+				border-radius: var(--mo-toolbar-border-radius, calc(var(--mo-border-radius) - 0px));
 				transition-duration: 175ms;
 				transition-property: opacity, transform;
 				padding: var(--mo-tooltip-spacing, 0.3125rem 0.5rem);
 				font-size: var(--mo-tooltip-font-size, 0.82rem);
 				background: var(--mo-tooltip-surface-color, var(--_tooltip-default-background));
-			}
-
-			mo-popover[placement="${unsafeCSS(PopoverPlacement.BlockStart)}"] {
-				transform: translateY(+10px);
-			}
-
-			mo-popover[placement="${unsafeCSS(PopoverPlacement.BlockEnd)}"] {
-				transform: translateY(-10px);
-			}
-
-			mo-popover[placement="${unsafeCSS(PopoverPlacement.InlineStart)}"] {
-				transform: translateX(+10px);
-			}
-
-			mo-popover[placement="${unsafeCSS(PopoverPlacement.InlineEnd)}"] {
-				transform: translateX(-10px);
-			}
-
-			mo-popover[open] {
-				transform: translate(0);
+				transition-property: opacity, transform;
 			}
 
 			:host(:not([rich])) mo-popover {
@@ -105,49 +91,48 @@ export class Tooltip extends Component {
 			}
 
 			#tip {
-				clip-path: polygon(-5% 0px, -5% 100%, 50% 50%);
-				width: 8px;
-				height: 8px;
-				margin: 0 auto;
+				transform: rotate(45deg);
 				position: absolute;
 				background: var(--mo-tooltip-surface-color, var(--_tooltip-default-background));
-				z-index: 1;
-				inset-block-start: 0;
-				transform: translate(-50%, -100%) rotate(-90deg);
-				inset-inline-start: 50%;
-			}
-
-			mo-popover[placement="${unsafeCSS(PopoverPlacement.BlockStart)}"] #tip {
-				inset-block-start: 100%;
-				transform: translateX(-50%) scale(-1) rotate(-90deg);
-			}
-
-			mo-popover[placement="${unsafeCSS(PopoverPlacement.InlineStart)}"] #tip {
-				transform: rotate(360deg) translateY(-50%);
-				inset-inline-start: 100%;
-				inset-block-start: 50%;
-			}
-
-			mo-popover[placement="${unsafeCSS(PopoverPlacement.InlineEnd)}"] #tip {
-				inset-inline-start: -8px;
-				transform: rotate(180deg) translateY(-100%);
+				width: 6px;
+				height: 6px;
 			}
 		`
 	}
 
+	@state() private positionMiddleware?: Array<Middleware>
+
+	protected override initialized() {
+		this.positionMiddleware = [arrow({ element: this.arrowElement })]
+	}
+
+
 	protected override get template() {
 		return html`
 			<mo-popover fixed manual
-				?open=${this.open}
-				@openChange=${(e: CustomEvent<boolean>) => this.open = e.detail}
+				?open=${bind(this, 'open')}
 				.anchor=${this.anchor}
 				placement=${ifDefined(this.placement)}
 				alignment='center'
+				.positionMiddleware=${this.positionMiddleware}
+				.positionComputed=${this.positionComputed}
 			>
 				<div id='tip'></div>
 				<slot></slot>
 			</mo-popover>
 		`
+	}
+
+	private readonly positionComputed = (response: ComputePositionReturn) => {
+		if (this.arrowElement) {
+			const { x: arrowX, y: arrowY } = response.middlewareData.arrow ?? { x: null, y: null }
+
+			this.arrowElement.style.left = arrowX !== null ? `${arrowX}px` : ''
+			this.arrowElement.style.top = arrowY !== null ? `${arrowY}px` : ''
+
+			const staticSide = Tooltip.tipSideByPlacement.get(response.placement!.split('-')[0] as any)
+			this.arrowElement.style[staticSide as any] = '-3px'
+		}
 	}
 }
 

@@ -3,6 +3,7 @@ import { PopoverPlacement } from './PopoverPlacement.js'
 import { PopoverPositionController } from './PopoverPositionController.js'
 import { PopoverAlignment } from './PopoverAlignment.js'
 import { PopoverCoordinates } from './PopoverCoordinates.js'
+import { Middleware, type ComputePositionReturn } from '@floating-ui/dom'
 
 /**
  * @element mo-popover
@@ -13,6 +14,7 @@ import { PopoverCoordinates } from './PopoverCoordinates.js'
  * @attr target - The target element for the popover.
  * @attr placement - The placement of the popover relative to the anchor.
  * @attr alignment - The alignment of the popover relative to the anchor.
+ * @attr offset - The offset of the popover.
  * @attr open - Whether the popover is open.
  * @attr manual - Whether the popover is manually controlled:
  * 	- When true, the popover is only opened or closed when the open attribute is set.
@@ -43,9 +45,13 @@ export class Popover extends Component {
 	@property() target?: string
 	@property({ reflect: true }) placement = PopoverPlacement.BlockEnd
 	@property({ reflect: true }) alignment = PopoverAlignment.Start
+	@property({ type: Number }) offset?: number
 	@property({ type: Boolean, reflect: true, updated(this: Popover) { this.openChanged() } }) open = false
 	@property({ type: Boolean }) manual = false
+
 	@property({ type: Object }) shouldOpen?: (e: Event) => boolean
+	@property({ type: Array }) positionMiddleware?: Array<Middleware>
+	@property({ type: Object }) positionComputed?: (response: ComputePositionReturn) => void
 
 	protected readonly positionController = new PopoverPositionController(this)
 
