@@ -49,7 +49,7 @@ export class ApplicationLogo extends Component {
 		this.replaceColorVariable()
 		return html`
 			<a href='/'>
-				<img width='100%' src=${ifDefined(this.source)} />
+				<img src=${ifDefined(this.source)} />
 			</a>
 		`
 	}
