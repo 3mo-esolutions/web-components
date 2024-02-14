@@ -47,6 +47,20 @@ export class DataGridDefaultRow<TData, TDetailsElement extends Element | undefin
 				margin-inline-start: var(--mo-details-data-grid-start-margin);
 				width: calc(100% - var(--mo-details-data-grid-start-margin));
 			}
+
+			@supports (not selector(:host-context([data-has-details]))) {
+				:host([data-has-details=true]) #detailsContainer > [instanceof*=mo-data-grid]:not([headerHidden]) {
+					margin: 16px var(--mo-details-data-grid-start-margin);
+					width: calc(100% - calc(var(--mo-details-data-grid-start-margin) * 2));
+				}
+				:host([data-has-details=true]) #detailsContainer > [instanceof*=mo-data-grid] {
+					padding: 0px !important;
+				}
+				:host([data-has-details=true]) #detailsContainer > [instanceof*=mo-data-grid][headerHidden] {
+					margin-inline-start: var(--mo-details-data-grid-start-margin);
+					width: calc(100% - var(--mo-details-data-grid-start-margin));
+				}
+			}
 		`
 	}
 
