@@ -8,7 +8,6 @@ import { DataGrid } from './DataGrid.js'
 Localizer.register('de', {
 	'Settings': 'Einstellungen',
 	'Extended Filters': 'Weitere Filter',
-	'Export as Excel file': 'Aktuelle Ansicht nach Excel exportieren',
 	'Columns': 'Spalten',
 	'Font Size': 'Schriftgröße',
 	'Row Height': 'Zeilenhöhe',
