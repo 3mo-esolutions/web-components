@@ -7,7 +7,7 @@ import excelSvg from './excel.svg.js'
 
 Localizer.register('de', {
 	'${page:number} of ${maxPage:number}': '${page} von ${maxPage}',
-	'Export as Excel file': 'Als Excel-Datei exportieren'
+	'Export current view to Excel': 'Aktuelle Ansicht nach Excel exportieren'
 })
 
 Localizer.register('fa', {
@@ -179,7 +179,7 @@ export class DataGridFooter<TData> extends Component {
 			</style>
 			<img id='export'
 				src=${`data:image/svg+xml,${encodeURIComponent(excelSvg)}`}
-				${tooltip('Export as Excel file', TooltipPlacement.BlockStart)}
+				${tooltip('Export current view to Excel', TooltipPlacement.BlockStart)}
 				@click=${() => this.dataGrid.exportExcelFile()}
 			/>
 		`
