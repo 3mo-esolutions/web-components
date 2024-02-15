@@ -237,9 +237,6 @@
 			"path": "./packages/MutationObserver"
 		},
 		{
-			"path": "./packages/NoIntrinsicDimensionsController"
-		},
-		{
 			"path": "./packages/NumberFields"
 		},
 		{

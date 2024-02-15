@@ -1,5 +1,4 @@
 import { component, css, html, Component } from '@a11d/lit'
-import { NoIntrinsicDimensionsController } from '@3mo/no-intrinsic-dimensions-controller'
 
 /**
  * @slot - The content of the scroller
@@ -49,8 +48,6 @@ export class Scroller extends Component {
 			${Scroller.scrollbarStyles}
 		`
 	}
-
-	protected readonly noIntrinsicDimensionsController = new NoIntrinsicDimensionsController(this)
 
 	protected override get template() {
 		return html`
