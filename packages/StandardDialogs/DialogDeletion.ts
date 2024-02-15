@@ -22,8 +22,7 @@ export class DialogDeletion extends DialogComponent<Parameters> {
 				await this.parameters.deletionAction?.()
 				return
 			} catch (e: any) {
-				NotificationComponent.notifyError(e.message)
-				throw e
+				NotificationComponent.notifyAndThrowError(e)
 			}
 		}
 
