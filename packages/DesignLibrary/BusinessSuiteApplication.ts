@@ -245,16 +245,17 @@ export abstract class BusinessSuiteApplication extends Application {
 
 		if (navigation.children?.length) {
 			return html`
+				${!navigation.hasSeparator ? html.nothing : html`<mo-line></mo-line>`}
 				<mo-collapsible-list-item slot=${ifDefined(detailsSlot ? 'details' : undefined)}>
 					${iconTemplate}
 					${navigation.label}
 					${navigation.children?.map(child => this.getNavigationListItemTemplate(child, true))}
 				</mo-collapsible-list-item>
-				${!navigation.line ? html.nothing : html`<mo-line></mo-line>`}
 			`
 		}
 
 		return html`
+			${!navigation.hasSeparator ? html.nothing : html`<mo-line></mo-line>`}
 			<mo-navigation-list-item
 				slot=${ifDefined(detailsSlot ? 'details' : undefined)}
 				${!navigation.component ? html.nothing : routerLink({ component: navigation.component as PageComponent, matchMode: RouteMatchMode.IgnoreParameters, invocationHandler: () => this.drawerOpen = false })}
@@ -262,7 +263,6 @@ export abstract class BusinessSuiteApplication extends Application {
 				${iconTemplate}
 				${navigation.label}
 			</mo-navigation-list-item>
-			${!navigation.line ? html.nothing : html`<mo-line></mo-line>`}
 		`
 	}
 
