@@ -36,6 +36,7 @@ export abstract class BusinessSuiteDialogAuthenticator extends DialogAuthenticat
 	protected override get template() {
 		return html`
 			<mo-dialog blocking primaryOnEnter ${style({ '--mdc-dialog-scrim-color': 'var(--mo-color-background)' })}>
+				<mo-anchor slot='footer' ${style({ fontSize: 'small' })} @click=${() => this.resetPassword()}>${t('Reset Password')}</mo-anchor>
 				<mo-loading-button slot='primaryAction' type='raised'>${this.primaryButtonText}</mo-loading-button>
 				${this.additionalTemplate}
 				<mo-flex alignItems='center' gap='40px'>
@@ -80,12 +81,9 @@ export abstract class BusinessSuiteDialogAuthenticator extends DialogAuthenticat
 					${bind(this, 'password', { event: 'input' })}
 				></mo-field-password>
 
-				<mo-checkbox label=${t('Show Password')} ${bind(this, 'revealPassword')}></mo-checkbox>
-
 				<mo-flex direction='horizontal' justifyContent='space-between' alignItems='center' wrap='wrap-reverse'>
 					<mo-checkbox label=${t('Remember Password')} ${bind(this, 'shallRememberPassword')}></mo-checkbox>
-
-					<mo-anchor ${style({ fontSize: 'small' })} @click=${() => this.resetPassword()}>${t('Reset Password')}</mo-anchor>
+					<mo-checkbox label=${t('Show Password')} ${bind(this, 'revealPassword')}></mo-checkbox>
 				</mo-flex>
 			</mo-flex>
 		`
