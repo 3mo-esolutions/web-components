@@ -722,16 +722,15 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	private get rowsTemplate() {
 		const getRowTemplate = (data: TData, index: number) => this.getRowTemplate(data, index)
 		const shallVirtualize = !this.preventVerticalContentScroll && this.renderData.length > this.virtualizationThreshold
-		const content = shallVirtualize === false
-			? this.renderData.map(getRowTemplate)
-			: html`<mo-virtualized-scroller .items=${this.renderData} .getItemTemplate=${getRowTemplate as any}></mo-virtualized-scroller>`
-		return html`
+		return shallVirtualize ? html`
+			<mo-virtualized-scroller id='rowsContainer' .items=${this.renderData} .getItemTemplate=${getRowTemplate}></mo-virtualized-scroller>
+		` : html`
 			<mo-scroller id='rowsContainer'
 				${style({ gridRow: '2', gridColumn: '1 / last-line', overflowX: 'hidden' })}
 				${observeResize(() => this.requestUpdate())}
 				@scroll=${this.handleScroll}
 			>
-				${content}
+				${this.renderData.map(getRowTemplate)}
 			</mo-scroller>
 		`
 	}
@@ -742,6 +741,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				.dataGrid=${this as any}
 				.data=${data}
 				?data-has-alternating-background=${index !== undefined && this.hasAlternatingBackground && index % 2 === 1}
+				?data-grid-has-details=${this.hasDetails}
 				?selected=${live(this.selectedData.includes(data))}
 				?detailsOpen=${live(this.openDetailedData.includes(data))}
 				@detailsOpenChange=${(event: CustomEvent<boolean>) => this.handleRowDetailsOpenChange(data, event.detail)}

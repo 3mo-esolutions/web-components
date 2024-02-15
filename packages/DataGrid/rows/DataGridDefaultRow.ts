@@ -34,18 +34,18 @@ export class DataGridDefaultRow<TData, TDetailsElement extends Element | undefin
 				background: var(--mo-color-transparent-gray-1);
 			}
 
-			:host-context(:not([hasDetails]):not([selectionMode=single]):not([selectionMode=multiple])) #detailsContainer > [instanceof*=mo-data-grid]:not([headerHidden]) {
+			:host([data-grid-has-details]) #detailsContainer > [instanceof*=mo-data-grid][headerHidden] {
+				margin-inline-start: var(--mo-details-data-grid-start-margin);
+				width: calc(100% - var(--mo-details-data-grid-start-margin));
+			}
+
+			:host([data-grid-has-details]) #detailsContainer > [instanceof*=mo-data-grid]:not([headerHidden]) {
 				margin: 16px var(--mo-details-data-grid-start-margin);
 				width: calc(100% - calc(var(--mo-details-data-grid-start-margin) * 2));
 			}
 
-			:host-context(:not([hasDetails]):not([selectionMode=single]):not([selectionMode=multiple])) #detailsContainer > [instanceof*=mo-data-grid] {
+			:host([data-grid-has-details]) #detailsContainer > [instanceof*=mo-data-grid] {
 				padding: 0px !important;
-			}
-
-			:host-context(:not([hasDetails]):not([selectionMode=single]):not([selectionMode=multiple])) #detailsContainer > [instanceof*=mo-data-grid][headerHidden] {
-				margin-inline-start: var(--mo-details-data-grid-start-margin);
-				width: calc(100% - var(--mo-details-data-grid-start-margin));
 			}
 		`
 	}

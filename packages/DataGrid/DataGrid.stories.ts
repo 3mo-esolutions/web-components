@@ -128,8 +128,12 @@ export const RowDetails = story({
 			.data=${fivePeople}
 			?multipleDetails=${multipleDetails}
 			?detailsOnClick=${detailsOnClick}
-			.getRowDetailsTemplate=${(p: Person) => html`
+			.getRowDetailsTemplate=${(p: Person) => Math.random() > 0.5 ? html`
 				<div style='margin: 10px; opacity: 0.5'>${p.name} details</div>
+			` : html`
+				<mo-data-grid .data=${generatePeople(5)} style='height: 200px'>
+					${columnsTemplate}
+				</mo-data-grid>
 			`}
 		>
 			${columnsTemplate}
