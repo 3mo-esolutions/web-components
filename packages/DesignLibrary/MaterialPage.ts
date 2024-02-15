@@ -7,6 +7,7 @@ import { SlotController } from '@3mo/slot-controller'
  *
  * @attr heading
  * @attr fullHeight
+ * @attr headerHidden
  *
  * @slot - Page content
  * @slot heading
@@ -21,6 +22,7 @@ export class MaterialPage extends Component {
 
 	@property({ updated(this: MaterialPage, value: string) { this.pageHeadingChange.dispatch(value) } }) heading = ''
 	@property({ type: Boolean, reflect: true }) fullHeight = false
+	@property({ type: Boolean }) headerHidden = false
 
 	static override get styles() {
 		return css`
@@ -83,13 +85,23 @@ export class MaterialPage extends Component {
 		return this.slotController.hasAssignedElements('headingDetails')
 	}
 
+	private get hasHeader() {
+		return !this.headerHidden && (this.hasHeading || this.hasHeadingDetails)
+	}
+
 	protected override get template() {
 		return html`
 			<mo-flex id='container' gap='var(--mo-thickness-xl)'>
-				<mo-flex part='header' direction='horizontal' justifyContent='space-between' alignItems='center'>
-					${this.headingContentTemplate}
-				</mo-flex>
+				${this.headerTemplate}
 				${this.contentTemplate}
+			</mo-flex>
+		`
+	}
+
+	protected get headerTemplate() {
+		return !this.hasHeader ? html.nothing : html`
+			<mo-flex part='header' direction='horizontal' justifyContent='space-between' alignItems='center'>
+				${this.headingContentTemplate}
 			</mo-flex>
 		`
 	}

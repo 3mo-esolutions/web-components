@@ -61,11 +61,11 @@ export class PopoverPositionController extends Controller {
 			return
 		}
 
-		const anchor = !this.host.coordinates ? this.host.anchor : {
-			getBoundingClientRect: () => new DOMRect(...this.host.coordinates as [number, number], 0, 0),
+		const anchor = !this.host.coordinates && this.host.anchor ? this.host.anchor : {
+			getBoundingClientRect: () => new DOMRect(...this.host.coordinates ?? [0, 0], 0, 0),
 		}
 
-		const response = await computePosition(anchor!, this.host, {
+		const response = await computePosition(anchor, this.host, {
 			strategy: this.host.fixed ? 'fixed' : 'absolute',
 			placement: this.floatingUiPlacement,
 			middleware: [
