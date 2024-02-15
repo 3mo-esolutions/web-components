@@ -16,6 +16,7 @@ const asteriskSyntaxConverter = {
  * @attr columns
  * @attr autoRows
  * @attr autoColumns
+ * @attr autoFlow
  * @attr rowGap
  * @attr columnGap
  * @attr gap
@@ -32,6 +33,7 @@ export class Grid extends Component {
 	@styleProperty({ styleKey: 'gridTemplateColumns', styleConverter: asteriskSyntaxConverter }) columns!: CSS.Property.GridTemplateColumns<string>
 	@styleProperty({ styleKey: 'gridAutoRows' }) autoRows!: CSS.Property.GridAutoRows<string>
 	@styleProperty({ styleKey: 'gridAutoColumns' }) autoColumns!: CSS.Property.GridAutoColumns<string>
+	@styleProperty({ styleKey: 'gridAutoFlow' }) autoFlow!: CSS.Property.GridAutoFlow
 	@styleProperty() rowGap!: CSS.Property.RowGap<string>
 	@styleProperty() columnGap!: CSS.Property.ColumnGap<string>
 	@styleProperty() gap!: CSS.Property.Gap<string>

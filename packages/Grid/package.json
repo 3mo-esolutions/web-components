@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/grid",
-	"version": "1.1.1",
+	"version": "1.2.0",
 	"description": "A simple wrapper web-component for CSS Grid Layout.",
 	"repository": {
 		"type": "git",
