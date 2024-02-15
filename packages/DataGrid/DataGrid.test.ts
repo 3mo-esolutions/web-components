@@ -4,7 +4,7 @@ import { html } from '@a11d/lit'
 
 type Person = { id: number, name: string, birthDate: DateTime }
 
-const people = [
+const people: Array<Person> = [
 	{ id: 1, name: 'John', birthDate: new DateTime(2000, 0, 0) },
 	{ id: 2, name: 'Jane', birthDate: new DateTime(2000, 0, 0) },
 	{ id: 3, name: 'Joe', birthDate: new DateTime(2000, 0, 0) },
@@ -87,6 +87,28 @@ describe('DataGrid', () => {
 			await expectClickingTheRowLeadsToSelection(fixture, true, true)
 		}
 
+		const shouldDispatchSelectionChange = async (
+			fixture: ComponentTestFixture<TestDataGrid>,
+			peopleToClick: Array<Person>,
+			shouldDispatch: boolean,
+		) => {
+			fixture.component.selectOnClick = true
+			spyOn(fixture.component.selectionChange, 'dispatch')
+
+			for (const person of peopleToClick) {
+				const row = fixture.component.rows.find(row => row.data === person) as DataGridRow<Person>
+				row.renderRoot.querySelector('#contentContainer')?.dispatchEvent(new MouseEvent('click'))
+				await fixture.updateComplete
+			}
+
+			if (!shouldDispatch) {
+				expect(fixture.component.selectionChange.dispatch).toHaveBeenCalledTimes(0)
+			} else {
+				expect(fixture.component.selectionChange.dispatch).toHaveBeenCalledTimes(peopleToClick.length)
+				expect(fixture.component.selectionChange.dispatch).toHaveBeenCalledWith(peopleToClick)
+			}
+		}
+
 		describe('None', () => {
 			const fixture = new ComponentTestFixture<TestDataGrid>(html`
 				<test-data-grid .getRowContextMenuTemplate=${getRowContextMenuTemplate}></test-data-grid>
@@ -98,6 +120,8 @@ describe('DataGrid', () => {
 				expect(fixture.component.headerSelectionCheckbox).not.toBeDefined()
 				expect(fixture.component.rowsSelectionCheckboxes.length).toBe(0)
 			})
+
+			it('should not dispatch the "selectionChange" event when a row is clicked', () => shouldDispatchSelectionChange(fixture, [people[0]], false))
 		})
 
 		describe('Single', () => {
@@ -116,6 +140,7 @@ describe('DataGrid', () => {
 			it('should not select the row when clicked', () => expectClickingTheRowLeadsToSelection(fixture, false))
 			it('should select the row when clicked and selectOnClick is true', () => shouldSelectTheRowWhenSelectOnClick(fixture))
 			it('should select the row when clicked and selectionCheckboxesHidden is true', () => shouldSelectTheRowWhenSelectionCheckboxesHidden(fixture))
+			it('should dispatch the "selectionChange" event when a row is clicked', () => shouldDispatchSelectionChange(fixture, [people[0]], true))
 		})
 
 		describe('Multiple', () => {
@@ -134,6 +159,7 @@ describe('DataGrid', () => {
 			it('should not select the row when clicked', () => expectClickingTheRowLeadsToSelection(fixture, false))
 			it('should select the row when clicked and selectOnClick is true', () => shouldSelectTheRowWhenSelectOnClick(fixture))
 			it('should select the row when clicked and selectionCheckboxesHidden is true', () => shouldSelectTheRowWhenSelectionCheckboxesHidden(fixture))
+			it('should dispatch the "selectionChange" event when a row is clicked', () => shouldDispatchSelectionChange(fixture, people, true))
 		})
 	})
 
