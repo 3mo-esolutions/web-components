@@ -217,10 +217,24 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	}
 
 	protected get detailsTemplate() {
-		return !this.hasDetails
-			? html.nothing
-			: this.dataGrid.getRowDetailsTemplate?.(this.data)
-			?? html.nothing
+		if (!this.hasDetails) {
+			return html.nothing
+		}
+
+		if (this.dataGrid.getRowDetailsTemplate) {
+			return this.dataGrid.getRowDetailsTemplate(this.data)
+		}
+
+		const subData = this.dataGrid.getSubData(this.data)
+		if (subData) {
+			return html`
+				<mo-flex style='width: 100%; padding: 0px'>
+					${subData.map(data => this.dataGrid.getRowTemplate(data))}
+				</mo-flex>
+			`
+		}
+
+		return html.nothing
 	}
 
 	private setSelection(selected: boolean) {

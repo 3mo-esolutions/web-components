@@ -32,6 +32,11 @@ const generatePeople = (count: number) => {
 const fivePeople = generatePeople(5)
 const thousandPeople = generatePeople(1000)
 
+const fivePeopleWithChildren = fivePeople.map(p => ({
+	...p,
+	children: generatePeople(Math.floor(Math.random() * 10) + 1)
+}))
+
 const columnsTemplate = html`
 	<mo-data-grid-column-number hidden nonEditable heading='ID' dataSelector='id'></mo-data-grid-column-number>
 	<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
@@ -126,6 +131,24 @@ export const RowDetails = story({
 			.getRowDetailsTemplate=${(p: Person) => html`
 				<div style='margin: 10px; opacity: 0.5'>${p.name} details</div>
 			`}
+		>
+			${columnsTemplate}
+		</mo-data-grid>
+	`
+})
+
+export const WithAutoSubDataGrid = story({
+	args: {
+		multipleDetails: false,
+		detailsOnClick: false,
+	},
+	render: ({ multipleDetails, detailsOnClick }) => html`
+		<mo-data-grid style='height: 500px'
+			selectionMode='multiple'
+			?multipleDetails=${multipleDetails}
+			?detailsOnClick=${detailsOnClick}
+			.data=${fivePeopleWithChildren}
+			subDataGridDataSelector='children'
 		>
 			${columnsTemplate}
 		</mo-data-grid>

@@ -169,7 +169,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	@property({ type: Object }) getRowDetailsTemplate?: (data: TData) => HTMLTemplateResult
 	@property({ type: Boolean }) multipleDetails = false
-	@property({ updated: subDataGridSelectorChanged }) subDataGridDataSelector?: KeyPathOf<TData>
+	@property() subDataGridDataSelector?: KeyPathOf<TData>
 	@property({ type: Object }) hasDataDetail?: (data: TData) => boolean
 	@property({ type: Boolean }) detailsOnClick = false
 	@property({ type: Array }) protected openDetailedData = new Array<TData>()
@@ -237,7 +237,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				this.deselectAll()
 				break
 			case DataGridSelectionBehaviorOnDataChange.Maintain:
-				this.select(this.previouslySelectedData)
+				this.selectionController.selectPreviouslySelectedData()
 				break
 		}
 		this.dataChange.dispatch(data)
@@ -269,11 +269,22 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	get hasDetails() {
 		return !!this.getRowDetailsTemplate && this.detailedData.length > 0
+			|| this.data.some(d => !!this.getSubData(d))
+	}
+
+	getSubData(data: TData): Array<TData> | undefined {
+		if (!this.subDataGridDataSelector) {
+			return undefined
+		}
+		const subValue = getValueByKeyPath(data, this.subDataGridDataSelector)
+		return Array.isArray(subValue) && subValue.length > 0 ? subValue : undefined
 	}
 
 	hasDetail(data: TData) {
-		const hasAutomatedSubDataGrid = !this.subDataGridDataSelector || this.subDataGridDataSelector && Array.isArray(getValueByKeyPath(data, this.subDataGridDataSelector))
-		return hasAutomatedSubDataGrid && (this.hasDataDetail?.(data) ?? true)
+		return !!this.getSubData(data) || (
+			this.hasDataDetail?.(data) ??
+			[undefined, html.nothing].includes(this.getRowDetailsTemplate?.(data)) === false
+		)
 	}
 
 	get allRowDetailsOpen() {
@@ -418,7 +429,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}
 
 	get dataLength() {
-		return this.data.length
+		return this.flattenedData.length
 	}
 
 	get maxPage() {
@@ -725,12 +736,12 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		`
 	}
 
-	protected getRowTemplate(data: TData, index: number) {
+	getRowTemplate(data: TData, index?: number) {
 		return staticHtml`
 			<${this.rowElementTag} part='row'
 				.dataGrid=${this as any}
 				.data=${data}
-				?data-has-alternating-background=${this.hasAlternatingBackground && index % 2 === 1}
+				?data-has-alternating-background=${index !== undefined && this.hasAlternatingBackground && index % 2 === 1}
 				?selected=${live(this.selectedData.includes(data))}
 				?detailsOpen=${live(this.openDetailedData.includes(data))}
 				@detailsOpenChange=${(event: CustomEvent<boolean>) => this.handleRowDetailsOpenChange(data, event.detail)}
@@ -938,6 +949,33 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		}
 	}
 
+	private *getFlattenedData() {
+		if (!this.subDataGridDataSelector) {
+			yield* this.data
+			return
+		}
+
+		const flatten = (data: TData): Array<TData> => {
+			const subData = getValueByKeyPath(data, this.subDataGridDataSelector!)
+			return [
+				data,
+				...!Array.isArray(subData)
+					? []
+					: subData.flatMap(flatten)
+			]
+		}
+
+		for (const data of this.data) {
+			yield* flatten(data)
+		}
+
+		return
+	}
+
+	get flattenedData() {
+		return [...this.getFlattenedData()]
+	}
+
 	protected get sortedData() {
 		const sorting = this.getSorting()
 
@@ -1023,49 +1061,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	get visibleColumns() {
 		return this.columns.filter(c => c.hidden === false)
 	}
-
-	get previouslySelectedData() {
-		const hasId = this.selectedData.every(d => Object.keys(d as any).includes('id'))
-		if (hasId) {
-			const selectedIds = this.selectedData.map((d: any) => d.id) as Array<number>
-			return this.data.filter((d: any) => selectedIds.includes(d.id))
-		} else {
-			const selectedDataJson = this.selectedData.map(d => JSON.stringify(d))
-			return this.data.filter(d => selectedDataJson.includes(JSON.stringify(d)))
-		}
-	}
-}
-
-function subDataGridSelectorChanged<TData>(this: DataGrid<TData>) {
-	const selector = this.subDataGridDataSelector
-
-	if (selector === undefined || !!this.getRowDetailsTemplate) {
-		return
-	}
-
-	this.getRowDetailsTemplate = (data: TData) => html`
-		<mo-data-grid ${style({ padding: '0px' })}
-			.data=${getValueByKeyPath(data, selector)}
-			headerHidden
-			sidePanelHidden
-			.columns=${this.columns}
-			.subDataGridDataSelector=${this.subDataGridDataSelector}
-			.hasDataDetail=${this.hasDataDetail}
-			.selectionMode=${this.selectionMode}
-			.isDataSelectable=${this.isDataSelectable}
-			?selectOnClick=${this.selectOnClick}
-			?selectionCheckboxesHidden=${this.selectionCheckboxesHidden}
-			?primaryContextMenuItemOnDoubleClick=${this.primaryContextMenuItemOnDoubleClick}
-			?multipleDetails=${this.multipleDetails}
-			?detailsOnClick=${this.detailsOnClick}
-			.getRowContextMenuTemplate=${this.getRowContextMenuTemplate}
-			editability=${this.editability}
-			@rowClick=${(e: CustomEvent<DataGridRow<TData, undefined>>) => this.rowClick.dispatch(e.detail)}
-			@rowDoubleClick=${(e: CustomEvent<DataGridRow<TData, undefined>>) => this.rowDoubleClick.dispatch(e.detail)}
-			@rowMiddleClick=${(e: CustomEvent<DataGridRow<TData, undefined>>) => this.rowMiddleClick.dispatch(e.detail)}
-			@cellEdit=${(e: CustomEvent<DataGridCell<any, TData, undefined>>) => this.cellEdit.dispatch(e.detail)}
-		></mo-data-grid>
-	`
 }
 
 declare global {
