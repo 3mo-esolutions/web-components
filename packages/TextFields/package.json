@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/text-fields",
-	"version": "0.0.7",
+	"version": "0.0.8",
 	"description": "A set of text field component web components.",
 	"repository": {
 		"type": "git",
@@ -31,6 +31,8 @@
 	"dependencies": {
 		"@a11d/lit": "x",
 		"tslib": "x",
+		"@3mo/icon": "x",
+		"@3mo/icon-button": "x",
 		"@3mo/field": "x",
 		"@3mo/localization": "x"
 	},

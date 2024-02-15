@@ -69,14 +69,19 @@ export type FieldTextAutoComplete =
  */
 @component('mo-field-text')
 export class FieldText extends InputFieldComponent<string> {
-	protected readonly type: string = 'text'
-	protected readonly inputType: string = 'text'
-
 	@property() value?: string
 	@property({ type: Number }) minLength?: number
 	@property({ type: Number }) maxLength?: number
 	@property() pattern?: string
 	@property() autoComplete?: FieldTextAutoComplete
+
+	protected get type(): string {
+		return 'text'
+	}
+
+	protected get inputType(): string {
+		return 'text'
+	}
 
 	protected valueToInputValue(value?: string) {
 		return value ?? ''

@@ -1,4 +1,4 @@
-import { html, state, style } from '@a11d/lit'
+import { bind, html, state, style } from '@a11d/lit'
 import { DialogAuthenticator as DialogAuthenticatorBase } from '@a11d/lit-application-authentication'
 import { Localizer } from '@3mo/localization'
 import { LocalStorage } from '@a11d/local-storage'
@@ -13,6 +13,7 @@ Localizer.register('de', {
 	'Username': 'Benutzer',
 	'Password': 'Passwort',
 	'Remember Password': 'Passwort merken',
+	'Show Password': 'Passwort anzeigen',
 	'Reset Password': 'Passwort zurücksetzen',
 	'Welcome': 'Willkommen',
 	'Login': 'Anmelden'
@@ -29,6 +30,8 @@ export abstract class BusinessSuiteDialogAuthenticator extends DialogAuthenticat
 	protected abstract requestPasswordReset(): Promise<void>
 
 	@state() primaryButtonText = t('Login')
+
+	@state() revealPassword = false
 
 	protected override get template() {
 		return html`
@@ -69,22 +72,18 @@ export abstract class BusinessSuiteDialogAuthenticator extends DialogAuthenticat
 			<mo-flex gap='var(--mo-thickness-l)' ${style({ flex: '1', width: '100%', paddingBottom: '25px' })}>
 				<mo-field-text data-focus
 					label=${t('Username')}
-					.value=${this.username}
-					@input=${(e: CustomEvent<string>) => this.username = e.detail}
+					${bind(this, 'username', { event: 'input' })}
 				></mo-field-text>
 
-				<mo-field-password
-					label=${t('Password')}
-					.value=${this.password}
-					@input=${(e: CustomEvent<string>) => this.password = e.detail}
+				<mo-field-password label=${t('Password')}
+					?reveal=${this.revealPassword}
+					${bind(this, 'password', { event: 'input' })}
 				></mo-field-password>
 
+				<mo-checkbox label=${t('Show Password')} ${bind(this, 'revealPassword')}></mo-checkbox>
+
 				<mo-flex direction='horizontal' justifyContent='space-between' alignItems='center' wrap='wrap-reverse'>
-					<mo-checkbox
-						label=${t('Remember Password')}
-						?selected=${this.shallRememberPassword}
-						@change=${(e: CustomEvent<boolean>) => this.shallRememberPassword = e.detail}
-					></mo-checkbox>
+					<mo-checkbox label=${t('Remember Password')} ${bind(this, 'shallRememberPassword')}></mo-checkbox>
 
 					<mo-anchor ${style({ fontSize: 'small' })} @click=${() => this.resetPassword()}>${t('Reset Password')}</mo-anchor>
 				</mo-flex>
