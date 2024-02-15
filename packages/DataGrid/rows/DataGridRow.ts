@@ -1,6 +1,5 @@
 import { css, property, Component, html, queryAll, style, HTMLTemplateResult, LitElement, event } from '@a11d/lit'
 import { ContextMenu } from '@3mo/context-menu'
-import { KeyboardController } from '@3mo/keyboard-controller'
 import { ColumnDefinition } from '../ColumnDefinition.js'
 import { DataGrid, DataGridCell, DataGridPrimaryContextMenuItem, DataGridSelectionMode } from '../index.js'
 
@@ -66,7 +65,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				width: 100%;
 			}
 
-			:host(:hover) {
+			:host(:hover) #contentContainer {
 				color: inherit;
 				background: var(--mo-color-accent-transparent) !important;
 			}
@@ -88,10 +87,6 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			#contentContainer {
 				cursor: pointer;
 				transition: 250ms;
-			}
-
-			:host([detailsOpen]) #contentContainer {
-				background: var(--mo-data-grid-row-background-on-opened-detail-element, var(--mo-color-accent-transparent));
 			}
 
 			:host([selected]) #contentContainer, :host([contextMenuOpen]) #contentContainer {
@@ -228,42 +223,9 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			?? html.nothing
 	}
 
-	private setSelection(value: boolean) {
-		if (this.dataGrid.hasSelection && this.dataGrid.isSelectable(this.data)) {
-			this.selected = value
-
-			const lastActiveSelection = this.dataGrid.lastActiveSelection
-			let dataToSelect = this.dataGrid.selectedData
-
-			if (this.dataGrid.selectionMode === DataGridSelectionMode.Multiple && KeyboardController.shift && lastActiveSelection) {
-				const indexes = [
-					this.dataGrid.data.findIndex(data => data === lastActiveSelection.data),
-					this.dataGrid.data.findIndex(data => data === this.data),
-				].sort((a, b) => a - b)
-				const range = this.dataGrid.data.slice(indexes[0]!, indexes[1]! + 1)
-				dataToSelect = lastActiveSelection.selected
-					? [...dataToSelect, ...range]
-					: dataToSelect.filter(d => range.includes(d) === false)
-			} else {
-				if (value) {
-					if (this.dataGrid.selectionMode === DataGridSelectionMode.Multiple) {
-						if (this.dataGrid.selectionCheckboxesHidden) {
-							dataToSelect = [this.data]
-						} else {
-							dataToSelect = [...dataToSelect, this.data]
-						}
-					} else if (this.dataGrid.selectionMode === DataGridSelectionMode.Single) {
-						dataToSelect = [this.data]
-					}
-				} else {
-					dataToSelect = dataToSelect.filter(data => data !== this.data)
-				}
-			}
-
-			this.dataGrid.lastActiveSelection = { data: this.data, selected: value }
-
-			this.dataGrid.select(dataToSelect.filter((value, index, self) => self.indexOf(value) === index))
-		}
+	private setSelection(selected: boolean) {
+		this.selected = selected
+		this.dataGrid.selectionController.setSelection(this.data, selected)
 	}
 
 	protected handleContentClick() {

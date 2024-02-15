@@ -11,6 +11,7 @@ import { observeResize } from '@3mo/resize-observer'
 import { Localizer } from '@3mo/localization'
 import { ContextMenu } from '@3mo/context-menu'
 import { CsvGenerator, DataGridColumn, DataGridSidePanelTab, type ColumnDefinition, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, type DataGridSidePanel } from './index.js'
+import { DataGridSelectionController } from './DataGridSelectionController.js'
 
 Localizer.register('en', {
 	'${count:pluralityNumber} entries selected': [
@@ -211,8 +212,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	@query('mo-data-grid-side-panel') private readonly sidePanel?: DataGridSidePanel<TData>
 	@query('slot[name=column]') private readonly columnsSlot?: HTMLSlotElement
 
-	lastActiveSelection?: { data: TData, selected: boolean }
-
 	setPage(page: number) {
 		this.page = page
 		this.pageChange.dispatch(page)
@@ -244,26 +243,24 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		this.dataChange.dispatch(data)
 	}
 
-	selectAll() {
-		if (this.selectionMode === DataGridSelectionMode.Multiple) {
-			this.select([...this.data])
-		}
+	get hasSelection() {
+		return this.selectionController.hasSelection
 	}
 
-	deselectAll() {
-		this.select([])
+	selectAll(...parameters: Parameters<typeof this.selectionController.selectAll>) {
+		return this.selectionController.selectAll(...parameters)
 	}
 
-	select(data: Array<TData>) {
-		if (this.hasSelection) {
-			const selectableData = data.filter(d => this.isSelectable(d))
-			this.selectedData = selectableData
-			this.selectionChange.dispatch(selectableData)
-		}
+	deselectAll(...parameters: Parameters<typeof this.selectionController.deselectAll>) {
+		return this.selectionController.deselectAll(...parameters)
 	}
 
-	isSelectable(data: TData) {
-		return this.isDataSelectable?.(data) ?? true
+	select(...parameters: Parameters<typeof this.selectionController.select>) {
+		return this.selectionController.select(...parameters)
+	}
+
+	isSelectable(...parameters: Parameters<typeof this.selectionController.isSelectable>) {
+		return this.selectionController.isSelectable(...parameters)
 	}
 
 	get detailedData() {
@@ -356,10 +353,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		}
 	}
 
-	get hasSelection() {
-		return this.selectionMode !== DataGridSelectionMode.None
-	}
-
 	get hasContextMenu() {
 		return this.getRowContextMenuTemplate !== undefined
 	}
@@ -448,6 +441,8 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	protected readonly smallScreenObserverController = new MediaQueryController(this, '(max-width: 768px)')
 
 	readonly themeController = new ThemeController(this)
+
+	readonly selectionController = new DataGridSelectionController(this)
 
 	protected override updated(...parameters: Parameters<Component['updated']>) {
 		this.header?.requestUpdate()

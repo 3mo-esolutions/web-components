@@ -2,7 +2,7 @@ import { Downloader } from '@3mo/downloader'
 import type { DataGrid } from './DataGrid.js'
 
 export class CsvGenerator {
-	static generate<TData>(dataGrid: DataGrid<TData>) {
+	static generate<TData>(dataGrid: DataGrid<TData, any>) {
 		const csv = [
 			dataGrid.visibleColumns.map(c => c.heading),
 			...dataGrid.data.map(data => dataGrid.visibleColumns.map(c => getValueByKeyPath(data, c.dataSelector)?.toString() ?? '').join(',')),
