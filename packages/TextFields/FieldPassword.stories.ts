@@ -10,6 +10,7 @@ export default meta({
 		label: 'Label',
 		required: false,
 		dense: false,
+		preview: false,
 		disabled: false,
 		readonly: false,
 		value: 'Password',
@@ -24,7 +25,7 @@ export default meta({
 })
 
 export const Password = story({
-	render: ({ label, required, disabled, dense, readonly, value }) => html`
-		<mo-field-password label=${label} ?required=${required} ?disabled=${disabled} ?readonly=${readonly} ?dense=${dense} value=${value}></mo-field-password>
+	render: ({ label, required, disabled, dense, readonly, value, preview }) => html`
+		<mo-field-password label=${label} ?required=${required} ?disabled=${disabled} ?preview=${preview} ?readonly=${readonly} ?dense=${dense} value=${value}></mo-field-password>
 	`
 })
