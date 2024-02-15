@@ -30,26 +30,28 @@ export class SplitterResizerHost extends Component {
 	protected slotController = new SlotController(this)
 
 	@eventListener('mousedown')
-	protected handleMouseDown() {
+	@eventListener('touchstart')
+	protected startResize() {
 		this.resizing = true
 		!this.resizerElement ? void 0 : this.resizerElement.hostResizing = true
 		this.resizeStart.dispatch()
 	}
 
 	@eventListener({ target: window, type: 'mouseup' })
-	protected handleWindowMouseUp() {
+	@eventListener({ target: window, type: 'touchend' })
+	protected endResize() {
 		this.resizing = false
 		!this.resizerElement ? void 0 : this.resizerElement.hostResizing = false
 		this.resizeStop.dispatch()
 	}
 
-	@eventListener('mouseenter')
-	protected handleMouseEnter() {
+	@eventListener('pointerenter')
+	protected hoverStart() {
 		!this.resizerElement ? void 0 : this.resizerElement.hostHover = true
 	}
 
-	@eventListener('mouseleave')
-	protected handleMouseLeave() {
+	@eventListener('pointerleave')
+	protected hoverEnd() {
 		!this.resizerElement ? void 0 : this.resizerElement.hostHover = false
 	}
 

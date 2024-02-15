@@ -1,4 +1,4 @@
-import { component, html, property, Component, css, styleMap, queryAll, ifDefined, eventListener, style } from '@a11d/lit'
+import { component, html, property, Component, css, styleMap, queryAll, ifDefined, eventListener, style, state } from '@a11d/lit'
 import { Flex } from '@3mo/flex'
 import { MutationController } from '@3mo/mutation-observer'
 import { SplitterItem, SplitterResizerHost } from './index.js'
@@ -23,6 +23,8 @@ export class Splitter extends Component {
 	@property({ type: Object }) resizerTemplate = html`<mo-splitter-resizer-knob></mo-splitter-resizer-knob>`
 
 	@property({ type: Boolean, reflect: true }) protected resizing = false
+
+	@state({ updated(this: Splitter) { this.resize() } }) private requestResizeKey = 0
 
 	@queryAll('mo-splitter-resizer-host') private readonly resizerElements!: Array<SplitterResizerHost>
 
@@ -59,31 +61,44 @@ export class Splitter extends Component {
 		`
 	}
 
-	@eventListener({ target: window, type: 'mousemove' })
-	protected handleMouseMove(e: MouseEvent) {
+	private resizeRequestEvent?: TouchEvent | PointerEvent
+	@eventListener({ target: window, type: 'pointermove' })
+	@eventListener({ target: window, type: 'touchmove', options: { passive: false } as any })
+	protected requestResize(e: TouchEvent | PointerEvent) {
+		if (this.resizing) {
+			e.preventDefault()
+			this.resizeRequestEvent = e
+			this.requestResizeKey++
+		}
+	}
+
+	protected resize() {
 		const resizingResizer = this.resizerElements.find(r => r.resizing)
 		const resizingItem = !resizingResizer ? undefined : this.items[this.resizerElements.indexOf(resizingResizer)]
-		if (resizingItem) {
-			const oldTotalSize = this.totalSize
-			const { clientX, clientY } = e
-			const { left, top, right, bottom } = resizingItem.getBoundingClientRect()
-
-			const getSize = () => {
-				switch (this.direction) {
-					case 'horizontal':
-						return clientX - left
-					case 'horizontal-reversed':
-						return right - clientX
-					case 'vertical':
-						return clientY - top
-					case 'vertical-reversed':
-						return bottom - clientY
-					default:
-						throw new Error(`Invalid direction: ${this.direction}`)
-				}
-			}
-			resizingItem.size = `${getSize() / oldTotalSize * 100}%`
+		if (!resizingItem) {
+			return
 		}
+		const oldTotalSize = this.totalSize
+		const e = this.resizeRequestEvent!
+		const clientX = e instanceof TouchEvent ? e.touches[0]!.clientX : e.clientX
+		const clientY = e instanceof TouchEvent ? e.touches[0]!.clientY : e.clientY
+		const { left, top, right, bottom } = resizingItem.getBoundingClientRect()
+
+		const getSize = () => {
+			switch (this.direction) {
+				case 'horizontal':
+					return clientX - left
+				case 'horizontal-reversed':
+					return right - clientX
+				case 'vertical':
+					return clientY - top
+				case 'vertical-reversed':
+					return bottom - clientY
+				default:
+					throw new Error(`Invalid direction: ${this.direction}`)
+			}
+		}
+		resizingItem.size = `${getSize() / oldTotalSize * 100}%`
 	}
 
 	protected override get template() {
