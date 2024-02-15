@@ -17,7 +17,7 @@ export class PagePreferences extends PageComponent {
 
 	protected override get template() {
 		return html`
-			<mo-page fullHeight heading='Benutzereinstellungen'>
+			<mo-page fullHeight heading='Benutzereinstellungen' headerHidden>
 				<mo-split-page-host>
 					<mo-card slot='sidebar' ${style({ height: '100%', '--mo-card-body-padding': '0px' })}>
 						<mo-flex ${style({ height: '100%' })} gap='var(--mo-thickness-xl)' justifyContent='space-between'>

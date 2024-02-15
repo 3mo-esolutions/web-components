@@ -82,7 +82,7 @@ export class PagePreferencesUserInterface extends PageSettings {
 
 	protected override get template() {
 		return html`
-			<mo-page heading='User-Interface'>
+			<mo-page heading='User-Interface' headerHidden>
 				<mo-flex gap='18px'>
 					<mo-section heading='Farbthemen'>
 						<mo-card ${style({ flex: '1', alignItems: 'center' })}>

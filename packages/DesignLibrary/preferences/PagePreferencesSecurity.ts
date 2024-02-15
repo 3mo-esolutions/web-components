@@ -10,7 +10,7 @@ import { BusinessSuiteDialogAuthenticator } from '../BusinessSuiteDialogAuthenti
 export class PagePreferencesSecurity extends PageSettings {
 	protected override get template() {
 		return html`
-			<mo-page heading='Sicherheit'>
+			<mo-page heading='Sicherheit' headerHidden>
 				<mo-flex gap='6px'>
 					<mo-checkbox-list-item
 						?selected=${DialogDeletion.deletionConfirmation.value}
