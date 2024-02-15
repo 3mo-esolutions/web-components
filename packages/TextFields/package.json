@@ -31,6 +31,8 @@
 	"dependencies": {
 		"@a11d/lit": "x",
 		"tslib": "x",
+		"@3mo/icon": "x",
+		"@3mo/icon-button": "x",
 		"@3mo/field": "x",
 		"@3mo/localization": "x"
 	},

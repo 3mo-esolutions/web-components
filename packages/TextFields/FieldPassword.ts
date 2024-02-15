@@ -4,19 +4,16 @@ import { FieldText, FieldTextAutoComplete } from './FieldText.js'
 /**
  * @element mo-field-password
  *
+ * @attr reveal
  * @attr autoComplete
  */
 @component('mo-field-password')
 export class FieldPassword extends FieldText {
-	@property({
-		type: Boolean,
-		updated(this: FieldPassword) {
-			this.type = this.preview ? 'text' : 'password'
-			this.requestUpdate()
-		},
-	}) preview = false
+	@property({ type: Boolean }) reveal = false
 
-	protected override type = this.preview ? 'text' : 'password'
+	protected override get type() {
+		return this.reveal ? 'text' : 'password'
+	}
 
 	@property() override autoComplete: FieldTextAutoComplete = 'current-password'
 

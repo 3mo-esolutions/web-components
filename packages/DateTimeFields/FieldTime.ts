@@ -5,7 +5,9 @@ import { FieldText } from '@3mo/text-fields'
 
 @component('mo-field-time')
 export class FieldTime extends FieldText {
-	override readonly inputType = 'time'
+	override get inputType() {
+		return 'time'
+	}
 
 	protected override get startSlotTemplate() {
 		return html`

@@ -6,7 +6,9 @@ import { FieldText } from './FieldText.js'
  */
 @component('mo-field-search')
 export class FieldSearch extends FieldText {
-	override readonly inputType = 'search'
+	override get inputType() {
+		return 'search'
+	}
 
 	@property({ event: 'input' }) override value?: string
 
