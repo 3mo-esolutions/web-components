@@ -49,7 +49,7 @@ export class MaterialPage extends Component {
 				min-height: 42px;
 				margin: var(--_margin-alteration) var(--_margin-alteration) 0 var(--_margin-alteration);
    		 	padding: 0 var(--mo-thickness-xl);
-    		background-color: white;
+    		background-color: var(--mo-color-surface);
     		box-shadow: 0px 5px 5px -3px rgba(var(--mo-shadow-base), 0.2), 0px 8px 10px 1px rgba(var(--mo-shadow-base), 0.1), 0px 3px 14px 2px rgba(var(--mo-shadow-base), 0.02);
 			}
 
