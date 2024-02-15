@@ -11,4 +11,6 @@ export type Navigation = {
 	component?: PageComponent<any> | DialogComponent<any, any>
 	matchMode?: RouteMatchMode
 	children?: Array<Navigation>
+	/** If true, a separator will be rendered before this item. */
+	hasSeparator?: boolean
 }

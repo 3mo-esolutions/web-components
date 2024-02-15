@@ -245,6 +245,7 @@ export abstract class BusinessSuiteApplication extends Application {
 
 		if (navigation.children?.length) {
 			return html`
+				${!navigation.hasSeparator ? html.nothing : html`<mo-line></mo-line>`}
 				<mo-collapsible-list-item slot=${ifDefined(detailsSlot ? 'details' : undefined)}>
 					${iconTemplate}
 					${navigation.label}
@@ -254,6 +255,7 @@ export abstract class BusinessSuiteApplication extends Application {
 		}
 
 		return html`
+			${!navigation.hasSeparator ? html.nothing : html`<mo-line></mo-line>`}
 			<mo-navigation-list-item
 				slot=${ifDefined(detailsSlot ? 'details' : undefined)}
 				${!navigation.component ? html.nothing : routerLink({ component: navigation.component as PageComponent, matchMode: RouteMatchMode.IgnoreParameters, invocationHandler: () => this.drawerOpen = false })}
