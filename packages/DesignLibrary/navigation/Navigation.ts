@@ -11,4 +11,5 @@ export type Navigation = {
 	component?: PageComponent<any> | DialogComponent<any, any>
 	matchMode?: RouteMatchMode
 	children?: Array<Navigation>
+	line?: boolean
 }

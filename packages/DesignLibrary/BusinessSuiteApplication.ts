@@ -250,6 +250,7 @@ export abstract class BusinessSuiteApplication extends Application {
 					${navigation.label}
 					${navigation.children?.map(child => this.getNavigationListItemTemplate(child, true))}
 				</mo-collapsible-list-item>
+				${!navigation.line ? html.nothing : html`<mo-line></mo-line>`}
 			`
 		}
 
@@ -261,6 +262,7 @@ export abstract class BusinessSuiteApplication extends Application {
 				${iconTemplate}
 				${navigation.label}
 			</mo-navigation-list-item>
+			${!navigation.line ? html.nothing : html`<mo-line></mo-line>`}
 		`
 	}
 
