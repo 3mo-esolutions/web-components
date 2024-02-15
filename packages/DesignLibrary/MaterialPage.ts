@@ -33,7 +33,6 @@ export class MaterialPage extends Component {
 
 			slot[name=heading] {
 				font-size: medium;
-				color: var(--mo-color-accent);
 				color: var(--mo-color-foreground);
 				font-weight: 500;
 				letter-spacing: 0.015em;
