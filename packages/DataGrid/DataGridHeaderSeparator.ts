@@ -1,9 +1,11 @@
 import { Component, component, property, html, css, state, event, eventListener, style } from '@a11d/lit'
-import type { ColumnDefinition, DataGrid } from './index.js'
+import { ColumnDefinition, DataGrid } from './index.js'
 
 /** @fires columnUpdate {CustomEvent} */
 @component('mo-data-grid-header-separator')
 export class DataGridHeaderSeparator extends Component {
+	static disableResizing = false
+
 	@event() readonly columnUpdate!: EventDispatcher
 
 	@property({ type: Object }) dataGrid!: DataGrid<unknown>
@@ -26,7 +28,6 @@ export class DataGridHeaderSeparator extends Component {
 				inset-inline-start: calc(var(--mo-data-grid-columns-gap) * -1);
 				width: var(--mo-data-grid-columns-gap);
 				height: 100%;
-				cursor: col-resize;
 				user-select: none;
 			}
 
@@ -38,14 +39,18 @@ export class DataGridHeaderSeparator extends Component {
 				transition: 0.2s;
 			}
 
-			.separator:hover .knob {
+			:host(:not([disabled])) div.separator {
+				cursor: col-resize;
+			}
+
+			:host(:not([disabled])) .separator:hover .knob {
 				--mo-data-grid-header-separator-height: 30px;
 				--mo-data-grid-header-separator-width: 8px;
 				background-color: var(--mo-color-accent);
 				cursor: col-resize;
 			}
 
-			.resizerOverlay {
+			:host(:not([disabled])) .resizerOverlay {
 				position: fixed;
 				top: 0;
 				height: 100%;
@@ -56,6 +61,7 @@ export class DataGridHeaderSeparator extends Component {
 	}
 
 	protected override get template() {
+		this.toggleAttribute('disabled', DataGridHeaderSeparator.disableResizing)
 		return html`
 			<div class='separator' @mousedown=${this.handleMouseDown}>
 				<div class='knob'></div>
@@ -69,19 +75,20 @@ export class DataGridHeaderSeparator extends Component {
 
 	@eventListener({ target: window, type: 'mouseup' })
 	protected handleMouseUp() {
-		if (this.isResizing) {
-			this.isResizing = false
-			this.delta = 0
-			this.initialWidth = undefined
-			this.column.width = `${this.targetWidth}px`
-			this.dataGrid.setColumns(this.dataGrid.columns)
-			this.columnUpdate.dispatch()
+		if (!this.isResizing || DataGridHeaderSeparator.disableResizing) {
+			return
 		}
+		this.isResizing = false
+		this.delta = 0
+		this.initialWidth = undefined
+		this.column.width = `${this.targetWidth}px`
+		this.dataGrid.setColumns(this.dataGrid.columns)
+		this.columnUpdate.dispatch()
 	}
 
 	@eventListener({ target: window, type: 'mousemove' })
 	protected handleMouseMove(e: MouseEvent) {
-		if (this.isResizing === false || this.initialWidth === undefined) {
+		if (this.isResizing === false || this.initialWidth === undefined || DataGridHeaderSeparator.disableResizing) {
 			return
 		}
 
@@ -100,6 +107,9 @@ export class DataGridHeaderSeparator extends Component {
 	}
 
 	private readonly handleMouseDown = () => {
+		if (DataGridHeaderSeparator.disableResizing) {
+			return
+		}
 		this.isResizing = true
 		this.initialWidth = this.getColumnWidth(this.column)
 	}

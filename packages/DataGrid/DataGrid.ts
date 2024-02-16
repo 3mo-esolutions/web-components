@@ -162,7 +162,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	@property({ reflect: true }) selectionMode = DataGridSelectionMode.None
 	@property({ type: Object }) isDataSelectable?: (data: TData) => boolean
-	@property({ type: Array }) selectedData = new Array<TData>()
+	@property({ type: Array, event: 'selectionChange' }) selectedData = new Array<TData>()
 	@property({ type: Boolean }) selectOnClick = false
 	@property({ type: Boolean }) selectionCheckboxesHidden = false
 	@property() selectionBehaviorOnDataChange = DataGridSelectionBehaviorOnDataChange.Reset
