@@ -162,7 +162,7 @@ export class DataGridHeader<TData> extends Component {
 	}
 
 	private get moreTemplate() {
-		return this.dataGrid.hasToolbar || this.dataGrid.sidePanelHidden ? html.nothing : html`
+		return this.dataGrid.hasToolbar || this.dataGrid.sidePanelHidden || this.dataGrid.hasFilters ? html.nothing : html`
 			<mo-flex alignItems='center' justifyContent='center' ${style({ marginInlineEnd: '8px', cursor: 'pointer', position: 'relative' })}>
 				<mo-icon-button dense icon='settings' ${style({ color: 'var(--mo-color-accent)', fontSize: 'large' })}
 					@click=${() => this.dataGrid.navigateToSidePanelTab(this.dataGrid.sidePanelTab ? undefined : DataGridSidePanelTab.Settings)}

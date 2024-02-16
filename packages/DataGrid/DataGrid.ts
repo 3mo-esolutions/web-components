@@ -812,7 +812,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}
 
 	protected get toolbarTemplate() {
-		return this.hasToolbar === false ? html.nothing : html`
+		return this.hasToolbar === false && !this.hasFilters ? html.nothing : html`
 			<mo-flex id='toolbar' direction='horizontal' gap='8px' wrap='wrap' justifyContent='end' alignItems='center'>
 				<mo-flex direction='horizontal' alignItems='inherit' gap='8px' wrap='wrap' ${style({ flex: '1' })}>
 					<slot name='toolbar'>${this.toolbarDefaultTemplate}</slot>
