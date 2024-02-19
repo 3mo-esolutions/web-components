@@ -80,7 +80,7 @@ export class DataGridSidePanel<TData> extends Component {
 			}
 
 			mo-section::part(root) {
-				height: unset;
+				height: unset !important;
 			}
 		`
 	}
