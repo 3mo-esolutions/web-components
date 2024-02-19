@@ -198,6 +198,11 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 
 	protected get menuTemplate() {
 		return html`
+			<style>
+				mo-menu::part(popover) {
+					max-width: ${this.offsetWidth}px;
+				}
+			</style>
 			<mo-menu
 				fixed
 				target='field'
