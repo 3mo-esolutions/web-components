@@ -78,6 +78,10 @@ export class DataGridSidePanel<TData> extends Component {
 				margin-inline-start: 8px;
 				font-size: small;
 			}
+
+			mo-section::part(root) {
+				height: unset;
+			}
 		`
 	}
 
