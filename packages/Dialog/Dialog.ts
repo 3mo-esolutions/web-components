@@ -437,7 +437,11 @@ MdDialog.addInitializer(element => {
 			this.scrollerElement?.removeEventListener('scroll', this.handleScroll)
 		}
 
-		private handleScroll = (scrollEvent: Event) => element.dispatchEvent(new Event('scroll', scrollEvent))
+		private handleScroll = (scrollEvent: Event) => {
+			element.dispatchEvent(new Event('scroll', scrollEvent))
+			// https://devdoc.net/web/developer.mozilla.org/en-US/docs/Web/Events/scroll.html
+			window.dispatchEvent(new Event('scroll', scrollEvent))
+		}
 
 		hostUpdated() {
 			element.renderRoot.querySelector('dialog')?.part.add('dialog')

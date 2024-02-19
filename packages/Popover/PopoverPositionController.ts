@@ -1,4 +1,4 @@
-import { Controller } from '@a11d/lit'
+import { Controller, EventListenerController } from '@a11d/lit'
 import { Popover } from './Popover.js'
 import { computePosition, flip, offset, shift } from '@floating-ui/dom'
 import { ResizeController } from '@3mo/resize-observer'
@@ -11,7 +11,14 @@ export class PopoverPositionController extends Controller {
 	}
 
 	protected readonly resizeController = new ResizeController(this.host, {
-		callback: () => this.host.requestUpdate(),
+		callback: () => this.updatePosition(),
+	})
+
+	protected readonly scrollListener = new EventListenerController(this.host, {
+		target: window,
+		type: 'scroll',
+		options: { capture: true, passive: true } as any,
+		listener: () => this.updatePosition(),
 	})
 
 	private get floatingUiPlacement() {
@@ -56,7 +63,11 @@ export class PopoverPositionController extends Controller {
 		}
 	}
 
-	override async hostUpdated() {
+	override hostUpdated() {
+		this.updatePosition()
+	}
+
+	private async updatePosition() {
 		if (!this.host.open) {
 			return
 		}

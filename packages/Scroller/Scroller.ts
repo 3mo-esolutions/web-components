@@ -1,4 +1,4 @@
-import { component, css, html, Component } from '@a11d/lit'
+import { component, css, html, Component, eventListener } from '@a11d/lit'
 
 /**
  * @slot - The content of the scroller
@@ -47,6 +47,12 @@ export class Scroller extends Component {
 
 			${Scroller.scrollbarStyles}
 		`
+	}
+
+	@eventListener('scroll')
+	protected handleScroll(e: Event) {
+		// https://devdoc.net/web/developer.mozilla.org/en-US/docs/Web/Events/scroll.html
+		window.dispatchEvent(new Event('scroll', e))
 	}
 
 	protected override get template() {
