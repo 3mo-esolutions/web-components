@@ -5,11 +5,8 @@
 		"incremental": true,
 		"declaration": true,
 		"declarationMap": true,
-		"target": "ES2017",
+		"target": "ES2020",
 		"lib": [
-			"ES2017",
-			"ES2018",
-			"ES2020",
 			"ES2021",
 			"DOM",
 			"DOM.Iterable"
