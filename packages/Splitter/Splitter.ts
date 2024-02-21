@@ -5,6 +5,10 @@ import { SplitterItem, SplitterResizerHost } from './index.js'
 import type * as CSS from 'csstype'
 import '@3mo/theme'
 
+if (!window.TouchEvent) {
+	window.TouchEvent = 'GestureEvent' in window ? (window as any).GestureEvent : class TouchEvent {}
+}
+
 /**
  * @element mo-splitter
  *
