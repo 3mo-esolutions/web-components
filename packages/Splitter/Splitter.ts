@@ -80,8 +80,9 @@ export class Splitter extends Component {
 		}
 		const oldTotalSize = this.totalSize
 		const e = this.resizeRequestEvent!
-		const clientX = e instanceof TouchEvent ? e.touches[0]!.clientX : e.clientX
-		const clientY = e instanceof TouchEvent ? e.touches[0]!.clientY : e.clientY
+		// Don't check for instanceof TouchEvent, as Safari doesn't understand it
+		const clientX = 'touches' in e ? e.touches[0]!.clientX : e.clientX
+		const clientY = 'touches' in e ? e.touches[0]!.clientY : e.clientY
 		const { left, top, right, bottom } = resizingItem.getBoundingClientRect()
 
 		const getSize = () => {
