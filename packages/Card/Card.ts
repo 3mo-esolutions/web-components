@@ -73,6 +73,7 @@ export class Card extends Component {
 				align-items: center;
 				gap: 6px;
 				padding: var(--mo-card-header-padding, 16px);
+				box-sizing: border-box;
 			}
 
 			slot[name=heading] {
@@ -127,7 +128,7 @@ export class Card extends Component {
 
 	protected override get template() {
 		return html`
-			<mo-flex ${style({ width: '100%', height: '100%' })}>
+			<mo-flex part='root' ${style({ width: '100%', height: '100%' })}>
 				${this.mediaTemplate}
 				${this.headerTemplate}
 				${this.bodyTemplate}
@@ -156,7 +157,7 @@ export class Card extends Component {
 		return !isServer && !hasHeader ? html.nothing : html`
 			<slot part='header' name='header'>
 				${this.defaultHeaderAvatarTemplate}
-				<mo-flex justifyContent='space-around' ${style({ flex: '1' })}>
+				<mo-flex justifyContent='space-around' ${style({ flex: '1', maxWidth: '100%' })}>
 					${this.defaultHeaderHeadingTemplate}
 					${this.defaultHeaderSubHeadingTemplate}
 				</mo-flex>
