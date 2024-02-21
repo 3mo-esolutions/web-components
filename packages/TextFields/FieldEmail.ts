@@ -1,4 +1,4 @@
-import { component, html, live, property } from '@a11d/lit'
+import { component, html, live, property, style } from '@a11d/lit'
 import { InputFieldComponent } from '@3mo/field'
 
 /**
@@ -16,7 +16,7 @@ export class FieldEmail extends InputFieldComponent<string> {
 
 	protected override get inputTemplate() {
 		return html`
-			<input
+			<input ${style({ fontSize: 'smaller' })}
 				part='input'
 				type='email'
 				inputmode='email'

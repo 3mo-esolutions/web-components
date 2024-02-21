@@ -1,4 +1,4 @@
-import { component, css, html, live } from '@a11d/lit'
+import { component, css, html, live, style } from '@a11d/lit'
 import { Color } from '@3mo/color'
 import { InputFieldComponent } from '@3mo/field'
 
@@ -20,7 +20,7 @@ export class FieldColor extends InputFieldComponent<Color> {
 
 	protected override get inputTemplate() {
 		return html`
-			<input
+			<input ${style({ fontSize: 'smaller' })}
 				part='input'
 				inputmode='text'
 				type='text'

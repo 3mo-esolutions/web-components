@@ -1,4 +1,4 @@
-import { html, property, css, event, component, live, query, eventListener, state, ifDefined } from '@a11d/lit'
+import { html, property, css, event, component, live, query, eventListener, state, ifDefined, style } from '@a11d/lit'
 import { FieldComponent } from '@3mo/field'
 import type { ListItem } from '@3mo/list'
 import type { Menu } from '@3mo/menu'
@@ -162,7 +162,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 
 	private get valueInputTemplate() {
 		return html`
-			<input
+			<input ${style({ fontSize: 'smaller' })}
 				part='input'
 				id='value'
 				type='text'
@@ -175,7 +175,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 
 	private get searchInputTemplate() {
 		return html`
-			<input
+			<input ${style({ fontSize: 'smaller' })}
 				part='input'
 				id='search'
 				type='text'

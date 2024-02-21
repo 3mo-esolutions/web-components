@@ -89,7 +89,7 @@ export class FieldText extends InputFieldComponent<string> {
 
 	protected override get inputTemplate() {
 		return html`
-			<input
+			<input ${style({ fontSize: 'smaller' })}
 				part='input'
 				inputmode=${this.inputType}
 				type=${this.type}

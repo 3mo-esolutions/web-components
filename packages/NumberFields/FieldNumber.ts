@@ -27,7 +27,7 @@ export class FieldNumber extends InputFieldComponent<number> {
 
 	protected override get inputTemplate() {
 		return html`
-			<input
+			<input ${style({ fontSize: 'smaller' })}
 				part='input'
 				type='text'
 				autocomplete='off'
