@@ -1,4 +1,4 @@
-import { component, html, ifDefined, live, property } from '@a11d/lit'
+import { component, html, ifDefined, live, property, style } from '@a11d/lit'
 import { InputFieldComponent } from '@3mo/field'
 import '@3mo/localization'
 
