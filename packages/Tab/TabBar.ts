@@ -35,7 +35,7 @@ export class TabBar extends Component {
 		`
 	}
 
-	override get template() {
+	protected override get template() {
 		return html`
 			<md-tabs autoActivate @change=${() => this.dispatchChange()}>
 				<slot @slotchange=${this.slotChange}></slot>

@@ -46,7 +46,7 @@ export class Grid extends Component {
 		return css`:host { display: grid; }`
 	}
 
-	override get template() {
+	protected override get template() {
 		return html`<slot></slot>`
 	}
 }

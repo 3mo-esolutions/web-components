@@ -67,7 +67,7 @@ export class Fab extends Component {
 
 	protected get label() { return this.textContent?.trim() || undefined }
 
-	override get template() {
+	protected override get template() {
 		return html`
 			<md-fab exportparts='button,ripple,focus-ring' variant='primary'
 				label=${ifDefined(this.label)}

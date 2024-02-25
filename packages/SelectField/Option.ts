@@ -66,7 +66,7 @@ export class Option<T> extends SelectionListItem {
 		`
 	}
 
-	override get template() {
+	protected override get template() {
 		return html`
 			${super.template}
 			${this.checkboxTemplate}

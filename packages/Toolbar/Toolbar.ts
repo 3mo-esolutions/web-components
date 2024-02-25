@@ -35,7 +35,7 @@ export class Toolbar extends Component {
 		`
 	}
 
-	override get template() {
+	protected override get template() {
 		return html`
 			<mo-flex direction='horizontal' alignItems='center' ${style({ display: !this.collapsed ? 'flex' : 'inline-flex' })}>
 				${this.paneTemplate}

@@ -83,7 +83,7 @@ export class SplitterResizerHost extends Component {
 		`
 	}
 
-	override get template() {
+	protected override get template() {
 		return html`<slot></slot>`
 	}
 }
