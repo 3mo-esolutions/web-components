@@ -13,10 +13,11 @@ export class FieldPassword extends FieldText {
 
 	static override get styles() {
 		return css`
-			[autocomplete='off'] + div[data-lastpass-icon-root],
-			[autocomplete='off'] + div[data-lastpass-infield] {
-        display: none;
-      }
+			${super.styles}
+
+			[autocomplete=off] + div[data-lastpass-icon-root], [autocomplete=off] + div[data-lastpass-infield] {
+				display: none;
+			}
 		`
 	}
 
