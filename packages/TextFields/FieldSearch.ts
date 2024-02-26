@@ -25,7 +25,7 @@ export class FieldSearch extends FieldText {
 	protected override get endSlotTemplate() {
 		return html`
 			<mo-icon-button slot='end' icon='cancel' dense
-				${style({ color: 'var(--mo-color-gray)', visibility: !this.value ? 'hidden' : 'visible' })}
+				${style({ color: 'var(--mo-color-gray)', visibility: !this.value ? 'hidden' : 'visible', display: 'inline-flex' })}
 				@click=${() => this.clear()}
 			></mo-icon-button>
 			${super.endSlotTemplate}
