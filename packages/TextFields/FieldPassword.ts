@@ -1,4 +1,4 @@
-import { html, component, property } from '@a11d/lit'
+import { html, component, property, css } from '@a11d/lit'
 import { FieldText, FieldTextAutoComplete } from './FieldText.js'
 
 /**
@@ -10,6 +10,16 @@ import { FieldText, FieldTextAutoComplete } from './FieldText.js'
 @component('mo-field-password')
 export class FieldPassword extends FieldText {
 	@property({ type: Boolean }) reveal = false
+
+	static override get styles() {
+		return css`
+			${super.styles}
+
+			[autocomplete=off] + div[data-lastpass-icon-root], [autocomplete=off] + div[data-lastpass-infield] {
+				display: none;
+			}
+		`
+	}
 
 	protected override get type() {
 		return this.reveal ? 'text' : 'password'
