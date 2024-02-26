@@ -1,5 +1,5 @@
 import { component, property, query, html, css, event, state, Component } from '@a11d/lit'
-import { ApplicationTopLayer, DialogActionKey, DialogComponent } from '@a11d/lit-application'
+import { ApplicationTopLayer, DialogActionKey, DialogComponent, Dialog as IDialog } from '@a11d/lit-application'
 import { MdDialog } from '@material/web/dialog/dialog.js'
 import { tooltip } from '@3mo/tooltip'
 import { SlotController } from '@3mo/slot-controller'
@@ -33,7 +33,6 @@ const queryActionElement = (slotName: string) => {
  * @attr manualClose
  * @attr primaryButtonText
  * @attr secondaryButtonText
- * @attr preventCancellationOnEscape
  * @attr poppable
  * @attr boundToWindow
  *
@@ -64,7 +63,7 @@ const queryActionElement = (slotName: string) => {
  */
 @component('mo-dialog')
 @DialogComponent.dialogElement()
-export class Dialog extends Component {
+export class Dialog extends Component implements IDialog {
 	static readonly executingActionAdaptersByComponent = new Map<Constructor<HTMLElement>, (actionElement: HTMLElement, isExecuting: boolean) => void>()
 
 	@event({ bubbles: true, cancelable: true, composed: true }) readonly dialogHeadingChange!: EventDispatcher<string>
@@ -86,7 +85,6 @@ export class Dialog extends Component {
 	@property({ type: Boolean }) manualClose = false
 	@property() primaryButtonText?: string
 	@property() secondaryButtonText?: string
-	@property({ type: Boolean }) preventCancellationOnEscape = false
 	@property({ type: Boolean }) poppable = false
 	@property({ type: Boolean, reflect: true }) boundToWindow = false
 
@@ -105,6 +103,10 @@ export class Dialog extends Component {
 	}) executingAction?: DialogActionKey
 
 	@state() private showTopLayer = false
+
+	get preventCancellationOnEscape() {
+		return this.blocking
+	}
 
 	@query('lit-application-top-layer') readonly topLayerElement!: ApplicationTopLayer
 	@queryActionElement('primaryAction') readonly primaryActionElement!: HTMLElement
