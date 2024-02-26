@@ -129,6 +129,11 @@ export class Dialog extends Component implements IDialog {
 				--mo-dialog-height: 768px;
 			}
 
+			:host([size=medium])::part(content) {
+				background-color: var(--mo-color-transparent-gray-1);
+				border-top: solid 1px var(--mo-color-transparent-gray-3);
+			}
+
 			:host([size=large]) {
 				--mo-dialog-width: 1680px;
 				--mo-dialog-height: 100vh;
