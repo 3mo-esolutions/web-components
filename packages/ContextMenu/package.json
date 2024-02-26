@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/context-menu",
-	"version": "0.3.3",
+	"version": "0.3.4",
 	"description": "A web component to display a context menu",
 	"repository": {
 		"type": "git",

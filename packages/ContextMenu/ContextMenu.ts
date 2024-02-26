@@ -1,5 +1,6 @@
 import { component, eventListener, queryConnectedInstances } from '@a11d/lit'
 import { Menu } from '@3mo/menu'
+import { shift } from '@floating-ui/core'
 import { ContextMenuLazyInitializer } from './ContextMenuLazyInitializer.js'
 
 /** @element mo-context-menu */
@@ -16,6 +17,14 @@ export class ContextMenu extends Menu {
 		ContextMenuLazyInitializer.initialize(contextMenu, initializeParameter)
 		contextMenu.openWith(openWithParameter)
 		return contextMenu
+	}
+
+	protected override initialized(): void {
+		super.initialized()
+		this.positionMiddleware = [shift({
+			crossAxis: true,
+			padding: 4,
+		})]
 	}
 
 	override readonly manual = true

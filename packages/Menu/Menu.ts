@@ -2,6 +2,7 @@ import { Component, EventListenerController, component, css, event, html, ifDefi
 import { Popover, PopoverCoordinates } from '@3mo/popover'
 import { SlotController } from '@3mo/slot-controller'
 import { disabledProperty } from '@3mo/disabled-property'
+import type { Middleware } from '@floating-ui/dom'
 import { ListElement, ListItem, SelectableList } from '@3mo/list'
 import type { MenuPlacement, MenuAlignment } from './index.js'
 
@@ -92,6 +93,7 @@ export class Menu extends Component {
 	@disabledProperty() disabled = false
 
 	@state() protected coordinates?: PopoverCoordinates
+	@state() protected positionMiddleware = new Array<Middleware>()
 
 	@query('mo-selectable-list') readonly list!: ListElement & SelectableList
 
@@ -157,6 +159,7 @@ export class Menu extends Component {
 				@openChange=${(e: CustomEvent<boolean>) => this.setOpen(e.detail)}
 				.coordinates=${this.coordinates}
 				.shouldOpen=${this.shouldOpen}
+				.positionMiddleware=${this.positionMiddleware}
 			>
 				<mo-selectable-list
 					selectionMode=${ifDefined(this.selectionMode)}
