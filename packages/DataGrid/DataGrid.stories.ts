@@ -38,7 +38,7 @@ const fivePeopleWithChildren = fivePeople.map(p => ({
 }))
 
 const columnsTemplate = html`
-	<mo-data-grid-column-number width='60px' primaryKey nonEditable heading='ID' dataSelector='id'></mo-data-grid-column-number>
+	<mo-data-grid-column-number width='60px' nonEditable heading='ID' dataSelector='id'></mo-data-grid-column-number>
 	<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
 	<mo-data-grid-column-number .nonEditable=${(person: Person) => person.age > 30} heading='Age' dataSelector='age'></mo-data-grid-column-number>
 	<mo-data-grid-column-text heading='City' dataSelector='city'></mo-data-grid-column-text>

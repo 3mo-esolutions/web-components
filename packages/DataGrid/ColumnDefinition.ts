@@ -3,7 +3,6 @@ import { HTMLTemplateResult } from '@a11d/lit'
 export type ColumnDefinition<TData, TValue = unknown> = {
 	heading: string
 	title?: string
-	primaryKey?: boolean
 	dataSelector: KeyPathOf<TData>
 	sortDataSelector?: KeyPathOf<TData>
 	width?: string

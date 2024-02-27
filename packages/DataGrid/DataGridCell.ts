@@ -123,7 +123,7 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 		return css`
 			:host {
 				position: relative;
-				padding: 0px var(--mo-data-grid-cell-padding, 3px);
+				padding: 0 var(--mo-data-grid-cell-padding);
 				user-select: none;
 				line-height: var(--mo-data-grid-row-height);
 				white-space: nowrap;
@@ -131,6 +131,11 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 				text-overflow: ellipsis;
 				font-size: var(--mo-data-grid-cell-font-size);
 			}
+
+			:host(:first-of-type:not([alignment=end])), :host(:first-of-type[alignment=end]) + mo-data-grid-cell {
+				padding: 0 var(--mo-data-grid-cell-padding) 0 calc(var(--_level) * 8px + var(--mo-data-grid-cell-padding));
+			}
+
 
 			:host(:not([isEditing]):focus) {
 				outline: 2px solid var(--mo-color-accent);

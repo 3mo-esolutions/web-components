@@ -87,11 +87,6 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				background-color: var(--mo-color-accent);
 			}
 
-
-			mo-data-grid-cell[data-primary-key="true"] + mo-data-grid-cell {
-				margin-left: calc(16px * var(--_level));
-			}
-
 			:host([data-has-alternating-background]) {
 				background: var(--mo-data-grid-alternating-background);
 			}
@@ -99,6 +94,10 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			#contentContainer {
 				cursor: pointer;
 				transition: 250ms;
+			}
+
+			mo-data-grid-cell[alignment='end']:first-of-type + mo-data-grid-cell {
+				padding: 0 var(--mo-data-grid-cell-padding) 0 calc(var(--_level) * 8px + var(--mo-data-grid-cell-padding));
 			}
 
 			:host([selected]) #contentContainer, :host([contextMenuOpen]) #contentContainer {
@@ -208,10 +207,8 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	}
 
 	protected getCellTemplate(column: ColumnDefinition<TData, KeyPathValueOf<TData, KeyPathOf<TData>>>) {
-		const isPrimaryKey = column.primaryKey ? true : column.dataSelector === 'id'
-
 		return column.hidden ? html.nothing : html`
-			<mo-data-grid-cell data-primary-key=${isPrimaryKey}
+			<mo-data-grid-cell ${style({ '--_level': this.level.toString() })}
 				.row=${this as any}
 				.column=${column}
 				.value=${getValueByKeyPath(this.data, column.dataSelector as any)}
