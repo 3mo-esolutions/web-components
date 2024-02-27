@@ -110,6 +110,8 @@ export type DataGridSorting<TData> = DataGridSortingDefinition<TData> | Array<Da
  *
  * @cssprop --mo-data-grid-min-visible-rows - The minimum number of visible rows. Default to 2.5.
  * @cssprop --mo-data-grid-footer-background - The background of the footer.
+ * @cssprop --mo-data-grid-cell-padding - The inline padding of the cells. Default to 3px.
+ * @cssprop --mo-data-grid-column-sub-row-indentation - The indentation of the first column in the sub row. Default to 10px.
  *
  * @fires dataChange {CustomEvent<Array<TData>>}
  * @fires selectionChange {CustomEvent<Array<TData>>}
@@ -487,7 +489,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 				--mo-data-grid-row-tree-line-width: 8px;
 				--mo-details-data-grid-start-margin: 26px;
-				--mo-data-grid-cell-padding: 3px;
 
 				--mo-data-grid-selection-background: rgba(var(--mo-color-accent-base), 0.5);
 				display: flex;
@@ -736,7 +737,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		`
 	}
 
-	getRowTemplate(data: TData, index?: number, level: number = 0) {
+	getRowTemplate(data: TData, index?: number, level = 0) {
 		return staticHtml`
 			<${this.rowElementTag} part='row'
 				.level=${level}
