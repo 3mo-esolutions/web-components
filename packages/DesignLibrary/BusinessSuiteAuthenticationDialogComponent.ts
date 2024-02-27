@@ -1,5 +1,5 @@
 import { bind, html, state, style } from '@a11d/lit'
-import { DialogAuthenticator as DialogAuthenticatorBase } from '@a11d/lit-application-authentication'
+import { DialogAuthenticator } from '@a11d/lit-application-authentication'
 import { Localizer } from '@3mo/localization'
 import { LocalStorage } from '@a11d/local-storage'
 import { NotificationComponent } from '@a11d/lit-application'
@@ -24,7 +24,7 @@ export type User = {
 	email?: string
 }
 
-export abstract class BusinessSuiteDialogAuthenticator extends DialogAuthenticatorBase<User> {
+export abstract class BusinessSuiteAuthenticationDialogComponent extends DialogAuthenticator<User> {
 	static readonly authenticatedUserStorage = new LocalStorage<object | undefined>('DialogAuthenticator.User', undefined)
 
 	protected abstract requestPasswordReset(): Promise<void>
@@ -35,7 +35,7 @@ export abstract class BusinessSuiteDialogAuthenticator extends DialogAuthenticat
 
 	protected override get template() {
 		return html`
-			<mo-dialog blocking primaryOnEnter ${style({ '--mdc-dialog-scrim-color': 'var(--mo-color-background)' })}>
+			<mo-business-suite-authentication-dialog ${style({ '--mdc-dialog-scrim-color': 'var(--mo-color-background)' })}>
 				<mo-anchor slot='footer' ${style({ fontSize: 'small' })} @click=${() => this.resetPassword()}>${t('Reset Password')}</mo-anchor>
 				<mo-loading-button slot='primaryAction' type='raised'>${this.primaryButtonText}</mo-loading-button>
 				${this.additionalTemplate}
@@ -44,7 +44,7 @@ export abstract class BusinessSuiteDialogAuthenticator extends DialogAuthenticat
 					${this.applicationInfoTemplate}
 					${this.contentTemplate}
 				</mo-flex>
-			</mo-dialog>
+			</mo-business-suite-authentication-dialog>
 		`
 	}
 
@@ -101,12 +101,12 @@ export abstract class BusinessSuiteDialogAuthenticator extends DialogAuthenticat
 
 	override async authenticate() {
 		const user = await super.authenticate()
-		BusinessSuiteDialogAuthenticator.authenticatedUserStorage.value = user
+		BusinessSuiteAuthenticationDialogComponent.authenticatedUserStorage.value = user
 		return user
 	}
 
 	override async unauthenticate() {
 		await super.unauthenticate()
-		BusinessSuiteDialogAuthenticator.authenticatedUserStorage.value = undefined
+		BusinessSuiteAuthenticationDialogComponent.authenticatedUserStorage.value = undefined
 	}
 }

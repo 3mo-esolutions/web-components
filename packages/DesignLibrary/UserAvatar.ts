@@ -1,6 +1,6 @@
 import { html, component, Component, css, join, bind, property, event, eventListener } from '@a11d/lit'
 import { Authentication } from '@a11d/lit-application-authentication'
-import { BusinessSuiteDialogAuthenticator, User } from './BusinessSuiteDialogAuthenticator.js'
+import { BusinessSuiteAuthenticationDialogComponent, User } from './BusinessSuiteAuthenticationDialogComponent.js'
 import { MenuItem } from '@3mo/menu'
 
 @component('mo-user-avatar')
@@ -33,11 +33,11 @@ export class UserAvatar extends Component {
 	}
 
 	protected override initialized() {
-		BusinessSuiteDialogAuthenticator.authenticatedUserStorage.changed.subscribe(() => this.requestUpdate())
+		BusinessSuiteAuthenticationDialogComponent.authenticatedUserStorage.changed.subscribe(() => this.requestUpdate())
 	}
 
 	private get user() {
-		return BusinessSuiteDialogAuthenticator.authenticatedUserStorage.value as User | undefined
+		return BusinessSuiteAuthenticationDialogComponent.authenticatedUserStorage.value as User | undefined
 	}
 
 	private get name() {
@@ -87,7 +87,7 @@ export class UserAvatar extends Component {
 	}
 
 	private get avatarTemplate() {
-		return !BusinessSuiteDialogAuthenticator.authenticatedUserStorage.value ? html.nothing : html`
+		return !BusinessSuiteAuthenticationDialogComponent.authenticatedUserStorage.value ? html.nothing : html`
 			<mo-flex direction='horizontal' gap='20px' style='padding: 15px'>
 				<mo-avatar>${this.avatarContentTemplate}</mo-avatar>
 				<mo-flex justifyContent='center'>

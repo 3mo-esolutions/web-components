@@ -3,7 +3,7 @@ import { DialogDeletion } from '@3mo/standard-dialogs'
 import { PagePreferences, PageSettings } from './index.js'
 import { route } from '@a11d/lit-application'
 import { Authentication } from '@a11d/lit-application-authentication'
-import { BusinessSuiteDialogAuthenticator } from '../BusinessSuiteDialogAuthenticator.js'
+import { BusinessSuiteAuthenticationDialogComponent } from '../BusinessSuiteAuthenticationDialogComponent.js'
 
 @component('mo-page-preferences-security')
 @route(PagePreferences, '/preferences/security')
@@ -18,8 +18,8 @@ export class PagePreferencesSecurity extends PageSettings {
 					>Vor dem Löschen bestätigen</mo-checkbox-list-item>
 
 					<mo-checkbox-list-item
-						?selected=${BusinessSuiteDialogAuthenticator.shallRememberStorage.value}
-						@change=${(e: CustomEvent<boolean>) => BusinessSuiteDialogAuthenticator.shallRememberStorage.value = e.detail}
+						?selected=${BusinessSuiteAuthenticationDialogComponent.shallRememberStorage.value}
+						@change=${(e: CustomEvent<boolean>) => BusinessSuiteAuthenticationDialogComponent.shallRememberStorage.value = e.detail}
 					>Passwort merken & eingeloggt bleiben</mo-checkbox-list-item>
 
 					${!Authentication.hasAuthenticator() ? html.nothing : html`
