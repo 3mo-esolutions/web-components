@@ -123,7 +123,7 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 		return css`
 			:host {
 				position: relative;
-				padding: 0px var(--mo-data-grid-cell-padding, 3px);
+				padding-inline: var(--mo-data-grid-cell-padding, 3px);
 				user-select: none;
 				line-height: var(--mo-data-grid-row-height);
 				white-space: nowrap;

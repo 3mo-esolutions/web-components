@@ -16,6 +16,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	@event() readonly detailsOpenChange!: EventDispatcher<boolean>
 
 	@queryAll('mo-data-grid-cell') readonly cells!: Array<DataGridCell<any, TData, TDetailsElement>>
+	@queryAll('[mo-data-grid-row]') readonly subRows!: Array<DataGridRow<TData, TDetailsElement>>
 
 	@property({ type: Object }) dataGrid!: DataGrid<TData, TDetailsElement>
 	@property({ type: Object }) data!: TData
@@ -34,6 +35,13 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		}
 	}) detailsOpen = false
 
+	@property({
+		type: Number,
+		updated(this: DataGridRow<TData, TDetailsElement>) {
+			this.style.setProperty('--_level', this.level.toString())
+		}
+	}) level = 0
+
 	@property({ type: Boolean, reflect: true }) protected contextMenuOpen = false
 
 	get detailsElement() {
@@ -46,6 +54,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 
 	override updated(...parameters: Parameters<Component['updated']>) {
 		this.cells.forEach(cell => cell.requestUpdate())
+		this.subRows.forEach(subRow => subRow.requestUpdate())
 		if (this.detailsElement instanceof LitElement) {
 			this.detailsElement.requestUpdate()
 		}
@@ -143,6 +152,10 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			#detailsContainer > :first-child {
 				padding: 8px 0;
 			}
+
+			mo-data-grid-cell:first-of-type:not([alignment=end]), mo-data-grid-cell[alignment=end]:first-of-type + mo-data-grid-cell {
+				margin-inline-start: calc(var(--_level, 0) * var(--mo-data-grid-column-sub-row-indentation, 10px));
+			}
 		`
 	}
 
@@ -226,10 +239,11 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		}
 
 		const subData = this.dataGrid.getSubData(this.data)
+
 		if (subData) {
 			return html`
 				<mo-flex style='width: 100%; padding: 0px'>
-					${subData.map(data => this.dataGrid.getRowTemplate(data))}
+					${subData.map(data => this.dataGrid.getRowTemplate(data, undefined, this.level + 1))}
 				</mo-flex>
 			`
 		}

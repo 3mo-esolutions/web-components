@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/data-grid",
-	"version": "0.5.5",
+	"version": "0.5.6",
 	"description": "A data grid web component",
 	"repository": {
 		"type": "git",
