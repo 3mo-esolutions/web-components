@@ -1,6 +1,7 @@
 import { Component, component, css, html, property, style } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
 import '@3mo/heading'
+import '@3mo/grid'
 
 /**
  * @element mo-section
