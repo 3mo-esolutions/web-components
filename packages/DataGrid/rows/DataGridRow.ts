@@ -34,12 +34,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		}
 	}) detailsOpen = false
 
-	@property({
-		type: Number,
-		updated(this: DataGridRow<TData, TDetailsElement>, level: number) {
-			this.style.setProperty('--_level', level.toString())
-		}
-	}) level = 0
+	@property({ type: Number }) level = 0
 
 	@property({ type: Boolean, reflect: true }) protected contextMenuOpen = false
 
@@ -96,7 +91,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				transition: 250ms;
 			}
 
-			mo-data-grid-cell[alignment='end']:first-of-type + mo-data-grid-cell {
+			mo-data-grid-cell:first-of-type:not([alignment=end]), mo-data-grid-cell[alignment='end']:first-of-type + mo-data-grid-cell {
 				padding: 0 var(--mo-data-grid-cell-padding) 0 calc(var(--_level) * 8px + var(--mo-data-grid-cell-padding));
 			}
 
