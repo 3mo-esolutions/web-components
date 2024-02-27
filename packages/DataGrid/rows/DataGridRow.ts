@@ -34,6 +34,13 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		}
 	}) detailsOpen = false
 
+	@property({
+		type: Number,
+		updated(this: DataGridRow<TData, TDetailsElement>, level: number) {
+			this.style.setProperty('--_level', level.toString())
+		}
+	}) level = 0
+
 	@property({ type: Boolean, reflect: true }) protected contextMenuOpen = false
 
 	get detailsElement() {
@@ -78,6 +85,11 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				inset-inline-start: 0;
 				position: absolute;
 				background-color: var(--mo-color-accent);
+			}
+
+
+			mo-data-grid-cell[data-primary-key="true"] + mo-data-grid-cell {
+				margin-left: calc(16px * var(--_level));
 			}
 
 			:host([data-has-alternating-background]) {
@@ -196,8 +208,10 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	}
 
 	protected getCellTemplate(column: ColumnDefinition<TData, KeyPathValueOf<TData, KeyPathOf<TData>>>) {
+		const isPrimaryKey = column.primaryKey ? true : column.dataSelector === 'id'
+
 		return column.hidden ? html.nothing : html`
-			<mo-data-grid-cell
+			<mo-data-grid-cell data-primary-key=${isPrimaryKey}
 				.row=${this as any}
 				.column=${column}
 				.value=${getValueByKeyPath(this.data, column.dataSelector as any)}
@@ -226,10 +240,11 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		}
 
 		const subData = this.dataGrid.getSubData(this.data)
+
 		if (subData) {
 			return html`
 				<mo-flex style='width: 100%; padding: 0px'>
-					${subData.map(data => this.dataGrid.getRowTemplate(data))}
+					${subData.map(data => this.dataGrid.getRowTemplate(data, 0, this.level + 1))}
 				</mo-flex>
 			`
 		}

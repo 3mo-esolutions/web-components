@@ -37,6 +37,7 @@ export abstract class DataGridColumn<TData, TValue> extends Component {
 			return String(value) !== String(oldValue)
 		}
 	}) nonEditable: boolean | Predicate<TData> = false
+	@property({ type: Boolean }) primaryKey = false
 
 	get definition(): ColumnDefinition<TData, TValue> {
 		const nonEditable = this.nonEditable
@@ -49,6 +50,7 @@ export abstract class DataGridColumn<TData, TValue> extends Component {
 			hidden: this.hidden,
 			width: !DataGridColumn.regex.test(this.width) ? this.width : `${DataGridColumn.getProportion(this.width)}fr`,
 			sortable: !this.nonSortable,
+			primaryKey: this.primaryKey,
 			editable: this.getEditContentTemplate !== undefined && (typeof nonEditable !== 'function' ? !nonEditable : x => !nonEditable(x)),
 			getContentTemplate: this.getContentTemplate.bind(this),
 			getEditContentTemplate: this.getEditContentTemplate?.bind(this),

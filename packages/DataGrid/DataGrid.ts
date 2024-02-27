@@ -736,9 +736,10 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		`
 	}
 
-	getRowTemplate(data: TData, index?: number) {
+	getRowTemplate(data: TData, index?: number, level: number = 0) {
 		return staticHtml`
 			<${this.rowElementTag} part='row'
+				.level=${level}
 				.dataGrid=${this as any}
 				.data=${data}
 				?data-has-alternating-background=${index !== undefined && this.hasAlternatingBackground && index % 2 === 1}
