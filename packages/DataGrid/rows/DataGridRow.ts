@@ -16,6 +16,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	@event() readonly detailsOpenChange!: EventDispatcher<boolean>
 
 	@queryAll('mo-data-grid-cell') readonly cells!: Array<DataGridCell<any, TData, TDetailsElement>>
+	@queryAll('[mo-data-grid-row]') readonly subRows!: Array<DataGridCell<any, TData, TDetailsElement>>
 
 	@property({ type: Object }) dataGrid!: DataGrid<TData, TDetailsElement>
 	@property({ type: Object }) data!: TData
@@ -48,6 +49,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 
 	override updated(...parameters: Parameters<Component['updated']>) {
 		this.cells.forEach(cell => cell.requestUpdate())
+		this.subRows.forEach(subRow => subRow.requestUpdate())
 		if (this.detailsElement instanceof LitElement) {
 			this.detailsElement.requestUpdate()
 		}
