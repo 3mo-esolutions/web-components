@@ -221,7 +221,6 @@ export class Dialog extends Component implements IDialog {
 				width: var(--mo-dialog-width);
 				max-width: calc(100vw - 32px);
 
-				overflow: hidden;
 				justify-content: center;
 
 				box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.2), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 9px 46px 8px rgba(0, 0, 0, 0.12);
@@ -393,8 +392,10 @@ MdDialog.elementStyles.push(css`
 	.scroller {
 		/* MdDialog removes overflow whenever the dialog doesn't need a scroll.
 		 * This leads to "min-height: 100%" of the ".content" element not working anymore.
+		 *
+		 * For Safari, where popovers that exceed the dialog height are not scrollable, we may need to set overflow to "visible" instead of "auto".
 		 */
-		overflow: auto;
+		overflow: var(--mo-dialog-scroller-overflow, auto);
 	}
 
 	.scroller::-webkit-scrollbar {
