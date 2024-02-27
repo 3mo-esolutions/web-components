@@ -32,6 +32,10 @@ export class Section extends Component {
 				height: 100%;
 			}
 
+			mo-grid {
+				height: max-content;
+			}
+
 			slot[name=action], slot[name=heading], slot[name=heading]::slotted(*) {
 				font-weight: 500;
 			}
@@ -82,7 +86,7 @@ export class Section extends Component {
 
 	protected get contentTemplate() {
 		return !this.slotController.hasAssignedContent('') ? html.nothing : html`
-			<mo-grid part='root' ${style({ height: '100%' })}>
+			<mo-grid>
 				<slot></slot>
 			</mo-grid>
 		`
