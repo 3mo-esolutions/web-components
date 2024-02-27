@@ -1,6 +1,7 @@
 import { Component, component, css, html, property, style } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
 import '@3mo/heading'
+import '@3mo/grid'
 
 /**
  * @element mo-section
@@ -30,6 +31,10 @@ export class Section extends Component {
 				gap: 8px;
 				width: 100%;
 				height: 100%;
+			}
+
+			mo-grid {
+				height: max-content;
 			}
 
 			slot[name=action], slot[name=heading], slot[name=heading]::slotted(*) {
@@ -82,7 +87,7 @@ export class Section extends Component {
 
 	protected get contentTemplate() {
 		return !this.slotController.hasAssignedContent('') ? html.nothing : html`
-			<mo-grid ${style({ height: '100%' })}>
+			<mo-grid>
 				<slot></slot>
 			</mo-grid>
 		`
