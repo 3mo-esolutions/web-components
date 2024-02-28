@@ -1,4 +1,4 @@
-import { component, style, Component, css, html, ifDefined, property } from '@a11d/lit'
+import { component, style, Component, css, html, ifDefined, property, bind } from '@a11d/lit'
 import { Localizer } from '@3mo/localization'
 import { tooltip } from '@3mo/tooltip'
 import { type Checkbox } from '@3mo/checkbox'
@@ -12,7 +12,7 @@ Localizer.register('de', {
 	'Font Size': 'Schriftgröße',
 	'Row Height': 'Zeilenhöhe',
 	'Tools': 'Tools',
-	'Tabellen-Design': 'Tabellen-Design',
+	'Design': 'Design',
 })
 
 export enum DataGridSidePanelTab {
@@ -60,28 +60,17 @@ export class DataGridSidePanel<TData> extends Component {
 			}
 
 			mo-scroller {
-				width: calc(100% - calc(2 * 14px));
-				padding: 0 14px;
-				margin-top: 14px;
 				overflow-x: hidden;
 			}
 
-			mo-scroller::part(container) {
-				width: calc(100% - calc(2 * 14px));
+			mo-section {
+				padding: 10px 14px 20px;
+				border-bottom: var(--mo-data-grid-border);
 			}
 
-			#settings {
-				padding: 0;
-				width: 100%;
-			}
-
-			#settings::part(container) {
-				width: 100%;
-			}
-
-			mo-heading {
-				color: var(--mo-color-gray);
-				font-weight: 600;
+			mo-section::part(heading) {
+				font-size: min(1em, 14px);
+				letter-spacing: 0.15px;
 			}
 		`
 	}
@@ -116,7 +105,7 @@ export class DataGridSidePanel<TData> extends Component {
 					</mo-flex>
 				`}
 
-				<mo-scroller ${style({ flex: '1' })} id=${ifDefined(this.dataGrid.sidePanelTab === DataGridSidePanelTab.Filters ? undefined : 'settings')}>
+				<mo-scroller ${style({ flex: '1' })}>
 					${this.dataGrid.sidePanelTab === DataGridSidePanelTab.Filters ? this.filtersTemplate : this.settingsTemplate}
 				</mo-scroller>
 			</mo-flex>
@@ -125,7 +114,7 @@ export class DataGridSidePanel<TData> extends Component {
 
 	protected get filtersTemplate() {
 		return html`
-			<mo-flex gap='14px'>
+			<mo-flex gap='14px' style='padding: 14px'>
 				<slot name='filter'></slot>
 			</mo-flex>
 		`
@@ -133,43 +122,32 @@ export class DataGridSidePanel<TData> extends Component {
 
 	protected get settingsTemplate() {
 		return html`
-			<mo-flex gap='16px'>
+			<mo-flex>
 				<slot name='settings'></slot>
 
-				<mo-section ${style({ padding: '0 16px' })}>
-					<mo-heading typography='heading6' slot='heading'>
-						${t('Tabellen-Design')}
-					</mo-heading>
+				<mo-section heading=${t('Design')}>
 					<mo-flex gap='16px'>
-						<mo-field-select label=${t('Font Size')}
-							.value=${this.dataGrid.cellFontSize}
-							@change=${(e: CustomEvent<number>) => this.dataGrid.cellFontSize = e.detail}
-						>
-							${Array.from({ length: 5 }).map((_, i) => html`
-								<mo-option value=${0.8 + i * 0.1}>
-									${80 + i * 10}%
-								</mo-option>
-							`)}
+						<mo-field-select label=${t('Font Size')} ${bind(this, 'dataGrid', { keyPath: 'cellFontSize' as any })}>
+							${Array.from({ length: 5 }).map((_, i) => {
+								const value = 0.8 + i * 0.1
+								return html`<mo-option value=${value}>${(value * 100).formatAsPercent()}</mo-option>`
+							})}
 						</mo-field-select>
-						<mo-field-select label=${t('Row Height')}
-							.value=${this.dataGrid.rowHeight}
-							@change=${(e: CustomEvent<number>) => this.dataGrid.cellFontSize = e.detail}
-						>
-							${Array.from({ length: 7 }).map((_, i) => html`
-								<mo-option value=${30 + i * 5}>
-									${30 + i * 5}px
-								</mo-option>
-							`)}
+						<mo-field-select label=${t('Row Height')} ${bind(this, 'dataGrid', { keyPath: 'rowHeight' as any })}>
+							${Array.from({ length: 7 }).map((_, i) => {
+								const value = 30 + i * 5
+								return html`<mo-option value=${value}>${value}px</mo-option>`
+							})}
 						</mo-field-select>
 					</mo-flex>
 				</mo-section>
 
-				<mo-line ${style({ marginTop: '9px' })}></mo-line>
-
-				<mo-section ${style({ padding: '0 16px' })}>
-					<mo-heading typography='heading6' slot='heading'>
-						${t('Columns')}
-					</mo-heading>
+				<mo-section .heading=${html`
+					${t('Columns')}
+					<span style='color: var(--mo-color-gray)'>
+						${this.dataGrid.visibleColumns.length.format()}/${this.dataGrid.columns.length.format()}
+					</span>
+				`}>
 					${this.dataGrid.columns.map(this.getColumnTemplate)}
 				</mo-section>
 			</mo-flex>
