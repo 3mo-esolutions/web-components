@@ -82,6 +82,13 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 		}
 	}
 
+	override focus() {
+		const inputElement = this.renderRoot.querySelector('mo-field-pair')
+			? this.renderRoot.querySelector('mo-field-pair *:not([slot])')
+			: this.renderRoot.firstElementChild
+		;(inputElement as any)?.focus?.()
+	}
+
 	static override get styles() {
 		return css`
 			mo-field-select::part(container) {
