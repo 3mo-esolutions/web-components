@@ -1,7 +1,7 @@
-import { Component, event, html, ifDefined, property, css, style, HTMLTemplateResult, state } from '@a11d/lit'
+import { Component, event, html, ifDefined, property, css, style, HTMLTemplateResult, state, query } from '@a11d/lit'
 import { DialogLanguageField, type Language } from './index.js'
 import { DialogSize } from '@3mo/dialog'
-import { FieldPairMode } from '@3mo/field-pair'
+import { type FieldPair, FieldPairMode } from '@3mo/field-pair'
 
 /**
  * @attr mode
@@ -39,6 +39,12 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 
 	@state() protected _languages = new Array<TLanguage>()
 	get languages() { return this._languages }
+
+	@query('mo-field-pair') protected readonly fieldPairElement?: FieldPair
+
+	get fieldElement(): HTMLElement {
+		return (this.fieldPairElement ?? this.renderRoot).querySelector(':not([slot])')!
+	}
 
 	protected abstract fetch(): Promise<Array<TLanguage>>
 
@@ -82,11 +88,9 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 		}
 	}
 
-	override focus() {
-		const inputElement = this.renderRoot.querySelector('mo-field-pair')
-			? this.renderRoot.querySelector('mo-field-pair *:not([slot])')
-			: this.renderRoot.firstElementChild
-		;(inputElement as any)?.focus?.()
+	override focus(...parameters: Parameters<HTMLElement['focus']>) {
+		super.focus(...parameters)
+		this.fieldElement?.focus(...parameters)
 	}
 
 	static override get styles() {
