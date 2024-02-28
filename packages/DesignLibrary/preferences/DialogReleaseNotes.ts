@@ -79,7 +79,6 @@ export class DialogReleaseNotes extends DialogComponent {
 
 		if (!match) {
 			// eslint-disable-next-line no-console
-			console.warn(new Error(`Could not find release notes for provided version ${version}`))
 			return ''
 		}
 
