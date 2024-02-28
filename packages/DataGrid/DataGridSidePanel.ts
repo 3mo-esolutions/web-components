@@ -1,4 +1,4 @@
-import { component, style, Component, css, html, ifDefined, property } from '@a11d/lit'
+import { component, style, Component, css, html, ifDefined, property, bind } from '@a11d/lit'
 import { Localizer } from '@3mo/localization'
 import { tooltip } from '@3mo/tooltip'
 import { type Checkbox } from '@3mo/checkbox'
@@ -12,6 +12,7 @@ Localizer.register('de', {
 	'Font Size': 'Schriftgröße',
 	'Row Height': 'Zeilenhöhe',
 	'Tools': 'Tools',
+	'Design': 'Design',
 })
 
 export enum DataGridSidePanelTab {
@@ -59,24 +60,17 @@ export class DataGridSidePanel<TData> extends Component {
 			}
 
 			mo-scroller {
-				width: calc(100% - calc(2 * 14px));
-				padding: 0 14px;
-				margin-top: 14px;
 				overflow-x: hidden;
 			}
 
-			mo-scroller::part(container) {
-				width: calc(100% - calc(2 * 14px));
+			mo-section {
+				padding: 10px 14px 20px;
+				border-bottom: var(--mo-data-grid-border);
 			}
 
-			mo-flex[slot=heading] {
-				align-items: center;
-			}
-
-			mo-flex[slot=heading] div {
-				color: var(--mo-color-gray);
-				margin-inline-start: 8px;
-				font-size: small;
+			mo-section::part(heading) {
+				font-size: min(1em, 14px);
+				letter-spacing: 0.15px;
 			}
 		`
 	}
@@ -120,7 +114,7 @@ export class DataGridSidePanel<TData> extends Component {
 
 	protected get filtersTemplate() {
 		return html`
-			<mo-flex gap='14px'>
+			<mo-flex gap='14px' style='padding: 14px'>
 				<slot name='filter'></slot>
 			</mo-flex>
 		`
@@ -128,39 +122,33 @@ export class DataGridSidePanel<TData> extends Component {
 
 	protected get settingsTemplate() {
 		return html`
-			<mo-flex gap='14px'>
+			<mo-flex>
 				<slot name='settings'></slot>
 
-				<mo-section>
-					<mo-flex slot='heading' direction='horizontal'>
-						<mo-heading typography='heading4'>${t('Columns')}</mo-heading>
-						<div>${this.dataGrid.visibleColumns.length.format()} / ${this.dataGrid.columns.length.format()}</div>
+				<mo-section heading=${t('Design')}>
+					<mo-flex gap='16px'>
+						<mo-field-select label=${t('Font Size')} ${bind(this, 'dataGrid', { keyPath: 'cellFontSize' as any })}>
+							${Array.from({ length: 5 }).map((_, i) => {
+								const value = 0.8 + i * 0.1
+								return html`<mo-option value=${value}>${(value * 100).formatAsPercent()}</mo-option>`
+							})}
+						</mo-field-select>
+						<mo-field-select label=${t('Row Height')} ${bind(this, 'dataGrid', { keyPath: 'rowHeight' as any })}>
+							${Array.from({ length: 7 }).map((_, i) => {
+								const value = 30 + i * 5
+								return html`<mo-option value=${value}>${value}px</mo-option>`
+							})}
+						</mo-field-select>
 					</mo-flex>
+				</mo-section>
+
+				<mo-section .heading=${html`
+					${t('Columns')}
+					<span style='color: var(--mo-color-gray)'>
+						${this.dataGrid.visibleColumns.length.format()}/${this.dataGrid.columns.length.format()}
+					</span>
+				`}>
 					${this.dataGrid.columns.map(this.getColumnTemplate)}
-				</mo-section>
-
-				<mo-section>
-					<mo-flex slot='heading' direction='horizontal'>
-						<mo-heading typography='heading4'>${t('Font Size')}</mo-heading>
-						<div>${(this.dataGrid.cellFontSize * 100).formatAsPercent()}</div>
-					</mo-flex>
-
-					<mo-slider min='0.8' max='1.2' step='0.1'
-						value=${this.dataGrid.cellFontSize}
-						@input=${(e: CustomEvent<number>) => this.dataGrid.cellFontSize = e.detail}
-					></mo-slider>
-				</mo-section>
-
-				<mo-section>
-					<mo-flex slot='heading' direction='horizontal'>
-						<mo-heading typography='heading4'>${t('Row Height')}</mo-heading>
-						<div>${this.dataGrid.rowHeight.format()} px</div>
-					</mo-flex>
-
-					<mo-slider min='30' max='60' step='5'
-						value=${this.dataGrid.rowHeight}
-						@input=${(e: CustomEvent<number>) => this.dataGrid.rowHeight = e.detail}
-					></mo-slider>
 				</mo-section>
 			</mo-flex>
 		`
