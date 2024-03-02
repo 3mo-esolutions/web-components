@@ -48,7 +48,7 @@ export class DialogDataGridMode extends DialogComponent<{ readonly moddableDataG
 				primaryButtonText=${t('Save')}
 				secondaryButtonText=${this.parameters.mode ? t('Delete') : ''}
 			>
-				<mo-field-text selectOnFocus data-focus
+				<mo-field-text selectOnFocus autofocus
 					label=${t('Name')}
 					value=${this.mode.name}
 					@input=${(e: CustomEvent<string>) => this.mode.name = e.detail.trim()}

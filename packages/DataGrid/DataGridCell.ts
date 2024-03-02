@@ -24,7 +24,7 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 	@state({
 		updated(this: DataGridCell<TValue, TData, TDetailsElement>) {
 			if (this.isEditing) {
-				this.renderRoot.querySelector<HTMLElement>('[data-focus]')?.focus()
+				this.renderRoot.querySelector<HTMLElement>('[autofocus]')?.focus()
 			}
 		}
 	}) private editing = false

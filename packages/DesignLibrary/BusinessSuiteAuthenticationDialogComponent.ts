@@ -71,7 +71,7 @@ export abstract class BusinessSuiteAuthenticationDialogComponent extends DialogA
 	protected get contentTemplate() {
 		return html`
 			<mo-flex gap='var(--mo-thickness-l)' ${style({ flex: '1', width: '100%', paddingBottom: '25px' })}>
-				<mo-field-text data-focus
+				<mo-field-text autofocus
 					label=${t('Username')}
 					${bind(this, 'username', { event: 'input' })}
 				></mo-field-text>

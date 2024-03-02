@@ -50,13 +50,13 @@ export class DialogPrompt extends DialogComponent<Parameters, string> {
 
 	private get textFieldTemplate() {
 		return this.parameters.isTextArea ? html`
-			<mo-field-text-area id='inputElement' data-focus
+			<mo-field-text-area id='inputElement' autofocus
 				label=${this.parameters.inputLabel ?? t('Input')}
 				value=${this.value}
 				@input=${(e: CustomEvent<string>) => this.value = e.detail}
 			></mo-field-text-area>
 		` : html`
-			<mo-field-text id='inputElement' data-focus
+			<mo-field-text id='inputElement' autofocus
 				label=${this.parameters.inputLabel ?? t('Input')}
 				value=${this.value}
 				@input=${(e: CustomEvent<string>) => this.value = e.detail}
