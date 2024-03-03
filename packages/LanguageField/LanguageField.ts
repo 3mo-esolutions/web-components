@@ -3,6 +3,13 @@ import { DialogLanguageField, type Language } from './index.js'
 import { DialogSize } from '@3mo/dialog'
 import { type FieldPair, FieldPairMode } from '@3mo/field-pair'
 
+export type LanguageFieldTemplateParameter<TValue, TLanguage extends Language> = {
+	readonly value: TValue
+	readonly handleChange: (value: TValue) => void
+	readonly label: string
+	readonly language: TLanguage
+}
+
 /**
  * @attr mode
  * @attr valueKey
@@ -34,7 +41,7 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 	@property({ type: Object, bindingDefault: true }) value = new Map<TLanguage[keyof TLanguage], TValue | undefined>()
 	@property({ type: Object, event: 'languageChange' }) selectedLanguage?: TLanguage
 	@property({ type: Object }) defaultLanguage?: TLanguage
-	@property({ type: Object }) fieldTemplate?: (value: TValue, handleChange: (value: TValue) => void, label: string, language: TLanguage) => HTMLTemplateResult
+	@property({ type: Object }) fieldTemplate?: (parameters: LanguageFieldTemplateParameter<TValue, TLanguage>) => HTMLTemplateResult
 	@property({ type: Object }) optionTemplate?: (language: TLanguage) => HTMLTemplateResult
 
 	@state() protected _languages = new Array<TLanguage>()
@@ -132,12 +139,12 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 	}
 
 	getFieldTemplateByLanguage(language: TLanguage) {
-		return !this.getFieldTemplate ? html.nothing : this.getFieldTemplate(
-			this.value.get(language?.[this.valueKey]!)!,
-			value => this.handleFieldChange(language, value),
-			this.label,
-			language
-		)
+		return !this.getFieldTemplate ? html.nothing : this.getFieldTemplate({
+			value: this.value.get(language?.[this.valueKey]!)!,
+			handleChange: value => this.handleFieldChange(language, value),
+			label: this.label,
+			language,
+		})
 	}
 
 	async openDialog() {
