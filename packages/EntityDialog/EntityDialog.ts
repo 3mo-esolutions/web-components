@@ -17,7 +17,7 @@ export class EntityDialog<TEntity> extends FetchableDialog<TEntity> {
 
 	protected override get secondaryActionDefaultTemplate() {
 		return !this.delete || this.secondaryButtonText === '' ? super.secondaryActionDefaultTemplate : html`
-			<mo-loading-button type='outlined' style='--mdc-theme-primary: var(--mo-color-error)' ?disabled=${this.fetcherController.isFetching}>
+			<mo-loading-button type='outlined' style='--mo-button-accent-color: var(--mo-color-red)' ?disabled=${this.fetcherController.isFetching}>
 				${this.secondaryButtonText || t('Delete')}
 			</mo-loading-button>
 		`
