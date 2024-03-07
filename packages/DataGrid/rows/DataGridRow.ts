@@ -101,6 +101,11 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				--mo-data-grid-sticky-part-color: color-mix(in srgb, var(--mo-color-surface), black var(--mo-data-grid-alternating-background-transparency));
 			}
 
+			:host([detailsOpen]) #contentContainer {
+				background: rgba(var(--mo-color-accent-base), 0.15);
+				font-weight: 600;
+			}
+
 			#contentContainer {
 				grid-column: -1 / 1;
 				cursor: pointer;
