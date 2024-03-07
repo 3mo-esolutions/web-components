@@ -1,5 +1,12 @@
 import { html, component, property, css } from '@a11d/lit'
 import { FieldText, FieldTextAutoComplete } from './FieldText.js'
+import { Localizer } from '@3mo/localization'
+import '@3mo/icon-button'
+
+Localizer.register('de', {
+	Reveal: 'Anzeigen',
+	Hide: 'Verbergen'
+})
 
 /**
  * @element mo-field-password
@@ -29,6 +36,18 @@ export class FieldPassword extends FieldText {
 
 	protected override get lengthTemplate() {
 		return html.nothing
+	}
+
+	protected override get endSlotTemplate() {
+		return html`
+			${super.endSlotTemplate}
+			<mo-icon-button slot='end'
+				title=${t(this.reveal ? 'Hide' : 'Reveal')}
+				style='color: var(--mo-color-gray)'
+				@click=${() => this.reveal = !this.reveal}
+				icon=${this.reveal ? 'visibility_off' : 'visibility'}
+			></mo-icon-button>
+		`
 	}
 }
 

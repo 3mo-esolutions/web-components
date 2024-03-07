@@ -31,8 +31,6 @@ export abstract class BusinessSuiteAuthenticationDialogComponent extends DialogA
 
 	@state() primaryButtonText = t('Login')
 
-	@state() revealPassword = false
-
 	protected override get template() {
 		return html`
 			<mo-business-suite-authentication-dialog ${style({ '--mdc-dialog-scrim-color': 'var(--mo-color-background)' })}>
@@ -71,20 +69,9 @@ export abstract class BusinessSuiteAuthenticationDialogComponent extends DialogA
 	protected get contentTemplate() {
 		return html`
 			<mo-flex gap='var(--mo-thickness-l)' ${style({ flex: '1', width: '100%', paddingBottom: '25px' })}>
-				<mo-field-text autofocus
-					label=${t('Username')}
-					${bind(this, 'username', { event: 'input' })}
-				></mo-field-text>
-
-				<mo-field-password label=${t('Password')}
-					?reveal=${this.revealPassword}
-					${bind(this, 'password', { event: 'input' })}
-				></mo-field-password>
-
-				<mo-flex direction='horizontal' justifyContent='space-between' alignItems='center' wrap='wrap-reverse'>
-					<mo-checkbox label=${t('Remember Password')} ${bind(this, 'shallRememberPassword')}></mo-checkbox>
-					<mo-checkbox label=${t('Show Password')} ${bind(this, 'revealPassword')}></mo-checkbox>
-				</mo-flex>
+				<mo-field-text autofocus label=${t('Username')} ${bind(this, 'username', { event: 'input' })}></mo-field-text>
+				<mo-field-password label=${t('Password')} ${bind(this, 'password', { event: 'input' })}></mo-field-password>
+				<mo-checkbox label=${t('Remember Password')} ${bind(this, 'shallRememberPassword')}></mo-checkbox>
 			</mo-flex>
 		`
 	}
