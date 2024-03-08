@@ -87,6 +87,13 @@ describe('DataGrid', () => {
 			await expectClickingTheRowLeadsToSelection(fixture, true, true)
 		}
 
+		const shouldNotSelectTheRowWhenIsDataSelectableReturnsFalse = async (fixture: ComponentTestFixture<TestDataGrid>) => {
+			fixture.component.selectOnClick = true
+			fixture.component.isDataSelectable = () => false
+			await fixture.updateComplete
+			await expectClickingTheRowLeadsToSelection(fixture, false)
+		}
+
 		const shouldDispatchSelectionChange = async (
 			fixture: ComponentTestFixture<TestDataGrid>,
 			peopleToClick: Array<Person>,
@@ -138,6 +145,7 @@ describe('DataGrid', () => {
 			it('should not render checkboxes when selectionCheckboxesHidden is true', () => shouldNotRenderCheckboxesWhenSelectionCheckboxesHidden(fixture))
 
 			it('should not select the row when clicked', () => expectClickingTheRowLeadsToSelection(fixture, false))
+			it('should not select the row when isDataSelectable returns false', () => shouldNotSelectTheRowWhenIsDataSelectableReturnsFalse(fixture))
 			it('should select the row when clicked and selectOnClick is true', () => shouldSelectTheRowWhenSelectOnClick(fixture))
 			it('should select the row when clicked and selectionCheckboxesHidden is true', () => shouldSelectTheRowWhenSelectionCheckboxesHidden(fixture))
 			it('should dispatch the "selectionChange" event when a row is clicked', () => shouldDispatchSelectionChange(fixture, [people[0]], true))
@@ -157,6 +165,7 @@ describe('DataGrid', () => {
 			it('should not render checkboxes when selectionCheckboxesHidden is true', () => shouldNotRenderCheckboxesWhenSelectionCheckboxesHidden(fixture))
 
 			it('should not select the row when clicked', () => expectClickingTheRowLeadsToSelection(fixture, false))
+			it('should not select the row when isDataSelectable returns false', () => shouldNotSelectTheRowWhenIsDataSelectableReturnsFalse(fixture))
 			it('should select the row when clicked and selectOnClick is true', () => shouldSelectTheRowWhenSelectOnClick(fixture))
 			it('should select the row when clicked and selectionCheckboxesHidden is true', () => shouldSelectTheRowWhenSelectionCheckboxesHidden(fixture))
 			it('should dispatch the "selectionChange" event when a row is clicked', () => shouldDispatchSelectionChange(fixture, people, true))

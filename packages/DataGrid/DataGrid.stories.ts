@@ -70,6 +70,7 @@ export const Selection = story({
 		<mo-data-grid .data=${fivePeople} style='height: 500px' selectionMode=${selectionMode as any}
 			?selectOnClick=${selectOnClick}
 			?selectionCheckboxesHidden=${selectionCheckboxesHidden}
+			.isDataSelectable=${(person: Person) => person.age >= 18}
 		>
 			${columnsTemplate}
 		</mo-data-grid>

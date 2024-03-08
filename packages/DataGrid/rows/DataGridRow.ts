@@ -200,7 +200,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			>
 				<mo-checkbox
 					tabindex='-1'
-					?disabled=${this.dataGrid.isDataSelectable?.(this.data) === false}
+					?disabled=${this.dataGrid.selectionController.isSelectable(this.data) === false}
 					?selected=${this.selected}
 					@change=${(e: CustomEvent<boolean>) => this.setSelection(e.detail)}
 				></mo-checkbox>
@@ -252,7 +252,6 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	}
 
 	private setSelection(selected: boolean) {
-		this.selected = selected
 		this.dataGrid.selectionController.setSelection(this.data, selected)
 	}
 
