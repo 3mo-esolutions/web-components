@@ -8,6 +8,9 @@ type TooltipDirectiveParameters = [content: string | HTMLTemplateResult, placeme
 export class TooltipDirective extends AsyncDirective {
 	private tooltip?: Tooltip
 
+	private static breakpoint = 1024
+	private static delay = 1_500
+
 	constructor(partInfo: PartInfo) {
 		super(partInfo)
 
@@ -47,7 +50,11 @@ export class TooltipDirective extends AsyncDirective {
 	}
 
 	protected override disconnected() {
-		this.tooltip?.remove()
+		if (window.innerWidth < TooltipDirective.breakpoint + 1) {
+			setTimeout(() => this.tooltip?.remove(), TooltipDirective.delay)
+		} else {
+			this.tooltip?.remove()
+		}
 	}
 }
 
