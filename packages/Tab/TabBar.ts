@@ -16,7 +16,12 @@ import { Tab } from './Tab.js'
 export class TabBar extends Component {
 	@event() readonly change!: EventDispatcher<string | undefined>
 
-	@property({ updated(this: TabBar) { this.syncActiveTab() } }) value?: string
+	@property({
+		bindingDefault: true,
+		updated(this: TabBar) {
+			this.syncActiveTab()
+		}
+	}) value?: string
 
 	@query('md-tabs') private readonly tabsElement!: MdTabs
 
