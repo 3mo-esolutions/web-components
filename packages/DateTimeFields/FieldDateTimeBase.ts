@@ -69,7 +69,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 		}
 	}
 
-	protected roundToPrecision(date: DateTime) {
+	protected floorToPrecision(date: DateTime) {
 		return date.with({
 			year: date.year,
 			month: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Month) ? 1 : date.month,
@@ -78,6 +78,17 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 			minute: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Minute) ? 0 : date.minute,
 			second: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Second) ? 0 : date.second,
 		})
+	}
+
+	protected ceilToPrecision(date: DateTime) {
+		return date.with({
+			year: date.year,
+			minute: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Minute) ? 60 : date.minute,
+			second: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Second) ? 60 : date.second,
+		})
+			.with({ month: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Month) ? date.monthsInYear : date.month })
+			.with({ day: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Day) ? date.daysInMonth : date.day })
+			.with({ hour: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Hour) ? date.hoursInDay : date.hour })
 	}
 
 	protected override handleChange(value?: T, e?: Event) {

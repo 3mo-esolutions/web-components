@@ -1,5 +1,5 @@
 
-import { component, css, html, property } from '@a11d/lit'
+import { bind, component, css, html, property } from '@a11d/lit'
 import { MaterialIcon } from '@3mo/icon'
 import { FieldDateTimeBase as FieldDateTimeBase, FieldDateTimePrecision } from './FieldDateTimeBase.js'
 import { DateRangeParser } from './DateRangeParser.js'
@@ -73,21 +73,32 @@ export class FieldDateTimeRange extends FieldDateTimeBase<DateTimeRange | undefi
 
 	protected override get popoverContentTemplate() {
 		return html`
+			${this.popoverToolbarTemplate}
+			${super.popoverContentTemplate}
+		`
+	}
+
+	protected get popoverToolbarTemplate() {
+		return html`
+			${this.startEndTabBarTemplate}
+		`
+	}
+
+	private get startEndTabBarTemplate() {
+		return html`
 			<mo-flex>
-				<mo-tab-bar value=${this.selection} @change=${(e: CustomEvent<FieldDateRangeSelection>) => this.selection = e.detail}>
+				<mo-tab-bar ${bind(this, 'selection')}>
 					<mo-tab value=${FieldDateRangeSelection.Start}>${t('Start')}</mo-tab>
 					<mo-tab value=${FieldDateRangeSelection.End}>${t('End')}</mo-tab>
 				</mo-tab-bar>
 			</mo-flex>
-
-			${super.popoverContentTemplate}
 		`
 	}
 
 	override handleSelectedDateChange(date: DateTime, precision: FieldDateTimePrecision) {
 		this.value = this.selection === FieldDateRangeSelection.Start
-			? new DateTimeRange(this.roundToPrecision(date), this.value?.end)
-			: new DateTimeRange(this.value?.start, this.roundToPrecision(date))
+			? new DateTimeRange(this.floorToPrecision(date), this.value?.end)
+			: new DateTimeRange(this.value?.start, this.ceilToPrecision(date))
 
 		if (this.precision === precision) {
 			this.selection = this.selection === FieldDateRangeSelection.Start

@@ -27,7 +27,7 @@ export class FieldDateTime extends FieldDateTimeBase<Date | undefined> {
 	}
 
 	protected override handleSelectedDateChange(date: DateTime, precision: FieldDateTimePrecision) {
-		this.value = !date ? undefined : this.roundToPrecision(date)
+		this.value = !date ? undefined : this.floorToPrecision(date)
 		super.handleSelectedDateChange(date, precision)
 	}
 
