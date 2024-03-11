@@ -1,7 +1,6 @@
 import { component, style, Component, css, html, ifDefined, property, bind } from '@a11d/lit'
 import { Localizer } from '@3mo/localization'
 import { tooltip } from '@3mo/tooltip'
-import { type Checkbox } from '@3mo/checkbox'
 import { ColumnDefinition } from './ColumnDefinition.js'
 import { DataGrid } from './DataGrid.js'
 
@@ -155,8 +154,8 @@ export class DataGridSidePanel<TData> extends Component {
 	}
 
 	private readonly getColumnTemplate = (column: ColumnDefinition<TData>) => {
-		const change = async (e: CustomEvent<undefined>) => {
-			column.hidden = (e.target as Checkbox)?.selected === false
+		const change = async (e: CustomEvent<boolean>) => {
+			column.hidden = e.detail === false
 			this.dataGrid.setColumns(this.dataGrid.columns)
 			this.dataGrid.requestUpdate()
 			await this.dataGrid.updateComplete

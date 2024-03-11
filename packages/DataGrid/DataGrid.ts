@@ -1,4 +1,4 @@
-import { property, component, Component, html, css, live, query, ifDefined, PropertyValues, event, queryAll, style, literal, staticHtml, HTMLTemplateResult, cache } from '@a11d/lit'
+import { property, component, Component, html, css, live, query, ifDefined, PropertyValues, event, style, literal, staticHtml, HTMLTemplateResult, cache } from '@a11d/lit'
 import { NotificationComponent } from '@a11d/lit-application'
 import { LocalStorage } from '@a11d/local-storage'
 import { InstanceofAttributeController } from '@3mo/instanceof-attribute-controller'
@@ -207,7 +207,13 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		}
 	}) rowHeight = DataGrid.rowHeight.value
 
-	@queryAll('[mo-data-grid-row]') readonly rows!: Array<DataGridRow<TData, TDetailsElement>>
+	get rows(): Array<DataGridRow<TData, TDetailsElement>> {
+		const root = this.shallVirtualize
+			? this.renderRoot.querySelector('mo-virtualized-scroller')?.renderRoot?.firstElementChild
+			: this.renderRoot
+		return [...root?.querySelectorAll('[mo-data-grid-row]') ?? []] as Array<DataGridRow<TData, TDetailsElement>>
+	}
+
 	@query('mo-data-grid-header') readonly header?: DataGridHeader<TData>
 	@query('#rowsContainer') private readonly rowsContainer?: HTMLElement
 	@query('mo-data-grid-footer') private readonly footer?: DataGridFooter<TData>
@@ -720,10 +726,13 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		`
 	}
 
+	private get shallVirtualize() {
+		return !this.preventVerticalContentScroll && this.renderData.length > this.virtualizationThreshold
+	}
+
 	private get rowsTemplate() {
 		const getRowTemplate = (data: TData, index: number) => this.getRowTemplate(data, index)
-		const shallVirtualize = !this.preventVerticalContentScroll && this.renderData.length > this.virtualizationThreshold
-		const content = shallVirtualize === false
+		const content = this.shallVirtualize === false
 			? this.renderData.map(getRowTemplate)
 			: html`<mo-virtualized-scroller .items=${this.renderData} .getItemTemplate=${getRowTemplate as any}></mo-virtualized-scroller>`
 		return html`
