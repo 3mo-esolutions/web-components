@@ -162,13 +162,12 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	protected abstract inputValueToValue(value: string): T | undefined
 	protected abstract override valueToInputValue(value: T | undefined): string
 
-	private iconButtonActivated = false
 	protected get calendarIconButtonTemplate() {
 		return this.pickerHidden ? html.nothing : html`
 			<mo-icon-button tabindex='-1' dense slot='end'
 				icon=${this.calendarIconButtonIcon}
 				${style({ color: this.isActive ? 'var(--mo-color-accent)' : 'var(--mo-color-gray)', fontSize: '22px', marginTop: '2px' })}
-				@click=${() => !this.iconButtonActivated ? void 0 : this.open = !this.open}
+				@click=${() => this.open ? this.blur() : this.focus()}
 			></mo-icon-button>
 		`
 	}
@@ -179,13 +178,11 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 			this.open = true
 		}
 		await new Promise(r => setTimeout(r))
-		this.iconButtonActivated = true
 	}
 
 	protected override handleBlur(bubbled: boolean, method: FocusMethod) {
 		super.handleBlur(bubbled, method)
 		this.open = false
-		this.iconButtonActivated = false
 	}
 
 	protected get popoverTemplate() {
