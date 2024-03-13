@@ -2,7 +2,7 @@
 import { HTMLTemplateResult, cache, css, html, live, property, style } from '@a11d/lit'
 import { InputFieldComponent } from '@3mo/field'
 import type { MaterialIcon } from '@3mo/icon'
-import { FocusMethod } from '@3mo/focus-controller'
+import type { FocusMethod } from '@3mo/focus-controller'
 
 export enum FieldDateTimePrecision {
 	Year = 'year',
@@ -173,30 +173,25 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	protected abstract inputValueToValue(value: string): T | undefined
 	protected abstract override valueToInputValue(value: T | undefined): string
 
-	private iconButtonActivated = false
 	protected get calendarIconButtonTemplate() {
 		return this.pickerHidden ? html.nothing : html`
-			<mo-icon-button tabindex='-1' dense slot='end'
+			<mo-icon tabindex='-1' dense slot='end'
 				icon=${this.calendarIconButtonIcon}
-				${style({ color: this.isActive ? 'var(--mo-color-accent)' : 'var(--mo-color-gray)', fontSize: '22px', marginTop: '2px' })}
-				@click=${() => !this.iconButtonActivated ? void 0 : this.open = !this.open}
-			></mo-icon-button>
+				${style({ color: this.isActive ? 'var(--mo-color-accent)' : 'var(--mo-color-gray)', fontSize: '22px', marginTop: '2px', cursor: 'pointer', userSelect: 'none' })}
+			></mo-icon>
 		`
 	}
 
-	protected override async handleFocus(bubbled: boolean, method: FocusMethod) {
+	protected override handleFocus(bubbled: boolean, method: FocusMethod) {
 		super.handleFocus(bubbled, method)
 		if (method === 'pointer') {
 			this.open = true
 		}
-		await new Promise(r => setTimeout(r))
-		this.iconButtonActivated = true
 	}
 
 	protected override handleBlur(bubbled: boolean, method: FocusMethod) {
 		super.handleBlur(bubbled, method)
 		this.open = false
-		this.iconButtonActivated = false
 	}
 
 	protected get popoverTemplate() {
