@@ -25,6 +25,10 @@ export class FieldPassword extends FieldText {
 			[autocomplete=off] + div[data-lastpass-icon-root], [autocomplete=off] + div[data-lastpass-infield] {
 				display: none;
 			}
+
+			input::-ms-reveal {
+				display: none;
+			}
 		`
 	}
 
