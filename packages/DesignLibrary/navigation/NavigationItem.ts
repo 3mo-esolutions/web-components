@@ -64,13 +64,13 @@ export class NavigationItem extends Component {
 					color: var(--mo-color-foreground);
 				}
 			</style>
-			<mo-flex direction='horizontal' alignItems='center' justifyContent='center' gap='2px'>
+			<mo-flex id='button' direction='horizontal' alignItems='center' justifyContent='center' gap='2px'>
 				<span>${this.navigation.label}</span>
 				${!this.navigation.children ? html.nothing : html`
 					<mo-icon icon=${this.open ? 'keyboard_arrow_up' : 'keyboard_arrow_down'} ${style({ fontSize: 'large' })}></mo-icon>
 				`}
 			</mo-flex>
-			<mo-menu fixed .anchor=${this} ?open=${bind(this, 'open')}>
+			<mo-menu fixed target='button' .anchor=${this} ?open=${bind(this, 'open')}>
 				${this.menuContentTemplate}
 			</mo-menu>
 		`

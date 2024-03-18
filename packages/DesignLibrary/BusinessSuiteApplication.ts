@@ -1,4 +1,4 @@
-import { css, html, property, style, HTMLTemplateResult, ifDefined, query, repeat } from '@a11d/lit'
+import { css, html, property, style, HTMLTemplateResult, ifDefined, query, repeat, bind } from '@a11d/lit'
 import { Application, PageComponent, PwaHelper, RouteMatchMode, routerLink } from '@a11d/lit-application'
 import { Authentication } from '@a11d/lit-application-authentication'
 import { Localizer } from '@3mo/localization'
@@ -214,7 +214,7 @@ export abstract class BusinessSuiteApplication extends Application {
 
 	protected get drawerTemplate() {
 		return html`
-			<mo-drawer ?open=${this.drawerOpen} @openChange=${(e: CustomEvent<boolean>) => this.drawerOpen = e.detail}>
+			<mo-drawer ?open=${bind(this, 'drawerOpen')}>
 				<mo-flex ${style({ height: '100%' })}>
 					${this.drawerTitleTemplate}
 

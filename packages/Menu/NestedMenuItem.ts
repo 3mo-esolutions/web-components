@@ -1,4 +1,4 @@
-import { component, css, eventListener, html, property } from '@a11d/lit'
+import { bind, component, css, eventListener, html, property } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
 import { MenuItem } from './MenuItem.js'
 
@@ -66,12 +66,9 @@ export class NestedMenuItem extends MenuItem {
 	protected get subMenuTemplate() {
 		return !this.hasSubMenu ? html.nothing : html`
 			<mo-icon icon='chevron_right'></mo-icon>
-			<mo-menu .anchor=${this}
-				?open=${this.open}
-				@openChange=${(e: CustomEvent<boolean>) => this.open = e.detail}
+			<mo-menu .anchor=${this} placement='inline-end' alignment='start'
+				?open=${bind(this, 'open')}
 				@listKeyDown=${(e: CustomEvent<KeyboardEvent>) => { e.stopImmediatePropagation(); !['Left', 'ArrowLeft'].includes(e.detail.key) ? void 0 : this.setOpen(false) }}
-				placement='inline-end'
-				alignment='start'
 			>
 				<slot name='submenu'></slot>
 			</mo-menu>

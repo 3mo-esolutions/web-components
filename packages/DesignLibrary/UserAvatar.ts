@@ -1,7 +1,6 @@
-import { html, component, Component, css, join, bind, property, event, eventListener } from '@a11d/lit'
+import { html, component, Component, css, join, bind, property, event } from '@a11d/lit'
 import { Authentication } from '@a11d/lit-application-authentication'
 import { BusinessSuiteAuthenticationDialogComponent, User } from './BusinessSuiteAuthenticationDialogComponent.js'
-import { MenuItem } from '@3mo/menu'
 
 @component('mo-user-avatar')
 export class UserAvatar extends Component {
@@ -51,21 +50,13 @@ export class UserAvatar extends Component {
 			.join('')
 	}
 
-	@eventListener('click')
-	protected handleClick(event: PointerEvent) {
-		const pathIncludedMenuItem = (event.composedPath() as HTMLElement[]).some(el => el instanceof MenuItem)
-		if (pathIncludedMenuItem) {
-			this.setOpen(false)
-		}
-	}
-
 	protected override get template() {
 		return html`
-			<mo-avatar @click=${() => this.setOpen(!this.open)}>
+			<mo-avatar id='avatar'>
 				${this.avatarContentTemplate}
 			</mo-avatar>
 
-			<mo-menu fixed manual .anchor=${this} ?open=${bind(this, 'open')}>
+			<mo-menu fixed target='avatar' .anchor=${this} ?open=${bind(this, 'open', { sourceUpdated: value => this.openChange.dispatch(value) })}>
 				${join([
 					this.avatarTemplate,
 					html`<slot></slot>`,
@@ -73,11 +64,6 @@ export class UserAvatar extends Component {
 				].filter(Boolean), html`<mo-line></mo-line>`)}
 			</mo-menu>
 		`
-	}
-
-	private setOpen(open: boolean) {
-		this.open = open
-		this.openChange.dispatch(open)
 	}
 
 	private get avatarContentTemplate() {
