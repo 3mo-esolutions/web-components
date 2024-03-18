@@ -1,4 +1,5 @@
-import { Component, component, css, html, property, unsafeSVG } from '@a11d/lit'
+import { Component, component, css, eventListener, html, property, unsafeSVG } from '@a11d/lit'
+import { Router } from '@a11d/lit-application'
 
 @component('mo-application-logo')
 export class ApplicationLogo extends Component {
@@ -11,7 +12,8 @@ export class ApplicationLogo extends Component {
 				color: var(--mo-color-on-accent);
 				display: flex;
 				justify-content: center;
-				height: 100%
+				height: 100%;
+				cursor: pointer;
 			}
 
 			a {
@@ -26,12 +28,13 @@ export class ApplicationLogo extends Component {
 		`
 	}
 
+	@eventListener('click')
+	protected handleClick() {
+		Router.path = Router.basePath || '/'
+	}
+
 	protected override get template() {
-		return html`
-			<a href='/'>
-				${unsafeSVG(this.source)}
-			</a>
-		`
+		return html`${unsafeSVG(this.source)}`
 	}
 }
 
