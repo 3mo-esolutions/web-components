@@ -148,7 +148,8 @@ export class Snackbar extends NotificationComponent {
 		this.type = this.notification.type ?? NotificationType.Info
 		const typeDuration = !this.type ? undefined : Snackbar.defaultTimerPeriodByType.get(this.type)
 		const duration = typeDuration ?? Snackbar.defaultDuration
-		this.timer = new PeriodicTimer(duration)
+		const actionsAddedDuration = (this.notification.actions?.length ?? 0) * 2500
+		this.timer = new PeriodicTimer(duration + actionsAddedDuration)
 		this.timer.run()
 		this.intervalId = window.setInterval(() => this.requestUpdate(), 100)
 		await this.updateComplete
