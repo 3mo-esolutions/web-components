@@ -17,7 +17,7 @@ export interface ListElement extends HTMLElement {
 }
 
 export class ListFocusController extends Controller {
-	protected static forceFocusedList?: ListFocusController
+	private static forceFocusedListsQueue = new Set<ListFocusController>()
 
 	constructor(protected override readonly host: ReactiveControllerHost & ReactiveElement & ListElement) {
 		super(host)
@@ -80,12 +80,11 @@ export class ListFocusController extends Controller {
 	}
 
 	protected handleFocusIn() {
-		ListFocusController.forceFocusedList = this
-		this.focusFirstItem()
+		ListFocusController.forceFocusedListsQueue.add(this)
 	}
 
 	protected handleFocusOut() {
-		ListFocusController.forceFocusedList = undefined
+		ListFocusController.forceFocusedListsQueue.delete(this)
 		this.focusedItemIndex = undefined
 	}
 
@@ -125,11 +124,11 @@ export class ListFocusController extends Controller {
 	}
 
 	private _keyboardFocus = false
-	private get keyboardFocus() { return this._keyboardFocus }
-	private set keyboardFocus(value) {
+	get keyboardFocus() { return this._keyboardFocus }
+	set keyboardFocus(value) {
 		this._keyboardFocus = value
 		for (const item of this.items) {
-			item.toggleAttribute('data-keyboard-focus', value)
+			item.toggleAttribute('data-keyboard-focus', this.hasFocus && value)
 		}
 	}
 
@@ -139,6 +138,9 @@ export class ListFocusController extends Controller {
 			if (!bubbled) {
 				if (focused) {
 					this.handleFocusIn()
+					if (this.keyboardFocus) {
+						this.focusFirstItem()
+					}
 				} else {
 					this.handleFocusOut()
 				}
@@ -148,7 +150,7 @@ export class ListFocusController extends Controller {
 
 	get hasFocus() {
 		return this.focusController.focused
-			&& (ListFocusController.forceFocusedList === undefined || ListFocusController.forceFocusedList === this)
+			&& (!ListFocusController.forceFocusedListsQueue.size || [...ListFocusController.forceFocusedListsQueue].pop() === this)
 	}
 
 	protected readonly itemsPointerDownEventListener = new EventListenerController(this.host, {

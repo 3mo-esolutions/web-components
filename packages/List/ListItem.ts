@@ -60,10 +60,18 @@ export class ListItem extends Component {
 		`
 	}
 
+	protected get rippleActive() {
+		return this.focused
+	}
+
+	protected get focusRingActive() {
+		return this.focused && this.hasAttribute('data-keyboard-focus')
+	}
+
 	protected override get template() {
 		return html`
-			<md-focus-ring inward ?visible=${this.focused && this.hasAttribute('data-keyboard-focus')}></md-focus-ring>
-			<mo-list-item-ripple ?focused=${this.focused} ?disabled=${this.disabled} ?preventClickOnSpace=${this.preventClickOnSpace}></mo-list-item-ripple>
+			<md-focus-ring inward ?visible=${this.focusRingActive}></md-focus-ring>
+			<mo-list-item-ripple ?focused=${this.rippleActive} ?disabled=${this.disabled} ?preventClickOnSpace=${this.preventClickOnSpace}></mo-list-item-ripple>
 			<slot></slot>
 		`
 	}

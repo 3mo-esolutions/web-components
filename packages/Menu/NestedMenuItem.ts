@@ -1,8 +1,7 @@
-import { bind, component, css, eventListener, html, property } from '@a11d/lit'
+import { bind, component, css, eventListener, html, property, query } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
 import { MenuItem } from './MenuItem.js'
-
-// TODO: [Popover] Tests overall
+import { Menu } from './Menu.js'
 
 /**
  * @element mo-nested-menu-item
@@ -13,9 +12,17 @@ import { MenuItem } from './MenuItem.js'
 export class NestedMenuItem extends MenuItem {
 	@property({ type: Boolean }) open = false
 
+	@query('mo-menu') readonly subMenu!: Menu
+
 	private setOpen(open: boolean) {
-		if (!this.disabled && this.hasSubMenu && this.open !== open && this.focused) {
+		if (!this.disabled && !!this.hasSubMenu && this.open !== open && this.focused) {
 			this.open = open
+			if (open) {
+				const focus = this.subMenu.list.focusController
+				focus.focusIn()
+				focus.focusedItemIndex = 0
+				focus.keyboardFocus = true
+			}
 		}
 	}
 
@@ -50,6 +57,14 @@ export class NestedMenuItem extends MenuItem {
 				height: 100%;
 			}
 		`
+	}
+
+	protected override get rippleActive() {
+		return super.rippleActive && !this.open
+	}
+
+	protected override get focusRingActive() {
+		return super.focusRingActive && !this.open
 	}
 
 	protected override get template() {
