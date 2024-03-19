@@ -6,7 +6,7 @@ import { ContextMenuLazyInitializer } from './ContextMenuLazyInitializer.js'
 /** @element mo-context-menu */
 @component('mo-context-menu')
 export class ContextMenu extends Menu {
-	@queryConnectedInstances() private static readonly container = new Set<ContextMenu>()
+	@queryConnectedInstances() private static readonly container: ReadonlySet<ContextMenu> = new Set<ContextMenu>()
 
 	static get openInstance() {
 		return [...ContextMenu.container].find(menu => menu.open)
@@ -52,6 +52,9 @@ export class ContextMenu extends Menu {
 			contextMenu.setOpen(false)
 		}
 		super.openWith(...parameters)
+		if (this.open) {
+			this.updateComplete.then(() => this.items[0]?.focus())
+		}
 	}
 }
 
