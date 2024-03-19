@@ -32,7 +32,9 @@ export class ListFocusController extends Controller {
 	}
 
 	protected getRenderedItemIndex(item: HTMLElement) {
-		return this.host.getRenderedItemIndex?.(item) ?? this.items.indexOf(item)
+		const renderedItemIndex = this.host.getRenderedItemIndex?.(item)
+		const index = this.items.indexOf(item)
+		return renderedItemIndex ?? (index < 0 ? undefined : index)
 	}
 
 	private _focusedItemIndex?: number
@@ -122,8 +124,18 @@ export class ListFocusController extends Controller {
 		}
 	}
 
+	private _keyboardFocus = false
+	private get keyboardFocus() { return this._keyboardFocus }
+	private set keyboardFocus(value) {
+		this._keyboardFocus = value
+		for (const item of this.items) {
+			item.toggleAttribute('data-keyboard-focus', value)
+		}
+	}
+
 	protected readonly focusController = new FocusController(this.host, {
-		handleChange: (focused, bubbled) => {
+		handleChange: (focused, bubbled, method) => {
+			this.keyboardFocus = method === 'keyboard'
 			if (!bubbled) {
 				if (focused) {
 					this.handleFocusIn()
@@ -161,21 +173,25 @@ export class ListFocusController extends Controller {
 			switch (event.key) {
 				case 'Down':
 				case 'ArrowDown':
+					this.keyboardFocus = true
 					this.focusNextItem()
 					prevent = true
 					break
 				case 'Up':
 				case 'ArrowUp':
+					this.keyboardFocus = true
 					this.focusPreviousItem()
 					prevent = true
 					break
 				case 'Home':
 				case 'PageUp':
+					this.keyboardFocus = true
 					this.focusFirstItem()
 					prevent = true
 					break
 				case 'End':
 				case 'PageDown':
+					this.keyboardFocus = true
 					this.focusLastItem()
 					prevent = true
 					break

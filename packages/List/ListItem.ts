@@ -1,6 +1,5 @@
 import { Component, component, css, html, property } from '@a11d/lit'
 import { disabledProperty } from '@3mo/disabled-property'
-import { FocusController } from '@3mo/focus-controller'
 import './ListItemRipple.js'
 
 /**
@@ -16,10 +15,6 @@ export class ListItem extends Component {
 	@disabledProperty({ blockFocus: true }) disabled = false
 	@property({ type: Boolean }) preventClickOnSpace = false
 	@property({ type: Boolean, reflect: true }) protected focused = false
-
-	protected readonly focusController = new FocusController(this, {
-		handleChange: focused => this.focused = focused
-	})
 
 	override role = 'listitem'
 	override tabIndex = 0
@@ -58,11 +53,16 @@ export class ListItem extends Component {
 				justify-content: inherit;
 				flex: 1;
 			}
+
+			md-focus-ring {
+				--md-focus-ring-shape: var(--mo-border-radius);
+			}
 		`
 	}
 
 	protected override get template() {
 		return html`
+			<md-focus-ring inward ?visible=${this.focused && this.hasAttribute('data-keyboard-focus')}></md-focus-ring>
 			<mo-list-item-ripple ?focused=${this.focused} ?disabled=${this.disabled} ?preventClickOnSpace=${this.preventClickOnSpace}></mo-list-item-ripple>
 			<slot></slot>
 		`
