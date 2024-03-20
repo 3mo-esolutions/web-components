@@ -39,6 +39,9 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		type: Number,
 		updated(this: DataGridRow<TData, TDetailsElement>) {
 			this.style.setProperty('--_level', this.level.toString())
+			if (this.level > 0) {
+				this.style.borderBottom = 'solid 1px var(--mo-color-transparent-gray-2)'
+			}
 		}
 	}) level = 0
 
@@ -89,7 +92,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				background-color: var(--mo-color-accent);
 			}
 
-			:host([data-has-alternating-background]) {
+			:host([data-has-alternating-background]) #contentContainer {
 				background: var(--mo-data-grid-alternating-background);
 			}
 
