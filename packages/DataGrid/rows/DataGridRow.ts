@@ -17,6 +17,9 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			if (this.isIntersecting) {
 				this.dataGrid.rowIntersectionObserver?.unobserve?.(this)
 			}
+			if (this.level > 0) {
+				this.style.borderBottom = 'solid 1px var(--mo-color-transparent-gray-2)'
+			}
 		}
 	}) isIntersecting = false
 
@@ -96,7 +99,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				z-index: 2;
 			}
 
-			:host([data-has-alternating-background]) {
+			:host([data-has-alternating-background]) #contentContainer {
 				background: var(--mo-data-grid-alternating-background);
 				--mo-data-grid-sticky-part-color: color-mix(in srgb, var(--mo-color-surface), black var(--mo-data-grid-alternating-background-transparency));
 			}
