@@ -30,7 +30,7 @@ export class ApplicationLogo extends Component {
 
 	@eventListener('click')
 	protected handleClick() {
-		Router.path = Router.basePath || '/'
+		Router.path = Router.basePath + (Router.path.endsWith('/') ? '' : '/')
 	}
 
 	protected override get template() {
