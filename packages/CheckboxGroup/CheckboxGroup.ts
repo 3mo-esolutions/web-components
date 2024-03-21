@@ -5,6 +5,8 @@ import type { Flex } from '@3mo/flex'
 /**
  * @element mo-checkbox-group
  *
+ * @ssr true
+ *
  * @attr direction
  */
 @component('mo-checkbox-group')
@@ -39,7 +41,11 @@ export class CheckboxGroup extends Checkbox {
 	}
 
 	@eventListener('change')
-	protected changed = () => this.childrenSelected = this.selected
+	protected handleChanged() {
+		// Whenever "selected" changes, wether by user interaction or by the children changing
+		// we need to update the childrenSelected state.
+		this.childrenSelected = this.selected
+	}
 
 	static override get styles() {
 		return css`
@@ -67,16 +73,16 @@ export class CheckboxGroup extends Checkbox {
 	}
 
 	private readonly handleSlotChange = () => {
-		const updateValue = () => {
-			const selected = this.childrenSelected
-			if (selected !== this.selected) {
-				this.selected = selected
-				this.change.dispatch(selected)
-			}
-		}
+		this.updateValue()
+		this.checkboxes.forEach(checkbox => checkbox.change.subscribe(this.updateValue))
+	}
 
-		updateValue()
-		this.checkboxes.forEach(checkbox => checkbox.change.subscribe(updateValue))
+	private updateValue = () => {
+		const childrenSelected = this.childrenSelected
+		if (childrenSelected !== this.selected) {
+			this.selected = childrenSelected
+			this.change.dispatch(childrenSelected)
+		}
 	}
 }
 
