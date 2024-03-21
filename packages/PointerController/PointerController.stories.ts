@@ -26,9 +26,13 @@ class StoryPointerController extends Component {
 	}
 
 	protected override get template() {
+		const { hover, press, type } = this.pointerController
+		const hoverText = !hover ? '' : 'hovered'
+		const pressText = !press ? '' : 'pressed'
+		const typeText = !hover && !press || !type ? '' : `using ${type}`
 		return html`
 			<mo-button type='raised'>
-				Content ${!this.pointerController.hover ? '' : '(Hovered)'} ${!this.pointerController.press ? '' : '(Pressed)'}
+				Button ${[hoverText, pressText].filter(Boolean).join(' and ')} ${typeText}
 			</mo-button>
 		`
 	}
