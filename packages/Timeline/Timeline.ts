@@ -1,6 +1,13 @@
 import { Component, component, css, html, property, queryAssignedElements } from '@a11d/lit'
 import type { TimelineItem } from './TimelineItem.js'
 
+/**
+ * @element mo-timeline - A component that represents a timeline.
+ *
+ * @attr direction - The direction of the timeline, either 'vertical' or 'horizontal'. Defaults to 'vertical'.
+ *
+ * @slot - The items of the timeline.
+ */
 @component('mo-timeline')
 export class Timeline extends Component {
 	@property({ reflect: true, updated(this: Timeline) { this.updateItemsDirection() } }) direction: 'vertical' | 'horizontal' = 'vertical'
