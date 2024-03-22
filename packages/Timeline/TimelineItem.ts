@@ -56,7 +56,7 @@ export class TimelineItem extends Component {
 				aspect-ratio: 1;
 				width: 10px;
 				height: 10px;
-				background: var(--mo-timeline-bullet-color, var(--mo-color-gray));
+				background: var(--mo-timeline-item-bullet-color, var(--mo-color-gray));
 				border-radius: 50%;
 			}
 		`
