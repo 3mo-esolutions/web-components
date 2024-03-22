@@ -1,4 +1,4 @@
-import { Component, HTMLTemplateResult, component, css, html, property, query } from '@a11d/lit'
+import { Component, HTMLTemplateResult, component, css, html, isServer, property, query } from '@a11d/lit'
 import { InstanceofAttributeController } from '@3mo/instanceof-attribute-controller'
 import { SlotController } from '@3mo/slot-controller'
 import { observeResize } from '@3mo/resize-observer'
@@ -31,7 +31,7 @@ export class TimelineItem extends Component {
 	protected readonly slotController = new SlotController(this)
 
 	get timeline() {
-		return this.closest('mo-timeline') ?? undefined
+		return isServer ? undefined : this.closest('mo-timeline') ?? undefined
 	}
 
 	private get previousItem() {
