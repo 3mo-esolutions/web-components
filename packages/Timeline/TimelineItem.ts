@@ -3,6 +3,20 @@ import { InstanceofAttributeController } from '@3mo/instanceof-attribute-control
 import { SlotController } from '@3mo/slot-controller'
 import { observeResize } from '@3mo/resize-observer'
 
+/**
+ * @element mo-timeline-item - A component that represents a single item in a timeline.
+ *
+ * @attr icon - The icon of the item.
+ * @attr meta - The meta information of the item.
+ * @attr line - The line template renderer of the item.
+ *
+ * @slot - The content of the item.
+ * @slot icon - The icon of the item.
+ * @slot meta - The meta information of the item.
+ *
+ * @cssprop --mo-timeline-item-padding-end - The padding end of the item.
+ * @cssprop --mo-timeline-item-bullet-color - The color of the bullet point.
+ */
 @component('mo-timeline-item')
 export class TimelineItem extends Component {
 	private static readonly defaultLine = html`<div class='line'></div>`
