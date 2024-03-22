@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/timeline",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"description": "A timeline web components supporting horizontal and vertical layouts.",
 	"repository": {
 		"type": "git",
