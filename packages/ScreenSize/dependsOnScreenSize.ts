@@ -1,4 +1,4 @@
-import { AsyncDirective, directive, type PartInfo, PartType } from '@3mo/del'
+import { AsyncDirective, directive, type PartInfo, PartType, isServer } from '@a11d/lit'
 
 type AtLeastOneOf<T, U = { [K in keyof T]: Pick<T, K> }> = Partial<T> & U[keyof U]
 
@@ -22,18 +22,18 @@ export class DependsOnScreenSizeDirective extends AsyncDirective {
 	protected static readonly supportedPartTypes = [PartType.PROPERTY, PartType.ATTRIBUTE, PartType.BOOLEAN_ATTRIBUTE, PartType.CHILD] as Array<PartType>
 
 	protected static readonly media = {
-		[ScreenSize.Mobile]: window.matchMedia('(max-width: 768px)'),
-		[ScreenSize.Tablet]: window.matchMedia('(min-width: 768px) and (max-width: 1024px)'),
-		[ScreenSize.Desktop]: window.matchMedia('(min-width: 1024px)'),
+		[ScreenSize.Mobile]: isServer ? undefined : window.matchMedia('(max-width: 768px)'),
+		[ScreenSize.Tablet]: isServer ? undefined : window.matchMedia('(min-width: 768px) and (max-width: 1024px)'),
+		[ScreenSize.Desktop]: isServer ? undefined : window.matchMedia('(min-width: 1024px)'),
 		addEventListener(listener: MediaQueryListener) {
-			this[ScreenSize.Mobile].addEventListener('change', listener)
-			this[ScreenSize.Tablet].addEventListener('change', listener)
-			this[ScreenSize.Desktop].addEventListener('change', listener)
+			this[ScreenSize.Mobile]?.addEventListener('change', listener)
+			this[ScreenSize.Tablet]?.addEventListener('change', listener)
+			this[ScreenSize.Desktop]?.addEventListener('change', listener)
 		},
 		removeEventListener(listener: MediaQueryListener) {
-			this[ScreenSize.Mobile].removeEventListener('change', listener)
-			this[ScreenSize.Tablet].removeEventListener('change', listener)
-			this[ScreenSize.Desktop].removeEventListener('change', listener)
+			this[ScreenSize.Mobile]?.removeEventListener('change', listener)
+			this[ScreenSize.Tablet]?.removeEventListener('change', listener)
+			this[ScreenSize.Desktop]?.removeEventListener('change', listener)
 		},
 	}
 
@@ -50,9 +50,9 @@ export class DependsOnScreenSizeDirective extends AsyncDirective {
 	render(definitions: ScreenSizeDefinitions) {
 		this.definitions = definitions
 		switch (true) {
-			case DependsOnScreenSizeDirective.media[ScreenSize.Mobile].matches:
+			case DependsOnScreenSizeDirective.media[ScreenSize.Mobile]?.matches:
 				return definitions[ScreenSize.Mobile] ?? definitions[ScreenSize.Tablet] ?? definitions[ScreenSize.Desktop]
-			case DependsOnScreenSizeDirective.media[ScreenSize.Tablet].matches:
+			case DependsOnScreenSizeDirective.media[ScreenSize.Tablet]?.matches:
 				return definitions[ScreenSize.Tablet] ?? definitions[ScreenSize.Desktop]
 			default:
 				return definitions[ScreenSize.Desktop]

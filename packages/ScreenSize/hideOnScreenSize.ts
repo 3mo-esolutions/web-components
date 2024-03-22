@@ -1,4 +1,4 @@
-import { noChange, type PartInfo, PartType, directive } from '@3mo/del'
+import { noChange, type PartInfo, PartType, directive } from '@a11d/lit'
 import { DependsOnScreenSizeDirective, ScreenSizeKey } from './dependsOnScreenSize.js'
 
 export class HideOnScreenSizeDirective extends DependsOnScreenSizeDirective {
@@ -22,7 +22,7 @@ export class HideOnScreenSizeDirective extends DependsOnScreenSizeDirective {
 	}
 
 	protected override handleChange() {
-		const matches = this.screenSizes.some(screenSize => DependsOnScreenSizeDirective.media[screenSize].matches)
+		const matches = this.screenSizes.some(screenSize => DependsOnScreenSizeDirective.media[screenSize]?.matches ?? false)
 		this.element.style.display = matches ? 'none' : ''
 	}
 }
