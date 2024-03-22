@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/section",
-	"version": "0.1.10",
+	"version": "0.1.11",
 	"description": "A section web-component based on Material Design.",
 	"repository": {
 		"type": "git",
@@ -25,6 +25,7 @@
 		"@a11d/lit": "x",
 		"tslib": "x",
 		"@3mo/slot-controller": "x",
+		"@3mo/grid": "x",
 		"@3mo/heading": "x"
 	}
 }
