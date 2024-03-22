@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/empty-state",
-	"version": "0.1.5",
+	"version": "0.1.6",
 	"description": "A web component to display an empty state",
 	"repository": {
 		"type": "git",

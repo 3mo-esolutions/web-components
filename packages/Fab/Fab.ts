@@ -1,4 +1,4 @@
-import { Component, component, css, html, ifDefined, property } from '@a11d/lit'
+import { Component, component, css, html, ifDefined, isServer, property } from '@a11d/lit'
 import { MutationController } from '@3mo/mutation-observer'
 import { InstanceofAttributeController } from '@3mo/instanceof-attribute-controller'
 import { MaterialIcon } from '@3mo/icon'
@@ -7,6 +7,8 @@ import '@3mo/theme'
 
 /**
  * @element mo-fab
+ *
+ * @ssr true
  *
  * @attr icon
  * @attr label
@@ -27,13 +29,17 @@ export class Fab extends Component {
 	@property({ type: Boolean }) dense = false
 
 	protected readonly instanceofAttributeController = new InstanceofAttributeController(this)
-	protected readonly mutationController = new MutationController(this, {
+	protected readonly mutationController = isServer ? undefined : new MutationController(this, {
 		config: {
 			subtree: true,
 			characterData: true,
 			childList: true,
 		}
 	})
+
+	protected override initialized() {
+		this.requestUpdate()
+	}
 
 	static override get styles() {
 		return css`

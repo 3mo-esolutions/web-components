@@ -1,5 +1,10 @@
 import { ReactiveControllerHost, Controller } from '@a11d/lit'
 
+/**
+ * A controller that runs a task at a regular interval.
+ *
+ * @ssr true
+ */
 export class IntervalController extends Controller {
 	private timerId = -1
 

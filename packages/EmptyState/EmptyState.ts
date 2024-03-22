@@ -4,6 +4,8 @@ import type { MaterialIcon } from '@3mo/icon'
 /**
  * @element mo-empty-state
  *
+ * @ssr true
+ *
  * @attr icon
  *
  * @slot - Error message

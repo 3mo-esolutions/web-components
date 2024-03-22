@@ -6,6 +6,8 @@ import { Tab } from './Tab.js'
 /**
  * @element mo-tab-bar
  *
+ * @ssr true
+ *
  * @attr value
  *
  * @slot - Default slot for tab elements
@@ -24,6 +26,11 @@ export class TabBar extends Component {
 	}) value?: string
 
 	@query('md-tabs') private readonly tabsElement!: MdTabs
+
+	protected override initialized() {
+		// This is needed as updated callback is not called on first render only in SSR
+		this.syncActiveTab()
+	}
 
 	get tabs() { return [...this.children].filter((c): c is Tab => c instanceof Tab) }
 

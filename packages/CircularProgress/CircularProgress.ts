@@ -3,6 +3,10 @@ import { MdCircularProgress } from '@material/web/progress/circular-progress.js'
 import '@3mo/theme'
 
 /**
+ * @element mo-circular-progress
+ *
+ * @ssr true
+ *
  * @attr progress - The progress of the circular progress indicator. Unset to display an indeterminate progress indicator.
  *
  * @cssprop --mo-circular-progress-accent-color

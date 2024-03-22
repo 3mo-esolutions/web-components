@@ -1,3 +1,8 @@
+/**
+ * A utility class for importing fonts globally.
+ *
+ * @ssr true
+ */
 export class FontImporter {
 	private static readonly styleElement = globalThis.document?.createElement('style') as HTMLStyleElement | undefined
 

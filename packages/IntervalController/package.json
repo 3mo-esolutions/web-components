@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/interval-controller",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"description": "A lit controller that calls a function in a given interval",
 	"repository": {
 		"type": "git",

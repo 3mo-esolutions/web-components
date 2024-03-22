@@ -5,6 +5,8 @@ import '@3mo/button'
 /**
  * @element mo-chip
  *
+ * @ssr true
+ *
  * @slot - The default slot.
  * @slot leading - The icon slot.
  * @slot trailing - The icon slot.

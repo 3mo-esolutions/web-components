@@ -3,6 +3,10 @@ import { MdLinearProgress } from '@material/web/progress/linear-progress.js'
 import '@3mo/theme'
 
 /**
+ * @element mo-linear-progress
+ *
+ * @ssr true
+ *
  * @attr progress
  * @attr buffer
  *

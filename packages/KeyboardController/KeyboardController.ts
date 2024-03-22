@@ -1,3 +1,8 @@
+/**
+ * A simple keyboard controller which tracks the pressed special keys (ctrl, alt, shift, meta).
+ *
+ * @ssr true
+ */
 export class KeyboardController {
 	private static _ctrl = false
 	static get ctrl() { return this._ctrl }
@@ -11,26 +16,16 @@ export class KeyboardController {
 	private static _meta = false
 	static get meta() { return this._meta }
 
+	private static setUsingEvent(e: KeyboardEvent) {
+		this._ctrl = e.ctrlKey
+		this._shift = e.shiftKey
+		this._alt = e.altKey
+		this._meta = e.metaKey
+	}
+
 	static {
-		window.addEventListener('keydown', e => {
-			KeyboardController._ctrl = e.ctrlKey
-			KeyboardController._shift = e.shiftKey
-			KeyboardController._alt = e.altKey
-			KeyboardController._meta = e.metaKey
-		})
-
-		window.addEventListener('keyup', e => {
-			KeyboardController._ctrl = e.ctrlKey
-			KeyboardController._shift = e.shiftKey
-			KeyboardController._alt = e.altKey
-			KeyboardController._meta = e.metaKey
-		})
-
-		window.addEventListener('blur', () => {
-			KeyboardController._ctrl = false
-			KeyboardController._shift = false
-			KeyboardController._alt = false
-			KeyboardController._meta = false
-		})
+		window?.addEventListener('keydown', e => this.setUsingEvent(e))
+		window?.addEventListener('keyup', e => this.setUsingEvent(e))
+		window?.addEventListener('blur', () => [this._ctrl, this._shift, this._alt, this._meta] = [false, false, false, false])
 	}
 }
