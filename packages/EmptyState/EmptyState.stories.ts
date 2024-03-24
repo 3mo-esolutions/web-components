@@ -1,29 +1,23 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 
-export default meta({
-	title: 'EmptyState',
+export default {
+	title: 'Empty State',
 	component: 'mo-empty-state',
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
-export const EmptyState = story({
+export const EmptyState: StoryObj = {
 	render: () => html`
 		<mo-empty-state icon='youtube_searched_for' style='height: 400px'>
 			No Results
 		</mo-empty-state>
 	`
-})
+}
 
-export const WithActions = story({
+export const WithActions: StoryObj = {
 	render: () => html`
 		<mo-empty-state icon='youtube_searched_for' style='height: 400px'>
 			<mo-flex gap='4px'>
@@ -32,20 +26,20 @@ export const WithActions = story({
 			</mo-flex>
 		</mo-empty-state>
 	`
-})
+}
 
-export const EmptyStateFile = story({
+export const EmptyStateFile: StoryObj = {
 	render: () => html`
 		<mo-empty-state icon='folder' style='height: 400px'>
 			No Files Found
 		</mo-empty-state>
 	`
-})
+}
 
-export const EmptyStatePage = story({
+export const EmptyStatePage: StoryObj = {
 	render: () => html`
 		<mo-empty-state icon='touch_app' style='height: 400px'>
 			Select a Page
 		</mo-empty-state>
 	`
-})
+}

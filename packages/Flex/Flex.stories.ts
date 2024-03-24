@@ -1,4 +1,4 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html, style } from '@a11d/lit'
 import p from './package.json'
 import '.'
@@ -15,7 +15,7 @@ const contentsOption = [
 	'safe center', 'unsafe center',
 ]
 
-export default meta({
+export default {
 	title: 'Flex',
 	component: 'mo-flex',
 	args: {
@@ -56,13 +56,7 @@ export default meta({
 			control: { type: 'select', options: contentsOption }
 		},
 	},
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	},
+	package: p,
 	decorators: [
 		story => html`
 			${story()}
@@ -70,22 +64,22 @@ export default meta({
 			<!-- Styles only for better visualization -->
 			<style>
 				html, body, #root, #root-inner { height: 100%; }
-				mo-flex { min-height: 300px; }
-				mo-flex div { color: black; font-size: xx-large; display: flex; align-items: center; justify-content: center; }
-				mo-flex div:nth-of-type(4n + 1) { background: #F7CAC9; }
-				mo-flex div:nth-of-type(4n + 2) { background: #7FCDCD; }
-				mo-flex div:nth-of-type(4n + 3) { background: #92A8D1; }
-				mo-flex div:nth-of-type(4n + 4) { background: #F3E0BE; }
+				#flex { min-height: 300px; }
+				#flex div { color: black; font-size: xx-large; display: flex; align-items: center; justify-content: center; }
+				#flex div:nth-of-type(4n + 1) { background: #F7CAC9; }
+				#flex div:nth-of-type(4n + 2) { background: #7FCDCD; }
+				#flex div:nth-of-type(4n + 3) { background: #92A8D1; }
+				#flex div:nth-of-type(4n + 4) { background: #F3E0BE; }
 			</style>
 		`
 	]
-})
+}
 
-export const Flex = story({
+export const Flex: StoryObj = {
 	render: ({ direction, wrap, gap, justifyItems, justifyContent, alignItems, alignContent }) => {
 		const orientationX = direction === 'horizontal' || direction === 'horizontal-reversed'
 		return html`
-			<mo-flex direction=${direction} wrap=${wrap} gap=${gap} justifyItems=${justifyItems} justifyContent=${justifyContent} alignItems=${alignItems} alignContent=${alignContent}>
+			<mo-flex id='flex' direction=${direction} wrap=${wrap} gap=${gap} justifyItems=${justifyItems} justifyContent=${justifyContent} alignItems=${alignItems} alignContent=${alignContent}>
 				<div ${style({ [orientationX ? 'width' : 'height']: '100px' })}>100px</div>
 				<div ${style({ flex: '2' })}>2*</div>
 				<div>auto</div>
@@ -93,4 +87,4 @@ export const Flex = story({
 			</mo-flex>
 		`
 	}
-})
+}

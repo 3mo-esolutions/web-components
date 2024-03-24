@@ -1,10 +1,10 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html, style } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 
-export default meta({
-	title: 'CollapsibleCard',
+export default {
+	title: 'Collapsible Card',
 	component: 'mo-collapsible-card',
 	args: {
 		type: 'filled',
@@ -31,19 +31,13 @@ export default meta({
 		subHeading: { control: 'text' },
 		content: { control: 'text' },
 	},
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
-export const CollapsibleCard = story({
+export const CollapsibleCard: StoryObj = {
 	render: ({ type, heading, subHeading, content }) => html`
 		<mo-collapsible-card type=${type} heading=${heading} subHeading=${subHeading} ${style({ width: '400px' })}>
 			${content}
 		</mo-collapsible-card>
 	`
-})
+}

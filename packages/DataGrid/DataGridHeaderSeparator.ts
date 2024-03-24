@@ -1,7 +1,7 @@
 import { Component, component, property, html, css, state, event, eventListener, style } from '@a11d/lit'
 import { ColumnDefinition, DataGrid } from './index.js'
 
-/** @fires columnUpdate {CustomEvent} */
+/** @fires columnUpdate */
 @component('mo-data-grid-header-separator')
 export class DataGridHeaderSeparator extends Component {
 	static disableResizing = false

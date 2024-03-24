@@ -1,9 +1,9 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html, style } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 
-export default meta({
+export default {
 	title: 'Button Group',
 	component: 'mo-button-group',
 	args: {
@@ -14,16 +14,10 @@ export default meta({
 		type: { control: 'select', options: ['normal', 'outlined', 'raised', 'unelevated'] },
 		direction: { control: 'select', options: ['horizontal', 'vertical', 'horizontal-reversed', 'vertical-reversed'] },
 	},
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
-export const ButtonGroup = story({
+export const ButtonGroup: StoryObj = {
 	render: ({ type, direction }) => html`
 		<mo-button-group type=${type} direction=${direction}>
 			<mo-button>B</mo-button>
@@ -31,9 +25,9 @@ export const ButtonGroup = story({
 			<mo-button>U</mo-button>
 		</mo-button-group>
 	`
-})
+}
 
-export const WithCustomBorderRadius = story({
+export const WithCustomBorderRadius: StoryObj = {
 	render: ({ type, direction }) => html`
 		<mo-button-group type=${type} direction=${direction} ${style({ '--mo-button-group-border-radius': '100px' })}>
 			<mo-button>B</mo-button>
@@ -41,9 +35,9 @@ export const WithCustomBorderRadius = story({
 			<mo-button>U</mo-button>
 		</mo-button-group>
 	`
-})
+}
 
-export const WithSubclassComposition = story({
+export const WithSubclassComposition: StoryObj = {
 	render: ({ type, direction }) => html`
 		<mo-button-group type=${type} direction=${direction}>
 			<mo-button>mo-button</mo-button>
@@ -51,4 +45,4 @@ export const WithSubclassComposition = story({
 			<mo-button>mo-button</mo-button>
 		</mo-button-group>
 	`
-})
+}

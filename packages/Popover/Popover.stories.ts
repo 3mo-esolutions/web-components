@@ -1,10 +1,10 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { Component, css, html, property } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 import { PopoverAlignment, PopoverPlacement } from './index.js'
 
-export default meta({
+export default {
 	title: 'Popover',
 	component: 'mo-popover',
 	args: {
@@ -25,14 +25,8 @@ export default meta({
 			},
 		},
 	},
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	},
-})
+	package: p,
+} as Meta
 
 const content = html`
 	<input />
@@ -46,7 +40,7 @@ const handleClick = (e: Event) => {
 	popover?.toggleAttribute('open')
 }
 
-export const Manual = story({
+export const Manual: StoryObj = {
 	render: ({ placement, alignment }) => {
 		return html`
 			<mo-popover-container placement=${placement} alignment=${alignment} @click=${handleClick}>
@@ -55,9 +49,9 @@ export const Manual = story({
 			</mo-popover-container>
 		`
 	}
-})
+}
 
-export const Target = story({
+export const Target: StoryObj = {
 	render: ({ placement, alignment }) => {
 		return html`
 			<mo-popover-container placement=${placement} alignment=${alignment}>
@@ -69,9 +63,9 @@ export const Target = story({
 			</mo-popover-container>
 		`
 	}
-})
+}
 
-export const Absolute = story({
+export const Absolute: StoryObj = {
 	render: ({ placement, alignment }) => {
 		return html`
 			<mo-popover-container placement=${placement} alignment=${alignment}>
@@ -80,9 +74,9 @@ export const Absolute = story({
 			</mo-popover-container>
 		`
 	}
-})
+}
 
-export const CatalogAbsolute = story({
+export const CatalogAbsolute: StoryObj = {
 	render: () => {
 		return html`
 			<mo-flex alignItems='center' justifyContent='center' style='margin: auto; height: 500px'>
@@ -90,9 +84,9 @@ export const CatalogAbsolute = story({
 			</mo-flex>
 		`
 	}
-})
+}
 
-export const CatalogFixed = story({
+export const CatalogFixed: StoryObj = {
 	render: () => {
 		return html`
 			<mo-flex alignItems='center' justifyContent='center'>
@@ -100,9 +94,9 @@ export const CatalogFixed = story({
 			</mo-flex>
 		`
 	}
-})
+}
 
-export const Fixed = story({
+export const Fixed: StoryObj = {
 	render: ({ placement, alignment }) => {
 		return html`
 			<mo-popover-container fixed placement=${placement} alignment=${alignment} @click=${handleClick}>
@@ -111,7 +105,7 @@ export const Fixed = story({
 			</mo-popover-container>
 		`
 	}
-})
+}
 
 class StoryPopoverCatalog extends Component {
 	@property({ type: Boolean }) fixed = false

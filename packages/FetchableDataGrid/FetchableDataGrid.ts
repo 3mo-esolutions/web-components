@@ -35,8 +35,8 @@ Localizer.register('de', {
  *
  * @slot error-no-selection - A slot for displaying an error message when user action is required in order for DataGrid to initiate the fetch.
  *
- * @fires parametersChange {CustomEvent<TDataFetcherParameters>}
- * @fires dataFetch {CustomEvent<Result<TData>>}
+ * @fires parametersChange
+ * @fires dataFetch
  */
 @component('mo-fetchable-data-grid')
 export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDataGridParametersType = Record<string, never>, TDetailsElement extends Element | undefined = undefined> extends DataGrid<TData, TDetailsElement> {

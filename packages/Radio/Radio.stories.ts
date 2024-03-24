@@ -1,9 +1,9 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import p from './package.json'
 import '.'
 
-export default meta({
+export default {
 	title: 'Radio',
 	component: 'mo-radio',
 	args: {
@@ -16,16 +16,10 @@ export default meta({
 		label: { control: 'text' },
 		selected: { control: 'boolean' },
 	},
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
-export const Radio = story({
+export const Radio: StoryObj = {
 	render: ({ label, disabled, selected }) => html`
 		<mo-radio
 			label=${label}
@@ -33,9 +27,9 @@ export const Radio = story({
 			?selected=${selected}
 		></mo-radio>
 	`
-})
+}
 
-export const RadioGroup = story({
+export const RadioGroup: StoryObj = {
 	render: ({ label, disabled }) => html`
 		Group One:
 		<mo-flex direction='horizontal'>
@@ -48,4 +42,4 @@ export const RadioGroup = story({
 			<mo-radio name='group-two' label=${label} ?disabled=${disabled}></mo-radio>
 		</mo-flex>
 	`
-})
+}

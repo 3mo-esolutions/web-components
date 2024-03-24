@@ -1,20 +1,14 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import p from './package.json'
 import '.'
 
-export default meta({
+export default {
 	title: 'Avatar',
 	component: 'mo-avatar',
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
-export const Avatar = story({
+export const Avatar: StoryObj = {
 	render: () => html`<mo-avatar>AZ</mo-avatar>`
-})
+}

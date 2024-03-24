@@ -1,12 +1,10 @@
 /* eslint-disable */
 // @ts-check
-import { Packages } from './util/index.mjs'
-import FileSystem from 'fs'
-import path from 'path'
+import { Package } from './util/index.mjs'
+import { promises as FileSystem } from 'fs'
+import Path from 'path'
 
-for (const directory of Packages.getAllDirectories()) {
-	const distDirectory = path.join(directory, 'dist')
-	if (FileSystem.existsSync(distDirectory)) {
-		FileSystem.rmSync(distDirectory, { recursive: true })
-	}
-}
+await Promise.all(Package.all.map(p => {
+	const dist = Path.join(p.path, 'dist')
+	return new Promise(r => FileSystem.rm(dist, { recursive: true }).then(r).catch(r))
+}))

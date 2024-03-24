@@ -1,22 +1,16 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { Component, css, html, property, query } from '@a11d/lit'
 import { Menu } from '@3mo/menu'
 import p from './package.json'
 import './index.js'
 
-export default meta({
+export default {
 	title: 'Menu',
 	component: 'mo-menu',
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	},
-})
+	package: p,
+}
 
-export const WithContainer = story({
+export const WithContainer: StoryObj = {
 	render: () => {
 		return html`
 			<mo-popover-container placement='block-end' alignment='end'>
@@ -27,9 +21,9 @@ export const WithContainer = story({
 			</mo-popover-container>
 		`
 	}
-})
+}
 
-export const WithContainerFixed = story({
+export const WithContainerFixed: StoryObj = {
 	render: () => {
 		return html`
 			<mo-popover-container placement='block-end' alignment='end' fixed>
@@ -40,9 +34,9 @@ export const WithContainerFixed = story({
 			</mo-popover-container>
 		`
 	}
-})
+}
 
-export const WithCustomTarget = story({
+export const WithCustomTarget: StoryObj = {
 	render: () => {
 		return html`
 			<mo-popover-container placement='block-end' alignment='end' fixed>
@@ -56,9 +50,9 @@ export const WithCustomTarget = story({
 			</mo-popover-container>
 		`
 	}
-})
+}
 
-export const Absolute = story({
+export const Absolute: StoryObj = {
 	render: () => html`
 		<story-button-with-menu></story-button-with-menu>
 		<!-- ENCAPSULATED CODE:
@@ -66,9 +60,9 @@ export const Absolute = story({
 			<mo-menu .anchor=\${this} target='button'>\${items}</mo-menu>
 		-->
 	`
-})
+}
 
-export const Fixed = story({
+export const Fixed: StoryObj = {
 	render: () => html`
 		<story-button-with-menu fixed></story-button-with-menu>
 		<!-- ENCAPSULATED CODE:
@@ -76,7 +70,7 @@ export const Fixed = story({
 			<mo-menu .anchor=\${this} target='button'>\${items}</mo-menu>
 		-->
 	`
-})
+}
 
 const keyboardShortcut = (shortcut: string) => html`<span style='font-size: 13px; color: darkgray'>${shortcut}</span>`
 

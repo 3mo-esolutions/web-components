@@ -1,9 +1,9 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 
-export default meta({
+export default {
 	title: 'Field Percent',
 	component: 'mo-field-percent',
 	args: {
@@ -14,17 +14,11 @@ export default meta({
 		readonly: false,
 		value: 10,
 	},
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
-export const Percent = story({
+export const Percent: StoryObj = {
 	render: ({ label, required, disabled, dense, readonly, value }) => html`
 		<mo-field-percent label=${label} ?required=${required} ?disabled=${disabled} ?readonly=${readonly} ?dense=${dense} value=${value}></mo-field-percent>
 	`
-})
+}

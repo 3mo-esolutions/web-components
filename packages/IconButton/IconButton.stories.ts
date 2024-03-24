@@ -1,4 +1,4 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html, style } from '@a11d/lit'
 import { MaterialIcon } from '@3mo/icon'
 import p from './package.json'
@@ -11,7 +11,7 @@ const icons = new Array<MaterialIcon>(
 	'theater_comedy', 'theaters', 'thermostat', 'thermostat_auto', 'thumb_down', 'thumb_down_alt', 'thumb_down_off_alt', 'thumb_up', 'thumb_up_alt', 'thumb_up_off_alt', 'thumbs_up_down', 'thunderstorm', 'time_to_leave', 'timelapse', 'timeline', 'timer', 'timer_10', 'timer_10_select', 'timer_3', 'timer_3_select', 'timer_off', 'tips_and_updates', 'tire_repair', 'title', 'toc', 'today', 'toggle_off', 'toggle_on', 'token', 'toll', 'tonality', 'topic', 'tornado', 'touch_app', 'tour', 'toys', 'track_changes', 'traffic', 'train', 'tram', 'transcribe', 'transfer_within_a_station', 'transform', 'transgender', 'transit_enterexit', 'translate', 'travel_explore', 'trending_down', 'trending_flat', 'trending_up', 'trip_origin', 'troubleshoot', 'try', 'tsunami', 'tty', 'tune', 'tungsten', 'turn_left', 'turn_right', 'turn_sharp_left', 'turn_sharp_right', 'turn_slight_left', 'turn_slight_right', 'turned_in', 'turned_in_not', 'tv', 'tv_off', 'two_wheeler', 'type_specimen', 'u_turn_left', 'u_turn_right', 'umbrella', 'unarchive', 'undo', 'unfold_less', 'unfold_less_double', 'unfold_more', 'unfold_more_double', 'unpublished', 'unsubscribe', 'upcoming', 'update', 'update_disabled', 'upgrade', 'upload', 'upload_file', 'usb', 'usb_off', 'vaccines', 'vape_free', 'vaping_rooms', 'verified', 'verified_user', 'vertical_align_bottom', 'vertical_align_center', 'vertical_align_top', 'vertical_distribute', 'vertical_shades', 'vertical_shades_closed', 'vertical_split', 'vibration', 'video_call', 'video_camera_back', 'video_camera_front', 'video_chat', 'video_file', 'video_label', 'video_library', 'video_settings', 'video_stable', 'videocam', 'videocam_off', 'videogame_asset', 'videogame_asset_off', 'view_agenda', 'view_array', 'view_carousel', 'view_column', 'view_comfy', 'view_comfy_alt', 'view_compact', 'view_compact_alt', 'view_cozy', 'view_day', 'view_headline', 'view_in_ar', 'view_kanban', 'view_list', 'view_module', 'view_quilt', 'view_sidebar', 'view_stream', 'view_timeline', 'view_week', 'vignette', 'villa', 'visibility', 'visibility_off', 'voice_chat', 'voice_over_off', 'voicemail', 'volcano', 'volume_down', 'volume_mute', 'volume_off', 'volume_up', 'volunteer_activism', 'vpn_key', 'vpn_key_off', 'vpn_lock', 'vrpano', 'wallet', 'wallpaper', 'warehouse', 'warning', 'warning_amber', 'wash', 'watch', 'watch_later', 'watch_off', 'water', 'water_damage', 'water_drop', 'waterfall_chart', 'waves', 'waving_hand', 'wb_auto', 'wb_cloudy', 'wb_incandescent', 'wb_iridescent', 'wb_shade', 'wb_sunny', 'wb_twilight', 'wc', 'web', 'web_asset', 'web_asset_off', 'web_stories', 'webhook', 'weekend', 'west', 'whatshot', 'wheelchair_pickup', 'where_to_vote', 'widgets', 'width_full', 'width_normal', 'width_wide', 'wifi', 'wifi_1_bar', 'wifi_2_bar', 'wifi_calling', 'wifi_calling_3', 'wifi_channel', 'wifi_find', 'wifi_lock', 'wifi_off', 'wifi_password', 'wifi_protected_setup', 'wifi_tethering', 'wifi_tethering_error', 'wifi_tethering_off', 'wind_power', 'window', 'wine_bar', 'woman', 'woman_2', 'work', 'work_history', 'work_off', 'work_outline', 'workspace_premium', 'workspaces', 'wrap_text', 'wrong_location', 'wysiwyg', 'yard', 'youtube_searched_for', 'zoom_in', 'zoom_in_map', 'zoom_out', 'zoom_out_map'
 )
 
-export default meta({
+export default {
 	title: 'Icon Button',
 	component: 'mo-icon-button',
 	argTypes: {
@@ -20,16 +20,10 @@ export default meta({
 		dense: { control: 'boolean' },
 		fontSize: { control: 'text' }
 	},
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
-export const Default = story({
+export const Default: StoryObj = {
 	args: {
 		icon: 'verified' as MaterialIcon,
 		disabled: false,
@@ -49,9 +43,9 @@ export const Default = story({
 			?dense=${dense}
 		></mo-icon-button>
 	`
-})
+}
 
-export const WithIconSlot = story({
+export const WithIconSlot: StoryObj = {
 	args: {
 		disabled: false,
 		dense: false,
@@ -70,9 +64,9 @@ export const WithIconSlot = story({
 			<span slot='icon'>🔍</span>
 		</mo-icon-button>
 	`
-})
+}
 
-export const WithButtonPart = story({
+export const WithButtonPart: StoryObj = {
 	args: {
 		disabled: false,
 		dense: false,
@@ -80,14 +74,14 @@ export const WithButtonPart = story({
 	},
 	render: ({ disabled, dense, fontSize }) => html`
 		<style>
-			mo-icon-button#withButtonPart::part(button) {
+			#with-button-part::part(button) {
 				border: 1px solid gray;
 				background: linear-gradient(90deg, rgba(255,166,158,0.25) 0%, rgba(134,22,87,0.25) 100%);
 				border-radius: 999px;
 			}
 		</style>
-		<mo-icon-button id='withButtonPart' ${style({ fontSize })} ?disabled=${disabled} ?dense=${dense}>
+		<mo-icon-button id='with-button-part' ${style({ fontSize })} ?disabled=${disabled} ?dense=${dense}>
 			<span slot='icon'>🎅</span>
 		</mo-icon-button>
 	`
-})
+}

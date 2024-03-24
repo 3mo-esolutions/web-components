@@ -13,8 +13,8 @@ import { SliderBase } from './SliderBase.js'
  *
  * @csspart thumb
  *
- * @fires input {CustomEvent<number>}
- * @fires change {CustomEvent<number>}
+ * @fires input
+ * @fires change
  */
 @component('mo-slider')
 export class Slider extends SliderBase<number> {

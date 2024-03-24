@@ -12,7 +12,7 @@ import { Tab } from './Tab.js'
  *
  * @slot - Default slot for tab elements
  *
- * @fires change {CustomEvent<string | undefined>}
+ * @fires change
  */
 @component('mo-tab-bar')
 export class TabBar extends Component {

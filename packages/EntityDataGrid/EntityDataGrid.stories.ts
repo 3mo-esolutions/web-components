@@ -1,19 +1,13 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 
-export default meta({
-	title: 'EntityDataGrid',
+export default {
+	title: 'Entity Data Grid',
 	component: 'mo-entity-data-grid',
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
 const generatePeople = (count: number) => {
 	const cities = ['Berlin', 'Hamburg', 'München', 'Köln', 'Frankfurt']
@@ -37,7 +31,7 @@ const fetch = async (parameters: Parameters) => {
 
 const parameters = { count: 50 }
 
-export const EntityDataGrid = story({
+export const EntityDataGrid: StoryObj = {
 	render: () => html`
 		<p>
 			In this demo the people below 7 years old are not editable and the people below 18 years old are not deletable.
@@ -57,4 +51,4 @@ export const EntityDataGrid = story({
 			<mo-data-grid-column-text heading='City' dataSelector='city'></mo-data-grid-column-text>
 		</mo-entity-data-grid>
 	`
-})
+}

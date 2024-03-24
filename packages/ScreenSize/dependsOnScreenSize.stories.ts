@@ -1,29 +1,23 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 import { dependsOnScreenSize, hideOnScreenSize } from './index.js'
 
-export default meta({
+export default {
 	title: 'Depends On Screen Size',
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
-export const DependsOnScreenSize = story({
+export const DependsOnScreenSize: StoryObj = {
 	render: () => html`
 		<mo-flex>
 			${dependsOnScreenSize({ mobile: 'Mobile', tablet: 'Tablet', desktop: 'Desktop' })}
 		</mo-flex>
 	`
-})
+}
 
-export const HideOnScreenSize = story({
+export const HideOnScreenSize: StoryObj = {
 	render: () => html`
 		<mo-flex gap='10px'>
 			<div style='color: black; padding: 10px; background-color: gray'>Don't hide</div>
@@ -35,4 +29,4 @@ export const HideOnScreenSize = story({
 			<div style='color: black; padding: 10px; background-color: lightcoral' ${hideOnScreenSize('mobile', 'desktop')}>Hide on mobile and desktop</div>
 		</mo-flex>
 	`
-})
+}

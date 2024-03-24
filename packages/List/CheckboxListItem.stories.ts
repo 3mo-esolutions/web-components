@@ -1,13 +1,13 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import './index.js'
 
-export default meta({
+export default {
 	title: 'Checkbox List Item',
 	component: 'mo-checkbox-list-item',
-})
+}
 
-export const Checkbox = story({
+export const Checkbox: StoryObj = {
 	render: () => html`
 		<mo-card heading='Connectivity' style='--mo-card-body-padding: 0px'>
 			<mo-list>
@@ -28,4 +28,4 @@ export const Checkbox = story({
 			</mo-list>
 		</mo-card>
 	`
-})
+}

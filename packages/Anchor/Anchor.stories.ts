@@ -1,11 +1,12 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html, ifDefined } from '@a11d/lit'
 import p from './package.json'
 import '.'
 
-export default meta({
+export default {
 	title: 'Anchor',
 	component: 'mo-anchor',
+	package: p,
 	args: {
 		href: 'https://www.3mo.de',
 		target: '_blank',
@@ -22,27 +23,20 @@ export default meta({
 		referrerPolicy: { control: 'text' },
 		rel: { control: 'text' },
 	},
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+} as Meta
 
-export const Anchor = story({
+export const Anchor: StoryObj = {
 	render: ({ href, target, download, ping, referrerPolicy, rel }) => {
 		return html`
 			<mo-anchor href=${ifDefined(href)} target=${ifDefined(target)} download=${ifDefined(download)} ping=${ifDefined(ping)} referrerPolicy=${ifDefined(referrerPolicy)} rel=${ifDefined(rel)}>Anchor</mo-anchor>
 		`
 	}
-})
+}
 
-export const WithoutHref = story({
+export const WithoutHref: StoryObj = {
 	render: () => {
 		return html`
 			<mo-anchor @click=${() => alert('Anchor was clicked!')}>Anchor</mo-anchor>
 		`
 	}
-})
+}

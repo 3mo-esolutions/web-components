@@ -1,11 +1,12 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import p from './package.json'
 import '.'
 
-export default meta({
+export default {
 	title: 'Checkbox',
 	component: 'mo-checkbox',
+	tags: ['autodocs'],
 	args: {
 		disabled: false,
 		label: 'Label',
@@ -16,16 +17,10 @@ export default meta({
 		label: { control: 'text' },
 		selected: { control: { type: 'select', options: [true, false, 'indeterminate'] } },
 	},
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
-export const Checkbox = story({
+export const Checkbox: StoryObj = {
 	render: ({ label, disabled, selected }) => html`
 		<mo-checkbox
 			label=${label}
@@ -33,9 +28,9 @@ export const Checkbox = story({
 			.selected=${selected}
 		></mo-checkbox>
 	`
-})
+}
 
-export const WithCustomAccentColor = story({
+export const WithCustomAccentColor: StoryObj = {
 	render: ({ label, disabled, selected }) => html`
 		<mo-checkbox style='--mo-checkbox-accent-color: var(--mo-color-red)'
 			label=${label}
@@ -43,4 +38,4 @@ export const WithCustomAccentColor = story({
 			.selected=${selected}
 		></mo-checkbox>
 	`
-})
+}

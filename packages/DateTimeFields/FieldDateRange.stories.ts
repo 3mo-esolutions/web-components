@@ -1,10 +1,10 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 import { FieldDateTimePrecision } from './FieldDateTimeBase.js'
 
-export default meta({
+export default {
 	title: 'Field Date Range',
 	component: 'mo-field-date-range',
 	args: {
@@ -27,16 +27,10 @@ export default meta({
 			}
 		}
 	},
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
-export const FieldDateRange = story({
+export const FieldDateRange: StoryObj = {
 	render: ({ label, required, disabled, dense, readonly, precision }) => html`
 		<mo-field-date-range
 			label=${label}
@@ -47,4 +41,4 @@ export const FieldDateRange = story({
 			precision=${precision}
 		></mo-field-date-range>
 	`
-})
+}

@@ -1,31 +1,25 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 import { ContextMenu } from '@3mo/context-menu'
 
-export default meta({
+export default {
 	title: 'Dialog',
 	component: 'mo-dialog',
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
-export const Dialog = story({
+export const Dialog: StoryObj = {
 	render: () => html`
 		<mo-dialog heading='Heading' open>
 			Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius quidem eaque earum obcaecati qui? Nihil quaerat,
 			repudiandae error delectus labore quasi inventore fugit corporis maxime eos aspernatur aliquid temporibus vitae.
 		</mo-dialog>
 	`
-})
+}
 
-export const Scrollable = story({
+export const Scrollable: StoryObj = {
 	render: () => html`
 		<mo-dialog heading='Heading' primaryButtonText='Done' open>
 			Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius quidem eaque earum obcaecati qui? Nihil quaerat,
@@ -84,9 +78,9 @@ export const Scrollable = story({
 			repudiandae error delectus labore quasi inventore fugit corporis maxime eos aspernatur aliquid temporibus vitae.
 		</mo-dialog>
 	`
-})
+}
 
-export const Header = story({
+export const Header: StoryObj = {
 	render: () => html`
 		<style>
 			span {
@@ -109,9 +103,9 @@ export const Header = story({
 			repudiandae error delectus labore quasi inventore fugit corporis maxime eos aspernatur aliquid temporibus vitae.
 		</mo-dialog>
 	`
-})
+}
 
-export const Footer = story({
+export const Footer: StoryObj = {
 	render: () => html`
 		<mo-dialog heading='Heading' open primaryButtonText='Save'>
 			<mo-checkbox slot='footer' label='Save as draft'></mo-checkbox>
@@ -119,9 +113,9 @@ export const Footer = story({
 			repudiandae error delectus labore quasi inventore fugit corporis maxime eos aspernatur aliquid temporibus vitae.
 		</mo-dialog>
 	`
-})
+}
 
-export const PrimaryAction = story({
+export const PrimaryAction: StoryObj = {
 	render: () => html`
 		<mo-dialog heading='Heading' open>
 			<mo-loading-button slot='primaryAction' type='raised' leadingIcon='save'>Save</mo-loading-button>
@@ -129,9 +123,9 @@ export const PrimaryAction = story({
 			repudiandae error delectus labore quasi inventore fugit corporis maxime eos aspernatur aliquid temporibus vitae.
 		</mo-dialog>
 	`
-})
+}
 
-export const SecondaryAction = story({
+export const SecondaryAction: StoryObj = {
 	render: () => html`
 		<mo-dialog heading='Heading' open primaryButtonText='Save'>
 			<mo-loading-button slot='secondaryAction' type='outlined' leadingIcon='delete' style='--mo-button-accent-color: darkred'>Delete</mo-loading-button>
@@ -139,36 +133,36 @@ export const SecondaryAction = story({
 			repudiandae error delectus labore quasi inventore fugit corporis maxime eos aspernatur aliquid temporibus vitae.
 		</mo-dialog>
 	`
-})
+}
 
-export const SizeMedium = story({
+export const SizeMedium: StoryObj = {
 	render: () => html`
 		<mo-dialog heading='Heading' open primaryButtonText='Save' size='medium'>
 			Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius quidem eaque earum obcaecati qui? Nihil quaerat,
 			repudiandae error delectus labore quasi inventore fugit corporis maxime eos aspernatur aliquid temporibus vitae.
 		</mo-dialog>
 	`
-})
+}
 
-export const SizeLarge = story({
+export const SizeLarge: StoryObj = {
 	render: () => html`
 		<mo-dialog heading='Heading' open primaryButtonText='Save' size='large'>
 			Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius quidem eaque earum obcaecati qui? Nihil quaerat,
 			repudiandae error delectus labore quasi inventore fugit corporis maxime eos aspernatur aliquid temporibus vitae.
 		</mo-dialog>
 	`
-})
+}
 
-export const BoundToWindow = story({
+export const BoundToWindow: StoryObj = {
 	render: () => html`
 		<mo-dialog heading='Heading' size='large' boundToWindow open>
 			Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius quidem eaque earum obcaecati qui? Nihil quaerat,
 			repudiandae error delectus labore quasi inventore fugit corporis maxime eos aspernatur aliquid temporibus vitae.
 		</mo-dialog>
 	`
-})
+}
 
-export const AutoFocus = story({
+export const AutoFocus: StoryObj = {
 	render: () => html`
 		<mo-dialog heading='Heading' open>
 			<mo-flex gap='6px'>
@@ -177,9 +171,9 @@ export const AutoFocus = story({
 			</mo-flex>
 		</mo-dialog>
 	`
-})
+}
 
-export const Scrim = story({
+export const Scrim: StoryObj = {
 	render: () => html`
 		<style>
 			#scrim::part(scrim) {
@@ -192,4 +186,4 @@ export const Scrim = story({
 			repudiandae error delectus labore quasi inventore fugit corporis maxime eos aspernatur aliquid temporibus vitae.
 		</mo-dialog>
 	`
-})
+}

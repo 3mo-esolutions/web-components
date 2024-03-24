@@ -2,7 +2,7 @@ import { component, css, property } from '@a11d/lit'
 import { DateTime } from '@3mo/date-time'
 import { SelectableCalendar } from './SelectableCalendar.js'
 
-/** @fires change {CustomEvent<T>} */
+/** @fires change */
 @component('mo-selectable-range-calendar')
 export class SelectableRangeCalendar extends SelectableCalendar {
 	@property({ type: Object }) dateRange?: DateTimeRange

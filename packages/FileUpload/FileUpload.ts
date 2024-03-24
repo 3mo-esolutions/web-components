@@ -10,9 +10,9 @@ import '@3mo/localization'
  *
  * @i18n "Upload has failed. Try again."
  *
- * @fires change {CustomEvent<TResult | undefined>} - Fired when the uploading process results in success or failure. The event detail is the result of the upload, either the result of the upload function or undefined if the upload failed.
- * @fires uploadingChange {CustomEvent<boolean>} - Fired when the uploading process starts or ends. The event detail is true if the uploading process has started, false otherwise.
- * @fires fileChange {CustomEvent<File | undefined>} - Fired when the selected file changes. The event detail is the selected file or undefined if no file is selected.
+ * @fires change - Fired when the uploading process results in success or failure. The event detail is the result of the upload, either the result of the upload function or undefined if the upload failed.
+ * @fires uploadingChange - Fired when the uploading process starts or ends. The event detail is true if the uploading process has started, false otherwise.
+ * @fires fileChange - Fired when the selected file changes. The event detail is the selected file or undefined if no file is selected.
  */
 @component('mo-file-upload')
 export class FileUpload<TResult> extends Component {

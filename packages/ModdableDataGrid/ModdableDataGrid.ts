@@ -8,7 +8,7 @@ import { FetchableDataGridParametersType, FetchableDataGrid } from '@3mo/fetchab
 import { DialogDataGridMode, Mode, ModeRepository } from './index.js'
 import { sortable } from './SortableDirective.js'
 
-/** @fires modeChange {CustomEvent<Mode<TData, TDataFetcherParameters> | undefined>} */
+/** @fires modeChange */
 export abstract class ModdableDataGrid<TData, TDataFetcherParameters extends FetchableDataGridParametersType = Record<string, never>, TDetailsElement extends Element | undefined = undefined> extends FetchableDataGrid<TData, TDataFetcherParameters, TDetailsElement> {
 	static disableModes = false
 

@@ -1,4 +1,4 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html, style } from '@a11d/lit'
 import p from './package.json'
 import './Icon'
@@ -13,23 +13,17 @@ const icons = new Array<MaterialIcon>(
 
 const variants = [IconVariant.Sharp, IconVariant.Outlined, IconVariant.Rounded, IconVariant.Filled]
 
-export default meta({
+export default {
 	title: 'Icon',
 	component: 'mo-icon',
 	argTypes: {
 		icon: { control: { type: 'select', options: icons } },
 		variant: { control: { type: 'select', options: variants } },
 	},
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
-export const Icon = story({
+export const Icon: StoryObj = {
 	args: {
 		icon: 'verified' as MaterialIcon,
 		variant: IconVariant.Filled,
@@ -40,9 +34,9 @@ export const Icon = story({
 			icon=${icon}
 		></mo-icon>
 	`
-})
+}
 
-export const List = story({
+export const AllIcons: StoryObj = {
 	args: { variant: IconVariant.Filled },
 	render: ({ variant }) => html`
 		<mo-grid gap='10px' columns='repeat(auto-fit, minmax(100px, 1fr))' ${style({ color: 'rgb(200,200,200)', mixBlendMode: 'difference' })}>
@@ -57,4 +51,4 @@ export const List = story({
 			`)}
 		</mo-grid>
 	`
-})
+}

@@ -1,9 +1,9 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 
-export default meta({
+export default {
 	title: 'Switch',
 	component: 'mo-switch',
 	args: {
@@ -16,16 +16,10 @@ export default meta({
 		label: { control: 'text' },
 		selected: { control: 'boolean' },
 	},
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
-export const Switch = story({
+export const Switch: StoryObj = {
 	render: ({ label, disabled, selected }) => html`
 		<mo-switch
 			label=${label}
@@ -33,9 +27,9 @@ export const Switch = story({
 			?selected=${selected}
 		></mo-switch>
 	`
-})
+}
 
-export const WithCustomAccentColor = story({
+export const WithCustomAccentColor: StoryObj = {
 	render: ({ label, disabled, selected }) => html`
 		<mo-switch style='--mo-switch-accent-color: var(--mo-color-yellow)'
 			label=${label}
@@ -43,9 +37,9 @@ export const WithCustomAccentColor = story({
 			?selected=${selected}
 		></mo-switch>
 	`
-})
+}
 
-export const WithCustomUncheckedAndAccentColor = story({
+export const WithCustomUncheckedAndAccentColor: StoryObj = {
 	render: ({ label, disabled, selected }) => html`
 		<mo-switch style='--mo-switch-accent-color: var(--mo-color-green); --mo-switch-unselected-color: var(--mo-color-red)'
 			label=${label}
@@ -53,4 +47,4 @@ export const WithCustomUncheckedAndAccentColor = story({
 			?selected=${selected}
 		></mo-switch>
 	`
-})
+}

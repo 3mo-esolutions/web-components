@@ -2,10 +2,15 @@
 import { exec } from 'child_process'
 import { promisify } from 'util'
 
-export async function run(command, directory) {
+/**
+ * Runs a command in a directory and returns the stdout
+ * @param {string} command - The command to run
+ * @param {string | undefined} directory - The directory to run the command in
+ */
+export async function run(command, directory = undefined, noError = false) {
 	const { stdout, stderr } = await promisify(exec)(command, { cwd: directory })
-	if (stderr) {
+	if (stderr && !noError) {
 		throw new Error(stderr)
 	}
-	console.log(stdout)
+	return stdout
 }

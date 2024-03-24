@@ -13,8 +13,8 @@ export type FieldFetchableSelectParametersType = Record<string, unknown> | void
  * @attr fetch - The function to fetch the data.
  * @attr optionTemplate - The template to render the options.
  *
- * @fires parametersChange {CustomEvent<TDataFetcherParameters | undefined>}
- * @fires dataFetch {CustomEvent<Array<T>>}
+ * @fires parametersChange
+ * @fires dataFetch
  */
 @component('mo-field-fetchable-select')
 export class FieldFetchableSelect<T, TDataFetcherParameters extends FieldFetchableSelectParametersType = void> extends FieldSelect<T> {

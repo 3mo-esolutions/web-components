@@ -1,21 +1,15 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html, style } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 
-export default meta({
+export default {
 	title: 'Scroller',
 	component: 'mo-scroller',
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
-export const Scroller = story({
+export const Scroller: StoryObj = {
 	render: () => {
 		return html`
 			<mo-scroller ${style({ height: '400px' })}>
@@ -23,6 +17,6 @@ export const Scroller = story({
 			</mo-scroller>
 		`
 	}
-})
+}
 
 const loremIpsum = (repetition: number) => new Array(repetition).fill(0).map(() => html`<p>Lorem ipsum dolor sit.</p>`)

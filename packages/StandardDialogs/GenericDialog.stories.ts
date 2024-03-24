@@ -1,23 +1,17 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 import { GenericDialog } from './index.js'
 
-export default meta({
+export default {
 	title: 'Generic Dialog',
 	component: 'mo-generic-dialog',
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
-export const Default = story({
+export const Default: StoryObj = {
 	render: () => html`
 		<mo-button @click=${() => new GenericDialog({ heading: 'Heading', content: 'Content' }).confirm()}>Open</mo-button>
 	`
-})
+}

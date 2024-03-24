@@ -1,19 +1,13 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { HTMLTemplateResult, html } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 
-export default meta({
+export default {
 	title: 'Timeline',
 	component: 'mo-timeline',
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
 const data = [
 	{
@@ -92,7 +86,7 @@ const data = [
 	},
 ]
 
-export const Timeline = story({
+export const Timeline: StoryObj = {
 	render: () => html`
 		<mo-timeline>
 			${data.map(({ date, content }) => html`
@@ -105,9 +99,9 @@ export const Timeline = story({
 			`)}
 		</mo-timeline>
 	`
-})
+}
 
-export const WithHorizontalDirection = story({
+export const WithHorizontalDirection: StoryObj = {
 	render: () => html`
 		<mo-timeline direction='horizontal'>
 			${data.map(({ date, heading, icon, continuous }) => html`
@@ -117,9 +111,9 @@ export const WithHorizontalDirection = story({
 			`)}
 		</mo-timeline>
 	`
-})
+}
 
-export const WithCustomLine = story({
+export const WithCustomLine: StoryObj = {
 	render: () => html`
 		<mo-timeline>
 			${data.map(({ icon, content, continuous }) => html`
@@ -129,9 +123,9 @@ export const WithCustomLine = story({
 			`)}
 		</mo-timeline>
 	`
-})
+}
 
-export const WithIcons = story({
+export const WithIcons: StoryObj = {
 	render: () => html`
 		<mo-timeline>
 			${data.map(({ date, icon, content }) => html`
@@ -144,9 +138,9 @@ export const WithIcons = story({
 			`)}
 		</mo-timeline>
 	`
-})
+}
 
-export const WithMeta = story({
+export const WithMeta: StoryObj = {
 	render: () => html`
 		<mo-timeline>
 			${data.map(({ date, icon, content }) => html`
@@ -156,19 +150,19 @@ export const WithMeta = story({
 			`)}
 		</mo-timeline>
 	`
-})
+}
 
-export const WithRotatedMeta = story({
+export const WithRotatedMeta: StoryObj = {
 	render: () => html`
 		<style>
-			mo-timeline-item::part(meta) {
+			#rotated-meta mo-timeline-item::part(meta) {
 				writing-mode: vertical-lr;
 				font-size: 12px;
 				padding-block-end: 0px;
 				padding-inline-end: var(--mo-timeline-item-padding-end, 35px);
 			}
 		</style>
-		<mo-timeline>
+		<mo-timeline id='rotated-meta'>
 			${data.map(({ date, icon, content }) => html`
 				<mo-timeline-item icon=${icon} meta=${date}>
 					${content}
@@ -176,4 +170,4 @@ export const WithRotatedMeta = story({
 			`)}
 		</mo-timeline>
 	`
-})
+}

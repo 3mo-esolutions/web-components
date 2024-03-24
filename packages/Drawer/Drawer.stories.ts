@@ -1,26 +1,20 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 
-export default meta({
+export default {
 	title: 'Drawer',
 	component: 'mo-drawer',
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
 function handleClick(this: HTMLElement) {
 	const drawer = this.previousElementSibling as HTMLElement & { open: boolean }
 	drawer.open = !drawer.open
 }
 
-export const Drawer = story({
+export const Drawer: StoryObj = {
 	render: () => html`
 		<mo-drawer>
 			<mo-flex gap='10px'>
@@ -33,4 +27,4 @@ export const Drawer = story({
 			@click=${handleClick}
 		></mo-icon-button>
 	`
-})
+}

@@ -1,10 +1,10 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import { Currency as LCurrency } from '@3mo/localization'
 import p from './package.json'
 import './index.js'
 
-export default meta({
+export default {
 	title: 'Field Currency',
 	component: 'mo-field-currency',
 	args: {
@@ -15,25 +15,19 @@ export default meta({
 		readonly: false,
 		value: 'test@3mo.de',
 	},
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
-export const Currency = story({
+export const Currency: StoryObj = {
 	render: ({ label, required, disabled, dense, readonly, value }) => html`
 		<mo-field-currency currency='EUR' label=${label} ?required=${required} ?disabled=${disabled} ?readonly=${readonly} ?dense=${dense} value=${value}></mo-field-currency>
 	`
-})
+}
 
-export const WithAnotherCurrency = story({
+export const WithAnotherCurrency: StoryObj = {
 	render: () => html`<mo-field-currency label='Currency' .currency=${LCurrency.GBP}></mo-field-currency>`
-})
+}
 
-export const WithoutCurrency = story({
+export const WithoutCurrency: StoryObj = {
 	render: () => html`<mo-field-currency label='Currency' .currency=${undefined}></mo-field-currency>`
-})
+}

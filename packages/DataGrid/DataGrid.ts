@@ -113,20 +113,20 @@ export type DataGridSorting<TData> = DataGridSortingDefinition<TData> | Array<Da
  * @cssprop --mo-data-grid-cell-padding - The inline padding of the cells. Default to 3px.
  * @cssprop --mo-data-grid-column-sub-row-indentation - The indentation of the first column in the sub row. Default to 10px.
  *
- * @fires dataChange {CustomEvent<Array<TData>>}
- * @fires selectionChange {CustomEvent<Array<TData>>}
- * @fires pageChange {CustomEvent<number>}
- * @fires paginationChange {CustomEvent<DataGridPagination | undefined>}
- * @fires columnsChange {CustomEvent<Array<ColumnDefinition<TData>>>}
- * @fires sidePanelOpen {CustomEvent<DataGridSidePanelTab>}
- * @fires sidePanelClose {CustomEvent}
- * @fires sortingChange {CustomEvent<DataGridSorting<TData>>}
- * @fires rowDetailsOpen {CustomEvent<DataGridRow<TData, TDetailsElement>>}
- * @fires rowDetailsClose {CustomEvent<DataGridRow<TData, TDetailsElement>>}
- * @fires rowClick {CustomEvent<DataGridRow<TData, TDetailsElement>>}
- * @fires rowDoubleClick {CustomEvent<DataGridRow<TData, TDetailsElement>>}
- * @fires rowMiddleClick {CustomEvent<DataGridRow<TData, TDetailsElement>>}
- * @fires cellEdit {CustomEvent<DataGridCell<any, TData, TDetailsElement>>}
+ * @fires dataChange
+ * @fires selectionChange
+ * @fires pageChange
+ * @fires paginationChange
+ * @fires columnsChange
+ * @fires sidePanelOpen
+ * @fires sidePanelClose
+ * @fires sortingChange
+ * @fires rowDetailsOpen
+ * @fires rowDetailsClose
+ * @fires rowClick
+ * @fires rowDoubleClick
+ * @fires rowMiddleClick
+ * @fires cellEdit
  */
 @component('mo-data-grid')
 export class DataGrid<TData, TDetailsElement extends Element | undefined = undefined> extends Component {

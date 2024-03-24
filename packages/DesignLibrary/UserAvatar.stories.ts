@@ -1,43 +1,37 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import p from './package.json'
 import '.'
 
-export default meta({
-	title: 'UserAvatar',
+export default {
+	title: 'User Avatar',
 	component: 'mo-user-avatar',
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
-export const Avatar = story({
+export const Avatar: StoryObj = {
 	render: () => html`
 		<mo-user-avatar name='John Doe' email='john.doe@email.com'>
 			<mo-navigation-menu-item icon='dashboard'>Item 1</mo-navigation-menu-item>
 			<mo-navigation-menu-item icon='settings'>Item 2</mo-navigation-menu-item>
 		</mo-user-avatar>
 	`
-})
+}
 
-export const Unauthenticated = story({
+export const Unauthenticated: StoryObj = {
 	render: () => html`
 		<mo-user-avatar>
 			<mo-navigation-menu-item icon='dashboard'>Item 1</mo-navigation-menu-item>
 			<mo-navigation-menu-item icon='settings'>Item 2</mo-navigation-menu-item>
 		</mo-user-avatar>
 	`
-})
+}
 
-export const WithoutEmail = story({
+export const WithoutEmail: StoryObj = {
 	render: () => html`
 		<mo-user-avatar name='john Doe'>
 			<mo-navigation-menu-item icon='dashboard'>Item 1</mo-navigation-menu-item>
 			<mo-navigation-menu-item icon='settings'>Item 2</mo-navigation-menu-item>
 		</mo-user-avatar>
 	`
-})
+}

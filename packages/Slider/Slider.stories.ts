@@ -1,9 +1,9 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html, style } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 
-export default meta({
+export default {
 	title: 'Slider',
 	component: 'mo-slider',
 	args: {
@@ -24,16 +24,10 @@ export default meta({
 		min: { control: 'number' },
 		max: { control: 'number' },
 	},
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
-export const Slider = story({
+export const Slider: StoryObj = {
 	render: ({ disabled, value, step, min, max, discrete, ticks }) => html`
 		<mo-slider ${style({ marginTop: '20px' })}
 			?discrete=${discrete}
@@ -45,9 +39,9 @@ export const Slider = story({
 			max=${max}
 		></mo-slider>
 	`
-})
+}
 
-export const WithCustomAccentColors = story({
+export const WithCustomAccentColors: StoryObj = {
 	render: ({ disabled, value, step, min, max, discrete, ticks }) => html`
 		<mo-slider ${style({ marginTop: '20px', '--mo-slider-accent-color': 'var(--mo-color-red)' })}
 			?discrete=${discrete}
@@ -59,4 +53,4 @@ export const WithCustomAccentColors = story({
 			max=${max}
 		></mo-slider>
 	`
-})
+}

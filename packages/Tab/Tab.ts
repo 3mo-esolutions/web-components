@@ -49,6 +49,10 @@ export class Tab extends MdPrimaryTab {
 					height: 100%;
 					min-height: 40px;
 				}
+
+				.button {
+					height: 100%;
+				}
 			`
 		]
 	}

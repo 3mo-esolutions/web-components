@@ -18,7 +18,7 @@ export function isList(element: EventTarget): element is HTMLElement {
  *
  * @slot - Default slot for list items
  *
- * @fires itemsChange CustomEvent<Array<HTMLElement>> - Dispatched when the list items change
+ * @fires itemsChange - Dispatched when the list items change
  */
 @component('mo-list')
 export class List extends Component {

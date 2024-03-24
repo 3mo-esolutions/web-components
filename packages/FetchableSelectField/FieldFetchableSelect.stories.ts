@@ -1,24 +1,18 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 
-export default meta({
-	title: 'FetchableSelect',
+export default {
+	title: 'Fetchable Select',
 	component: 'mo-field-fetchable-select',
 	args: {
 		defaultText: 'No selection',
 		searchable: false,
 		multiple: false,
 	},
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
 const fetch = async (parameters?: { keyword?: string }) => {
 	await new Promise(resolve => setTimeout(resolve, 1000))
@@ -27,7 +21,7 @@ const fetch = async (parameters?: { keyword?: string }) => {
 }
 const fetchableSelectParameters = {}
 
-export const FetchableSelect = story({
+export const FetchableSelect: StoryObj = {
 	render: ({ searchable, multiple, defaultText }) => html`
 		<mo-card style='max-width: 300px'>
 			<mo-field-fetchable-select label='Countries' ?searchable=${searchable} ?multiple=${multiple} default=${defaultText}
@@ -44,7 +38,7 @@ export const FetchableSelect = story({
 			></mo-field-fetchable-select>
 		</mo-card>
 	`
-})
+}
 
 const countries = [
 	{ code: 'AD', label: 'Andorra', phone: '376' },

@@ -1,13 +1,15 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
+import p from './package.json'
 import './index.js'
 
-export default meta({
+export default {
 	title: 'Selectable List Item',
 	component: 'mo-selectable-list-item',
-})
+	package: p,
+} as Meta
 
-export const Selectable = story({
+export const Selectable: StoryObj = {
 	render: () => html`
 		<mo-card heading='Connectivity' style='--mo-card-body-padding: 0px'>
 			<mo-list>
@@ -28,4 +30,4 @@ export const Selectable = story({
 			</mo-list>
 		</mo-card>
 	`
-})
+}

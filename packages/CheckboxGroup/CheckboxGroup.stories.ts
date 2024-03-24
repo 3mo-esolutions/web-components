@@ -1,10 +1,10 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import p from './package.json'
 import '.'
 
-export default meta({
-	title: 'CheckboxGroup',
+export default {
+	title: 'Checkbox Group',
 	component: 'mo-checkbox-group',
 	args: {
 		label: 'Label',
@@ -14,16 +14,10 @@ export default meta({
 		label: { control: 'text' },
 		direction: { control: 'select', options: ['vertical', 'horizontal', 'vertical-reversed', 'horizontal-reversed'] },
 	},
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
-export const CheckboxGroup = story({
+export const CheckboxGroup: StoryObj = {
 	render: ({ label, direction }) => html`
 		<mo-checkbox-group label=${label} direction=${direction}>
 			<mo-checkbox label='Checkbox 1' selected></mo-checkbox>
@@ -36,4 +30,4 @@ export const CheckboxGroup = story({
 			<mo-checkbox label='Checkbox 4'></mo-checkbox>
 		</mo-checkbox-group>
 	`
-})
+}

@@ -1,9 +1,9 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 
-export default meta({
+export default {
 	title: 'Field Select',
 	component: 'mo-field-select',
 	args: {
@@ -11,16 +11,10 @@ export default meta({
 		searchable: false,
 		multiple: false,
 	},
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
-export const Select = story({
+export const Select: StoryObj = {
 	render: ({ searchable, multiple, defaultText }) => html`
 		<mo-card style='max-width: 300px'>
 			<mo-field-select label='Countries' ?searchable=${searchable} ?multiple=${multiple} default=${defaultText}>
@@ -42,9 +36,9 @@ export const Select = story({
 			</mo-field-select>
 		</mo-card>
 	`
-})
+}
 
-export const FreeInput = story({
+export const FreeInput: StoryObj = {
 	render: ({ multiple, defaultText }) => html`
 		<mo-card style='max-width: 300px'>
 			<mo-field-select label='Countries' searchable freeInput ?multiple=${multiple} default=${defaultText}>
@@ -57,9 +51,9 @@ export const FreeInput = story({
 			</mo-field-select>
 		</mo-card>
 	`
-})
+}
 
-export const PreSelectedValue = story({
+export const PreSelectedValue: StoryObj = {
 	render: ({ searchable, multiple, defaultText }) => html`
 		<mo-card style='max-width: 300px'>
 			<mo-field-select label='Countries' ?searchable=${searchable} ?multiple=${multiple} default=${defaultText} .value=${multiple ? [] : 'DE'}>
@@ -72,7 +66,7 @@ export const PreSelectedValue = story({
 			</mo-field-select>
 		</mo-card>
 	`
-})
+}
 
 const countries = [
 	{ code: 'AD', label: 'Andorra', phone: '376' },

@@ -1,3 +1,0 @@
-# Color
-
-A color class.

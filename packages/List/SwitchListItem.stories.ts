@@ -1,13 +1,13 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import './index.js'
 
-export default meta({
+export default {
 	title: 'Switch List Item',
 	component: 'mo-switch-list-item',
-})
+}
 
-export const Switch = story({
+export const Switch: StoryObj = {
 	render: () => html`
 		<mo-card heading='Connectivity' style='--mo-card-body-padding: 0px'>
 			<mo-list>
@@ -28,4 +28,4 @@ export const Switch = story({
 			</mo-list>
 		</mo-card>
 	`
-})
+}

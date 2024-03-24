@@ -1,52 +1,46 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 
-export default meta({
+export default {
 	title: 'Chip',
 	component: 'mo-chip',
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
-export const Chip = story({
+export const Chip: StoryObj = {
 	render: () => html`<mo-chip>Chip</mo-chip>`
-})
+}
 
-export const WithLeadingIcon = story({
+export const WithLeadingIcon: StoryObj = {
 	render: () => html`
 		<mo-chip>
 			<mo-icon-button dense slot='leading' icon='calendar_today'></mo-icon-button>
 			With Leading Icon
 		</mo-chip>
 	`
-})
+}
 
-export const WithTrailingIcon = story({
+export const WithTrailingIcon: StoryObj = {
 	render: () => html`
 		<mo-chip>
 			With Trailing Icon
 			<mo-icon-button dense slot='trailing' icon='delete'></mo-icon-button>
 		</mo-chip>
 	`
-})
+}
 
-export const WithoutRipple = story({
+export const WithoutRipple: StoryObj = {
 	render: () => html`
 		<style>
 			#without-ripple::part(ripple) { display: none; }
 		</style>
 		<mo-chip id='without-ripple'>Chip</mo-chip>
 	`
-})
+}
 
-export const Customized = story({
+export const Customized: StoryObj = {
 	render: () => html`
 		<style>
 			#inactive {
@@ -71,4 +65,4 @@ export const Customized = story({
 			Active
 		</mo-chip>
 	`
-})
+}

@@ -1,9 +1,9 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html, style } from '@a11d/lit'
 import p from './package.json'
 import '.'
 
-export default meta({
+export default {
 	title: 'Button',
 	component: 'mo-button',
 	args: {
@@ -14,82 +14,61 @@ export default meta({
 		type: { control: 'select', options: ['normal', 'outlined', 'raised', 'unelevated'] },
 		disabled: { control: 'boolean' },
 	},
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
-export const Button = story({
+export const Button: StoryObj = {
 	render: ({ type, disabled }) => html`<mo-button type=${type} ?disabled=${disabled}>Button</mo-button>`
-})
+}
 
-export const WithoutRipple = story({
+export const WithCustomBorderRadius: StoryObj = {
 	render: ({ type, disabled }) => html`
-		<style>
-			mo-button::part(ripple) { display: none; }
-		</style>
-		<mo-button type=${type} ?disabled=${disabled}>Button</mo-button>
+		<mo-button type=${type} ?disabled=${disabled} ${style({ borderRadius: '100px' })}>Custom Border Radius</mo-button>
+		<mo-button type=${type} ?disabled=${disabled} ${style({ borderRadius: '0', '--mo-button-accent-color': 'white' })}>Feeling Sharp?</mo-button>
 	`
-})
+}
 
-export const WithoutFocusRing = story({
-	render: ({ type, disabled }) => html`
-		<style>
-			mo-button::part(focus-ring) { display: none; }
-		</style>
-		<mo-button type=${type} ?disabled=${disabled}>Button</mo-button>
-	`
-})
-
-export const WithCustomBorderRadius = story({
-	render: ({ type, disabled }) => html`<mo-button type=${type} ?disabled=${disabled} ${style({ borderRadius: '100px' })}>Custom Border Radius</mo-button>`
-})
-
-export const WithCustomDisabledColors = story({
+export const WithCustomDisabledColors: StoryObj = {
 	render: ({ type, disabled }) => html`<mo-button type=${type} ?disabled=${disabled} ${style({ '--mo-button-disabled-background-color': 'pink', '--mo-button-disabled-color': 'red' })}>Custom Disabled Colors</mo-button>`
-})
+}
 
-export const WithCustomHorizontalPadding = story({
+export const WithCustomHorizontalPadding: StoryObj = {
 	render: ({ type, disabled }) => html`<mo-button type=${type} ?disabled=${disabled} ${style({ '--mo-button-horizontal-padding': '80px' })}>Custom horizontal Padding</mo-button>`
-})
+}
 
-export const WithLeadingIcon = story({
+export const WithLeadingIcon: StoryObj = {
 	render: ({ type, disabled }) => html`<mo-button leadingIcon='contact_mail' type=${type} ?disabled=${disabled}>Leading Icon</mo-button>`
-})
+}
 
-export const WithTrailingIcon = story({
+export const WithTrailingIcon: StoryObj = {
 	render: ({ type, disabled }) => html`<mo-button trailingIcon='done' type=${type} ?disabled=${disabled}>Trailing Icon</mo-button>`
-})
+}
 
-export const WithLeadingAndTrailingIcon = story({
+export const WithLeadingAndTrailingIcon: StoryObj = {
 	render: ({ type, disabled }) => html`<mo-button leadingIcon='add' trailingIcon='done' type=${type} ?disabled=${disabled}>Leading & Trailing Icon</mo-button>`
-})
+}
 
-export const WithLeadingAndTrailingIconRtl = story({
+export const WithLeadingAndTrailingIconRtl: StoryObj = {
 	render: ({ type, disabled }) => html`<mo-button dir='rtl' leadingIcon='add' trailingIcon='done' type=${type} ?disabled=${disabled}>با آیکان سر و ته</mo-button>`
-})
+}
 
-export const WithNonTextContent = story({
+export const WithNonTextContent: StoryObj = {
 	render: ({ type, disabled }) => html`
 		<mo-button type=${type} ?disabled=${disabled}>
 			<mo-icon icon='delete'></mo-icon>
 		</mo-button>
 	`
-})
+}
 
-export const WithOverflowingContent = story({
+export const WithOverflowingContent: StoryObj = {
 	render: ({ type, disabled }) => html`
 		<mo-button type=${type} ?disabled=${disabled} style='max-width: 200px'>
 			Something very very long that will overflow
 		</mo-button>
 	`
-})
+}
 
-export const WithComplexContent = story({
+export const WithComplexContent: StoryObj = {
 	render: ({ type, disabled }) => html`
 		<mo-button type=${type} ?disabled=${disabled} ${style({ minHeight: '50px', minWidth: '250px' })}>
 			<mo-flex>
@@ -98,9 +77,9 @@ export const WithComplexContent = story({
 			</mo-flex>
 		</mo-button>
 	`
-})
+}
 
-export const WithComplexContentAndTrailingContent = story({
+export const WithComplexContentAndTrailingContent: StoryObj = {
 	render: ({ type, disabled }) => html`
 		<mo-button type=${type} ?disabled=${disabled} ${style({ minHeight: '50px', minWidth: '250px' })}>
 			<mo-flex>
@@ -110,9 +89,9 @@ export const WithComplexContentAndTrailingContent = story({
 			<span slot='trailing' ${style({ fontSize: '36px' })}>₿</span>
 		</mo-button>
 	`
-})
+}
 
-export const WithCustomAccentColors = story({
+export const WithCustomAccentColors: StoryObj = {
 	render: ({ type, disabled }) => html`
 		<mo-button type=${type} ?disabled=${disabled} ${style({ '--mo-button-accent-color': 'var(--mo-color-red)', '--mo-button-on-accent-color': 'rgb(255, 189, 46)' })}>
 			<span slot='leading' ${style({ fontSize: '36px' })}>⚠️</span>
@@ -122,13 +101,31 @@ export const WithCustomAccentColors = story({
 			</mo-flex>
 		</mo-button>
 	`
-})
+}
 
-export const WithTrailingInteractiveContent = story({
+export const WithTrailingInteractiveContent: StoryObj = {
 	render: ({ type, disabled }) => html`
 		<mo-button type=${type} ?disabled=${disabled} @click=${() => alert('Proceed')}>
 			Proceed
 			<mo-icon-button slot='trailing' icon='help' dense ?disabled=${disabled} ${style({ fontSize: '20px' })} @click=${(e: PointerEvent) => { e.stopImmediatePropagation(); alert('Help') }}></mo-icon-button>
 		</mo-button>
 	`
-})
+}
+
+export const WithoutRipple: StoryObj = {
+	render: ({ type, disabled }) => html`
+		<style>
+			#without-ripple::part(ripple) { display: none; }
+		</style>
+		<mo-button id='without-ripple' type=${type} ?disabled=${disabled}>Button</mo-button>
+	`
+}
+
+export const WithoutFocusRing: StoryObj = {
+	render: ({ type, disabled }) => html`
+		<style>
+			#without-focus-ring::part(focus-ring) { display: none; }
+		</style>
+		<mo-button id='without-focus-ring' type=${type} ?disabled=${disabled}>Button</mo-button>
+	`
+}

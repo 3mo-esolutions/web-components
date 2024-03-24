@@ -15,8 +15,8 @@ export type RangeSliderValue = [start: number, end: number]
  *
  * @csspart thumb
  *
- * @fires input {CustomEvent<[start: number, end: number]>}
- * @fires change {CustomEvent<[start: number, end: number]>}
+ * @fires input
+ * @fires change
  */
 @component('mo-range-slider')
 export class RangeSlider extends SliderBase<RangeSliderValue> {

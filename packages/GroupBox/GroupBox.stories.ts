@@ -1,10 +1,10 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 
-export default meta({
-	title: 'GroupBox',
+export default {
+	title: 'Group Box',
 	component: 'mo-group-box',
 	args: {
 		heading: 'Satoshi Nakamoto',
@@ -27,16 +27,10 @@ export default meta({
 		heading: { control: 'text' },
 		content: { control: 'text' },
 	},
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
-export const GroupBox = story({
+export const GroupBox: StoryObj = {
 	render: ({ heading, content }) => html`
 		<mo-group-box heading=${heading}>
 			<mo-icon-button slot='action' icon='share'></mo-icon-button>
@@ -44,4 +38,4 @@ export const GroupBox = story({
 			${content}
 		</mo-group-box>
 	`
-})
+}

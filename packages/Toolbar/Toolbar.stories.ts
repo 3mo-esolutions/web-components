@@ -1,23 +1,17 @@
+import { Meta, StoryObj } from '@storybook/web-components'
 import { Component, html, property, range } from '@a11d/lit'
 import { MaterialIcon } from '@3mo/icon'
 import { ToolbarController } from './index.js'
-import { meta, story } from '../../.storybook/story.js'
 import p from './package.json'
 import './index.js'
 
-export default meta({
+export default {
 	title: 'Toolbar',
 	component: 'mo-toolbar',
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	},
-})
+	package: p,
+} as Meta
 
-export const Default = story({
+export const Default: StoryObj = {
 	args: {
 		collapsed: false,
 		extraItems: 5,
@@ -54,9 +48,9 @@ export const Default = story({
 			`)}
 		</mo-toolbar>
 	`
-})
+}
 
-export const Custom = story({
+export const Custom: StoryObj = {
 	args: { itemCount: 4 },
 	render: ({ itemCount }) => {
 		return html`
@@ -74,7 +68,7 @@ export const Custom = story({
 			</story-custom-toolbar>
 		`
 	}
-})
+}
 class StoryCustomToolbar extends Component {
 	@property({ type: Boolean, reflect: true }) open = false
 

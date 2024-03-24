@@ -1,23 +1,17 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { Component, css, html, state, style } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 
-export default meta({
+export default {
 	title: 'Virtualized Scroller',
 	component: 'mo-virtualized-scroller',
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
 const items = new Array(1000).fill(undefined).map((_, i) => i)
 
-export const VirtualizedScroller = story({
+export const VirtualizedScroller: StoryObj = {
 	render: () => {
 		return html`
 			<mo-virtualized-scroller ${style({ height: '400px' })}
@@ -26,7 +20,7 @@ export const VirtualizedScroller = story({
 			></mo-virtualized-scroller>
 		`
 	}
-})
+}
 
 class Box extends Component {
 	@state() private secondPassedConnected = false

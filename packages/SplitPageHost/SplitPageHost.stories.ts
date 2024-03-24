@@ -1,21 +1,15 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 
-export default meta({
-	title: 'SplitPageHost',
+export default {
+	title: 'Split Page Host',
 	component: 'mo-split-page-host',
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
-export const SplitPageHost = story({
+export const SplitPageHost: StoryObj = {
 	render: () => html`
 		<mo-split-page-host>
 			<mo-card slot='sidebar' style='--mo-card-body-padding: 0px'>
@@ -33,4 +27,4 @@ export const SplitPageHost = story({
 			</mo-page>
 		</mo-split-page-host>
 	`
-})
+}

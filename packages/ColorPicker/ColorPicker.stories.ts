@@ -1,27 +1,21 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import p from './package.json'
 import '.'
 
-export default meta({
-	title: 'ColorPicker',
+export default {
+	title: 'Color Picker',
 	component: 'mo-color-picker',
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
-export const Default = story({
+export const Default: StoryObj = {
 	render: () => {
 		return html`<mo-color-picker></mo-color-picker>`
 	}
-})
+}
 
-export const WithPresets = story({
+export const WithPresets: StoryObj = {
 	render: () => {
 		return html`
 			<mo-color-picker
@@ -29,4 +23,4 @@ export const WithPresets = story({
 			></mo-color-picker>
 		`
 	}
-})
+}

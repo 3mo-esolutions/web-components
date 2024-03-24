@@ -1,20 +1,14 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html, ifDefined, style } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 import { DataGridSortingStrategy } from './index.js'
 
-export default meta({
-	title: 'DataGrid',
+export default {
+	title: 'Data Grid',
 	component: 'mo-data-grid',
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
 type Person = { id: number, name: string, age: number, city: string }
 
@@ -44,15 +38,15 @@ const columnsTemplate = html`
 	<mo-data-grid-column-text heading='City' dataSelector='city'></mo-data-grid-column-text>
 `
 
-export const DataGrid = story({
+export const DataGrid: StoryObj = {
 	render: () => html`
 		<mo-data-grid .data=${fivePeople} style='height: 500px'>
 			${columnsTemplate}
 		</mo-data-grid>
 	`
-})
+}
 
-export const Selection = story({
+export const Selection: StoryObj = {
 	args: {
 		selectionMode: 'single',
 		selectOnClick: false,
@@ -66,6 +60,13 @@ export const Selection = story({
 			}
 		}
 	},
+	parameters: {
+		docs: {
+			description: {
+				story: 'This example also demonstrates how the selection can be restricted to people older than 18.'
+			},
+		}
+	},
 	render: ({ selectionMode, selectOnClick, selectionCheckboxesHidden }) => html`
 		<mo-data-grid .data=${fivePeople} style='height: 500px' selectionMode=${selectionMode as any}
 			?selectOnClick=${selectOnClick}
@@ -75,9 +76,9 @@ export const Selection = story({
 			${columnsTemplate}
 		</mo-data-grid>
 	`
-})
+}
 
-export const ContextMenu = story({
+export const ContextMenu: StoryObj = {
 	render: () => html`
 		<mo-data-grid .data=${fivePeople} style='height: 500px' .getRowContextMenuTemplate=${(data: Array<Person>) => html`
 			<div style='margin: 10px; opacity: 0.5'>${data.map(p => `"${p.name}"`).join(', ')} selected</div>
@@ -87,9 +88,9 @@ export const ContextMenu = story({
 			${columnsTemplate}
 		</mo-data-grid>
 	`
-})
+}
 
-export const Sums = story({
+export const Sums: StoryObj = {
 	render: () => html`
 		<mo-data-grid
 			.data=${generatePeople(50).map(x => ({ ...x, balance: Math.floor(Math.random() * 1000) }))}
@@ -105,9 +106,9 @@ export const Sums = story({
 			<mo-data-grid-footer-sum slot='sum' heading='Customized Sum Maybe!' ${style({ alignItems: 'center', fontWeight: '800' })}>199,99 €</mo-data-grid-footer-sum>
 		</mo-data-grid>
 	`
-})
+}
 
-export const Sorting = story({
+export const Sorting: StoryObj = {
 	render: () => html`
 		<mo-data-grid .data=${thousandPeople} pagination='auto' selectionMode='multiple' style='height: 500px' selectOnClick .sorting=${[{ selector: 'name', strategy: DataGridSortingStrategy.Ascending }, { selector: 'age', strategy: DataGridSortingStrategy.Descending }]}>
 			<mo-data-grid-column-number hidden nonEditable heading='ID' dataSelector='id'></mo-data-grid-column-number>
@@ -117,9 +118,9 @@ export const Sorting = story({
 			<mo-data-grid-column-currency heading='Balance' dataSelector='balance' sumHeading='Balances Total'></mo-data-grid-column-currency>
 		</mo-data-grid>
 	`
-})
+}
 
-export const RowDetails = story({
+export const RowDetails: StoryObj = {
 	args: {
 		multipleDetails: false,
 		detailsOnClick: false,
@@ -140,9 +141,9 @@ export const RowDetails = story({
 			${columnsTemplate}
 		</mo-data-grid>
 	`
-})
+}
 
-export const WithAutoSubDataGrid = story({
+export const WithAutoSubDataGrid: StoryObj = {
 	args: {
 		multipleDetails: false,
 		detailsOnClick: false,
@@ -158,9 +159,9 @@ export const WithAutoSubDataGrid = story({
 			${columnsTemplate}
 		</mo-data-grid>
 	`
-})
+}
 
-export const Editability = story({
+export const Editability: StoryObj = {
 	args: {
 		editability: 'always'
 	},
@@ -172,10 +173,14 @@ export const Editability = story({
 			}
 		}
 	},
+	parameters: {
+		docs: {
+			description: {
+				story: 'This example also demonstrated how some columns can be partially editable by disabling the editability of people older than 30.',
+			},
+		}
+	},
 	render: ({ editability }) => html`
-		<p>
-			This example also demonstrated how some columns can be partially editable by disabling the editability of people older than 30.
-		</p>
 		<mo-data-grid style='height: 500px'
 			.data=${fivePeople}
 			editability=${editability as any}
@@ -183,26 +188,26 @@ export const Editability = story({
 			${columnsTemplate}
 		</mo-data-grid>
 	`
-})
+}
 
-export const WithFiltersWithoutToolbar = story({
+export const WithFiltersWithoutToolbar: StoryObj = {
 	render: () => html`
 		<mo-data-grid .data=${thousandPeople} style='height: 500px'>
 			${columnsTemplate}
 			<mo-checkbox slot='filter' label='Something'></mo-checkbox>
 		</mo-data-grid>
 	`
-})
+}
 
-export const Virtualization = story({
+export const Virtualization: StoryObj = {
 	render: () => html`
 		<mo-data-grid .data=${thousandPeople} style='height: 500px'>
 			${columnsTemplate}
 		</mo-data-grid>
 	`
-})
+}
 
-export const MinVisibleRows = story({
+export const MinVisibleRows: StoryObj = {
 	args: {
 		minVisibleRows: 10
 	},
@@ -211,9 +216,9 @@ export const MinVisibleRows = story({
 			${columnsTemplate}
 		</mo-data-grid>
 	`
-})
+}
 
-export const Fab = story({
+export const Fab: StoryObj = {
 	args: {
 		label: 'Add',
 		withFooter: false,
@@ -224,12 +229,12 @@ export const Fab = story({
 			<mo-fab slot='fab' icon='add'>${label}</mo-fab>
 		</mo-data-grid>
 	`
-})
+}
 
-export const Exportable = story({
+export const Exportable: StoryObj = {
 	render: () => html`
 		<mo-data-grid exportable pagination='auto' .data=${thousandPeople} style='height: 500px'>
 			${columnsTemplate}
 		</mo-data-grid>
 	`
-})
+}

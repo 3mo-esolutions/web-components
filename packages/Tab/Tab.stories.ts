@@ -1,26 +1,20 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 import '@material/web/tabs/primary-tab.js'
 
-export default meta({
+export default {
 	title: 'Tab',
 	component: 'mo-tab',
 	args: { value: 'overview' },
 	argTypes: {
 		value: { control: { type: 'select', options: ['overview', 'flights', 'trips', 'explore'] } },
 	},
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
-export const Tab = story({
+export const Tab: StoryObj = {
 	args: { value: 'tab-1' },
 	render: ({ value }) => html`
 		<mo-tab-bar value=${value}>
@@ -30,9 +24,9 @@ export const Tab = story({
 			<mo-tab value='explore'>Explore</mo-tab>
 		</mo-tab-bar>
 	`
-})
+}
 
-export const WithIcons = story({
+export const WithIcons: StoryObj = {
 	render: ({ value }) => html`
 		<mo-tab-bar value=${value} style='height: 60px'>
 			<mo-tab value='overview'>
@@ -53,9 +47,9 @@ export const WithIcons = story({
 			</mo-tab>
 		</mo-tab-bar>
 	`
-})
+}
 
-export const WithCustomColors = story({
+export const WithCustomColors: StoryObj = {
 	args: { value: 'tab-1' },
 	render: ({ value }) => html`
 		<mo-tab-bar value=${value} style='--mo-tab-background-color: var(--mo-color-transparent-gray-3); --mo-tab-accent-color: var(--mo-color-red); --mo-tab-color: green'>
@@ -65,4 +59,4 @@ export const WithCustomColors = story({
 			<mo-tab value='explore'>Explore</mo-tab>
 		</mo-tab-bar>
 	`
-})
+}

@@ -1,10 +1,10 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 import { FieldDateTimePrecision } from './FieldDateTimeBase.js'
 
-export default meta({
+export default {
 	title: 'Field Date Time',
 	component: 'mo-field-date-time',
 	args: {
@@ -30,16 +30,10 @@ export default meta({
 			}
 		}
 	},
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
-export const FieldDateTime = story({
+export const FieldDateTime: StoryObj = {
 	render: ({ label, required, disabled, dense, readonly, precision }) => html`
 		<mo-field-date-time
 			label=${label}
@@ -50,4 +44,4 @@ export const FieldDateTime = story({
 			precision=${precision}
 		></mo-field-date-time>
 	`
-})
+}

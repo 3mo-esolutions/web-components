@@ -1,9 +1,9 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 
-export default meta({
+export default {
 	title: 'Loading Dialog',
 	component: 'mo-loading-dialog',
 	args: { loading: true, loadingHeading: 'Loading' },
@@ -11,25 +11,19 @@ export default meta({
 		loading: { control: { type: 'boolean' } },
 		loadingHeading: { control: { type: 'text' } }
 	},
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
-export const LoadingDialog = story({
+export const LoadingDialog: StoryObj = {
 	render: ({ loading, loadingHeading }) => html`
 		<mo-loading-dialog heading='Heading' primaryButtonText='Action' open ?loading=${loading} loadingHeading=${loadingHeading}>
 			Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius quidem eaque earum obcaecati qui? Nihil quaerat,
 			repudiandae error delectus labore quasi inventore fugit corporis maxime eos aspernatur aliquid temporibus vitae.
 		</mo-loading-dialog>
 	`
-})
+}
 
-export const CustomLoadingDialog = story({
+export const CustomLoadingDialog: StoryObj = {
 	render: ({ loading, loadingHeading }) => html`
 		<mo-loading-dialog heading='Heading' primaryButtonText='Action' open ?loading=${loading} loadingHeading=${loadingHeading}>
 			<mo-flex slot='loading'>
@@ -40,4 +34,4 @@ export const CustomLoadingDialog = story({
 			repudiandae error delectus labore quasi inventore fugit corporis maxime eos aspernatur aliquid temporibus vitae.
 		</mo-loading-dialog>
 	`
-})
+}

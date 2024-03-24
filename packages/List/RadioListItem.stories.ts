@@ -1,13 +1,13 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import './index.js'
 
-export default meta({
+export default {
 	title: 'Radio List Item',
 	component: 'mo-radio-list-item',
-})
+}
 
-export const Radio = story({
+export const Radio: StoryObj = {
 	render: () => html`
 		<mo-card heading='Notifications' style='--mo-card-body-padding: 0px'>
 			<mo-list>
@@ -28,4 +28,4 @@ export const Radio = story({
 			</mo-list>
 		</mo-card>
 	`
-})
+}

@@ -1,21 +1,15 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 import { EntityDialogComponent } from './index.js'
 import { EntityId } from '../FetchableDialog/FetchableDialogComponent.js'
 
-export default meta({
-	title: 'EntityDialog',
+export default {
+	title: 'Entity Dialog',
 	component: 'mo-entity-dialog',
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
 type Data = {
 	id: number
@@ -40,8 +34,8 @@ class DialogData extends EntityDialogComponent<Data> {
 
 customElements.define('story-dialog-data', DialogData)
 
-export const DialogComponent = story({
+export const DialogComponent: StoryObj = {
 	render: () => html`
 		<mo-button @click=${() => new DialogData({ id: 1 }).confirm()}>Open</mo-button>
 	`,
-})
+}

@@ -1,9 +1,9 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html, style } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 
-export default meta({
+export default {
 	title: 'Splitter',
 	component: 'mo-splitter',
 	args: {
@@ -12,16 +12,10 @@ export default meta({
 	argTypes: {
 		gap: { control: 'text' },
 	},
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
-export const Splitter = story({
+export const Splitter: StoryObj = {
 	render: ({ gap }) => html`
 		<mo-splitter direction='horizontal' gap=${gap} ${style({ height: '500px' })}>
 			<mo-splitter-item min='20%' max='80%'>
@@ -33,9 +27,9 @@ export const Splitter = story({
 			</mo-splitter-item>
 		</mo-splitter>
 	`
-})
+}
 
-export const SplitterWithCustomResizer = story({
+export const SplitterWithCustomResizer: StoryObj = {
 	render: ({ gap }) => html`
 		<mo-splitter direction='horizontal' gap=${gap} ${style({ height: '500px' })}
 			.resizerTemplate=${html`<mo-splitter-resizer-line></mo-splitter-resizer-line>`}
@@ -49,4 +43,4 @@ export const SplitterWithCustomResizer = story({
 			</mo-splitter-item>
 		</mo-splitter>
 	`
-})
+}

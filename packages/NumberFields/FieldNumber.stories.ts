@@ -1,9 +1,9 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import p from './package.json'
 import '.'
 
-export default meta({
+export default {
 	title: 'Field Number',
 	component: 'mo-field-number',
 	args: {
@@ -14,25 +14,19 @@ export default meta({
 		readonly: false,
 		value: 0,
 	},
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
-export const Number = story({
+export const Number: StoryObj = {
 	render: ({ label, required, disabled, dense, readonly, value }) => html`
 		<mo-field-number label=${label} ?required=${required} ?disabled=${disabled} ?readonly=${readonly} ?dense=${dense} value=${value}></mo-field-number>
 	`
-})
+}
 
-export const MinMaxStep = story({
+export const MinMaxStep: StoryObj = {
 	render: () => html`
 		<mo-field-number label='Number' step='2' max='50' min='0'>
 			<span slot='end'>/50</span>
 		</mo-field-number>
 	`
-})
+}

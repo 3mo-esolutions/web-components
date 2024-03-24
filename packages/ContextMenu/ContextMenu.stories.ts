@@ -1,19 +1,13 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import p from './package.json'
 import { contextMenu } from './index.js'
 
-export default meta({
-	title: 'ContextMenu',
+export default {
+	title: 'Context Menu',
 	component: 'mo-field-context-menu',
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
 const keyboardShortcut = (shortcut: string) => html`<span style='font-size: 13px; color: darkgray'>${shortcut}</span>`
 
@@ -55,7 +49,7 @@ const specialContextMenu = html`
 	</mo-context-menu-item>
 `
 
-export const ContextMenu = story({
+export const ContextMenu: StoryObj = {
 	render: () => html`
 		<div ${contextMenu(mainContextMenu)} style='width: 100%; height: 300px; position: relative; display: flex; align-items: center; justify-content: center; border: dotted 2px currentColor; opacity: .7; border-radius: var(--mo-border-radius)'>
 			Right click anywhere
@@ -63,4 +57,4 @@ export const ContextMenu = story({
 			<div ${contextMenu(specialContextMenu)} style='position: absolute; top: 50px; left: 60px; width: 100px; height: 100px; border: dotted 2px red; display: flex; align-items: center; justify-content: center;'>Or here</div>
 		</div>
 	`
-})
+}

@@ -1,9 +1,9 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html, style } from '@a11d/lit'
 import p from './package.json'
 import '.'
 
-export default meta({
+export default {
 	title: 'Loading Button',
 	component: 'mo-loading-button',
 	args: {
@@ -16,49 +16,43 @@ export default meta({
 		type: { control: 'select', options: ['normal', 'outlined', 'raised', 'unelevated'] },
 		disabled: { control: 'boolean' },
 	},
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
 const handler = async () => {
 	await new Promise(resolve => setTimeout(resolve, 2000))
 	alert('Done processing!')
 }
 
-export const LoadingButton = story({
+export const LoadingButton: StoryObj = {
 	render: ({ type, disabled, loading, preventClickEventInference }) => html`<mo-loading-button @click=${handler} type=${type} ?disabled=${disabled} ?loading=${loading} ?preventClickEventInference=${preventClickEventInference}>Button</mo-loading-button>`
-})
+}
 
-export const WithCustomBorderRadius = story({
+export const WithCustomBorderRadius: StoryObj = {
 	render: ({ type, disabled, loading, preventClickEventInference }) => html`<mo-loading-button @click=${handler} type=${type} ?disabled=${disabled} ?loading=${loading} ?preventClickEventInference=${preventClickEventInference} ${style({ borderRadius: '100px' })}>Custom Border Radius</mo-loading-button>`
-})
+}
 
-export const WithLeadingIcon = story({
+export const WithLeadingIcon: StoryObj = {
 	render: ({ type, disabled, loading, preventClickEventInference }) => html`<mo-loading-button @click=${handler} leadingIcon='add' type=${type} ?disabled=${disabled} ?loading=${loading} ?preventClickEventInference=${preventClickEventInference}>Leading Icon</mo-loading-button>`
-})
+}
 
-export const WithTrailingIcon = story({
+export const WithTrailingIcon: StoryObj = {
 	render: ({ type, disabled, loading, preventClickEventInference }) => html`<mo-loading-button @click=${handler} trailingIcon='done' type=${type} ?disabled=${disabled} ?loading=${loading} ?preventClickEventInference=${preventClickEventInference}>Trailing Icon</mo-loading-button>`
-})
+}
 
-export const WithLeadingAndTrailingIcon = story({
+export const WithLeadingAndTrailingIcon: StoryObj = {
 	render: ({ type, disabled, loading, preventClickEventInference }) => html`<mo-loading-button @click=${handler} leadingIcon='add' trailingIcon='done' type=${type} ?disabled=${disabled} ?loading=${loading} ?preventClickEventInference=${preventClickEventInference}>Leading & Trailing Icon</mo-loading-button>`
-})
+}
 
-export const WithNonTextContent = story({
+export const WithNonTextContent: StoryObj = {
 	render: ({ type, disabled, loading, preventClickEventInference }) => html`
 		<mo-loading-button @click=${handler} type=${type} ?disabled=${disabled} ?loading=${loading} ?preventClickEventInference=${preventClickEventInference}>
 			<mo-icon icon='delete'></mo-icon>
 		</mo-loading-button>
 	`
-})
+}
 
-export const WithComplexContent = story({
+export const WithComplexContent: StoryObj = {
 	render: ({ type, disabled, loading, preventClickEventInference }) => html`
 		<mo-loading-button @click=${handler} type=${type} ?disabled=${disabled} ?loading=${loading} ?preventClickEventInference=${preventClickEventInference} ${style({ minHeight: '50px', minWidth: '250px' })}>
 			<mo-flex>
@@ -67,9 +61,9 @@ export const WithComplexContent = story({
 			</mo-flex>
 		</mo-loading-button>
 	`
-})
+}
 
-export const WithComplexContentAndTrailingContent = story({
+export const WithComplexContentAndTrailingContent: StoryObj = {
 	render: ({ type, disabled, loading, preventClickEventInference }) => html`
 		<mo-loading-button @click=${handler} type=${type} ?disabled=${disabled} ?loading=${loading} ?preventClickEventInference=${preventClickEventInference} ${style({ minHeight: '50px', minWidth: '250px' })}>
 			<mo-flex>
@@ -79,9 +73,9 @@ export const WithComplexContentAndTrailingContent = story({
 			<span slot='trailing' ${style({ fontSize: '36px' })}>₿</span>
 		</mo-loading-button>
 	`
-})
+}
 
-export const WithCustomizedAccentColor = story({
+export const WithCustomizedAccentColor: StoryObj = {
 	render: ({ type, disabled, loading, preventClickEventInference }) => html`
 		<mo-loading-button @click=${handler} type=${type} ?disabled=${disabled} ?loading=${loading} ?preventClickEventInference=${preventClickEventInference} ${style({ '--mo-loading-button-accent-color': 'red' })}>
 			<span slot='leading' ${style({ fontSize: '36px' })}>⚠️</span>
@@ -91,13 +85,13 @@ export const WithCustomizedAccentColor = story({
 			</mo-flex>
 		</mo-loading-button>
 	`
-})
+}
 
-export const WithTrailingInteractiveContent = story({
+export const WithTrailingInteractiveContent: StoryObj = {
 	render: ({ type, disabled, loading, preventClickEventInference }) => html`
 		<mo-loading-button type=${type} ?disabled=${disabled} ?loading=${loading} ?preventClickEventInference=${preventClickEventInference} @click=${handler}>
 			Proceed
 			<mo-icon-button slot='trailing' icon='help' dense ?disabled=${disabled} ${style({ fontSize: '20px' })} @click=${(e: PointerEvent) => { e.stopImmediatePropagation(); alert('Help') }}></mo-icon-button>
 		</mo-loading-button>
 	`
-})
+}

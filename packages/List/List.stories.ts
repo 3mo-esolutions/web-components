@@ -1,19 +1,13 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 
-export default meta({
+export default {
 	title: 'List',
 	component: 'mo-list',
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	},
-})
+	package: p,
+} as Meta
 
 const keyboardShortcut = (shortcut: string) => html`
 	<span style='font-size: 13px; color: darkgray'>${shortcut}</span>
@@ -58,12 +52,12 @@ const items = html`
 	</mo-list-item>
 `
 
-export const Default = story({
+export const Default: StoryObj = {
 	render: () => html`
 		<mo-list>${items}</mo-list>
 	`
-})
+}
 
-export const ItemsWithoutList = story({
+export const ItemsWithoutList: StoryObj = {
 	render: () => items
-})
+}

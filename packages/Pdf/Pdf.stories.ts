@@ -1,22 +1,16 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 
-export default meta({
+export default {
 	title: 'Pdf',
 	component: 'mo-pdf',
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
-export const Pdf = story({
+export const Pdf: StoryObj = {
 	render: () => html`
 		<mo-pdf style='height: 600px' source='https://www.africau.edu/images/default/sample.pdf'></mo-pdf>
 	`
-})
+}

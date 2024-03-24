@@ -1,34 +1,28 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 
-export default meta({
+export default {
 	title: 'Floating Action Button (FAB)',
 	component: 'mo-fab',
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
-export const Default = story({
+export const Default: StoryObj = {
 	render: () => html`<mo-fab icon='add'></mo-fab>`
-})
+}
 
-export const Dense = story({
+export const Dense: StoryObj = {
 	render: () => html`<mo-fab icon='add' dense></mo-fab>`
-})
+}
 
-export const IconAtEnd = story({
+export const IconAtEnd: StoryObj = {
 	render: () => html`<mo-fab icon='add' iconAtEnd>Test</mo-fab>`
-})
+}
 
-export const WithLabel = story({
+export const WithLabel: StoryObj = {
 	args: { label: 'Add' },
 	argTypes: { label: { control: 'text' } },
 	render: ({ label }) => html`<mo-fab icon='add'>${label}</mo-fab>`
-})
+}

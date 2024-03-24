@@ -1,4 +1,4 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html, style } from '@a11d/lit'
 import p from './package.json'
 import './Symbol.js'
@@ -14,7 +14,7 @@ const icons = new Array<MaterialSymbol>(
 
 const variants = [SymbolVariant.Sharp, SymbolVariant.Outlined, SymbolVariant.Rounded]
 
-export default meta({
+export default {
 	title: 'Symbol',
 	component: 'mo-symbol',
 	argTypes: {
@@ -25,16 +25,10 @@ export default meta({
 		grade: {},
 		opticalScale: {},
 	},
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
-export const Symbol = story({
+export const Symbol: StoryObj = {
 	args: {
 		icon: 'verified' as MaterialSymbol,
 		variant: SymbolVariant.Rounded,
@@ -53,9 +47,9 @@ export const Symbol = story({
 			weight=${weight}
 		></mo-symbol>
 	`
-})
+}
 
-export const List = story({
+export const AllSymbols: StoryObj = {
 	args: {
 		variant: SymbolVariant.Rounded,
 		fill: '0',
@@ -80,4 +74,4 @@ export const List = story({
 			`)}
 		</mo-grid>
 	`
-})
+}

@@ -1,13 +1,13 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import './index.js'
 
-export default meta({
+export default {
 	title: 'Collapsible List Item',
 	component: 'mo-collapsible-list-item',
-})
+}
 
-export const Collapsible = story({
+export const Collapsible: StoryObj = {
 	render: () => html`
 		<mo-card heading='Navigation Menu' style='--mo-card-body-padding: 0px'>
 			<mo-list-item>
@@ -29,4 +29,4 @@ export const Collapsible = story({
 			</mo-collapsible-list-item>
 		</mo-card>
 	`
-})
+}

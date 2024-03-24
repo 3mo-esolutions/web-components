@@ -1,9 +1,9 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html, style } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 
-export default meta({
+export default {
 	title: 'Card',
 	component: 'mo-card',
 	args: {
@@ -34,16 +34,10 @@ export default meta({
 		content: { control: 'text' },
 		image: { control: 'text' },
 	},
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
-export const Card = story({
+export const Card: StoryObj = {
 	render: ({ type, heading, subHeading, content, avatar, image }) => html`
 		<mo-card type=${type} heading=${heading} subHeading=${subHeading} avatar=${avatar} image=${image} ${style({ width: '400px' })}>
 			<mo-icon-button slot='action' icon='share'></mo-icon-button>
@@ -54,4 +48,4 @@ export const Card = story({
 			<mo-button slot='footer'>Read more</mo-button>
 		</mo-card>
 	`
-})
+}

@@ -1,6 +1,14 @@
 # Storybook Documentation
 docs-dist
 
+# Changelogs
+CHANGELOG.md
+**/*/CHANGELOG.md
+
+# Web Components Manifest
+custom-elements.json
+**/*/custom-elements.json
+
 # Logs
 logs
 *.log

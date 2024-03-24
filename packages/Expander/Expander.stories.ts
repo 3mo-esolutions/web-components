@@ -1,29 +1,23 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 
-export default meta({
+export default {
 	title: 'Expander',
 	component: 'mo-expander',
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+	package: p,
+} as Meta
 
-export const Expander = story({
+export const Expander: StoryObj = {
 	render: () => html`
 		<mo-expander heading='Heading'>
 			Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quasi totam rerum sunt! Aliquam tempore dolore rem est quos at officiis, distinctio dolor atque laborum, eveniet incidunt! Repellat ab atque hic.
 		</mo-expander>
 	`
-})
+}
 
-export const SlotHeading = story({
+export const SlotHeading: StoryObj = {
 	render: () => html`
 		<mo-expander>
 			<mo-flex slot='heading' direction='horizontal' alignItems='center' gap='10px' style='color: chartreuse'>
@@ -33,43 +27,43 @@ export const SlotHeading = story({
 			Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quasi totam rerum sunt! Aliquam tempore dolore rem est quos at officiis, distinctio dolor atque laborum, eveniet incidunt! Repellat ab atque hic.
 		</mo-expander>
 	`
-})
+}
 
-export const PartHeader = story({
+export const PartHeader: StoryObj = {
 	render: () => html`
 		<style>
-			mo-expander::part(header) {
+			#part-header::part(header) {
 				color: chartreuse;
 			}
 		</style>
-		<mo-expander heading='Heading'>
+		<mo-expander id='part-header' heading='Heading'>
 			Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quasi totam rerum sunt! Aliquam tempore dolore rem est quos at officiis, distinctio dolor atque laborum, eveniet incidunt! Repellat ab atque hic.
 		</mo-expander>
 	`
-})
+}
 
-export const PartHeading = story({
+export const PartHeading: StoryObj = {
 	render: () => html`
 		<style>
-			mo-expander::part(heading) {
+			#part-heading::part(heading) {
 				color: chartreuse;
 			}
 		</style>
-		<mo-expander heading='Heading'>
+		<mo-expander id='part-heading' heading='Heading'>
 			Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quasi totam rerum sunt! Aliquam tempore dolore rem est quos at officiis, distinctio dolor atque laborum, eveniet incidunt! Repellat ab atque hic.
 		</mo-expander>
 	`
-})
+}
 
-export const PartExpandCollapseIconButton = story({
+export const PartExpandCollapseIconButton: StoryObj = {
 	render: () => html`
 		<style>
-			mo-expander::part(expand-collapse-icon-button) {
+			#part-expand-collapse-icon-button::part(expand-collapse-icon-button) {
 				color: chartreuse;
 			}
 		</style>
-		<mo-expander heading='Heading'>
+		<mo-expander id='part-expand-collapse-icon-button' heading='Heading'>
 			Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quasi totam rerum sunt! Aliquam tempore dolore rem est quos at officiis, distinctio dolor atque laborum, eveniet incidunt! Repellat ab atque hic.
 		</mo-expander>
 	`
-})
+}

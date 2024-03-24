@@ -1,18 +1,12 @@
-import { story, meta } from '../../.storybook/story.js'
+import type { Meta, StoryObj } from '@storybook/web-components'
 import { Component, css, html } from '@a11d/lit'
 import p from './package.json'
 import { PointerController as PointerC } from './PointerController.js'
 
-export default meta({
-	title: 'PointerController',
-	parameters: {
-		docs: {
-			description: {
-				component: p.description,
-			},
-		}
-	}
-})
+export default {
+	title: 'Pointer Controller',
+	package: p,
+} as Meta
 
 class StoryPointerController extends Component {
 	protected readonly pointerController = new PointerC(this)
@@ -40,6 +34,6 @@ class StoryPointerController extends Component {
 
 customElements.define('story-pointer-controller', StoryPointerController)
 
-export const PointerController = story({
+export const PointerController: StoryObj = {
 	render: () => html`<story-pointer-controller></story-pointer-controller>`
-})
+}
