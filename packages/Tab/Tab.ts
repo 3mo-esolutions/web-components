@@ -38,10 +38,10 @@ export class Tab extends MdPrimaryTab {
 					--md-primary-tab-active-hover-label-text-color: var(--mo-tab-accent-color, var(--mo-color-accent));
 					--md-primary-tab-active-label-text-color: var(--mo-tab-accent-color, var(--mo-color-accent));
 					--md-primary-tab-active-pressed-label-text-color: var(--mo-tab-accent-color, var(--mo-color-accent));
-					--md-primary-tab-focus-label-text-color: var(--mo-color-foreground);
-					--md-primary-tab-hover-label-text-color: var(--mo-color-foreground);
-					--md-primary-tab-label-text-color: var(--mo-color-foreground);
-					--md-primary-tab-pressed-label-text-color: var(--mo-color-foreground);
+					--md-primary-tab-focus-label-text-color: currentColor;
+					--md-primary-tab-hover-label-text-color: currentColor;
+					--md-primary-tab-label-text-color: currentColor;
+					--md-primary-tab-pressed-label-text-color: currentColor;
 					--md-focus-ring-color: var(--mo-tab-accent-color, var(--mo-color-accent));
 				}
 
