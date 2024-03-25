@@ -73,7 +73,7 @@ export default {
 			</style>
 		`
 	]
-}
+} as Meta
 
 export const Flex: StoryObj = {
 	render: ({ direction, wrap, gap, justifyItems, justifyContent, alignItems, alignContent }) => {

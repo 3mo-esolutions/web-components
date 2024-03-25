@@ -1,7 +1,6 @@
 import React, { useContext } from 'react'
 import { INITIAL_VIEWPORTS } from '@storybook/addon-viewport'
 import { addons } from '@storybook/preview-api'
-import { themes } from '@storybook/theming'
 import { theme } from './manager'
 import { setCustomElementsManifest } from '@storybook/web-components'
 import { withThemeByDataAttribute } from '@storybook/addon-themes'
@@ -147,7 +146,12 @@ export default {
 			attributeName: 'data-storybook-theme',
 		}),
 		(story: any) => {
-			channel.on(DARK_MODE_EVENT_NAME, (isDark: boolean) => document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light'))
+			console.log()
+			channel.on(DARK_MODE_EVENT_NAME, (isDark: boolean) => {
+				if (globalThis.Theme) {
+					globalThis.Theme.background.value = (isDark ? 'dark' : 'light') as any
+				}
+			})
 			return story()
 		}
 	]

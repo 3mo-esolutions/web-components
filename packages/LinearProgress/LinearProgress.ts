@@ -7,10 +7,12 @@ import '@3mo/theme'
  *
  * @ssr true
  *
- * @attr progress
- * @attr buffer
+ * @attr progress - The progress value of the progress. If not set, the progress will be indeterminate.
+ * @attr buffer - The buffer value of the progress
+ * @attr reverse - Reverses the direction of the progress
  *
- * @cssprop --mo-linear-progress-accent-color
+ * @cssprop --mo-linear-progress-accent-color - The color of the progress
+ * @cssprop --mo-linear-progress-track-color - The color of the track
  */
 @component('mo-linear-progress')
 export class LinearProgress extends Component {
@@ -31,7 +33,7 @@ export class LinearProgress extends Component {
 				border-radius: inherit;
 				--md-linear-progress-active-indicator-color: var(--mo-linear-progress-accent-color, var(--mo-color-accent));
 				--md-linear-progress-active-indicator-height: 100%;
-				--md-linear-progress-track-color: var(--mo-color-gray);
+				--md-linear-progress-track-color: var(--mo-linear-progress-track-color, var(--mo-color-gray));
 				--md-linear-progress-track-height: 100%;
 				--md-linear-progress-track-shape: var(--mo-border-radius);
 			}
