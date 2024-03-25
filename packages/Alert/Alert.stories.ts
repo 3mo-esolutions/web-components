@@ -9,7 +9,7 @@ export default {
 	package: p,
 } as Meta
 
-export const Default: StoryObj = {
+export const Alert: StoryObj = {
 	render: () => html`
 		<mo-flex gap='8px'>
 			<mo-alert type='info' heading='Info'></mo-alert>
@@ -38,6 +38,20 @@ export const WithBodyAndCollapsible: StoryObj = {
 			<mo-alert type='success' heading='Success' collapsible>Text</mo-alert>
 			<mo-alert type='warning' heading='Warning' collapsible>Text</mo-alert>
 			<mo-alert type='error' heading='Error' collapsible>Text</mo-alert>
+		</mo-flex>
+	`
+}
+
+export const WithCustomColorAndHeading: StoryObj = {
+	render: () => html`
+		<mo-flex gap='8px'>
+			<mo-alert type='warning' heading='Important' style='--mo-alert-color: #8957e5'>
+				Have something very important?
+			</mo-alert>
+
+			<mo-alert type='info' heading='Not Important' style='--mo-alert-color: var(--mo-color-gray)'>
+				Or not that important?
+			</mo-alert>
 		</mo-flex>
 	`
 }

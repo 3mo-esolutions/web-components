@@ -1,7 +1,7 @@
 {
 	"name": "@3mo/alert",
-	"version": "1.0.3",
-	"description": "A alert web-component.",
+	"version": "1.1.0",
+	"description": "Alerts give users brief information in an unobtrusive manner.",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/3mo-esolutions/web-components"

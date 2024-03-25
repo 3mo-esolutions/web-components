@@ -15,7 +15,7 @@ import '@3mo/theme'
  * @cssprop --mo-checkbox-accent-color
  * @cssprop --mo-checkbox-disabled-color
  *
- * @fires change - Fired when the selection state of the checkbox changes.
+ * @fires change - Dispatched when the selection state of the checkbox changes.
  */
 @component('mo-checkbox')
 export class Checkbox extends Component {

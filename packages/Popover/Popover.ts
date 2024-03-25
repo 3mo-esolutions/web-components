@@ -22,7 +22,7 @@ import { Middleware, type ComputePositionReturn } from '@floating-ui/dom'
  *
  * @slot - Default slot for popover content
  *
- * @fires openChange - Fired when the popover is opened or closed.
+ * @fires openChange - Dispatched when the popover is opened or closed.
  */
 @component('mo-popover')
 export class Popover extends Component {

@@ -14,18 +14,16 @@ export enum AlertType {
  *
  * @ssr true
  *
- * @attr heading
- * @attr type
- * @attr collapsible
- * @attr open
+ * @attr heading - The heading of the alert.
+ * @attr type - The type can be 'info', 'success', 'warning', or 'error'.
+ * @attr collapsible - Whether the alert can be collapsed.
+ * @attr open - Whether the alert is open. Only applies when the alert is @see {collapsible}.
  *
  * @slot - The default slot is used to provide the content of the alert.
  *
- * @cssprop --mo-alert-border-radius
- * @cssprop --mo-alert-color-base
- * @cssprop --mo-alert-body-color-base
+ * @cssprop --mo-alert-color - The color of the alert.
  *
- * @fires openChange - Fired when the alert is opened or closed.
+ * @fires openChange - Dispatched when the alert is opened or closed.
  */
 @component('mo-alert')
 export class Alert extends Component {
@@ -47,37 +45,39 @@ export class Alert extends Component {
 		return css`
 			:host {
 				width: 100%;
+				border-radius: var(--mo-border-radius);
 			}
 
 			:host([type=success]) {
-				--mo-alert-color-base: var(--mo-color-green-base);
+				--mo-alert-color: var(--mo-color-green);
 			}
 
 			:host([type=warning]) {
-				--mo-alert-color-base: var(--mo-color-yellow-base);
+				--mo-alert-color: var(--mo-color-yellow);
 			}
 
 			:host([type=error]) {
-				--mo-alert-color-base: var(--mo-color-red-base);
+				--mo-alert-color: var(--mo-color-red);
 			}
 
 			:host([type=info]) {
-				--mo-alert-color-base: var(--mo-color-blue-base);
+				--mo-alert-color: var(--mo-color-blue);
 			}
 
 			mo-flex[role=alert] {
 				position: relative;
-				border-radius: var(--mo-alert-border-radius, var(--mo-border-radius));
+				border-radius: inherit;
 				padding: 8px;
-				border-radius: var(--mo-alert-border-radius, var(--mo-border-radius));
+				background: color-mix(in srgb, var(--mo-alert-color), transparent 87.5%);
+			}
 
-				color: rgba(var(--mo-alert-color-base), 1);
-				background: rgba(var(--mo-alert-color-base), 0.12);
+			mo-icon, mo-heading, mo-expand-collapse-icon-button {
+				color: var(--mo-alert-color);
 			}
 
 			slot {
 				grid-column: 2 / -1;
-				color: rgba(var(--mo-alert-body-color-base, var(--mo-color-foreground-base), 0.9));
+				color: color-mix(in srgb, currentColor, transparent 10%);
 				display: block;
 			}
 

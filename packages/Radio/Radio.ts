@@ -16,7 +16,7 @@ import '@3mo/theme'
  * @cssprop --mo-radio-unchecked-color
  * @cssprop --mo-radio-ink-color
  *
- * @fires change - Fired when the selected state of the radio changes.
+ * @fires change - Dispatched when the selected state of the radio changes.
  */
 @component('mo-radio')
 export class Radio extends Component {

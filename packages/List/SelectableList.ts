@@ -23,7 +23,7 @@ export enum SelectableListSelectionMode {
  *
  * @slot - Default slot for list items
  *
- * @fires change - Fired when the selected list items change
+ * @fires change - Dispatched when the selected list items change
  */
 @component('mo-selectable-list')
 export class SelectableList extends List {

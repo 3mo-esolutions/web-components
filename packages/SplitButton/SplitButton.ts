@@ -10,7 +10,7 @@ import { disabledProperty } from '@3mo/disabled-property'
  * @slot - The content of the button.
  * @slot more - The content of the more menu.
  *
- * @fires openChange - Fired when the menu is opened or closed.
+ * @fires openChange - Dispatched when the menu is opened or closed.
  */
 @component('mo-split-button')
 export class SplitButton extends Component {

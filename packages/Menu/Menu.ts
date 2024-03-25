@@ -26,9 +26,9 @@ export function isMenu(element: EventTarget): element is HTMLElement {
  *
  * @slot - Default slot for list items
  *
- * @fires change - Fired when the menu value changes.
- * @fires openChange - Fired when the menu open state changes.
- * @fires itemsChange - Fired when the menu items change.
+ * @fires change - Dispatched when the menu value changes.
+ * @fires openChange - Dispatched when the menu open state changes.
+ * @fires itemsChange - Dispatched when the menu items change.
  */
 @component('mo-menu')
 export class Menu extends Component {

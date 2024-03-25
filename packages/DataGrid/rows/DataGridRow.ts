@@ -10,7 +10,7 @@ import { DataGrid, DataGridCell, DataGridPrimaryContextMenuItem, DataGridSelecti
  * @attr contextMenuOpen
  * @attr detailsOpen
  *
- * @fires detailsOpenChange - Fired when the details open state changes
+ * @fires detailsOpenChange - Dispatched when the details open state changes
  */
 export abstract class DataGridRow<TData, TDetailsElement extends Element | undefined = undefined> extends Component {
 	@event() readonly detailsOpenChange!: EventDispatcher<boolean>

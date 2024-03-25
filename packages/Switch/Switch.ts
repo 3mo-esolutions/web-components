@@ -16,7 +16,7 @@ import { MdSwitch } from '@material/web/switch/switch.js'
  *
  * @cssprop --mo-switch-selected-icon-color
  *
- * @fires change - Fired when the selection state of the switch changes.
+ * @fires change - Dispatched when the selection state of the switch changes.
  */
 @component('mo-switch')
 export class Switch extends Component {

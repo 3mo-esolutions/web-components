@@ -2,6 +2,7 @@ import React, { useContext } from 'react'
 import { INITIAL_VIEWPORTS } from '@storybook/addon-viewport'
 import { addons } from '@storybook/preview-api'
 import { themes } from '@storybook/theming'
+import { theme } from './manager'
 import { setCustomElementsManifest } from '@storybook/web-components'
 import { withThemeByDataAttribute } from '@storybook/addon-themes'
 import { Primary, Controls, Stories, DocsContext, Markdown } from '@storybook/blocks'
@@ -27,13 +28,13 @@ declare global {
 
 export const parameters = {
 	darkMode: {
-		dark: themes.dark,
-		light: themes.dark,
+		dark: theme,
+		light: theme,
 		current: 'dark',
 	},
 	docs: {
 		inlineStories: true,
-		theme: themes.dark,
+		theme: theme,
 		page: () => {
 			const context = useContext(DocsContext)
 			const meta = [...(context as any).attachedCSFFiles][0].meta
