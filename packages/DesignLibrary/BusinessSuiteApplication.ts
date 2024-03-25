@@ -60,14 +60,6 @@ export abstract class BusinessSuiteApplication extends Application {
 				--mo-thickness-xl: 14px;
 			}
 
-			:root[data-theme=light] {
-				--mo-color-foreground-transparent: rgb(48, 48, 48) !important;
-			}
-
-			:root[data-theme=dark] {
-				--mo-color-foreground-transparent: rgb(220, 220, 220) !important;
-			}
-
 			[application][mobileNavigation] #navbarNavigations {
 				visibility: hidden;
 			}

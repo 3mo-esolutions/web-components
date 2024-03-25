@@ -11,7 +11,7 @@ export class DialogAcknowledge extends DialogComponent<Parameters, boolean> {
 	protected override get template(): HTMLTemplateResult {
 		const { heading, primaryButtonText, secondaryButtonText, blocking, size, content } = this.parameters
 		return html`
-			<mo-dialog style='--mo-dialog-default-foreground-content-color: var(--mo-color-foreground-transparent)'
+			<mo-dialog style='--mo-dialog-content-color: color-mix(in srgb, currentColor, transparent 16%)'
 				heading=${heading}
 				primaryButtonText=${primaryButtonText ?? t('OK')}
 				secondaryButtonText=${secondaryButtonText ?? t('Cancel')}

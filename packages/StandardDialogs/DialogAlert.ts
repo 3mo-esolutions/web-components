@@ -7,7 +7,7 @@ export class DialogAlert extends DialogComponent<BaseDialogParameters<DialogAler
 	protected override get template(): HTMLTemplateResult {
 		const { heading, primaryButtonText, blocking, size, content } = this.parameters
 		return html`
-			<mo-dialog style='--mo-dialog-default-foreground-content-color: var(--mo-color-foreground-transparent)'
+			<mo-dialog style='--mo-dialog-content-color: color-mix(in srgb, currentColor, transparent 16%)'
 				heading=${heading}
 				primaryButtonText=${primaryButtonText ?? t('OK')}
 				?blocking=${blocking}

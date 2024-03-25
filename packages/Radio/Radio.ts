@@ -42,7 +42,7 @@ export class Radio extends Component {
 				--mdc-radio-touch-target-size: 36px;
 				--mdc-radio-ripple-size: 36px;
 				--mdc-radio-disabled-color: var(--mo-radio-disabled-color, var(--mo-color-gray-transparent));
-				--mdc-radio-unchecked-color: var(--mo-radio-unchecked-color, var(--mo-color-foreground-transparent));
+				--mdc-radio-unchecked-color: var(--mo-radio-unchecked-color, color-mix(in srgb, currentColor, transparent 20%));
 				--mdc-radio-ink-color: var(--mo-radio-ink-color, var(--mo-color-on-accent));
 			}
 
