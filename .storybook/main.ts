@@ -12,7 +12,13 @@ export default {
 
 	addons: [
 		getPackageAbsolutePath('@storybook/addon-links'),
-		getPackageAbsolutePath('@storybook/addon-essentials'),
+		{
+			name: getPackageAbsolutePath('@storybook/addon-essentials'),
+			options: {
+				backgrounds: false,
+				actions: false,
+			}
+		},
 		getPackageAbsolutePath('@storybook/addon-webpack5-compiler-babel'),
 		getPackageAbsolutePath('@storybook/addon-storysource'),
 		getPackageAbsolutePath('storybook-dark-mode'),

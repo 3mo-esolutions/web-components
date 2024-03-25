@@ -26,7 +26,6 @@ declare global {
 }
 
 export const parameters = {
-	actions: { disabled: true },
 	darkMode: {
 		dark: themes.dark,
 		light: themes.dark,
