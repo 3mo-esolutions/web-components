@@ -25,7 +25,7 @@ export class DataGridDefaultRow<TData, TDetailsElement extends Element | undefin
 			}
 
 			#detailsContainer [instanceof*=mo-data-grid] {
-				--mo-data-grid-header-background: rgba(var(--mo-color-foreground-base), 0.04);
+				--mo-data-grid-header-background: color-mix(in srgb, var(--mo-color-foreground), transparent 96%);
 				--mo-data-grid-alternating-background: transparent;
 				--mo-data-grid-content-min-height: 0px;
 			}

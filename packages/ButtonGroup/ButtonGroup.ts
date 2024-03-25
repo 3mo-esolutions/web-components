@@ -11,8 +11,8 @@ import type { Flex } from '@3mo/flex'
  * @attr direction - The direction of the buttons.
  * @attr type - The type of the buttons which will be passed down to all buttons.
  *
- * @cssprop --mo-button-group-border-radius
- * @cssprop --mo-button-group-separator-color
+ * @cssprop --mo-button-group-border-radius - The border radius of the buttons.
+ * @cssprop --mo-button-group-separator-color - The color of the separator between buttons.
  *
  * @slot - The content of the which should be buttons of type mo-button
  */
@@ -81,12 +81,12 @@ export class ButtonGroup extends Component {
 			}
 
 			:host([type=normal]) ::slotted([instanceof*=mo-button]:not([data-mo-button-group-last]))::after {
-				background: var(--mo-button-group-separator-color, rgba(var(--mo-color-on-background-base), 0.3));
+				background: var(--mo-button-group-separator-color, color-mix(in srgb, var(--mo-color-foreground), transparent 70%));
 			}
 
 			:host([type=unelevated]) ::slotted([instanceof*=mo-button]:not([data-mo-button-group-last]))::after,
 			:host([type=raised]) ::slotted([instanceof*=mo-button]:not([data-mo-button-group-last]))::after {
-				background: var(--mo-button-group-separator-color, rgba(var(--mo-color-on-primary-base), 0.3));
+				background: var(--mo-button-group-separator-color, color-mix(in srgb, var(--mo-color-on-accent), transparent 70%));
 			}
 
 			:host([direction=vertical]:not([type=outlined])) ::slotted([instanceof*=mo-button]:not([data-mo-button-group-last]))::after,

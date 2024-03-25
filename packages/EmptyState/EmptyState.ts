@@ -26,13 +26,15 @@ export class EmptyState extends Component {
 				text-align: center;
 			}
 
+			mo-heading, mo-icon {
+				color: color-mix(in srgb, currentColor, transparent 67%);
+			}
+
 			mo-heading {
-				color: rgba(var(--mo-color-gray-base), 0.33);
-				font-weight: 600;
+				font-weight: 500;
 			}
 
 			mo-icon {
-				color: rgba(var(--mo-color-gray-base), 0.33);
 				font-size: 48px;
 			}
 		`

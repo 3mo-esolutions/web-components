@@ -27,8 +27,8 @@ export class Chip extends Component {
 			}
 
 			mo-button {
-				--mo-button-accent-color: var(--mo-chip-background-color, rgba(var(--mo-color-foreground-base), 0.15));
-				--mo-button-on-accent-color: var(--mo-chip-foreground-color, rgba(var(--mo-color-foreground-base), 0.8));
+				--mo-button-accent-color: var(--mo-chip-background-color, color-mix(in srgb, var(--mo-color-foreground), transparent 85%));
+				--mo-button-on-accent-color: var(--mo-chip-foreground-color, color-mix(in srgb, var(--mo-color-foreground), transparent 20%));
 				--mo-button-horizontal-padding: 10px;
 				height: 100%;
 				min-height: auto;

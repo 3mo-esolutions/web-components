@@ -46,11 +46,11 @@ export class NavigationItem extends Component {
 				}
 
 				:host([data-router-selected]) {
-					background-color: rgba(var(--mo-color-background-base), 0.12);
+					background-color: color-mix(in srgb, var(--mo-color-background), transparent 88%);
 				}
 
 				:host(:hover) {
-					background-color: rgba(var(--mo-color-background-base), 0.12);
+					background-color: color-mix(in srgb, var(--mo-color-background), transparent 88%);
 				}
 
 				span {

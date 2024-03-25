@@ -12,7 +12,7 @@ export class SelectableRangeCalendar extends SelectableCalendar {
 			${super.styles}
 
 			.day.isInRange:not(.selected) {
-				background: rgba(var(--mo-color-accent-base), 0.08);
+				background: color-mix(in srgb, var(--mo-color-accent), transparent 92%);
 			}
 
 			.day.isInRange {

@@ -39,7 +39,7 @@ export class LoadingDialog extends Dialog {
 				z-index: 1;
 				place-items: center;
 				backdrop-filter: blur(5px);
-				background: rgba(var(--mo-color-surface-base), 0.8);
+				background: color-mix(in srgb, var(--mo-color-surface), transparent 20%);
 			}
 		`
 	}

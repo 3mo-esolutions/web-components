@@ -72,19 +72,24 @@ export class Snackbar extends NotificationComponent {
 			}
 
 			:host([type=${unsafeCSS(NotificationType.Info)}]) {
-				--mo-snackbar-color-base: var(--mo-color-blue-base);
+				--mo-snackbar-color: var(--mo-color-blue);
 			}
 
 			:host([type=${unsafeCSS(NotificationType.Success)}]) {
-				--mo-snackbar-color-base: var(--mo-color-green-base);
+				--mo-snackbar-color: var(--mo-color-green);
 			}
 
 			:host([type=${unsafeCSS(NotificationType.Warning)}]) {
-				--mo-snackbar-color-base: var(--mo-color-yellow-base);
+				--mo-snackbar-color: var(--mo-color-yellow);
 			}
 
 			:host([type=${unsafeCSS(NotificationType.Error)}]) {
-				--mo-snackbar-color-base: var(--mo-color-red-base);
+				--mo-snackbar-color: var(--mo-color-red);
+			}
+
+			mo-linear-progress {
+				--mo-linear-progress-accent-color: var(--mo-snackbar-color);
+				--mo-linear-progress-track-color: color-mix(in srgb, var(--mo-snackbar-color), transparent 75%);
 			}
 		`
 	}
@@ -110,7 +115,7 @@ export class Snackbar extends NotificationComponent {
 		return !this.type ? html.nothing : html`
 			<mo-icon slot='icon'
 				icon=${ifDefined(Snackbar.iconByType.get(this.type))}
-				${style({ color: 'rgba(var(--mo-snackbar-color-base), 0.75)' })}
+				${style({ color: 'color-mix(in srgb, var(--mo-snackbar-color), transparent 25%)' })}
 			></mo-icon>
 		`
 	}
@@ -194,7 +199,7 @@ MwcSnackbar.elementStyles.push(css`
 
 	.mdc-snackbar__label {
 		padding-inline-start: 8px;
-		color: rgba(var(--mo-color-background-base), 0.87)
+		color: color-mix(in srgb, var(--mo-color-background), transparent 13%)
 	}
 ` as any)
 

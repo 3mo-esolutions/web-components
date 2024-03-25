@@ -496,7 +496,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				--mo-data-grid-row-tree-line-width: 8px;
 				--mo-details-data-grid-start-margin: 26px;
 
-				--mo-data-grid-selection-background: rgba(var(--mo-color-accent-base), 0.5);
+				--mo-data-grid-selection-background: color-mix(in srgb, var(--mo-color-accent), transparent 50%);
 				display: flex;
 				flex-direction: column;
 				height: 100%;
@@ -504,11 +504,11 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			}
 
 			:host([data-theme=light]) {
-				--mo-data-grid-alternating-background: rgba(var(--mo-color-foreground-base), 0.05);
+				--mo-data-grid-alternating-background: color-mix(in srgb, black, transparent 95%);
 			}
 
 			:host([data-theme=dark]) {
-				--mo-data-grid-alternating-background: rgba(var(--mo-color-background-base), 0.2);
+				--mo-data-grid-alternating-background: color-mix(in srgb, black, transparent 80%);
 			}
 
 			:host([preventVerticalContentScroll]) mo-scroller {

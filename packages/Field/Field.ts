@@ -60,11 +60,11 @@ export class Field extends Component {
 			}
 
 			:host([data-theme=light]) {
-				--mo-field-background-default: rgba(var(--mo-color-foreground-base), 0.09);
+				--mo-field-background-default: color-mix(in srgb, black, transparent 91%);
 			}
 
 			:host([data-theme=dark]) {
-				--mo-field-background-default: rgba(var(--mo-color-background-base), 0.5);
+				--mo-field-background-default: color-mix(in srgb, black, transparent 50%);
 			}
 
 			:host([active]) {
