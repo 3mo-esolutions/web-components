@@ -1,6 +1,6 @@
 {
 	"scripts": {
-		"start": "npm run clean && npm install --loglevel=error && storybook dev -p 3000",
+		"start": "npm run clean && npm install --loglevel=error && npm run analyze && storybook dev -p 3000",
 		"dev": "node ./scripts/test.mjs",
 		"watch": "npm-watch",
 		"test": "node ./scripts/test.mjs && karma start --single-run",
@@ -33,6 +33,7 @@
 		"@storybook/addon-essentials": "8.x",
 		"@storybook/addon-links": "8.x",
 		"@storybook/addon-storysource": "8.x",
+		"@storybook/addon-themes": "8.x",
 		"@storybook/addon-webpack5-compiler-babel": "x",
 		"@storybook/theming": "8.x",
 		"@storybook/web-components": "8.x",
@@ -57,6 +58,7 @@
 		"pre-commit": "^1.2.2",
 		"resolve-typescript-plugin": "x",
 		"storybook": "8.x",
+		"storybook-dark-mode": "4.x",
 		"terser-webpack-plugin": "x",
 		"ts-loader": "x",
 		"tsconfig-paths-webpack-plugin": "x",

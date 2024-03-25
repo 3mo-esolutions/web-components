@@ -1,9 +1,12 @@
 import React, { useContext } from 'react'
 import { INITIAL_VIEWPORTS } from '@storybook/addon-viewport'
+import { addons } from '@storybook/preview-api'
 import { themes } from '@storybook/theming'
 import { setCustomElementsManifest } from '@storybook/web-components'
+import { withThemeByDataAttribute } from '@storybook/addon-themes'
 import { Primary, Controls, Stories, DocsContext, Markdown } from '@storybook/blocks'
 import customElements from '../custom-elements.json'
+import { DARK_MODE_EVENT_NAME } from 'storybook-dark-mode'
 
 customElements.tags.forEach(tag => tag.properties = [])
 setCustomElementsManifest(customElements)
@@ -24,6 +27,11 @@ declare global {
 
 export const parameters = {
 	actions: { disabled: true },
+	darkMode: {
+		dark: themes.dark,
+		light: themes.dark,
+		current: 'dark',
+	},
 	docs: {
 		inlineStories: true,
 		theme: themes.dark,
@@ -43,32 +51,21 @@ export const parameters = {
 			return (
 				<mo-flex>
 					<style>{`
-						@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
-
-						:root {
-							font-family: 'Roboto', sans-serif;
-						}
-
-						h1, h2, h3, h4, h5, h6 {
-							font-family: 'Roboto', sans-serif !important;
-							font-weight: 500 !important;
-						}
-
-						.docblock-argstable * {
-							font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace !important;
-						}
-
-						.sb-bar {
-							background: var(--mo-color-background) !important;
+						.sbdocs-preview, .sb-bar {
+							background: inherit !important;
 						}
 
 						.sbdocs-wrapper {
-							background: var(--mo-color-background);
+							background: #101114 !important;
 							background: linear-gradient(109.6deg,
-								var(--mo-color-background) 0%,
+								rgb(16, 17, 20) 0%,
 								color-mix(in srgb, var(--mo-color-accent) 15%, black) 17.5%,
-								var(--mo-color-background) 60%
-							);
+								rgb(16, 17, 20) 60%
+							) !important;
+						}
+
+						.docs-story {
+							background: var(--mo-color-background) !important;
 						}
 
 						.docblock-code-toggle {
@@ -77,8 +74,8 @@ export const parameters = {
 					`}</style>
 					<mo-flex direction='horizontal' justifyContent='space-between' alignItems='center' gap='6px'>
 						<mo-flex>
-							<mo-heading typography='heading1'>{title}</mo-heading>
-							<mo-heading typography='heading5' style={{ color: 'var(--mo-color-gray)' }}>{_package.description}</mo-heading>
+							<mo-heading typography='heading1' style={{ color: 'white' }}>{title}</mo-heading>
+							<mo-heading typography='heading5' style={{ color: 'rgb(165, 165, 165)' }}>{_package.description}</mo-heading>
 						</mo-flex>
 						<mo-flex direction='horizontal' gap='4px' style={{ flexShrink: '0' }}>
 							<mo-flex direction='horizontal'>
@@ -99,7 +96,11 @@ export const parameters = {
 
 					<Primary />
 
-					<mo-tab-bar value={tab} ref={tab => tab && tab.addEventListener('change', listener)}>
+					<mo-tab-bar
+						value={tab}
+						ref={tab => tab && tab.addEventListener('change', listener)}
+						style={{ '--mo-tab-divider-color': 'rgba(140,140,140,0.2)', color: 'white' }}
+					>
 						<mo-tab value='api' style={{ height: '60px' }}>
 							<mo-icon icon='api'></mo-icon>
 							API Reference
@@ -131,4 +132,23 @@ export const parameters = {
 			date: /Date$/,
 		},
 	},
+}
+
+const channel = addons.getChannel()
+
+export default {
+	decorators: [
+		withThemeByDataAttribute({
+			themes: {
+				light: 'light',
+				dark: 'dark',
+			},
+			defaultTheme: 'dark',
+			attributeName: 'data-storybook-theme',
+		}),
+		(story: any) => {
+			channel.on(DARK_MODE_EVENT_NAME, (isDark: boolean) => document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light'))
+			return story()
+		}
+	]
 }

@@ -8,11 +8,14 @@ export default {
 		'../samples/**/*.stories.ts',
 	],
 
+	staticDirs: ['./public'],
+
 	addons: [
 		getPackageAbsolutePath('@storybook/addon-links'),
 		getPackageAbsolutePath('@storybook/addon-essentials'),
 		getPackageAbsolutePath('@storybook/addon-webpack5-compiler-babel'),
 		getPackageAbsolutePath('@storybook/addon-storysource'),
+		getPackageAbsolutePath('storybook-dark-mode'),
 	],
 
 	framework: {
