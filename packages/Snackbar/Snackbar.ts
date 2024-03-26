@@ -115,7 +115,7 @@ export class Snackbar extends NotificationComponent {
 		return !this.type ? html.nothing : html`
 			<mo-icon slot='icon'
 				icon=${ifDefined(Snackbar.iconByType.get(this.type))}
-				${style({ color: 'color-mix(in srgb, var(--mo-snackbar-color), transparent 25%)' })}
+				${style({ color: 'color-mix(in srgb, var(--mo-snackbar-color), transparent 10%)' })}
 			></mo-icon>
 		`
 	}
