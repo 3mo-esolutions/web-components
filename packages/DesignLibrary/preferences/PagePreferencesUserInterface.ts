@@ -1,6 +1,6 @@
 import { html, component, css, style } from '@a11d/lit'
 import { route } from '@a11d/lit-application'
-import { Background, ColorSet, Theme } from '@3mo/theme'
+import { Background, Theme } from '@3mo/theme'
 import { Color } from '@3mo/color'
 import { DataGrid, DataGridPagination } from '@3mo/data-grid'
 import { PagePreferences, PageSettings } from './index.js'
@@ -14,13 +14,7 @@ export class PagePreferencesUserInterface extends PageSettings {
 		new Color('rgb(171, 71, 188)'), // Purple
 		new Color('rgb(104, 159, 56)'), // Green
 		new Color('rgb(249, 168, 37)'), // Yellow
-		new ColorSet('rgb(0, 119, 200)', 'rgb(0, 139, 220)', 'rgb(0, 159, 240)'), // Blue Gradient
-		new ColorSet('rgb(0, 128, 128)', 'rgb(0, 148, 148)', 'rgb(0, 168, 168)'), // Teal Gradient
-		new ColorSet('rgb(171, 71, 188)', 'rgb(191, 91, 208)', 'rgb(211, 111, 228)'), // Purple Gradient
-		new ColorSet('rgb(104, 159, 56)', 'rgb(124, 179, 76)', 'rgb(144, 199, 96)'), // Green Gradient
-		new ColorSet('rgb(249, 168, 37)', 'rgb(269, 188, 57)', 'rgb(289, 208, 77)'), // Yellow Gradient
-		new ColorSet('rgb(102, 126, 234)', 'rgb(110, 101, 198)', 'rgb(118, 75, 162)'), // Plum Plate Gradient
-		new ColorSet('rgb(247, 140, 160)', 'rgb(251, 125, 142)', 'rgb(254, 154, 139)'), // Strong Bliss Gradient
+		new Color('rgb(251, 125, 142)'), // Pink
 	]
 
 	protected override initialized() {
@@ -96,7 +90,7 @@ export class PagePreferencesUserInterface extends PageSettings {
 									${PagePreferencesUserInterface.accentPresetColors.map(color => this.getForegroundColorTemplate(color))}
 									<!-- .presets={PagePreferencesUserInterface.accentPresetColors} -->
 									<mo-color-picker ${style({ width: '100%', gridColumn: '1 / -1' })}
-										.value=${Theme.accent.medianColor}
+										.value=${Theme.accent.value}
 										@input=${(e: CustomEvent<Color>) => Theme.accent.value = e.detail}
 										@change=${(e: CustomEvent<Color>) => Theme.accent.value = e.detail}
 									></mo-color-picker>
@@ -124,7 +118,7 @@ export class PagePreferencesUserInterface extends PageSettings {
 							<mo-list-item>
 								Höhe der Zeilen
 								<mo-slider max='50' min='30' step='5' discrete
-									${style({ width: '150px', margin: '0 -15px' })}
+									${style({ margin: '0 -15px' })}
 									value=${DataGrid.rowHeight.value}
 									@change=${(e: CustomEvent<number>) => DataGrid.rowHeight.value = e.detail}
 								></mo-slider>
@@ -133,7 +127,7 @@ export class PagePreferencesUserInterface extends PageSettings {
 							<mo-list-item>
 								Schriftgröße
 								<mo-slider min='0.8' max='1.2' step='0.1' discrete
-									${style({ width: '150px', margin: '0 -15px' })}
+									${style({ margin: '0 -15px' })}
 									value=${DataGrid.cellRelativeFontSize.value}
 									@input=${(e: CustomEvent<number>) => DataGrid.cellRelativeFontSize.value = e.detail}
 								></mo-slider>
@@ -186,10 +180,9 @@ export class PagePreferencesUserInterface extends PageSettings {
 		`
 	}
 
-	private getForegroundColorTemplate(color: Color | ColorSet) {
-		const background = color instanceof Color ? color.hex : color.medianColor.hex
+	private getForegroundColorTemplate(color: Color) {
 		return html`
-			<button class='accentPreview' ${style({ background: background })}
+			<button class='accentPreview' ${style({ background: color.hex })}
 				@click=${() => Theme.accent.value = color}
 			></button>
 		`

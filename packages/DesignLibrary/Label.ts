@@ -11,7 +11,7 @@ export class Label extends Component {
 					margin: 0 4px;
 					color: var(--mo-color-accent);
 					font-weight: 500;
-					background: var(--mo-color-accent-gradient-transparent);
+					background: var(--mo-color-accent-transparent);
 				}
 			</style>
 			<slot></slot>
