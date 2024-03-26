@@ -68,11 +68,11 @@ export class Alert extends Component {
 				position: relative;
 				border-radius: inherit;
 				padding: 8px;
-				background: color-mix(in srgb, var(--mo-alert-color), transparent 87.5%);
+				background: color-mix(in srgb, var(--mo-alert-color), transparent 75%);
 			}
 
 			mo-icon, mo-heading, mo-expand-collapse-icon-button {
-				color: var(--mo-alert-color);
+				color: color-mix(in srgb,var(--mo-alert-color),var(--mo-color-foreground) 25%);
 			}
 
 			slot {

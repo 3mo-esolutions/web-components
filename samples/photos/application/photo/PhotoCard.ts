@@ -43,7 +43,7 @@ export class PhotoCard extends Component {
 				<mo-flex ${style({ flex: '1' })}>
 					<img src=${this.photo.thumbnailUrl} alt=${this.photo.title} @click=${this.selectCard}>
 					<mo-flex justifyContent='center' ${style({ flex: '1' })}>
-						<mo-heading typography='heading5' ${style({ textAlign: 'center', width: '100%', color: 'var(--mo-color-accent)' })}>${this.photo.title}</mo-heading>
+						<mo-heading typography='heading5' ${style({ textAlign: 'center', width: '100%' })}>${this.photo.title}</mo-heading>
 					</mo-flex>
 				</mo-flex>
 			</mo-card>
