@@ -1,7 +1,7 @@
 {
 	"name": "@3mo/button",
 	"version": "0.4.9",
-	"description": "A button web-component based on Material Web Components.",
+	"description": "Buttons let people take action and make choices with one tap.",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/3mo-esolutions/web-components"
