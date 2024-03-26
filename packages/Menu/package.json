@@ -1,7 +1,7 @@
 {
 	"name": "@3mo/menu",
-	"version": "0.6.2",
-	"description": "A menu web-component.",
+	"version": "0.6.3",
+	"description": "Menus display a list of choices on a temporary surface.",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/3mo-esolutions/web-components"

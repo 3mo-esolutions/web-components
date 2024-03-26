@@ -138,7 +138,7 @@ export class Menu extends Component {
 
 			mo-popover {
 				border-radius: var(--mo-toolbar-border-radius, var(--mo-border-radius));
-				background: var(--mo-color-surface);
+				background: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-gray) 8%);
 				border-radius: var(--mo-border-radius);
 				/*overflow: hidden;*/
 				transition: opacity 100ms;
