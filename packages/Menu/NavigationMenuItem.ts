@@ -11,8 +11,8 @@ export class NavigationMenuItem extends MenuItem {
 			:host { cursor: pointer; }
 
 			:host([data-router-selected]) {
-				background-color: var(--mo-color-accent-transparent);
-				color: var(--mo-color-accent);
+				background-color: var(--mo-selectable-list-item-selected-background, color-mix(in srgb, var(--mo-color-accent), transparent 90%));
+				color: var(--mo-selectable-list-item-selected-color, color-mix(in srgb, var(--mo-color-accent), var(--mo-color-foreground) 25%));
 			}
 		`
 	}

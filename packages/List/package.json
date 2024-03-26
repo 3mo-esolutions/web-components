@@ -1,7 +1,7 @@
 {
 	"name": "@3mo/list",
-	"version": "0.2.1",
-	"description": "A list web-component.",
+	"version": "0.2.6",
+	"description": "Lists are continuous, vertical indexes of text and images.",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/3mo-esolutions/web-components"

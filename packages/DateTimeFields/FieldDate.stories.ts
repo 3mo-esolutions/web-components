@@ -28,6 +28,7 @@ export default {
 		}
 	},
 	package: p,
+	decorators: [story => html`<div style='height: 250px'>${story()}</div>`]
 } as Meta
 
 export const FieldDate: StoryObj = {

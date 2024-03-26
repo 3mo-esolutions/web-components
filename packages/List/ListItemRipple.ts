@@ -35,9 +35,10 @@ export class ListItemRipple extends Component {
 				inset: 0;
 				width: 100%;
 				height: 100%;
-				--md-ripple-focus-color: var(--mo-color-gray);
-				--md-ripple-hover-color: var(--mo-color-gray);
-				--md-ripple-pressed-color: var(--mo-color-gray);
+				--_color: color-mix(in srgb, var(--mo-color-gray), var(--mo-color-accent) 25%);
+				--md-ripple-focus-color: var(--_color);
+				--md-ripple-hover-color: var(--_color);
+				--md-ripple-pressed-color: var(--_color);
 			}
 
 			md-ripple {

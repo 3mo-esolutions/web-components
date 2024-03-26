@@ -45,14 +45,29 @@ export class ListFocusController extends Controller {
 		}
 
 		this._focusedItemIndex = value
+		this.updateFocus()
+	}
 
-		if (value !== undefined) {
-			const item = this.getItem(value)
+	private _focused = false
+	get focused() { return this._focused }
+	set focused(value) {
+		this._focused = value
+		this.updateFocus()
+	}
+
+	private updateFocus() {
+		if (this.focused && this.focusedItemIndex !== undefined) {
+			const item = this.getItem(this.focusedItemIndex)
 			item?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
 		}
 
 		for (const item of this.items) {
-			item.toggleAttribute('focused', value !== undefined && this.getRenderedItemIndex(item) === value && this.isFocusable(item))
+			item.toggleAttribute('focused',
+				this.focused
+				&& this.focusedItemIndex !== undefined
+				&& this.getRenderedItemIndex(item) === this.focusedItemIndex
+				&& this.isFocusable(item)
+			)
 		}
 	}
 
@@ -80,12 +95,13 @@ export class ListFocusController extends Controller {
 	}
 
 	protected handleFocusIn() {
+		this.focused = true
 		ListFocusController.forceFocusedListsQueue.add(this)
 	}
 
 	protected handleFocusOut() {
+		this.focused = false
 		ListFocusController.forceFocusedListsQueue.delete(this)
-		this.focusedItemIndex = undefined
 	}
 
 	private focusFirstItem() {
@@ -138,7 +154,7 @@ export class ListFocusController extends Controller {
 			if (!bubbled) {
 				if (focused) {
 					this.handleFocusIn()
-					if (this.keyboardFocus) {
+					if (this.keyboardFocus && this.focusedItemIndex === undefined) {
 						this.focusFirstItem()
 					}
 				} else {

@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/web-components'
 import { Component, css, html, property, query } from '@a11d/lit'
-import { Menu } from '@3mo/menu'
 import p from './package.json'
 import './index.js'
 
@@ -8,7 +7,8 @@ export default {
 	title: 'Menu',
 	component: 'mo-menu',
 	package: p,
-}
+	decorators: [story => html`<div style='height: 400px'>${story()}</div>`]
+} as Meta
 
 export const WithContainer: StoryObj = {
 	render: () => {
@@ -55,20 +55,12 @@ export const WithCustomTarget: StoryObj = {
 export const Absolute: StoryObj = {
 	render: () => html`
 		<story-button-with-menu></story-button-with-menu>
-		<!-- ENCAPSULATED CODE:
-			<mo-button id='button' type='outlined'>Click to open the menu</mo-button>
-			<mo-menu .anchor=\${this} target='button'>\${items}</mo-menu>
-		-->
 	`
 }
 
 export const Fixed: StoryObj = {
 	render: () => html`
 		<story-button-with-menu fixed></story-button-with-menu>
-		<!-- ENCAPSULATED CODE:
-			<mo-button id='' type='outlined'>Click to open the menu</mo-button>
-			<mo-menu .anchor=\${this} target='button'>\${items}</mo-menu>
-		-->
 	`
 }
 
@@ -132,30 +124,4 @@ class ButtonWithMenuStory extends Component {
 	}
 }
 
-class ContextMenuStory extends Component {
-	@query('mo-menu') readonly menu!: Menu
-
-	static override get styles() {
-		return css`
-			:host {
-				width: 100vw;
-				height: 100dvh;
-			}
-		`
-	}
-
-	protected override get template() {
-		return html`
-			<div
-				style='width: 100%; height: 300px; display: flex; align-items: center; justify-content: center; border: dotted 2px currentColor; opacity: .7; border-radius: var(--mo-border-radius)'
-				@contextmenu=${(e: PointerEvent) => this.menu.openWith(e)}
-			>
-				Right click anywhere
-			</div>
-			<mo-menu fixed manual .anchor=${this}>${items}</mo-menu>
-		`
-	}
-}
-
 customElements.define('story-button-with-menu', ButtonWithMenuStory)
-customElements.define('story-context-menu', ContextMenuStory)
