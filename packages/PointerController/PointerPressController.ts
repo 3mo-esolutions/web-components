@@ -1,4 +1,4 @@
-import { Controller, EventListenerController, EventListenerTarget, ReactiveElement } from '@a11d/lit'
+import { Controller, EventListenerTarget, ReactiveElement, eventListener, extractEventTargets } from '@a11d/lit'
 
 export interface PointerPressControllerOptions {
 	target?: EventListenerTarget
@@ -21,21 +21,14 @@ export class PointerPressController extends Controller {
 		}
 	}
 
-	protected readonly pointerDown = new EventListenerController(this.host, {
-		type: 'pointerdown',
-		target: this.options?.target,
-		listener: () => this.setPress(true)
-	})
+	@eventListener({ type: 'pointerdown', target(this: PointerPressController) { return extractEventTargets(this.host, this.options?.target) } })
+	protected setPressTrue() {
+		this.setPress(true)
+	}
 
-	protected readonly pointerUp = new EventListenerController(this.host, {
-		type: 'pointerup',
-		target: document,
-		listener: () => this.setPress(false)
-	})
-
-	protected readonly pointerCancel = new EventListenerController(this.host, {
-		type: 'pointercancel',
-		target: document,
-		listener: () => this.setPress(false)
-	})
+	@eventListener({ type: 'pointerup', target: document })
+	@eventListener({ type: 'pointercancel', target: document })
+	protected setPressFalse() {
+		this.setPress(false)
+	}
 }

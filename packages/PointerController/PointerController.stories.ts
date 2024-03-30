@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/web-components'
-import { Component, css, html } from '@a11d/lit'
+import { Component, css, html, style } from '@a11d/lit'
 import p from './package.json'
 import { PointerController as PointerC } from './PointerController.js'
 
@@ -24,10 +24,11 @@ class StoryPointerController extends Component {
 		const hoverText = !hover ? '' : 'hovered'
 		const pressText = !press ? '' : 'pressed'
 		const typeText = !hover && !press || !type ? '' : `using ${type}`
+		const color = !hover ? 'var(--mo-color-red)' : press ? 'var(--mo-color-green)' : 'var(--mo-color-blue)'
 		return html`
-			<mo-button type='raised'>
-				Button ${[hoverText, pressText].filter(Boolean).join(' and ')} ${typeText}
-			</mo-button>
+			<mo-flex alignItems='center' justifyContent='center' ${style({ width: '400px', height: '300px', border: `2px dashed ${color}`, textAlign: 'center', userSelect: 'none' })}>
+				<span>${[hoverText, pressText].filter(Boolean).join(' and ')} ${typeText}</span>
+			</mo-flex>
 		`
 	}
 }

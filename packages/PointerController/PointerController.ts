@@ -5,7 +5,6 @@ import { PointerTypeController, PointerTypeControllerOptions } from './PointerTy
 
 export interface PointerControllerOptions extends PointerPressControllerOptions, PointerHoverControllerOptions, PointerTypeControllerOptions { }
 
-
 export class PointerController extends Controller {
 	constructor(protected override readonly host: ReactiveElement, protected readonly options?: PointerControllerOptions) {
 		super(host)

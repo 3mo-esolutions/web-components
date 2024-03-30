@@ -1,10 +1,14 @@
-import { Controller, EventListenerController, EventListenerTarget, ReactiveElement, extractEventTargets } from '@a11d/lit'
+import { Controller, EventListenerTarget, ReactiveElement, eventListener, extractEventTargets } from '@a11d/lit'
 import { ResizeController } from '@3mo/resize-observer'
 import { Throttler } from '@3mo/throttler'
 
 export interface PointerHoverControllerOptions {
 	target?: EventListenerTarget
 	handleHoverChange?(hover: boolean): void
+}
+
+function target(this: PointerHoverController) {
+	return extractEventTargets(this.host, this.options?.target)
 }
 
 export class PointerHoverController extends Controller {
@@ -17,9 +21,20 @@ export class PointerHoverController extends Controller {
 		super(host)
 	}
 
+
+	protected readonly resizeController = new ResizeController(this.host, {
+		target: this.host,
+		callback: () => this.checkHover()
+	})
+
+	@eventListener({ type: 'pointerenter', target })
+	@eventListener({ type: 'pointerleave', target })
+	@eventListener({ type: 'pointerdown', target: document })
+	@eventListener({ type: 'pointerup', target: document })
+	@eventListener({ type: 'pointercancel', target: document })
 	protected async checkHover() {
 		await this.throttler.throttle()
-		const elements = await extractEventTargets.call(this.host, this.options?.target) as Array<Element>
+		const elements = await extractEventTargets(this.host, this.options?.target) as Array<Element>
 		const hover = elements.some(e => e.matches(':hover'))
 		if (this._hover !== hover) {
 			this._hover = hover
@@ -27,39 +42,4 @@ export class PointerHoverController extends Controller {
 			this.host.requestUpdate()
 		}
 	}
-
-	protected readonly pointerEnter = new EventListenerController(this.host, {
-		type: 'pointerenter',
-		target: this.options?.target,
-		listener: () => this.checkHover()
-	})
-
-	protected readonly pointerLeave = new EventListenerController(this.host, {
-		type: 'pointerleave',
-		target: this.options?.target,
-		listener: () => this.checkHover()
-	})
-
-	protected readonly resizeController = new ResizeController(this.host, {
-		target: this.host,
-		callback: () => this.checkHover()
-	})
-
-	protected readonly pointerDown = new EventListenerController(this.host, {
-		type: 'pointerdown',
-		target: document,
-		listener: () => this.checkHover()
-	})
-
-	protected readonly pointerUp = new EventListenerController(this.host, {
-		type: 'pointerup',
-		target: document,
-		listener: () => this.checkHover()
-	})
-
-	protected readonly pointerCancel = new EventListenerController(this.host, {
-		type: 'pointercancel',
-		target: document,
-		listener: () => this.checkHover()
-	})
 }
