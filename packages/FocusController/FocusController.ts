@@ -1,10 +1,14 @@
-import { Controller, EventListenerController, EventListenerTarget, ReactiveElement } from '@a11d/lit'
+import { Controller, EventListenerTarget, ReactiveElement, eventListener, extractEventTargets } from '@a11d/lit'
 
 export type FocusMethod = 'pointer' | 'keyboard' | 'programmatic'
 
 export interface FocusControllerOptions {
 	target?: EventListenerTarget
 	handleChange?(focused: boolean, bubbled: boolean, method: FocusMethod): void
+}
+
+function target(this: FocusController) {
+	return extractEventTargets(this.host, this.options?.target)
 }
 
 export class FocusController extends Controller {
@@ -14,17 +18,15 @@ export class FocusController extends Controller {
 
 	private method: FocusMethod = 'programmatic'
 
-	protected readonly pointerDown = new EventListenerController(this.host, {
-		type: 'pointerdown',
-		target: document,
-		listener: () => this.method = 'pointer'
-	})
+	@eventListener({ target: document, type: 'pointerdown' })
+	protected handlePointerDown() {
+		this.method = 'pointer'
+	}
 
-	protected readonly keyDown = new EventListenerController(this.host, {
-		type: 'keydown',
-		target: document,
-		listener: () => this.method = 'keyboard'
-	})
+	@eventListener({ target: document, type: 'keydown' })
+	protected handleKeyDown() {
+		this.method = 'keyboard'
+	}
 
 	private bubbled = false
 
@@ -39,18 +41,6 @@ export class FocusController extends Controller {
 		}
 	}
 
-	protected readonly anchorFocusIn = new EventListenerController(this.host, {
-		type: 'focusin',
-		target: this.options?.target ?? this.host,
-		listener: (e: FocusEvent) => this.handleFocusIn(e)
-	})
-
-	protected readonly anchorFocusOut = new EventListenerController(this.host, {
-		type: 'focusout',
-		target: this.options?.target ?? this.host,
-		listener: (e: FocusEvent) => this.handleFocusOut(e)
-	})
-
 	focusIn() {
 		this.handleFocusIn(new FocusEvent('focusin', { bubbles: true }))
 	}
@@ -59,11 +49,13 @@ export class FocusController extends Controller {
 		this.handleFocusOut(new FocusEvent('focusout', { bubbles: true }))
 	}
 
+	@eventListener({ type: 'focusin', target })
 	private handleFocusIn(e: FocusEvent) {
 		this.bubbled = e.target !== this.host
 		this.focused = true
 	}
 
+	@eventListener({ type: 'focusout', target })
 	private handleFocusOut(e: FocusEvent) {
 		this.bubbled = e.target !== this.host
 		this.focused = false
