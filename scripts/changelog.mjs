@@ -85,7 +85,7 @@ export class ChangeLog {
 		/** @type {Release} */ let lastRelease
 		for (const [index, commit] of commits.entries()) {
 			const { type, message, hash, date } = commit.match(ChangeLog.commitRegex)?.groups ?? {}
-			const output = await run(`git show --first-parent origin/main --unified=0 --word-diff=plain ${hash} package.json`, p.relativePath)
+			const output = await run(`git show --unified=0 --word-diff=plain ${hash} package.json`, p.relativePath)
 			if (!output || !output.includes('version')) {
 				continue
 			}
