@@ -26,8 +26,56 @@ class Release {
 }
 
 class Commit {
-	/* @readonly */ static order = ['feat', 'fix', 'chore', 'refactor', 'test', 'docs', 'perf']
-	/* @readonly */ static commitTypeInfo = new Map([
+	static regex = /(?<body>.+)?\((?<hash>\w+)\)\s?\((?<date>.+)\)/s
+
+	static fromMessage(/** @type string */ message, /** @type Package */ pkg) {
+		const match = message.match(Commit.regex)?.groups
+		if (!match) {
+			throw new Error(`Invalid commit message: ${message}`)
+		}
+		const { body, hash, date } = match
+		return new Commit({
+			hash,
+			date: new Date(date),
+			package: pkg,
+			changeSets: body?.split('\n').map(s => s.trim()).filter(Boolean).map(cs => ChangeSet.fromMessage(cs))
+		})
+	}
+
+	/** @param {Partial<Commit>} init */
+	constructor(init) {
+		Object.assign(this, init)
+		this.changeSets.forEach(cs => cs.commit = this)
+	}
+
+	valueOf() {
+		return this.changeSets.map(cs => cs.valueOf()).reduce((a, b) => a + b, 0)
+	}
+
+	/** @readonly @type {Package} */ package
+	/** @readonly @type {string} */ hash
+	/** @readonly @type {Date} */ date
+	/** @readonly @type {ChangeSet[]} */ changeSets
+
+	toString() {
+		return [...new Set(this.changeSets.map(cs => cs.toString())).values()].join('\n')
+	}
+}
+
+class ChangeSet {
+	static regex = /(?<type>\w+)(\((?<scope>\w+)\))?(!?): (?<message>.+)/
+
+	static fromMessage(/** @type string */ message) {
+		const match = message.match(ChangeSet.regex)?.groups
+		if (!match) {
+			return new ChangeSet({ message })
+		}
+		const { type, scope, message: _message } = match
+		return new ChangeSet({ type, scope, message: _message })
+	}
+
+	static order = ['feat', 'fix', 'chore', 'refactor', 'test', 'docs', 'perf']
+	static typeInfo = new Map([
 		['feat', { emoji: '🚀', name: 'Feature' }],
 		['fix', { emoji: '🐛', name: 'Fix' }],
 		['chore', { emoji: '🧹', name: 'Chore' }],
@@ -37,38 +85,36 @@ class Commit {
 		['perf', { emoji: '⚡️', name: 'Performance Improvement' }],
 	])
 
-	/** @param {Partial<Commit>} init */
+	/** @param {Partial<ChangeSet>} init */
 	constructor(init) {
 		Object.assign(this, init)
 		this.type ||= 'chore'
 		this.message = this.message?.charAt(0).toUpperCase() + this.message?.slice(1)
 	}
+	get typeName() { return ChangeSet.typeInfo.get(this.type)?.name ?? 'Chore' }
+	get emoji() { return ChangeSet.typeInfo.get(this.type)?.emoji ?? '🧹' }
 
-	/** @readonly @type {Package} */ package
-	/** @readonly @type {string} */ hash
 	/** @readonly @type {string} */ type
+	/** @readonly @type {string} */ scope
 	/** @readonly @type {string} */ message
-	/** @readonly @type {Date} */ date
-	get typeName() { return Commit.commitTypeInfo.get(this.type)?.name ?? 'Chore' }
-	get emoji() { return Commit.commitTypeInfo.get(this.type)?.emoji ?? '🧹' }
+	/** @readonly @type {Commit} */ commit
 
 	valueOf() {
-		return Commit.order.indexOf(this.type)
+		return ChangeSet.order.indexOf(this.type)
 	}
 
 	toString() {
-		return `- ${this.emoji} **${this.typeName}**: ${this.message} ([${this.hash.slice(0, 7)}](${this.package.packageJson.repository.url}/commit/${this.hash}))`
+		return `- ${this.emoji} **${this.typeName}**: ${this.message} ([${this.commit.hash.slice(0, 7)}](${this.commit.package.packageJson.repository.url}/commit/${this.commit.hash}))`
 	}
 }
 
 export class ChangeLog {
-	/* @readonly */ static commitRegex = /(?<type>\w+)(\((?<scope>\w+)\))?(!?): (?<message>.+) \((?<hash>\w+)\) \((?<date>.+)\)/
 	/* @readonly */ static versionRegex = /"version": \[-"(?<oldVersion>.+)",-]{\+"(?<version>.+)",\+}/
 
 	static async generate() {
 		const releases = (await Promise.all(Package.all.map(p => this.generateForPackage(p)))).flat()
 		const releaseNotes = Object.entries(Object.groupBy(releases, release => release.dateString))
-			.sort(([a], [b]) => new Date(b) - new Date(a))
+			.sort(([a], [b]) => new Date(b).valueOf() - new Date(a).valueOf())
 			.map(([dateString, releases]) => `# ${dateString}\n\n${releases.map(r => r.toString(true)).join('\n\n')}`)
 
 		FileSystem.writeFileSync(Path.resolve('CHANGELOG.md'), releaseNotes.join('\n\n'))
@@ -79,12 +125,15 @@ export class ChangeLog {
 	 * @returns {Promise<Release[]>}
 	 */
 	static async generateForPackage(p) {
-		const commits = (await run('git log --first-parent origin/main --pretty=format:"%s (%H) (%ad)" --date=format:"%Y-%m-%d" ./package.json', p.relativePath)).split('\n')
+		const commits = (await run('git log --first-parent origin/main --pretty=format:"%B (%H) (%ad);;;" --date=format:"%Y-%m-%d" ./package.json', p.relativePath)).split(';;;')
 
 		/** @type {Release[]} */ const releases = []
 		/** @type {Release} */ let lastRelease
 		for (const [index, commit] of commits.entries()) {
-			const { type, message, hash, date } = commit.match(ChangeLog.commitRegex)?.groups ?? {}
+			const { hash, date } = commit.match(Commit.regex)?.groups ?? {}
+			if (!hash || !date) {
+				continue
+			}
 			const output = await run(`git show --unified=0 --word-diff=plain ${hash} package.json`, p.relativePath)
 			if (!output || !output.includes('version')) {
 				continue
@@ -94,7 +143,7 @@ export class ChangeLog {
 				version ||= releases.filter(l => !!l.oldVersion).at(-1)?.oldVersion
 			}
 			const release = !version ? lastRelease : (lastRelease = new Release({ package: p, version, oldVersion, date: new Date(date) }))
-			release?.commits.push(new Commit({ package: p, type, message, hash, date }))
+			release?.commits.push(Commit.fromMessage(commit, p))
 			if (release && !releases.includes(release)) {
 				releases.push(release)
 			}
