@@ -43,13 +43,6 @@ const items = html`
 		<mo-icon style='opacity: 0.66' icon='logout'></mo-icon>
 		Logout
 	</mo-list-item>
-	<mo-list-item disabled style='opacity: 1'>
-		<mo-icon style='opacity: 0.33' icon='settings_suggest'></mo-icon>
-		<span>
-			<span style='opacity: 0.5'>Personalization -</span>
-			<mo-anchor style='pointer-events: auto;'>Upgrade to Pro!</mo-anchor>
-		</span>
-	</mo-list-item>
 `
 
 export const Default: StoryObj = {

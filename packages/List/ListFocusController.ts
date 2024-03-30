@@ -127,6 +127,7 @@ export class ListFocusController extends Controller {
 			if (breakSafe >= this.itemsLength) {
 				break
 			}
+			index %= this.itemsLength
 
 			const item = this.getItem(index)
 			if (item && this.isFocusable(item)) {
@@ -134,7 +135,7 @@ export class ListFocusController extends Controller {
 				break
 			}
 			index = direction === 'forward' ? index + 1 : index - 1
-			index = index < 0 ? this.itemsLength - 1 : index % this.itemsLength
+			index = index < 0 ? this.itemsLength - 1 : index
 			breakSafe++
 		}
 	}
