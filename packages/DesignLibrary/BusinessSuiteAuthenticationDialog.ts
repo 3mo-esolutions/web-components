@@ -99,3 +99,9 @@ export class BusinessSuiteAuthenticationDialog extends Component implements IDia
 		`
 	}
 }
+
+declare global {
+	interface HTMLElementTagNameMap {
+		'mo-business-suite-authentication-dialog': BusinessSuiteAuthenticationDialog
+	}
+}

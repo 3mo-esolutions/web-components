@@ -2,7 +2,7 @@ import { css, html, property, style, HTMLTemplateResult, ifDefined, query, repea
 import { Application, PageComponent, PwaHelper, RouteMatchMode, routerLink } from '@a11d/lit-application'
 import { Authentication } from '@a11d/lit-application-authentication'
 import { Localizer } from '@3mo/localization'
-import { DialogReleaseNotes, PagePreferences, Navigation, BusinessSuiteAuthenticationDialogComponent, type User } from './index.js'
+import { PagePreferences, Navigation, BusinessSuiteAuthenticationDialogComponent, type User } from './index.js'
 import { observeResize } from '@3mo/resize-observer'
 import { observeMutation } from '@3mo/mutation-observer'
 import { Icon, IconVariant } from '@3mo/icon'
@@ -30,8 +30,7 @@ export abstract class BusinessSuiteApplication extends Application {
 		PwaHelper.registerServiceWorker('/ServiceWorker.js')
 	}
 
-	override async connected() {
-		await new DialogReleaseNotes().confirm()
+	override connected() {
 		BusinessSuiteAuthenticationDialogComponent.authenticatedUserStorage.changed.subscribe(() => this.requestUpdate())
 	}
 
