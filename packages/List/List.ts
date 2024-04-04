@@ -2,10 +2,11 @@ import { Component, component, css, event, html } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
 import { ListFocusController } from './ListFocusController.js'
 
-export function isListItem(element: Element): element is HTMLElement {
+export function isListItem(element: Element, options?: { includeHidden?: boolean }): element is HTMLElement {
 	return element instanceof HTMLElement
 		&& !!element.role
 		&& List.itemRoles.includes(element.role)
+		&& (element.getAttribute('aria-hidden') !== 'true' || options?.includeHidden === true)
 }
 
 export function isList(element: EventTarget): element is HTMLElement {
@@ -32,7 +33,9 @@ export class List extends Component {
 	readonly slotController = new SlotController(this)
 
 	get items() {
-		return this.slotController.getAssignedElements('').filter(isListItem)
+		return this.slotController.getAssignedElements('')
+			.flatMap(e => [e, ...e.querySelectorAll('*')])
+			.filter(i => isListItem(i)) as Array<HTMLElement>
 	}
 
 	static override get styles() {

@@ -11,6 +11,10 @@ import { MaterialIcon } from '@3mo/icon'
 export class NavigationListItem extends ListItem {
 	@property() icon?: MaterialIcon
 
+	get selected() {
+		return this.hasAttribute('data-router-selected')
+	}
+
 	static override get styles() {
 		return css`
 			${super.styles}

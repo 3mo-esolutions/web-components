@@ -13,8 +13,8 @@ export default {
 const getTemplate = (selectionMode: SelectableListSelectionMode) => html`
 	Check the console for the selected item.
 	<mo-selectable-list selectionMode=${selectionMode}>
-		<mo-selectable-list-item>Item 1</mo-selectable-list-item>
-		<mo-selectable-list-item>Item 2</mo-selectable-list-item>
+		<mo-selectable-list-item toggleable>Item 1</mo-selectable-list-item>
+		<mo-selectable-list-item toggleable>Item 2</mo-selectable-list-item>
 		<mo-checkbox-list-item disabled>Item 3</mo-checkbox-list-item>
 		<mo-checkbox-list-item>Item 3</mo-checkbox-list-item>
 		<mo-checkbox-list-item>Item 4</mo-checkbox-list-item>

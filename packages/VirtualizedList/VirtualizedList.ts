@@ -18,7 +18,7 @@ export class VirtualizedList<T = unknown> extends List {
 	@query('mo-virtualized-scroller') protected readonly virtualizedScroller!: VirtualizedScroller
 
 	override get items() {
-		return (this.virtualizedScroller?.renderedItems ?? []).filter(isListItem)
+		return (this.virtualizedScroller?.renderedItems ?? []).filter(e => isListItem(e)) as Array<HTMLElement>
 	}
 
 	get itemsLength() {
