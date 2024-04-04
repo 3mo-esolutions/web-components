@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/list",
-	"version": "0.2.7",
+	"version": "0.3.7",
 	"description": "Lists are continuous, vertical indexes of text and images.",
 	"repository": {
 		"type": "git",
@@ -33,6 +33,8 @@
 		"@3mo/radio": "x",
 		"@3mo/switch": "x",
 		"@3mo/focus-controller": "x",
+		"@3mo/mutation-observer": "x",
+		"@3mo/expand-collapse-icon-button": "x",
 		"@material/web": "1.x"
 	}
 }

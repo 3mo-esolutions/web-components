@@ -1,33 +1,57 @@
-import { component, css, html, property, eventListener } from '@a11d/lit'
+import { component, css, html, property, eventListener, Component, query } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
-import { ListItem } from './ListItem.js'
+import { MutationController } from '@3mo/mutation-observer'
+import { isListItem } from './List.js'
+import '@3mo/expand-collapse-icon-button'
 
 /**
  * @element mo-collapsible-list-item
  *
  * @attr open - Whether the list item is open
  *
- * @slot details - The details of the list item
+ * @slot - The parent list item
+ * @slot details - The nested list items
+ *
+ * @csspart summary - The summary element hosting the parent list item
+ * @csspart details - The details element hosting the nested list items
+ * @csspart expand-collapse-icon-button - The expand/collapse icon button
  */
 @component('mo-collapsible-list-item')
-export class CollapsibleListItem extends ListItem {
-	@property({
-		type: Boolean,
-		updated(this: CollapsibleListItem) {
-			if (this.open) {
-				this.focusFirstChild()
+export class CollapsibleListItem extends Component {
+	@property({ type: Boolean, updated(this: CollapsibleListItem) { this.openUpdated() } }) open = false
+
+	@query('details') private readonly detailsElement!: HTMLDetailsElement
+
+	protected readonly slotController = new SlotController(this)
+	protected readonly mutationObserver = new MutationController(this, {
+		config: { subtree: true, attributes: true, attributeFilter: ['selected', 'data-router-selected'] },
+		callback: () => {
+			if (this.detailItems.some(d => 'selected' in d && d.selected === true)) {
+				this.open = true
 			}
 		}
-	}) private open = false
+	})
+
+	get item() {
+		return this.slotController.getAssignedElements('').find(e => isListItem(e))
+	}
+
+	private get hasDetails() {
+		return this.slotController.hasAssignedElements('details')
+	}
+
+	get detailItems() {
+		return this.slotController.getAssignedElements('details').filter(e => isListItem(e, { includeHidden: true }))
+	}
+
+	private openUpdated() {
+		this.detailItems.forEach(item => item.setAttribute('aria-hidden', String(!this.open)))
+	}
 
 	static override get styles() {
 		return css`
-			${super.styles}
-
 			:host {
-				height: unset;
-				min-height: 48px;
-				padding-inline-end: 0px;
+				display: block;
 			}
 
 			details {
@@ -35,6 +59,7 @@ export class CollapsibleListItem extends ListItem {
 			}
 
 			summary {
+				position: relative;
 				list-style: none;
 			}
 
@@ -46,33 +71,33 @@ export class CollapsibleListItem extends ListItem {
 				display: block;
 			}
 
-			mo-icon {
-				margin-inline-end: 16px;
+			mo-expand-collapse-icon-button {
+				position: absolute;
+				inset-inline-end: 16px;
+				inset-block-start: 50%;
+				transform: translateY(-50%);
 			}
 		`
 	}
 
-	private readonly slotController = new SlotController(this)
-
-	private get hasDetails() {
-		return this.slotController.hasAssignedElements('details')
-	}
-
 	protected override get template() {
 		return !this.hasDetails ? super.template : html`
-			<details ?open=${this.open}>
-				<summary class='container' tabindex='-1'>
-					${super.template}
-					<mo-icon icon=${!this.open ? 'arrow_drop_down' : 'arrow_drop_up'}></mo-icon>
+			<details ?open=${this.open} @toggle=${() => { this.open = this.detailsElement.open }}>
+				<summary tabindex='-1' part='summary'>
+					<slot></slot>
+					<mo-expand-collapse-icon-button tabindex='-1'
+						part='expand-collapse-icon-button'
+						?open=${this.open}
+					></mo-expand-collapse-icon-button>
 				</summary>
-				<slot name='details'></slot>
+				<slot name='details' part='details'></slot>
 			</details>
 		`
 	}
 
 	@eventListener({ target: window, type: 'keydown' })
 	handleItemKeyDown(event: KeyboardEvent) {
-		if (!this.focused) {
+		if (!this.item?.hasAttribute('focused')) {
 			return
 		}
 
@@ -85,12 +110,6 @@ export class CollapsibleListItem extends ListItem {
 			event.stopPropagation()
 			this.open = false
 		}
-	}
-
-	private async focusFirstChild() {
-		await this.updateComplete
-		const firstChild = this.slotController.getAssignedElements('details')[0] as HTMLElement
-		firstChild?.focus()
 	}
 }
 

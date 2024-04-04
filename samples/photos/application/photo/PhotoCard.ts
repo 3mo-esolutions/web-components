@@ -19,7 +19,7 @@ export class PhotoCard extends Component {
 				mo-card {
 					width: 100%;
 					height: 100%;
-					transition: var(--mo-duration-quick);
+					transition: 250ms;
 					--mo-card-body-padding: 0px 8px 16px 8px;
 				}
 

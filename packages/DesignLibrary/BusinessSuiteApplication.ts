@@ -49,9 +49,6 @@ export abstract class BusinessSuiteApplication extends Application {
 				font-family: var(--mo-font-family);
 				background-color: var(--mo-color-background);
 				color: var(--mo-color-foreground);
-				/* Duration */
-				--mo-duration-quick: 250ms;
-				--mo-duration-slow: 1000ms;
 				/* Thickness */
 				--mo-thickness-s: 4px;
 				--mo-thickness-m: 6px;
@@ -65,6 +62,16 @@ export abstract class BusinessSuiteApplication extends Application {
 
 			[application]:not([mobileNavigation]) mo-icon-button[icon=menu] {
 				display: none;
+			}
+
+			mo-collapsible-list-item:has(mo-navigation-list-item[slot=details][data-router-selected])::part(summary) {
+				color: color-mix(in srgb, var(--mo-color-accent), var(--mo-color-foreground) 25%);
+			}
+
+			mo-navigation-list-item[slot=details] {
+				padding-inline-start: 56px;
+				height: 40px;
+				font-size: 0.875rem;
 			}
 		`
 	}
@@ -237,25 +244,32 @@ export abstract class BusinessSuiteApplication extends Application {
 			<mo-icon icon=${navigation.icon} style='opacity: 0.75; font-size: 24px'></mo-icon>
 		`
 
+		const contentTemplate = html`
+			${iconTemplate}
+			${navigation.label}
+		`
+
+		const separatorTemplate = !navigation.hasSeparator ? html.nothing : html`<mo-line slot=${ifDefined(detailsSlot ? 'details' : undefined)}></mo-line>`
+
 		if (navigation.children?.length) {
 			return html`
-				${!navigation.hasSeparator ? html.nothing : html`<mo-line></mo-line>`}
+				${separatorTemplate}
 				<mo-collapsible-list-item slot=${ifDefined(detailsSlot ? 'details' : undefined)}>
-					${iconTemplate}
-					${navigation.label}
+					<mo-list-item>
+						${contentTemplate}
+					</mo-list-item>
 					${navigation.children?.map(child => this.getNavigationListItemTemplate(child, true))}
 				</mo-collapsible-list-item>
 			`
 		}
 
 		return html`
-			${!navigation.hasSeparator ? html.nothing : html`<mo-line></mo-line>`}
+			${separatorTemplate}
 			<mo-navigation-list-item
 				slot=${ifDefined(detailsSlot ? 'details' : undefined)}
 				${!navigation.component ? html.nothing : routerLink({ component: navigation.component as PageComponent, matchMode: RouteMatchMode.IgnoreParameters, invocationHandler: () => this.drawerOpen = false })}
 			>
-				${iconTemplate}
-				${navigation.label}
+				${contentTemplate}
 			</mo-navigation-list-item>
 		`
 	}

@@ -37,6 +37,10 @@ export class ListFocusController extends Controller {
 		return renderedItemIndex ?? (index < 0 ? undefined : index)
 	}
 
+	focusItem(item: ListItem) {
+		this.focusedItemIndex = this.getRenderedItemIndex(item)
+	}
+
 	private _focusedItemIndex?: number
 	get focusedItemIndex() { return this._focusedItemIndex }
 	set focusedItemIndex(value) {
@@ -49,8 +53,8 @@ export class ListFocusController extends Controller {
 	}
 
 	private _focused = false
-	get focused() { return this._focused }
-	set focused(value) {
+	private get focused() { return this._focused }
+	private set focused(value) {
 		this._focused = value
 		this.updateFocus()
 	}
