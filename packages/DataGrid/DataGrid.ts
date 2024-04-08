@@ -963,17 +963,17 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	private *getFlattenedData() {
 		if (!this.subDataGridDataSelector) {
-			yield* this.data
+			yield* this.data.map(d => ({ level: 0, data: d }))
 			return
 		}
 
-		const flatten = (data: TData): Array<TData> => {
+		const flatten = (data: TData, level = 0): Array<{ level: number, data: TData }> => {
 			const subData = getValueByKeyPath(data, this.subDataGridDataSelector!)
 			return [
-				data,
+				{ data, level },
 				...!Array.isArray(subData)
 					? []
-					: subData.flatMap(flatten)
+					: subData.flatMap(d => flatten(d, level + 1))
 			]
 		}
 
@@ -985,7 +985,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}
 
 	get flattenedData() {
-		return [...this.getFlattenedData()]
+		return [...this.getFlattenedData()].map(({ data }) => data)
 	}
 
 	protected get sortedData() {

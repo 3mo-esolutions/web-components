@@ -12,15 +12,14 @@ export default {
 
 type Person = { id: number, name: string, age: number, city: string }
 
-const generatePeople = (count: number, hasChildren = false) => {
+const generatePeople = (count: number) => {
 	const cities = ['Berlin', 'Hamburg', 'München', 'Köln', 'Frankfurt']
 	const names = ['Max', 'Moritz', 'Mia', 'Maja', 'Mika']
 	return new Array(count).fill(0).map((_, i) => ({
 		id: i + 1,
 		name: names[Math.floor(Math.random() * names.length)],
 		age: Math.floor(Math.random() * 80),
-		city: cities[Math.floor(Math.random() * cities.length)],
-		children: !hasChildren ? [] : generatePeople(10),
+		city: cities[Math.floor(Math.random() * cities.length)]
 	}))
 }
 
@@ -232,11 +231,9 @@ export const Fab: StoryObj = {
 	`
 }
 
-const peopleWithChildren = generatePeople(10, true)
-
-export const Exportable = {
+export const Exportable: StoryObj = {
 	render: () => html`
-		<mo-data-grid exportable subDataGridDataSelector='children' pagination='auto' .data=${peopleWithChildren} style='height: 500px'>
+		<mo-data-grid exportable subDataGridDataSelector='children' pagination='auto' .data=${fivePeopleWithChildren} style='height: 500px'>
 			${columnsTemplate}
 		</mo-data-grid>
 	`
