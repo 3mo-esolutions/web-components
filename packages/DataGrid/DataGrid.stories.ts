@@ -233,7 +233,7 @@ export const Fab: StoryObj = {
 
 export const Exportable: StoryObj = {
 	render: () => html`
-		<mo-data-grid exportable pagination='auto' .data=${thousandPeople} style='height: 500px'>
+		<mo-data-grid exportable subDataGridDataSelector='children' pagination='auto' .data=${fivePeopleWithChildren} style='height: 500px'>
 			${columnsTemplate}
 		</mo-data-grid>
 	`
