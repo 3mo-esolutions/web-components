@@ -40,9 +40,9 @@ const twentyPeople = generatePeople(20)
 const hundredPeople = generatePeople(100)
 const thousandPeople = generatePeople(1000)
 
-const fivePeopleWithChildren = fivePeople.map(p => ({
+const fivePeopleWithChildren = fivePeople.map((p, i) => ({
 	...p,
-	children: generatePeople(Math.floor(Math.random() * 10) + 1)
+	children: generatePeople(i + 2)
 }))
 
 const columnsTemplate = html`

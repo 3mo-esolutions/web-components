@@ -6,6 +6,17 @@ import { ContextMenu } from '@3mo/context-menu'
 import { type DataGridColumn } from '../DataGridColumn.js'
 import { type DataGridCell, DataGridPrimaryContextMenuItem, DataGridSelectionMode, type DataRecord } from '../index.js'
 
+/**
+ * @attr dataGrid
+ * @attr data
+ * @attr selected
+ * @attr contextMenuOpen
+ * @attr detailsOpen
+ *
+ * @fires detailsOpenChange - Dispatched when the details open state changes
+ *
+ * @cssprop --mo-data-grid-column-sub-row-indentation - The indentation of sub rows
+ */
 export abstract class DataGridRow<TData, TDetailsElement extends Element | undefined = undefined> extends Component {
 	@queryAll('mo-data-grid-cell') readonly cells!: Array<DataGridCell<any, TData, TDetailsElement>>
 	@queryAll('[mo-data-grid-row]') readonly subRows!: Array<DataGridRow<TData, TDetailsElement>>
@@ -102,7 +113,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			}
 
 			:host([detailsOpen]) #contentContainer {
-				background: rgba(var(--mo-color-accent-base), 0.15);
+				background: color-mix(in srgb, var(--mo-color-accent), transparent 85%);
 				font-weight: 600;
 			}
 
