@@ -6,6 +6,17 @@ import { ContextMenu } from '@3mo/context-menu'
 import { type DataGridColumn } from '../DataGridColumn.js'
 import { type DataGridCell, DataGridPrimaryContextMenuItem, DataGridSelectionMode, type DataRecord } from '../index.js'
 
+/**
+ * @attr dataGrid
+ * @attr data
+ * @attr selected
+ * @attr contextMenuOpen
+ * @attr detailsOpen
+ *
+ * @fires detailsOpenChange - Dispatched when the details open state changes
+ *
+ * @cssprop --mo-data-grid-nested-row-border-block-end - Optional border-block-end style for nested rows
+ */
 export abstract class DataGridRow<TData, TDetailsElement extends Element | undefined = undefined> extends Component {
 	@queryAll('mo-data-grid-cell') readonly cells!: Array<DataGridCell<any, TData, TDetailsElement>>
 	@queryAll('[mo-data-grid-row]') readonly subRows!: Array<DataGridRow<TData, TDetailsElement>>
@@ -17,9 +28,8 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			if (this.isIntersecting) {
 				this.dataGrid.rowIntersectionObserver?.unobserve?.(this)
 			}
-			if (this.level > 0) {
-				this.style.borderBottom = 'solid 1px var(--mo-color-transparent-gray-2)'
-			}
+			this.style.setProperty('--_level', this.level.toString())
+			this.style.setProperty('--_border-block-end', this.level > 0 ? 'var(--mo-data-grid-nested-row-border-block-end)' : 'none')
 		}
 	}) isIntersecting = false
 
@@ -76,6 +86,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				position: relative;
 				height: auto;
 				width: 100%;
+				border-block-end: var(--_border-block-end);
 			}
 
 			:host([data-has-alternating-background]:hover) #contentContainer {
