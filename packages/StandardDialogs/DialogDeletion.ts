@@ -43,7 +43,7 @@ export class DialogDeletion extends DialogComponent<Parameters> {
 
 	protected override get template() {
 		return html`
-			<mo-dialog heading=${t('Deletion Confirmation')}>
+			<mo-dialog heading=${t('Deletion Confirmation')} errorHandler='no-op'>
 				<mo-loading-button type='raised' slot='primaryAction'>${t('Delete')}</mo-loading-button>
 				${this.parameters.content}
 			</mo-dialog>

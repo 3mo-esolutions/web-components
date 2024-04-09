@@ -39,6 +39,7 @@ export class DialogPrompt extends DialogComponent<Parameters, string> {
 				?blocking=${blocking}
 				size=${ifDefined(size)}
 				primaryOnEnter
+				errorHandler='no-op'
 			>
 				<mo-flex ${style({ width: '100%', height: '100%' })} gap='6px'>
 					${getContentTemplate(this, content)}

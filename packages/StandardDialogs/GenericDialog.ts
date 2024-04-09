@@ -1,5 +1,5 @@
 import { HTMLTemplateResult, component, html, ifDefined } from '@a11d/lit'
-import { DialogAction, DialogComponent } from '@a11d/lit-application'
+import { DialogAction, DialogComponent, type DialogErrorHandler } from '@a11d/lit-application'
 import { BaseDialogParameters, getContentTemplate } from '@3mo/dialog'
 
 interface Parameters<TResult> extends BaseDialogParameters<GenericDialog<TResult>> {
@@ -7,6 +7,7 @@ interface Parameters<TResult> extends BaseDialogParameters<GenericDialog<TResult
 	readonly primaryAction?: () => DialogAction<TResult>
 	readonly secondaryAction?: () => DialogAction<TResult>
 	readonly cancellationAction?: () => DialogAction<TResult>
+	readonly errorHandler?: DialogErrorHandler
 }
 
 @component('mo-generic-dialog')
@@ -21,6 +22,7 @@ export class GenericDialog<TResult = void> extends DialogComponent<Parameters<TR
 				secondaryButtonText=${secondaryButtonText ?? t('Cancel')}
 				?blocking=${blocking}
 				primaryOnEnter
+				.errorHandler=${this.parameters.errorHandler}
 			>
 				${getContentTemplate(this, content)}
 			</mo-dialog>

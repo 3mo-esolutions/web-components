@@ -18,6 +18,7 @@ export class DialogAcknowledge extends DialogComponent<Parameters, boolean> {
 				?blocking=${blocking}
 				size=${ifDefined(size)}
 				primaryOnEnter
+				errorHandler='no-op'
 			>
 				${getContentTemplate(this, content)}
 			</mo-dialog>

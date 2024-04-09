@@ -13,6 +13,7 @@ export class DialogAlert extends DialogComponent<BaseDialogParameters<DialogAler
 				?blocking=${blocking}
 				size=${ifDefined(size)}
 				primaryOnEnter
+				errorHandler='no-op'
 			>
 				${getContentTemplate(this, content)}
 			</mo-dialog>
