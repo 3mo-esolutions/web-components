@@ -30,7 +30,6 @@ export class DataGridColumnCurrency<TData> extends DataGridColumnNumberBase<TDat
 		return html`
 			<mo-field-currency dense autofocus
 				.currency=${this.getCurrency(data)}
-				label=${this.heading}
 				value=${ifDefined(value)}
 				@change=${(e: CustomEvent<number>) => this.handleEdit(e.detail, data)}
 			></mo-field-currency>
