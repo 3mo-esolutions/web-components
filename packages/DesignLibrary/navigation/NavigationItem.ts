@@ -43,6 +43,7 @@ export class NavigationItem extends Component {
 					color: var(--mo-color-on-accent);
 					cursor: pointer;
 					white-space: nowrap;
+					outline: none;
 				}
 
 				:host([data-router-selected]) {
@@ -63,7 +64,13 @@ export class NavigationItem extends Component {
 				mo-menu {
 					color: var(--mo-color-foreground);
 				}
+
+				md-focus-ring {
+					--md-focus-ring-shape: var(--mo-border-radius);
+					--md-focus-ring-color: var(--mo-color-on-accent);
+				}
 			</style>
+			<md-focus-ring .control=${this} inward></md-focus-ring>
 			<mo-flex id='button' direction='horizontal' alignItems='center' justifyContent='center' gap='2px'>
 				<span>${this.navigation.label}</span>
 				${!this.navigation.children ? html.nothing : html`
