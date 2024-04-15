@@ -1,4 +1,4 @@
-import { component, Component, css, html, property } from '@a11d/lit'
+import { component, Component, css, html, property, query } from '@a11d/lit'
 import { disabledProperty } from '@3mo/disabled-property'
 import { type MaterialIcon } from '@3mo/icon'
 import { MdIconButton } from '@material/web/iconbutton/icon-button.js'
@@ -23,6 +23,8 @@ export class IconButton extends Component {
 	@property() icon!: MaterialIcon
 	@disabledProperty() disabled = false
 	@property({ type: Boolean, reflect: true }) dense = false
+
+	@query('md-icon-button') protected readonly iconButton!: MdIconButton
 
 	static override get styles() {
 		return css`
@@ -60,6 +62,14 @@ export class IconButton extends Component {
 				font-size: inherit;
 			}
 		`
+	}
+
+	override focus(...parameters: Parameters<Component['focus']>) {
+		this.updateComplete.then(() => this.iconButton.focus(...parameters))
+	}
+
+	override blur(...parameters: Parameters<Component['blur']>) {
+		this.updateComplete.then(() => this.iconButton.blur(...parameters))
 	}
 
 	protected override get template() {
