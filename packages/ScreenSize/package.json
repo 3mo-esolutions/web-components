@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/screen-size",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"description": "Lit directives and utilities to depend UI on screen size",
 	"repository": {
 		"type": "git",

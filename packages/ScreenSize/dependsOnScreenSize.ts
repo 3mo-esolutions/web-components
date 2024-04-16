@@ -22,8 +22,8 @@ export class DependsOnScreenSizeDirective extends AsyncDirective {
 	protected static readonly supportedPartTypes = [PartType.PROPERTY, PartType.ATTRIBUTE, PartType.BOOLEAN_ATTRIBUTE, PartType.CHILD] as Array<PartType>
 
 	protected static readonly media = {
-		[ScreenSize.Mobile]: isServer ? undefined : window.matchMedia('(max-width: 768px)'),
-		[ScreenSize.Tablet]: isServer ? undefined : window.matchMedia('(min-width: 768px) and (max-width: 1024px)'),
+		[ScreenSize.Mobile]: isServer ? undefined : window.matchMedia('(max-width: 640px)'),
+		[ScreenSize.Tablet]: isServer ? undefined : window.matchMedia('(min-width: 640px) and (max-width: 1024px)'),
 		[ScreenSize.Desktop]: isServer ? undefined : window.matchMedia('(min-width: 1024px)'),
 		addEventListener(listener: MediaQueryListener) {
 			this[ScreenSize.Mobile]?.addEventListener('change', listener)
