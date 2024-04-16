@@ -1,16 +1,29 @@
 import { bind, Component, component, html, property, repeat, style, type TemplateResult } from '@a11d/lit'
-import { type PageComponent, routerLink } from '@a11d/lit-application'
-import { type Navigation } from './Navigation.js'
+import { type PageComponent, routerLink, type DialogComponent, type RouteMatchMode } from '@a11d/lit-application'
+import type { MaterialIcon } from '@3mo/icon'
+
+export type NavigationDefinition = {
+	key?: string
+	label: string | TemplateResult
+	icon?: MaterialIcon
+	hidden?: boolean
+	openInNewPage?: boolean
+	component?: PageComponent<any> | DialogComponent<any, any>
+	matchMode?: RouteMatchMode
+	children?: Array<NavigationDefinition>
+	/** If true, a separator will be rendered before this item. */
+	hasSeparator?: boolean
+}
 
 @component('mo-navigation-item')
 export class NavigationItem extends Component {
-	@property({ type: Object }) navigation!: Navigation
+	@property({ type: Object }) navigation!: NavigationDefinition
 	@property({ type: Boolean }) open = false
 
 	override tabIndex = 0
 
 	private get menuContentTemplate() {
-		const getItemTemplate = (navigation: Navigation): TemplateResult => navigation.hidden ? html.nothing : !navigation.children ? html`
+		const getItemTemplate = (navigation: NavigationDefinition): TemplateResult => navigation.hidden ? html.nothing : !navigation.children ? html`
 			<mo-navigation-menu-item ${!navigation.component ? html.nothing : routerLink({
 				component: navigation.component as PageComponent,
 				matchMode: navigation.matchMode,
@@ -21,9 +34,9 @@ export class NavigationItem extends Component {
 		` : html`
 			<mo-nested-menu-item>
 				${navigation.label}
-				<mo-context-menu slot='submenu'>
+				<mo-menu slot='submenu'>
 					${repeat(navigation.children, c => c.key ?? c, child => getItemTemplate(child))}
-				</mo-context-menu>
+				</mo-menu>
 			</mo-nested-menu-item>
 		`
 

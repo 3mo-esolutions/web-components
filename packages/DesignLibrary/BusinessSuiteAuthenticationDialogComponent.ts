@@ -3,6 +3,7 @@ import { DialogAuthenticator } from '@a11d/lit-application-authentication'
 import { Localizer } from '@3mo/localization'
 import { LocalStorage } from '@a11d/local-storage'
 import { NotificationComponent } from '@a11d/lit-application'
+import { updateAllComponentsOnDispatch } from './updateAllComponentsOnDispatch.js'
 
 Localizer.register('de', {
 	'Authenticated successfully': 'Erfolgreich authentifiziert',
@@ -26,6 +27,10 @@ export type User = {
 
 export abstract class BusinessSuiteAuthenticationDialogComponent extends DialogAuthenticator<User> {
 	static readonly authenticatedUserStorage = new LocalStorage<object | undefined>('DialogAuthenticator.User', undefined)
+
+	static {
+		updateAllComponentsOnDispatch(BusinessSuiteAuthenticationDialogComponent.authenticatedUserStorage.changed)
+	}
 
 	protected abstract requestPasswordReset(): Promise<void>
 
