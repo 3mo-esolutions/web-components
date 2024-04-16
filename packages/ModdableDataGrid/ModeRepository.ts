@@ -1,6 +1,6 @@
 import { LocalStorage } from '@a11d/local-storage'
-import { FetchableDataGridParametersType } from '@3mo/fetchable-data-grid'
-import { ModdableDataGrid } from './ModdableDataGrid.js'
+import { type FetchableDataGridParametersType } from '@3mo/fetchable-data-grid'
+import { type ModdableDataGrid } from './ModdableDataGrid.js'
 import { Mode } from './Mode.js'
 import { objectEquals } from './ObjectExtensions.js'
 

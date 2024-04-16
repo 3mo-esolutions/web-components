@@ -1,6 +1,6 @@
 import { component, Component, html } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { PointerType, PointerTypeController } from './PointerTypeController.js'
+import { type PointerType, PointerTypeController } from './PointerTypeController.js'
 
 @component('pointer-type-controller-test-component')
 class PointerTypeControllerTestComponent extends Component {

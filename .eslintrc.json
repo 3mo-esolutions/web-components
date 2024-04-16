@@ -2,5 +2,15 @@
 	"root": true,
 	"extends": [
 		"./node_modules/@a11d/eslint-config/.eslintrc.json"
-	]
+	],
+	"rules": {
+		"@typescript-eslint/consistent-type-imports": [
+			"error",
+			{
+				"prefer": "type-imports",
+				"fixStyle": "inline-type-imports",
+				"disallowTypeAnnotations": false
+			}
+		]
+	}
 }

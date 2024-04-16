@@ -1,5 +1,5 @@
 import { component, css, Component, html, property, ifDefined, event, isServer } from '@a11d/lit'
-import { MaterialIcon } from '@3mo/icon'
+import { type MaterialIcon } from '@3mo/icon'
 import { SlotController } from '@3mo/slot-controller'
 
 export enum AlertType {

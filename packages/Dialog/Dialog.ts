@@ -1,5 +1,5 @@
 import { component, property, query, html, css, event, state, Component } from '@a11d/lit'
-import { ApplicationTopLayer, DialogActionKey, DialogComponent, Dialog as IDialog } from '@a11d/lit-application'
+import { type ApplicationTopLayer, DialogActionKey, DialogComponent, type Dialog as IDialog } from '@a11d/lit-application'
 import { MdDialog } from '@material/web/dialog/dialog.js'
 import { tooltip } from '@3mo/tooltip'
 import { SlotController } from '@3mo/slot-controller'

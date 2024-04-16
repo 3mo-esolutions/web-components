@@ -1,8 +1,8 @@
-import { state, component, html, ifDefined, query, style, HTMLTemplateResult } from '@a11d/lit'
-import { FieldText, FieldTextArea } from '@3mo/text-fields'
+import { state, component, html, ifDefined, query, style, type HTMLTemplateResult } from '@a11d/lit'
+import { type FieldText, type FieldTextArea } from '@3mo/text-fields'
 import { DialogComponent } from '@a11d/lit-application'
 import { Localizer } from '@3mo/localization'
-import { BaseDialogParameters, getContentTemplate } from '@3mo/dialog'
+import { type BaseDialogParameters, getContentTemplate } from '@3mo/dialog'
 
 Localizer.register('de', {
 	'OK': 'OK',

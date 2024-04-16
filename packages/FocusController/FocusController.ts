@@ -1,4 +1,4 @@
-import { Controller, EventListenerTarget, ReactiveElement, eventListener, extractEventTargets } from '@a11d/lit'
+import { Controller, type EventListenerTarget, type ReactiveElement, eventListener, extractEventTargets } from '@a11d/lit'
 
 export type FocusMethod = 'pointer' | 'keyboard' | 'programmatic'
 

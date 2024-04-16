@@ -1,7 +1,7 @@
-import { eventListener, PropertyValues } from '@a11d/lit'
-import { DialogActionKey, DialogParameters, NotificationComponent } from '@a11d/lit-application'
+import { eventListener, type PropertyValues } from '@a11d/lit'
+import { DialogActionKey, type DialogParameters, NotificationComponent } from '@a11d/lit-application'
 import { Localizer } from '@3mo/localization'
-import { FetchableDialogComponentParameters, FetchableDialogComponent } from '@3mo/fetchable-dialog'
+import { type FetchableDialogComponentParameters, FetchableDialogComponent } from '@3mo/fetchable-dialog'
 import { EntityDialog } from './EntityDialog.js'
 
 Localizer.register('de', {

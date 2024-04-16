@@ -1,6 +1,6 @@
-import { HTMLTemplateResult, render } from '@a11d/lit'
+import { type HTMLTemplateResult, render } from '@a11d/lit'
 import { Application } from '@a11d/lit-application'
-import { ContextMenu } from './ContextMenu.js'
+import { type ContextMenu } from './ContextMenu.js'
 
 export type ContextMenuTemplate = HTMLTemplateResult | (() => HTMLTemplateResult)
 

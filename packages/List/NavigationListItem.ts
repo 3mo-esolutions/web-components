@@ -1,6 +1,6 @@
 import { component, css, html, property } from '@a11d/lit'
 import { ListItem } from '@3mo/list'
-import { MaterialIcon } from '@3mo/icon'
+import { type MaterialIcon } from '@3mo/icon'
 
 /**
  * @element mo-navigation-list-item

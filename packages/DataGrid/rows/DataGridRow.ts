@@ -1,7 +1,7 @@
-import { css, property, Component, html, queryAll, style, HTMLTemplateResult, LitElement, event } from '@a11d/lit'
+import { css, property, Component, html, queryAll, style, type HTMLTemplateResult, LitElement, event } from '@a11d/lit'
 import { ContextMenu } from '@3mo/context-menu'
-import { ColumnDefinition } from '../ColumnDefinition.js'
-import { DataGrid, DataGridCell, DataGridPrimaryContextMenuItem, DataGridSelectionMode } from '../index.js'
+import { type ColumnDefinition } from '../ColumnDefinition.js'
+import { type DataGrid, type DataGridCell, DataGridPrimaryContextMenuItem, DataGridSelectionMode } from '../index.js'
 
 /**
  * @attr dataGrid

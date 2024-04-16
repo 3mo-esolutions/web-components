@@ -1,9 +1,9 @@
 import { Temporal, Intl } from '@js-temporal/polyfill'
 import { Localizer } from '@3mo/localization'
 import { TimeSpan } from './TimeSpan.js'
-import { DateTimeParser, DateTimeLocalParser, DateTimeShortcutParser, DateTimeOperationParser, DateTimeNativeParser, DateTimeZeroParser } from './parsers/index.js'
+import { type DateTimeParser, DateTimeLocalParser, DateTimeShortcutParser, DateTimeOperationParser, DateTimeNativeParser, DateTimeZeroParser } from './parsers/index.js'
 import { Memoize as memoize } from 'typescript-memoize'
-import { ParsingParameters, extractParsingParameters } from './extractParsingParameters.js'
+import { type ParsingParameters, extractParsingParameters } from './extractParsingParameters.js'
 
 type DateTimeFromParameters =
 	| [epochMilliseconds?: number, calendar?: Temporal.CalendarLike, timeZone?: Temporal.TimeZoneLike]

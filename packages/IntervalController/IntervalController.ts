@@ -1,4 +1,4 @@
-import { ReactiveControllerHost, Controller } from '@a11d/lit'
+import { type ReactiveControllerHost, Controller } from '@a11d/lit'
 
 /**
  * A controller that runs a task at a regular interval.

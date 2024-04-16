@@ -1,5 +1,5 @@
 import { component, css, html, property } from '@a11d/lit'
-import { Currency, CurrencyCode } from '@3mo/localization'
+import { Currency, type CurrencyCode } from '@3mo/localization'
 import { FieldNumber } from './FieldNumber.js'
 
 /**

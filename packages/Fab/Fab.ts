@@ -1,7 +1,7 @@
 import { Component, component, css, html, ifDefined, isServer, property } from '@a11d/lit'
 import { MutationController } from '@3mo/mutation-observer'
 import { InstanceofAttributeController } from '@3mo/instanceof-attribute-controller'
-import { MaterialIcon } from '@3mo/icon'
+import { type MaterialIcon } from '@3mo/icon'
 import { MdFab } from '@material/web/fab/fab.js'
 import '@3mo/theme'
 

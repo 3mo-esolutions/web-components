@@ -1,6 +1,6 @@
 import { component, html, range } from '@a11d/lit'
 import { DateList } from './DateList.js'
-import { SelectionListItemChangeEvent } from '@3mo/list'
+import { type SelectionListItemChangeEvent } from '@3mo/list'
 
 @component('mo-hour-list')
 export class HourList extends DateList {

@@ -1,6 +1,6 @@
-import { HTMLTemplateResult, component, html, ifDefined } from '@a11d/lit'
+import { type HTMLTemplateResult, component, html, ifDefined } from '@a11d/lit'
 import { DialogComponent } from '@a11d/lit-application'
-import { BaseDialogParameters, getContentTemplate as getContentTemplate } from '@3mo/dialog'
+import { type BaseDialogParameters, getContentTemplate as getContentTemplate } from '@3mo/dialog'
 
 @component('mo-dialog-alert')
 export class DialogAlert extends DialogComponent<BaseDialogParameters<DialogAlert>> {

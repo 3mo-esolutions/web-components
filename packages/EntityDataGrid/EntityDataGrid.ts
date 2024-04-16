@@ -1,7 +1,7 @@
-import { component, property, html, TemplateResult } from '@a11d/lit'
-import { FetchableDialogComponentParameters as EntityWithId } from '@3mo/fetchable-dialog'
-import { EntityDialogComponent } from '@3mo/entity-dialog'
-import { FetchableDataGridParametersType, FetchableDataGrid } from '@3mo/fetchable-data-grid'
+import { component, property, html, type TemplateResult } from '@a11d/lit'
+import { type FetchableDialogComponentParameters as EntityWithId } from '@3mo/fetchable-dialog'
+import { type EntityDialogComponent } from '@3mo/entity-dialog'
+import { type FetchableDataGridParametersType, FetchableDataGrid } from '@3mo/fetchable-data-grid'
 
 type CreateAction = (() => unknown | PromiseLike<unknown>)
 type EditAction<TEntity extends EntityWithId> = ((entity: TEntity) => unknown | PromiseLike<unknown>)

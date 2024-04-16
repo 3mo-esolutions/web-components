@@ -1,4 +1,4 @@
-import { Component, HTMLTemplateResult, component, css, html, isServer, property, query } from '@a11d/lit'
+import { Component, type HTMLTemplateResult, component, css, html, isServer, property, query } from '@a11d/lit'
 import { InstanceofAttributeController } from '@3mo/instanceof-attribute-controller'
 import { SlotController } from '@3mo/slot-controller'
 import { observeResize } from '@3mo/resize-observer'

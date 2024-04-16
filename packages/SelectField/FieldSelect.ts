@@ -3,9 +3,9 @@ import { FieldComponent } from '@3mo/field'
 import type { ListItem } from '@3mo/list'
 import type { Menu } from '@3mo/menu'
 import type { FocusMethod } from '@3mo/focus-controller'
-import { PopoverAlignment } from '@3mo/popover'
+import type { PopoverAlignment, PopoverPlacement } from '@3mo/popover'
+import { FieldSelectValueController, type Data, type Index, type Value } from './SelectValueController.js'
 import { Option } from './Option.js'
-import { Data, FieldSelectValueController, Index, Value } from './SelectValueController.js'
 
 /**
  * @element mo-field-select
@@ -18,7 +18,8 @@ import { Data, FieldSelectValueController, Index, Value } from './SelectValueCon
  * @attr value - The selected value.
  * @attr index - The selected index.
  * @attr data - The selected data.
- * @attr alignment - Popover alignment
+ * @attr menuAlignment - Menu popover alignment
+ * @attr menuPlacement - Menu popover placement
  *
  * @slot - The select options.
  *
@@ -42,6 +43,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 	@property({ type: Boolean }) searchable = false
 	@property({ type: Boolean }) freeInput = false
 	@property() menuAlignment?: PopoverAlignment
+	@property() menuPlacement?: PopoverPlacement
 	@property({ type: Boolean, reflect: true }) open = false
 	@property({ type: String, bindingDefault: true, updated(this: FieldSelect<T>) { this.valueController.value = this.value } }) value: Value
 	@property({ type: Number, updated(this: FieldSelect<T>) { this.valueController.index = this.index } }) index: Index
@@ -204,6 +206,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 				selectionMode=${this.multiple ? 'multiple' : 'single'}
 				.anchor=${this}
 				alignment=${ifDefined(this.menuAlignment)}
+				placement=${ifDefined(this.menuPlacement)}
 				?disabled=${this.disabled}
 				?open=${this.open}
 				@openChange=${(e: CustomEvent<boolean>) => this.open = e.detail}

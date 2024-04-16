@@ -1,7 +1,7 @@
 import { component, Component, css, html, ifDefined, property, event, join, style } from '@a11d/lit'
 import { KeyboardController } from '@3mo/keyboard-controller'
-import { Checkbox } from '@3mo/checkbox'
-import { DataGridSelectionMode, DataGridSortingStrategy, ColumnDefinition, DataGrid, DataGridSidePanelTab } from './index.js'
+import { type Checkbox } from '@3mo/checkbox'
+import { DataGridSelectionMode, DataGridSortingStrategy, type ColumnDefinition, type DataGrid, DataGridSidePanelTab } from './index.js'
 
 @component('mo-data-grid-header')
 export class DataGridHeader<TData> extends Component {

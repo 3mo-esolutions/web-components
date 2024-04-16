@@ -1,5 +1,5 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { Anchor, AnchorReferrerPolicy } from './Anchor.js'
+import { type Anchor, AnchorReferrerPolicy } from './Anchor.js'
 
 describe('Anchor', () => {
 	const fixture = new ComponentTestFixture<Anchor>('mo-anchor')

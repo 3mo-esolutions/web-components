@@ -1,7 +1,7 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { expectFieldPropertyTunnelsToInput, expectInputEventTunnelsToField } from '../Field/InputFieldComponent.test.js'
 import { expectSlotRendersOnlyWithAssignedContent } from '../Field/FieldComponent.test.js'
-import { FieldCurrency } from './FieldCurrency.js'
+import { type FieldCurrency } from './FieldCurrency.js'
 
 describe('FieldCurrency', () => {
 	const fixture = new ComponentTestFixture<FieldCurrency>('mo-field-currency')

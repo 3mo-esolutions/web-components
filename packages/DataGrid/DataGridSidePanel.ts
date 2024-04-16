@@ -1,8 +1,8 @@
 import { component, style, Component, css, html, ifDefined, property, bind } from '@a11d/lit'
 import { Localizer } from '@3mo/localization'
 import { tooltip } from '@3mo/tooltip'
-import { ColumnDefinition } from './ColumnDefinition.js'
-import { DataGrid } from './DataGrid.js'
+import { type ColumnDefinition } from './ColumnDefinition.js'
+import { type DataGrid } from './DataGrid.js'
 
 Localizer.register('de', {
 	'Settings': 'Einstellungen',

@@ -1,4 +1,4 @@
-import { Dialog, DialogSize } from '@3mo/dialog'
+import { type Dialog, DialogSize } from '@3mo/dialog'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { GenericDialog } from './GenericDialog.js'
 

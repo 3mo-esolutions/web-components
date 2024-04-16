@@ -1,5 +1,5 @@
 import { Component, component, property, html, css, state, event, eventListener, style } from '@a11d/lit'
-import { ColumnDefinition, DataGrid } from './index.js'
+import { type ColumnDefinition, type DataGrid } from './index.js'
 
 /** @fires columnUpdate */
 @component('mo-data-grid-header-separator')

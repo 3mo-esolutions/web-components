@@ -1,7 +1,7 @@
-import { LanguageCode, Localizer, extractDateTimeFormatOptions } from '@3mo/localization'
-import { DateTimeRangeParser } from './parsers/DateTimeRangeParser.js'
+import { type LanguageCode, Localizer, extractDateTimeFormatOptions } from '@3mo/localization'
+import { type DateTimeRangeParser } from './parsers/DateTimeRangeParser.js'
 import { DateTimeRangeDelimiterParser } from './index.js'
-import { ParsingParameters, extractParsingParameters } from './extractParsingParameters.js'
+import { type ParsingParameters, extractParsingParameters } from './extractParsingParameters.js'
 
 export class DateTimeRange {
 	private static readonly customParsers = new Array<Constructor<DateTimeRangeParser>>()

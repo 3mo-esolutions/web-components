@@ -1,4 +1,4 @@
-import { html, HTMLTemplateResult, property } from '@a11d/lit'
+import { html, type HTMLTemplateResult, property } from '@a11d/lit'
 import { SelectionListItem } from './SelectionListItem.js'
 
 export abstract class SelectionListItemWithControl<T = boolean> extends SelectionListItem<T> {

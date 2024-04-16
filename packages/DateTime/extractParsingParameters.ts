@@ -1,4 +1,4 @@
-import { LanguageCode, Localizer } from '@3mo/localization'
+import { type LanguageCode, Localizer } from '@3mo/localization'
 
 export type ParsingParameters =
 	| [text: string, language?: LanguageCode]

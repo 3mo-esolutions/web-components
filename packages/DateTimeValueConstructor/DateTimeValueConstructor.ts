@@ -1,4 +1,4 @@
-import { apiValueConstructor, ApiValueConstructor } from '@a11d/api'
+import { apiValueConstructor, type ApiValueConstructor } from '@a11d/api'
 import '@3mo/date-time'
 
 @apiValueConstructor()

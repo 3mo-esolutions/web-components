@@ -1,6 +1,6 @@
-import { Component, event, html, ifDefined, property, css, style, HTMLTemplateResult, state, query } from '@a11d/lit'
+import { Component, event, html, ifDefined, property, css, style, type HTMLTemplateResult, state, query } from '@a11d/lit'
 import { DialogLanguageField, type Language } from './index.js'
-import { DialogSize } from '@3mo/dialog'
+import { type DialogSize } from '@3mo/dialog'
 import { type FieldPair, FieldPairMode } from '@3mo/field-pair'
 
 export type LanguageFieldTemplateParameter<TValue, TLanguage extends Language> = {
@@ -140,7 +140,7 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 
 	getFieldTemplateByLanguage(language: TLanguage) {
 		return !this.getFieldTemplate ? html.nothing : this.getFieldTemplate({
-			value: this.value.get(language?.[this.valueKey]!)!,
+			value: this.value.get(language?.[this.valueKey])!,
 			handleChange: value => this.handleFieldChange(language, value),
 			label: this.label,
 			language,

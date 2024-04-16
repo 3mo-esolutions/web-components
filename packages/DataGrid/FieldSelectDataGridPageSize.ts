@@ -1,6 +1,6 @@
 import { component, html, property } from '@a11d/lit'
 import { FieldSelect } from '@3mo/select-field'
-import { DataGrid, DataGridPagination } from './DataGrid.js'
+import { type DataGrid, type DataGridPagination } from './DataGrid.js'
 
 @component('mo-field-select-data-grid-page-size')
 export class FieldSelectDataGridPageSize extends FieldSelect<DataGridPagination> {

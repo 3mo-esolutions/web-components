@@ -1,5 +1,5 @@
 import { Controller, EventListenerController } from '@a11d/lit'
-import { Popover } from './Popover.js'
+import { type Popover } from './Popover.js'
 import { computePosition, flip, offset, shift } from '@floating-ui/dom'
 import { ResizeController } from '@3mo/resize-observer'
 import { PopoverPlacement } from './PopoverPlacement.js'

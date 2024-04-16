@@ -1,8 +1,8 @@
 import { component, property, Component, css, state, html, query, ifDefined, style } from '@a11d/lit'
-import { FieldNumber } from '@3mo/number-fields'
+import { type FieldNumber } from '@3mo/number-fields'
 import { Localizer } from '@3mo/localization'
 import { TooltipPlacement, tooltip } from '@3mo/tooltip'
-import { DataGrid, DataGridPagination, FieldSelectDataGridPageSize } from './index.js'
+import { type DataGrid, type DataGridPagination, type FieldSelectDataGridPageSize } from './index.js'
 import excelSvg from './excel.svg.js'
 
 Localizer.register('de', {

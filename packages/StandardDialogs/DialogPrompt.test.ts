@@ -1,5 +1,5 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { Dialog, DialogSize } from '@3mo/dialog'
+import { type Dialog, DialogSize } from '@3mo/dialog'
 import { DialogPrompt } from './DialogPrompt.js'
 
 describe('DialogPrompt', () => {

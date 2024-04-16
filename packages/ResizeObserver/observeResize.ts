@@ -1,4 +1,4 @@
-import { AsyncDirective, directive, ElementPart, PartInfo, PartType } from '@a11d/lit'
+import { AsyncDirective, directive, type ElementPart, type PartInfo, PartType } from '@a11d/lit'
 
 class ResizeDirective extends AsyncDirective {
 	readonly observer = new ResizeObserver((...args) => this.callback?.(...args))

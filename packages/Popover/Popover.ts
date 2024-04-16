@@ -2,8 +2,8 @@ import { Component, component, css, event, eventListener, html, property, queryC
 import { PopoverPlacement } from './PopoverPlacement.js'
 import { PopoverPositionController } from './PopoverPositionController.js'
 import { PopoverAlignment } from './PopoverAlignment.js'
-import { PopoverCoordinates } from './PopoverCoordinates.js'
-import { Middleware, type ComputePositionReturn } from '@floating-ui/dom'
+import { type PopoverCoordinates } from './PopoverCoordinates.js'
+import { type Middleware, type ComputePositionReturn } from '@floating-ui/dom'
 
 /**
  * @element mo-popover

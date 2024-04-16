@@ -1,5 +1,5 @@
 
-import { HTMLTemplateResult, cache, css, html, live, property, style } from '@a11d/lit'
+import { type HTMLTemplateResult, cache, css, html, live, property, style } from '@a11d/lit'
 import { InputFieldComponent } from '@3mo/field'
 import type { MaterialIcon } from '@3mo/icon'
 import type { FocusMethod } from '@3mo/focus-controller'

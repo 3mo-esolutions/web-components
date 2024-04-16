@@ -1,4 +1,4 @@
-import { property, literal, html, staticHtml } from '@a11d/lit'
+import { property, type literal, html, staticHtml } from '@a11d/lit'
 import { DataGridColumn } from '../DataGridColumn.js'
 
 /**

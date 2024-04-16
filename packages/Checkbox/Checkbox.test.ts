@@ -1,5 +1,5 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { Checkbox } from './Checkbox.js'
+import { type Checkbox } from './Checkbox.js'
 import { html } from '@a11d/lit'
 
 class CheckboxTestFixture extends ComponentTestFixture<Checkbox> {

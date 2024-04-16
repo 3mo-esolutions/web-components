@@ -1,5 +1,5 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { ExpandCollapseIconButton } from './ExpandCollapseIconButton.js'
+import { type ExpandCollapseIconButton } from './ExpandCollapseIconButton.js'
 
 describe('ExpandCollapseIconButton', () => {
 	const fixture = new ComponentTestFixture<ExpandCollapseIconButton>('mo-expand-collapse-icon-button')

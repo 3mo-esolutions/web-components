@@ -1,4 +1,4 @@
-import { EventListenerController, Controller, ReactiveControllerHost, ReactiveElement } from '@a11d/lit'
+import { EventListenerController, Controller, type ReactiveControllerHost, type ReactiveElement } from '@a11d/lit'
 import { FocusController } from '@3mo/focus-controller'
 import { isListItem } from './List.js'
 

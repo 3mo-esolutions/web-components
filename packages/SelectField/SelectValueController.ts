@@ -1,5 +1,5 @@
 import type { Option } from './Option.js'
-import { FieldSelect } from './FieldSelect.js'
+import { type FieldSelect } from './FieldSelect.js'
 
 type PluralizeUnion<T> = Array<T> | T | undefined
 

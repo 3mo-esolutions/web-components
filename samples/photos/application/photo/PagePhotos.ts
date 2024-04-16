@@ -1,5 +1,5 @@
 import { PageComponent, component, html, route, state, cache, style, tooltip, contextMenu } from '@3mo/del'
-import { Photo } from '../../sdk/index.js'
+import { type Photo } from '../../sdk/index.js'
 
 const enum Tab {
 	Card = 'card',

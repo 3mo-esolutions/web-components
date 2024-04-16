@@ -1,4 +1,4 @@
-import { Controller, event, ReactiveControllerHost } from '@a11d/lit'
+import { Controller, event, type ReactiveControllerHost } from '@a11d/lit'
 import { Throttler } from '@3mo/throttler'
 import { Enqueuer } from './index.js'
 

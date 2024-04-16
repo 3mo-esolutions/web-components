@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/web-components'
-import { HTMLTemplateResult, html } from '@a11d/lit'
+import { type HTMLTemplateResult, html } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 

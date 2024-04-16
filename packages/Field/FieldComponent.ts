@@ -1,4 +1,4 @@
-import { html, property, event, Component, HTMLTemplateResult, state, css, PropertyValues } from '@a11d/lit'
+import { html, property, event, Component, type HTMLTemplateResult, state, css, type PropertyValues } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
 import { FocusController, type FocusMethod } from '@3mo/focus-controller'
 

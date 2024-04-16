@@ -1,5 +1,5 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { LoadingDialog } from './LoadingDialog.js'
+import { type LoadingDialog } from './LoadingDialog.js'
 
 describe('LoadingDialog', () => {
 	const fixture = new ComponentTestFixture<LoadingDialog>('mo-loading-dialog')

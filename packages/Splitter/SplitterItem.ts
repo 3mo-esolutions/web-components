@@ -1,5 +1,5 @@
 import { Component, component, css, html, property } from '@a11d/lit'
-import { Splitter } from './Splitter.js'
+import { type Splitter } from './Splitter.js'
 
 /**
  * @element mo-splitter-item

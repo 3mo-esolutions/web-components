@@ -1,6 +1,6 @@
-import { directive, AsyncDirective, type ElementPart, HTMLTemplateResult, type PartInfo, PartType, render, html } from '@a11d/lit'
+import { directive, AsyncDirective, type ElementPart, type HTMLTemplateResult, type PartInfo, PartType, render, html } from '@a11d/lit'
 import { Tooltip } from './Tooltip.js'
-import { TooltipPlacement } from './TooltipPlacement.js'
+import { type TooltipPlacement } from './TooltipPlacement.js'
 import { Application } from '@a11d/lit-application'
 
 type TooltipDirectiveParameters = [content: string | HTMLTemplateResult, placement?: TooltipPlacement]

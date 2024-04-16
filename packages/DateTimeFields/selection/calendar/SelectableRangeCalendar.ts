@@ -1,5 +1,5 @@
 import { component, css, property } from '@a11d/lit'
-import { DateTime } from '@3mo/date-time'
+import { type DateTime } from '@3mo/date-time'
 import { SelectableCalendar } from './SelectableCalendar.js'
 
 /** @fires change */

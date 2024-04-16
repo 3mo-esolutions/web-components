@@ -1,6 +1,6 @@
-import { HTMLTemplateResult, component, html, ifDefined } from '@a11d/lit'
-import { DialogAction, DialogComponent, type DialogErrorHandler } from '@a11d/lit-application'
-import { BaseDialogParameters, getContentTemplate } from '@3mo/dialog'
+import { type HTMLTemplateResult, component, html, ifDefined } from '@a11d/lit'
+import { type DialogAction, DialogComponent, type DialogErrorHandler } from '@a11d/lit-application'
+import { type BaseDialogParameters, getContentTemplate } from '@3mo/dialog'
 
 interface Parameters<TResult> extends BaseDialogParameters<GenericDialog<TResult>> {
 	readonly secondaryButtonText?: string

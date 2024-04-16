@@ -1,6 +1,6 @@
 import { KeyboardController } from '@3mo/keyboard-controller'
 import { Controller } from '@a11d/lit'
-import { DataGrid, DataGridSelectionMode } from './index.js'
+import { type DataGrid, DataGridSelectionMode } from './index.js'
 
 export class DataGridSelectionController<TData> extends Controller {
 	private lastActiveSelection?: {

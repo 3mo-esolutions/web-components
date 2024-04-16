@@ -3,7 +3,7 @@ import { html } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 import { EntityDialogComponent } from './index.js'
-import { EntityId } from '../FetchableDialog/FetchableDialogComponent.js'
+import { type EntityId } from '../FetchableDialog/FetchableDialogComponent.js'
 
 export default {
 	title: 'Entity Dialog',

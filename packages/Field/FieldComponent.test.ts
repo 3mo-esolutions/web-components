@@ -1,4 +1,4 @@
-import { HTMLTemplateResult, html, live, query } from '@a11d/lit'
+import { type HTMLTemplateResult, html, live, query } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { FieldComponent } from './FieldComponent.js'
 

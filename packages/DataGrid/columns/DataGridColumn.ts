@@ -1,4 +1,4 @@
-import { Component, property, HTMLTemplateResult } from '@a11d/lit'
+import { Component, property, type HTMLTemplateResult } from '@a11d/lit'
 import { DataGrid } from '../DataGrid.js'
 import type { ColumnDefinition } from '../ColumnDefinition.js'
 

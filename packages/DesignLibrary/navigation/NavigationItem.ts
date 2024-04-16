@@ -1,6 +1,6 @@
-import { bind, Component, component, html, property, repeat, style, TemplateResult } from '@a11d/lit'
-import { PageComponent, routerLink } from '@a11d/lit-application'
-import { Navigation } from './Navigation.js'
+import { bind, Component, component, html, property, repeat, style, type TemplateResult } from '@a11d/lit'
+import { type PageComponent, routerLink } from '@a11d/lit-application'
+import { type Navigation } from './Navigation.js'
 
 @component('mo-navigation-item')
 export class NavigationItem extends Component {

@@ -1,8 +1,8 @@
 import { component, css, property, html, Component, state, bind, ifDefined, query } from '@a11d/lit'
-import { TooltipPlacement } from './TooltipPlacement.js'
-import { FocusMethod, FocusController } from '@3mo/focus-controller'
+import { type TooltipPlacement } from './TooltipPlacement.js'
+import { type FocusMethod, FocusController } from '@3mo/focus-controller'
 import { PointerController } from '@3mo/pointer-controller'
-import { type ComputePositionReturn, arrow, Middleware } from '@floating-ui/core'
+import { type ComputePositionReturn, arrow, type Middleware } from '@floating-ui/core'
 
 function targetAnchor(this: Tooltip) {
 	return this.anchor || []

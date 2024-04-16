@@ -1,5 +1,5 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { Button } from './Button.js'
+import { type Button } from './Button.js'
 
 describe('Button', () => {
 	const fixture = new ComponentTestFixture<Button>('mo-button')

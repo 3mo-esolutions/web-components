@@ -1,6 +1,6 @@
-import { TemplateResult } from '@a11d/lit'
+import { type TemplateResult } from '@a11d/lit'
 import type { DialogSize } from './Dialog.js'
-import { DialogComponent } from '@a11d/lit-application'
+import { type DialogComponent } from '@a11d/lit-application'
 
 type Content<Dialog extends DialogComponent<any, any>> = undefined | string | TemplateResult | ((this: Dialog) => string | TemplateResult)
 

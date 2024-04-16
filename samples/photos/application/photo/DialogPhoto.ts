@@ -1,5 +1,5 @@
 import { component, FetchableDialogComponent, html, state } from '@3mo/del'
-import { Album, Api, Photo, User } from '../../sdk/index.js'
+import { type Album, Api, Photo, type User } from '../../sdk/index.js'
 
 @component('photos-photo-details-dialog')
 export class DialogPhoto extends FetchableDialogComponent<Photo> {

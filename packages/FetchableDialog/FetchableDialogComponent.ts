@@ -1,5 +1,5 @@
-import { PropertyValues, state, Binder } from '@a11d/lit'
-import { DialogComponent, DialogParameters } from '@a11d/lit-application'
+import { type PropertyValues, state, Binder } from '@a11d/lit'
+import { DialogComponent, type DialogParameters } from '@a11d/lit-application'
 import { FetchableDialog } from './FetchableDialog.js'
 
 export type EntityId = number | string

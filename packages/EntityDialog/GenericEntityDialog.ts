@@ -1,7 +1,7 @@
-import { component, html, state, ifDefined, HTMLTemplateResult } from '@a11d/lit'
-import { BaseDialogParameters, getContentTemplate } from '@3mo/dialog'
+import { component, html, state, ifDefined, type HTMLTemplateResult } from '@a11d/lit'
+import { type BaseDialogParameters, getContentTemplate } from '@3mo/dialog'
 import { EntityDialogComponent } from './EntityDialogComponent.js'
-import { EntityId } from '@3mo/fetchable-dialog'
+import { type EntityId } from '@3mo/fetchable-dialog'
 
 interface GenericEntityDialogParameters<T> extends BaseDialogParameters<GenericEntityDialog<T>> {
 	readonly secondaryButtonText?: string

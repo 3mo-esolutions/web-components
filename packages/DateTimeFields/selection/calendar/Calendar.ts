@@ -1,4 +1,4 @@
-import { Component, css, component, html, property, classMap, style, ClassInfo, state } from '@a11d/lit'
+import { Component, css, component, html, property, classMap, style, type ClassInfo, state } from '@a11d/lit'
 import '@a11d/array.prototype.group'
 import { MemoizeExpiring as memoizeExpiring } from 'typescript-memoize'
 

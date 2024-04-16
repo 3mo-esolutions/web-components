@@ -1,5 +1,5 @@
 import { component, html, Component, css, property, event, eventListener } from '@a11d/lit'
-import { Flex } from '@3mo/flex'
+import { type Flex } from '@3mo/flex'
 import { SlotController } from '@3mo/slot-controller'
 import { SplitterResizer } from './index.js'
 

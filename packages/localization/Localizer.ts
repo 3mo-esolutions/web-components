@@ -1,7 +1,7 @@
 import { event } from '@a11d/lit'
 import { LocalStorage } from '@a11d/local-storage'
 import { CardinalPluralizationRulesByLanguage } from './CardinalPluralizationRulesByLanguage.js'
-import { LanguageCode } from './LanguageCode.js'
+import { type LanguageCode } from './LanguageCode.js'
 
 type Dictionary = Map<string, string | Array<string>>
 

@@ -2,7 +2,7 @@ import { html, component, state, style } from '@a11d/lit'
 import { DialogComponent } from '@a11d/lit-application'
 import { Localizer } from '@3mo/localization'
 import { DialogDeletion } from '@3mo/standard-dialogs'
-import { ModdableDataGrid, Mode } from './index.js'
+import { type ModdableDataGrid, Mode } from './index.js'
 
 Localizer.register('de', {
 	'Mode ${name:string}': 'Ansicht "${name}"',

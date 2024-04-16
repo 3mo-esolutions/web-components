@@ -1,7 +1,7 @@
 import { bind, component, css, eventListener, html, property, query } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
 import { MenuItem } from './MenuItem.js'
-import { Menu } from './Menu.js'
+import { type Menu } from './Menu.js'
 
 /**
  * @element mo-nested-menu-item

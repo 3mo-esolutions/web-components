@@ -1,4 +1,4 @@
-import { property, component, Component, html, css, live, query, ifDefined, PropertyValues, event, style, literal, staticHtml, HTMLTemplateResult, cache } from '@a11d/lit'
+import { property, component, Component, html, css, live, query, ifDefined, type PropertyValues, event, style, literal, staticHtml, type HTMLTemplateResult, cache } from '@a11d/lit'
 import { NotificationComponent } from '@a11d/lit-application'
 import { LocalStorage } from '@a11d/local-storage'
 import { InstanceofAttributeController } from '@3mo/instanceof-attribute-controller'

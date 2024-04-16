@@ -1,11 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import './index.js'
+import p from './package.json'
 
 export default {
 	title: 'Switch List Item',
 	component: 'mo-switch-list-item',
-}
+	package: p,
+} as Meta
 
 export const Switch: StoryObj = {
 	render: () => html`

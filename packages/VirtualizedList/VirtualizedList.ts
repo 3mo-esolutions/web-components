@@ -1,5 +1,5 @@
 import { component, html, property, query } from '@a11d/lit'
-import { type GetItemTemplate, VirtualizedScroller } from '@3mo/virtualized-scroller'
+import { type GetItemTemplate, type VirtualizedScroller } from '@3mo/virtualized-scroller'
 import { List, isListItem } from '@3mo/list'
 
 /**

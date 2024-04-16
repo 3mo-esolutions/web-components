@@ -1,7 +1,7 @@
-import { Controller, ReactiveElement } from '@a11d/lit'
-import { PointerHoverController, PointerHoverControllerOptions } from './PointerHoverController.js'
-import { PointerPressController, PointerPressControllerOptions } from './PointerPressController.js'
-import { PointerTypeController, PointerTypeControllerOptions } from './PointerTypeController.js'
+import { Controller, type ReactiveElement } from '@a11d/lit'
+import { PointerHoverController, type PointerHoverControllerOptions } from './PointerHoverController.js'
+import { PointerPressController, type PointerPressControllerOptions } from './PointerPressController.js'
+import { PointerTypeController, type PointerTypeControllerOptions } from './PointerTypeController.js'
 
 export interface PointerControllerOptions extends PointerPressControllerOptions, PointerHoverControllerOptions, PointerTypeControllerOptions { }
 

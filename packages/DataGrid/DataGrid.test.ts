@@ -1,5 +1,5 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { DataGrid, DataGridRow, DataGridSelectionMode } from './index.js'
+import { DataGrid, type DataGridRow, DataGridSelectionMode } from './index.js'
 import { html } from '@a11d/lit'
 
 type Person = { id: number, name: string, birthDate: DateTime }

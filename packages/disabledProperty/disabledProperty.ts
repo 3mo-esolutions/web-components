@@ -1,4 +1,4 @@
-import { property, ReactiveElement, type UpdatedCallback } from '@a11d/lit'
+import { property, type ReactiveElement, type UpdatedCallback } from '@a11d/lit'
 
 const tabIndexBeforeDisabledSymbol = Symbol('tabIndexBeforeDisabledSymbol')
 

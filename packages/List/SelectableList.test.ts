@@ -1,6 +1,6 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { html } from '@a11d/lit'
-import { SelectableList, SelectableListSelectionMode, type SelectableListItem } from './index.js'
+import { type SelectableList, SelectableListSelectionMode, type SelectableListItem } from './index.js'
 
 class SelectableListTestFixture extends ComponentTestFixture<SelectableList> {
 	dispatchedSelectedIndices?: Array<number>

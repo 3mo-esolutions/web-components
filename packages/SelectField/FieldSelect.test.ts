@@ -1,5 +1,5 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { FieldSelect } from './index.js'
+import { type FieldSelect } from './index.js'
 import { html } from '@a11d/lit'
 import '@3mo/date-time'
 

@@ -1,7 +1,7 @@
 import { html } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { Menu } from './Menu.js'
-import { MenuItem } from './MenuItem.js'
+import { type Menu } from './Menu.js'
+import { type MenuItem } from './MenuItem.js'
 
 describe('Menu', () => {
 	describe('auto-closing', () => {

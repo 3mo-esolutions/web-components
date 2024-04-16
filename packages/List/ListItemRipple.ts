@@ -1,5 +1,5 @@
 import { Component, component, css, eventListener, html, property, query } from '@a11d/lit'
-import { MdRipple } from '@material/web/ripple/ripple.js'
+import { type MdRipple } from '@material/web/ripple/ripple.js'
 
 /**
  * @element mo-list-item-ripple

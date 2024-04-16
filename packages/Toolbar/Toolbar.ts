@@ -1,5 +1,5 @@
 import { Component, component, css, html, property, style } from '@a11d/lit'
-import { MaterialIcon } from '@3mo/icon'
+import { type MaterialIcon } from '@3mo/icon'
 import { ToolbarController } from './index.js'
 
 /**

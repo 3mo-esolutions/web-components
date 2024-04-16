@@ -3,9 +3,9 @@ import { css, html, property, event, style } from '@a11d/lit'
 import { LocalStorage } from '@a11d/local-storage'
 import { contextMenu } from '@3mo/context-menu'
 import { tooltip } from '@3mo/tooltip'
-import { DataGrid } from '@3mo/data-grid'
-import { FetchableDataGridParametersType, FetchableDataGrid } from '@3mo/fetchable-data-grid'
-import { DialogDataGridMode, Mode, ModeRepository } from './index.js'
+import { type DataGrid } from '@3mo/data-grid'
+import { type FetchableDataGridParametersType, FetchableDataGrid } from '@3mo/fetchable-data-grid'
+import { DialogDataGridMode, type Mode, ModeRepository } from './index.js'
 import { sortable } from './SortableDirective.js'
 
 /** @fires modeChange */

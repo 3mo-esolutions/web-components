@@ -1,7 +1,7 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { expectFieldPropertyTunnelsToInput, expectInputEventTunnelsToField } from '../Field/InputFieldComponent.test.js'
 import { expectSlotRendersOnlyWithAssignedContent } from '../Field/FieldComponent.test.js'
-import { FieldNumber } from './FieldNumber.js'
+import { type FieldNumber } from './FieldNumber.js'
 
 describe('FieldNumber', () => {
 	const fixture = new ComponentTestFixture<FieldNumber>('mo-field-number')

@@ -1,11 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import './index.js'
+import p from './package.json'
 
 export default {
 	title: 'Radio List Item',
 	component: 'mo-radio-list-item',
-}
+	package: p
+} as Meta
 
 export const Radio: StoryObj = {
 	render: () => html`

@@ -1,6 +1,6 @@
-import { Component, HTMLTemplateResult, css, event, html, property, query } from '@a11d/lit'
+import { Component, type HTMLTemplateResult, css, event, html, property, query } from '@a11d/lit'
 import { IntervalController } from '@3mo/interval-controller'
-import { SelectableListItem } from '@3mo/list'
+import { type SelectableListItem } from '@3mo/list'
 
 export abstract class DateList extends Component {
 	@event() readonly change!: EventDispatcher<DateTime>

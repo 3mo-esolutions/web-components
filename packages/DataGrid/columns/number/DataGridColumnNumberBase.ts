@@ -1,4 +1,4 @@
-import { HTMLTemplateResult, property } from '@a11d/lit'
+import { type HTMLTemplateResult, property } from '@a11d/lit'
 import { DataGridColumn } from '../DataGridColumn.js'
 
 export abstract class DataGridColumnNumberBase<TData> extends DataGridColumn<TData, number> {

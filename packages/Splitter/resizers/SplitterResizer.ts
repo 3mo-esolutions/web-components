@@ -1,5 +1,5 @@
 import { Component, property } from '@a11d/lit'
-import { Flex } from '@3mo/flex'
+import { type Flex } from '@3mo/flex'
 
 export abstract class SplitterResizer extends Component {
 	@property({ type: String, reflect: true }) hostDirection?: Flex['direction']

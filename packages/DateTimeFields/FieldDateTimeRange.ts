@@ -1,6 +1,6 @@
 
 import { bind, component, css, html, property } from '@a11d/lit'
-import { MaterialIcon } from '@3mo/icon'
+import { type MaterialIcon } from '@3mo/icon'
 import { FieldDateTimeBase as FieldDateTimeBase, FieldDateTimePrecision } from './FieldDateTimeBase.js'
 import { DateRangeParser } from './DateRangeParser.js'
 import { Memoize as memoize } from 'typescript-memoize'

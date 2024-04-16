@@ -1,5 +1,5 @@
 import { html, eventListener, css, component, query, Component, property, event, literal, staticHtml } from '@a11d/lit'
-import { FileUpload } from '@3mo/file-upload'
+import { type FileUpload } from '@3mo/file-upload'
 import '@3mo/file-upload'
 
 /**

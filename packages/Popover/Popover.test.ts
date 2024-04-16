@@ -1,6 +1,6 @@
 import { Component, component, html, property, query, queryAll } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { Popover } from './index.js'
+import { type Popover } from './index.js'
 
 describe('Popover', () => {
 	@component('test-generic-popover')

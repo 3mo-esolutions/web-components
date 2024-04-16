@@ -1,6 +1,6 @@
-import { Meta, StoryObj } from '@storybook/web-components'
+import { type Meta, type StoryObj } from '@storybook/web-components'
 import { Component, html, property, range } from '@a11d/lit'
-import { MaterialIcon } from '@3mo/icon'
+import { type MaterialIcon } from '@3mo/icon'
 import { ToolbarController } from './index.js'
 import p from './package.json'
 import './index.js'

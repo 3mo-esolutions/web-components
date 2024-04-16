@@ -1,5 +1,5 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { Grid } from './Grid.js'
+import { type Grid } from './Grid.js'
 
 describe('Grid', () => {
 	const fixture = new ComponentTestFixture<Grid>('mo-grid')

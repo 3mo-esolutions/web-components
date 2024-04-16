@@ -1,7 +1,7 @@
 import { component } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { Notification, NotificationComponent } from '@a11d/lit-application'
-import { Dialog } from './Dialog.js'
+import { type Notification, NotificationComponent } from '@a11d/lit-application'
+import { type Dialog } from './Dialog.js'
 
 @NotificationComponent.defaultComponent()
 @component('test-fake-notification')

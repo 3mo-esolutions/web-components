@@ -1,5 +1,5 @@
 import { component, Component, html, property, event, style } from '@3mo/del'
-import { Photo } from '../../sdk/index.js'
+import { type Photo } from '../../sdk/index.js'
 import { DialogPhoto } from './DialogPhoto.js'
 
 @component('photos-photo-card')

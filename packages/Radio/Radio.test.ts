@@ -1,5 +1,5 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { Radio } from './Radio.js'
+import { type Radio } from './Radio.js'
 
 describe('Radio', () => {
 	const fixture = new ComponentTestFixture<Radio>('mo-radio')

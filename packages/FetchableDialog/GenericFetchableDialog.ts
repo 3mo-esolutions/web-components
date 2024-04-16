@@ -1,6 +1,6 @@
-import { component, html, state, ifDefined, HTMLTemplateResult } from '@a11d/lit'
-import { BaseDialogParameters, getContentTemplate } from '@3mo/dialog'
-import { EntityId, FetchableDialogComponent } from './FetchableDialogComponent.js'
+import { component, html, state, ifDefined, type HTMLTemplateResult } from '@a11d/lit'
+import { type BaseDialogParameters, getContentTemplate } from '@3mo/dialog'
+import { type EntityId, FetchableDialogComponent } from './FetchableDialogComponent.js'
 
 interface GenericFetchableDialogParameters<T> extends BaseDialogParameters<GenericFetchableDialog<T>> {
 	readonly secondaryButtonText?: string

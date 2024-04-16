@@ -1,5 +1,5 @@
 import { component, html, ifDefined, property } from '@a11d/lit'
-import { Currency } from '@3mo/localization'
+import { type Currency } from '@3mo/localization'
 import { FieldCurrency } from '@3mo/number-fields'
 import { DataGridColumnNumberBase } from './DataGridColumnNumberBase.js'
 

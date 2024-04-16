@@ -1,6 +1,6 @@
 import { directive, AsyncDirective, PartType, type ElementPart, type PartInfo, html } from '@a11d/lit'
 import { ContextMenu } from './ContextMenu.js'
-import { ContextMenuLazyInitializer, ContextMenuTemplate } from './ContextMenuLazyInitializer.js'
+import { ContextMenuLazyInitializer, type ContextMenuTemplate } from './ContextMenuLazyInitializer.js'
 
 type ContextMenuDirectiveParameters = [content: ContextMenuTemplate]
 

@@ -1,4 +1,4 @@
-import { Controller, ReactiveElement } from '@a11d/lit'
+import { Controller, type ReactiveElement } from '@a11d/lit'
 import { Theme } from './Theme.js'
 
 export class ThemeController extends Controller {

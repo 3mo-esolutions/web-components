@@ -1,5 +1,5 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { Switch } from './Switch.js'
+import { type Switch } from './Switch.js'
 
 describe('Switch', () => {
 	const fixture = new ComponentTestFixture<Switch>('mo-switch')

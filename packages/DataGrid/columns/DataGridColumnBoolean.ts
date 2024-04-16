@@ -1,5 +1,5 @@
 import { component, html, property, style } from '@a11d/lit'
-import { MaterialIcon } from '@3mo/icon'
+import { type MaterialIcon } from '@3mo/icon'
 import { DataGridColumn } from './DataGridColumn.js'
 
 /**

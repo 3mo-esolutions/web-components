@@ -1,7 +1,7 @@
-import { ElementPart, AsyncDirective, Controller, ReactiveControllerHost, directive, html } from '@a11d/lit'
+import { type ElementPart, AsyncDirective, Controller, type ReactiveControllerHost, directive, html } from '@a11d/lit'
 import { IntersectionController } from '@3mo/intersection-observer'
 import { SlotController } from '@3mo/slot-controller'
-import { ToolbarPane } from './index.js'
+import { type ToolbarPane } from './index.js'
 
 const generatePaneDirective = (controller: ToolbarController) => directive(class ToolbarPaneDirective extends AsyncDirective {
 	pane?: ToolbarPane

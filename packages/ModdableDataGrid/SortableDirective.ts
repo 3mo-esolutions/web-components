@@ -1,4 +1,4 @@
-import { directive, Directive, PartType, PartInfo, html, ChildPart, DirectiveParameters, HTMLTemplateResult } from '@a11d/lit'
+import { directive, Directive, PartType, type PartInfo, html, type ChildPart, type DirectiveParameters, type HTMLTemplateResult } from '@a11d/lit'
 
 type SortedCallback<T> = (data: Array<T>) => void
 

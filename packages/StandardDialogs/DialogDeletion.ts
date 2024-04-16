@@ -1,4 +1,4 @@
-import { component, TemplateResult, html, css } from '@a11d/lit'
+import { component, type TemplateResult, html, css } from '@a11d/lit'
 import { DialogComponent, NotificationComponent } from '@a11d/lit-application'
 import { LocalStorage } from '@a11d/local-storage'
 import { Localizer } from '@3mo/localization'

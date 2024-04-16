@@ -1,4 +1,4 @@
-import { LanguageCode, Localizer } from '@3mo/localization'
+import { type LanguageCode, Localizer } from '@3mo/localization'
 
 export class TimeSpan {
 	static readonly ticksPerSecond = 1000

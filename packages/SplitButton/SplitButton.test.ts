@@ -1,6 +1,6 @@
 import { html } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { SplitButton } from './SplitButton.js'
+import { type SplitButton } from './SplitButton.js'
 import './index.js'
 
 describe('SplitButton', () => {

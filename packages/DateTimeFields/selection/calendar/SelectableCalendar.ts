@@ -1,6 +1,6 @@
 import { component, css, event, property } from '@a11d/lit'
 import { Calendar } from './Calendar.js'
-import { DateTime } from '@3mo/date-time'
+import { type DateTime } from '@3mo/date-time'
 
 /** @fires change */
 @component('mo-selectable-calendar')

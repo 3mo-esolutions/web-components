@@ -1,5 +1,5 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { EmptyState } from './EmptyState.js'
+import { type EmptyState } from './EmptyState.js'
 
 describe('EmptyState', () => {
 	const fixture = new ComponentTestFixture<EmptyState>('mo-empty-state')

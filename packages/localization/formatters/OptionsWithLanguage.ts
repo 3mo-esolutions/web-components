@@ -1,4 +1,4 @@
-import { LanguageCode } from '../LanguageCode.js'
+import { type LanguageCode } from '../LanguageCode.js'
 import { Localizer } from '../Localizer.js'
 
 export type FormatOptionsWithLanguage<T> =

@@ -1,7 +1,7 @@
 import { component, html, property, Component, css, styleMap, queryAll, ifDefined, eventListener, style, state } from '@a11d/lit'
-import { Flex } from '@3mo/flex'
+import { type Flex } from '@3mo/flex'
 import { MutationController } from '@3mo/mutation-observer'
-import { SplitterItem, SplitterResizerHost } from './index.js'
+import { SplitterItem, type SplitterResizerHost } from './index.js'
 import type * as CSS from 'csstype'
 import '@3mo/theme'
 

@@ -1,5 +1,5 @@
 import { noChange, type PartInfo, PartType, directive } from '@a11d/lit'
-import { DependsOnScreenSizeDirective, ScreenSizeKey } from './dependsOnScreenSize.js'
+import { DependsOnScreenSizeDirective, type ScreenSizeKey } from './dependsOnScreenSize.js'
 
 export class HideOnScreenSizeDirective extends DependsOnScreenSizeDirective {
 	protected static override readonly supportedPartTypes = [PartType.ELEMENT]

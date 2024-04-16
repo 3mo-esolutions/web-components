@@ -1,4 +1,4 @@
-import { isServer, property, ReactiveElement } from '@a11d/lit'
+import { isServer, property, type ReactiveElement } from '@a11d/lit'
 
 /**
  * A decorator factory that defines a property that reflects a style property.

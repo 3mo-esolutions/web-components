@@ -1,4 +1,4 @@
-import { HTMLTemplateResult } from '@a11d/lit'
+import { type HTMLTemplateResult } from '@a11d/lit'
 
 export type ColumnDefinition<TData, TValue = unknown> = {
 	heading: string

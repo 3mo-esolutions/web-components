@@ -24,6 +24,23 @@ jobs:
       - name: Test 🧪
         run: npm run test
 
+  Linting:
+    name: 📝 Linting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository ⬇️
+        uses: actions/checkout@v4
+      - name: Setup Node ⬇️
+        uses: actions/setup-node@v4
+        with:
+          node-version: 21.x
+          cache: 'npm'
+      - name: Install Dependencies ⬇️
+        run: npm ci
+
+      - name: Lint 📝
+        run: npm run lint
+
   Docs:
     name: 📖 Deploy Documentation
     runs-on: ubuntu-latest

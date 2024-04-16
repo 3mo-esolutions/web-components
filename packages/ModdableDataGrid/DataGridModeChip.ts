@@ -2,7 +2,7 @@ import { html, component, css, property, eventListener, Component, style, state,
 import { DialogAcknowledge, DialogAlert, DialogDeletion } from '@3mo/standard-dialogs'
 import { tooltip } from '@3mo/tooltip'
 import { Localizer } from '@3mo/localization'
-import { DialogDataGridMode, ModdableDataGrid, Mode } from './index.js'
+import { DialogDataGridMode, type ModdableDataGrid, type Mode } from './index.js'
 
 Localizer.register('de', {
 	'Changing Filter': 'Filterwechsel',

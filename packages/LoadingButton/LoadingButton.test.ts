@@ -1,5 +1,5 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { LoadingButton } from './LoadingButton.js'
+import { type LoadingButton } from './LoadingButton.js'
 import './index.js'
 
 describe('LoadingButton', () => {

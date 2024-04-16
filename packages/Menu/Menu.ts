@@ -1,9 +1,9 @@
 import { Component, EventListenerController, component, css, event, html, ifDefined, property, query, state } from '@a11d/lit'
-import { Popover, PopoverCoordinates } from '@3mo/popover'
+import { Popover, type PopoverCoordinates } from '@3mo/popover'
 import { SlotController } from '@3mo/slot-controller'
 import { disabledProperty } from '@3mo/disabled-property'
 import type { Middleware } from '@floating-ui/dom'
-import { ListElement, ListItem, SelectableList } from '@3mo/list'
+import type { ListElement, ListItem, SelectableList } from '@3mo/list'
 import type { MenuPlacement, MenuAlignment } from './index.js'
 
 export function isMenu(element: EventTarget): element is HTMLElement {

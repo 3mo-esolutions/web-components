@@ -1,6 +1,6 @@
-import { TemplateResult } from '@a11d/lit'
-import { PageComponent, DialogComponent, RouteMatchMode } from '@a11d/lit-application'
-import { MaterialIcon } from '@3mo/icon'
+import { type TemplateResult } from '@a11d/lit'
+import { type PageComponent, type DialogComponent, type RouteMatchMode } from '@a11d/lit-application'
+import { type MaterialIcon } from '@3mo/icon'
 
 export type Navigation = {
 	key?: string

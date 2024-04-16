@@ -1,6 +1,6 @@
 import { component, html, css, ifDefined, unsafeCSS, style, property, query, queryConnectedInstances } from '@a11d/lit'
-import { Notification, NotificationComponent, NotificationType } from '@a11d/lit-application'
-import { MaterialIcon } from '@3mo/icon'
+import { type Notification, NotificationComponent, NotificationType } from '@a11d/lit-application'
+import { type MaterialIcon } from '@3mo/icon'
 import { Snackbar as MwcSnackbar } from '@material/mwc-snackbar'
 import { PeriodicTimer } from './PeriodicTimer.js'
 import '@3mo/icon-button'

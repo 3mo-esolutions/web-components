@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/web-components'
 import { html, style } from '@a11d/lit'
-import { MaterialIcon } from '@3mo/icon'
+import { type MaterialIcon } from '@3mo/icon'
 import p from './package.json'
 import './IconButton.js'
 

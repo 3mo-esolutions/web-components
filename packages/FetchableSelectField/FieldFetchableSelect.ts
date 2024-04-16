@@ -1,4 +1,4 @@
-import { component, css, property, event, html, HTMLTemplateResult, PropertyValues } from '@a11d/lit'
+import { component, css, property, event, html, type HTMLTemplateResult, type PropertyValues } from '@a11d/lit'
 import { FetcherController } from '@3mo/fetcher-controller'
 import { FieldSelect } from '@3mo/select-field'
 

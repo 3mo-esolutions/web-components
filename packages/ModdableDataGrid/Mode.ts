@@ -1,5 +1,5 @@
-import { ColumnDefinition, DataGridPagination, DataGridSorting } from '@3mo/data-grid'
-import { FetchableDataGridParametersType } from '@3mo/fetchable-data-grid'
+import { type ColumnDefinition, type DataGridPagination, type DataGridSorting } from '@3mo/data-grid'
+import { type FetchableDataGridParametersType } from '@3mo/fetchable-data-grid'
 
 export class Mode<TData, TDataFetcherParameters extends FetchableDataGridParametersType> {
 	name!: string

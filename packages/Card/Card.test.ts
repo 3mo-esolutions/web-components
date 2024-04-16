@@ -1,6 +1,6 @@
 import { html, render } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { Card } from './Card.js'
+import { type Card } from './Card.js'
 
 describe('Card', () => {
 	const fixture = new ComponentTestFixture<Card>('mo-card')
