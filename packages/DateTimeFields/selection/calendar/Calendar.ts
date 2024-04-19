@@ -89,20 +89,9 @@ export class Calendar extends Component {
 				</mo-grid>
 
 				${this.days.map(([weekNumber, days]) => html`
-					${this.includeWeekNumbers === false ? html.nothing : html`
-						<div class='weekNumber'>${weekNumber}</div>
-					`}
-
+					${this.includeWeekNumbers === false ? html.nothing : html`<div class='weekNumber'>${weekNumber}</div>`}
 					<mo-selectable-list>
-						${days.map((day) => html`
-							<mo-selectable-list-item
-								class=${classMap(this.getDayElementClasses(day))}
-								@click=${() => this.handleDayClick(day)}
-							>
-								${day.getDate()}
-							</mo-selectable-list-item>
-						`)}
-
+						${days.map((day) => this.getDayTemplate(day))}
 					</mo-selectable-list>
 				`)}
 			</mo-flex>
@@ -118,9 +107,12 @@ export class Calendar extends Component {
 
 	protected getDayTemplate(day: DateTime) {
 		return html`
-			<mo-flex class=${classMap(this.getDayElementClasses(day))} @click=${() => this.handleDayClick(day)}>
-				${day.format({ day: 'numeric' })}
-			</mo-flex>
+			<mo-selectable-list-item
+				class=${classMap(this.getDayElementClasses(day))}
+				@click=${() => this.handleDayClick(day)}
+			>
+				${day.getDate()}
+			</mo-selectable-list-item>
 		`
 	}
 
