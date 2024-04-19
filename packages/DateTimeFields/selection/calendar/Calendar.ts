@@ -26,13 +26,10 @@ export class Calendar extends Component {
 				padding-inline: 10px;
 			}
 
-			.monthHeader {
-				color: var(--mo-color-gray);
-				align-items: center;
-			}
-
-			.week {
-				color: var(--mo-color-gray);
+			mo-selectable-list {
+				display: grid !important;
+				grid-template-rows: repeat(auto-fill, var(--mo-calendar-day-size));
+				grid-template-columns: repeat(7, var(--mo-calendar-day-size));
 			}
 
 			.day {
@@ -51,6 +48,10 @@ export class Calendar extends Component {
 
 			.day {
 				height: var(--mo-calendar-day-size);
+			}
+
+			.dayName, .weekNumber {
+				color: var(--mo-color-gray);
 			}
 
 			.day:hover {
@@ -73,24 +74,38 @@ export class Calendar extends Component {
 
 	protected override get template() {
 		return html`
-			<mo-grid class='month'
-				rows='repeat(auto-fill, var(--mo-calendar-day-size))'
-				columns=${this.includeWeekNumbers ? 'var(--mo-calendar-week-number-width) repeat(7, var(--mo-calendar-day-size))' : 'repeat(7, var(--mo-calendar-day-size))'}
-				${style({ alignItems: 'center', justifyItems: 'center' })}
-			>
-				${this.includeWeekNumbers === false ? html.nothing : html`<div></div>`}
+			<mo-flex alignItems='center' justifyItems='center'>
+				<mo-grid
+					rows='repeat(auto-fill, var(--mo-calendar-day-size))'
+					columns='repeat(7, var(--mo-calendar-day-size))'
+				>
+					${this.includeWeekNumbers === false ? html.nothing : html`<div></div>`}
 
-				${this.navigatingValue.weekDayNames.map(dayName => html`
-					<div class='monthHeader'>
-						${dayName.charAt(0).toUpperCase() + dayName.charAt(1)}
-					</div>
-				`)}
+					${this.navigatingValue.weekDayNames.map(dayName => html`
+						<mo-flex alignItems='center' justifyContent='center' class='dayName'>
+							${dayName.charAt(0).toUpperCase() + dayName.charAt(1)}
+						</mo-flex>
+					`)}
+				</mo-grid>
 
 				${this.days.map(([weekNumber, days]) => html`
-					${this.includeWeekNumbers === false ? html.nothing : html`<div class='week'>${weekNumber}</div>`}
-					${days.map(day => this.getDayTemplate(day))}
+					${this.includeWeekNumbers === false ? html.nothing : html`
+						<div class='weekNumber'>${weekNumber}</div>
+					`}
+
+					<mo-selectable-list>
+						${days.map((day) => html`
+							<mo-selectable-list-item
+								class=${classMap(this.getDayElementClasses(day))}
+								@click=${() => this.handleDayClick(day)}
+							>
+								${day.getDate()}
+							</mo-selectable-list-item>
+						`)}
+
+					</mo-selectable-list>
 				`)}
-			</mo-grid>
+			</mo-flex>
 		`
 	}
 
@@ -114,7 +129,9 @@ export class Calendar extends Component {
 	}
 
 	@memoizeExpiring(60_000)
-	private get now() { return new DateTime }
+	private get now() {
+		return new DateTime()
+	}
 
 	protected getDayElementClasses(day: DateTime): ClassInfo {
 		return {
