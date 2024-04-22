@@ -7,18 +7,19 @@ import { DataGridColumnNumberBase } from './DataGridColumnNumberBase.js'
  * @element mo-data-grid-column-currency
  *
  * @attr currency - The currency of the values.
+ * @attr currencyDataSelector - The key path to the currency of the values.
 */
 @component('mo-data-grid-column-currency')
 export class DataGridColumnCurrency<TData> extends DataGridColumnNumberBase<TData> {
 	static defaultCurrency?: Currency
 
-	@property({ type: Object, converter: FieldCurrency.currencyConverter }) currency = DataGridColumnCurrency.defaultCurrency
+	@property({ type: Object, converter: FieldCurrency.currencyConverter }) currency?: Currency
 	@property() currencyDataSelector?: KeyPathOf<TData>
 
-	private getCurrency(data: TData): Currency {
-		return this.currencyDataSelector
-			? Currency[getValueByKeyPath(data, this.currencyDataSelector) as CurrencyCode] ?? this.currency
-			: this.currency!
+	private getCurrency(data: TData) {
+		return (this.currencyDataSelector ? Currency[getValueByKeyPath(data, this.currencyDataSelector) as CurrencyCode] : undefined)
+			?? this.currency
+			?? DataGridColumnCurrency.defaultCurrency!
 	}
 
 	getContentTemplate(value: number | undefined, data: TData) {
