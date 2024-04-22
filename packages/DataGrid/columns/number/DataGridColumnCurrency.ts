@@ -13,24 +13,22 @@ export class DataGridColumnCurrency<TData> extends DataGridColumnNumberBase<TDat
 	static defaultCurrency?: Currency
 
 	@property({ type: Object, converter: FieldCurrency.currencyConverter }) currency = DataGridColumnCurrency.defaultCurrency
-	@property() currencyDataSelector?: string
+	@property() currencyDataSelector?: KeyPathOf<TData>
+
+	private getCurrency(data: TData): Currency {
+		return this.currencyDataSelector
+			? Currency[getValueByKeyPath(data, this.currencyDataSelector) as CurrencyCode] ?? this.currency
+			: this.currency!
+	}
 
 	getContentTemplate(value: number | undefined, data: TData) {
-		const currency = this.currencyDataSelector
-			? Currency[(data as any)[this.currencyDataSelector] as CurrencyCode]
-			: this.currency
-
-		return html`${this.getNumber(value)?.formatAsCurrency(currency!) ?? html.nothing}`
+		return html`${this.getNumber(value)?.formatAsCurrency(this.getCurrency(data)) ?? html.nothing}`
 	}
 
 	getEditContentTemplate(value: number | undefined, data: TData) {
-		const currency = this.currencyDataSelector
-			? Currency[(data as any)[this.currencyDataSelector] as CurrencyCode]
-			: this.currency
-
 		return html`
 			<mo-field-currency dense autofocus
-				.currency=${currency}
+				.currency=${this.getCurrency(data)}
 				label=${this.heading}
 				value=${ifDefined(value)}
 				@change=${(e: CustomEvent<number>) => this.handleEdit(e.detail, data)}
