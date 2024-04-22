@@ -1,13 +1,16 @@
 import { Localizer } from '../Localizer.js'
-import { type LanguageCode } from '../LanguageCode.js'
+import { LanguageCode } from '../LanguageCode.js'
 
-const tokensForEnglishLocale = ['USD', 'JPY', '$', '¥']
+const FOREIGN_LOCALE_TOKENS = ['USD', 'JPY', '$', '¥']
 
-String.prototype.toNumber = function (this: string, language = Localizer.currentLanguage) {
-	if (tokensForEnglishLocale.some(token => this.endsWith(token))) {
+function getLanguageCode(this: string, language?: LanguageCode) {
+	if (FOREIGN_LOCALE_TOKENS.some(token => this.endsWith(token))) {
 		language = 'en'
 	}
+	return language ?? Localizer.currentLanguage
+}
 
+function toNumber(this: string, language: LanguageCode) {
 	const numberString = this.replace(/ /g, '')
 
 	const thousandSeparator = Intl.NumberFormat(language).formatToParts(1000).find(p => p.type === 'group')?.value ?? ''
@@ -19,6 +22,11 @@ String.prototype.toNumber = function (this: string, language = Localizer.current
 	)
 
 	return Number.isNaN(number) ? undefined : number
+}
+
+String.prototype.toNumber = function (this: string, language?: LanguageCode) {
+	const languageCode = getLanguageCode.call(this, language)
+	return toNumber.call(this, languageCode)
 }
 
 declare global {
