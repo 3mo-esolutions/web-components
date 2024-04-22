@@ -103,7 +103,7 @@ export class Calendar extends Component {
 
 	protected getDayTemplate(day: DateTime) {
 		return html`
-			<mo-flex class=${classMap(this.getDayElementClasses(day))} @click=${() => this.handleDayClick(day)}>
+			<mo-flex tabindex='0' class=${classMap(this.getDayElementClasses(day))} @click=${() => this.handleDayClick(day)}>
 				${day.format({ day: 'numeric' })}
 			</mo-flex>
 		`
