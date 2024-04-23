@@ -1,8 +1,7 @@
 
-import { type HTMLTemplateResult, cache, css, html, live, property, style } from '@a11d/lit'
+import { type HTMLTemplateResult, cache, css, html, live, property, style, bind } from '@a11d/lit'
 import { InputFieldComponent } from '@3mo/field'
 import type { MaterialIcon } from '@3mo/icon'
-import type { FocusMethod } from '@3mo/focus-controller'
 
 export enum FieldDateTimePrecision {
 	Year = 'year',
@@ -182,25 +181,11 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 		`
 	}
 
-	protected override handleFocus(bubbled: boolean, method: FocusMethod) {
-		super.handleFocus(bubbled, method)
-		if (method === 'pointer') {
-			this.open = true
-		}
-	}
-
-	protected override handleBlur(bubbled: boolean, method: FocusMethod) {
-		super.handleBlur(bubbled, method)
-		this.open = false
-	}
-
 	protected get popoverTemplate() {
 		return this.pickerHidden ? html.nothing : html`
-			<mo-popover tabindex='-1' fixed manual
-				.anchor=${this}
-				?open=${this.open}
-				@openChange=${(e: CustomEvent<boolean>) => this.open = e.detail}
-			>${cache(!this.open ? html.nothing : this.popoverContentTemplate)}</mo-popover>
+			<mo-popover tabindex='-1' fixed .anchor=${this} ?open=${bind(this, 'open')}>
+				${cache(!this.open ? html.nothing : this.popoverContentTemplate)}
+			</mo-popover>
 		`
 	}
 
