@@ -82,6 +82,10 @@ export class DataGridHeader<TData> extends Component {
 				justify-content: center;
 			}
 
+			.header:first-of-type {
+				padding-left: var(--mo-first-cell-padding-left, 0);
+			}
+
 			.cell {
 				position: relative;
 			}
