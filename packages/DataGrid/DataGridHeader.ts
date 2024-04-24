@@ -76,6 +76,10 @@ export class DataGridHeader<TData> extends Component {
 				align-items: center;
 				justify-content: center;
 			}
+
+			.header:first-of-type {
+				padding-left: var(--mo-first-cell-padding-left, 0);
+			}
 		`
 	}
 
@@ -147,7 +151,7 @@ export class DataGridHeader<TData> extends Component {
 		const sortingRank = !sortingDefinition || this.dataGrid.getSorting().length <= 1 ? undefined : sortingDefinition.rank
 
 		return html`
-			<mo-flex direction=${column.alignment === 'end' ? 'horizontal-reversed' : 'horizontal'} alignItems='center'
+			<mo-flex class='header' direction=${column.alignment === 'end' ? 'horizontal-reversed' : 'horizontal'} alignItems='center'
 				${style({ overflow: 'hidden', position: 'relative', cursor: 'pointer', userSelect: 'none' })}
 				@click=${() => this.sort(column)}
 			>
