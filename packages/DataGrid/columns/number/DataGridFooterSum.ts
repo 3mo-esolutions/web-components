@@ -16,11 +16,14 @@ export class DataGridFooterSum extends Component {
 			:host {
 				display: flex;
 				flex-direction: column;
+				align-items: center;
+
 				position: relative;
 				max-height: 100%;
+				padding: 5px 8px;
+
 				line-height: 1em;
 				user-select: all;
-				align-items: flex-end;
 			}
 
 			div {
