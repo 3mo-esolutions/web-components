@@ -12,7 +12,7 @@ import { type Splitter } from './Splitter.js'
  */
 @component('mo-splitter-item')
 export class SplitterItem extends Component {
-	@property() size?: string
+	@property({ reflect: true }) size?: string
 	@property() min = '100px'
 	@property() max?: string
 	@property({ type: Boolean }) locked = false

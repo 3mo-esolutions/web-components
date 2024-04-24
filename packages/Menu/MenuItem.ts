@@ -1,4 +1,4 @@
-import { EventListenerController, component, event, html, property } from '@a11d/lit'
+import { component, event, eventListener, html, property } from '@a11d/lit'
 import { ListItem } from '@3mo/list'
 import { type MaterialIcon } from '@3mo/icon'
 
@@ -27,8 +27,7 @@ export class MenuItem extends ListItem {
 		`
 	}
 
-	protected readonly clickEventListenerController = new EventListenerController(this, 'click', this.handleClick.bind(this))
-
+	@eventListener('click')
 	protected handleClick() {
 		this.menuItemClick.dispatch()
 	}

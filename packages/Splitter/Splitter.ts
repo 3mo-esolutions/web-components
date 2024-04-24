@@ -1,9 +1,10 @@
-import { component, html, property, Component, css, styleMap, queryAll, ifDefined, eventListener, style, state } from '@a11d/lit'
+import { component, html, property, Component, css, styleMap, queryAll, ifDefined, style } from '@a11d/lit'
 import { type Flex } from '@3mo/flex'
 import { MutationController } from '@3mo/mutation-observer'
 import { SplitterItem, type SplitterResizerHost } from './index.js'
 import type * as CSS from 'csstype'
 import '@3mo/theme'
+import { SplitterController } from './SplitterController.js'
 
 /**
  * @element mo-splitter
@@ -22,15 +23,16 @@ export class Splitter extends Component {
 	@property() gap?: CSS.Property.Gap<string>
 	@property({ type: Object }) resizerTemplate = html`<mo-splitter-resizer-knob></mo-splitter-resizer-knob>`
 
-	@property({ type: Boolean, reflect: true }) protected resizing = false
-
-	@state({ updated(this: Splitter) { this.resize() } }) private requestResizeKey = 0
-
 	@queryAll('mo-splitter-resizer-host') private readonly resizerElements!: Array<SplitterResizerHost>
 
 	get items() {
 		return [...this.children].filter((c): c is SplitterItem => c instanceof SplitterItem)
 	}
+
+	protected readonly splitterController = new SplitterController(this, {
+		resizerElements: () => this.resizerElements,
+		resizingElements: () => this.items,
+	})
 
 	protected readonly mutationController = new MutationController(this, {
 		config: { childList: true },
@@ -46,7 +48,7 @@ export class Splitter extends Component {
 				display: block;
 			}
 
-			:host([resizing]) {
+			:host([data-resizing]) {
 				user-select: none;
 			}
 
@@ -61,47 +63,6 @@ export class Splitter extends Component {
 		`
 	}
 
-	private resizeRequestEvent?: TouchEvent | PointerEvent
-	@eventListener({ target: window, type: 'pointermove' })
-	@eventListener({ target: window, type: 'touchmove', options: { passive: false } as any })
-	protected requestResize(e: TouchEvent | PointerEvent) {
-		if (this.resizing) {
-			e.preventDefault()
-			this.resizeRequestEvent = e
-			this.requestResizeKey++
-		}
-	}
-
-	protected resize() {
-		const resizingResizer = this.resizerElements.find(r => r.resizing)
-		const resizingItem = !resizingResizer ? undefined : this.items[this.resizerElements.indexOf(resizingResizer)]
-		if (!resizingItem) {
-			return
-		}
-		const oldTotalSize = this.totalSize
-		const e = this.resizeRequestEvent!
-		// Don't check for instanceof TouchEvent, as Safari doesn't understand it
-		const clientX = 'touches' in e ? e.touches[0]!.clientX : e.clientX
-		const clientY = 'touches' in e ? e.touches[0]!.clientY : e.clientY
-		const { left, top, right, bottom } = resizingItem.getBoundingClientRect()
-
-		const getSize = () => {
-			switch (this.direction) {
-				case 'horizontal':
-					return clientX - left
-				case 'horizontal-reversed':
-					return right - clientX
-				case 'vertical':
-					return clientY - top
-				case 'vertical-reversed':
-					return bottom - clientY
-				default:
-					throw new Error(`Invalid direction: ${this.direction}`)
-			}
-		}
-		resizingItem.size = `${getSize() / oldTotalSize * 100}%`
-	}
-
 	protected override get template() {
 		return html`
 			<mo-flex wrap='nowrap' direction=${this.direction} gap=${ifDefined(this.gap)} ${style({ height: '100%', width: '100%' })}>
@@ -112,7 +73,7 @@ export class Splitter extends Component {
 
 	private getItemTemplate(item: SplitterItem, index: number) {
 		const styles = {
-			'flex': index === this.items.length - 1 || item.size === undefined ? '1' : undefined,
+			'flex': index === this.items.length - 1 || item.size === undefined ? '1 0 0px' : undefined,
 			...(this.direction === 'horizontal' || this.direction === 'horizontal-reversed' ? {
 				'width': item.size,
 				'min-width': item.min,
@@ -134,17 +95,8 @@ export class Splitter extends Component {
 			<mo-splitter-resizer-host part='resizer-host'
 				?locked=${item.locked}
 				direction=${this.direction}
-				@resizeStart=${() => this.resizing = true}
-				@resizeStop=${() => this.resizing = false}
 			>${this.resizerTemplate}</mo-splitter-resizer-host>
 		`
-	}
-
-	private get totalSize() {
-		const clientRect = this.getBoundingClientRect()
-		return this.direction === 'horizontal' || this.direction === 'horizontal-reversed'
-			? clientRect.width
-			: clientRect.height
 	}
 }
 

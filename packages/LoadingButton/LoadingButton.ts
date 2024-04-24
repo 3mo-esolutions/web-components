@@ -1,4 +1,4 @@
-import { EventListenerController, component, css, extractEventHandler, html, property, queryAsync, style } from '@a11d/lit'
+import { eventListener, component, css, extractEventHandler, html, property, queryAsync, style } from '@a11d/lit'
 import { Button } from '@3mo/button'
 import '@3mo/circular-progress'
 
@@ -29,23 +29,20 @@ export class LoadingButton extends Button {
 
 	@queryAsync('[md-button]') private readonly button!: Promise<HTMLButtonElement>
 
-	protected readonly clickEventListenerController = new EventListenerController(this, {
-		type: 'click',
-		target: () => this.button,
-		listener: async (e: PointerEvent) => {
-			if (this.preventClickEventInference === false) {
-				const results = [...this.clickEventListeners]
-					.map(listener => extractEventHandler(listener)(e))
-					.filter(Boolean)
-				if (results.length > 0 && this.loading === false) {
-					e.stopImmediatePropagation()
-					this.loading = true
-					await Promise.allSettled(results)
-					this.loading = false
-				}
+	@eventListener({ type: 'click', target(this: LoadingButton) { return this.button } })
+	protected async handleClick(e: PointerEvent) {
+		if (this.preventClickEventInference === false) {
+			const results = [...this.clickEventListeners]
+				.map(listener => extractEventHandler(listener)(e))
+				.filter(Boolean)
+			if (results.length > 0 && this.loading === false) {
+				e.stopImmediatePropagation()
+				this.loading = true
+				await Promise.allSettled(results)
+				this.loading = false
 			}
-		},
-	})
+		}
+	}
 
 	static override get styles() {
 		return css`

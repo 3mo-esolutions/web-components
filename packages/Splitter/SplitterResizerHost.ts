@@ -1,6 +1,7 @@
-import { component, html, Component, css, property, event, eventListener } from '@a11d/lit'
+import { component, html, Component, css, property } from '@a11d/lit'
 import { type Flex } from '@3mo/flex'
 import { SlotController } from '@3mo/slot-controller'
+import { PointerController } from '@3mo/pointer-controller'
 import { SplitterResizer } from './index.js'
 
 /**
@@ -9,17 +10,11 @@ import { SplitterResizer } from './index.js'
  * @attr direction
  * @attr resizing
  * @attr locked
- *
- * @event resizeStart
- * @event resizeStop
  */
 @component('mo-splitter-resizer-host')
 export class SplitterResizerHost extends Component {
-	@event() readonly resizeStart!: EventDispatcher
-	@event() readonly resizeStop!: EventDispatcher
-
 	@property({ reflect: true, updated(this: SplitterResizerHost) { !this.resizerElement ? void 0 : this.resizerElement.hostDirection = this.direction } }) direction?: Flex['direction']
-	@property({ type: Boolean, reflect: true }) resizing = false
+	@property({ type: Boolean, reflect: true, attribute: 'data-resizing', updated(this: SplitterResizerHost) { this.resizingUpdated() } }) resizing = false
 	@property({ type: Boolean, reflect: true }) locked = false
 
 	get resizerElement() {
@@ -28,31 +23,14 @@ export class SplitterResizerHost extends Component {
 	}
 
 	protected slotController = new SlotController(this)
+	protected pointerController = new PointerController(this, {
+		handleHoverChange: hover => !this.resizerElement ? void 0 : this.resizerElement.hostHover = hover,
+	})
 
-	@eventListener('mousedown')
-	@eventListener('touchstart')
-	protected startResize() {
-		this.resizing = true
-		!this.resizerElement ? void 0 : this.resizerElement.hostResizing = true
-		this.resizeStart.dispatch()
-	}
-
-	@eventListener({ target: window, type: 'mouseup' })
-	@eventListener({ target: window, type: 'touchend' })
-	protected endResize() {
-		this.resizing = false
-		!this.resizerElement ? void 0 : this.resizerElement.hostResizing = false
-		this.resizeStop.dispatch()
-	}
-
-	@eventListener('pointerenter')
-	protected hoverStart() {
-		!this.resizerElement ? void 0 : this.resizerElement.hostHover = true
-	}
-
-	@eventListener('pointerleave')
-	protected hoverEnd() {
-		!this.resizerElement ? void 0 : this.resizerElement.hostHover = false
+	private resizingUpdated() {
+		if (this.resizerElement) {
+			this.resizerElement.hostResizing = this.resizing
+		}
 	}
 
 	static override get styles() {
