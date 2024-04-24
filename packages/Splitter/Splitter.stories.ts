@@ -44,3 +44,29 @@ export const SplitterWithCustomResizer: StoryObj = {
 		</mo-splitter>
 	`
 }
+
+export const Complex: StoryObj = {
+	render: ({ gap }) => html`
+		<mo-splitter direction='horizontal' gap=${gap} ${style({ height: '500px' })}>
+			<mo-splitter-item min='20%' max='80%'>
+				<div ${style({ background: 'rgba(0, 128, 128, 0.3)' })}>Item 1</div>
+			</mo-splitter-item>
+
+			<mo-splitter-item min='20%' max='80%'>
+				<div ${style({ background: 'rgba(255, 192, 203, 0.3)' })}>Item 2</div>
+			</mo-splitter-item>
+
+			<mo-splitter-item min='20%' max='80%'>
+				<mo-splitter direction='vertical' gap=${gap} ${style({ height: '500px' })}>
+					<mo-splitter-item min='20%' max='80%'>
+						<div ${style({ background: 'rgba(0, 128, 128, 0.3)' })}>Item 3</div>
+					</mo-splitter-item>
+
+					<mo-splitter-item min='20%' max='80%'>
+						<div ${style({ background: 'rgba(255, 192, 203, 0.3)' })}>Item 4</div>
+					</mo-splitter-item>
+				</mo-splitter>
+			</mo-splitter-item>
+		</mo-splitter>
+	`
+}

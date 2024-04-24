@@ -27,6 +27,7 @@
 		"csstype": "x",
 		"@3mo/theme": "x",
 		"@3mo/flex": "x",
-		"@3mo/slot-controller": "x"
+		"@3mo/slot-controller": "x",
+		"@3mo/pointer-controller": "x"
 	}
 }

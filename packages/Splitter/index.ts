@@ -1,4 +1,5 @@
 export * from './Splitter.js'
+export * from './SplitterController.js'
 export * from './SplitterItem.js'
 export * from './SplitterResizerHost.js'
 export * from './resizers/index.js'

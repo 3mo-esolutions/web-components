@@ -1,9 +1,10 @@
-import { component, html, property, Component, css, styleMap, queryAll, ifDefined, eventListener, style, state } from '@a11d/lit'
+import { component, html, property, Component, css, styleMap, queryAll, ifDefined, style } from '@a11d/lit'
 import { type Flex } from '@3mo/flex'
 import { MutationController } from '@3mo/mutation-observer'
 import { SplitterItem, type SplitterResizerHost } from './index.js'
 import type * as CSS from 'csstype'
 import '@3mo/theme'
+import { SplitterController } from './SplitterController.js'
 
 /**
  * @element mo-splitter
@@ -22,15 +23,16 @@ export class Splitter extends Component {
 	@property() gap?: CSS.Property.Gap<string>
 	@property({ type: Object }) resizerTemplate = html`<mo-splitter-resizer-knob></mo-splitter-resizer-knob>`
 
-	@property({ type: Boolean, reflect: true }) protected resizing = false
-
-	@state({ updated(this: Splitter) { this.resize() } }) private requestResizeKey = 0
-
 	@queryAll('mo-splitter-resizer-host') private readonly resizerElements!: Array<SplitterResizerHost>
 
 	get items() {
 		return [...this.children].filter((c): c is SplitterItem => c instanceof SplitterItem)
 	}
+
+	protected readonly splitterController = new SplitterController(this, {
+		resizerElements: () => this.resizerElements,
+		resizingElements: () => this.items,
+	})
 
 	protected readonly mutationController = new MutationController(this, {
 		config: { childList: true },
@@ -46,7 +48,7 @@ export class Splitter extends Component {
 				display: block;
 			}
 
-			:host([resizing]) {
+			:host([data-resizing]) {
 				user-select: none;
 			}
 
@@ -112,7 +114,7 @@ export class Splitter extends Component {
 
 	private getItemTemplate(item: SplitterItem, index: number) {
 		const styles = {
-			'flex': index === this.items.length - 1 || item.size === undefined ? '1' : undefined,
+			'flex': index === this.items.length - 1 || item.size === undefined ? '1 0 0px' : undefined,
 			...(this.direction === 'horizontal' || this.direction === 'horizontal-reversed' ? {
 				'width': item.size,
 				'min-width': item.min,
@@ -134,17 +136,8 @@ export class Splitter extends Component {
 			<mo-splitter-resizer-host part='resizer-host'
 				?locked=${item.locked}
 				direction=${this.direction}
-				@resizeStart=${() => this.resizing = true}
-				@resizeStop=${() => this.resizing = false}
 			>${this.resizerTemplate}</mo-splitter-resizer-host>
 		`
-	}
-
-	private get totalSize() {
-		const clientRect = this.getBoundingClientRect()
-		return this.direction === 'horizontal' || this.direction === 'horizontal-reversed'
-			? clientRect.width
-			: clientRect.height
 	}
 }
 

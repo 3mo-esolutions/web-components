@@ -28,7 +28,7 @@ export enum AlertType {
 @component('mo-alert')
 export class Alert extends Component {
 	private static readonly iconByType = new Map<AlertType, MaterialIcon>([
-		[AlertType.Info, 'info'],
+		[AlertType.Info, 'help'],
 		[AlertType.Success, 'check_circle'],
 		[AlertType.Warning, 'warning'],
 		[AlertType.Error, 'error'],
