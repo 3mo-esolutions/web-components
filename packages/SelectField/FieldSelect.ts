@@ -150,14 +150,16 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 		`
 	}
 
-	private get mode() {
-		return this.freeInput || (this.searchable && this.focusController.focused)
-			? 'search'
-			: 'value'
-	}
-
 	protected override get inputTemplate() {
-		return this.mode === 'search' ? this.searchInputTemplate : this.valueInputTemplate
+		if (this.freeInput) {
+			return this.searchInputTemplate
+		}
+
+		if (this.searchable && this.focusController.focused) {
+			return this.searchInputTemplate
+		}
+
+		return this.valueInputTemplate
 	}
 
 	private get valueInputTemplate() {
@@ -198,10 +200,16 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 	}
 
 	private get clearIconButtonTemplate() {
+		const clear = () => {
+			this.resetSearch()
+			this.searchInputElement?.focus()
+			this.searchInputElement?.select()
+		}
+
 		return !this.searchable || !this.focusController.focused || !this.searchString || this.freeInput || this.valueToInputValue(this.value) === this.searchString ? html.nothing : html`
 			<mo-icon-button tabIndex='-1' dense slot='end' icon='cancel'
 				style='color: var(--mo-color-gray)'
-				@click=${() => this.resetSearch()}
+				@click=${() => clear()}
 			></mo-icon-button>
 		`
 	}
