@@ -24,11 +24,17 @@ export class FieldSearch extends FieldText {
 
 	protected override get endSlotTemplate() {
 		return html`
+			${this.clearIconButtonTemplate}
+			${super.endSlotTemplate}
+		`
+	}
+
+	protected get clearIconButtonTemplate() {
+		return !this.inputStringValue ? html.nothing : html`
 			<mo-icon-button slot='end' icon='cancel' dense
-				${style({ color: 'var(--mo-color-gray)', visibility: !this.value ? 'hidden' : 'visible', display: 'inline-flex' })}
+				style='color: var(--mo-color-gray)'
 				@click=${() => this.clear()}
 			></mo-icon-button>
-			${super.endSlotTemplate}
 		`
 	}
 
