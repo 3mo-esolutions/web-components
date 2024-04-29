@@ -150,16 +150,14 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 		`
 	}
 
+	private get mode() {
+		return this.freeInput || (this.searchable && this.focusController.focused)
+			? 'search'
+			: 'value'
+	}
+
 	protected override get inputTemplate() {
-		if (this.freeInput) {
-			return this.searchInputTemplate
-		}
-
-		if (this.searchable && this.focusController.focused) {
-			return this.searchInputTemplate
-		}
-
-		return this.valueInputTemplate
+		return this.mode === 'search' ? this.searchInputTemplate : this.valueInputTemplate
 	}
 
 	private get valueInputTemplate() {
@@ -193,8 +191,18 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 	protected override get endSlotTemplate() {
 		this.style.setProperty('--mo-field-width', this.offsetWidth + 'px')
 		return html`
+			${this.clearIconButtonTemplate}
 			${super.endSlotTemplate}
 			<mo-icon slot='end' part='dropDownIcon' icon='expand_more'></mo-icon>
+		`
+	}
+
+	private get clearIconButtonTemplate() {
+		return !this.searchable || !this.focusController.focused || !this.searchString || this.freeInput || this.valueToInputValue(this.value) === this.searchString ? html.nothing : html`
+			<mo-icon-button tabIndex='-1' dense slot='end' icon='cancel'
+				style='color: var(--mo-color-gray)'
+				@click=${() => this.resetSearch()}
+			></mo-icon-button>
 		`
 	}
 
@@ -259,8 +267,8 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 			this.open = true
 		}
 		await this.updateComplete
-		this.searchInputElement?.setSelectionRange(0, this.searchString?.length ?? 0)
 		this.searchInputElement?.focus()
+		this.searchInputElement?.select()
 	}
 
 	protected override handleBlur(bubbled: boolean, method: FocusMethod) {
