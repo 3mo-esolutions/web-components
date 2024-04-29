@@ -134,8 +134,7 @@ export class Popover extends Component {
 
 	override focus(options?: FocusOptions | undefined) {
 		super.focus(options)
-		const focusable = (this.querySelector('[autofocus]') ?? this.children[0]) as HTMLElement | undefined
-		focusable?.focus?.()
+		this.querySelector<HTMLElement>('[autofocus]')?.focus?.()
 	}
 
 	static get translationStyles() {

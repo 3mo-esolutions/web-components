@@ -111,16 +111,6 @@ describe('Popover', () => {
 			expect(generic.component.focus).toHaveBeenCalled()
 		})
 
-		it('should focus the first focusable element when opened', async () => {
-			spyOn(autoFocus.component.inputs[0]!, 'focus')
-			autoFocus.component.popoverElement.setOpen(true)
-
-			await autoFocus.updateComplete
-			await new Promise(r => setTimeout(r))
-
-			expect(autoFocus.component.inputs[0]!.focus).toHaveBeenCalledOnceWith()
-		})
-
 		it('should focus the first element with "autofocus" when available', async () => {
 			spyOn(autoFocus.component.inputs[0]!, 'focus')
 			spyOn(autoFocus.component.inputs[1]!, 'focus')
