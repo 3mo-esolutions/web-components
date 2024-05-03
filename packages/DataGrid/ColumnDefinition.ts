@@ -8,6 +8,7 @@ export type ColumnDefinition<TData, TValue = unknown> = {
 	width?: string
 	alignment?: 'start' | 'center' | 'end'
 	hidden?: boolean
+	fixed?: 'left' | 'right'
 	sortable?: boolean
 	editable?: boolean | Predicate<TData>
 	sumHeading?: string

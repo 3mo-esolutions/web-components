@@ -99,10 +99,11 @@ export const Sums: StoryObj = {
 			style='height: 500px; --mo-data-grid-footer-background: var(--mo-color-transparent-gray-3)'
 			selectOnClick
 		>
+			<mo-data-grid-column-number nonEditable fixed='left' width='30px' heading='ID' dataSelector='id'></mo-data-grid-column-number>
 			<mo-data-grid-column-number hidden nonEditable heading='ID' dataSelector='id'></mo-data-grid-column-number>
 			<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
-			<mo-data-grid-column-number heading='Age' dataSelector='age' sumHeading='Ages Total'></mo-data-grid-column-number>
-			<mo-data-grid-column-text heading='City' dataSelector='city'></mo-data-grid-column-text>
+			<mo-data-grid-column-number width='40px' fixed='right' heading='Age' dataSelector='age' sumHeading='Ages Total'></mo-data-grid-column-number>
+			<mo-data-grid-column-text width='70px' fixed='right' heading='City' dataSelector='city'></mo-data-grid-column-text>
 			<mo-data-grid-column-currency heading='Balance' dataSelector='balance' sumHeading='Balances Total'></mo-data-grid-column-currency>
 			<mo-data-grid-footer-sum slot='sum' heading='Customized Sum Maybe!' ${style({ alignItems: 'center', fontWeight: '800' })}>199,99 €</mo-data-grid-footer-sum>
 		</mo-data-grid>
@@ -114,7 +115,7 @@ export const Sorting: StoryObj = {
 		<mo-data-grid .data=${hundredPeople} pagination='auto' selectionMode='multiple' style='height: 500px' selectOnClick .sorting=${[{ selector: 'name', strategy: DataGridSortingStrategy.Ascending }, { selector: 'age', strategy: DataGridSortingStrategy.Descending }]}>
 			<mo-data-grid-column-number hidden nonEditable heading='ID' dataSelector='id'></mo-data-grid-column-number>
 			<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
-			<mo-data-grid-column-number heading='Age' dataSelector='age' sumHeading='Ages Total'></mo-data-grid-column-number>
+			<mo-data-grid-column-number width='80px' fixed='right' heading='Age' dataSelector='age' sumHeading='Ages Total'></mo-data-grid-column-number>
 			<mo-data-grid-column-text heading='City' dataSelector='city'></mo-data-grid-column-text>
 			<mo-data-grid-column-currency heading='Balance' dataSelector='balance' sumHeading='Balances Total'></mo-data-grid-column-currency>
 		</mo-data-grid>

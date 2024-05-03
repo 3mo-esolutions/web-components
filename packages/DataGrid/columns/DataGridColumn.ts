@@ -12,6 +12,7 @@ import type { ColumnDefinition } from '../ColumnDefinition.js'
  * @attr sortDataSelector - The data selector of the column
  * @attr nonSortable - Whether the column is sortable
  * @attr nonEditable - Whether the column is editable
+ * @attr fixed - A side for fixing (left or right).
  */
 export abstract class DataGridColumn<TData, TValue> extends Component {
 	static readonly regex = /^\s*(0|[1-9][0-9]*)?\s*\*\s*$/
@@ -24,6 +25,7 @@ export abstract class DataGridColumn<TData, TValue> extends Component {
 
 	@property() width = 'minmax(100px, 1fr)'
 	@property({ type: Boolean }) override hidden = false
+	@property() fixed?: 'left' | 'right'
 	@property({ reflect: true }) heading = ''
 	@property({ reflect: true }) textAlign = 'start'
 	@property({ reflect: true }) override title!: string
@@ -47,6 +49,7 @@ export abstract class DataGridColumn<TData, TValue> extends Component {
 			title: this.title || undefined,
 			alignment: this.textAlign as 'start' | 'center' | 'end',
 			hidden: this.hidden,
+			fixed: this.fixed,
 			width: !DataGridColumn.regex.test(this.width) ? this.width : `${DataGridColumn.getProportion(this.width)}fr`,
 			sortable: !this.nonSortable,
 			editable: this.getEditContentTemplate !== undefined && (typeof nonEditable !== 'function' ? !nonEditable : x => !nonEditable(x)),

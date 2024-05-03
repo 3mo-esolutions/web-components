@@ -21,6 +21,8 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	@property({ type: Object }) dataGrid!: DataGrid<TData, TDetailsElement>
 	@property({ type: Object }) data!: TData
 	@property({ type: Boolean, reflect: true }) selected = false
+	@property({ type: String }) fixed?: 'right' | 'left'
+
 	@property({
 		type: Boolean,
 		reflect: true,
@@ -71,7 +73,8 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				display: block;
 				position: relative;
 				height: auto;
-				width: 100%;
+				width: fit-content;
+				min-width: 100%;
 			}
 
 			:host(:hover) #contentContainer {
@@ -170,7 +173,9 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			>
 				${this.rowTemplate}
 			</mo-grid>
-			<slot id='detailsContainer'>${this.detailsOpen ? this.detailsTemplate : html.nothing}</slot>
+			${this.fixed ? html.nothing : html`
+				<slot id='detailsContainer'>${this.detailsOpen ? this.detailsTemplate : html.nothing}</slot>
+			`}
 		`
 	}
 

@@ -11,6 +11,7 @@ export class DataGridHeader<TData> extends Component {
 	@property({ type: Object }) dataGrid!: DataGrid<TData, any>
 	@property() selection: CheckboxSelection = false
 	@property({ type: Boolean, reflect: true }) overlayOpen = false
+	@property() fixed?: 'left' | 'right'
 
 	protected override connected() {
 		this.dataGrid.dataChange.subscribe(this.handleDataGridDataChange)
@@ -57,6 +58,10 @@ export class DataGridHeader<TData> extends Component {
 				position: relative;
 				height: var(--mo-data-grid-header-height);
 				background: var(--mo-data-grid-header-background);
+				position: sticky;
+				top: 0;
+				background-color: var(--mo-color-background);
+				z-index: 2;
 			}
 
 			.headerContent {
@@ -95,7 +100,7 @@ export class DataGridHeader<TData> extends Component {
 	}
 
 	private get detailsExpanderTemplate() {
-		return this.dataGrid.hasDetails === false ? html.nothing : html`
+		return this.dataGrid.hasDetails === false || this.fixed ? html.nothing : html`
 			<mo-flex justifyContent='center' alignItems='center'>
 				${!this.dataGrid.hasDetails || !this.dataGrid.multipleDetails ? html.nothing : html`
 					<mo-icon-button dense ${style({ padding: '-10px 0px 0 -10px' })}
@@ -109,7 +114,7 @@ export class DataGridHeader<TData> extends Component {
 	}
 
 	private get selectionTemplate() {
-		return this.dataGrid.hasSelection === false || this.dataGrid.selectionCheckboxesHidden ? html.nothing : html`
+		return this.dataGrid.hasSelection === false || this.dataGrid.selectionCheckboxesHidden || this.fixed ? html.nothing : html`
 			<mo-flex justifyContent='center' alignItems='center'>
 				${this.dataGrid.selectionMode !== DataGridSelectionMode.Multiple ? html.nothing : html`
 					<mo-checkbox ${style({ position: 'absolute' })} .selected=${this.selection} @change=${this.handleSelectionChange}></mo-checkbox>
@@ -119,6 +124,10 @@ export class DataGridHeader<TData> extends Component {
 	}
 
 	private get contentTemplate() {
+		const columns = this.fixed
+			? this.dataGrid.fixedColumns.filter(c => c.fixed === this.fixed)
+			: this.dataGrid.visibleColumns
+
 		return html`
 			${this.dataGrid.visibleColumns.map(this.getHeaderCellTemplate)}
 		`

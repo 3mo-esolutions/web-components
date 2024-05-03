@@ -15,6 +15,14 @@ export class DataGridDefaultRow<TData, TDetailsElement extends Element | undefin
 				min-height: var(--mo-data-grid-row-height);
 			}
 
+			:host([fixed=right]) mo-grid {
+				grid-template-columns: var(--mo-data-grid-right-fixed-columns) !important;
+			}
+
+			:host([fixed=left]) mo-grid {
+				grid-template-columns: var(--mo-data-grid-left-fixed-columns) !important;
+			}
+
 			mo-flex {
 				white-space: nowrap;
 				text-overflow: ellipsis;
@@ -69,7 +77,9 @@ export class DataGridDefaultRow<TData, TDetailsElement extends Element | undefin
 	}
 
 	protected override get rowTemplate() {
-		return html`
+		return this.fixed ? html`
+			${this.dataGrid.fixedColumns.filter(c => c.fixed === this.fixed).map(column => this.getCellTemplate(column))}
+		` : html`
 			${this.detailsExpanderTemplate}
 			${this.selectionTemplate}
 			${this.dataGrid.columns.map(column => this.getCellTemplate(column))}

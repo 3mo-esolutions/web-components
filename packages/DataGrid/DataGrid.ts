@@ -153,6 +153,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	@property({ type: Array }) data = new Array<TData>()
 	@property({ type: Array }) columns = new Array<ColumnDefinition<TData>>()
+	@property({ type: Array }) fixedColumns = new Array<ColumnDefinition<TData>>()
 
 	@property({ type: Boolean, reflect: true }) headerHidden = false
 	@property({ type: Boolean, reflect: true }) preventVerticalContentScroll = false
@@ -329,8 +330,9 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}
 
 	setColumns(columns: Array<ColumnDefinition<TData>>) {
-		this.columns = columns
-		this.columnsChange.dispatch(columns)
+		this.columns = columns.filter(c => !c.fixed)
+		this.fixedColumns = columns.filter(c => c.fixed)
+		this.columnsChange.dispatch(this.columns)
 		this.requestUpdate()
 	}
 
@@ -718,6 +720,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	protected get dataGridTemplate() {
 		this.provideCssColumnsProperties()
 		this.toggleAttribute('hasDetails', this.hasDetails)
+
 		return html`
 			<mo-grid rows='* auto' ${style({ position: 'relative', height: '100%' })}>
 				<mo-scroller
@@ -732,6 +735,27 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				</mo-scroller>
 				${this.footerTemplate}
 			</mo-grid>
+		`
+	}
+
+	private getFixedColumnsTemplate = (fixed: 'right' | 'left') => {
+		return !this.fixedColumns.filter(c => c.fixed === fixed).length || this.shallVirtualize ? html.nothing : html`
+			<div ${style({ height: '100%', position: 'sticky', [fixed]: '0', top: '0', zIndex: '1000' })}>
+				${this.headerHidden ? html.nothing : html`
+					<div ${style({ position: 'sticky', top: '0', zIndex: '1000' })}>
+						<mo-data-grid-header fixed=${fixed} .dataGrid=${this as any}></mo-data-grid-header>
+					</div>
+				`}
+				<mo-flex>
+					${this.data.map(item => html`
+						<mo-flex class='' direction='horizontal' alignItems='center' justifyContent='center' gap='8px'
+							${style({ [fixed === 'right' ? 'borderLeft' : 'borderRight']: 'var(--mo-data-grid-border)' })}
+						>
+							<mo-data-grid-default-row fixed=${fixed} .data=${item} .dataGrid=${this as any}></mo-data-grid-default-row>
+						</mo-flex>
+					`)}
+				</mo-flex>
+			</div>
 		`
 	}
 
@@ -905,6 +929,8 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	private provideCssColumnsProperties() {
 		this.style.setProperty('--mo-data-grid-content-width', this.dataColumnsWidths.join(' '))
 		this.style.setProperty('--mo-data-grid-columns', this.columnsWidths.join(' '))
+		this.style.setProperty('--mo-data-grid-left-fixed-columns', this.getFixedColumnsWidth('left').join(' '))
+		this.style.setProperty('--mo-data-grid-right-fixed-columns', this.getFixedColumnsWidth('right').join(' '))
 	}
 
 	get columnsWidths() {
@@ -914,6 +940,10 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			...this.dataColumnsWidths,
 			this.moreColumnWidth
 		].filter((c): c is string => c !== undefined)
+	}
+
+	getFixedColumnsWidth(fixed: 'right' | 'left') {
+		return this.fixedColumns.filter(c => c.fixed === fixed).map(c => c.width).filter((c): c is string => c !== undefined)
 	}
 
 	get detailsColumnWidth() {
