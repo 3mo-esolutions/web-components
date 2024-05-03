@@ -1,12 +1,9 @@
-import { Component, component, property, html, css, state, event, eventListener, style } from '@a11d/lit'
+import { Component, component, property, html, css, state, eventListener, style } from '@a11d/lit'
 import { type ColumnDefinition, type DataGrid } from './index.js'
 
-/** @fires columnUpdate */
 @component('mo-data-grid-header-separator')
 export class DataGridHeaderSeparator extends Component {
 	static disableResizing = false
-
-	@event() readonly columnUpdate!: EventDispatcher
 
 	@property({ type: Object }) dataGrid!: DataGrid<unknown>
 	@property({ type: Object }) column!: ColumnDefinition<unknown>
@@ -83,7 +80,6 @@ export class DataGridHeaderSeparator extends Component {
 		this.initialWidth = undefined
 		this.column.width = `${this.targetWidth}px`
 		this.dataGrid.setColumns(this.dataGrid.columns)
-		this.columnUpdate.dispatch()
 	}
 
 	@eventListener({ target: window, type: 'mousemove' })

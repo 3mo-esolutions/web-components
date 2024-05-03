@@ -134,7 +134,6 @@ export class DataGridHeader<TData> extends Component {
 					<mo-data-grid-header-separator
 						.dataGrid=${this.dataGrid as any}
 						.column=${this.dataGrid.visibleColumns[index]}
-						@columnUpdate=${() => this.dataGrid.requestUpdate()}
 					></mo-data-grid-header-separator>
 				`)}
 			</mo-grid>
