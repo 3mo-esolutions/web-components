@@ -12,7 +12,13 @@ export class ModeRepository<TData, TDataFetcherParameters extends FetchableDataG
 
 	constructor(private readonly dataGrid: ModdableDataGrid<TData, TDataFetcherParameters>) {
 		super(`ModdableDataGrid.${dataGrid.tagName.toLowerCase()}.Modes`, [], (_key: string, value: any) => {
-			return this.transformToClassIfNeeded(value)
+			if (typeof value === 'object'
+				&& value !== null
+				&& ((value?.start && value.start instanceof Date)
+					|| (value?.end && value.end instanceof Date))) {
+				return new DateTimeRange(value.start, value.end)
+			}
+			return (DateTime.isoRegularExpression.test(value)) ? new Date(value) : value
 		})
 	}
 
@@ -64,40 +70,8 @@ export class ModeRepository<TData, TDataFetcherParameters extends FetchableDataG
 		} as Required<Mode<TData, TDataFetcherParameters>>
 	}
 
-	transformToClassIfNeeded(value?: any) {
-		const isCustomClass = value !== null && typeof value === 'object'
-
-		if (isCustomClass) {
-			const className = (value as any)[ModeRepository.typeIdentifier]
-			// IDEA: Use DI to fetch a class and transform it (for example, using a class decorator)
-			// Do we need to make it so difficult? Are we going to use any classes except for Date and
-			// DateTimeRange? Is there an easier way for DateTimeRange (start/end may be undefined)?
-			if (className === 'DateTimeRange') {
-				value = new DateTimeRange((value as any)?.start, (value as any)?.end)
-			}
-		}
-
-		return (DateTime.isoRegularExpression.test(value)) ? new Date(value) : value
-	}
-
-	transformToPlainIfNeeded(mode: Mode<TData, TDataFetcherParameters>) {
-		if (!mode.parameters) {
-			return
-		}
-		Object.keys(mode.parameters as TDataFetcherParameters)
-				.forEach(parameterName => {
-					const value = mode.parameters![parameterName]
-					const isCustomClass = value !== null && typeof value === 'object' && value.constructor !== Object
-					if (value && isCustomClass) {
-						(mode.parameters![parameterName] as any)![ModeRepository.typeIdentifier] = value.constructor.name
-					}
-				})
-	}
-
 	save(mode: Mode<TData, TDataFetcherParameters> = this.currentMode) {
 		const existingMode = !mode.id ? undefined : this.get(mode.id)
-
-		this.transformToPlainIfNeeded(mode)
 
 		if (existingMode) {
 			this.value = this.value.map(m => m.id !== mode.id ? m : mode)
