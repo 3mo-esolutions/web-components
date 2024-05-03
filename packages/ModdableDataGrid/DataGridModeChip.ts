@@ -1,4 +1,4 @@
-import { html, component, css, property, eventListener, Component, style, state, bind } from '@a11d/lit'
+import { html, component, css, property, eventListener, Component, style, state, bind, event } from '@a11d/lit'
 import { DialogAcknowledge, DialogAlert, DialogDeletion } from '@3mo/standard-dialogs'
 import { tooltip } from '@3mo/tooltip'
 import { Localizer } from '@3mo/localization'

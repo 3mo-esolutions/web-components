@@ -36,8 +36,13 @@ export abstract class ModdableDataGrid<TData, TDataFetcherParameters extends Fet
 			const m = mode ?? defaultMode
 
 			this.preventFetch = true
+
 			this.setColumns((m.columns ?? defaultMode.columns).map(c => ({ ...c })))
-			this.sort(m.sorting ?? defaultMode.sorting)
+
+			if (!this.columns.length) {
+				this.extractColumns()
+			}
+
 			this.setPagination(m.pagination ?? defaultMode.pagination)
 			this.setParameters(m.parameters ?? defaultMode.parameters)
 			this.preventFetch = false
