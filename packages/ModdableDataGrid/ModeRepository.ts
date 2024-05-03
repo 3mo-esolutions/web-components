@@ -50,7 +50,7 @@ export class ModeRepository<TData, TDataFetcherParameters extends FetchableDataG
 
 	get isSelectedModeSaved() {
 		return !this.dataGrid.mode
-			|| this.getAll().includes(this.dataGrid.mode)
+			|| this.dataGrid.modes.includes(this.dataGrid.mode)
 			|| objectEquals(this.dataGrid.mode, this.currentMode)
 	}
 
