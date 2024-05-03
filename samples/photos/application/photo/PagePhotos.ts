@@ -82,6 +82,7 @@ export class PagePhotos extends PageComponent {
 					.value=${this.dataGridParameters.albumIds}
 					@change=${(event: CustomEvent<Array<number>>) => this.dataGridParameters = { ...this.dataGridParameters, albumIds: event.detail }}>
 				</app-field-select-album>
+
 				<mo-fab slot='fab' icon='add'></mo-fab>
 			</photos-data-grid-photo>
 		`
