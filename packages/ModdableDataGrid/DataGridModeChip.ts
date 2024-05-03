@@ -77,10 +77,14 @@ export class DataGridModeChip extends Component {
 			:host([selected]:not([readOnly])) mo-icon-button:not([data-no-border]) {
 				border-inline-start: 1px solid var(--mo-color-gray-transparent);
 			}
+
+			mo-context-menu-item {
+				color: var(--mo-color-foreground);
+				font-weight: 400;
+			}
 		`
 	}
 
-	@eventListener('click')
 	protected async handleClick() {
 		if (this.moddableDataGrid.modesRepository.isSelected(this.mode)) {
 			this.moddableDataGrid.mode = undefined
@@ -110,7 +114,7 @@ export class DataGridModeChip extends Component {
 
 	protected override get template() {
 		return html`
-			<mo-chip>
+			<mo-chip @click=${() => this.handleClick()}>
 				${this.mode.isArchived ? `[${this.mode.name}]` : this.mode.name}
 				${this.trailingSlotTemplate}
 			</mo-chip>
@@ -119,7 +123,9 @@ export class DataGridModeChip extends Component {
 
 	protected get trailingSlotTemplate() {
 		return this.readOnly || !this.selected ? html.nothing : html`
-			<mo-flex direction='horizontal' slot='trailing'>
+			<mo-flex direction='horizontal' slot='trailing'
+				@click=${(e: MouseEvent) => e.stopPropagation()}
+			>
 				${this.moddableDataGrid.modesRepository.isSelectedModeSaved ? html.nothing : html`
 					<span id='spanUnsaved'>*</span>
 
@@ -134,35 +140,33 @@ export class DataGridModeChip extends Component {
 					></mo-icon-button>
 				`}
 
-				<mo-icon-button ?data-no-border=${this.moddableDataGrid.modesRepository.isSelectedModeSaved} icon='more_vert' tabindex='-1' dense
-					${tooltip(t('More options'))}
-					@click=${(e: MouseEvent) => { this.open = !this.open; e.stopImmediatePropagation() }}
-				></mo-icon-button>
-
-				${this.menuTemplate}
+				<mo-popover-container fixed>
+					<mo-icon-button dense icon='more_vert' ${tooltip(t('More options'))}></mo-icon-button>
+					${this.menuTemplate}
+				</mo-popover-container>
 			</mo-flex>
 		`
 	}
 
 	protected get menuTemplate() {
 		return html`
-			<mo-menu manual .anchor=${this} ${bind(this, 'open')}>
+			<mo-menu slot='popover'>
 				${this.moddableDataGrid.modesRepository.isSelectedModeSaved ? html.nothing : html`
-					<mo-menu-item icon='undo' @click=${this.discardChanges}>${t('Discard changes')}</mo-menu-item>
-					<mo-menu-item icon='save' @click=${this.saveChanges}>${t('Save changes')}</mo-menu-item>
+					<mo-context-menu-item icon='undo' @click=${this.discardChanges}>${t('Discard changes')}</mo-context-menu-item>
+					<mo-context-menu-item icon='save' @click=${this.saveChanges}>${t('Save changes')}</mo-context-menu-item>
 					<mo-line ${style({ margin: '4px 0' })}></mo-line>
 				`}
-				<mo-menu-item icon='edit' @click=${this.editMode}>${t('Edit')}</mo-menu-item>
+				<mo-context-menu-item icon='edit' @click=${this.editMode}>${t('Edit')}</mo-context-menu-item>
 				${this.mode.isArchived === false ? html`
-					<mo-menu-item icon='archive'
+					<mo-context-menu-item icon='archive'
 						@click=${() => this.moddableDataGrid.modesRepository.archive(this.mode)}
-					>${t('Archive')}</mo-menu-item>
+					>${t('Archive')}</mo-context-menu-item>
 				` : html`
-					<mo-menu-item icon='unarchive'
+					<mo-context-menu-item icon='unarchive'
 						@click=${() => this.moddableDataGrid.modesRepository.unarchive(this.mode)}
-					>${t('Unarchive')}</mo-menu-item>
+					>${t('Unarchive')}</mo-context-menu-item>
 				`}
-				<mo-menu-item icon='delete' @click=${this.deleteMode}>${t('Delete')}</mo-menu-item>
+				<mo-context-menu-item icon='delete' @click=${this.deleteMode}>${t('Delete')}</mo-context-menu-item>
 			</mo-menu>
 		`
 	}

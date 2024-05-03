@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 import { css, html, property, event, style } from '@a11d/lit'
 import { LocalStorage } from '@a11d/local-storage'
-import { contextMenu } from '@3mo/context-menu'
 import { tooltip } from '@3mo/tooltip'
 import { type DataGrid } from '@3mo/data-grid'
 import { type FetchableDataGridParametersType, FetchableDataGrid } from '@3mo/fetchable-data-grid'
@@ -154,7 +153,15 @@ export abstract class ModdableDataGrid<TData, TDataFetcherParameters extends Fet
 			</mo-flex>
 
 			${this.modesRepository.getArchived().length === 0 ? html.nothing : html`
-				<mo-icon-button icon='more_vert' ${contextMenu(this.archiveMenuTemplate)}></mo-icon-button>
+				<mo-popover-container ${style({ marginLeft: 'var(--mo-thickness-l)' })} fixed>
+					<mo-icon-button icon='unarchive'
+						${tooltip(t('Unarchive'))}
+						${style({ color: this.modesRepository.getArchived().find(m => m.id === this.mode?.id) ? 'var(--mo-color-accent)' : undefined })}
+					></mo-icon-button>
+					<mo-menu slot='popover'>
+						${this.archiveMenuTemplate}
+					</mo-menu>
+				</mo-popover-container>
 			`}
 		`
 	}
@@ -174,12 +181,22 @@ export abstract class ModdableDataGrid<TData, TDataFetcherParameters extends Fet
 
 	private get archiveMenuTemplate() {
 		return html`
-			${this.modesRepository.getArchived().map(mode => html`
-				<mo-context-menu-item
-					?activated=${this.mode?.id === mode.id}
-					@click=${() => this.mode = mode}
-				>${mode.name}</mo-context-menu-item>
-			`)}
+			${this.modesRepository.getArchived().map(mode => {
+				const unarchived = this.mode?.id === mode.id
+
+				return html`
+					<mo-context-menu-item
+						${style({
+							minWidth: '10em',
+							color: unarchived ? 'color-mix(in srgb, var(--mo-color-accent), var(--mo-color-foreground) 25%)' : undefined,
+							backgroundColor: unarchived ? 'color-mix(in srgb, var(--mo-color-accent), transparent 90%)' : undefined,
+						})}
+						@click=${() => this.mode = this.mode?.id === mode.id ? undefined : mode}
+					>
+						${mode.name}
+					</mo-context-menu-item>
+				`
+			})}
 		`
 	}
 
