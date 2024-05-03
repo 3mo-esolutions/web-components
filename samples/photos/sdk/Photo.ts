@@ -8,6 +8,8 @@ export class Photo {
 		albumIds?: Array<number>
 		skip?: number
 		take?: number
+		/** Fake param for testing modes */
+		date?: Date
 	}) => {
 		Photo.count++
 		const queryString = (parameters.albumIds?.map(id => `albumId=${id}`) ?? []).join('&')
