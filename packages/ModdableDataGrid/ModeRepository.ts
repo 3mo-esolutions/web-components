@@ -5,17 +5,12 @@ import { Mode } from './Mode.js'
 import { objectEquals } from './ObjectExtensions.js'
 
 export class ModeRepository<TData, TDataFetcherParameters extends FetchableDataGridParametersType> extends LocalStorage<Array<Mode<TData, TDataFetcherParameters>>> {
-	private static readonly typeIdentifier = '__instanceOf__'
-
 	private _defaultMode?: Required<Mode<TData, TDataFetcherParameters>>
 	get defaultMode() { return this._defaultMode! }
 
 	constructor(private readonly dataGrid: ModdableDataGrid<TData, TDataFetcherParameters>) {
 		super(`ModdableDataGrid.${dataGrid.tagName.toLowerCase()}.Modes`, [], (_key: string, value: any) => {
-			if (typeof value === 'object'
-				&& value !== null
-				&& ((value?.start && value.start instanceof Date)
-					|| (value?.end && value.end instanceof Date))) {
+			if (typeof value === 'object'	&& value !== null && ('start' in value || 'end' in value)) {
 				return new DateTimeRange(value.start, value.end)
 			}
 			return (DateTime.isoRegularExpression.test(value)) ? new Date(value) : value
