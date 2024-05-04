@@ -238,3 +238,11 @@ export const Exportable: StoryObj = {
 		</mo-data-grid>
 	`
 }
+
+export const NoContent: StoryObj = {
+	render: () => html`
+		<mo-data-grid style='height: 500px'>
+			${columnsTemplate}
+		</mo-data-grid>
+	`
+}
