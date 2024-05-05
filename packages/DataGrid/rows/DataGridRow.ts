@@ -68,9 +68,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	static override get styles() {
 		return css`
 			:host {
-				display: grid;
-				grid-template-columns: subgrid;
-				grid-column: -1 / 1;
+				display: block;
 				position: relative;
 				height: auto;
 				width: 100%;
@@ -97,7 +95,6 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 
 			#contentContainer {
 				grid-column: -1 / 1;
-				grid-template-columns: subgrid;
 				cursor: pointer;
 				transition: 250ms;
 			}
@@ -165,7 +162,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 
 	protected override get template() {
 		return html`
-			<mo-grid id='contentContainer'
+			<mo-grid id='contentContainer' columns='subgrid'
 				@click=${() => this.handleContentClick()}
 				@dblclick=${() => this.handleContentDoubleClick()}
 				@auxclick=${(e: PointerEvent) => e.button !== 1 ? void 0 : this.handleContentMiddleClick()}

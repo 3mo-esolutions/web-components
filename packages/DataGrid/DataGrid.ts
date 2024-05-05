@@ -215,7 +215,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}
 
 	@query('mo-data-grid-header') readonly header?: DataGridHeader<TData>
-	@query('#rowsContainer') private readonly rowsContainer?: HTMLElement
+	@query('#content') private readonly content?: HTMLElement
 	@query('mo-data-grid-footer') private readonly footer?: DataGridFooter<TData>
 	@query('mo-data-grid-side-panel') private readonly sidePanel?: DataGridSidePanel<TData>
 	@query('slot[name=column]') private readonly columnsSlot?: HTMLSlotElement
@@ -421,7 +421,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		}
 
 		if (this.pagination === 'auto') {
-			const rowsHeight = this.rowsContainer?.clientHeight
+			const rowsHeight = this.content?.clientHeight
 			const rowHeight = this.rowHeight
 			const pageSize = Math.floor((rowsHeight || 0) / rowHeight) || 1
 			return dynamicPageSize(pageSize)

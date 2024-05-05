@@ -41,7 +41,7 @@ const columnsTemplate = html`
 
 export const DataGrid: StoryObj = {
 	render: () => html`
-		<mo-data-grid .data=${twentyPeople} style='height: 500px; flex: 1'>
+		<mo-data-grid .data=${twentyPeople} style='height: 500px'>
 			${columnsTemplate}
 		</mo-data-grid>
 	`
@@ -156,7 +156,6 @@ export const WithAutoSubDataGrid: StoryObj = {
 			?detailsOnClick=${detailsOnClick}
 			.data=${fivePeopleWithChildren}
 			subDataGridDataSelector='children'
-			.getRowContextMenuTemplate=${(data: Array<Person>) => html`selected length: ${data.length}`}
 		>
 			${columnsTemplate}
 		</mo-data-grid>
