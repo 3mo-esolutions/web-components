@@ -3,13 +3,11 @@ import { type ColumnDefinition, type DataGrid } from './index.js'
 
 @component('mo-data-grid-header-separator')
 export class DataGridHeaderSeparator extends Component {
-	static disableResizing = false
-
 	@property({ type: Object }) dataGrid!: DataGrid<unknown>
 	@property({ type: Object }) column!: ColumnDefinition<unknown>
 
 	@state() private isResizing = false
-	@state() private delta = 0
+	@state() private pointerInlineStart = 0
 
 	private readonly minimum = 30
 
@@ -18,6 +16,12 @@ export class DataGridHeaderSeparator extends Component {
 
 	static override get styles() {
 		return css`
+			:host {
+				position: absolute;
+				inset-inline-end: calc(var(--mo-data-grid-columns-gap) * -1);
+				z-index: 2;
+			}
+
 			div.separator {
 				display: flex;
 				align-items: center;
@@ -49,6 +53,7 @@ export class DataGridHeaderSeparator extends Component {
 
 			:host(:not([disabled])) .resizerOverlay {
 				position: fixed;
+				pointer-events: none;
 				top: 0;
 				height: 100%;
 				background: var(--mo-color-gray);
@@ -58,56 +63,64 @@ export class DataGridHeaderSeparator extends Component {
 	}
 
 	protected override get template() {
-		this.toggleAttribute('disabled', DataGridHeaderSeparator.disableResizing)
 		return html`
-			<div class='separator' @mousedown=${this.handleMouseDown}>
+			<div class='separator' @mousedown=${this.handleMouseDown} @dblclick=${this.handleDoubleClick}>
 				<div class='knob'></div>
 			</div>
 
 			${this.isResizing === false ? html.nothing : html`
-				<div class='resizerOverlay' ${style({ marginInlineStart: `${this.delta}px` })}></div>
+				<div class='resizerOverlay' ${style({ insetInlineStart: `${this.pointerInlineStart}px` })}></div>
 			`}
 		`
 	}
 
 	@eventListener({ target: window, type: 'mouseup' })
 	protected handleMouseUp() {
-		if (!this.isResizing || DataGridHeaderSeparator.disableResizing) {
+		if (!this.isResizing) {
 			return
 		}
 		this.isResizing = false
-		this.delta = 0
 		this.initialWidth = undefined
-		this.column.width = `${this.targetWidth}px`
+		if (this.targetWidth) {
+			this.column.width = `${this.targetWidth}px`
+		}
 		this.dataGrid.setColumns(this.dataGrid.columns)
 	}
 
 	@eventListener({ target: window, type: 'mousemove' })
 	protected handleMouseMove(e: MouseEvent) {
-		if (this.isResizing === false || this.initialWidth === undefined || DataGridHeaderSeparator.disableResizing) {
+		if (this.isResizing === false || this.initialWidth === undefined) {
 			return
 		}
 
-		const mouseX = e.clientX
-		const offsetLeft = this.offsetLeft
+		this.updatePointerPosition(e)
 
-		this.delta = mouseX - offsetLeft - this.dataGrid.offsetLeft
+		const isRtl = getComputedStyle(this).direction === 'rtl'
+		const { left: offsetLeft, right: offsetRight } = this.getBoundingClientRect()
+		const offsetInlineStart = !isRtl ? offsetLeft : offsetRight
 
-		this.targetWidth = this.initialWidth + this.delta
+		this.targetWidth = this.initialWidth + this.pointerInlineStart - offsetInlineStart
 
 		if (this.targetWidth < this.minimum) {
-			this.delta = this.minimum - this.initialWidth
 			this.targetWidth = this.minimum
-
 		}
 	}
 
-	private readonly handleMouseDown = () => {
-		if (DataGridHeaderSeparator.disableResizing) {
-			return
-		}
+	private readonly handleMouseDown = (e: MouseEvent) => {
 		this.isResizing = true
 		this.initialWidth = this.getColumnWidth(this.column)
+		this.updatePointerPosition(e)
+	}
+
+	private updatePointerPosition(e: MouseEvent) {
+		const isRtl = getComputedStyle(this).direction === 'rtl'
+		this.pointerInlineStart = !isRtl ? e.clientX : window.innerWidth - e.clientX
+	}
+
+	private readonly handleDoubleClick = () => {
+		this.isResizing = false
+		this.column.width = 'min-content'
+		this.dataGrid.setColumns(this.dataGrid.columns)
 	}
 
 	private getColumnWidth(column: ColumnDefinition<unknown>) {

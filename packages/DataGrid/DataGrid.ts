@@ -483,7 +483,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			:host {
 				--mo-data-grid-column-details-width: 20px;
 				--mo-data-grid-column-selection-width: 40px;
-				--mo-data-grid-column-more-width: 20px;
+				--mo-data-grid-column-more-width: minmax(28px, 1fr);
 
 				--mo-data-grid-header-height: 32px;
 				--mo-data-grid-footer-min-height: 40px;
@@ -495,6 +495,8 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 				--mo-data-grid-row-tree-line-width: 8px;
 				--mo-details-data-grid-start-margin: 26px;
+
+				--mo-data-grid-sticky-part-color: var(--mo-color-surface);
 
 				--mo-data-grid-selection-background: color-mix(in srgb, var(--mo-color-accent), transparent 50%);
 				display: flex;
@@ -696,7 +698,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	protected get noContentTemplate() {
 		return html`
-			<slot name='error-no-content'>
+			<slot name='error-no-content' ${style({ display: 'block', gridColumn: '-1 / 1' })}>
 				<mo-empty-state icon='youtube_searched_for'>${t('No results')}</mo-empty-state>
 			</slot>
 		`
@@ -706,17 +708,19 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		this.provideCssColumnsProperties()
 		this.toggleAttribute('hasDetails', this.hasDetails)
 		return html`
-			<mo-flex ${style({ flex: '1', position: 'relative' })}>
-				<mo-grid ${style({ flex: '1' })} rows='* auto'>
-					<mo-scroller ${style({ minHeight: 'var(--mo-data-grid-content-min-height, calc(var(--mo-data-grid-min-visible-rows, 2.5) * var(--mo-data-grid-row-height) + var(--mo-data-grid-header-height)))' })}>
-						<mo-grid ${style({ height: '100%' })} rows='auto *'>
-							${this.headerTemplate}
-							${this.contentTemplate}
-						</mo-grid>
-					</mo-scroller>
-					${this.footerTemplate}
-				</mo-grid>
-			</mo-flex>
+			<mo-grid rows='* auto' ${style({ position: 'relative' })}>
+				<mo-scroller
+					${style({ minHeight: 'var(--mo-data-grid-content-min-height, calc(var(--mo-data-grid-min-visible-rows, 2.5) * var(--mo-data-grid-row-height) + var(--mo-data-grid-header-height)))' })}
+					${observeResize(() => this.requestUpdate())}
+					@scroll=${this.handleScroll}
+				>
+					<mo-grid id='content' autoRows='min-content' columns='var(--mo-data-grid-columns)' columnGap='var(--mo-data-grid-columns-gap)'>
+						${this.headerTemplate}
+						${this.contentTemplate}
+					</mo-grid>
+				</mo-scroller>
+				${this.footerTemplate}
+			</mo-grid>
 		`
 	}
 
@@ -736,13 +740,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			? this.renderData.map(getRowTemplate)
 			: html`<mo-virtualized-scroller .items=${this.renderData} .getItemTemplate=${getRowTemplate as any} exportparts='row'></mo-virtualized-scroller>`
 		return html`
-			<mo-scroller id='rowsContainer'
-				${style({ gridRow: '2', gridColumn: '1 / last-line', overflowX: 'hidden' })}
-				${observeResize(() => this.requestUpdate())}
-				@scroll=${this.handleScroll}
-			>
 				${content}
-			</mo-scroller>
 		`
 	}
 

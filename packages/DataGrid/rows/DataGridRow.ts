@@ -68,7 +68,9 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	static override get styles() {
 		return css`
 			:host {
-				display: block;
+				display: grid;
+				grid-template-columns: subgrid;
+				grid-column: -1 / 1;
 				position: relative;
 				height: auto;
 				width: 100%;
@@ -94,6 +96,8 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			}
 
 			#contentContainer {
+				grid-column: -1 / 1;
+				grid-template-columns: subgrid;
 				cursor: pointer;
 				transition: 250ms;
 			}
@@ -149,7 +153,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				display: none;
 			}
 
-			#detailsContainer > :first-child {
+			:host(:not([has-sub-data])) #detailsContainer > :first-child {
 				padding: 8px 0;
 			}
 
@@ -220,11 +224,11 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 
 	protected get contextMenuIconButtonTemplate() {
 		return this.dataGrid.hasContextMenu === false ? html.nothing : html`
-			<mo-flex justifyContent='center' alignItems='center'
-				@click=${this.openContextMenu}
-				@dblclick=${(e: Event) => e.stopPropagation()}
-			>
-				<mo-icon-button id='contextMenuIconButton' icon='more_vert'></mo-icon-button>
+			<mo-flex justifyContent='center' ${style({ height: '100%', placeSelf: 'end', position: 'sticky', insetInlineEnd: '0px', zIndex: '3', background: 'var(--mo-data-grid-sticky-part-color)' })}>
+				<mo-icon-button id='contextMenuIconButton' icon='more_vert' dense
+					@click=${this.openContextMenu}
+					@dblclick=${(e: Event) => e.stopPropagation()}
+				></mo-icon-button>
 			</mo-flex>
 		`
 	}
@@ -239,12 +243,11 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		}
 
 		const subData = this.dataGrid.getSubData(this.data)
+		this.toggleAttribute('has-sub-data', !!subData)
 
 		if (subData) {
 			return html`
-				<mo-flex style='width: 100%; padding: 0px'>
-					${subData.map(data => this.dataGrid.getRowTemplate(data, undefined, this.level + 1))}
-				</mo-flex>
+				${subData.map(data => this.dataGrid.getRowTemplate(data, undefined, this.level + 1))}
 			`
 		}
 
