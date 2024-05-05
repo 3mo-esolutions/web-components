@@ -14,7 +14,7 @@ type Person = { id: number, name: string, age: number, city: string }
 
 const generatePeople = (count: number) => {
 	const cities = ['Berlin', 'Hamburg', 'München', 'Köln', 'Frankfurt']
-	const names = ['Max', 'Moritz', 'Mia', 'Maja', 'Mika']
+	const names = ['Max', 'Moritz long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long', 'Mia', 'Maja', 'Mika long long long long long long long long long long long long long long long long long long long long long long long long long']
 	return new Array(count).fill(0).map((_, i) => ({
 		id: i + 1,
 		name: names[Math.floor(Math.random() * names.length)],
@@ -24,7 +24,8 @@ const generatePeople = (count: number) => {
 }
 
 const fivePeople = generatePeople(5)
-const thousandPeople = generatePeople(1000)
+const twentyPeople = generatePeople(20)
+const hundredPeople = generatePeople(100)
 
 const fivePeopleWithChildren = fivePeople.map(p => ({
 	...p,
@@ -33,14 +34,14 @@ const fivePeopleWithChildren = fivePeople.map(p => ({
 
 const columnsTemplate = html`
 	<mo-data-grid-column-number hidden nonEditable heading='ID' dataSelector='id'></mo-data-grid-column-number>
-	<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
+	<mo-data-grid-column-text heading='Name' width='200px' dataSelector='name'></mo-data-grid-column-text>
 	<mo-data-grid-column-number .nonEditable=${(person: Person) => person.age > 30} heading='Age' dataSelector='age'></mo-data-grid-column-number>
 	<mo-data-grid-column-text heading='City' dataSelector='city'></mo-data-grid-column-text>
 `
 
 export const DataGrid: StoryObj = {
 	render: () => html`
-		<mo-data-grid .data=${fivePeople} style='height: 500px'>
+		<mo-data-grid .data=${twentyPeople} style='height: 500px; flex: 1'>
 			${columnsTemplate}
 		</mo-data-grid>
 	`
@@ -110,7 +111,7 @@ export const Sums: StoryObj = {
 
 export const Sorting: StoryObj = {
 	render: () => html`
-		<mo-data-grid .data=${thousandPeople} pagination='auto' selectionMode='multiple' style='height: 500px' selectOnClick .sorting=${[{ selector: 'name', strategy: DataGridSortingStrategy.Ascending }, { selector: 'age', strategy: DataGridSortingStrategy.Descending }]}>
+		<mo-data-grid .data=${hundredPeople} pagination='auto' selectionMode='multiple' style='height: 500px' selectOnClick .sorting=${[{ selector: 'name', strategy: DataGridSortingStrategy.Ascending }, { selector: 'age', strategy: DataGridSortingStrategy.Descending }]}>
 			<mo-data-grid-column-number hidden nonEditable heading='ID' dataSelector='id'></mo-data-grid-column-number>
 			<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
 			<mo-data-grid-column-number heading='Age' dataSelector='age' sumHeading='Ages Total'></mo-data-grid-column-number>
@@ -155,6 +156,7 @@ export const WithAutoSubDataGrid: StoryObj = {
 			?detailsOnClick=${detailsOnClick}
 			.data=${fivePeopleWithChildren}
 			subDataGridDataSelector='children'
+			.getRowContextMenuTemplate=${(data: Array<Person>) => html`selected length: ${data.length}`}
 		>
 			${columnsTemplate}
 		</mo-data-grid>
@@ -192,7 +194,7 @@ export const Editability: StoryObj = {
 
 export const WithFiltersWithoutToolbar: StoryObj = {
 	render: () => html`
-		<mo-data-grid .data=${thousandPeople} style='height: 500px'>
+		<mo-data-grid .data=${hundredPeople} style='height: 500px'>
 			${columnsTemplate}
 			<mo-checkbox slot='filter' label='Something'></mo-checkbox>
 		</mo-data-grid>
@@ -201,9 +203,15 @@ export const WithFiltersWithoutToolbar: StoryObj = {
 
 export const Virtualization: StoryObj = {
 	render: () => html`
-		<mo-data-grid .data=${thousandPeople} style='height: 500px'>
-			${columnsTemplate}
-		</mo-data-grid>
+		<mo-flex gap='10px'>
+			<mo-alert type='warning'>
+				Virtualization is disabled as of version 0.6.x due to incompatibilities with CSS Sub-grids.
+				It will be re-enabled or re-worked into a different solution in a future version.
+			</mo-alert>
+			<mo-data-grid .data=${hundredPeople} style='height: 500px'>
+				${columnsTemplate}
+			</mo-data-grid>
+		</mo-flex>
 	`
 }
 
@@ -212,7 +220,7 @@ export const MinVisibleRows: StoryObj = {
 		minVisibleRows: 10
 	},
 	render: ({ minVisibleRows }) => html`
-		<mo-data-grid .data=${thousandPeople} ${style({ '--mo-data-grid-min-visible-rows': String(minVisibleRows) })}>
+		<mo-data-grid .data=${hundredPeople} ${style({ '--mo-data-grid-min-visible-rows': String(minVisibleRows) })}>
 			${columnsTemplate}
 		</mo-data-grid>
 	`
@@ -224,7 +232,7 @@ export const Fab: StoryObj = {
 		withFooter: false,
 	},
 	render: ({ label, withFooter }) => html`
-		<mo-data-grid .data=${thousandPeople} style='height: 500px' pagination=${ifDefined(withFooter ? 'auto' : undefined)}>
+		<mo-data-grid .data=${hundredPeople} style='height: 500px' pagination=${ifDefined(withFooter ? 'auto' : undefined)}>
 			${columnsTemplate}
 			<mo-fab slot='fab' icon='add'>${label}</mo-fab>
 		</mo-data-grid>

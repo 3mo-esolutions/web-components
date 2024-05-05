@@ -496,7 +496,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				--mo-data-grid-row-tree-line-width: 8px;
 				--mo-details-data-grid-start-margin: 26px;
 
-				--mo-data-grid-sticky-part-color: var(--mo-color-surface);
+				--mo-data-grid-sticky-part-color: var(--mo-color-surface-container-high);
 
 				--mo-data-grid-selection-background: color-mix(in srgb, var(--mo-color-accent), transparent 50%);
 				display: flex;
@@ -575,6 +575,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				bottom: 8px;
 				inset-inline-end: 16px;
 				transition: var(--mo-data-grid-fab-transition, 250ms);
+				z-index: 3;
 			}
 
 			:host([hasFooter]) #fab {
@@ -616,6 +617,16 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				height: 100%;
 				z-index: 1;
 				background-color: var(--mo-color-surface);
+			}
+
+			mo-grid#content:has(.span-through) {
+				min-height: 100%;
+				grid-template-rows: auto 1fr;
+			}
+
+			.span-through {
+				display: block;
+				grid-column: -1 / 1;
 			}
 		`
 	}
@@ -698,7 +709,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	protected get noContentTemplate() {
 		return html`
-			<slot name='error-no-content' ${style({ display: 'block', gridColumn: '-1 / 1' })}>
+			<slot name='error-no-content' class='span-through'>
 				<mo-empty-state icon='youtube_searched_for'>${t('No results')}</mo-empty-state>
 			</slot>
 		`
@@ -731,7 +742,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}
 
 	private get shallVirtualize() {
-		return !this.preventVerticalContentScroll && this.renderData.length > this.virtualizationThreshold
+		return false && !this.preventVerticalContentScroll && this.renderData.length > this.virtualizationThreshold
 	}
 
 	private get rowsTemplate() {
@@ -740,7 +751,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			? this.renderData.map(getRowTemplate)
 			: html`<mo-virtualized-scroller .items=${this.renderData} .getItemTemplate=${getRowTemplate as any} exportparts='row'></mo-virtualized-scroller>`
 		return html`
-				${content}
+			${content}
 		`
 	}
 

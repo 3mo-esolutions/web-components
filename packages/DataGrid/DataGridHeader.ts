@@ -155,7 +155,7 @@ export class DataGridHeader<TData> extends Component {
 	private get moreTemplate() {
 		return this.dataGrid.hasToolbar || this.dataGrid.sidePanelHidden ? html.nothing : html`
 			<mo-flex alignItems='end' justifyContent='center'
-				${style({ cursor: 'pointer' })}
+				${style({ cursor: 'pointer', position: 'sticky', insetInlineEnd: '0px', background: 'var(--mo-data-grid-sticky-part-color)', zIndex: '3' })}
 			>
 				<mo-icon-button dense icon='settings' ${style({ color: 'var(--mo-color-accent)', fontSize: 'large' })}
 					@click=${() => this.dataGrid.navigateToSidePanelTab(this.dataGrid.sidePanelTab ? undefined : DataGridSidePanelTab.Settings)}

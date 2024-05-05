@@ -230,13 +230,13 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 
 	private get fetchingTemplate() {
 		return html`
-			<mo-circular-progress ${style({ width: '48px', height: '48px', margin: 'auto' })}></mo-circular-progress>
+			<mo-circular-progress class='span-through' ${style({ width: '48px', height: '48px', margin: 'auto' })}></mo-circular-progress>
 		`
 	}
 
 	protected get noSelectionTemplate() {
 		return html`
-			<slot name='error-no-selection'>
+			<slot name='error-no-selection' class='span-through'>
 				<mo-empty-state icon='touch_app'>${t('Make a filter selection')}</mo-empty-state>
 			</slot>
 		`
