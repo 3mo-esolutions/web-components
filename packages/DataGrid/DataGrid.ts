@@ -719,7 +719,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		this.provideCssColumnsProperties()
 		this.toggleAttribute('hasDetails', this.hasDetails)
 		return html`
-			<mo-grid rows='* auto' ${style({ position: 'relative' })}>
+			<mo-grid rows='* auto' ${style({ position: 'relative', height: '100%' })}>
 				<mo-scroller
 					${style({ minHeight: 'var(--mo-data-grid-content-min-height, calc(var(--mo-data-grid-min-visible-rows, 2.5) * var(--mo-data-grid-row-height) + var(--mo-data-grid-header-height)))' })}
 					${observeResize(() => this.requestUpdate())}
