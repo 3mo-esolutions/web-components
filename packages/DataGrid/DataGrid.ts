@@ -214,7 +214,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		return [...root?.querySelectorAll('[mo-data-grid-row]') ?? []] as Array<DataGridRow<TData, TDetailsElement>>
 	}
 
-	@query('mo-data-grid-header') readonly header?: DataGridHeader<TData>
+	@query('mo-data-grid-header') private readonly header?: DataGridHeader<TData>
 	@query('#content') private readonly content?: HTMLElement
 	@query('mo-data-grid-footer') private readonly footer?: DataGridFooter<TData>
 	@query('mo-data-grid-side-panel') private readonly sidePanel?: DataGridSidePanel<TData>
