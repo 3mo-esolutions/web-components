@@ -8,10 +8,11 @@ export class DataGridDefaultRow<TData, TDetailsElement extends Element | undefin
 		return css`
 			${super.styles}
 
-			mo-grid {
-				height: var(--mo-data-grid-row-height);
-				grid-template-columns: var(--mo-data-grid-columns);
-				column-gap: var(--mo-data-grid-columns-gap);
+			:host {
+				display: grid;
+				grid-template-columns: subgrid;
+				grid-column: -1 / 1;
+				min-height: var(--mo-data-grid-row-height);
 			}
 
 			mo-flex {
@@ -22,6 +23,15 @@ export class DataGridDefaultRow<TData, TDetailsElement extends Element | undefin
 
 			#selectionContainer {
 				height: var(--mo-data-grid-row-height);
+			}
+
+			#detailsContainer {
+				grid-column: -1 / 1;
+			}
+
+			:host([has-sub-data]) #detailsContainer {
+				display: grid;
+				grid-template-columns: subgrid;
 			}
 
 			#detailsContainer [instanceof*=mo-data-grid] {

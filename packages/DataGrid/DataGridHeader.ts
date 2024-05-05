@@ -1,4 +1,4 @@
-import { component, Component, css, html, ifDefined, property, event, join, style } from '@a11d/lit'
+import { component, Component, css, html, ifDefined, property, event, style } from '@a11d/lit'
 import { KeyboardController } from '@3mo/keyboard-controller'
 import { type Checkbox } from '@3mo/checkbox'
 import { DataGridSelectionMode, DataGridSortingStrategy, type ColumnDefinition, type DataGrid, DataGridSidePanelTab } from './index.js'
@@ -41,7 +41,13 @@ export class DataGridHeader<TData> extends Component {
 			:host {
 				--mo-data-grid-header-separator-height: 15px;
 				--mo-data-grid-header-separator-width: 2px;
-				display: inherit;
+				display: grid;
+				grid-template-columns: subgrid;
+				grid-column: -1 / 1;
+				background: var(--mo-data-grid-sticky-part-color);
+				position: sticky;
+				top: 0;
+				z-index: 4;
 				font-size: small;
 			}
 
@@ -79,27 +85,12 @@ export class DataGridHeader<TData> extends Component {
 		`
 	}
 
-	private get skeletonColumns() {
-		return [
-			this.dataGrid.detailsColumnWidth,
-			this.dataGrid.selectionColumnWidth,
-			'1fr',
-			this.dataGrid.moreColumnWidth
-		].filter((c): c is string => c !== undefined).join(' ')
-	}
-
-	private get separatorAdjustedColumns() {
-		return this.dataGrid.dataColumnsWidths.join(' var(--mo-data-grid-columns-gap) ')
-	}
-
 	protected override get template() {
 		return html`
-			<mo-grid id='header' columns=${this.skeletonColumns} columnGap='var(--mo-data-grid-columns-gap)'>
-				${this.detailsExpanderTemplate}
-				${this.selectionTemplate}
-				${this.contentTemplate}
-				${this.moreTemplate}
-			</mo-grid>
+			${this.detailsExpanderTemplate}
+			${this.selectionTemplate}
+			${this.contentTemplate}
+			${this.moreTemplate}
 		`
 	}
 
@@ -129,33 +120,33 @@ export class DataGridHeader<TData> extends Component {
 
 	private get contentTemplate() {
 		return html`
-			<mo-grid columns=${this.separatorAdjustedColumns}>
-				${join(this.dataGrid.visibleColumns.map(column => this.getHeaderCellTemplate(column)), index => html`
-					<mo-data-grid-header-separator
-						.dataGrid=${this.dataGrid as any}
-						.column=${this.dataGrid.visibleColumns[index]}
-						@columnUpdate=${() => this.dataGrid.requestUpdate()}
-					></mo-data-grid-header-separator>
-				`)}
-			</mo-grid>
+			${this.dataGrid.visibleColumns.map(this.getHeaderCellTemplate)}
 		`
 	}
 
-	private getHeaderCellTemplate(column: ColumnDefinition<TData>) {
+	private readonly getHeaderCellTemplate = (column: ColumnDefinition<TData>, index: number) => {
 		const sortingDefinition = this.dataGrid.getSortingDefinition(column)
 		const sortIcon = !sortingDefinition ? undefined : sortingDefinition.strategy === DataGridSortingStrategy.Ascending ? 'arrow_upward' : 'arrow_downward'
 		const sortingRank = !sortingDefinition || this.dataGrid.getSorting().length <= 1 ? undefined : sortingDefinition.rank
 
 		return html`
-			<mo-flex direction=${column.alignment === 'end' ? 'horizontal-reversed' : 'horizontal'} alignItems='center'
-				${style({ overflow: 'hidden', position: 'relative', cursor: 'pointer', userSelect: 'none' })}
-				@click=${() => this.sort(column)}
-			>
-				<div class='headerContent' ${style({ width: '100%', textAlign: column.alignment })} title=${column.title || column.heading}>${column.heading}</div>
+			<mo-flex direction=${column.alignment === 'end' ? 'horizontal-reversed' : 'horizontal'} alignItems='center' ${style({ position: 'relative' })}>
+				<mo-flex direction=${column.alignment === 'end' ? 'horizontal-reversed' : 'horizontal'} alignItems='center'
+					${style({ overflow: 'hidden', cursor: 'pointer', userSelect: 'none', flex: '1' })}
+					@click=${() => this.sort(column)}
+				>
+					<div class='headerContent' ${style({ width: '100%', textAlign: column.alignment })} title=${column.title || column.heading}>${column.heading}</div>
 
-				${sortIcon === undefined ? html.nothing : html`
-					${!sortingRank ? html.nothing : html`<span class='sort-rank'>${sortingRank}</span>`}
-					<mo-icon ${style({ color: 'var(--mo-color-accent)' })} icon=${ifDefined(sortIcon)}></mo-icon>
+					${sortIcon === undefined ? html.nothing : html`
+						${!sortingRank ? html.nothing : html`<span class='sort-rank'>${sortingRank}</span>`}
+						<mo-icon ${style({ color: 'var(--mo-color-accent)' })} icon=${ifDefined(sortIcon)}></mo-icon>
+					`}
+				</mo-flex>
+				${index === this.dataGrid.visibleColumns.length - 1 ? html.nothing : html`
+					<mo-data-grid-header-separator
+						.dataGrid=${this.dataGrid as any}
+						.column=${this.dataGrid.visibleColumns[index]}
+					></mo-data-grid-header-separator>
 				`}
 			</mo-flex>
 		`
@@ -163,7 +154,9 @@ export class DataGridHeader<TData> extends Component {
 
 	private get moreTemplate() {
 		return this.dataGrid.hasToolbar || this.dataGrid.sidePanelHidden ? html.nothing : html`
-			<mo-flex alignItems='center' justifyContent='center' ${style({ marginInlineEnd: '8px', cursor: 'pointer', position: 'relative' })}>
+			<mo-flex alignItems='end' justifyContent='center'
+				${style({ cursor: 'pointer', position: 'sticky', insetInlineEnd: '0px', background: 'var(--mo-data-grid-sticky-part-color)', zIndex: '3' })}
+			>
 				<mo-icon-button dense icon='settings' ${style({ color: 'var(--mo-color-accent)', fontSize: 'large' })}
 					@click=${() => this.dataGrid.navigateToSidePanelTab(this.dataGrid.sidePanelTab ? undefined : DataGridSidePanelTab.Settings)}
 				></mo-icon-button>
