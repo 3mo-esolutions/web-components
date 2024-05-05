@@ -8,6 +8,11 @@ RootCssInjector.inject(css`
 		--mo-color-background: color-mix(in srgb, rgb(220, 220, 220), var(--mo-color-accent) var(--mo-color-background-leak-percent, 14%));
 		--mo-color-gray: rgb(121, 121, 121);
 		--mo-color-surface: color-mix(in srgb, white, var(--mo-color-accent) var(--mo-color-surface-leak-percent, 6%));
+		--mo-color-surface-container-lowest: var(--mo-color-surface);
+		--mo-color-surface-container-low: var(--mo-color-surface);
+		--mo-color-surface-container: var(--mo-color-surface);
+		--mo-color-surface-container-high: color-mix(in srgb, var(--mo-color-surface), black 4%);
+		--mo-color-surface-container-highest: color-mix(in srgb, var(--mo-color-surface), black 8%);
 		--mo-shadow-base: 95, 81, 78;
 	}
 
@@ -17,6 +22,11 @@ RootCssInjector.inject(css`
 		--mo-color-background: color-mix(in srgb, rgb(12, 13, 17), var(--mo-color-accent) var(--mo-color-background-leak-percent, 4%));
 		--mo-color-gray: rgb(165, 165, 165);
 		--mo-color-surface: color-mix(in srgb, rgb(27, 28, 32), var(--mo-color-accent) var(--mo-color-surface-leak-percent, 8%));
+		--mo-color-surface-container-lowest: color-mix(in srgb, var(--mo-color-surface) 100%, black 64%);
+		--mo-color-surface-container-low: color-mix(in srgb, var(--mo-color-surface) 100%, black 32%);
+		--mo-color-surface-container: var(--mo-color-surface);
+		--mo-color-surface-container-high: color-mix(in srgb, var(--mo-color-surface) 100%, white 4%);
+		--mo-color-surface-container-highest: color-mix(in srgb, var(--mo-color-surface) 100%, white 8%);
 		--mo-shadow-base: 0, 1, 3;
 	}
 
