@@ -156,6 +156,12 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 				text-align: center;
 			}
 
+			:host([sticky]) {
+				position: sticky;
+				z-index: 2;
+				background: var(--mo-data-grid-sticky-part-color);
+			}
+
 			:host > :first-child {
 				line-height: var(--mo-data-grid-row-height);
 			}
@@ -178,6 +184,8 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 		} else {
 			this.setAttribute('tabindex', '-1')
 		}
+		this.toggleAttribute('sticky', this.column.sticky !== undefined)
+		this.style.insetInline = this.dataGrid.getStickyColumnInsetInline(this.column)
 		return this.isEditing ? this.editContentTemplate as HTMLTemplateResult : this.contentTemplate
 	}
 

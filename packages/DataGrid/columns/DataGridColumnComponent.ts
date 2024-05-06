@@ -1,6 +1,6 @@
 import { Component, property, type HTMLTemplateResult } from '@a11d/lit'
 import { DataGrid } from '../DataGrid.js'
-import { DataGridColumn, type DataGridColumnAlignment } from '../DataGridColumn.js'
+import { DataGridColumn, type DataGridColumnAlignment, type DataGridColumnSticky } from '../DataGridColumn.js'
 
 /**
  * @attr width - The width of the column
@@ -12,6 +12,7 @@ import { DataGridColumn, type DataGridColumnAlignment } from '../DataGridColumn.
  * @attr sortDataSelector - The data selector of the column
  * @attr nonSortable - Whether the column is sortable
  * @attr nonEditable - Whether the column is editable
+ * @attr sticky - The sticky position of the column, either 'start', 'end', or 'both'
  */
 export abstract class DataGridColumnComponent<TData, TValue> extends Component {
 	static readonly regex = /^\s*(0|[1-9][0-9]*)?\s*\*\s*$/
@@ -24,6 +25,7 @@ export abstract class DataGridColumnComponent<TData, TValue> extends Component {
 
 	@property() width = 'max-content'
 	@property({ type: Boolean }) override hidden = false
+	@property() sticky?: DataGridColumnSticky
 	@property({ reflect: true }) heading = ''
 	@property({ reflect: true }) description?: string
 	@property({ reflect: true }) textAlign: DataGridColumnAlignment = 'start'
@@ -47,6 +49,7 @@ export abstract class DataGridColumnComponent<TData, TValue> extends Component {
 			description: this.description,
 			alignment: this.textAlign,
 			hidden: this.hidden,
+			sticky: this.sticky,
 			width: !DataGridColumnComponent.regex.test(this.width) ? this.width : `${DataGridColumnComponent.getProportion(this.width)}fr`,
 			sortable: !this.nonSortable,
 			editable: this.getEditContentTemplate !== undefined && (typeof nonEditable !== 'function' ? !nonEditable : x => !nonEditable(x)),

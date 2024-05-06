@@ -83,6 +83,16 @@ export class DataGridHeader<TData> extends Component {
 				align-items: center;
 				justify-content: center;
 			}
+
+			.cell {
+				position: relative;
+			}
+
+			.cell[data-sticky] {
+				position: sticky;
+				z-index: 2;
+				background: var(--mo-data-grid-sticky-part-color);
+			}
 		`
 	}
 
@@ -130,9 +140,11 @@ export class DataGridHeader<TData> extends Component {
 		const sortingDefinition = column.sortingDefinition
 		const sortIcon = !sortingDefinition ? undefined : sortingDefinition.strategy === DataGridSortingStrategy.Ascending ? 'arrow_upward' : 'arrow_downward'
 		const sortingRank = !sortingDefinition || this.dataGrid.getSorting().length <= 1 ? undefined : sortingDefinition.rank
-
 		return html`
-			<mo-grid alignItems='center' ${style({ position: 'relative', userSelect: 'none' })}>
+			<mo-flex class='cell' alignItems='center' direction=${column.alignment === 'end' ? 'horizontal-reversed' : 'horizontal'}
+				data-sticky=${ifDefined(column.sticky)}
+				${!column.sticky ? html.nothing : style({ insetInline: this.dataGrid.getStickyColumnInsetInline(column) })}
+			>
 				<mo-flex direction=${column.alignment === 'end' ? 'horizontal-reversed' : 'horizontal'} alignItems='center'
 					${style({ overflow: 'hidden', cursor: 'pointer', flex: '1' })}
 					@click=${() => this.sort(column)}
@@ -151,7 +163,7 @@ export class DataGridHeader<TData> extends Component {
 					.dataGrid=${this.dataGrid as any}
 					.column=${this.dataGrid.visibleColumns[index]}
 				></mo-data-grid-header-separator>
-			</mo-grid>
+			</mo-flex>
 		`
 	}
 

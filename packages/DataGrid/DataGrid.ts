@@ -886,6 +886,34 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		this.style.setProperty('--mo-data-grid-columns', this.columnsWidths.join(' '))
 	}
 
+	getStickyColumnInsetInline(column: ColumnDefinition<TData, unknown>) {
+		const columnIndex = this.visibleColumns.indexOf(column)
+		const getFixedInset = (type: 'start' | 'end') => type === 'start'
+			? 0
+			: (this.hasContextMenu ? 28 : 0)
+
+		const calculate = (type: 'start' | 'end') => this.visibleColumns
+			.filter((c, i) => c.sticky === type && (type === 'start' ? i < columnIndex : i > columnIndex))
+			.map(c => this.rows[0]?.getCell(c)?.clientWidth)
+			.filter(x => x !== undefined)
+			.reduce((a, b) => a! + b!, 0)!
+			+ getFixedInset(type)
+
+		switch (column.sticky) {
+			case 'start':
+				const start = calculate('start')
+				return `${start}px auto`
+			case 'end':
+				const end = calculate('end')
+				return `auto ${end}px`
+			case 'both':
+				const [s, e] = [calculate('start'), calculate('end')]
+				return `${s}px ${e}px`
+			default:
+				return ''
+		}
+	}
+
 	get columnsWidths() {
 		return [
 			this.detailsColumnWidth,
