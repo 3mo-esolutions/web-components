@@ -347,12 +347,21 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		this.setColumns(extractedColumns)
 	}
 
-	handleEdit(data: TData, dataSelector: KeyPathOf<TData>, value: KeyPathValueOf<TData, KeyPathOf<TData>> | undefined) {
-		const row = this.rows.find(r => r.data === data)
-		const cell = row?.cells.find(c => c.dataSelector === dataSelector)
-		if (row && cell && value !== undefined && cell.value !== value) {
+	getRow(data: TData) {
+		return this.rows.find(r => r.data === data)
+	}
+
+	getCell(data: TData, column: DataGridColumn<TData, unknown>) {
+		const row = this.getRow(data)
+		return row?.getCell(column)
+	}
+
+	handleEdit(data: TData, column: DataGridColumn<TData, unknown>, value: KeyPathValueOf<TData, KeyPathOf<TData>> | undefined) {
+		const row = this.getRow(data)
+		const cell = row?.getCell(column)
+		if (row && cell && value !== undefined && column.dataSelector && cell.value !== value) {
 			row.requestUpdate()
-			setValueByKeyPath(data, dataSelector, value)
+			setValueByKeyPath(row, column.dataSelector as any, value)
 			this.cellEdit.dispatch(cell)
 		}
 	}

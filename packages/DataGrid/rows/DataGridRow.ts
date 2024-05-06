@@ -48,6 +48,10 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		return this.renderRoot.querySelector('#detailsContainer')?.firstElementChild as TDetailsElement as TDetailsElement | undefined
 	}
 
+	getCell(column: ColumnDefinition<TData, any>) {
+		return this.cells.find(cell => cell.column === column)
+	}
+
 	protected override initialized() {
 		this.toggleAttribute('mo-data-grid-row', true)
 	}

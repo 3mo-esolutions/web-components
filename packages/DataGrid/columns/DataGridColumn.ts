@@ -59,7 +59,7 @@ export abstract class DataGridColumn<TData, TValue> extends Component {
 	abstract getEditContentTemplate?(value: TValue | undefined, data: TData): HTMLTemplateResult
 
 	protected handleEdit(value: TValue | undefined, data: TData) {
-		this.dataGrid?.handleEdit(data, this.dataSelector, value as any)
+		this.dataGrid?.handleEdit(data, this, value as any)
 	}
 
 	override connectedCallback() {
