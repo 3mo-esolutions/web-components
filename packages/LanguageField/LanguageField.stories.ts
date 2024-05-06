@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/web-components'
 import { html, ifDefined, property } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
-import { type Language as LanguageBase, LanguageField as LanguageFieldBase } from './index.js'
+import { type Language as LanguageBase, LanguageField as LanguageFieldBase, type LanguageFieldTemplateParameter } from './index.js'
 
 export default {
 	title: 'Language Field',
@@ -27,7 +27,7 @@ customElements.define('story-language-field', StoryLanguageField)
 export const ModeAttach: StoryObj = {
 	render: () => html`
 		<story-language-field label='Label'
-			.fieldTemplate=${(value: string, handleChange: (value: string) => void, label: string, language: Language) => html`
+			.fieldTemplate=${({ value, handleChange, label, language }: LanguageFieldTemplateParameter<string>) => html`
 				<mo-field-text
 					label=${`${label} (${language.name})`}
 					value=${value}
@@ -42,7 +42,7 @@ export const ModeAttach: StoryObj = {
 export const OptionTemplate: StoryObj = {
 	render: () => html`
 		<story-language-field label='Label'
-			.fieldTemplate=${(value: string, handleChange: (value: string) => void, label: string, language: Language) => html`
+			.fieldTemplate=${({ value, handleChange, label, language }: LanguageFieldTemplateParameter<string>) => html`
 				<mo-field-text
 					label=${`${label} (${language.name})`}
 					value=${value}
@@ -61,7 +61,7 @@ export const OptionTemplate: StoryObj = {
 export const DenseField: StoryObj = {
 	render: () => html`
 		<story-language-field label='Label' mode='overlay' dense
-			.fieldTemplate=${(value: string, handleChange: (value: string) => void, label: string, language: Language) => html`
+			.fieldTemplate=${({ value, handleChange, label, language }: LanguageFieldTemplateParameter<string>) => html`
 				<mo-field-text dense
 					label=${`${label} (${language.name})`}
 					value=${value}
@@ -75,7 +75,7 @@ export const DenseField: StoryObj = {
 export const ModeOverlay: StoryObj = {
 	render: () => html`
 		<story-language-field label='Label' mode='overlay'
-			.fieldTemplate=${(value: string, handleChange: (value: string) => void, label: string, language: Language) => html`
+			.fieldTemplate=${({ value, handleChange, label, language }: LanguageFieldTemplateParameter<string>) => html`
 				<mo-field-text-area
 					label=${`${label} (${language.name})`}
 					value=${value}
@@ -89,7 +89,7 @@ export const ModeOverlay: StoryObj = {
 export const WhenOneLanguage: StoryObj = {
 	render: () => html`
 		<story-language-field onlyOne label='Label' mode='overlay'
-			.fieldTemplate=${(value: string, handleChange: (value: string) => void, label: string, language: Language) => html`
+			.fieldTemplate=${({ value, handleChange, label, language }: LanguageFieldTemplateParameter<string>) => html`
 				<mo-field-text
 					label=${`${label} (${language.name})`}
 					value=${value}
