@@ -18,16 +18,16 @@ export class DataGridHeaderSeparator extends Component {
 		return css`
 			:host {
 				position: absolute;
-				inset-inline-end: calc(var(--mo-data-grid-columns-gap) * -1);
-				z-index: 2;
+				inset-inline-end: -3px;
+				z-index: 5;
 			}
 
 			div.separator {
 				display: flex;
 				align-items: center;
 				justify-content: center;
-				inset-inline-start: calc(var(--mo-data-grid-columns-gap) * -1);
-				width: var(--mo-data-grid-columns-gap);
+				inset-inline-start: -6px;
+				width: 6px;
 				height: 100%;
 				user-select: none;
 			}

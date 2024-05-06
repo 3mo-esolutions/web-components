@@ -110,7 +110,7 @@ export type DataGridSorting<TData> = DataGridSortingDefinition<TData> | Array<Da
  *
  * @cssprop --mo-data-grid-min-visible-rows - The minimum number of visible rows. Default to 2.5.
  * @cssprop --mo-data-grid-footer-background - The background of the footer.
- * @cssprop --mo-data-grid-cell-padding - The inline padding of the cells. Default to 3px.
+ * @cssprop --mo-data-grid-cell-padding - The inline padding of the cells. Default to 10px.
  * @cssprop --mo-data-grid-column-sub-row-indentation - The indentation of the first column in the sub row. Default to 10px.
  *
  * @fires dataChange
@@ -493,14 +493,11 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				--mo-data-grid-column-details-width: 20px;
 				--mo-data-grid-column-selection-width: 40px;
 				--mo-data-grid-column-more-width: minmax(28px, 1fr);
-
+				--mo-data-grid-cell-padding: 10px;
 				--mo-data-grid-header-height: 32px;
 				--mo-data-grid-footer-min-height: 40px;
 				--mo-data-grid-toolbar-padding: 0px 14px 14px 14px;
 				--mo-data-grid-border: 1px solid var(--mo-color-transparent-gray-3);
-
-				/* --mo-data-grid-columns Generated in JS */
-				--mo-data-grid-columns-gap: 6px;
 
 				--mo-data-grid-row-tree-line-width: 8px;
 				--mo-details-data-grid-start-margin: 26px;
@@ -734,7 +731,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 					${observeResize(() => this.requestUpdate())}
 					@scroll=${this.handleScroll}
 				>
-					<mo-grid id='content' autoRows='min-content' columns='var(--mo-data-grid-columns)' columnGap='var(--mo-data-grid-columns-gap)'>
+					<mo-grid id='content' autoRows='min-content' columns='var(--mo-data-grid-columns)'>
 						${this.headerTemplate}
 						${this.contentTemplate}
 					</mo-grid>
@@ -800,10 +797,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 					${this.fabTemplate}
 				</mo-flex>
 				${this.hasFooter === false ? html.nothing : html`
-					<mo-data-grid-footer
-						.dataGrid=${this as any}
-						page=${this.page}
-					>
+					<mo-data-grid-footer .dataGrid=${this as any} page=${this.page}>
 						<slot name='sum' slot='sum'>${this.sumDefaultTemplate}</slot>
 					</mo-data-grid-footer>
 				`}

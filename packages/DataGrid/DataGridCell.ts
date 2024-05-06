@@ -1,6 +1,7 @@
 import { component, Component, html, property, css, eventListener, state, type HTMLTemplateResult } from '@a11d/lit'
 import { NotificationComponent } from '@a11d/lit-application'
 import { Localizer } from '@3mo/localization'
+import { FocusController } from '@3mo/focus-controller'
 import { type ColumnDefinition, DataGridEditability, type DataGridRow } from './index.js'
 
 Localizer.register('de', {
@@ -48,6 +49,8 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 		return this.isEditable
 			&& (this.editing || this.dataGrid.editability === DataGridEditability.Always)
 	}
+
+	protected readonly focusController = new FocusController(this)
 
 	@eventListener({ target: document, type: 'pointerdown' })
 	protected handlePointerDown(event: PointerEvent) {
@@ -123,17 +126,18 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 		return css`
 			:host {
 				position: relative;
-				padding-inline: var(--mo-data-grid-cell-padding, 3px);
+				padding-inline: var(--mo-data-grid-cell-padding);
 				user-select: none;
 				line-height: var(--mo-data-grid-row-height);
 				white-space: nowrap;
 				overflow: hidden !important;
 				text-overflow: ellipsis;
 				font-size: var(--mo-data-grid-cell-font-size);
+				outline: none;
 			}
 
-			:host(:not([isEditing]):focus) {
-				outline: 2px solid var(--mo-color-accent);
+			md-focus-ring {
+				--md-focus-ring-shape: var(--mo-border-radius);
 			}
 
 			:host([isEditing]) {
@@ -178,7 +182,10 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 	}
 
 	private get contentTemplate() {
-		return this.column.getContentTemplate?.(this.value, this.data) ?? html`${this.value}`
+		return html`
+			<md-focus-ring inward .control=${this} ?visible=${this.focusController.focused}></md-focus-ring>
+			${this.column.getContentTemplate?.(this.value, this.data) ?? html`${this.value}`}
+		`
 	}
 
 	private get editContentTemplate() {

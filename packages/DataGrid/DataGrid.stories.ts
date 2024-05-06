@@ -14,7 +14,7 @@ type Person = { id: number, name: string, age: number, city: string }
 
 const generatePeople = (count: number) => {
 	const cities = ['Berlin', 'Hamburg', 'München', 'Köln', 'Frankfurt']
-	const names = ['Max', 'Moritz long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long', 'Mia', 'Maja', 'Mika long long long long long long long long long long long long long long long long long long long long long long long long long']
+	const names = ['Max', 'Moritz', 'Mia', 'Maja', 'Mika']
 	return new Array(count).fill(0).map((_, i) => ({
 		id: i + 1,
 		name: names[Math.floor(Math.random() * names.length)],

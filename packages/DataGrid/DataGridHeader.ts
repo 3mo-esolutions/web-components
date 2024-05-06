@@ -60,7 +60,7 @@ export class DataGridHeader<TData> extends Component {
 			}
 
 			.headerContent {
-				padding: 0 var(--mo-data-grid-cell-padding, 3px);
+				padding: 0 var(--mo-data-grid-cell-padding);
 				display: inline-block;
 				overflow: hidden !important;
 				color: var(--mo-color-foreground);
