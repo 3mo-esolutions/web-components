@@ -119,6 +119,10 @@ export class Dialog extends Component implements IDialog {
 
 	static override get styles() {
 		return css`
+			:host {
+				background: var(--mo-color-surface);
+			}
+
 			:host([size=small]) {
 				--mo-dialog-width: 480px;
 				--mo-dialog-height: min-content;
@@ -383,6 +387,18 @@ export class Dialog extends Component implements IDialog {
 }
 
 MdDialog.elementStyles.push(css`
+	:host {
+		background: inherit;
+	}
+
+	dialog {
+		background: inherit;
+	}
+
+	.container::before {
+		background: inherit;
+	}
+
 	.content {
 		display: flex;
 		flex-direction: column;
