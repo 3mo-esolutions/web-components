@@ -3,7 +3,7 @@ import { DialogLanguageField, type Language } from './index.js'
 import { type DialogSize } from '@3mo/dialog'
 import { type FieldPair, FieldPairMode } from '@3mo/field-pair'
 
-export type LanguageFieldTemplateParameter<TValue, TLanguage extends Language> = {
+export type LanguageFieldTemplateParameter<TValue, TLanguage extends Language = Language> = {
 	readonly value: TValue
 	readonly handleChange: (value: TValue) => void
 	readonly label: string
@@ -102,12 +102,20 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 
 	static override get styles() {
 		return css`
+			mo-field-select {
+				background-color: color-mix(in srgb, var(--mo-color-gray) 10%, transparent);
+			}
+
 			mo-field-select::part(container) {
 				display: none;
 			}
 
 			:host([single]) mo-field-select::part(dropDownIcon) {
 				display: none;
+			}
+
+			mo-field-pair {
+				--mo-field-pair-attachment-width: 110px;
 			}
 
 			:host([single]) mo-field-pair {
