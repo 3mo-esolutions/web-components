@@ -1,12 +1,14 @@
 import { type HTMLTemplateResult } from '@a11d/lit'
 
+export type DataGridColumnAlignment = 'start' | 'center' | 'end'
+
 export type ColumnDefinition<TData, TValue = unknown> = {
 	heading: string
 	title?: string
 	dataSelector: KeyPathOf<TData>
 	sortDataSelector?: KeyPathOf<TData>
 	width?: string
-	alignment?: 'start' | 'center' | 'end'
+	alignment?: DataGridColumnAlignment
 	hidden?: boolean
 	sortable?: boolean
 	editable?: boolean | Predicate<TData>

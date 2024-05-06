@@ -1,9 +1,10 @@
 import { type HTMLTemplateResult, property } from '@a11d/lit'
 import { DataGridColumn } from '../DataGridColumn.js'
+import type { DataGridColumnAlignment } from '../../ColumnDefinition.js'
 
 export abstract class DataGridColumnNumberBase<TData> extends DataGridColumn<TData, number> {
 	@property() sumHeading: string | undefined = undefined
-	@property() override textAlign = 'end'
+	@property() override textAlign: DataGridColumnAlignment = 'end'
 
 	override get definition() {
 		return {

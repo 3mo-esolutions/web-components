@@ -1,6 +1,6 @@
 import { Component, property, type HTMLTemplateResult } from '@a11d/lit'
 import { DataGrid } from '../DataGrid.js'
-import type { ColumnDefinition } from '../ColumnDefinition.js'
+import type { ColumnDefinition, DataGridColumnAlignment } from '../ColumnDefinition.js'
 
 /**
  * @attr width - The width of the column
@@ -25,7 +25,7 @@ export abstract class DataGridColumn<TData, TValue> extends Component {
 	@property() width = 'minmax(100px, 1fr)'
 	@property({ type: Boolean }) override hidden = false
 	@property({ reflect: true }) heading = ''
-	@property({ reflect: true }) textAlign = 'start'
+	@property({ reflect: true }) textAlign: DataGridColumnAlignment = 'start'
 	@property({ reflect: true }) override title!: string
 	@property({ reflect: true }) dataSelector!: KeyPathOf<TData>
 	@property({ reflect: true }) sortDataSelector?: KeyPathOf<TData>
@@ -45,7 +45,7 @@ export abstract class DataGridColumn<TData, TValue> extends Component {
 			sortDataSelector: this.sortDataSelector,
 			heading: this.heading,
 			title: this.title || undefined,
-			alignment: this.textAlign as 'start' | 'center' | 'end',
+			alignment: this.textAlign,
 			hidden: this.hidden,
 			width: !DataGridColumn.regex.test(this.width) ? this.width : `${DataGridColumn.getProportion(this.width)}fr`,
 			sortable: !this.nonSortable,
