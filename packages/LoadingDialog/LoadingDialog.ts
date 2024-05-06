@@ -38,8 +38,12 @@ export class LoadingDialog extends Dialog {
 				inset: 0;
 				z-index: 1;
 				place-items: center;
-				backdrop-filter: blur(5px);
-				background: color-mix(in srgb, var(--mo-color-surface), transparent 20%);
+			}
+
+			:host(.loading) [part=content] {
+				opacity: 0.33;
+				pointer-events: none;
+				filter: blur(4px);
 			}
 		`
 	}
@@ -52,6 +56,7 @@ export class LoadingDialog extends Dialog {
 	}
 
 	protected get loadingTemplate() {
+		this.classList.toggle('loading', this.isLoading)
 		return !this.isLoading ? html.nothing : html`
 			<slot slot='content' name='loading' part='loading'>
 				<mo-circular-progress></mo-circular-progress>

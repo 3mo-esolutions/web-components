@@ -35,3 +35,14 @@ export const CustomLoadingDialog: StoryObj = {
 		</mo-loading-dialog>
 	`
 }
+
+export const CustomBackground: StoryObj = {
+	render: ({ loading }) => html`
+		<mo-loading-dialog heading='Heading' primaryButtonText='Action' open ?loading=${loading}
+			style='background: linear-gradient(90deg, color-mix(in srgb, var(--mo-color-red), var(--mo-color-surface)), color-mix(in srgb, var(--mo-color-blue), var(--mo-color-surface)));'
+		>
+			Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius quidem eaque earum obcaecati qui? Nihil quaerat,
+			repudiandae error delectus labore quasi inventore fugit corporis maxime eos aspernatur aliquid temporibus vitae.
+		</mo-loading-dialog>
+	`
+}
