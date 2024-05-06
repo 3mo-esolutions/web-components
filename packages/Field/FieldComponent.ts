@@ -13,6 +13,8 @@ import { FocusController, type FocusMethod } from '@3mo/focus-controller'
  * @slot start - Content to be placed at the start of the field
  * @slot end - Content to be placed at the end of the field
  *
+ * @csspart container - Field's container
+ *
  * @fires change
  * @fires input
  * @fires validityChange
@@ -106,7 +108,8 @@ export abstract class FieldComponent<T> extends Component {
 
 	protected override get template() {
 		return html`
-			<mo-field id='field' label=${this.label}
+			<mo-field id='field' exportparts='container'
+				label=${this.label}
 				?populated=${this.isPopulated}
 				?disabled=${this.disabled}
 				?readonly=${this.readonly}
