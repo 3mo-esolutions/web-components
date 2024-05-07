@@ -64,7 +64,7 @@ export class DataGridHeaderSeparator extends Component {
 
 	protected override get template() {
 		return html`
-			<div class='separator' @mousedown=${this.handleMouseDown} @dblclick=${this.handleDoubleClick}>
+			<div class='separator' @pointerdown=${this.handlePointerDown} @dblclick=${this.handleDoubleClick}>
 				<div class='knob'></div>
 			</div>
 
@@ -74,8 +74,8 @@ export class DataGridHeaderSeparator extends Component {
 		`
 	}
 
-	@eventListener({ target: window, type: 'mouseup' })
-	protected handleMouseUp() {
+	@eventListener({ target: window, type: 'pointerup' })
+	protected handlePointerUp() {
 		if (!this.isResizing) {
 			return
 		}
@@ -87,12 +87,14 @@ export class DataGridHeaderSeparator extends Component {
 		this.dataGrid.setColumns(this.dataGrid.columns)
 	}
 
-	@eventListener({ target: window, type: 'mousemove' })
-	protected handleMouseMove(e: MouseEvent) {
+	@eventListener({ target: window, type: 'pointermove' })
+	@eventListener({ target: window, type: 'touchmove', options: { passive: false } as any })
+	protected handlePointerMove(e: PointerEvent | TouchEvent) {
 		if (this.isResizing === false || this.initialWidth === undefined) {
 			return
 		}
 
+		e.preventDefault()
 		this.updatePointerPosition(e)
 
 		const isRtl = getComputedStyle(this).direction === 'rtl'
@@ -106,15 +108,16 @@ export class DataGridHeaderSeparator extends Component {
 		}
 	}
 
-	private readonly handleMouseDown = (e: MouseEvent) => {
+	private readonly handlePointerDown = (e: PointerEvent) => {
 		this.isResizing = true
 		this.initialWidth = this.getColumnWidth(this.column)
 		this.updatePointerPosition(e)
 	}
 
-	private updatePointerPosition(e: MouseEvent) {
+	private updatePointerPosition(e: PointerEvent | TouchEvent) {
 		const isRtl = getComputedStyle(this).direction === 'rtl'
-		this.pointerInlineStart = !isRtl ? e.clientX : window.innerWidth - e.clientX
+		const clientX = 'touches' in e ? e.touches[0]!.clientX : e.clientX
+		this.pointerInlineStart = !isRtl ? clientX : window.innerWidth - clientX
 	}
 
 	private readonly handleDoubleClick = () => {

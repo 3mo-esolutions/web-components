@@ -130,9 +130,9 @@ export class DataGridHeader<TData> extends Component {
 		const sortingRank = !sortingDefinition || this.dataGrid.getSorting().length <= 1 ? undefined : sortingDefinition.rank
 
 		return html`
-			<mo-flex direction=${column.alignment === 'end' ? 'horizontal-reversed' : 'horizontal'} alignItems='center' ${style({ position: 'relative' })}>
+			<mo-grid alignItems='center' ${style({ position: 'relative', userSelect: 'none' })}>
 				<mo-flex direction=${column.alignment === 'end' ? 'horizontal-reversed' : 'horizontal'} alignItems='center'
-					${style({ overflow: 'hidden', cursor: 'pointer', userSelect: 'none', flex: '1' })}
+					${style({ overflow: 'hidden', cursor: 'pointer', flex: '1' })}
 					@click=${() => this.sort(column)}
 				>
 					<div class='headerContent' ${style({ width: '100%', textAlign: column.alignment })} title=${column.title || column.heading}>${column.heading}</div>
@@ -142,20 +142,18 @@ export class DataGridHeader<TData> extends Component {
 						<mo-icon ${style({ color: 'var(--mo-color-accent)' })} icon=${ifDefined(sortIcon)}></mo-icon>
 					`}
 				</mo-flex>
-				${index === this.dataGrid.visibleColumns.length - 1 ? html.nothing : html`
-					<mo-data-grid-header-separator
-						.dataGrid=${this.dataGrid as any}
-						.column=${this.dataGrid.visibleColumns[index]}
-					></mo-data-grid-header-separator>
-				`}
-			</mo-flex>
+				<mo-data-grid-header-separator
+					.dataGrid=${this.dataGrid as any}
+					.column=${this.dataGrid.visibleColumns[index]}
+				></mo-data-grid-header-separator>
+			</mo-grid>
 		`
 	}
 
 	private get moreTemplate() {
 		return this.dataGrid.hasToolbar || this.dataGrid.sidePanelHidden ? html.nothing : html`
 			<mo-flex alignItems='end' justifyContent='center'
-				${style({ cursor: 'pointer', position: 'sticky', insetInlineEnd: '0px', background: 'var(--mo-data-grid-sticky-part-color)', zIndex: '3' })}
+				${style({ cursor: 'pointer', position: 'sticky', insetInlineEnd: '0px', background: 'var(--mo-data-grid-sticky-part-color)', zIndex: '5', marginInlineStart: '3px' })}
 			>
 				<mo-icon-button dense icon='settings' ${style({ color: 'var(--mo-color-accent)', fontSize: 'large' })}
 					@click=${() => this.dataGrid.navigateToSidePanelTab(this.dataGrid.sidePanelTab ? undefined : DataGridSidePanelTab.Settings)}
