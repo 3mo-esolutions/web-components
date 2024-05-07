@@ -889,7 +889,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	getStickyColumnInsetInline(column: ColumnDefinition<TData, unknown>) {
 		const columnIndex = this.visibleColumns.indexOf(column)
 		const getFixedInset = (type: 'start' | 'end') => type === 'start'
-			? 0
+			? (this.selectionMode !== DataGridSelectionMode.None ? 40 : 0) + (this.hasDetails ? 20 : 0)
 			: (this.hasContextMenu ? 28 : 0)
 
 		const calculate = (type: 'start' | 'end') => this.visibleColumns

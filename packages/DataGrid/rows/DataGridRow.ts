@@ -182,7 +182,8 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 
 	protected get detailsExpanderTemplate() {
 		return this.dataGrid.hasDetails === false ? html.nothing : html`
-			<mo-flex justifyContent='center' alignItems='center' ${style({ width: 'var(--mo-data-grid-column-details-width)' })}
+			<mo-flex justifyContent='center' alignItems='center'
+				${style({ width: 'var(--mo-data-grid-column-details-width)', position: 'sticky', zIndex: '2', insetInlineStart: '0px', background: 'var(--mo-data-grid-sticky-part-color)' })}
 				@click=${(e: Event) => e.stopPropagation()}
 				@dblclick=${(e: Event) => e.stopPropagation()}
 			>
@@ -199,7 +200,8 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 
 	protected get selectionTemplate() {
 		return this.dataGrid.hasSelection === false || this.dataGrid.selectionCheckboxesHidden ? html.nothing : html`
-			<mo-flex id='selectionContainer' ${style({ width: 'var(--mo-data-grid-column-selection-width)' })} justifyContent='center' alignItems='center'
+			<mo-flex id='selectionContainer' justifyContent='center' alignItems='center'
+				${style({ width: 'var(--mo-data-grid-column-selection-width)', position: 'sticky', zIndex: '2', insetInlineStart: '0px', background: 'var(--mo-data-grid-sticky-part-color)' })}
 				@click=${(e: Event) => e.stopPropagation()}
 				@dblclick=${(e: Event) => e.stopPropagation()}
 			>

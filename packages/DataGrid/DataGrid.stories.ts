@@ -105,7 +105,9 @@ export const ContextMenu: StoryObj = {
 
 export const StickyColumns: StoryObj = {
 	render: () => html`
-		<mo-data-grid style='height: 500px' .data=${twentyPeople} .getRowContextMenuTemplate=${(data: Array<Person>) => html`
+		<mo-data-grid style='height: 500px' .data=${twentyPeople}
+		selectionMode='multiple'
+		.getRowContextMenuTemplate=${(data: Array<Person>) => html`
 			<div style='margin: 10px; opacity: 0.5'>${data.map(p => `"${p.name}"`).join(', ')} selected</div>
 			<mo-context-menu-item>Item1</mo-context-menu-item>
 			<mo-context-menu-item>Item2</mo-context-menu-item>
