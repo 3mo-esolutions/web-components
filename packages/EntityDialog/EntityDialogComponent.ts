@@ -44,16 +44,21 @@ export abstract class EntityDialogComponent<
 
 	protected override async primaryAction() {
 		const result = (await this.save(this.entity) || undefined) as TResult | undefined
-		this.notifySuccess()
+		this.notifySuccess(result)
 		return result
 	}
 
-	protected notifySuccess() {
+	protected notifySuccess(result?: TResult | undefined) {
 		const DialogConstructor = this.constructor as Constructor<EntityDialogComponent<TEntity>>
-		NotificationComponent.notifySuccess(t('Saved successfully'), {
+		const id = result !== null && typeof result === 'object' && 'id' in result ? result.id : this.parameters.id
+		NotificationComponent.notifySuccess(this.successMessage, {
 			title: t('Open'),
-			handleClick: () => void new DialogConstructor({ id: this.parameters.id }).confirm(),
+			handleClick: () => void new DialogConstructor({ id }).confirm(),
 		})
+	}
+
+	protected get successMessage() {
+		return t('Saved successfully')
 	}
 
 	protected override async secondaryAction() {
