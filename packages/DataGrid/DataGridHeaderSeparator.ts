@@ -122,7 +122,7 @@ export class DataGridHeaderSeparator extends Component {
 
 	private readonly handleDoubleClick = () => {
 		this.isResizing = false
-		this.column.width = 'min-content'
+		this.column.width = 'max-content'
 		this.dataGrid.setColumns(this.dataGrid.columns)
 	}
 

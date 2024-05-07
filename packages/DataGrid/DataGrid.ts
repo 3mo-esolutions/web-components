@@ -608,6 +608,8 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 			mo-empty-state, ::slotted(mo-empty-state) {
 				height: 100%;
+				position: absolute;
+				inset: 0;
 			}
 
 			#overlayModeContainer {
@@ -623,16 +625,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				height: 100%;
 				z-index: 1;
 				background-color: var(--mo-color-surface);
-			}
-
-			mo-grid#content:has(.span-through) {
-				min-height: 100%;
-				grid-template-rows: auto 1fr;
-			}
-
-			.span-through {
-				display: block;
-				grid-column: -1 / 1;
 			}
 		`
 	}
@@ -715,7 +707,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	protected get noContentTemplate() {
 		return html`
-			<slot name='error-no-content' class='span-through'>
+			<slot name='error-no-content'>
 				<mo-empty-state icon='youtube_searched_for'>${t('No results')}</mo-empty-state>
 			</slot>
 		`
