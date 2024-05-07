@@ -90,8 +90,16 @@ export class DataGridHeader<TData> extends Component {
 
 			.cell[data-sticky] {
 				position: sticky;
-				z-index: 2;
+				z-index: 6;
 				background: var(--mo-data-grid-sticky-part-color);
+			}
+
+			mo-data-grid-header-separator {
+				z-index: 5;
+			}
+
+			.cell[data-sticky] mo-data-grid-header-separator {
+				z-index: 7;
 			}
 		`
 	}

@@ -19,7 +19,6 @@ export class DataGridHeaderSeparator extends Component {
 			:host {
 				position: absolute;
 				inset-inline-end: -3px;
-				z-index: 5;
 			}
 
 			div.separator {
