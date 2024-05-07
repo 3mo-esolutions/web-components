@@ -1,4 +1,4 @@
-import { html, component, css, property, eventListener, Component, style, state, bind } from '@a11d/lit'
+import { html, component, css, property, Component, style } from '@a11d/lit'
 import { DialogAcknowledge, DialogAlert, DialogDeletion } from '@3mo/standard-dialogs'
 import { tooltip } from '@3mo/tooltip'
 import { Localizer } from '@3mo/localization'
@@ -48,151 +48,158 @@ export class DataGridModeChip extends Component {
 	@property({ type: Boolean, reflect: true }) selected = false
 	@property({ type: Boolean, reflect: true }) readOnly = false
 
-	@state() open = false
-
 	static override get styles() {
 		return css`
-			:host {
-				white-space: nowrap;
+			#chip {
+				--_background-color-opacity: 85%;
+				border-radius: 16px;
+    		background-color: color-mix(in srgb, var(--mo-color-foreground), transparent var(--_background-color-opacity));
+				color: color-mix(in srgb, var(--mo-color-foreground), transparent 20%);
+				font-weight: 500;
+				padding: 6px 12px;
+				font-size: 14px;
+				cursor: pointer;
+				transition: background-color 0.1s;
 			}
 
-			:host(:hover) {
-				--mo-chip-background-color: var(--mo-color-accent-transparent);
-			}
-
-			:host([selected]) {
-				--mo-chip-background-color: var(--mo-color-accent);
-				--mo-chip-foreground-color: var(--mo-color-on-accent);
-			}
-
-			mo-chip::part(ripple) {
-				display: none;
-			}
-
-			mo-icon-button {
+			:host([selected]) #chip {
+				padding: 4px 12px;
+				font-size: unset;
+				background-color: var(--mo-color-accent);
 				color: var(--mo-color-on-accent);
-				--mdc-icon-size: 18px;
 			}
 
-			:host([selected]:not([readOnly])) mo-icon-button:not([data-no-border]) {
-				border-inline-start: 1px solid var(--mo-color-gray-transparent);
+			#chip:hover {
+				--_background-color-opacity: 82%;
 			}
 
-			mo-context-menu-item {
-				color: var(--mo-color-foreground);
-				font-weight: 400;
+			#chip:active {
+				--_background-color-opacity: 80%;
+			}
+
+			mo-icon-button:first-of-type {
+				margin-left: 2px;
 			}
 		`
-	}
-
-	protected async handleClick() {
-		if (this.moddableDataGrid.modesRepository.isSelected(this.mode)) {
-			this.moddableDataGrid.mode = undefined
-		} else {
-			if (this.moddableDataGrid.modesRepository.isSelectedModeSaved === false) {
-				const result = await new DialogAcknowledge({
-					heading: t('Unsaved changes'),
-					content: t('Do you want to save the new changes to "${name:string}" before switching views?'),
-					primaryButtonText: t('Save'),
-					secondaryButtonText: t('Don\'t Save'),
-				}).confirm()
-
-				if (result === true) {
-					this.moddableDataGrid.modesRepository.save()
-				}
-			}
-
-			this.moddableDataGrid.mode = this.mode
-		}
-	}
-
-	@eventListener('contextmenu')
-	protected handleRightClick(e: MouseEvent) {
-		e.preventDefault()
-		this.editMode(e)
 	}
 
 	protected override get template() {
+		const isReadOnly = this.readOnly || !this.selected
+
 		return html`
-			<mo-chip @click=${() => this.handleClick()}>
+			<mo-flex id='chip' gap='2px' direction='horizontal' alignItems='center' @click=${this.handleClick}>
 				${this.mode.isArchived ? `[${this.mode.name}]` : this.mode.name}
-				${this.trailingSlotTemplate}
-			</mo-chip>
-		`
-	}
 
-	protected get trailingSlotTemplate() {
-		return this.readOnly || !this.selected ? html.nothing : html`
-			<mo-flex direction='horizontal' slot='trailing'
-				@click=${(e: MouseEvent) => e.stopPropagation()}
-			>
-				${this.moddableDataGrid.modesRepository.isSelectedModeSaved ? html.nothing : html`
-					<span id='spanUnsaved'>*</span>
-
-					<mo-icon-button icon='undo' tabindex='-1' dense ${style({ marginInlineStart: '0 0 0 12px' })}
-						${tooltip(t('Discard changes'))}
-						@click=${this.discardChanges}
-					></mo-icon-button>
-
-					<mo-icon-button icon='save' tabindex='-1' dense
-						${tooltip(t('Save changes'))}
-						@click=${this.saveChanges}
-					></mo-icon-button>
-				`}
-
-				<mo-popover-container fixed>
-					<mo-icon-button dense icon='more_vert' ${tooltip(t('More options'))}></mo-icon-button>
-					${this.menuTemplate}
-				</mo-popover-container>
+				${isReadOnly ? html.nothing
+						: this.moddableDataGrid.modesRepository.isSelectedModeSaved
+							? this.actionsTemplate
+							: this.unsavedChangesTemplate}
 			</mo-flex>
 		`
 	}
 
-	protected get menuTemplate() {
+	private get actionsTemplate() {
 		return html`
-			<mo-menu slot='popover'>
-				${this.moddableDataGrid.modesRepository.isSelectedModeSaved ? html.nothing : html`
-					<mo-context-menu-item icon='undo' @click=${this.discardChanges}>${t('Discard changes')}</mo-context-menu-item>
-					<mo-context-menu-item icon='save' @click=${this.saveChanges}>${t('Save changes')}</mo-context-menu-item>
-					<mo-line ${style({ margin: '4px 0' })}></mo-line>
-				`}
-				<mo-context-menu-item icon='edit' @click=${this.editMode}>${t('Edit')}</mo-context-menu-item>
-				${this.mode.isArchived === false ? html`
-					<mo-context-menu-item icon='archive'
-						@click=${() => this.moddableDataGrid.modesRepository.archive(this.mode)}
-					>${t('Archive')}</mo-context-menu-item>
-				` : html`
-					<mo-context-menu-item icon='unarchive'
-						@click=${() => this.moddableDataGrid.modesRepository.unarchive(this.mode)}
-					>${t('Unarchive')}</mo-context-menu-item>
-				`}
-				<mo-context-menu-item icon='delete' @click=${this.deleteMode}>${t('Delete')}</mo-context-menu-item>
-			</mo-menu>
+			<mo-icon-button dense icon='edit' tabIndex='-1'
+				${tooltip(t('Edit'))}
+				@click=${this.handleEdit}
+			></mo-icon-button>
+
+			${this.mode.isArchived === false ? html`
+				<mo-icon-button dense icon='archive' tabIndex='-1'
+					${tooltip(t('Archive'))}
+					@click=${this.handleArchive}>
+				</mo-icon-button>
+			` : html`
+				<mo-icon-button dense icon='unarchive' tabIndex='-1'
+					${tooltip(t('Unarchive'))}
+					@click=${this.handleUnarchive}>
+				</mo-icon-button>
+			`}
+
+			<mo-icon-button dense icon='delete'
+				${tooltip(t('Delete'))}
+				@click=${this.handleDelete}
+			></mo-icon-button>
 		`
 	}
 
-	private readonly discardChanges = async (e: MouseEvent) => {
-		e.stopImmediatePropagation()
+	private get unsavedChangesTemplate() {
+		return html`
+			<span id='spanUnsaved'>*</span>
+
+			<mo-icon-button dense icon='undo' tabIndex='-1' dense ${style({ marginInlineStart: '0 0 0 12px' })}
+				${tooltip(t('Discard changes'))}
+				@click=${this.handleDiscardChanges}
+			></mo-icon-button>
+
+			<mo-icon-button dense icon='save' tabIndex='-1' dense
+				${tooltip(t('Save changes'))}
+				@click=${this.handleSave}
+			></mo-icon-button>
+		`
+	}
+
+	private handleUnarchive = (e: MouseEvent) => {
+		e.stopPropagation()
+		this.moddableDataGrid.modesRepository.unarchive(this.mode)
+	}
+
+	private handleArchive = (e: MouseEvent) => {
+		e.stopPropagation()
+		this.moddableDataGrid.modesRepository.archive(this.mode)
+	}
+
+	protected handleClick = async () => {
+		if (this.moddableDataGrid.modesRepository.isSelected(this.mode)) {
+			this.moddableDataGrid.mode = undefined
+			return
+		}
+
+		if (this.moddableDataGrid.modesRepository.isSelectedModeSaved === false) {
+			const result = await new DialogAcknowledge({
+				heading: t('Unsaved changes'),
+				content: t('Do you want to save the new changes to "${name:string}" before switching views?'),
+				primaryButtonText: t('Save'),
+				secondaryButtonText: t('Don\'t Save'),
+			}).confirm()
+
+			if (result === true) {
+				this.moddableDataGrid.modesRepository.save()
+			}
+		}
+
+		this.moddableDataGrid.mode = this.mode
+	}
+
+	private readonly handleDiscardChanges = async (e: MouseEvent) => {
+		e.stopPropagation()
+
 		await new DialogAlert({
 			heading: t('Discard changes'),
 			content: t('Do you want to discard changes of "${name:string}"?', { name: this.mode.name }),
 			primaryButtonText: t('Discard'),
 		}).confirm()
+
 		this.moddableDataGrid.modesRepository.save(this.mode)
 	}
 
-	private readonly saveChanges = (e: MouseEvent) => {
-		e.stopImmediatePropagation()
+	private readonly handleSave = (e: MouseEvent) => {
+		e.stopPropagation()
 		this.moddableDataGrid.modesRepository.save()
 	}
 
-	private readonly editMode = async (e: MouseEvent) => {
-		e.stopImmediatePropagation()
-		await new DialogDataGridMode({ moddableDataGrid: this.moddableDataGrid, mode: this.mode }).confirm()
+	private readonly handleEdit = async (e: MouseEvent) => {
+		e.stopPropagation()
+		await new DialogDataGridMode({
+			moddableDataGrid: this.moddableDataGrid,
+			mode: this.mode,
+		}).confirm()
 	}
 
-	private readonly deleteMode = async (e: MouseEvent) => {
-		e.stopImmediatePropagation()
+	private readonly handleDelete = async (e: MouseEvent) => {
+		e.stopPropagation()
+
 		await new DialogDeletion({
 			content: `${t('Do you want to delete the view "${name:string}"?', { name: this.mode.name })} ${t('This process is irreversible.')}`,
 			deletionAction: () => this.moddableDataGrid.modesRepository.remove(this.mode)
