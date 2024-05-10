@@ -111,6 +111,10 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 				position: relative;
 			}
 
+			:host([disabled]) {
+				pointer-events: none;
+			}
+
 			mo-popover {
 				background: var(--mo-color-background);
 				box-shadow: var(--mo-shadow);
