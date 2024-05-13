@@ -22,7 +22,7 @@ export abstract class DataGridColumn<TData, TValue> extends Component {
 
 	@property({ type: Object }) dataGrid?: DataGrid<TData, any> | undefined
 
-	@property() width = 'minmax(100px, 1fr)'
+	@property() width = 'max-content'
 	@property({ type: Boolean }) override hidden = false
 	@property({ reflect: true }) heading = ''
 	@property({ reflect: true }) textAlign: DataGridColumnAlignment = 'start'

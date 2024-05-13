@@ -131,7 +131,7 @@ export class DataGridHeaderSeparator extends Component {
 			return 0
 		}
 
-		column.width = column.width ?? '1fr'
+		column.width ??= 'max-content'
 		const columnIndex = this.dataGrid.visibleColumns.findIndex(c => c === this.column)
 		const targetColumnIndex = this.dataGrid.visibleColumns.findIndex(c => c === column)
 		let targetColumn = this.previousElementSibling as Element

@@ -39,17 +39,17 @@ describe('DataGrid', () => {
 
 			// expect(firstColumn?.dataSelector as any).toEqual('id')
 			expect(firstColumn?.heading).toEqual('Id')
-			expect(firstColumn?.width).toEqual('minmax(100px, 1fr)')
+			expect(firstColumn?.width).toEqual('max-content')
 			expect(firstColumn?.hidden).toEqual(false)
 
 			// expect(secondColumn?.dataSelector as any).toEqual('name')
 			expect(secondColumn?.heading).toEqual('Name')
-			expect(secondColumn?.width).toEqual('minmax(100px, 1fr)')
+			expect(secondColumn?.width).toEqual('max-content')
 			expect(secondColumn?.hidden).toEqual(false)
 
 			// expect(thirdColumn?.dataSelector as any).toEqual('birthDate')
 			expect(thirdColumn?.heading).toEqual('Birth Date')
-			expect(thirdColumn?.width).toEqual('minmax(100px, 1fr)')
+			expect(thirdColumn?.width).toEqual('max-content')
 			expect(thirdColumn?.hidden).toEqual(false)
 		})
 	})
