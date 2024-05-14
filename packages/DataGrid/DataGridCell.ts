@@ -2,7 +2,7 @@ import { component, Component, html, property, css, eventListener, state, type H
 import { NotificationComponent } from '@a11d/lit-application'
 import { Localizer } from '@3mo/localization'
 import { FocusController } from '@3mo/focus-controller'
-import { type ColumnDefinition, DataGridEditability, type DataGridRow } from './index.js'
+import { type DataGridColumn, DataGridEditability, type DataGridRow } from './index.js'
 
 Localizer.register('de', {
 	'Using the clipboard is not allowed in an insecure browser environment': 'In einer unsicheren Browser-Umgebung darf kein Text in die Zwischenablage kopiert werden',
@@ -19,7 +19,7 @@ Localizer.register('de', {
 @component('mo-data-grid-cell')
 export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDetailsElement extends Element | undefined = undefined> extends Component {
 	@property({ type: Object }) value!: TValue
-	@property({ type: Object }) column!: ColumnDefinition<TData, TValue>
+	@property({ type: Object }) column!: DataGridColumn<TData, TValue>
 	@property({ type: Object }) row!: DataGridRow<TData, TDetailsElement>
 
 	@state({

@@ -1,6 +1,6 @@
 import { component, html, property, style } from '@a11d/lit'
 import { type MaterialIcon } from '@3mo/icon'
-import { DataGridColumn } from './DataGridColumn.js'
+import { DataGridColumnComponent } from './DataGridColumnComponent.js'
 
 /**
  * @element mo-data-grid-column-boolean
@@ -11,7 +11,7 @@ import { DataGridColumn } from './DataGridColumn.js'
  * @attr falseIconColor - Color of the false icon
  */
 @component('mo-data-grid-column-boolean')
-export class DataGridColumnBoolean<TData> extends DataGridColumn<TData, boolean> {
+export class DataGridColumnBoolean<TData> extends DataGridColumnComponent<TData, boolean> {
 	@property() trueIcon: MaterialIcon = 'done'
 	@property() falseIcon: MaterialIcon = 'clear'
 

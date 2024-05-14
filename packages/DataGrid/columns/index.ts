@@ -1,4 +1,4 @@
-export * from './DataGridColumn.js'
+export * from './DataGridColumnComponent.js'
 export * from './DataGridColumnBoolean.js'
 export * from './DataGridColumnImage.js'
 export * from './DataGridColumnText.js'

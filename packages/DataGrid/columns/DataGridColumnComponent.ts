@@ -1,23 +1,23 @@
 import { Component, property, type HTMLTemplateResult } from '@a11d/lit'
 import { DataGrid } from '../DataGrid.js'
-import type { ColumnDefinition, DataGridColumnAlignment } from '../ColumnDefinition.js'
+import { DataGridColumn, type DataGridColumnAlignment } from '../DataGridColumn.js'
 
 /**
  * @attr width - The width of the column
  * @attr hidden - Whether the column is hidden. The column can be made visible by the user in the settings panel if available.
  * @attr heading - The heading of the column
  * @attr textAlign - The text alignment of the column
- * @attr title - The title of the column
+ * @attr description - The description of the column. It will be displayed as a tooltip on the heading.
  * @attr dataSelector - The data selector of the column
  * @attr sortDataSelector - The data selector of the column
  * @attr nonSortable - Whether the column is sortable
  * @attr nonEditable - Whether the column is editable
  */
-export abstract class DataGridColumn<TData, TValue> extends Component {
+export abstract class DataGridColumnComponent<TData, TValue> extends Component {
 	static readonly regex = /^\s*(0|[1-9][0-9]*)?\s*\*\s*$/
 
 	private static getProportion(value: string) {
-		return Number(value.replace(DataGridColumn.regex, '$1') || 1)
+		return Number(value.replace(DataGridColumnComponent.regex, '$1') || 1)
 	}
 
 	@property({ type: Object }) dataGrid?: DataGrid<TData, any> | undefined
@@ -25,8 +25,8 @@ export abstract class DataGridColumn<TData, TValue> extends Component {
 	@property() width = 'max-content'
 	@property({ type: Boolean }) override hidden = false
 	@property({ reflect: true }) heading = ''
+	@property({ reflect: true }) description?: string
 	@property({ reflect: true }) textAlign: DataGridColumnAlignment = 'start'
-	@property({ reflect: true }) override title!: string
 	@property({ reflect: true }) dataSelector!: KeyPathOf<TData>
 	@property({ reflect: true }) sortDataSelector?: KeyPathOf<TData>
 	@property({ type: Boolean, reflect: true }) nonSortable = false
@@ -38,28 +38,28 @@ export abstract class DataGridColumn<TData, TValue> extends Component {
 		}
 	}) nonEditable: boolean | Predicate<TData> = false
 
-	get definition(): ColumnDefinition<TData, TValue> {
+	get column(): DataGridColumn<TData, TValue> {
 		const nonEditable = this.nonEditable
-		return {
+		return new DataGridColumn({
 			dataSelector: this.dataSelector,
 			sortDataSelector: this.sortDataSelector,
 			heading: this.heading,
-			title: this.title || undefined,
+			description: this.description,
 			alignment: this.textAlign,
 			hidden: this.hidden,
-			width: !DataGridColumn.regex.test(this.width) ? this.width : `${DataGridColumn.getProportion(this.width)}fr`,
+			width: !DataGridColumnComponent.regex.test(this.width) ? this.width : `${DataGridColumnComponent.getProportion(this.width)}fr`,
 			sortable: !this.nonSortable,
 			editable: this.getEditContentTemplate !== undefined && (typeof nonEditable !== 'function' ? !nonEditable : x => !nonEditable(x)),
 			getContentTemplate: this.getContentTemplate.bind(this),
 			getEditContentTemplate: this.getEditContentTemplate?.bind(this),
-		}
+		})
 	}
 
 	abstract getContentTemplate(value: TValue | undefined, data: TData): HTMLTemplateResult
 	abstract getEditContentTemplate?(value: TValue | undefined, data: TData): HTMLTemplateResult
 
 	protected handleEdit(value: TValue | undefined, data: TData) {
-		this.dataGrid?.handleEdit(data, this, value as any)
+		this.dataGrid?.handleEdit(data, this.column, value as any)
 	}
 
 	override connectedCallback() {

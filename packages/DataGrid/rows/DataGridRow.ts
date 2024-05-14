@@ -1,6 +1,6 @@
 import { css, property, Component, html, queryAll, style, type HTMLTemplateResult, LitElement, event } from '@a11d/lit'
 import { ContextMenu } from '@3mo/context-menu'
-import { type ColumnDefinition } from '../ColumnDefinition.js'
+import { type DataGridColumn } from '../DataGridColumn.js'
 import { type DataGrid, type DataGridCell, DataGridPrimaryContextMenuItem, DataGridSelectionMode } from '../index.js'
 
 /**
@@ -48,7 +48,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		return this.renderRoot.querySelector('#detailsContainer')?.firstElementChild as TDetailsElement as TDetailsElement | undefined
 	}
 
-	getCell(column: ColumnDefinition<TData, any>) {
+	getCell(column: DataGridColumn<TData, any>) {
 		return this.cells.find(cell => cell.column === column)
 	}
 
@@ -213,7 +213,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		`
 	}
 
-	protected getCellTemplate(column: ColumnDefinition<TData, KeyPathValueOf<TData, KeyPathOf<TData>>>) {
+	protected getCellTemplate(column: DataGridColumn<TData, KeyPathValueOf<TData, KeyPathOf<TData>>>) {
 		return column.hidden ? html.nothing : html`
 			<mo-data-grid-cell
 				.row=${this as any}
@@ -221,6 +221,10 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				.value=${getValueByKeyPath(this.data, column.dataSelector as any)}
 			></mo-data-grid-cell>
 		`
+	}
+
+	protected get fillerTemplate() {
+		return html`<span></span>`
 	}
 
 	protected get contextMenuIconButtonTemplate() {

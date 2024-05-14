@@ -10,7 +10,7 @@ import { MediaQueryController } from '@3mo/media-query-observer'
 import { observeResize } from '@3mo/resize-observer'
 import { Localizer } from '@3mo/localization'
 import { ContextMenu } from '@3mo/context-menu'
-import { CsvGenerator, DataGridColumn, DataGridSidePanelTab, type ColumnDefinition, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, type DataGridSidePanel } from './index.js'
+import { CsvGenerator, DataGridColumnComponent, DataGridSidePanelTab, type DataGridColumn, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, type DataGridSidePanel } from './index.js'
 import { DataGridSelectionController } from './DataGridSelectionController.js'
 
 Localizer.register('en', {
@@ -61,8 +61,6 @@ export type DataGridSortingDefinition<TData> = {
 	selector: KeyPathOf<TData>
 	strategy: DataGridSortingStrategy
 }
-
-export type DataGridRankedSortDefinition<TData> = DataGridSortingDefinition<TData> & { rank: number }
 
 export type DataGridSorting<TData> = DataGridSortingDefinition<TData> | Array<DataGridSortingDefinition<TData>>
 
@@ -140,7 +138,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	@event() readonly selectionChange!: EventDispatcher<Array<TData>>
 	@event() readonly pageChange!: EventDispatcher<number>
 	@event() readonly paginationChange!: EventDispatcher<DataGridPagination | undefined>
-	@event() readonly columnsChange!: EventDispatcher<Array<ColumnDefinition<TData>>>
+	@event() readonly columnsChange!: EventDispatcher<Array<DataGridColumn<TData>>>
 	@event() readonly sidePanelOpen!: EventDispatcher<DataGridSidePanelTab>
 	@event() readonly sidePanelClose!: EventDispatcher
 	@event() readonly sortingChange!: EventDispatcher<DataGridSorting<TData> | undefined>
@@ -152,7 +150,12 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	@event() readonly cellEdit!: EventDispatcher<DataGridCell<any, TData, TDetailsElement>>
 
 	@property({ type: Array }) data = new Array<TData>()
-	@property({ type: Array }) columns = new Array<ColumnDefinition<TData>>()
+	@property({
+		type: Array,
+		updated(this: DataGrid<TData, TDetailsElement>) {
+			this.columns.forEach(column => column.dataGrid = this)
+		}
+	}) columns = new Array<DataGridColumn<TData>>()
 
 	@property({ type: Boolean, reflect: true }) headerHidden = false
 	@property({ type: Boolean, reflect: true }) preventVerticalContentScroll = false
@@ -328,7 +331,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		this.sort(sorting)
 	}
 
-	setColumns(columns: Array<ColumnDefinition<TData>>) {
+	setColumns(columns: Array<DataGridColumn<TData>>) {
 		this.columns = columns
 		this.columnsChange.dispatch(columns)
 		this.requestUpdate()
@@ -492,7 +495,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			:host {
 				--mo-data-grid-column-details-width: 20px;
 				--mo-data-grid-column-selection-width: 40px;
-				--mo-data-grid-column-more-width: minmax(28px, 1fr);
+				--mo-data-grid-column-more-width: 28px;
 				--mo-data-grid-cell-padding: 10px;
 				--mo-data-grid-header-height: 32px;
 				--mo-data-grid-footer-min-height: 40px;
@@ -804,26 +807,8 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	get sumsTemplate() {
 		return html`
 			<mo-flex direction='horizontal' gap='10px' wrap='wrap-reverse' alignItems='center' ${style({ padding: '2px 4px' })}>
-				${this.columns.map(column => this.getSumTemplate(column))}
+				${this.columns.map(c => c.sumTemplate)}
 			</mo-flex>
-		`
-	}
-
-	getSumTemplate(column: ColumnDefinition<TData>) {
-		if (column.sumHeading === undefined || column.getSumTemplate === undefined) {
-			return
-		}
-
-		const sum = this.sumsData
-			.map(data => parseFloat(getValueByKeyPath(data, column.dataSelector) as unknown as string))
-			.filter(n => isNaN(n) === false)
-			.reduce(((a, b) => a + b), 0)
-			|| 0
-
-		return html`
-			<mo-data-grid-footer-sum heading=${column.sumHeading + ''} ${style({ color: this.selectedData.length > 0 ? 'var(--mo-color-accent)' : 'currentColor' })}>
-				${column.getSumTemplate(sum)}
-			</mo-data-grid-footer-sum>
 		`
 	}
 
@@ -907,6 +892,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			this.detailsColumnWidth,
 			this.selectionColumnWidth,
 			...this.dataColumnsWidths,
+			'1fr',
 			this.moreColumnWidth
 		].filter((c): c is string => c !== undefined)
 	}
@@ -954,15 +940,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			: Array.isArray(this.sorting)
 				? this.sorting
 				: [this.sorting]
-	}
-
-	getSortingDefinition(column: ColumnDefinition<TData>): DataGridRankedSortDefinition<TData> | undefined {
-		const sorting = this.getSorting()
-		const definition = sorting.find(s => s.selector === (column.sortDataSelector || column.dataSelector))
-		return !definition ? undefined : {
-			...definition,
-			rank: sorting.indexOf(definition) + 1
-		}
 	}
 
 	private *getFlattenedData() {
@@ -1028,21 +1005,21 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		return this.sortedData.slice(from, to)
 	}
 
-	private get elementExtractedColumns(): Array<ColumnDefinition<TData, KeyPathValueOf<TData>>> {
+	private get elementExtractedColumns(): Array<DataGridColumn<TData, KeyPathValueOf<TData>>> {
 		if (!this.columnsSlot) {
 			return []
 		}
 		const children = this.columnsSlot.children.length > 0 ? Array.from(this.columnsSlot.children) : undefined
 		const assigned = this.columnsSlot.assignedElements().length > 0 ? Array.from(this.columnsSlot.assignedElements()) : undefined
 		return Array.from(assigned ?? children ?? [])
-			.filter((c): c is DataGridColumn<TData, KeyPathValueOf<TData>> => {
-				const isColumn = c instanceof DataGridColumn
+			.filter((c): c is DataGridColumnComponent<TData, KeyPathValueOf<TData>> => {
+				const isColumn = c instanceof DataGridColumnComponent
 				if (isColumn) {
 					c.dataGrid = this
 				}
 				return isColumn
 			})
-			.map(c => c.definition)
+			.map(c => c.column)
 	}
 
 	private get autoGeneratedColumns() {
@@ -1067,11 +1044,11 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			.map(key => {
 				const columnElement = document.createElement(getDefaultColumnElement(getValueByKeyPath(sampleData, key as any)))
 				columnElement.heading = key.replace(/([A-Z])/g, ' $1').charAt(0).toUpperCase() + key.replace(/([A-Z])/g, ' $1').slice(1)
-				columnElement.dataGrid = key as any
-				const definition = columnElement.definition
+				columnElement.dataGrid = this as any
+				const column = columnElement.column
 				columnElement.remove()
-				return definition
-			}) as Array<ColumnDefinition<TData>>
+				return column
+			}) as Array<DataGridColumn<TData>>
 	}
 
 	get visibleColumns() {
