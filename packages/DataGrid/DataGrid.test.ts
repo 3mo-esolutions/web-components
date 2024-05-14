@@ -39,34 +39,37 @@ describe('DataGrid', () => {
 
 			// expect(firstColumn?.dataSelector as any).toEqual('id')
 			expect(firstColumn).toBeInstanceOf(DataGridColumn)
+			expect(firstColumn?.dataGrid).toBe(fixture.component)
 			expect(firstColumn?.heading).toEqual('Id')
 			expect(firstColumn?.width).toEqual('max-content')
 			expect(firstColumn?.hidden).toEqual(false)
 
 			// expect(secondColumn?.dataSelector as any).toEqual('name')
 			expect(secondColumn).toBeInstanceOf(DataGridColumn)
+			expect(secondColumn?.dataGrid).toBe(fixture.component)
 			expect(secondColumn?.heading).toEqual('Name')
 			expect(secondColumn?.width).toEqual('max-content')
 			expect(secondColumn?.hidden).toEqual(false)
 
 			// expect(thirdColumn?.dataSelector as any).toEqual('birthDate')
 			expect(thirdColumn).toBeInstanceOf(DataGridColumn)
+			expect(thirdColumn?.dataGrid).toBe(fixture.component)
 			expect(thirdColumn?.heading).toEqual('Birth Date')
 			expect(thirdColumn?.width).toEqual('max-content')
 			expect(thirdColumn?.hidden).toEqual(false)
 		})
 
-		it('should convert object literals to an instance of DataGridColumnDefinition', async () => {
+		it('should automatically set dataGrid property of columns', async () => {
 			fixture.component.columns = [
-				{ heading: 'Id', dataSelector: 'id' },
-				{ heading: 'Name', dataSelector: 'name' },
+				new DataGridColumn({ heading: 'Id', dataSelector: 'id' }),
+				new DataGridColumn({ heading: 'Name', dataSelector: 'name' }),
 			]
 
 			await fixture.updateComplete
 
 			const [firstColumn, secondColumn] = fixture.component.columns
-			expect(firstColumn).toEqual(new DataGridColumn({ heading: 'Id', dataSelector: 'id' }))
-			expect(secondColumn).toEqual(new DataGridColumn({ heading: 'Name', dataSelector: 'name' }))
+			expect(firstColumn?.dataGrid).toBe(fixture.component)
+			expect(secondColumn?.dataGrid).toBe(fixture.component)
 		})
 	})
 

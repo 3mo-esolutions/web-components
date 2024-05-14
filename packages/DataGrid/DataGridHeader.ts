@@ -1,6 +1,7 @@
 import { component, Component, css, html, ifDefined, property, event, style } from '@a11d/lit'
 import { KeyboardController } from '@3mo/keyboard-controller'
 import { type Checkbox } from '@3mo/checkbox'
+import { tooltip } from '@3mo/tooltip'
 import { DataGridSelectionMode, DataGridSortingStrategy, type DataGridColumn, type DataGrid, DataGridSidePanelTab } from './index.js'
 
 @component('mo-data-grid-header')
@@ -90,6 +91,7 @@ export class DataGridHeader<TData> extends Component {
 			${this.detailsExpanderTemplate}
 			${this.selectionTemplate}
 			${this.contentTemplate}
+			${this.fillerTemplate}
 			${this.moreTemplate}
 		`
 	}
@@ -125,7 +127,7 @@ export class DataGridHeader<TData> extends Component {
 	}
 
 	private readonly getHeaderCellTemplate = (column: DataGridColumn<TData>, index: number) => {
-		const sortingDefinition = this.dataGrid.getSortingDefinition(column)
+		const sortingDefinition = column.sortingDefinition
 		const sortIcon = !sortingDefinition ? undefined : sortingDefinition.strategy === DataGridSortingStrategy.Ascending ? 'arrow_upward' : 'arrow_downward'
 		const sortingRank = !sortingDefinition || this.dataGrid.getSorting().length <= 1 ? undefined : sortingDefinition.rank
 
@@ -135,7 +137,10 @@ export class DataGridHeader<TData> extends Component {
 					${style({ overflow: 'hidden', cursor: 'pointer', flex: '1' })}
 					@click=${() => this.sort(column)}
 				>
-					<div class='headerContent' ${style({ width: '100%', textAlign: column.alignment })} title=${column.title || column.heading}>${column.heading}</div>
+					<div class='headerContent'
+						${style({ width: '100%', textAlign: column.alignment })}
+						${!column.tooltip ? html.nothing : tooltip(column.tooltip)}
+					>${column.heading}</div>
 
 					${sortIcon === undefined ? html.nothing : html`
 						${!sortingRank ? html.nothing : html`<span class='sort-rank'>${sortingRank}</span>`}
@@ -148,6 +153,10 @@ export class DataGridHeader<TData> extends Component {
 				></mo-data-grid-header-separator>
 			</mo-grid>
 		`
+	}
+
+	private get fillerTemplate() {
+		return html`<span></span>`
 	}
 
 	private get moreTemplate() {
@@ -168,9 +177,8 @@ export class DataGridHeader<TData> extends Component {
 		}
 
 		const defaultSortingStrategy = DataGridSortingStrategy.Descending
-		const sortDataSelector = column.sortDataSelector || column.dataSelector
-
-		const sortingDefinition = this.dataGrid.getSortingDefinition(column)
+		const sortDataSelector = column.sortDataSelector
+		const sortingDefinition = column.sortingDefinition
 
 		if (KeyboardController.shift || KeyboardController.meta || KeyboardController.ctrl) {
 			const sortings = this.dataGrid.getSorting()

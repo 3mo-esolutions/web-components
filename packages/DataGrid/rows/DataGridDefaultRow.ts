@@ -73,6 +73,7 @@ export class DataGridDefaultRow<TData, TDetailsElement extends Element | undefin
 			${this.detailsExpanderTemplate}
 			${this.selectionTemplate}
 			${this.dataGrid.columns.map(column => this.getCellTemplate(column))}
+			${this.fillerTemplate}
 			${this.contextMenuIconButtonTemplate}
 		`
 	}

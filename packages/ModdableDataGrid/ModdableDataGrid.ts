@@ -3,7 +3,7 @@ import { css, html, property, event, style } from '@a11d/lit'
 import { LocalStorage } from '@a11d/local-storage'
 import { contextMenu } from '@3mo/context-menu'
 import { tooltip } from '@3mo/tooltip'
-import { type DataGrid } from '@3mo/data-grid'
+import { DataGridColumn, type DataGrid } from '@3mo/data-grid'
 import { type FetchableDataGridParametersType, FetchableDataGrid } from '@3mo/fetchable-data-grid'
 import { DialogDataGridMode, type Mode, ModeRepository } from './index.js'
 import { sortable } from './SortableDirective.js'
@@ -36,7 +36,7 @@ export abstract class ModdableDataGrid<TData, TDataFetcherParameters extends Fet
 			const m = mode ?? defaultMode
 
 			this.preventFetch = true
-			this.setColumns((m.columns ?? defaultMode.columns).map(c => ({ ...c })))
+			this.setColumns((m.columns ?? defaultMode.columns).map(c => new DataGridColumn(c)))
 			this.sort(m.sorting ?? defaultMode.sorting)
 			this.setPagination(m.pagination ?? defaultMode.pagination)
 			this.setParameters(m.parameters ?? defaultMode.parameters)

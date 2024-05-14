@@ -25,6 +25,7 @@ export abstract class DataGridColumnComponent<TData, TValue> extends Component {
 	@property() width = 'max-content'
 	@property({ type: Boolean }) override hidden = false
 	@property({ reflect: true }) heading = ''
+	@property({ reflect: true }) tooltip?: string
 	@property({ reflect: true }) textAlign: DataGridColumnAlignment = 'start'
 	@property({ reflect: true }) override title!: string
 	@property({ reflect: true }) dataSelector!: KeyPathOf<TData>
@@ -44,7 +45,7 @@ export abstract class DataGridColumnComponent<TData, TValue> extends Component {
 			dataSelector: this.dataSelector,
 			sortDataSelector: this.sortDataSelector,
 			heading: this.heading,
-			title: this.title || undefined,
+			tooltip: this.tooltip,
 			alignment: this.textAlign,
 			hidden: this.hidden,
 			width: !DataGridColumnComponent.regex.test(this.width) ? this.width : `${DataGridColumnComponent.getProportion(this.width)}fr`,
@@ -59,7 +60,7 @@ export abstract class DataGridColumnComponent<TData, TValue> extends Component {
 	abstract getEditContentTemplate?(value: TValue | undefined, data: TData): HTMLTemplateResult
 
 	protected handleEdit(value: TValue | undefined, data: TData) {
-		this.dataGrid?.handleEdit(data, this, value as any)
+		this.dataGrid?.handleEdit(data, this.column, value as any)
 	}
 
 	override connectedCallback() {
