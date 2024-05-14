@@ -15,12 +15,6 @@ import { DataGridColumn, type DataGridColumnAlignment, type DataGridColumnSticky
  * @attr sticky - The sticky position of the column, either 'start', 'end', or 'both'
  */
 export abstract class DataGridColumnComponent<TData, TValue> extends Component {
-	static readonly regex = /^\s*(0|[1-9][0-9]*)?\s*\*\s*$/
-
-	private static getProportion(value: string) {
-		return Number(value.replace(DataGridColumnComponent.regex, '$1') || 1)
-	}
-
 	@property({ type: Object }) dataGrid?: DataGrid<TData, any> | undefined
 
 	@property() width = 'max-content'
@@ -50,7 +44,7 @@ export abstract class DataGridColumnComponent<TData, TValue> extends Component {
 			alignment: this.textAlign,
 			hidden: this.hidden,
 			sticky: this.sticky,
-			width: !DataGridColumnComponent.regex.test(this.width) ? this.width : `${DataGridColumnComponent.getProportion(this.width)}fr`,
+			width: this.width,
 			sortable: !this.nonSortable,
 			editable: this.getEditContentTemplate !== undefined && (typeof nonEditable !== 'function' ? !nonEditable : x => !nonEditable(x)),
 			getContentTemplate: this.getContentTemplate.bind(this),

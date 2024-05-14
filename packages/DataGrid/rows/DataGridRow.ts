@@ -105,6 +105,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 
 			:host([selected]) #contentContainer, :host([contextMenuOpen]) #contentContainer {
 				background: var(--mo-data-grid-selection-background) !important;
+				--mo-data-grid-sticky-part-color: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-accent));
 			}
 
 			:host([selected]:not(:last-of-type)) #contentContainer:after {

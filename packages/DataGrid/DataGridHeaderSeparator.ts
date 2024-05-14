@@ -109,7 +109,7 @@ export class DataGridHeaderSeparator extends Component {
 
 	private readonly handlePointerDown = (e: PointerEvent) => {
 		this.isResizing = true
-		this.initialWidth = this.getColumnWidth(this.column)
+		this.initialWidth = this.column.widthInPixels
 		this.updatePointerPosition(e)
 	}
 
@@ -123,26 +123,6 @@ export class DataGridHeaderSeparator extends Component {
 		this.isResizing = false
 		this.column.width = 'max-content'
 		this.dataGrid.setColumns(this.dataGrid.columns)
-	}
-
-	private getColumnWidth(column: DataGridColumn<unknown>) {
-		if (column.hidden === true) {
-			return 0
-		}
-
-		column.width ??= 'max-content'
-		const columnIndex = this.dataGrid.visibleColumns.findIndex(c => c === this.column)
-		const targetColumnIndex = this.dataGrid.visibleColumns.findIndex(c => c === column)
-		let targetColumn = this.previousElementSibling as Element
-		if (columnIndex !== targetColumnIndex) {
-			let steps = (targetColumnIndex - columnIndex) * 2 - 1
-			while (steps >= 0) {
-				targetColumn = targetColumn.nextElementSibling as Element
-				steps--
-			}
-		}
-
-		return targetColumn.clientWidth || 0
 	}
 }
 

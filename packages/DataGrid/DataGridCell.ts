@@ -158,6 +158,9 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 
 			:host([sticky]) {
 				position: sticky;
+			}
+
+			:host([sticky]) /*[sticking]*/ {
 				z-index: 2;
 				background: var(--mo-data-grid-sticky-part-color);
 			}
@@ -185,7 +188,8 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 			this.setAttribute('tabindex', '-1')
 		}
 		this.toggleAttribute('sticky', this.column.sticky !== undefined)
-		this.style.insetInline = this.dataGrid.getStickyColumnInsetInline(this.column)
+		this.toggleAttribute('sticking', this.column.intersecting === false)
+		this.style.insetInline = this.column.stickyColumnInsetInline
 		return this.isEditing ? this.editContentTemplate as HTMLTemplateResult : this.contentTemplate
 	}
 

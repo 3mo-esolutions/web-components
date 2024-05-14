@@ -505,7 +505,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				--mo-data-grid-row-tree-line-width: 8px;
 				--mo-details-data-grid-start-margin: 26px;
 
-				--mo-data-grid-sticky-part-color: var(--mo-color-surface-container-high);
+				--mo-data-grid-sticky-part-color: var(--mo-color-surface);
 
 				--mo-data-grid-selection-background: color-mix(in srgb, var(--mo-color-accent), transparent 50%);
 				display: flex;
@@ -536,6 +536,10 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 			:host([hasDetails]) {
 				--mo-data-grid-row-tree-line-width: 18px;
+			}
+
+			#content {
+				width: fit-content;
 			}
 
 			#toolbar {
@@ -886,33 +890,9 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		this.style.setProperty('--mo-data-grid-columns', this.columnsWidths.join(' '))
 	}
 
-	getStickyColumnInsetInline(column: ColumnDefinition<TData, unknown>) {
-		const columnIndex = this.visibleColumns.indexOf(column)
-		const getFixedInset = (type: 'start' | 'end') => type === 'start'
-			? (this.selectionMode !== DataGridSelectionMode.None ? 40 : 0) + (this.hasDetails ? 20 : 0)
-			: (this.hasContextMenu ? 28 : 0)
-
-		const calculate = (type: 'start' | 'end') => this.visibleColumns
-			.filter((c, i) => c.sticky === type && (type === 'start' ? i < columnIndex : i > columnIndex))
-			.map(c => this.rows[0]?.getCell(c)?.clientWidth)
-			.filter(x => x !== undefined)
-			.reduce((a, b) => a! + b!, 0)!
-			+ getFixedInset(type)
-
-		switch (column.sticky) {
-			case 'start':
-				const start = calculate('start')
-				return `${start}px auto`
-			case 'end':
-				const end = calculate('end')
-				return `auto ${end}px`
-			case 'both':
-				const [s, e] = [calculate('start'), calculate('end')]
-				return `${s}px ${e}px`
-			default:
-				return ''
-		}
-	}
+	readonly detailsColumnWidthInPixels = 0
+	readonly selectionColumnWidthInPixels = 0
+	readonly moreColumnWidthInPixels = 0
 
 	get columnsWidths() {
 		return [
