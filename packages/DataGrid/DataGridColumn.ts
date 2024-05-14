@@ -9,15 +9,12 @@ export type DataGridRankedSortDefinition<TData> = DataGridSortingDefinition<TDat
 export class DataGridColumn<TData, TValue = unknown> {
 	dataGrid!: DataGrid<TData, any>
 	dataSelector!: KeyPathOf<TData>
-	heading!: string
 
-	private _tooltip?: string
-	get tooltip() { return this._tooltip || this.heading }
-	set tooltip(value) { this._tooltip = value }
+	heading!: string
+	description?: string
 
 	// eslint-disable-next-line @typescript-eslint/ban-types
 	width: CSS.DataType.TrackBreadth<(string & {}) | 0> = 'max-content'
-
 	alignment: DataGridColumnAlignment = 'start'
 	hidden = false
 

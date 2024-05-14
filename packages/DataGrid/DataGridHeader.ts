@@ -139,7 +139,7 @@ export class DataGridHeader<TData> extends Component {
 				>
 					<div class='headerContent'
 						${style({ width: '100%', textAlign: column.alignment })}
-						${!column.tooltip ? html.nothing : tooltip(column.tooltip)}
+						${!column.description ? html.nothing : tooltip(column.description)}
 					>${column.heading}</div>
 
 					${sortIcon === undefined ? html.nothing : html`
