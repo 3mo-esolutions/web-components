@@ -1,10 +1,10 @@
 import { Component, component, property, html, css, state, eventListener, style } from '@a11d/lit'
-import { type ColumnDefinition, type DataGrid } from './index.js'
+import { type DataGridColumn, type DataGrid } from './index.js'
 
 @component('mo-data-grid-header-separator')
 export class DataGridHeaderSeparator extends Component {
 	@property({ type: Object }) dataGrid!: DataGrid<unknown>
-	@property({ type: Object }) column!: ColumnDefinition<unknown>
+	@property({ type: Object }) column!: DataGridColumn<unknown>
 
 	@state() private isResizing = false
 	@state() private pointerInlineStart = 0
@@ -126,7 +126,7 @@ export class DataGridHeaderSeparator extends Component {
 		this.dataGrid.setColumns(this.dataGrid.columns)
 	}
 
-	private getColumnWidth(column: ColumnDefinition<unknown>) {
+	private getColumnWidth(column: DataGridColumn<unknown>) {
 		if (column.hidden === true) {
 			return 0
 		}

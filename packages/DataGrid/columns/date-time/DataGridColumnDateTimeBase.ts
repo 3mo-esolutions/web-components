@@ -1,11 +1,11 @@
 import { property, type literal, html, staticHtml } from '@a11d/lit'
-import { DataGridColumn } from '../DataGridColumn.js'
+import { DataGridColumnComponent } from '../DataGridColumnComponent.js'
 
 /**
  * @attr formatOptions - Options to pass to Date.prototype.format()
  * @attr pickerHidden - Hides the date/time picker
  */
-export abstract class DataGridColumnDateTimeBase<TData, TDate extends { format(...options: any[]): string }> extends DataGridColumn<TData, TDate> {
+export abstract class DataGridColumnDateTimeBase<TData, TDate extends { format(...options: any[]): string }> extends DataGridColumnComponent<TData, TDate> {
 	static defaultFormatOptions?: Intl.DateTimeFormatOptions
 	abstract readonly fieldTag: ReturnType<typeof literal>
 

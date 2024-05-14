@@ -2,7 +2,7 @@ import { component, html, event, property, style } from '@a11d/lit'
 import { type MaterialIcon } from '@3mo/icon'
 import { Localizer } from '@3mo/localization'
 import { tooltip } from '@3mo/tooltip'
-import { DataGridColumn } from './DataGridColumn.js'
+import { DataGridColumnComponent } from './DataGridColumnComponent.js'
 
 Localizer.register('de', {
 	'Delete position': 'Position entfernen'
@@ -16,7 +16,7 @@ Localizer.register('de', {
  * @fires delete
  */
 @component('mo-data-grid-column-deletion')
-export class DataGridColumnDeletion<TData> extends DataGridColumn<TData, never> {
+export class DataGridColumnDeletion<TData> extends DataGridColumnComponent<TData, never> {
 	@event() readonly delete!: EventDispatcher<TData>
 
 	@property() icon: MaterialIcon = 'delete'

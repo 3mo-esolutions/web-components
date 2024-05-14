@@ -1,5 +1,5 @@
 import { component, html, property, style } from '@a11d/lit'
-import { DataGridColumn } from './DataGridColumn.js'
+import { DataGridColumnComponent } from './DataGridColumnComponent.js'
 import { tooltip } from '@3mo/tooltip'
 
 /**
@@ -8,7 +8,7 @@ import { tooltip } from '@3mo/tooltip'
  * @attr tooltipSelector - The data selector of the column to use as a tooltip. If a function is provided, it will be called with the data as an argument.
  */
 @component('mo-data-grid-column-image')
-export class DataGridColumnImage<TData> extends DataGridColumn<TData, string> {
+export class DataGridColumnImage<TData> extends DataGridColumnComponent<TData, string> {
 	@property() tooltipSelector?: KeyPathOf<TData> | ((data: TData) => string | undefined)
 
 	override nonSortable = true

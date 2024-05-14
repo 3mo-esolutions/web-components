@@ -1,6 +1,6 @@
 import { Component, property, type HTMLTemplateResult } from '@a11d/lit'
 import { DataGrid } from '../DataGrid.js'
-import type { ColumnDefinition, DataGridColumnAlignment } from '../ColumnDefinition.js'
+import { DataGridColumn, type DataGridColumnAlignment } from '../DataGridColumn.js'
 
 /**
  * @attr width - The width of the column
@@ -13,11 +13,11 @@ import type { ColumnDefinition, DataGridColumnAlignment } from '../ColumnDefinit
  * @attr nonSortable - Whether the column is sortable
  * @attr nonEditable - Whether the column is editable
  */
-export abstract class DataGridColumn<TData, TValue> extends Component {
+export abstract class DataGridColumnComponent<TData, TValue> extends Component {
 	static readonly regex = /^\s*(0|[1-9][0-9]*)?\s*\*\s*$/
 
 	private static getProportion(value: string) {
-		return Number(value.replace(DataGridColumn.regex, '$1') || 1)
+		return Number(value.replace(DataGridColumnComponent.regex, '$1') || 1)
 	}
 
 	@property({ type: Object }) dataGrid?: DataGrid<TData, any> | undefined
@@ -38,21 +38,21 @@ export abstract class DataGridColumn<TData, TValue> extends Component {
 		}
 	}) nonEditable: boolean | Predicate<TData> = false
 
-	get definition(): ColumnDefinition<TData, TValue> {
+	get column(): DataGridColumn<TData, TValue> {
 		const nonEditable = this.nonEditable
-		return {
+		return new DataGridColumn({
 			dataSelector: this.dataSelector,
 			sortDataSelector: this.sortDataSelector,
 			heading: this.heading,
 			title: this.title || undefined,
 			alignment: this.textAlign,
 			hidden: this.hidden,
-			width: !DataGridColumn.regex.test(this.width) ? this.width : `${DataGridColumn.getProportion(this.width)}fr`,
+			width: !DataGridColumnComponent.regex.test(this.width) ? this.width : `${DataGridColumnComponent.getProportion(this.width)}fr`,
 			sortable: !this.nonSortable,
 			editable: this.getEditContentTemplate !== undefined && (typeof nonEditable !== 'function' ? !nonEditable : x => !nonEditable(x)),
 			getContentTemplate: this.getContentTemplate.bind(this),
 			getEditContentTemplate: this.getEditContentTemplate?.bind(this),
-		}
+		})
 	}
 
 	abstract getContentTemplate(value: TValue | undefined, data: TData): HTMLTemplateResult

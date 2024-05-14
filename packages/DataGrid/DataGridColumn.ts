@@ -2,10 +2,10 @@ import { type HTMLTemplateResult } from '@a11d/lit'
 
 export type DataGridColumnAlignment = 'start' | 'center' | 'end'
 
-export type ColumnDefinition<TData, TValue = unknown> = {
-	heading: string
+export class DataGridColumn<TData, TValue = unknown> {
+	dataSelector!: KeyPathOf<TData>
+	heading!: string
 	title?: string
-	dataSelector: KeyPathOf<TData>
 	sortDataSelector?: KeyPathOf<TData>
 	width?: string
 	alignment?: DataGridColumnAlignment
@@ -16,4 +16,8 @@ export type ColumnDefinition<TData, TValue = unknown> = {
 	getContentTemplate?(value: TValue, data: TData): HTMLTemplateResult
 	getEditContentTemplate?(value: TValue, data: TData): HTMLTemplateResult
 	getSumTemplate?(sum: number): HTMLTemplateResult
+
+	constructor(column: Partial<DataGridColumn<TData>>) {
+		Object.assign(this, column)
+	}
 }

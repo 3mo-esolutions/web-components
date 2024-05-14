@@ -1,7 +1,7 @@
 import { component, Component, css, html, ifDefined, property, event, style } from '@a11d/lit'
 import { KeyboardController } from '@3mo/keyboard-controller'
 import { type Checkbox } from '@3mo/checkbox'
-import { DataGridSelectionMode, DataGridSortingStrategy, type ColumnDefinition, type DataGrid, DataGridSidePanelTab } from './index.js'
+import { DataGridSelectionMode, DataGridSortingStrategy, type DataGridColumn, type DataGrid, DataGridSidePanelTab } from './index.js'
 
 @component('mo-data-grid-header')
 export class DataGridHeader<TData> extends Component {
@@ -124,7 +124,7 @@ export class DataGridHeader<TData> extends Component {
 		`
 	}
 
-	private readonly getHeaderCellTemplate = (column: ColumnDefinition<TData>, index: number) => {
+	private readonly getHeaderCellTemplate = (column: DataGridColumn<TData>, index: number) => {
 		const sortingDefinition = this.dataGrid.getSortingDefinition(column)
 		const sortIcon = !sortingDefinition ? undefined : sortingDefinition.strategy === DataGridSortingStrategy.Ascending ? 'arrow_upward' : 'arrow_downward'
 		const sortingRank = !sortingDefinition || this.dataGrid.getSorting().length <= 1 ? undefined : sortingDefinition.rank
@@ -162,7 +162,7 @@ export class DataGridHeader<TData> extends Component {
 		`
 	}
 
-	private sort(column: ColumnDefinition<TData>) {
+	private sort(column: DataGridColumn<TData>) {
 		if (column.sortable === false) {
 			return
 		}

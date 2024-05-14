@@ -1,14 +1,14 @@
 import { type HTMLTemplateResult, property } from '@a11d/lit'
-import { DataGridColumn } from '../DataGridColumn.js'
-import type { DataGridColumnAlignment } from '../../ColumnDefinition.js'
+import { DataGridColumnComponent } from '../DataGridColumnComponent.js'
+import type { DataGridColumnAlignment } from '../../DataGridColumn.js'
 
-export abstract class DataGridColumnNumberBase<TData> extends DataGridColumn<TData, number> {
+export abstract class DataGridColumnNumberBase<TData> extends DataGridColumnComponent<TData, number> {
 	@property() sumHeading: string | undefined = undefined
 	@property() override textAlign: DataGridColumnAlignment = 'end'
 
-	override get definition() {
+	override get column() {
 		return {
-			...super.definition,
+			...super.column,
 			sumHeading: this.sumHeading,
 			getSumTemplate: this.getSumTemplate.bind(this),
 		}

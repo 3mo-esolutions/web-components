@@ -1,11 +1,11 @@
 import { component, html, ifDefined } from '@a11d/lit'
-import { DataGridColumn } from './DataGridColumn.js'
+import { DataGridColumnComponent } from './DataGridColumnComponent.js'
 
 /** @element mo-data-grid-column-text */
 @component('mo-data-grid-column-text')
-export class DataGridColumnText<TData> extends DataGridColumn<TData, string> {
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	getContentTemplate(value: string | undefined, _data: TData) {
+export class DataGridColumnText<TData> extends DataGridColumnComponent<TData, string> {
+	getContentTemplate(value: string | undefined, data: TData) {
+		data
 		return html`${value ?? ''}`
 	}
 
