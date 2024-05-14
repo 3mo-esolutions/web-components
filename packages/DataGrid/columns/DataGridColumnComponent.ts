@@ -7,7 +7,7 @@ import { DataGridColumn, type DataGridColumnAlignment } from '../DataGridColumn.
  * @attr hidden - Whether the column is hidden. The column can be made visible by the user in the settings panel if available.
  * @attr heading - The heading of the column
  * @attr textAlign - The text alignment of the column
- * @attr title - The title of the column
+ * @attr description - The description of the column. It will be displayed as a tooltip on the heading.
  * @attr dataSelector - The data selector of the column
  * @attr sortDataSelector - The data selector of the column
  * @attr nonSortable - Whether the column is sortable
@@ -27,7 +27,6 @@ export abstract class DataGridColumnComponent<TData, TValue> extends Component {
 	@property({ reflect: true }) heading = ''
 	@property({ reflect: true }) description?: string
 	@property({ reflect: true }) textAlign: DataGridColumnAlignment = 'start'
-	@property({ reflect: true }) override title!: string
 	@property({ reflect: true }) dataSelector!: KeyPathOf<TData>
 	@property({ reflect: true }) sortDataSelector?: KeyPathOf<TData>
 	@property({ type: Boolean, reflect: true }) nonSortable = false
