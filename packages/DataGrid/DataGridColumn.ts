@@ -7,7 +7,7 @@ export type DataGridColumnAlignment = 'start' | 'center' | 'end'
 export type DataGridRankedSortDefinition<TData> = DataGridSortingDefinition<TData> & { rank: number }
 
 export class DataGridColumn<TData, TValue = unknown> {
-	dataGrid!: DataGrid<TData, any>
+	dataGrid?: DataGrid<TData, any>
 	dataSelector!: KeyPathOf<TData>
 
 	heading!: string
@@ -37,6 +37,9 @@ export class DataGridColumn<TData, TValue = unknown> {
 	}
 
 	get sortingDefinition() {
+		if (!this.dataGrid) {
+			return undefined
+		}
 		const sorting = this.dataGrid.getSorting()
 		const definition = sorting.find(s => s.selector === this.sortDataSelector)
 		return !definition ? undefined : {
@@ -46,7 +49,7 @@ export class DataGridColumn<TData, TValue = unknown> {
 	}
 
 	get sumTemplate() {
-		if (this.sumHeading === undefined || this.getSumTemplate === undefined) {
+		if (!this.dataGrid || this.sumHeading === undefined || this.getSumTemplate === undefined) {
 			return
 		}
 
