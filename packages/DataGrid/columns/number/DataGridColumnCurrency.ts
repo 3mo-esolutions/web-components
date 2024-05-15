@@ -39,7 +39,7 @@ export class DataGridColumnCurrency<TData> extends DataGridColumnNumberBase<TDat
 
 	getSumTemplate(sum: number) {
 		return html`
-			<span style='font-weight: 500'>${sum.formatAsCurrency(this.currency!)}</span>
+			<span style='font-weight: 500'>${sum.formatAsCurrency(this.currency ?? DataGridColumnCurrency.defaultCurrency!)}</span>
 		`
 	}
 }
