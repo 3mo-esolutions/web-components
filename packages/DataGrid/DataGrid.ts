@@ -581,7 +581,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 			#fab {
 				position: absolute;
-				bottom: 8px;
 				inset-inline-end: 16px;
 				transition: var(--mo-data-grid-fab-transition, 250ms);
 				z-index: 3;
