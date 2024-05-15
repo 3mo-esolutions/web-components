@@ -2,6 +2,7 @@ import { component, Component, css, html, ifDefined, property, event, style } fr
 import { KeyboardController } from '@3mo/keyboard-controller'
 import { type Checkbox } from '@3mo/checkbox'
 import { tooltip } from '@3mo/tooltip'
+import { observeResize } from '@3mo/resize-observer'
 import { DataGridSelectionMode, DataGridSortingStrategy, type DataGridColumn, type DataGrid, DataGridSidePanelTab } from './index.js'
 
 @component('mo-data-grid-header')
@@ -83,6 +84,46 @@ export class DataGridHeader<TData> extends Component {
 				align-items: center;
 				justify-content: center;
 			}
+
+			.cell {
+				position: relative;
+			}
+
+			.cell[data-sticky] {
+				position: sticky;
+			}
+
+			.cell[data-sticky] /*[data-sticking]*/ {
+				z-index: 6;
+				background: var(--mo-data-grid-sticky-part-color);
+			}
+
+			mo-data-grid-header-separator {
+				z-index: 5;
+			}
+
+			.cell[data-sticky] /*[data-sticking]*/ mo-data-grid-header-separator {
+				z-index: 7;
+			}
+
+			.details, .selection, .more {
+				position: sticky;
+				background: var(--mo-data-grid-sticky-part-color);
+				z-index: 5;
+			}
+
+			.details {
+				inset-inline-start: 0px;
+			}
+
+			.selection {
+				inset-inline-start: 0px;
+			}
+
+			.more {
+				cursor: pointer;
+				inset-inline-end: 0px;
+			}
 		`
 	}
 
@@ -98,7 +139,7 @@ export class DataGridHeader<TData> extends Component {
 
 	private get detailsExpanderTemplate() {
 		return this.dataGrid.hasDetails === false ? html.nothing : html`
-			<mo-flex justifyContent='center' alignItems='center'>
+			<mo-flex class='details' justifyContent='center' alignItems='center' ${this.getResizeObserver('detailsColumnWidthInPixels')}>
 				${!this.dataGrid.hasDetails || !this.dataGrid.multipleDetails ? html.nothing : html`
 					<mo-icon-button dense ${style({ padding: '-10px 0px 0 -10px' })}
 						${style({ display: 'inherit' })}
@@ -112,7 +153,7 @@ export class DataGridHeader<TData> extends Component {
 
 	private get selectionTemplate() {
 		return this.dataGrid.hasSelection === false || this.dataGrid.selectionCheckboxesHidden ? html.nothing : html`
-			<mo-flex justifyContent='center' alignItems='center'>
+			<mo-flex class='selection' justifyContent='center' alignItems='center' ${this.getResizeObserver('selectionColumnWidthInPixels')}>
 				${this.dataGrid.selectionMode !== DataGridSelectionMode.Multiple ? html.nothing : html`
 					<mo-checkbox ${style({ position: 'absolute' })} .selected=${this.selection} @change=${this.handleSelectionChange}></mo-checkbox>
 				`}
@@ -126,13 +167,17 @@ export class DataGridHeader<TData> extends Component {
 		`
 	}
 
-	private readonly getHeaderCellTemplate = (column: DataGridColumn<TData>, index: number) => {
+	private readonly getHeaderCellTemplate = (column: DataGridColumn<TData>, index: number, columns: Array<DataGridColumn<TData>>) => {
 		const sortingDefinition = column.sortingDefinition
 		const sortIcon = !sortingDefinition ? undefined : sortingDefinition.strategy === DataGridSortingStrategy.Ascending ? 'arrow_upward' : 'arrow_downward'
 		const sortingRank = !sortingDefinition || this.dataGrid.getSorting().length <= 1 ? undefined : sortingDefinition.rank
-
 		return html`
-			<mo-grid alignItems='center' ${style({ position: 'relative', userSelect: 'none' })}>
+			<mo-flex class='cell' alignItems='center' direction=${column.alignment === 'end' ? 'horizontal-reversed' : 'horizontal'}
+				data-sticky=${ifDefined(column.sticky)}
+				data-sticking=${column.intersecting === false}
+				${!column.sticky || column.intersecting ? html.nothing : style({ insetInline: column.stickyColumnInsetInline })}
+				${observeResize(([entry]) => column.widthInPixels = entry?.contentRect.width ?? 0)}
+			>
 				<mo-flex direction=${column.alignment === 'end' ? 'horizontal-reversed' : 'horizontal'} alignItems='center'
 					${style({ overflow: 'hidden', cursor: 'pointer', flex: '1' })}
 					@click=${() => this.sort(column)}
@@ -148,10 +193,11 @@ export class DataGridHeader<TData> extends Component {
 					`}
 				</mo-flex>
 				<mo-data-grid-header-separator
+					?data-last=${columns.length - 1 === index}
 					.dataGrid=${this.dataGrid as any}
 					.column=${this.dataGrid.visibleColumns[index]}
 				></mo-data-grid-header-separator>
-			</mo-grid>
+			</mo-flex>
 		`
 	}
 
@@ -161,14 +207,17 @@ export class DataGridHeader<TData> extends Component {
 
 	private get moreTemplate() {
 		return this.dataGrid.hasToolbar || this.dataGrid.sidePanelHidden ? html.nothing : html`
-			<mo-flex alignItems='end' justifyContent='center'
-				${style({ cursor: 'pointer', position: 'sticky', insetInlineEnd: '0px', background: 'var(--mo-data-grid-sticky-part-color)', zIndex: '5', marginInlineStart: '3px' })}
-			>
+			<mo-flex class='more' alignItems='end' justifyContent='center' ${this.getResizeObserver('moreColumnWidthInPixels')}>
 				<mo-icon-button dense icon='settings' ${style({ color: 'var(--mo-color-accent)', fontSize: 'large' })}
 					@click=${() => this.dataGrid.navigateToSidePanelTab(this.dataGrid.sidePanelTab ? undefined : DataGridSidePanelTab.Settings)}
 				></mo-icon-button>
 			</mo-flex>
 		`
+	}
+
+	private getResizeObserver(property: keyof DataGrid<TData>) {
+		// @ts-expect-error Readonly property set here
+		return observeResize(([entry]) => this.dataGrid[property] = entry?.contentRect.width ?? 0)
 	}
 
 	private sort(column: DataGridColumn<TData>) {

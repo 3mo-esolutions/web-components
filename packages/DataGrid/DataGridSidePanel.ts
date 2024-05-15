@@ -37,6 +37,7 @@ export class DataGridSidePanel<TData> extends Component {
 				width: 100%;
 				height: 100%;
 				transform-origin: right center;
+				z-index: 10;
 			}
 
 			:host(:not([hidden])) {

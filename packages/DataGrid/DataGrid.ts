@@ -109,7 +109,7 @@ export type DataGridSorting<TData> = DataGridSortingDefinition<TData> | Array<Da
  * @cssprop --mo-data-grid-min-visible-rows - The minimum number of visible rows. Default to 2.5.
  * @cssprop --mo-data-grid-footer-background - The background of the footer.
  * @cssprop --mo-data-grid-cell-padding - The inline padding of the cells. Default to 10px.
- * @cssprop --mo-data-grid-column-sub-row-indentation - The indentation of the first column in the sub row. Default to 10px.
+ * @cssprop --mo-data-grid-column-sub-row-indentation - The indentation of the first column in the sub row. Default to 20px.
  *
  * @fires dataChange
  * @fires selectionChange
@@ -505,7 +505,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				--mo-data-grid-row-tree-line-width: 8px;
 				--mo-details-data-grid-start-margin: 26px;
 
-				--mo-data-grid-sticky-part-color: var(--mo-color-surface-container-high);
+				--mo-data-grid-sticky-part-color: var(--mo-color-surface);
 
 				--mo-data-grid-selection-background: color-mix(in srgb, var(--mo-color-accent), transparent 50%);
 				display: flex;
@@ -536,6 +536,10 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 			:host([hasDetails]) {
 				--mo-data-grid-row-tree-line-width: 18px;
+			}
+
+			#content {
+				width: fit-content;
 			}
 
 			#toolbar {
@@ -885,6 +889,10 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		this.style.setProperty('--mo-data-grid-content-width', this.dataColumnsWidths.join(' '))
 		this.style.setProperty('--mo-data-grid-columns', this.columnsWidths.join(' '))
 	}
+
+	readonly detailsColumnWidthInPixels = 0
+	readonly selectionColumnWidthInPixels = 0
+	readonly moreColumnWidthInPixels = 0
 
 	get columnsWidths() {
 		return [

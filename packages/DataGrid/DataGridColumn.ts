@@ -4,6 +4,8 @@ import type * as CSS from 'csstype'
 
 export type DataGridColumnAlignment = 'start' | 'center' | 'end'
 
+export type DataGridColumnSticky = 'start' | 'both' | 'end'
+
 export type DataGridRankedSortDefinition<TData> = DataGridSortingDefinition<TData> & { rank: number }
 
 export class DataGridColumn<TData, TValue = unknown> {
@@ -15,10 +17,13 @@ export class DataGridColumn<TData, TValue = unknown> {
 
 	// eslint-disable-next-line @typescript-eslint/ban-types
 	width: CSS.DataType.TrackBreadth<(string & {}) | 0> = 'max-content'
+
 	alignment: DataGridColumnAlignment = 'start'
 	hidden = false
 
 	sortable = true
+
+	sticky?: DataGridColumnSticky
 
 	private _sortDataSelector?: KeyPathOf<TData>
 	get sortDataSelector() { return this._sortDataSelector || this.dataSelector }
@@ -34,6 +39,20 @@ export class DataGridColumn<TData, TValue = unknown> {
 
 	constructor(column: Partial<DataGridColumn<TData, TValue>>) {
 		Object.assign(this, column)
+	}
+
+	private _widthInPixels?: number
+	get widthInPixels() { return this._widthInPixels || 0 }
+	set widthInPixels(value) {
+		this._widthInPixels = value
+		this.dataGrid?.requestUpdate()
+	}
+
+	private _intersecting = false
+	get intersecting() { return this._intersecting }
+	set intersecting(value) {
+		this._intersecting = value
+		this.dataGrid?.requestUpdate()
 	}
 
 	get sortingDefinition() {
@@ -64,5 +83,34 @@ export class DataGridColumn<TData, TValue = unknown> {
 				${this.getSumTemplate(sum)}
 			</mo-data-grid-footer-sum>
 		`
+	}
+
+	get stickyColumnInsetInline() {
+		const dataGrid = this.dataGrid
+
+		if (!dataGrid) {
+			return ''
+		}
+
+		const columnIndex = dataGrid.visibleColumns.indexOf(this)
+		const calculate = (type: 'start' | 'end') => dataGrid.visibleColumns
+			.filter((c, i) => c.sticky === type && (type === 'start' ? i < columnIndex : i > columnIndex))
+			.map(c => c.widthInPixels)
+			.filter(x => x !== undefined)
+			.reduce((a, b) => a! + b!, 0)!
+
+		const start = `${dataGrid.selectionColumnWidthInPixels + dataGrid.detailsColumnWidthInPixels + calculate('start')}px`
+		const end = `${calculate('end') + dataGrid.moreColumnWidthInPixels}px`
+
+		switch (this.sticky) {
+			case 'start':
+				return `${start} auto`
+			case 'end':
+				return `auto ${end}`
+			case 'both':
+				return `${start} ${end}`
+			default:
+				return ''
+		}
 	}
 }
