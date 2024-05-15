@@ -109,7 +109,7 @@ export type DataGridSorting<TData> = DataGridSortingDefinition<TData> | Array<Da
  * @cssprop --mo-data-grid-min-visible-rows - The minimum number of visible rows. Default to 2.5.
  * @cssprop --mo-data-grid-footer-background - The background of the footer.
  * @cssprop --mo-data-grid-cell-padding - The inline padding of the cells. Default to 10px.
- * @cssprop --mo-data-grid-column-sub-row-indentation - The indentation of the first column in the sub row. Default to 10px.
+ * @cssprop --mo-data-grid-column-sub-row-indentation - The indentation of the first column in the sub row. Default to 20px.
  *
  * @fires dataChange
  * @fires selectionChange

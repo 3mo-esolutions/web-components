@@ -160,7 +160,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			}
 
 			mo-data-grid-cell:first-of-type:not([alignment=end]), mo-data-grid-cell[alignment=end]:first-of-type + mo-data-grid-cell {
-				margin-inline-start: calc(var(--_level, 0) * var(--mo-data-grid-column-sub-row-indentation, 10px));
+				margin-inline-start: calc(var(--_level, 0) * var(--mo-data-grid-column-sub-row-indentation, 20px));
 			}
 		`
 	}
