@@ -38,7 +38,6 @@
 		"@3mo/media-query-observer": "x",
 		"@3mo/mutation-observer": "x",
 		"@3mo/resize-observer": "x",
-		"@3mo/intersection-observer": "x",
 		"@3mo/localization": "x",
 		"@3mo/context-menu": "x",
 		"@3mo/tooltip": "x",

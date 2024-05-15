@@ -167,7 +167,7 @@ export class DataGridHeader<TData> extends Component {
 		`
 	}
 
-	private readonly getHeaderCellTemplate = (column: DataGridColumn<TData>, index: number) => {
+	private readonly getHeaderCellTemplate = (column: DataGridColumn<TData>, index: number, columns: Array<DataGridColumn<TData>>) => {
 		const sortingDefinition = column.sortingDefinition
 		const sortIcon = !sortingDefinition ? undefined : sortingDefinition.strategy === DataGridSortingStrategy.Ascending ? 'arrow_upward' : 'arrow_downward'
 		const sortingRank = !sortingDefinition || this.dataGrid.getSorting().length <= 1 ? undefined : sortingDefinition.rank
@@ -193,6 +193,7 @@ export class DataGridHeader<TData> extends Component {
 					`}
 				</mo-flex>
 				<mo-data-grid-header-separator
+					?data-last=${columns.length - 1 === index}
 					.dataGrid=${this.dataGrid as any}
 					.column=${this.dataGrid.visibleColumns[index]}
 				></mo-data-grid-header-separator>

@@ -18,7 +18,11 @@ export class DataGridHeaderSeparator extends Component {
 		return css`
 			:host {
 				position: absolute;
-				inset-inline-end: -3px;
+				inset-inline-end: -2px;
+			}
+
+			:host([data-last]) {
+				inset-inline-end: 0px !important;
 			}
 
 			div.separator {
