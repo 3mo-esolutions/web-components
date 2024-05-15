@@ -113,15 +113,4 @@ export class DataGridColumn<TData, TValue = unknown> {
 				return ''
 		}
 	}
-
-	get isSticking() {
-		const rect = this.dataGrid?.['content']?.getBoundingClientRect()
-
-		if (!rect) {
-			return false
-		}
-
-		console.log(rect)
-		return false
-	}
 }

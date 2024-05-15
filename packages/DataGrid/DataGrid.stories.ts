@@ -113,19 +113,19 @@ export const StickyColumns: StoryObj = {
 			<mo-context-menu-item>Item2</mo-context-menu-item>
 		`}>
 			<mo-data-grid-column-text sticky='start' heading='Name' width='200px' dataSelector='name'></mo-data-grid-column-text>
-			<mo-data-grid-column-text width='min-content' heading='Address' dataSelector='address'></mo-data-grid-column-text>
-			<mo-data-grid-column-text width='min-content' heading='Address' dataSelector='address'></mo-data-grid-column-text>
-			<mo-data-grid-column-text width='min-content' heading='Address' dataSelector='address'></mo-data-grid-column-text>
+			<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
+			<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
+			<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
 			<mo-data-grid-column-text sticky='both' heading='Name' width='200px' dataSelector='name'></mo-data-grid-column-text>
-			<mo-data-grid-column-text width='min-content' heading='Address' dataSelector='address'></mo-data-grid-column-text>
-			<mo-data-grid-column-text width='min-content' heading='Address' dataSelector='address'></mo-data-grid-column-text>
-			<mo-data-grid-column-text width='min-content' heading='Address' dataSelector='address'></mo-data-grid-column-text>
-			<mo-data-grid-column-text width='min-content' heading='Address' dataSelector='address'></mo-data-grid-column-text>
-			<mo-data-grid-column-text width='min-content' heading='Address' dataSelector='address'></mo-data-grid-column-text>
-			<mo-data-grid-column-text width='min-content' heading='Address' dataSelector='address'></mo-data-grid-column-text>
-			<mo-data-grid-column-text width='min-content' heading='Address' dataSelector='address'></mo-data-grid-column-text>
+			<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
+			<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
+			<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
+			<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
+			<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
+			<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
+			<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
 			<mo-data-grid-column-number heading='Age' dataSelector='age'></mo-data-grid-column-number>
-			<mo-data-grid-column-date sticky='end' width='min-content' heading='Birth Date' dataSelector='birthDate'></mo-data-grid-column-date>
+			<mo-data-grid-column-date sticky='end' heading='Birth Date' dataSelector='birthDate'></mo-data-grid-column-date>
 		</mo-data-grid>
 	`
 }
