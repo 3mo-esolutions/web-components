@@ -7,7 +7,6 @@ import { tooltip } from '@3mo/tooltip'
 import { ThemeController } from '@3mo/theme'
 import { observeMutation } from '@3mo/mutation-observer'
 import { MediaQueryController } from '@3mo/media-query-observer'
-import { observeResize } from '@3mo/resize-observer'
 import { Localizer } from '@3mo/localization'
 import { ContextMenu } from '@3mo/context-menu'
 import { CsvGenerator, DataGridColumnComponent, DataGridSidePanelTab, type DataGridColumn, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, type DataGridSidePanel } from './index.js'
@@ -433,9 +432,9 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		}
 
 		if (this.pagination === 'auto') {
-			const rowsHeight = this.content?.clientHeight
+			const rowsHeight = (this.content?.clientHeight ?? 0) - (this.header?.clientHeight ?? 0)
 			const rowHeight = this.rowHeight
-			const pageSize = Math.floor((rowsHeight || 0) / rowHeight) || 1
+			const pageSize = Math.floor(rowsHeight / rowHeight) || 1
 			return dynamicPageSize(pageSize)
 		}
 
@@ -540,6 +539,9 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 			#content {
 				width: fit-content;
+				min-width: 100%;
+				height: min-content;
+				min-height: 100%;
 			}
 
 			#toolbar {
@@ -588,6 +590,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				inset-inline-end: 16px;
 				transition: var(--mo-data-grid-fab-transition, 250ms);
 				z-index: 3;
+				top: -64px;
 			}
 
 			:host([hasFooter]) #fab {
@@ -726,7 +729,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			<mo-grid rows='* auto' ${style({ position: 'relative', height: '100%' })}>
 				<mo-scroller
 					${style({ minHeight: 'var(--mo-data-grid-content-min-height, calc(var(--mo-data-grid-min-visible-rows, 2.5) * var(--mo-data-grid-row-height) + var(--mo-data-grid-header-height)))' })}
-					${observeResize(() => this.requestUpdate())}
 					@scroll=${this.handleScroll}
 				>
 					<mo-grid id='content' autoRows='min-content' columns='var(--mo-data-grid-columns)'>
