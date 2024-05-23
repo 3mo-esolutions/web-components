@@ -128,12 +128,12 @@ export class DataGridModeChip extends Component {
 		return html`
 			<span id='spanUnsaved'>*</span>
 
-			<mo-icon-button dense icon='undo' tabIndex='-1' dense ${style({ marginInlineStart: '0 0 0 12px' })}
+			<mo-icon-button dense icon='undo' tabIndex='-1' ${style({ marginInlineStart: '0 0 0 12px' })}
 				${tooltip(t('Discard changes'))}
 				@click=${this.handleDiscardChanges}
 			></mo-icon-button>
 
-			<mo-icon-button dense icon='save' tabIndex='-1' dense
+			<mo-icon-button dense icon='save' tabIndex='-1'
 				${tooltip(t('Save changes'))}
 				@click=${this.handleSave}
 			></mo-icon-button>
