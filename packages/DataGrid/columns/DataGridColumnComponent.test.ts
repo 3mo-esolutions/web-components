@@ -1,10 +1,10 @@
 import '../index.js'
-import { DataGridColumn } from './DataGridColumn.js'
+import { DataGridColumnComponent } from './DataGridColumnComponent.js'
 
-describe('DataGridColumn', () => {
+describe('DataGridColumnComponent', () => {
 	describe('nonEditable', () => {
 		it('should not trigger update when a new passed predicate is equal but not identical', () => {
-			const hasChanged = DataGridColumn.getPropertyOptions('nonEditable').hasChanged
+			const hasChanged = DataGridColumnComponent.getPropertyOptions('nonEditable').hasChanged
 
 			expect(hasChanged?.(false, false)).toBe(false)
 			expect(hasChanged?.(true, true)).toBe(false)

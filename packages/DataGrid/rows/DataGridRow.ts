@@ -1,6 +1,6 @@
 import { css, property, Component, html, queryAll, style, type HTMLTemplateResult, LitElement, event } from '@a11d/lit'
 import { ContextMenu } from '@3mo/context-menu'
-import { type ColumnDefinition } from '../ColumnDefinition.js'
+import { type DataGridColumn } from '../DataGridColumn.js'
 import { type DataGrid, type DataGridCell, DataGridPrimaryContextMenuItem, DataGridSelectionMode } from '../index.js'
 
 /**
@@ -46,6 +46,10 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 
 	get detailsElement() {
 		return this.renderRoot.querySelector('#detailsContainer')?.firstElementChild as TDetailsElement as TDetailsElement | undefined
+	}
+
+	getCell(column: DataGridColumn<TData, any>) {
+		return this.cells.find(cell => cell.column === column)
 	}
 
 	protected override initialized() {
@@ -94,12 +98,14 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			}
 
 			#contentContainer {
+				grid-column: -1 / 1;
 				cursor: pointer;
 				transition: 250ms;
 			}
 
 			:host([selected]) #contentContainer, :host([contextMenuOpen]) #contentContainer {
 				background: var(--mo-data-grid-selection-background) !important;
+				--mo-data-grid-sticky-part-color: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-accent));
 			}
 
 			:host([selected]:not(:last-of-type)) #contentContainer:after {
@@ -149,19 +155,19 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				display: none;
 			}
 
-			#detailsContainer > :first-child {
+			:host(:not([has-sub-data])) #detailsContainer > :first-child {
 				padding: 8px 0;
 			}
 
 			mo-data-grid-cell:first-of-type:not([alignment=end]), mo-data-grid-cell[alignment=end]:first-of-type + mo-data-grid-cell {
-				margin-inline-start: calc(var(--_level, 0) * var(--mo-data-grid-column-sub-row-indentation, 10px));
+				margin-inline-start: calc(var(--_level, 0) * var(--mo-data-grid-column-sub-row-indentation, 20px));
 			}
 		`
 	}
 
 	protected override get template() {
 		return html`
-			<mo-grid id='contentContainer'
+			<mo-grid id='contentContainer' columns='subgrid'
 				@click=${() => this.handleContentClick()}
 				@dblclick=${() => this.handleContentDoubleClick()}
 				@auxclick=${(e: PointerEvent) => e.button !== 1 ? void 0 : this.handleContentMiddleClick()}
@@ -177,7 +183,8 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 
 	protected get detailsExpanderTemplate() {
 		return this.dataGrid.hasDetails === false ? html.nothing : html`
-			<mo-flex justifyContent='center' alignItems='center' ${style({ width: 'var(--mo-data-grid-column-details-width)' })}
+			<mo-flex justifyContent='center' alignItems='center'
+				${style({ position: 'sticky', zIndex: '2', insetInlineStart: '0px', background: 'var(--mo-data-grid-sticky-expander-part-color, var(--mo-data-grid-sticky-part-color))' })}
 				@click=${(e: Event) => e.stopPropagation()}
 				@dblclick=${(e: Event) => e.stopPropagation()}
 			>
@@ -194,7 +201,8 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 
 	protected get selectionTemplate() {
 		return this.dataGrid.hasSelection === false || this.dataGrid.selectionCheckboxesHidden ? html.nothing : html`
-			<mo-flex id='selectionContainer' ${style({ width: 'var(--mo-data-grid-column-selection-width)' })} justifyContent='center' alignItems='center'
+			<mo-flex id='selectionContainer' justifyContent='center' alignItems='center'
+				${style({ width: 'var(--mo-data-grid-column-selection-width)', position: 'sticky', zIndex: '2', insetInlineStart: this.dataGrid.hasDetails ? '20px' : '0px', padding: this.dataGrid.hasDetails ? '1px 0' : undefined, background: 'var(--mo-data-grid-sticky-part-color)' })}
 				@click=${(e: Event) => e.stopPropagation()}
 				@dblclick=${(e: Event) => e.stopPropagation()}
 			>
@@ -208,7 +216,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		`
 	}
 
-	protected getCellTemplate(column: ColumnDefinition<TData, KeyPathValueOf<TData, KeyPathOf<TData>>>) {
+	protected getCellTemplate(column: DataGridColumn<TData, KeyPathValueOf<TData, KeyPathOf<TData>>>) {
 		return column.hidden ? html.nothing : html`
 			<mo-data-grid-cell
 				.row=${this as any}
@@ -218,13 +226,17 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		`
 	}
 
+	protected get fillerTemplate() {
+		return html`<span></span>`
+	}
+
 	protected get contextMenuIconButtonTemplate() {
 		return this.dataGrid.hasContextMenu === false ? html.nothing : html`
-			<mo-flex justifyContent='center' alignItems='center'
-				@click=${this.openContextMenu}
-				@dblclick=${(e: Event) => e.stopPropagation()}
-			>
-				<mo-icon-button id='contextMenuIconButton' icon='more_vert'></mo-icon-button>
+			<mo-flex justifyContent='center' ${style({ height: '100%', placeSelf: 'end', position: 'sticky', insetInlineEnd: '0px', zIndex: '3', background: 'var(--mo-data-grid-sticky-part-color)' })}>
+				<mo-icon-button id='contextMenuIconButton' icon='more_vert' dense
+					@click=${this.openContextMenu}
+					@dblclick=${(e: Event) => e.stopPropagation()}
+				></mo-icon-button>
 			</mo-flex>
 		`
 	}
@@ -239,12 +251,11 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		}
 
 		const subData = this.dataGrid.getSubData(this.data)
+		this.toggleAttribute('has-sub-data', !!subData)
 
 		if (subData) {
 			return html`
-				<mo-flex style='width: 100%; padding: 0px'>
-					${subData.map(data => this.dataGrid.getRowTemplate(data, undefined, this.level + 1))}
-				</mo-flex>
+				${subData.map(data => this.dataGrid.getRowTemplate(data, undefined, this.level + 1))}
 			`
 		}
 
@@ -285,18 +296,18 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		}
 	}
 
-	async openContextMenu(mouseEvent?: MouseEvent) {
+	async openContextMenu(event?: PointerEvent) {
 		if (!this.dataGrid.hasContextMenu) {
 			return
 		}
 
-		mouseEvent?.stopPropagation()
+		event?.stopPropagation()
 
 		if (this.dataGrid.selectedData.includes(this.data) === false) {
 			this.dataGrid.select(this.dataGrid.selectionMode !== DataGridSelectionMode.None ? [this.data] : [])
 		}
 
-		const contextMenu = ContextMenu.open(mouseEvent || [0, 0], this.contextMenuTemplate)
+		const contextMenu = ContextMenu.open(event || [0, 0], this.contextMenuTemplate)
 		this.contextMenuOpen = true
 		const handler = (open: boolean) => {
 			this.contextMenuOpen = open

@@ -1,7 +1,8 @@
 import { component, Component, html, property, css, eventListener, state, type HTMLTemplateResult } from '@a11d/lit'
 import { NotificationComponent } from '@a11d/lit-application'
 import { Localizer } from '@3mo/localization'
-import { type ColumnDefinition, DataGridEditability, type DataGridRow } from './index.js'
+import { FocusController } from '@3mo/focus-controller'
+import { type DataGridColumn, DataGridEditability, type DataGridRow } from './index.js'
 
 Localizer.register('de', {
 	'Using the clipboard is not allowed in an insecure browser environment': 'In einer unsicheren Browser-Umgebung darf kein Text in die Zwischenablage kopiert werden',
@@ -18,7 +19,7 @@ Localizer.register('de', {
 @component('mo-data-grid-cell')
 export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDetailsElement extends Element | undefined = undefined> extends Component {
 	@property({ type: Object }) value!: TValue
-	@property({ type: Object }) column!: ColumnDefinition<TData, TValue>
+	@property({ type: Object }) column!: DataGridColumn<TData, TValue>
 	@property({ type: Object }) row!: DataGridRow<TData, TDetailsElement>
 
 	@state({
@@ -48,6 +49,8 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 		return this.isEditable
 			&& (this.editing || this.dataGrid.editability === DataGridEditability.Always)
 	}
+
+	protected readonly focusController = new FocusController(this)
 
 	@eventListener({ target: document, type: 'pointerdown' })
 	protected handlePointerDown(event: PointerEvent) {
@@ -123,17 +126,18 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 		return css`
 			:host {
 				position: relative;
-				padding-inline: var(--mo-data-grid-cell-padding, 3px);
+				padding-inline: var(--mo-data-grid-cell-padding);
 				user-select: none;
 				line-height: var(--mo-data-grid-row-height);
 				white-space: nowrap;
 				overflow: hidden !important;
 				text-overflow: ellipsis;
 				font-size: var(--mo-data-grid-cell-font-size);
+				outline: none;
 			}
 
-			:host(:not([isEditing]):focus) {
-				outline: 2px solid var(--mo-color-accent);
+			md-focus-ring {
+				--md-focus-ring-shape: var(--mo-border-radius);
 			}
 
 			:host([isEditing]) {
@@ -150,6 +154,15 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 
 			:host([alignment=center]) {
 				text-align: center;
+			}
+
+			:host([sticky]) {
+				position: sticky;
+			}
+
+			:host([sticky]) /*[sticking]*/ {
+				z-index: 2;
+				background: var(--mo-data-grid-sticky-part-color);
 			}
 
 			:host > :first-child {
@@ -174,11 +187,17 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 		} else {
 			this.setAttribute('tabindex', '-1')
 		}
+		this.toggleAttribute('sticky', this.column.sticky !== undefined)
+		this.toggleAttribute('sticking', this.column.intersecting === false)
+		this.style.insetInline = this.column.stickyColumnInsetInline
 		return this.isEditing ? this.editContentTemplate as HTMLTemplateResult : this.contentTemplate
 	}
 
 	private get contentTemplate() {
-		return this.column.getContentTemplate?.(this.value, this.data) ?? html`${this.value}`
+		return html`
+			<md-focus-ring inward .control=${this} ?visible=${this.focusController.focused}></md-focus-ring>
+			${this.column.getContentTemplate?.(this.value, this.data) ?? html`${this.value}`}
+		`
 	}
 
 	private get editContentTemplate() {

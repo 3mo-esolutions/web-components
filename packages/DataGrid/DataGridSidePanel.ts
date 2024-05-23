@@ -1,7 +1,7 @@
 import { component, style, Component, css, html, ifDefined, property, bind } from '@a11d/lit'
 import { Localizer } from '@3mo/localization'
 import { tooltip } from '@3mo/tooltip'
-import { type ColumnDefinition } from './ColumnDefinition.js'
+import { type DataGridColumn } from './DataGridColumn.js'
 import { type DataGrid } from './DataGrid.js'
 
 Localizer.register('de', {
@@ -37,6 +37,7 @@ export class DataGridSidePanel<TData> extends Component {
 				width: 100%;
 				height: 100%;
 				transform-origin: right center;
+				z-index: 10;
 			}
 
 			:host(:not([hidden])) {
@@ -153,7 +154,7 @@ export class DataGridSidePanel<TData> extends Component {
 		`
 	}
 
-	private readonly getColumnTemplate = (column: ColumnDefinition<TData>) => {
+	private readonly getColumnTemplate = (column: DataGridColumn<TData>) => {
 		const change = async (e: CustomEvent<boolean>) => {
 			column.hidden = e.detail === false
 			this.dataGrid.setColumns(this.dataGrid.columns)

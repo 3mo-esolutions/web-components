@@ -96,6 +96,14 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 		return css`
 			${super.styles}
 
+			mo-circular-progress {
+				position: absolute;
+				width: 48px;
+				height: 48px;
+				inset-inline-start: calc(50% - 24px);
+				inset-block-start: calc(50% - 24px);
+			}
+
 			:host([fetching]) mo-icon-button[icon=refresh] {
 				animation: rotate 1500ms ease-in-out infinite;
 			}
@@ -230,7 +238,7 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 
 	private get fetchingTemplate() {
 		return html`
-			<mo-circular-progress ${style({ width: '48px', height: '48px', margin: 'auto' })}></mo-circular-progress>
+			<mo-circular-progress></mo-circular-progress>
 		`
 	}
 

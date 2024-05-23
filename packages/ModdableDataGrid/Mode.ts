@@ -1,11 +1,11 @@
-import { type ColumnDefinition, type DataGridPagination, type DataGridSorting } from '@3mo/data-grid'
+import { type DataGridColumn, type DataGridPagination, type DataGridSorting } from '@3mo/data-grid'
 import { type FetchableDataGridParametersType } from '@3mo/fetchable-data-grid'
 
 export class Mode<TData, TDataFetcherParameters extends FetchableDataGridParametersType> {
 	name!: string
 	id? = generateId()
 	isArchived = false
-	columns?: Array<ColumnDefinition<TData>>
+	columns?: Array<DataGridColumn<TData>>
 	sorting?: DataGridSorting<TData>
 	pagination?: DataGridPagination
 	parameters?: TDataFetcherParameters

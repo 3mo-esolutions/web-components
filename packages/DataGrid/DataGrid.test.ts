@@ -1,5 +1,5 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { DataGrid, type DataGridRow, DataGridSelectionMode } from './index.js'
+import { DataGrid, type DataGridRow, DataGridSelectionMode, DataGridColumn } from './index.js'
 import { html } from '@a11d/lit'
 
 type Person = { id: number, name: string, birthDate: DateTime }
@@ -13,7 +13,7 @@ const people: Array<Person> = [
 class TestDataGrid extends DataGrid<Person> {
 	override data = people
 
-	get headerSelectionCheckbox() { return this.header?.renderRoot.querySelector('mo-checkbox') ?? undefined }
+	get headerSelectionCheckbox() { return this['header']?.renderRoot.querySelector('mo-checkbox') ?? undefined }
 	get rowsSelectionCheckboxes() { return this.rows.map(row => row.renderRoot.querySelector('mo-checkbox') ?? undefined).filter(Boolean) }
 
 	isRowSelected(row: DataGridRow<Person>, skipCheckboxCheck = false) {
@@ -38,19 +38,38 @@ describe('DataGrid', () => {
 			// TODO: dataSelector's type (KeyPath) leads to compiler exhaustion
 
 			// expect(firstColumn?.dataSelector as any).toEqual('id')
+			expect(firstColumn).toBeInstanceOf(DataGridColumn)
+			expect(firstColumn?.dataGrid).toBe(fixture.component)
 			expect(firstColumn?.heading).toEqual('Id')
-			expect(firstColumn?.width).toEqual('minmax(100px, 1fr)')
+			expect(firstColumn?.width).toEqual('max-content')
 			expect(firstColumn?.hidden).toEqual(false)
 
 			// expect(secondColumn?.dataSelector as any).toEqual('name')
+			expect(secondColumn).toBeInstanceOf(DataGridColumn)
+			expect(secondColumn?.dataGrid).toBe(fixture.component)
 			expect(secondColumn?.heading).toEqual('Name')
-			expect(secondColumn?.width).toEqual('minmax(100px, 1fr)')
+			expect(secondColumn?.width).toEqual('max-content')
 			expect(secondColumn?.hidden).toEqual(false)
 
 			// expect(thirdColumn?.dataSelector as any).toEqual('birthDate')
+			expect(thirdColumn).toBeInstanceOf(DataGridColumn)
+			expect(thirdColumn?.dataGrid).toBe(fixture.component)
 			expect(thirdColumn?.heading).toEqual('Birth Date')
-			expect(thirdColumn?.width).toEqual('minmax(100px, 1fr)')
+			expect(thirdColumn?.width).toEqual('max-content')
 			expect(thirdColumn?.hidden).toEqual(false)
+		})
+
+		it('should automatically set dataGrid property of columns', async () => {
+			fixture.component.columns = [
+				new DataGridColumn({ heading: 'Id', dataSelector: 'id' }),
+				new DataGridColumn({ heading: 'Name', dataSelector: 'name' }),
+			]
+
+			await fixture.updateComplete
+
+			const [firstColumn, secondColumn] = fixture.component.columns
+			expect(firstColumn?.dataGrid).toBe(fixture.component)
+			expect(secondColumn?.dataGrid).toBe(fixture.component)
 		})
 	})
 

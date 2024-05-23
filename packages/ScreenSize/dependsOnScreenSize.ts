@@ -1,4 +1,4 @@
-import { AsyncDirective, directive, type PartInfo, PartType, isServer } from '@a11d/lit'
+import { AsyncDirective, directive, type PartInfo, isServer } from '@a11d/lit'
 
 type AtLeastOneOf<T, U = { [K in keyof T]: Pick<T, K> }> = Partial<T> & U[keyof U]
 
@@ -16,21 +16,17 @@ export type ScreenSizeDefinitions = AtLeastOneOf<{
 	readonly [ScreenSize.Desktop]: unknown
 }>
 
-type MediaQueryListener = (event: MediaQueryListEvent) => void
-
 export class DependsOnScreenSizeDirective extends AsyncDirective {
-	protected static readonly supportedPartTypes = [PartType.PROPERTY, PartType.ATTRIBUTE, PartType.BOOLEAN_ATTRIBUTE, PartType.CHILD] as Array<PartType>
-
-	protected static readonly media = {
+	static readonly media = {
 		[ScreenSize.Mobile]: isServer ? undefined : window.matchMedia('(max-width: 640px)'),
 		[ScreenSize.Tablet]: isServer ? undefined : window.matchMedia('(min-width: 640px) and (max-width: 1024px)'),
 		[ScreenSize.Desktop]: isServer ? undefined : window.matchMedia('(min-width: 1024px)'),
-		addEventListener(listener: MediaQueryListener) {
+		addEventListener(listener: EventListenerOrEventListenerObject) {
 			this[ScreenSize.Mobile]?.addEventListener('change', listener)
 			this[ScreenSize.Tablet]?.addEventListener('change', listener)
 			this[ScreenSize.Desktop]?.addEventListener('change', listener)
 		},
-		removeEventListener(listener: MediaQueryListener) {
+		removeEventListener(listener: EventListenerOrEventListenerObject) {
 			this[ScreenSize.Mobile]?.removeEventListener('change', listener)
 			this[ScreenSize.Tablet]?.removeEventListener('change', listener)
 			this[ScreenSize.Desktop]?.removeEventListener('change', listener)
@@ -41,10 +37,7 @@ export class DependsOnScreenSizeDirective extends AsyncDirective {
 
 	constructor(partInfo: PartInfo) {
 		super(partInfo)
-		if ((this.constructor as typeof DependsOnScreenSizeDirective).supportedPartTypes.includes(partInfo.type) === false) {
-			throw new Error('Directive not supported on this part type.')
-		}
-		DependsOnScreenSizeDirective.media.addEventListener(this.handleChangeListener)
+		DependsOnScreenSizeDirective.media.addEventListener(this)
 	}
 
 	render(definitions: ScreenSizeDefinitions) {
@@ -60,14 +53,12 @@ export class DependsOnScreenSizeDirective extends AsyncDirective {
 	}
 
 	override disconnected() {
-		DependsOnScreenSizeDirective.media.removeEventListener(this.handleChangeListener)
+		DependsOnScreenSizeDirective.media.removeEventListener(this)
 	}
 
-	protected handleChange() {
+	handleEvent() {
 		this.setValue(this.render(this.definitions))
 	}
-
-	private readonly handleChangeListener = () => this.handleChange()
 }
 
 export const dependsOnScreenSize = directive(DependsOnScreenSizeDirective)

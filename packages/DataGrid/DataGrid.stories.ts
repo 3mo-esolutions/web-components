@@ -10,21 +10,33 @@ export default {
 	package: p,
 } as Meta
 
-type Person = { id: number, name: string, age: number, city: string }
+type Person = { id: number, name: string, age: number, birthDate: DateTime, address: string }
 
 const generatePeople = (count: number) => {
-	const cities = ['Berlin', 'Hamburg', 'München', 'Köln', 'Frankfurt']
-	const names = ['Max', 'Moritz', 'Mia', 'Maja', 'Mika']
-	return new Array(count).fill(0).map((_, i) => ({
-		id: i + 1,
-		name: names[Math.floor(Math.random() * names.length)],
-		age: Math.floor(Math.random() * 80),
-		city: cities[Math.floor(Math.random() * cities.length)]
-	}))
+	const names = ['Octavia Blake', 'Charmaine Diyoza', 'Clarke Griffin', 'Elliot Anderson', 'Darlene Anderson', 'Max Caufield']
+	const addresses = [
+		'112 Rue de Elm, 1265 Paris, France',
+		'1234 Elm Street, Springfield, IL 62701, USA',
+		'7234 Elmstraße, 21001 Berlin, Deutschland',
+		'9692 Elm Street, Springfield, NSW 62701, Australia',
+		'7792 Elm Street, London, England',
+	]
+
+	return new Array(count).fill(0).map((_, i) => {
+		const birthDate = new DateTime().add({ days: -Math.floor(Math.random() * 365 * 80) })
+		return {
+			id: i + 1,
+			name: names[Math.floor(Math.random() * names.length)],
+			birthDate,
+			age: Math.floor((new DateTime().since(birthDate).years)),
+			address: addresses[Math.floor(Math.random() * addresses.length)],
+		}
+	})
 }
 
 const fivePeople = generatePeople(5)
-const thousandPeople = generatePeople(1000)
+const twentyPeople = generatePeople(20)
+const hundredPeople = generatePeople(100)
 
 const fivePeopleWithChildren = fivePeople.map(p => ({
 	...p,
@@ -33,14 +45,15 @@ const fivePeopleWithChildren = fivePeople.map(p => ({
 
 const columnsTemplate = html`
 	<mo-data-grid-column-number hidden nonEditable heading='ID' dataSelector='id'></mo-data-grid-column-number>
-	<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
+	<mo-data-grid-column-text heading='Name' width='200px' dataSelector='name'></mo-data-grid-column-text>
 	<mo-data-grid-column-number .nonEditable=${(person: Person) => person.age > 30} heading='Age' dataSelector='age'></mo-data-grid-column-number>
-	<mo-data-grid-column-text heading='City' dataSelector='city'></mo-data-grid-column-text>
+	<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
+	<mo-data-grid-column-date heading='Birth Date' dataSelector='birthDate'></mo-data-grid-column-date>
 `
 
 export const DataGrid: StoryObj = {
 	render: () => html`
-		<mo-data-grid .data=${fivePeople} style='height: 500px'>
+		<mo-data-grid .data=${twentyPeople} style='height: 500px'>
 			${columnsTemplate}
 		</mo-data-grid>
 	`
@@ -90,6 +103,33 @@ export const ContextMenu: StoryObj = {
 	`
 }
 
+export const StickyColumns: StoryObj = {
+	render: () => html`
+		<mo-data-grid style='height: 500px' .data=${twentyPeople}
+		selectionMode='multiple'
+		.getRowContextMenuTemplate=${(data: Array<Person>) => html`
+			<div style='margin: 10px; opacity: 0.5'>${data.map(p => `"${p.name}"`).join(', ')} selected</div>
+			<mo-context-menu-item>Item1</mo-context-menu-item>
+			<mo-context-menu-item>Item2</mo-context-menu-item>
+		`}>
+			<mo-data-grid-column-text sticky='start' heading='Name' width='200px' dataSelector='name'></mo-data-grid-column-text>
+			<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
+			<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
+			<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
+			<mo-data-grid-column-text sticky='both' heading='Name' width='200px' dataSelector='name'></mo-data-grid-column-text>
+			<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
+			<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
+			<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
+			<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
+			<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
+			<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
+			<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
+			<mo-data-grid-column-number heading='Age' dataSelector='age'></mo-data-grid-column-number>
+			<mo-data-grid-column-date sticky='end' heading='Birth Date' dataSelector='birthDate'></mo-data-grid-column-date>
+		</mo-data-grid>
+	`
+}
+
 export const Sums: StoryObj = {
 	render: () => html`
 		<mo-data-grid
@@ -101,7 +141,7 @@ export const Sums: StoryObj = {
 			<mo-data-grid-column-number hidden nonEditable heading='ID' dataSelector='id'></mo-data-grid-column-number>
 			<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
 			<mo-data-grid-column-number heading='Age' dataSelector='age' sumHeading='Ages Total'></mo-data-grid-column-number>
-			<mo-data-grid-column-text heading='City' dataSelector='city'></mo-data-grid-column-text>
+			<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
 			<mo-data-grid-column-currency heading='Balance' dataSelector='balance' sumHeading='Balances Total'></mo-data-grid-column-currency>
 			<mo-data-grid-footer-sum slot='sum' heading='Customized Sum Maybe!' ${style({ alignItems: 'center', fontWeight: '800' })}>199,99 €</mo-data-grid-footer-sum>
 		</mo-data-grid>
@@ -110,11 +150,11 @@ export const Sums: StoryObj = {
 
 export const Sorting: StoryObj = {
 	render: () => html`
-		<mo-data-grid .data=${thousandPeople} pagination='auto' selectionMode='multiple' style='height: 500px' selectOnClick .sorting=${[{ selector: 'name', strategy: DataGridSortingStrategy.Ascending }, { selector: 'age', strategy: DataGridSortingStrategy.Descending }]}>
+		<mo-data-grid .data=${hundredPeople} pagination='auto' selectionMode='multiple' style='height: 500px' selectOnClick .sorting=${[{ selector: 'name', strategy: DataGridSortingStrategy.Ascending }, { selector: 'age', strategy: DataGridSortingStrategy.Descending }]}>
 			<mo-data-grid-column-number hidden nonEditable heading='ID' dataSelector='id'></mo-data-grid-column-number>
 			<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
 			<mo-data-grid-column-number heading='Age' dataSelector='age' sumHeading='Ages Total'></mo-data-grid-column-number>
-			<mo-data-grid-column-text heading='City' dataSelector='city'></mo-data-grid-column-text>
+			<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
 			<mo-data-grid-column-currency heading='Balance' dataSelector='balance' sumHeading='Balances Total'></mo-data-grid-column-currency>
 		</mo-data-grid>
 	`
@@ -192,7 +232,7 @@ export const Editability: StoryObj = {
 
 export const WithFiltersWithoutToolbar: StoryObj = {
 	render: () => html`
-		<mo-data-grid .data=${thousandPeople} style='height: 500px'>
+		<mo-data-grid .data=${hundredPeople} style='height: 500px'>
 			${columnsTemplate}
 			<mo-checkbox slot='filter' label='Something'></mo-checkbox>
 		</mo-data-grid>
@@ -201,9 +241,15 @@ export const WithFiltersWithoutToolbar: StoryObj = {
 
 export const Virtualization: StoryObj = {
 	render: () => html`
-		<mo-data-grid .data=${thousandPeople} style='height: 500px'>
-			${columnsTemplate}
-		</mo-data-grid>
+		<mo-flex gap='10px'>
+			<mo-alert type='warning'>
+				Virtualization is disabled as of version 0.6.x due to incompatibilities with CSS Sub-grids.
+				It will be re-enabled or re-worked into a different solution in a future version.
+			</mo-alert>
+			<mo-data-grid .data=${hundredPeople} style='height: 500px'>
+				${columnsTemplate}
+			</mo-data-grid>
+		</mo-flex>
 	`
 }
 
@@ -212,7 +258,7 @@ export const MinVisibleRows: StoryObj = {
 		minVisibleRows: 10
 	},
 	render: ({ minVisibleRows }) => html`
-		<mo-data-grid .data=${thousandPeople} ${style({ '--mo-data-grid-min-visible-rows': String(minVisibleRows) })}>
+		<mo-data-grid .data=${hundredPeople} ${style({ '--mo-data-grid-min-visible-rows': String(minVisibleRows) })}>
 			${columnsTemplate}
 		</mo-data-grid>
 	`
@@ -224,7 +270,7 @@ export const Fab: StoryObj = {
 		withFooter: false,
 	},
 	render: ({ label, withFooter }) => html`
-		<mo-data-grid .data=${thousandPeople} style='height: 500px' pagination=${ifDefined(withFooter ? 'auto' : undefined)}>
+		<mo-data-grid .data=${hundredPeople} style='height: 500px' pagination=${ifDefined(withFooter ? 'auto' : undefined)}>
 			${columnsTemplate}
 			<mo-fab slot='fab' icon='add'>${label}</mo-fab>
 		</mo-data-grid>
@@ -234,6 +280,14 @@ export const Fab: StoryObj = {
 export const Exportable: StoryObj = {
 	render: () => html`
 		<mo-data-grid exportable subDataGridDataSelector='children' pagination='auto' .data=${fivePeopleWithChildren} style='height: 500px'>
+			${columnsTemplate}
+		</mo-data-grid>
+	`
+}
+
+export const NoContent: StoryObj = {
+	render: () => html`
+		<mo-data-grid style='height: 500px'>
 			${columnsTemplate}
 		</mo-data-grid>
 	`
