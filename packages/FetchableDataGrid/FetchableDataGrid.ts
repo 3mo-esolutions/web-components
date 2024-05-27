@@ -68,7 +68,7 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 	@property({ type: Object }) sortParameters?: () => Partial<TDataFetcherParameters>
 	// protected filterParameters?: () => TDataFetcherParameters
 
-	protected readonly parametersBinder = new Binder(this, 'parameters')
+	protected readonly parametersBinder = new Binder<TDataFetcherParameters>(this, 'parameters')
 
 	protected fetchDirty?(parameters: TDataFetcherParameters): Array<TData> | undefined
 
