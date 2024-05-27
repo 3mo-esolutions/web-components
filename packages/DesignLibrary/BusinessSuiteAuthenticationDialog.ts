@@ -60,7 +60,7 @@ export class BusinessSuiteAuthenticationDialog extends Component implements IDia
 			}
 
 			form {
-				width: min(100%, 480px);
+				width: min(calc(100% - 32px), 480px);
 				box-shadow: var(--mo-shadow-deep);
 				height: min-content;
 				background-color: var(--mo-color-surface);
