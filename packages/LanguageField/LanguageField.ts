@@ -22,6 +22,8 @@ export type LanguageFieldTemplateParameter<TValue, TLanguage extends Language = 
  * @attr fieldTemplate
  * @attr optionTemplate
  *
+ * @csspart dialog-icon-button - The icon button that opens the language selection dialog.
+ *
  * @fires change
  * @fires languageChange
  * @fires languagesFetch
@@ -186,10 +188,16 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 
 	protected get languageSelectorStartTemplate() {
 		return html`
-			${this._languages.length === 1 ? html.nothing : html`
-				<mo-icon-button icon='launch' ${style({ display: 'flex', alignItems: 'center' })} @click=${(e: PointerEvent) => { e.stopPropagation(); this.openDialog() }}></mo-icon-button>
-			`}
+			${this.dialogIconButtonTemplate}
 			${this.flagTemplate}
+		`
+	}
+
+	protected get dialogIconButtonTemplate() {
+		return this._languages.length === 1 ? html.nothing : html`
+			<mo-icon-button icon='launch' part='dialog-icon-button' ${style({ display: 'flex', alignItems: 'center' })}
+				@click=${(e: PointerEvent) => { e.stopPropagation(); this.openDialog() }}
+			></mo-icon-button>
 		`
 	}
 
