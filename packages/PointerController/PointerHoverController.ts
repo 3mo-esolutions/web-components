@@ -1,6 +1,7 @@
 import { Controller, type EventListenerTarget, type ReactiveElement, eventListener, extractEventTargets } from '@a11d/lit'
 import { ResizeController } from '@3mo/resize-observer'
 import { Throttler } from '@3mo/throttler'
+import * as System from 'detect-browser'
 
 export interface PointerHoverControllerOptions {
 	target?: EventListenerTarget
@@ -17,15 +18,47 @@ export class PointerHoverController extends Controller {
 
 	private readonly throttler = new Throttler(10)
 
-	constructor(protected override readonly host: ReactiveElement, protected readonly options?: PointerHoverControllerOptions) {
-		super(host)
+	private targets = new Array<EventTarget>()
+
+	private get isFirefox() {
+		return System.detect()?.name === 'firefox'
 	}
 
+	constructor(
+		protected override readonly host: ReactiveElement,
+		protected readonly options?: PointerHoverControllerOptions
+	) {
+		super(host)
+		this.checkHover = this.checkHover.bind(this)
+	}
 
 	protected readonly resizeController = new ResizeController(this.host, {
 		target: this.host,
 		callback: () => this.checkHover()
 	})
+
+	override async hostConnected() {
+		super.hostConnected?.()
+		if (!this.isFirefox) {
+			return
+		}
+		this.targets = await target.call(this)
+		this.targets.forEach(target => {
+			target.addEventListener('pointerenter', this.checkHover)
+			target.addEventListener('pointerleave', this.checkHover)
+		})
+	}
+
+	override hostDisconnected() {
+		super.hostDisconnected?.()
+		if (this.isFirefox) {
+			return
+		}
+		this.targets.forEach(target => {
+			target.removeEventListener('pointerenter', this.checkHover)
+			target.removeEventListener('pointerleave', this.checkHover)
+		})
+	}
 
 	@eventListener({ type: 'pointerenter', target })
 	@eventListener({ type: 'pointerleave', target })

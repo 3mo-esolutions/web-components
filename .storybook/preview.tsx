@@ -146,7 +146,6 @@ export default {
 			attributeName: 'data-storybook-theme',
 		}),
 		(story: any) => {
-			console.log()
 			channel.on(DARK_MODE_EVENT_NAME, (isDark: boolean) => {
 				if (globalThis.Theme) {
 					globalThis.Theme.background.value = (isDark ? 'dark' : 'light') as any
