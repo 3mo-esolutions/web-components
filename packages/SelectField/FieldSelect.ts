@@ -60,6 +60,8 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 
 	@state() protected searchString?: string
 
+	@state() private openedAt!: number
+
 	@query('input#value') readonly valueInputElement!: HTMLInputElement
 	@query('input#search') readonly searchInputElement?: HTMLInputElement
 
@@ -100,7 +102,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 				cursor: pointer;
 			}
 
-			mo-icon[part=dropDownIcon] {
+			mo-icon-button[part=dropDownIcon] {
 				font-size: 20px;
 				color: var(--mo-color-gray);
 				user-select: none;
@@ -108,7 +110,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 				cursor: pointer;
 			}
 
-			mo-field[active] mo-icon[part=dropDownIcon] {
+			mo-field[active] mo-icon-button[part=dropDownIcon] {
 				color: var(--mo-color-accent);
 			}
 
@@ -195,8 +197,26 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 		return html`
 			${this.clearIconButtonTemplate}
 			${super.endSlotTemplate}
-			<mo-icon slot='end' part='dropDownIcon' icon='expand_more'></mo-icon>
+			<mo-icon-button dense slot='end' part='dropDownIcon' icon='expand_more'
+				@click=${this.closeIfNeeded}
+			></mo-icon-button>
 		`
+	}
+
+	private closeIfNeeded = (e: MouseEvent) => {
+		e.preventDefault()
+		e.stopPropagation()
+
+		// If the user opens an input using an icon, it will trigger focus at the same time
+
+		if (new Date().getTime() - this.openedAt < 150) {
+			return
+		}
+
+		if (this.open) {
+			this.blur()
+			document.body.click()
+		}
 	}
 
 	private get clearIconButtonTemplate() {
@@ -273,6 +293,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 		super.handleFocus(bubbled, method)
 		if (method === 'pointer') {
 			this.open = true
+			this.openedAt = new Date().getTime()
 		}
 		await this.updateComplete
 		this.searchInputElement?.focus()
