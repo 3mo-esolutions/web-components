@@ -13,6 +13,7 @@ export class ApplicationLogo extends Component {
 				display: flex;
 				justify-content: center;
 				height: 100%;
+				max-width: 100%;
 				cursor: pointer;
 			}
 
