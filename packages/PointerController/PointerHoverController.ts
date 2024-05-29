@@ -21,7 +21,6 @@ export class PointerHoverController extends Controller {
 		super(host)
 	}
 
-
 	protected readonly resizeController = new ResizeController(this.host, {
 		target: this.host,
 		callback: () => this.checkHover()
@@ -35,6 +34,8 @@ export class PointerHoverController extends Controller {
 	protected async checkHover() {
 		await this.throttler.throttle()
 		const elements = await extractEventTargets(this.host, this.options?.target) as Array<Element>
+		// Without this delay, the :hover state won't work in Firefox sometimes
+		await new Promise<void>(resolve => requestAnimationFrame(() => resolve()))
 		const hover = elements.some(e => e.matches(':hover'))
 		if (this._hover !== hover) {
 			this._hover = hover
