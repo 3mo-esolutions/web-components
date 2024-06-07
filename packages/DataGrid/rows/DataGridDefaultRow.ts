@@ -25,7 +25,7 @@ export class DataGridDefaultRow<TData, TDetailsElement extends Element | undefin
 				mo-grid {
 					height: var(--mo-data-grid-row-height);
 					grid-template-columns: var(--mo-data-grid-columns);
-					column-gap: var(--mo-data-grid-columns-gap, 2px);
+					column-gap: var(--mo-data-grid-columns-gap);
 				}
 			}
 
@@ -37,6 +37,7 @@ export class DataGridDefaultRow<TData, TDetailsElement extends Element | undefin
 
 			#selectionContainer {
 				height: 100%;
+				box-sizing: border-box;
 			}
 
 			#detailsContainer [instanceof*=mo-data-grid] {
@@ -61,8 +62,7 @@ export class DataGridDefaultRow<TData, TDetailsElement extends Element | undefin
 
 			:host([data-grid-has-details]) #detailsContainer > [instanceof*=mo-data-grid] {
 				padding: 0px !important;
-			}
-		`
+			}		`
 	}
 
 	override updated(...parameters: Parameters<DataGridRow<TData, TDetailsElement>['updated']>) {
@@ -78,6 +78,7 @@ export class DataGridDefaultRow<TData, TDetailsElement extends Element | undefin
 			${this.detailsExpanderTemplate}
 			${this.selectionTemplate}
 			${this.dataGrid.columns.map(column => this.getCellTemplate(column))}
+			${this.fillerTemplate}
 			${this.contextMenuIconButtonTemplate}
 		`
 	}

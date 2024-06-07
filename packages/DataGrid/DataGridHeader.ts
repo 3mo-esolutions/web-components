@@ -45,7 +45,6 @@ export class DataGridHeader<TData> extends Component {
 	static override get styles() {
 		return css`
 			:host {
-				--mo-data-grid-cell-width: 100px;
 				--mo-data-grid-header-separator-height: 15px;
 				--mo-data-grid-header-separator-width: 2px;
 				display: inherit;
@@ -53,6 +52,7 @@ export class DataGridHeader<TData> extends Component {
 			}
 
 			:host([subgrid]) {
+				--mo-data-grid-column-width: 102px;
 				position: sticky;
 				display: grid;
 				grid-template-columns: subgrid;
@@ -147,19 +147,19 @@ export class DataGridHeader<TData> extends Component {
 		return [
 			this.dataGrid.detailsColumnWidth,
 			this.dataGrid.selectionColumnWidth,
-			'1fr',
-			this.dataGrid.hasToolbar || this.dataGrid.sidePanelHidden ? undefined : this.dataGrid.moreColumnWidth,
+			this.dataGrid.isUsingSubgrid ? undefined : '1fr',
+			this.dataGrid.hasToolbar || this.dataGrid.sidePanelHidden || this.dataGrid.isUsingSubgrid ? undefined : this.dataGrid.moreColumnWidth,
 		].filter((c): c is string => c !== undefined).join(' ')
 	}
 
 	private get separatorAdjustedColumns() {
-		return this.dataGrid.dataColumnsWidths.join(' var(--mo-data-grid-columns-gap, 2px) ')
+		return this.dataGrid.dataColumnsWidths.join(' var(--mo-data-grid-columns-gap) ')
 	}
 
 	protected override get template() {
 		if (!this.dataGrid.isUsingSubgrid) {
 			return html`
-				<mo-grid id='header' columns=${this.skeletonColumns} columnGap='var(--mo-data-grid-columns-gap, 2px)'>
+				<mo-grid id='header' columns=${this.skeletonColumns}>
 					${this.detailsExpanderTemplate}
 					${this.selectionTemplate}
 					${this.contentTemplate}
@@ -172,7 +172,14 @@ export class DataGridHeader<TData> extends Component {
 			${this.detailsExpanderTemplate}
 			${this.selectionTemplate}
 			${this.contentTemplate}
+			${this.fillerTemplate}
 			${this.moreTemplate}
+		`
+	}
+
+	protected get fillerTemplate() {
+		return !this.dataGrid.isUsingSubgrid || !this.dataGrid.hasToolbar || this.dataGrid.sidePanelHidden ? html.nothing : html`
+			<span></span>
 		`
 	}
 

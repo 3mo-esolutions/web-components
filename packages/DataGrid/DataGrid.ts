@@ -499,6 +499,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	static override get styles() {
 		return css`
 			:host {
+				--mo-data-grid-columns-gap: 6px;
 				--mo-data-grid-column-details-width: 20px;
 				--mo-data-grid-column-selection-width: 40px;
 				--mo-data-grid-column-more-width: 28px;
@@ -1020,12 +1021,16 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	readonly moreColumnWidthInPixels = 0
 
 	get columnsWidths() {
+		const hasMoreIcon = !this.hasToolbar && !this.sidePanelHidden
+
+		const hasFiller = this.isUsingSubgrid && this.hasToolbar && !this.sidePanelHidden
+
 		return [
 			this.detailsColumnWidth,
 			this.selectionColumnWidth,
 			...this.dataColumnsWidths,
-			'1fr',
-			!this.hasContextMenu || !this.isUsingSubgrid ? undefined : this.moreColumnWidth,
+			hasFiller ? '1fr' : undefined,
+			!hasMoreIcon ? undefined : this.moreColumnWidth,
 		].filter((c): c is string => c !== undefined)
 	}
 

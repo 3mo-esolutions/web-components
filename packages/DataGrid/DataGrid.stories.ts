@@ -170,7 +170,7 @@ export const RowDetails: StoryObj = {
 		detailsOnClick: false,
 	},
 	render: ({ multipleDetails, detailsOnClick }) => html`
-		<mo-data-grid style='height: 500px'
+		<mo-data-grid style='height: 500px' subDataGridDataSelector='children'
 			.data=${fivePeople}
 			?multipleDetails=${multipleDetails}
 			?detailsOnClick=${detailsOnClick}

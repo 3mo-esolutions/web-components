@@ -217,6 +217,8 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			this.dataGrid.detailsColumnWidth,
 			this.dataGrid.selectionColumnWidth,
 			this.dataGrid.dataColumnsWidths,
+			!this.dataGrid.isUsingSubgrid ? undefined : '1fr',
+			this.dataGrid.hasToolbar || this.dataGrid.sidePanelHidden ? undefined : this.dataGrid.moreColumnWidth,
 		].flat().filter(Boolean).join(' ')
 	}
 
@@ -266,6 +268,12 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 					@change=${(e: CustomEvent<boolean>) => this.setSelection(e.detail)}
 				></mo-checkbox>
 			</mo-flex>
+		`
+	}
+
+	protected get fillerTemplate() {
+		return !this.dataGrid.isUsingSubgrid || !this.dataGrid.hasToolbar || this.dataGrid.sidePanelHidden ? html.nothing : html`
+			<span></span>
 		`
 	}
 

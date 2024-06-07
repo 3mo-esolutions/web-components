@@ -19,7 +19,7 @@ export abstract class DataGridColumnComponent<TData, TValue> extends Component {
 		type: Object,
 		updated(this: DataGridColumnComponent<TData, TValue>, dataGrid: DataGrid<TData, any> | undefined) {
 			if (dataGrid) {
-				this.width = dataGrid.isUsingSubgrid ? 'max-content' : 'minmax(var(--mo-data-grid-cell-width, 102px), 1fr)'
+				this.width = dataGrid.isUsingSubgrid ? 'max-content' : 'minmax(var(--mo-data-grid-column-width, 100px), 1fr)'
 			}
 		}
 	}) dataGrid?: DataGrid<TData, any> | undefined
