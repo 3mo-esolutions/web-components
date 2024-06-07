@@ -28,13 +28,14 @@ export class ListItem extends Component {
 				user-select: none;
 				font-size: 16px;
 				padding-inline: 16px;
+				padding-block: 10px;
 			}
 
 			:host, .container {
 				display: flex;
 				gap: 16px;
 				align-items: center;
-				height: 48px;
+				min-height: 48px;
 			}
 
 			:host([disabled]) {

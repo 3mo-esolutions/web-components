@@ -128,7 +128,7 @@ export class Menu extends Component {
 	static override get styles() {
 		return css`
 			:host {
-				display: content;
+				display: contents;
 				position: static;
 			}
 
