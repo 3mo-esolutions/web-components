@@ -54,10 +54,6 @@ export class ListItem extends Component {
 				justify-content: inherit;
 				flex: 1;
 			}
-
-			md-focus-ring {
-				--md-focus-ring-shape: var(--mo-border-radius);
-			}
 		`
 	}
 
@@ -71,7 +67,7 @@ export class ListItem extends Component {
 
 	protected override get template() {
 		return html`
-			<md-focus-ring inward ?visible=${this.focusRingActive}></md-focus-ring>
+			${!this.focusRingActive ? html.nothing : html`<mo-focus-ring inward visible></mo-focus-ring>`}
 			<mo-list-item-ripple ?focused=${this.rippleActive} ?disabled=${this.disabled} ?preventClickOnSpace=${this.preventClickOnSpace}></mo-list-item-ripple>
 			<slot></slot>
 		`

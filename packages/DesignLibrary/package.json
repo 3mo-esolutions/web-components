@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/del",
-	"version": "0.1.65",
+	"version": "0.1.66",
 	"description": "3MO Design Library to build business-suite web applications",
 	"repository": {
 		"type": "git",
@@ -120,6 +120,7 @@
 		"@3mo/timeline": "x",
 		"@3mo/line": "x",
 		"@3mo/screen-size": "x",
+		"@3mo/focus-ring": "x",
 		"detect-browser": "x",
 		"@ts-stack/markdown": "x"
 	}

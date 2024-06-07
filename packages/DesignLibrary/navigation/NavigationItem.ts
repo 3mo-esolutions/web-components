@@ -81,9 +81,8 @@ export class NavigationItem extends Component {
 				color: var(--mo-color-foreground);
 			}
 
-			md-focus-ring {
-				--md-focus-ring-shape: var(--mo-border-radius);
-				--md-focus-ring-color: var(--mo-color-on-accent);
+			mo-focus-ring {
+				--mo-focus-ring-color: var(--mo-color-on-accent);
 			}
 
 			mo-navigation-menu-item {
@@ -96,7 +95,7 @@ export class NavigationItem extends Component {
 
 	protected override get template() {
 		return html`
-			<md-focus-ring .control=${this} inward></md-focus-ring>
+			<mo-focus-ring .control=${this} inward></mo-focus-ring>
 			<mo-flex id='button' direction='horizontal' alignItems='center' justifyContent='center' gap='2px'>
 				<span>${this.navigation.label}</span>
 				${!this.navigation.children ? html.nothing : html`

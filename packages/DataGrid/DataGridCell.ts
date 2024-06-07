@@ -136,10 +136,6 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 				outline: none;
 			}
 
-			md-focus-ring {
-				--md-focus-ring-shape: var(--mo-border-radius);
-			}
-
 			:host([isEditing]) {
 				display: grid;
 			}
@@ -195,7 +191,7 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 
 	private get contentTemplate() {
 		return html`
-			<md-focus-ring inward .control=${this} ?visible=${this.focusController.focused}></md-focus-ring>
+			${!this.focusController.focused ? html.nothing : html`<mo-focus-ring inward visible></mo-focus-ring>`}
 			${this.column.getContentTemplate?.(this.value, this.data) ?? html`${this.value}`}
 		`
 	}
