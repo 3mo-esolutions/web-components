@@ -44,7 +44,7 @@ export class Menu extends Component {
 		type: 'keydown',
 		target: () => this.anchor || [],
 		listener: (event: KeyboardEvent) => {
-			if (event.ctrlKey || event.shiftKey) {
+			if (this.manual || event.ctrlKey || event.shiftKey) {
 				return
 			}
 
