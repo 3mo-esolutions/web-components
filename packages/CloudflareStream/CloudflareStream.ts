@@ -70,8 +70,8 @@ export class CloudflareStream extends Component {
 		`
 	}
 
-	@eventListener({ type: 'scroll', target: window, options: { passive: true } as any })
-	@eventListener({ type: 'resize', target: window, options: { passive: true } as any })
+	@eventListener({ type: 'scroll', target: window, options: { passive: true } })
+	@eventListener({ type: 'resize', target: window, options: { passive: true } })
 	protected autoPauseIfNecessary() {
 		if (this.autoPause) {
 			const rect = this.getBoundingClientRect()

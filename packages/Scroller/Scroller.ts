@@ -49,7 +49,7 @@ export class Scroller extends Component {
 		`
 	}
 
-	@eventListener({ type: 'scroll', options: { passive: true } as any })
+	@eventListener({ type: 'scroll', options: { passive: true } })
 	protected handleScroll(e: Event) {
 		// https://devdoc.net/web/developer.mozilla.org/en-US/docs/Web/Events/scroll.html
 		window.dispatchEvent(new Event('scroll', e))

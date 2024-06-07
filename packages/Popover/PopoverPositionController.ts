@@ -17,7 +17,7 @@ export class PopoverPositionController extends Controller {
 	protected readonly scrollListener = new EventListenerController(this.host, {
 		target: window,
 		type: 'scroll',
-		options: { capture: true, passive: true } as any,
+		options: { capture: true, passive: true },
 		listener: () => this.updatePosition(),
 	})
 
