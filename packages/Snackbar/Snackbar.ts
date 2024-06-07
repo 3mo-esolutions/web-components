@@ -38,7 +38,7 @@ export class Snackbar extends NotificationComponent {
 	}) open = false
 
 	private async recalculateOffset() {
-		await new Promise(resolve => setTimeout(resolve, 0))
+		await new Promise(r => requestAnimationFrame(r))
 		let offsetY = 0;
 		[...Snackbar.connectedInstances].reverse().map((notification, i) => {
 			if (!notification.open) {

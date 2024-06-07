@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/pointer-controller",
-	"version": "1.3.4",
+	"version": "1.3.5",
 	"description": "A controller that tracks the pointer state of a web component.",
 	"repository": {
 		"type": "git",
@@ -25,7 +25,6 @@
 	"dependencies": {
 		"@a11d/lit": "x",
 		"@3mo/resize-observer": "x",
-		"@3mo/throttler": "x",
 		"tslib": "x"
 	},
 	"devDependencies": {

@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/snackbar",
-	"version": "0.2.4",
+	"version": "0.2.5",
 	"description": "Snackbars show short updates about app processes at the bottom of the screen.",
 	"repository": {
 		"type": "git",
