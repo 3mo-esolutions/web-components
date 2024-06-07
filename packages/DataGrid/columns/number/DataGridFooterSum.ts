@@ -20,7 +20,7 @@ export class DataGridFooterSum extends Component {
 
 				position: relative;
 				max-height: 100%;
-				padding: 5px 8px;
+				padding-left: 8px;
 
 				line-height: 1em;
 				user-select: all;
