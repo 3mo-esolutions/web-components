@@ -62,8 +62,8 @@ export class Splitter extends Component {
 	}
 
 	private resizeRequestEvent?: TouchEvent | PointerEvent
-	@eventListener({ target: window, type: 'pointermove' })
-	@eventListener({ target: window, type: 'touchmove', options: { passive: false } as any })
+	@eventListener({ target: window, type: 'pointermove', options: { passive: true } })
+	@eventListener({ target: window, type: 'touchmove', options: { passive: true } })
 	protected requestResize(e: TouchEvent | PointerEvent) {
 		if (this.resizing) {
 			e.preventDefault()
