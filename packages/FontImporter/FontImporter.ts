@@ -16,11 +16,15 @@ export class FontImporter {
 
 	/** Imports a font from a URL if it hasn't been imported yet. */
 	static import(fontUrl: string) {
+		if (FontImporter.urls.has(fontUrl)) {
+			return
+		}
+
 		FontImporter.urls.add(fontUrl)
 
 		const importStatements = [...FontImporter.urls].map(url => `@import '${url}';`)
 
-		if (FontImporter.styleElement && importStatements.some(statement => FontImporter.styleElement?.innerText.includes(statement) === false)) {
+		if (FontImporter.styleElement) {
 			FontImporter.styleElement.innerHTML = importStatements.join('\n')
 		}
 	}
