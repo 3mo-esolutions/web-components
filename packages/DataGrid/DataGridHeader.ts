@@ -153,7 +153,11 @@ export class DataGridHeader<TData> extends Component {
 	}
 
 	private get separatorAdjustedColumns() {
-		return this.dataGrid.dataColumnsWidths.join(' var(--mo-data-grid-columns-gap) ')
+		const hasMoreColumn = (!this.dataGrid.hasToolbar && !this.dataGrid.sidePanelHidden) || this.dataGrid.hasContextMenu
+
+		return [...this.dataGrid.dataColumnsWidths, !hasMoreColumn ? undefined : this.dataGrid.moreColumnWidth]
+			.filter(Boolean)
+			.join(' var(--mo-data-grid-columns-gap) ')
 	}
 
 	protected override get template() {
