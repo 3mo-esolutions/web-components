@@ -10,9 +10,10 @@ export class ModeRepository<TData, TDataFetcherParameters extends FetchableDataG
 
 	constructor(private readonly dataGrid: ModdableDataGrid<TData, TDataFetcherParameters>) {
 		super(`ModdableDataGrid.${dataGrid.tagName.toLowerCase()}.Modes`, [], (_key: string, value: any) => {
-			return (DateTime.isoRegularExpression.test(value))
-				? new Date(value)
-				: value
+			if (typeof value === 'object' && value !== null && ('start' in value || 'end' in value)) {
+				return new DateTimeRange(value.start, value.end)
+			}
+			return (DateTime.isoRegularExpression.test(value)) ? new Date(value) : value
 		})
 	}
 
