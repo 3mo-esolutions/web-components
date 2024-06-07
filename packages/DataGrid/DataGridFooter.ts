@@ -29,7 +29,7 @@ export class DataGridFooter<TData> extends Component {
 		async updated(this: DataGridFooter<TData>, value: boolean) {
 			if (value === true) {
 				await this.updateComplete
-				await new Promise(resolve => setTimeout(resolve, 10))
+				await new Promise(r => requestAnimationFrame(r))
 				this.pageNumberField.focus()
 				this.pageNumberField.select()
 			}
@@ -40,7 +40,7 @@ export class DataGridFooter<TData> extends Component {
 		async updated(this: DataGridFooter<TData>, value: boolean) {
 			if (value === true) {
 				await this.updateComplete
-				await new Promise(resolve => setTimeout(resolve, 10))
+				await new Promise(r => requestAnimationFrame(r))
 				this.pageSizeSelectField.focus()
 				this.pageSizeSelectField.open = true
 			}

@@ -1,7 +1,6 @@
 import { component, eventListener, queryConnectedInstances } from '@a11d/lit'
 import { Menu } from '@3mo/menu'
 import { shift } from '@floating-ui/core'
-import { ContextMenuLazyInitializer } from './ContextMenuLazyInitializer.js'
 
 /** @element mo-context-menu */
 @component('mo-context-menu')
@@ -12,11 +11,8 @@ export class ContextMenu extends Menu {
 		return [...ContextMenu.container].find(menu => menu.open)
 	}
 
-	static open(...[openWithParameter, initializeParameter]: [...Parameters<typeof ContextMenu.prototype.openWith>, Parameters<typeof ContextMenuLazyInitializer.initialize>[1]]) {
-		const contextMenu = new ContextMenu()
-		ContextMenuLazyInitializer.initialize(contextMenu, initializeParameter)
-		contextMenu.openWith(openWithParameter)
-		return contextMenu
+	close() {
+		this.setOpen(false)
 	}
 
 	protected override initialized(): void {

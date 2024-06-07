@@ -1,4 +1,5 @@
-import { css, property, Component, html, queryAll, style, type HTMLTemplateResult, LitElement, event } from '@a11d/lit'
+import { css, property, Component, html, query, queryAll, style, type HTMLTemplateResult, LitElement, event } from '@a11d/lit'
+import { popover } from '@3mo/popover'
 import { ContextMenu } from '@3mo/context-menu'
 import { type DataGridColumn } from '../DataGridColumn.js'
 import { type DataGrid, type DataGridCell, DataGridPrimaryContextMenuItem, DataGridSelectionMode } from '../index.js'
@@ -7,7 +8,6 @@ import { type DataGrid, type DataGridCell, DataGridPrimaryContextMenuItem, DataG
  * @attr dataGrid
  * @attr data
  * @attr selected
- * @attr contextMenuOpen
  * @attr detailsOpen
  *
  * @fires detailsOpenChange - Dispatched when the details open state changes
@@ -17,6 +17,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 
 	@queryAll('mo-data-grid-cell') readonly cells!: Array<DataGridCell<any, TData, TDetailsElement>>
 	@queryAll('[mo-data-grid-row]') readonly subRows!: Array<DataGridRow<TData, TDetailsElement>>
+	@query('#contentContainer') readonly content!: HTMLElement
 
 	@property({ type: Object }) dataGrid!: DataGrid<TData, TDetailsElement>
 	@property({ type: Object }) data!: TData
@@ -41,8 +42,6 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			this.style.setProperty('--_level', this.level.toString())
 		}
 	}) level = 0
-
-	@property({ type: Boolean, reflect: true }) protected contextMenuOpen = false
 
 	get detailsElement() {
 		return this.renderRoot.querySelector('#detailsContainer')?.firstElementChild as TDetailsElement as TDetailsElement | undefined
@@ -103,11 +102,6 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				transition: 250ms;
 			}
 
-			:host([selected]) #contentContainer, :host([contextMenuOpen]) #contentContainer {
-				background: var(--mo-data-grid-selection-background) !important;
-				--mo-data-grid-sticky-part-color: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-accent));
-			}
-
 			:host([selected]:not(:last-of-type)) #contentContainer:after {
 				content: '';
 				position: absolute;
@@ -123,9 +117,16 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				color: var(--mo-color-gray);
 			}
 
-			:host([selected]) #contextMenuIconButton, :host([contextMenuOpen]) #contextMenuIconButton {
-				color: var(--mo-color-foreground);
-				opacity: 1;
+			:host([selected]), :host([data-context-menu-open]) {
+				#contentContainer {
+					background: var(--mo-data-grid-selection-background) !important;
+					--mo-data-grid-sticky-part-color: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-accent));
+				}
+
+				#contextMenuIconButton {
+					color: var(--mo-color-foreground);
+					opacity: 1;
+				}
 			}
 
 			#contentContainer:hover #contextMenuIconButton {
@@ -171,7 +172,11 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				@click=${() => this.handleContentClick()}
 				@dblclick=${() => this.handleContentDoubleClick()}
 				@auxclick=${(e: PointerEvent) => e.button !== 1 ? void 0 : this.handleContentMiddleClick()}
-				@contextmenu=${(e: PointerEvent) => this.openContextMenu(e)}
+				${popover(() => html`
+					<mo-context-menu @openChange=${(e: CustomEvent<boolean>) => this.toggleAttribute('data-context-menu-open', e.detail)}>
+						${this.contextMenuTemplate}
+					</mo-context-menu>
+				`)}
 			>
 				${this.rowTemplate}
 			</mo-grid>
@@ -292,7 +297,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		if (this.dataGrid.hasContextMenu === true && this.dataGrid.primaryContextMenuItemOnDoubleClick === true) {
 			await this.openContextMenu()
 			ContextMenu.openInstance?.items.find(item => item instanceof DataGridPrimaryContextMenuItem)?.click()
-			this.contextMenuOpen = false
+			await this.closeContextMenu()
 		}
 	}
 
@@ -307,17 +312,9 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			this.dataGrid.select(this.dataGrid.selectionMode !== DataGridSelectionMode.None ? [this.data] : [])
 		}
 
-		const contextMenu = ContextMenu.open(event || [0, 0], this.contextMenuTemplate)
-		this.contextMenuOpen = true
-		const handler = (open: boolean) => {
-			this.contextMenuOpen = open
-			if (open === false) {
-				contextMenu.openChange.unsubscribe(handler)
-			}
-		}
-		contextMenu.openChange.subscribe(handler)
-
 		await this.updateComplete
+
+		this.content?.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, composed: true, ...(event ?? {}) }))
 	}
 
 	private get contextMenuData() {
@@ -331,7 +328,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	}
 
 	async closeContextMenu() {
-		this.contextMenuOpen = false
+		ContextMenu.openInstance?.close()
 		await this.updateComplete
 	}
 

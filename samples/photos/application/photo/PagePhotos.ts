@@ -1,4 +1,4 @@
-import { PageComponent, component, html, route, state, cache, style, tooltip, contextMenu } from '@3mo/del'
+import { PageComponent, component, html, route, state, cache, style, tooltip, contextMenu, popover } from '@3mo/del'
 import { type Photo } from '../../sdk/index.js'
 
 const enum Tab {
@@ -44,10 +44,12 @@ export class PagePhotos extends PageComponent {
 				<mo-heading typography='heading4' ${style({ color: 'var(--mo-color-accent)', flex: '1' })}>${this.selectedPhotos.length > 0 ? `${this.selectedPhotos.length} Photo${this.selectedPhotos.length > 1 ? 's' : ''} selected` : 'Photos'}</mo-heading>
 				${this.selectedPhotos.length === 0 ? html.nothing : html`
 					<mo-icon-button icon='edit'
-						${tooltip(html`
-							<mo-card heading='Tooltip'>
-								Edit <b>${this.selectedPhotos.length}</b> Photos
-							</mo-card>
+						${popover(() => html`
+							<mo-tooltip>
+								<mo-card heading='Tooltip'>
+									Edit <b>${this.selectedPhotos.length}</b> Photos
+								</mo-card>
+							</mo-tooltip>
 						`)}
 					></mo-icon-button>
 					<mo-icon-button icon='delete' ${tooltip('Delete!')}></mo-icon-button>
@@ -59,7 +61,7 @@ export class PagePhotos extends PageComponent {
 						.photo=${photo}
 						?selected=${this.selectedPhotos.includes(photo)}
 						@selectionChange=${(event: CustomEvent<boolean>) => this.updateSelectedPhotos(event.detail, photo)}
-						${contextMenu(html`
+						${contextMenu(() => html`
 							<mo-context-menu-item icon='edit'>Edit</mo-context-menu-item>
 							<mo-context-menu-item icon='delete'>Delete</mo-context-menu-item>
 						`)}

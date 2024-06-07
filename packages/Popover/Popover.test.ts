@@ -120,7 +120,7 @@ describe('Popover', () => {
 
 			autoFocus.component.popoverElement.setOpen(true)
 			await autoFocus.updateComplete
-			await new Promise(r => setTimeout(r))
+			await new Promise(r => requestAnimationFrame(r))
 
 			expect(autoFocus.component.inputs[0]!.focus).not.toHaveBeenCalled()
 			expect(autoFocus.component.inputs[1]!.focus).toHaveBeenCalledOnceWith()

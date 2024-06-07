@@ -191,7 +191,8 @@ export class Popover extends Component {
 			:host {
 				position: absolute;
 				box-shadow: var(--mo-shadow);
-				width: fit-content;
+				width: max-content;
+				max-width: 100%;
 				opacity: 0;
 				z-index: 99;
 				transition: all .3s ease, transform none !important;

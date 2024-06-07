@@ -1,4 +1,4 @@
-import { component, css, property, html, Component, state, bind, ifDefined, query } from '@a11d/lit'
+import { component, css, property, html, Component, state, bind, ifDefined, query, event } from '@a11d/lit'
 import { type TooltipPlacement } from './TooltipPlacement.js'
 import { type FocusMethod, FocusController } from '@3mo/focus-controller'
 import { PointerController } from '@3mo/pointer-controller'
@@ -25,6 +25,8 @@ export class Tooltip extends Component {
 		['left', 'right'],
 	])
 
+	@event({ bubbles: true }) readonly openChange!: EventDispatcher<boolean>
+
 	@property() placement?: TooltipPlacement
 	@property({ type: Object }) anchor?: HTMLElement
 
@@ -45,16 +47,23 @@ export class Tooltip extends Component {
 
 	private openIfApplicable = () => {
 		if (this.pointerController.type === 'touch') {
-			this.open = this.anchorPointerController.press
+			this.setOpen(this.anchorPointerController.press)
 			return
 		}
 
 		if (this.lastFocusMethod === 'keyboard' && this.anchorFocusController.focused) {
-			this.open = true
+			this.setOpen(true)
 			return
 		}
 
-		this.open = this.pointerController.hover || this.anchorPointerController.hover
+		this.setOpen(this.pointerController.hover || this.anchorPointerController.hover)
+	}
+
+	private setOpen(open: boolean) {
+		if (this.open !== open) {
+			this.open = open
+			this.openChange.dispatch(open)
+		}
 	}
 
 	protected readonly pointerController = new PointerController(this, {
@@ -106,7 +115,6 @@ export class Tooltip extends Component {
 		this.positionMiddleware = [arrow({ element: this.arrowElement })]
 	}
 
-
 	protected override get template() {
 		return html`
 			<mo-popover fixed manual
@@ -118,7 +126,7 @@ export class Tooltip extends Component {
 				.positionComputed=${this.positionComputed}
 			>
 				<div id='tip'></div>
-				<slot></slot>
+				<slot @slotchange=${this.handleSlotChange}></slot>
 			</mo-popover>
 		`
 	}
@@ -132,6 +140,18 @@ export class Tooltip extends Component {
 
 			const staticSide = Tooltip.tipSideByPlacement.get(response.placement!.split('-')[0] as any)
 			this.arrowElement.style[staticSide as any] = '-3px'
+		}
+	}
+
+	private readonly handleSlotChange = () => {
+		this.rich = !!this.children.length && [...this.children].some(child => child.nodeType !== Node.TEXT_NODE)
+
+		const textContent = this.rich ? undefined : this.textContent?.trim() ?? undefined
+
+		if (textContent) {
+			this.anchor?.setAttribute('aria-label', textContent)
+		} else {
+			this.anchor?.removeAttribute('aria-label')
 		}
 	}
 }

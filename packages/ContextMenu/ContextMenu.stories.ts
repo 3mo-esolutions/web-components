@@ -51,10 +51,10 @@ const specialContextMenu = html`
 
 export const ContextMenu: StoryObj = {
 	render: () => html`
-		<div ${contextMenu(mainContextMenu)} style='width: 100%; height: 300px; position: relative; display: flex; align-items: center; justify-content: center; border: dotted 2px currentColor; opacity: .7; border-radius: var(--mo-border-radius)'>
+		<div ${contextMenu(() => mainContextMenu)} style='width: 100%; height: 300px; position: relative; display: flex; align-items: center; justify-content: center; border: dotted 2px currentColor; opacity: .7; border-radius: var(--mo-border-radius)'>
 			Right click anywhere
 
-			<div ${contextMenu(specialContextMenu)} style='position: absolute; top: 50px; left: 60px; width: 100px; height: 100px; border: dotted 2px red; display: flex; align-items: center; justify-content: center;'>Or here</div>
+			<div ${contextMenu(() => specialContextMenu)} style='position: absolute; top: 50px; left: 60px; width: 100px; height: 100px; border: dotted 2px red; display: flex; align-items: center; justify-content: center;'>Or here</div>
 		</div>
 	`
 }

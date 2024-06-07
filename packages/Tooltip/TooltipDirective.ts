@@ -1,54 +1,9 @@
-import { directive, AsyncDirective, type ElementPart, type HTMLTemplateResult, type PartInfo, PartType, render, html } from '@a11d/lit'
-import { Tooltip } from './Tooltip.js'
-import { type TooltipPlacement } from './TooltipPlacement.js'
-import { Application } from '@a11d/lit-application'
+import { html, ifDefined } from '@a11d/lit'
+import { popover } from '@3mo/popover'
+import type { TooltipPlacement } from './TooltipPlacement.js'
 
-type TooltipDirectiveParameters = [content: string | HTMLTemplateResult, placement?: TooltipPlacement]
-
-export class TooltipDirective extends AsyncDirective {
-	private tooltip?: Tooltip
-
-	constructor(partInfo: PartInfo) {
-		super(partInfo)
-
-		if (partInfo.type !== PartType.ELEMENT) {
-			throw new Error('tooltip can only be used on an element')
-		}
-	}
-
-	override async update(part: ElementPart, [content, placement]: TooltipDirectiveParameters) {
-		if (this.isConnected) {
-			this.tooltip ??= new Tooltip()
-			this.tooltip.anchor = part.element as HTMLElement
-
-			if (placement) {
-				this.tooltip.placement = placement
-			}
-
-			if (typeof content === 'string') {
-				part.element.ariaLabel = content
-			}
-
-			await new Promise(r => setTimeout(r))
-
-			render(content, this.tooltip)
-
-			this.tooltip.rich = this.tooltip.childElementCount > 0
-
-			Application.topLayer.appendChild(this.tooltip)
-		}
-
-		return super.update(part, [content, placement])
-	}
-
-	render(...parameters: TooltipDirectiveParameters) {
-		parameters
-		return html.nothing
-	}
-
-	protected override disconnected() {
-		this.tooltip?.remove()
-	}
-}
-
-export const tooltip = directive(TooltipDirective)
+export const tooltip = (content: string, placement?: TooltipPlacement) => popover(() => html`
+	<mo-tooltip placement=${ifDefined(placement)}>
+		${content}
+	</mo-tooltip>
+`)

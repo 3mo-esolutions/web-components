@@ -8,7 +8,6 @@ import { ThemeController } from '@3mo/theme'
 import { observeMutation } from '@3mo/mutation-observer'
 import { MediaQueryController } from '@3mo/media-query-observer'
 import { Localizer } from '@3mo/localization'
-import { ContextMenu } from '@3mo/context-menu'
 import { CsvGenerator, DataGridColumnComponent, DataGridSidePanelTab, type DataGridColumn, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, type DataGridSidePanel } from './index.js'
 import { DataGridSelectionController } from './DataGridSelectionController.js'
 
@@ -522,11 +521,13 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			}
 
 			:host([preventVerticalContentScroll]) mo-scroller {
-				overflow-y: hidden;
-			}
+				mo-scroller {
+					overflow-y: hidden;
+				}
 
-			:host([preventVerticalContentScroll]) mo-scroller::part(container) {
-				position: relative;
+				mo-scroller::part(container) {
+					position: relative;
+				}
 			}
 
 			:host(:not([selectionMode="none"])) {
@@ -547,11 +548,11 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			#toolbar {
 				position: relative;
 				padding: var(--mo-data-grid-toolbar-padding);
-			}
 
-			#toolbar mo-icon-button {
-				align-self: flex-start;
-				color: var(--mo-color-gray);
+				mo-icon-button {
+					align-self: flex-start;
+					color: var(--mo-color-gray);
+				}
 			}
 
 			#flexSelectionToolbar {
@@ -560,30 +561,35 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				inset: 0px;
 				width: 100%;
 				height: 100%;
-				z-index: 1;
+				z-index: 5;
+
+				& > mo-flex {
+					background: var(--mo-data-grid-selection-background);
+					height: 100%;
+					align-items: center;
+				}
+
+				mo-icon-button {
+					align-self: center;
+					color: var(--mo-color-foreground);
+				}
 			}
 
-			#flexSelectionToolbar > mo-flex {
-				background: var(--mo-data-grid-selection-background);
-				height: 100%;
-				align-items: center;
-			}
-
-			#flexSelectionToolbar mo-icon-button {
-				align-self: center;
-				color: var(--mo-color-foreground);
-			}
-
-			#flexActions {
-				align-items: center;
-				justify-content: center;
-				padding-inline: 14px 6px;
-				margin: 6px 0;
-				cursor: pointer;
-				background: var(--mo-color-accent-transparent);
+			mo-popover-container {
 				height: calc(100% - calc(2 * 6px));
 				max-height: 45px;
+				margin: 6px 0;
+
+				#flexActions {
+					align-items: center;
+					justify-content: center;
+					padding-inline: 14px 6px;
+					cursor: pointer;
+					background: var(--mo-color-accent-transparent);
+					height: 100%;
+				}
 			}
+
 
 			#fab {
 				position: absolute;
@@ -625,15 +631,15 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				position: relative;
 				height: 100%;
 				width: 100%;
-			}
 
-			#overlayModeContainer mo-data-grid-side-panel {
-				position: absolute;
-				inset: 0;
-				width: 100%;
-				height: 100%;
-				z-index: 1;
-				background-color: var(--mo-color-surface);
+				mo-data-grid-side-panel {
+					position: absolute;
+					inset: 0;
+					width: 100%;
+					height: 100%;
+					z-index: 1;
+					background-color: var(--mo-color-surface);
+				}
 			}
 		`
 	}
@@ -852,10 +858,16 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 						${t('${count:pluralityNumber} entries selected', { count: this.selectedData.length })}
 					</div>
 					${!this.getRowContextMenuTemplate ? html.nothing : html`
-						<mo-flex id='flexActions' direction='horizontal' @click=${(e: PointerEvent) => ContextMenu.open(e, this.getRowContextMenuTemplate?.(this.selectedData) ?? html.nothing)}>
-							<div ${style({ flex: '1' })}>${t('Options')}</div>
-							<mo-icon-button dense icon='arrow_drop_down' ${style({ display: 'flex', alignItems: 'center', justifyContent: 'center' })}></mo-icon-button>
-						</mo-flex>
+						<mo-popover-container fixed>
+							<mo-flex id='flexActions' direction='horizontal'>
+								<div ${style({ flex: '1' })}>${t('Options')}</div>
+								<mo-icon-button dense icon='arrow_drop_down' ${style({ display: 'flex', alignItems: 'center', justifyContent: 'center' })}></mo-icon-button>
+							</mo-flex>
+
+							<mo-menu slot='popover'>
+								${this.getRowContextMenuTemplate?.(this.selectedData) ?? html.nothing}
+							</mo-menu>
+						</mo-popover-container>
 					`}
 					<div ${style({ flex: '1' })}></div>
 					<mo-icon-button icon='close'

@@ -29,7 +29,7 @@ export default {
 } as Meta
 
 const content = html`
-	<input />
+	<input autofocus />
 	<mo-card heading='Popover'>
 		Here some content
 	</mo-card>
@@ -45,7 +45,7 @@ export const Manual: StoryObj = {
 		return html`
 			<mo-popover-container placement=${placement} alignment=${alignment} @click=${handleClick}>
 				<mo-button type='outlined'>Click to open the popover</mo-button>
-				<mo-popover manual slot='popover'>${content}</mo-popover>
+				<mo-popover manual slot='popover' @click=${(e: Event) => e.stopPropagation()}>${content}</mo-popover>
 			</mo-popover-container>
 		`
 	}
