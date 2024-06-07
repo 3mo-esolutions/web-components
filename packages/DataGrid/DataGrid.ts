@@ -817,10 +817,12 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				></mo-virtualized-scroller>
 			`
 
+		this.resizeInternalGridIfNeeded()
+
 		return this.isUsingSubgrid ? html`${content}` : html`
 			<mo-flex direction='horizontal'>
-				<mo-scroller
-					${style({ flexGrow: '1', gridRow: '2', gridColumn: '1 / last-line', overflow: 'hidden' })}
+				<mo-scroller id='internalGrid'
+					${style({ flexGrow: '1' })}
 					${observeResize(() => this.requestUpdate())}
 					@scroll=${this.handleScroll}
 				>
@@ -829,6 +831,21 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				${this.fallbackContextMenuTemplate}
 			</mo-flex>
 		`
+	}
+
+	private resizeInternalGridIfNeeded = () => {
+		setTimeout(() => {
+			if (this.isUsingSubgrid) {
+					return
+			}
+
+			const internalGrid = this.shadowRoot!.querySelector('#internalGrid') as HTMLElement
+
+			if (internalGrid.scrollHeight > internalGrid.clientHeight) {
+					internalGrid.style.overflow = 'hidden'
+					internalGrid.style.minHeight = `${internalGrid.scrollHeight}px`
+			}
+		}, 0)
 	}
 
 	private get fallbackContextMenuTemplate() {
@@ -1021,7 +1038,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	readonly moreColumnWidthInPixels = 0
 
 	get columnsWidths() {
-		const hasMoreIcon = !this.hasToolbar && !this.sidePanelHidden
+		const hasMoreIcon = (!this.hasToolbar || this.hasContextMenu) && !this.sidePanelHidden
 
 		const hasFiller = this.isUsingSubgrid && this.hasToolbar && !this.sidePanelHidden
 
