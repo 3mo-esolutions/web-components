@@ -4,7 +4,7 @@ import { promises as FileSystem, existsSync } from 'fs'
 
 await run('wca analyze --outFiles ./custom-elements.json --visibility public ./packages/**/*.ts')
 
-const customElements = (await import('../custom-elements.json', { assert: { type: 'json' } })).default
+const customElements = (await import('../custom-elements.json', { with: { type: 'json' }, assert: { type: 'json' } })).default
 customElements.tags = customElements.tags
 	.filter(tag => !tag.path.endsWith('.test.ts') && !tag.path.endsWith('.stories.ts'))
 	.map(tag => {
