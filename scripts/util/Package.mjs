@@ -37,7 +37,7 @@ export class Package {
 		console.log(await run('tsc', this.relativePath) || 'TypeScript compiled successfully')
 		await run('npm run analyze', undefined, true)
 		if (versionBumpType.startsWith('pre')) {
-			versionBumpType.replace('prepatch', 'prerelease')
+			versionBumpType = versionBumpType.replace('prepatch', 'prerelease')
 			if (!versionBumpType.includes('--preid')) {
 				versionBumpType += ' --preid=rc'
 			}

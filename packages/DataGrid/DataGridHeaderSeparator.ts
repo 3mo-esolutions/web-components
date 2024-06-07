@@ -3,7 +3,14 @@ import { type DataGridColumn, type DataGrid } from './index.js'
 
 @component('mo-data-grid-header-separator')
 export class DataGridHeaderSeparator extends Component {
-	@property({ type: Object }) dataGrid!: DataGrid<unknown>
+	@property({
+		type: Object,
+		updated(this: DataGridHeaderSeparator, dataGrid?: DataGrid<unknown>) {
+			if (dataGrid) {
+				this.toggleAttribute('subgrid', dataGrid.isUsingSubgrid)
+			}
+		}
+	}) dataGrid!: DataGrid<unknown>
 	@property({ type: Object }) column!: DataGridColumn<unknown>
 
 	@state() private isResizing = false
@@ -16,9 +23,10 @@ export class DataGridHeaderSeparator extends Component {
 
 	static override get styles() {
 		return css`
-			:host {
+			:host([subgrid]) {
 				position: absolute;
 				inset-inline-end: -2px;
+				z-index: 2;
 			}
 
 			:host([data-last]) {
@@ -124,8 +132,16 @@ export class DataGridHeaderSeparator extends Component {
 	}
 
 	private readonly handleDoubleClick = () => {
-		this.isResizing = false
 		this.column.width = 'max-content'
+
+		if (!this.dataGrid.isUsingSubgrid) {
+			const columns = this.dataGrid.rows.map(row => row.cells.filter(cell => cell.column === this.column)).flat();
+			const headerCell = this.dataGrid?.header?.cells.find(cell => cell.dataset.selector === this.column.dataSelector)
+			const width = Math.max(...columns.map(c => c.scrollWidth), headerCell?.scrollWidth ?? 0)
+			this.column.width = `${width}px`
+		}
+
+		this.isResizing = false
 		this.dataGrid.setColumns(this.dataGrid.columns)
 	}
 }

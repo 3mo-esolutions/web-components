@@ -8,11 +8,25 @@ export class DataGridDefaultRow<TData, TDetailsElement extends Element | undefin
 		return css`
 			${super.styles}
 
-			:host {
+			:host([subgrid]) {
 				display: grid;
 				grid-template-columns: subgrid;
 				grid-column: -1 / 1;
 				min-height: var(--mo-data-grid-row-height);
+			}
+
+			:host([subgrid][has-sub-data]) #detailsContainer {
+				display: grid;
+				grid-template-columns: subgrid;
+				grid-column: -1 / 1;
+			}
+
+			:host(:not([subgrid])) {
+				mo-grid {
+					height: var(--mo-data-grid-row-height);
+					grid-template-columns: var(--mo-data-grid-columns);
+					column-gap: var(--mo-data-grid-columns-gap, 2px);
+				}
 			}
 
 			mo-flex {
@@ -22,16 +36,7 @@ export class DataGridDefaultRow<TData, TDetailsElement extends Element | undefin
 			}
 
 			#selectionContainer {
-				height: var(--mo-data-grid-row-height);
-			}
-
-			#detailsContainer {
-				grid-column: -1 / 1;
-			}
-
-			:host([has-sub-data]) #detailsContainer {
-				display: grid;
-				grid-template-columns: subgrid;
+				height: 100%;
 			}
 
 			#detailsContainer [instanceof*=mo-data-grid] {
@@ -73,7 +78,6 @@ export class DataGridDefaultRow<TData, TDetailsElement extends Element | undefin
 			${this.detailsExpanderTemplate}
 			${this.selectionTemplate}
 			${this.dataGrid.columns.map(column => this.getCellTemplate(column))}
-			${this.fillerTemplate}
 			${this.contextMenuIconButtonTemplate}
 		`
 	}

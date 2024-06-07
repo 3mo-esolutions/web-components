@@ -15,9 +15,16 @@ import { DataGridColumn, type DataGridColumnAlignment, type DataGridColumnSticky
  * @attr sticky - The sticky position of the column, either 'start', 'end', or 'both'
  */
 export abstract class DataGridColumnComponent<TData, TValue> extends Component {
-	@property({ type: Object }) dataGrid?: DataGrid<TData, any> | undefined
+	@property({
+		type: Object,
+		updated(this: DataGridColumnComponent<TData, TValue>, dataGrid: DataGrid<TData, any> | undefined) {
+			if (dataGrid) {
+				this.width = dataGrid.isUsingSubgrid ? 'max-content' : 'minmax(var(--mo-data-grid-cell-width, 102px), 1fr)'
+			}
+		}
+	}) dataGrid?: DataGrid<TData, any> | undefined
 
-	@property() width = 'max-content'
+	@property() width!: string
 	@property({ type: Boolean }) override hidden = false
 	@property() sticky?: DataGridColumnSticky
 	@property({ reflect: true }) heading = ''

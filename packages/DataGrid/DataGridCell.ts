@@ -187,9 +187,11 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 		} else {
 			this.setAttribute('tabindex', '-1')
 		}
-		this.toggleAttribute('sticky', this.column.sticky !== undefined)
-		this.toggleAttribute('sticking', this.column.intersecting === false)
-		this.style.insetInline = this.column.stickyColumnInsetInline
+		if (this.dataGrid.isUsingSubgrid) {
+			this.toggleAttribute('sticky', this.column.sticky !== undefined)
+			this.toggleAttribute('sticking', !this.column.intersecting)
+			this.style.insetInline = this.column.stickyColumnInsetInline
+		}
 		return this.isEditing ? this.editContentTemplate as HTMLTemplateResult : this.contentTemplate
 	}
 

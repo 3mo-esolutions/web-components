@@ -11,6 +11,8 @@ import { Localizer } from '@3mo/localization'
 import { ContextMenu } from '@3mo/context-menu'
 import { CsvGenerator, DataGridColumnComponent, DataGridSidePanelTab, type DataGridColumn, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, type DataGridSidePanel } from './index.js'
 import { DataGridSelectionController } from './DataGridSelectionController.js'
+import * as System from 'detect-browser'
+import { observeResize } from '@3mo/resize-observer'
 
 Localizer.register('en', {
 	'${count:pluralityNumber} entries selected': [
@@ -216,7 +218,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		return [...root?.querySelectorAll('[mo-data-grid-row]') ?? []] as Array<DataGridRow<TData, TDetailsElement>>
 	}
 
-	@query('mo-data-grid-header') private readonly header?: DataGridHeader<TData>
+	@query('mo-data-grid-header') readonly header?: DataGridHeader<TData>
 	@query('#content') private readonly content?: HTMLElement
 	@query('mo-data-grid-footer') private readonly footer?: DataGridFooter<TData>
 	@query('mo-data-grid-side-panel') private readonly sidePanel?: DataGridSidePanel<TData>
@@ -255,6 +257,10 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	get hasSelection() {
 		return this.selectionController.hasSelection
+	}
+
+	get isUsingSubgrid() {
+		return System.detect()?.name !== 'safari' && System.detect()?.os !== 'iOS'
 	}
 
 	selectAll(...parameters: Parameters<typeof this.selectionController.selectAll>) {
@@ -315,6 +321,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		} else {
 			this.openRowDetails()
 		}
+		this.updateContextMenuFallbackIfNeeded()
 	}
 
 	sort(sorting?: DataGridSorting<TData>) {
@@ -539,6 +546,9 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 			#content {
 				width: fit-content;
+			}
+
+			:host([subgrid]) #content {
 				min-width: 100%;
 				height: min-content;
 				min-height: 100%;
@@ -551,6 +561,31 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 			#toolbar mo-icon-button {
 				align-self: flex-start;
+				color: var(--mo-color-gray);
+			}
+
+			.contextMenu {
+				background-color: var(--mo-data-grid-sticky-part-color);
+				height: var(--mo-data-grid-row-height);
+			}
+
+			.contextMenu[opened] {
+				background-color: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-accent));
+			}
+
+			.contextMenu[opened] .contextMenuIconButton {
+				color: var(--mo-color-foreground);
+				opacity: 1;
+			}
+
+			.contextMenu:not([opened]):hover .contextMenuIconButton {
+				color: var(--mo-color-accent);
+				opacity: 1;
+			}
+
+			.contextMenuIconButton {
+				transition: 250ms;
+				opacity: 0.5;
 				color: var(--mo-color-gray);
 			}
 
@@ -725,6 +760,24 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	protected get dataGridTemplate() {
 		this.provideCssColumnsProperties()
 		this.toggleAttribute('hasDetails', this.hasDetails)
+		this.toggleAttribute('subgrid', this.isUsingSubgrid)
+
+		if (!this.isUsingSubgrid) {
+			return html`
+				<mo-flex ${style({ flexGrow: '1', position: 'relative' })}>
+				<mo-grid rows='* auto' ${style({ flexGrow: '1' })}>
+					<mo-scroller ${style({ minHeight: 'var(--mo-data-grid-content-min-height, calc(var(--mo-data-grid-min-visible-rows, 2.5) * var(--mo-data-grid-row-height) + var(--mo-data-grid-header-height)))' })}>
+						<mo-grid ${style({ height: '100%' })} rows='auto *'>
+							${this.headerTemplate}
+							${this.contentTemplate}
+						</mo-grid>
+					</mo-scroller>
+					${this.footerTemplate}
+				</mo-grid>
+			</mo-flex>
+			`
+		}
+
 		return html`
 			<mo-grid rows='* auto' ${style({ position: 'relative', height: '100%' })}>
 				<mo-scroller
@@ -753,11 +806,75 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	private get rowsTemplate() {
 		const getRowTemplate = (data: TData, index: number) => this.getRowTemplate(data, index)
-		const content = this.shallVirtualize === false
+
+		const content = !this.shallVirtualize
 			? this.renderData.map(getRowTemplate)
-			: html`<mo-virtualized-scroller .items=${this.renderData} .getItemTemplate=${getRowTemplate as any} exportparts='row'></mo-virtualized-scroller>`
+			: html`
+				<mo-virtualized-scroller exportparts='row'
+					.items=${this.renderData}
+					.getItemTemplate=${getRowTemplate as any}
+				></mo-virtualized-scroller>
+			`
+
+		return this.isUsingSubgrid ? html`${content}` : html`
+			<mo-flex direction='horizontal'>
+				<mo-scroller
+					${style({ flexGrow: '1', gridRow: '2', gridColumn: '1 / last-line', overflow: 'hidden' })}
+					${observeResize(() => this.requestUpdate())}
+					@scroll=${this.handleScroll}
+				>
+					${content}
+				</mo-scroller>
+				${this.fallbackContextMenuTemplate}
+			</mo-flex>
+		`
+	}
+
+	private get fallbackContextMenuTemplate() {
+		if (!this.hasContextMenu) {
+			return html.nothing
+		}
+
+		const flattenedData = this.renderData.map((root, i) => [
+			{ ...root, outer: i },
+			...(this.getSubData(root) ?? []).map((node, j) => ({ ...node, outer: i, nested: j })),
+		]).flat()
+
 		return html`
-			${content}
+			<mo-flex ${style({ position: 'sticky', right: '0' })}>
+				${flattenedData.map((node) => {
+					const { outer, nested } = node as any
+
+					let rowNode = this.rows[outer]
+
+					if (nested !== undefined) {
+						rowNode = rowNode?.subRows[nested]
+					}
+
+					if (!rowNode) {
+						return html.nothing
+					}
+
+					const rowKey = `${outer}-${nested ?? -1}`
+
+					const onClick = (e: PointerEvent) => {
+						if (rowNode.contextMenuOpen) {
+							return
+						}
+						const contextMenuIconNode = this.shadowRoot?.querySelector(`[data-row-key="${rowKey}"]`) as HTMLElement
+						contextMenuIconNode.setAttribute('opened', '')
+						rowNode.openContextMenu.call(rowNode, e, () => {
+							contextMenuIconNode.removeAttribute('opened')
+						})
+					}
+
+					return html`
+						<mo-flex data-row-key=${rowKey} class='contextMenu' alignItems='center' justifyContent='center'>
+							<mo-icon-button dense class='contextMenuIconButton' icon='more_vert' @click=${onClick}></mo-icon-button>
+						</mo-flex>
+					`
+				})}
+			</mo-flex>
 		`
 	}
 
@@ -788,6 +905,12 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		this.openDetailedData = open
 			? [...this.openDetailedData, data]
 			: this.openDetailedData.filter(d => d !== data)
+
+		this.updateContextMenuFallbackIfNeeded()
+	}
+
+	private updateContextMenuFallbackIfNeeded = () => {
+		requestAnimationFrame(() => !this.isUsingSubgrid && this.requestUpdate())
 	}
 
 	protected get footerTemplate() {
@@ -902,7 +1025,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			this.selectionColumnWidth,
 			...this.dataColumnsWidths,
 			'1fr',
-			this.moreColumnWidth
+			!this.hasContextMenu || !this.isUsingSubgrid ? undefined : this.moreColumnWidth,
 		].filter((c): c is string => c !== undefined)
 	}
 

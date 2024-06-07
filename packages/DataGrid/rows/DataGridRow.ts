@@ -35,6 +35,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		}
 	}) detailsOpen = false
 
+
 	@property({
 		type: Number,
 		updated(this: DataGridRow<TData, TDetailsElement>) {
@@ -42,7 +43,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		}
 	}) level = 0
 
-	@property({ type: Boolean, reflect: true }) protected contextMenuOpen = false
+	@property({ type: Boolean, reflect: true }) contextMenuOpen = false
 
 	get detailsElement() {
 		return this.renderRoot.querySelector('#detailsContainer')?.firstElementChild as TDetailsElement as TDetailsElement | undefined
@@ -54,6 +55,8 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 
 	protected override initialized() {
 		this.toggleAttribute('mo-data-grid-row', true)
+		this.toggleAttribute('subgrid', this.dataGrid.isUsingSubgrid)
+		this.toggleAttribute('details', this.dataGrid.hasDetails)
 	}
 
 	override updated(...parameters: Parameters<Component['updated']>) {
@@ -98,7 +101,6 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			}
 
 			#contentContainer {
-				grid-column: -1 / 1;
 				cursor: pointer;
 				transition: 250ms;
 			}
@@ -121,6 +123,51 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				transition: 250ms;
 				opacity: 0.5;
 				color: var(--mo-color-gray);
+			}
+
+			:host(:not([subgrid])) #contextMenu {
+				align-items: center;
+				grid-column: -1;
+			}
+
+			:host([subgrid]) {
+				#contentContainer {
+					grid-column: -1 / 1;
+				}
+
+				[data-sticky] {
+					position: sticky;
+					z-index: 3;
+					background: var(--mo-data-grid-sticky-part-color);
+				}
+
+				#contextMenu {
+					height: 100%;
+					place-self: end;
+					inset-inline-end: 0;
+				}
+
+				#detailsExpander {
+					inset-inline-start: 0;
+					background-color: var(--mo-data-grid-sticky-expander-part-color, var(--mo-data-grid-sticky-part-color));
+					z-index: 5;
+				}
+
+				#selection {
+					width: var(--mo-data-grid-column-selection-width);
+					align-items: unset;
+					left: 0;
+				}
+			}
+
+
+			:host([subgrid]:not([details])) #selectionContainer {
+				inset-inline-start: 0;
+			}
+
+			:host([subgrid][details]) #selectionContainer {
+				inset-inline-start: 20px;
+				padding: 1px 0;
 			}
 
 			:host([selected]) #contextMenuIconButton, :host([contextMenuOpen]) #contextMenuIconButton {
@@ -165,9 +212,17 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		`
 	}
 
+	private get columnsWidths() {
+		return [
+			this.dataGrid.detailsColumnWidth,
+			this.dataGrid.selectionColumnWidth,
+			this.dataGrid.dataColumnsWidths,
+		].flat().filter(Boolean).join(' ')
+	}
+
 	protected override get template() {
 		return html`
-			<mo-grid id='contentContainer' columns='subgrid'
+			<mo-grid id='contentContainer' columns=${this.dataGrid.isUsingSubgrid ? 'subgrid' : this.columnsWidths}
 				@click=${() => this.handleContentClick()}
 				@dblclick=${() => this.handleContentDoubleClick()}
 				@auxclick=${(e: PointerEvent) => e.button !== 1 ? void 0 : this.handleContentMiddleClick()}
@@ -182,9 +237,8 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	protected abstract get rowTemplate(): HTMLTemplateResult
 
 	protected get detailsExpanderTemplate() {
-		return this.dataGrid.hasDetails === false ? html.nothing : html`
-			<mo-flex justifyContent='center' alignItems='center'
-				${style({ position: 'sticky', zIndex: '2', insetInlineStart: '0px', background: 'var(--mo-data-grid-sticky-expander-part-color, var(--mo-data-grid-sticky-part-color))' })}
+		return !this.dataGrid.hasDetails ? html.nothing : html`
+			<mo-flex justifyContent='center' alignItems='center' id='detailsExpander' data-sticky
 				@click=${(e: Event) => e.stopPropagation()}
 				@dblclick=${(e: Event) => e.stopPropagation()}
 			>
@@ -201,8 +255,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 
 	protected get selectionTemplate() {
 		return this.dataGrid.hasSelection === false || this.dataGrid.selectionCheckboxesHidden ? html.nothing : html`
-			<mo-flex id='selectionContainer' justifyContent='center' alignItems='center'
-				${style({ width: 'var(--mo-data-grid-column-selection-width)', position: 'sticky', zIndex: '2', insetInlineStart: this.dataGrid.hasDetails ? '20px' : '0px', padding: this.dataGrid.hasDetails ? '1px 0' : undefined, background: 'var(--mo-data-grid-sticky-part-color)' })}
+			<mo-flex id='selectionContainer' justifyContent='center' alignItems='center' id='selection' data-sticky
 				@click=${(e: Event) => e.stopPropagation()}
 				@dblclick=${(e: Event) => e.stopPropagation()}
 			>
@@ -226,13 +279,9 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		`
 	}
 
-	protected get fillerTemplate() {
-		return html`<span></span>`
-	}
-
 	protected get contextMenuIconButtonTemplate() {
-		return this.dataGrid.hasContextMenu === false ? html.nothing : html`
-			<mo-flex justifyContent='center' ${style({ height: '100%', placeSelf: 'end', position: 'sticky', insetInlineEnd: '0px', zIndex: '3', background: 'var(--mo-data-grid-sticky-part-color)' })}>
+		return !this.dataGrid.hasContextMenu || !this.dataGrid.isUsingSubgrid ? html.nothing : html`
+			<mo-flex id='contextMenu' data-sticky justifyContent='center'>
 				<mo-icon-button id='contextMenuIconButton' icon='more_vert' dense
 					@click=${this.openContextMenu}
 					@dblclick=${(e: Event) => e.stopPropagation()}
@@ -296,7 +345,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		}
 	}
 
-	async openContextMenu(event?: PointerEvent) {
+	async openContextMenu(event?: PointerEvent, onClose?: () => void) {
 		if (!this.dataGrid.hasContextMenu) {
 			return
 		}
@@ -313,6 +362,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			this.contextMenuOpen = open
 			if (open === false) {
 				contextMenu.openChange.unsubscribe(handler)
+				onClose?.()
 			}
 		}
 		contextMenu.openChange.subscribe(handler)
@@ -335,7 +385,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		await this.updateComplete
 	}
 
-	protected toggleDetails() {
+	toggleDetails() {
 		this.setDetailsOpen(!this.detailsOpen)
 	}
 

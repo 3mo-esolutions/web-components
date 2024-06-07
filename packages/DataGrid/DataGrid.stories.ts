@@ -12,7 +12,7 @@ export default {
 
 type Person = { id: number, name: string, age: number, birthDate: DateTime, address: string }
 
-const generatePeople = (count: number) => {
+const generatePeople = (count: number, nested = true) => {
 	const names = ['Octavia Blake', 'Charmaine Diyoza', 'Clarke Griffin', 'Elliot Anderson', 'Darlene Anderson', 'Max Caufield']
 	const addresses = [
 		'112 Rue de Elm, 1265 Paris, France',
@@ -30,6 +30,7 @@ const generatePeople = (count: number) => {
 			birthDate,
 			age: Math.floor((new DateTime().since(birthDate).years)),
 			address: addresses[Math.floor(Math.random() * addresses.length)],
+			children: !nested ? [] : generatePeople(count, false),
 		}
 	})
 }
@@ -93,11 +94,14 @@ export const Selection: StoryObj = {
 
 export const ContextMenu: StoryObj = {
 	render: () => html`
-		<mo-data-grid .data=${fivePeople} style='height: 500px' .getRowContextMenuTemplate=${(data: Array<Person>) => html`
-			<div style='margin: 10px; opacity: 0.5'>${data.map(p => `"${p.name}"`).join(', ')} selected</div>
-			<mo-context-menu-item>Item1</mo-context-menu-item>
-			<mo-context-menu-item>Item2</mo-context-menu-item>
-		`}>
+		<mo-data-grid subDataGridDataSelector='children' multipleDetails style='height: 500px'
+			.data=${fivePeople}
+			.getRowContextMenuTemplate=${(data: Array<Person>) => html`
+				<div style='margin: 10px; opacity: 0.5'>${data.map(p => `"${p.name}"`).join(', ')} selected</div>
+				<mo-context-menu-item>Item1</mo-context-menu-item>
+				<mo-context-menu-item>Item2</mo-context-menu-item>
+			`}
+		>
 			${columnsTemplate}
 		</mo-data-grid>
 	`

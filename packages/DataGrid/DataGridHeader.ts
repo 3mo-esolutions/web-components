@@ -1,9 +1,9 @@
-import { component, Component, css, html, ifDefined, property, event, style } from '@a11d/lit'
+import { component, Component, css, html, ifDefined, property, event, style, join, queryAll } from '@a11d/lit'
 import { KeyboardController } from '@3mo/keyboard-controller'
 import { type Checkbox } from '@3mo/checkbox'
 import { tooltip } from '@3mo/tooltip'
 import { observeResize } from '@3mo/resize-observer'
-import { DataGridSelectionMode, DataGridSortingStrategy, type DataGridColumn, type DataGrid, DataGridSidePanelTab } from './index.js'
+import { DataGridSelectionMode, DataGridSortingStrategy, type DataGridColumn, DataGrid, DataGridSidePanelTab } from './index.js'
 
 @component('mo-data-grid-header')
 export class DataGridHeader<TData> extends Component {
@@ -14,9 +14,13 @@ export class DataGridHeader<TData> extends Component {
 	@property() selection: CheckboxSelection = false
 	@property({ type: Boolean, reflect: true }) overlayOpen = false
 
+	@queryAll('.headerContent') readonly cells!: Array<HTMLElement>
+
 	protected override connected() {
 		this.dataGrid.dataChange.subscribe(this.handleDataGridDataChange)
 		this.dataGrid.selectionChange.subscribe(this.handleDataGridSelectionChange)
+		this.toggleAttribute('subgrid', this.dataGrid.isUsingSubgrid)
+		this.toggleAttribute('details', this.dataGrid.hasDetails)
 	}
 
 	protected override disconnected() {
@@ -41,24 +45,76 @@ export class DataGridHeader<TData> extends Component {
 	static override get styles() {
 		return css`
 			:host {
+				--mo-data-grid-cell-width: 100px;
 				--mo-data-grid-header-separator-height: 15px;
 				--mo-data-grid-header-separator-width: 2px;
+				display: inherit;
+				font-size: small;
+			}
+
+			:host([subgrid]) {
+				position: sticky;
 				display: grid;
 				grid-template-columns: subgrid;
 				grid-column: -1 / 1;
 				background: var(--mo-data-grid-sticky-part-color);
-				position: sticky;
 				top: 0;
 				z-index: 4;
-				font-size: small;
+
+				.details, .selection, .more {
+					position: sticky;
+					background: var(--mo-data-grid-sticky-part-color);
+					z-index: 10;
+				}
+
+				.cell {
+					position: relative;
+				}
+
+				.cell[data-sticky] {
+					position: sticky;
+				}
+
+				.cell[data-sticky] /*[data-sticking]*/ {
+					z-index: 6;
+					background: var(--mo-data-grid-sticky-part-color);
+				}
+
+				mo-data-grid-header-separator {
+					z-index: 5;
+				}
+
+				.cell[data-sticky] /*[data-sticking]*/ mo-data-grid-header-separator {
+					z-index: 7;
+				}
+
+				.details {
+					inset-inline-start: 0px;
+				}
+
+				.selection {
+					inset-inline-start: 0px;
+				}
+
+				.more {
+					cursor: pointer;
+					inset-inline-end: 0px;
+				}
+			}
+
+			:host([subgrid][details]) .selection {
+				inset-inline-start: 20px;
+			}
+
+			:host([subgrid]), #header {
+				border-top: var(--mo-data-grid-border);
+				border-bottom: var(--mo-data-grid-border);
 			}
 
 			#header {
-				border-top: var(--mo-data-grid-border);
-				border-bottom: var(--mo-data-grid-border);
 				position: relative;
 				height: var(--mo-data-grid-header-height);
-				background: var(--mo-data-grid-header-background);
+				background-color: var(--mo-data-grid-sticky-part-color);
 			}
 
 			.headerContent {
@@ -84,55 +140,38 @@ export class DataGridHeader<TData> extends Component {
 				align-items: center;
 				justify-content: center;
 			}
-
-			.cell {
-				position: relative;
-			}
-
-			.cell[data-sticky] {
-				position: sticky;
-			}
-
-			.cell[data-sticky] /*[data-sticking]*/ {
-				z-index: 6;
-				background: var(--mo-data-grid-sticky-part-color);
-			}
-
-			mo-data-grid-header-separator {
-				z-index: 5;
-			}
-
-			.cell[data-sticky] /*[data-sticking]*/ mo-data-grid-header-separator {
-				z-index: 7;
-			}
-
-			.details, .selection, .more {
-				position: sticky;
-				background: var(--mo-data-grid-sticky-part-color);
-				z-index: 5;
-			}
-
-			.details {
-				inset-inline-start: 0px;
-			}
-
-			.selection {
-				inset-inline-start: 0px;
-			}
-
-			.more {
-				cursor: pointer;
-				inset-inline-end: 0px;
-			}
 		`
 	}
 
+	private get skeletonColumns() {
+		return [
+			this.dataGrid.detailsColumnWidth,
+			this.dataGrid.selectionColumnWidth,
+			'1fr',
+			this.dataGrid.hasToolbar || this.dataGrid.sidePanelHidden ? undefined : this.dataGrid.moreColumnWidth,
+		].filter((c): c is string => c !== undefined).join(' ')
+	}
+
+	private get separatorAdjustedColumns() {
+		return this.dataGrid.dataColumnsWidths.join(' var(--mo-data-grid-columns-gap, 2px) ')
+	}
+
 	protected override get template() {
+		if (!this.dataGrid.isUsingSubgrid) {
+			return html`
+				<mo-grid id='header' columns=${this.skeletonColumns} columnGap='var(--mo-data-grid-columns-gap, 2px)'>
+					${this.detailsExpanderTemplate}
+					${this.selectionTemplate}
+					${this.contentTemplate}
+					${this.moreTemplate}
+				</mo-grid>
+			`
+		}
+
 		return html`
 			${this.detailsExpanderTemplate}
 			${this.selectionTemplate}
 			${this.contentTemplate}
-			${this.fillerTemplate}
 			${this.moreTemplate}
 		`
 	}
@@ -162,6 +201,20 @@ export class DataGridHeader<TData> extends Component {
 	}
 
 	private get contentTemplate() {
+		if (!this.dataGrid.isUsingSubgrid) {
+			return html`
+				<mo-grid columns=${this.separatorAdjustedColumns}>
+					${join(this.dataGrid.visibleColumns.map(this.getHeaderCellTemplate), index => html`
+						<mo-data-grid-header-separator
+							.dataGrid=${this.dataGrid as any}
+							.column=${this.dataGrid.visibleColumns[index]}
+							@columnUpdate=${() => this.dataGrid.requestUpdate()}
+						></mo-data-grid-header-separator>
+					`)}
+				</mo-grid>
+			`
+		}
+
 		return html`
 			${this.dataGrid.visibleColumns.map(this.getHeaderCellTemplate)}
 		`
@@ -178,16 +231,16 @@ export class DataGridHeader<TData> extends Component {
 		})
 		return html`
 			<mo-flex class='cell' alignItems='center' direction=${column.alignment === 'end' ? 'horizontal-reversed' : 'horizontal'}
-				data-sticky=${ifDefined(column.sticky)}
+				data-sticky=${ifDefined(this.dataGrid.isUsingSubgrid ? column.sticky : undefined)}
 				data-sticking=${column.intersecting === false}
-				${!column.sticky || column.intersecting ? html.nothing : style({ insetInline: column.stickyColumnInsetInline })}
+				${!column.sticky || column.intersecting || this.dataGrid.isUsingSubgrid ? html.nothing : style({ insetInline: column.stickyColumnInsetInline })}
 				${observeResizeDeferred(([entry]) => column.widthInPixels = entry?.contentRect.width ?? 0)}
 			>
 				<mo-flex direction=${column.alignment === 'end' ? 'horizontal-reversed' : 'horizontal'} alignItems='center'
 					${style({ overflow: 'hidden', cursor: 'pointer', flex: '1' })}
 					@click=${() => this.sort(column)}
 				>
-					<div class='headerContent'
+					<div class='headerContent' data-selector=${column.dataSelector}
 						${style({ width: '100%', textAlign: column.alignment })}
 						${!column.description ? html.nothing : tooltip(column.description)}
 					>${column.heading}</div>
@@ -197,17 +250,15 @@ export class DataGridHeader<TData> extends Component {
 						<mo-icon ${style({ color: 'var(--mo-color-accent)' })} icon=${ifDefined(sortIcon)}></mo-icon>
 					`}
 				</mo-flex>
-				<mo-data-grid-header-separator
-					?data-last=${columns.length - 1 === index}
-					.dataGrid=${this.dataGrid as any}
-					.column=${this.dataGrid.visibleColumns[index]}
-				></mo-data-grid-header-separator>
+				${!this.dataGrid.isUsingSubgrid ? html.nothing : html`
+					<mo-data-grid-header-separator
+						?data-last=${columns.length - 1 === index}
+						.dataGrid=${this.dataGrid as any}
+						.column=${this.dataGrid.visibleColumns[index]}
+					></mo-data-grid-header-separator>
+				`}
 			</mo-flex>
 		`
-	}
-
-	private get fillerTemplate() {
-		return html`<span></span>`
 	}
 
 	private get moreTemplate() {
