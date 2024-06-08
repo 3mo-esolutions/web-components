@@ -125,21 +125,6 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 				flex-direction: column;
 				align-items: stretch;
 			}
-
-			mo-option, ::slotted(mo-option) {
-				transform: scaleY(1);
-				transition: 0.2s ease-in-out;
-				height: 36px;
-				opacity: 1;
-				min-width: var(--mo-field-width);
-			}
-
-			mo-option[data-search-no-match], ::slotted(mo-option[data-search-no-match]) {
-				transform: scaleY(0);
-				opacity: 0;
-				height: 0px;
-				pointer-events: none;
-			}
 		`
 	}
 

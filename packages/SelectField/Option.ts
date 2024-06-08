@@ -54,6 +54,11 @@ export class Option<T> extends SelectionListItem {
 
 			:host {
 				cursor: pointer;
+				transform: scaleY(1);
+				transition: 0.2s ease-in-out;
+				min-height: 36px;
+				opacity: 1;
+				min-width: var(--mo-field-width);
 			}
 
 			:host([focused]) {
@@ -62,6 +67,13 @@ export class Option<T> extends SelectionListItem {
 
 			:host([selected]) {
 				background-color: var(--mo-color-accent-transparent);
+			}
+
+			:host([data-search-no-match]) {
+				transform: scaleY(0);
+				opacity: 0;
+				height: 0px;
+				pointer-events: none;
 			}
 		`
 	}

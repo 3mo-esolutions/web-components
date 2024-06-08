@@ -32,7 +32,7 @@ export abstract class DateList extends Component {
 			}
 
 			mo-selectable-list-item {
-				height: 32px;
+				min-height: 32px;
 			}
 
 			mo-selectable-list-item[data-now] {

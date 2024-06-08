@@ -9,7 +9,7 @@ export class ContextMenuItem extends NestedMenuItem {
 			${super.styles}
 
 			:host {
-				height: 40px;
+				min-height: 40px;
 			}
 		`
 	}
