@@ -1,4 +1,4 @@
-import { css, property, Component, html, query, queryAll, style, type HTMLTemplateResult, LitElement, event, state, cache } from '@a11d/lit'
+import { css, property, Component, html, query, queryAll, style, type HTMLTemplateResult, LitElement, event, state } from '@a11d/lit'
 import { popover } from '@3mo/popover'
 import { ContextMenu } from '@3mo/context-menu'
 import { type DataGridColumn } from '../DataGridColumn.js'
@@ -173,7 +173,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	}
 
 	protected override get template() {
-		return cache(!this.isIntersecting ? html.nothing : html`
+		return !this.isIntersecting ? html.nothing : html`
 			<mo-grid id='contentContainer' columns='subgrid'
 				@click=${() => this.handleContentClick()}
 				@dblclick=${() => this.handleContentDoubleClick()}
@@ -187,7 +187,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				${this.rowTemplate}
 			</mo-grid>
 			<slot id='detailsContainer'>${this.detailsOpen ? this.detailsTemplate : html.nothing}</slot>
-		`) as HTMLTemplateResult
+		`
 	}
 
 	protected abstract get rowTemplate(): HTMLTemplateResult

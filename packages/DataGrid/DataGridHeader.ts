@@ -166,9 +166,10 @@ export class DataGridHeader<TData> extends Component {
 		const sortIcon = !sortingDefinition ? undefined : sortingDefinition.strategy === DataGridSortingStrategy.Ascending ? 'arrow_upward' : 'arrow_downward'
 		const sortingRank = !sortingDefinition || this.dataGrid.getSorting().length <= 1 ? undefined : sortingDefinition.rank
 		const observeResizeDeferred = (callback: ResizeObserverCallback) => observeResize((e, o) => {
-			// It is necessary to defer the callback to the next frame to avoid
+			// It is necessary to defer the callback to avoid
 			// this resize-observer triggering other resize-observers in a loop
-			requestAnimationFrame(() => callback(e, o))
+			const defer = 'requestIdleCallback' in globalThis ? requestIdleCallback : requestAnimationFrame
+			defer(() => callback(e, o))
 		})
 		return html`
 			<mo-flex class='cell' alignItems='center' direction=${column.alignment === 'end' ? 'horizontal-reversed' : 'horizontal'}
