@@ -1,7 +1,6 @@
 import { component, Component, html, property, css, eventListener, state, type HTMLTemplateResult } from '@a11d/lit'
 import { NotificationComponent } from '@a11d/lit-application'
 import { Localizer } from '@3mo/localization'
-import { FocusController } from '@3mo/focus-controller'
 import { type DataGridColumn, DataGridEditability, type DataGridRow } from './index.js'
 
 Localizer.register('de', {
@@ -49,8 +48,6 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 		return this.isEditable
 			&& (this.editing || this.dataGrid.editability === DataGridEditability.Always)
 	}
-
-	protected readonly focusController = new FocusController(this)
 
 	@eventListener({ target: document, type: 'pointerdown' })
 	protected handlePointerDown(event: PointerEvent) {
@@ -136,6 +133,10 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 				outline: none;
 			}
 
+			:host(:not([isEditing]):focus) {
+				outline: 2px solid var(--mo-color-accent);
+			}
+
 			:host([isEditing]) {
 				display: grid;
 			}
@@ -191,10 +192,15 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 
 	private get contentTemplate() {
 		return html`
-			${!this.focusController.focused ? html.nothing : html`<mo-focus-ring inward visible></mo-focus-ring>`}
 			${this.column.getContentTemplate?.(this.value, this.data) ?? html`${this.value}`}
 		`
 	}
+
+	// Having focus-controller on every cell can lead to performance issues
+	// in larger data-grids. Therefore defaulting to CSS native outline for now.
+	// protected get focusRingTemplate() {
+	// 	return !this.focusController.focused ? html.nothing : html`<mo-focus-ring inward visible></mo-focus-ring>`
+	// }
 
 	private get editContentTemplate() {
 		return this.column.getEditContentTemplate?.(this.value, this.data)

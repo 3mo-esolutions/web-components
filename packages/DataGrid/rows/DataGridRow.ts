@@ -55,7 +55,11 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 
 	protected override initialized() {
 		this.toggleAttribute('mo-data-grid-row', true)
-		this.dataGrid.rowIntersectionObserver?.observe(this) ?? (this.isIntersecting = true)
+		if (this.dataGrid.rowIntersectionObserver) {
+			this.dataGrid.rowIntersectionObserver.observe(this)
+		} else {
+			this.isIntersecting = true
+		}
 	}
 
 	protected override disconnected() {

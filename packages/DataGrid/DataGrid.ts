@@ -474,9 +474,13 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		this.footer?.requestUpdate()
 		this.rows.forEach(row => row.requestUpdate())
 		// @ts-expect-error rowIntersectionObserver is initialized once here
-		this.rowIntersectionObserver ??= new IntersectionObserver(entries => {
+		this.rowIntersectionObserver ??= new IntersectionObserver((entries, observer) => {
 			entries.forEach(({ target, isIntersecting }) => {
-				(target as DataGridRow<TData>).isIntersecting = isIntersecting
+				const row = target as DataGridRow<TData>
+				if (row.isIntersecting === false && isIntersecting === true) {
+					row.isIntersecting = true
+					observer.unobserve(row)
+				}
 			})
 		}, {
 			root: this.scroller,
@@ -742,11 +746,11 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 					@scroll=${this.handleScroll}
 				>
 					<mo-grid id='content' autoRows='min-content' columns='var(--mo-data-grid-columns)'>
-						${cache(this.headerTemplate)}
-						${cache(this.contentTemplate)}
+						${this.headerTemplate}
+						${this.contentTemplate}
 					</mo-grid>
 				</mo-scroller>
-				${cache(this.footerTemplate)}
+				${this.footerTemplate}
 			</mo-grid>
 		`
 	}
