@@ -45,20 +45,14 @@ export class DataGridHeader<TData> extends Component {
 				--mo-data-grid-header-separator-width: 2px;
 				display: grid;
 				grid-template-columns: subgrid;
-				grid-column: -1 / 1;
-				background: var(--mo-data-grid-sticky-part-color);
 				position: sticky;
+				grid-column: -1 / 1;
+				background: var(--mo-data-grid-header-background, var(--mo-data-grid-sticky-part-color));
 				top: 0;
 				z-index: 4;
 				font-size: small;
-			}
-
-			#header {
-				border-top: var(--mo-data-grid-border);
-				border-bottom: var(--mo-data-grid-border);
-				position: relative;
+				border-block: var(--mo-data-grid-border);
 				height: var(--mo-data-grid-header-height);
-				background: var(--mo-data-grid-header-background);
 			}
 
 			.headerContent {

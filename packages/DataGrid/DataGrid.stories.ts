@@ -37,6 +37,7 @@ const generatePeople = (count: number) => {
 const fivePeople = generatePeople(5)
 const twentyPeople = generatePeople(20)
 const hundredPeople = generatePeople(100)
+const thousandPeople = generatePeople(1000)
 
 const fivePeopleWithChildren = fivePeople.map(p => ({
 	...p,
@@ -242,11 +243,7 @@ export const WithFiltersWithoutToolbar: StoryObj = {
 export const Virtualization: StoryObj = {
 	render: () => html`
 		<mo-flex gap='10px'>
-			<mo-alert type='warning'>
-				Virtualization is disabled as of version 0.6.x due to incompatibilities with CSS Sub-grids.
-				It will be re-enabled or re-worked into a different solution in a future version.
-			</mo-alert>
-			<mo-data-grid .data=${hundredPeople} style='height: 500px'>
+			<mo-data-grid .data=${thousandPeople} style='height: 500px'>
 				${columnsTemplate}
 			</mo-data-grid>
 		</mo-flex>

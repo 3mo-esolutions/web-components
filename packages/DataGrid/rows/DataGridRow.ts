@@ -1,4 +1,4 @@
-import { css, property, Component, html, query, queryAll, style, type HTMLTemplateResult, LitElement, event } from '@a11d/lit'
+import { css, property, Component, html, query, queryAll, style, type HTMLTemplateResult, LitElement, event, state, cache } from '@a11d/lit'
 import { popover } from '@3mo/popover'
 import { ContextMenu } from '@3mo/context-menu'
 import { type DataGridColumn } from '../DataGridColumn.js'
@@ -43,6 +43,8 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		}
 	}) level = 0
 
+	@state() isIntersecting = false
+
 	get detailsElement() {
 		return this.renderRoot.querySelector('#detailsContainer')?.firstElementChild as TDetailsElement as TDetailsElement | undefined
 	}
@@ -53,6 +55,11 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 
 	protected override initialized() {
 		this.toggleAttribute('mo-data-grid-row', true)
+		this.dataGrid.rowIntersectionObserver?.observe(this) ?? (this.isIntersecting = true)
+	}
+
+	protected override disconnected() {
+		this.dataGrid.rowIntersectionObserver?.unobserve?.(this)
 	}
 
 	override updated(...parameters: Parameters<Component['updated']>) {
@@ -99,7 +106,6 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			#contentContainer {
 				grid-column: -1 / 1;
 				cursor: pointer;
-				transition: 250ms;
 			}
 
 			:host([selected]:not(:last-of-type)) #contentContainer:after {
@@ -167,12 +173,12 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	}
 
 	protected override get template() {
-		return html`
+		return cache(!this.isIntersecting ? html.nothing : html`
 			<mo-grid id='contentContainer' columns='subgrid'
 				@click=${() => this.handleContentClick()}
 				@dblclick=${() => this.handleContentDoubleClick()}
 				@auxclick=${(e: PointerEvent) => e.button !== 1 ? void 0 : this.handleContentMiddleClick()}
-				${popover(() => html`
+				${this.contextMenuTemplate === html.nothing ? html.nothing : popover(() => html`
 					<mo-context-menu @openChange=${(e: CustomEvent<boolean>) => this.toggleAttribute('data-context-menu-open', e.detail)}>
 						${this.contextMenuTemplate}
 					</mo-context-menu>
@@ -181,7 +187,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				${this.rowTemplate}
 			</mo-grid>
 			<slot id='detailsContainer'>${this.detailsOpen ? this.detailsTemplate : html.nothing}</slot>
-		`
+		`) as HTMLTemplateResult
 	}
 
 	protected abstract get rowTemplate(): HTMLTemplateResult

@@ -1,4 +1,4 @@
-import { property, component, Component, html, css, live, query, ifDefined, type PropertyValues, event, style, literal, staticHtml, type HTMLTemplateResult, cache, eventOptions } from '@a11d/lit'
+import { property, component, Component, html, css, live, query, ifDefined, type PropertyValues, event, style, literal, staticHtml, type HTMLTemplateResult, cache, eventOptions, queryAll, repeat } from '@a11d/lit'
 import { NotificationComponent } from '@a11d/lit-application'
 import { LocalStorage } from '@a11d/local-storage'
 import { InstanceofAttributeController } from '@3mo/instanceof-attribute-controller'
@@ -8,6 +8,7 @@ import { ThemeController } from '@3mo/theme'
 import { observeMutation } from '@3mo/mutation-observer'
 import { MediaQueryController } from '@3mo/media-query-observer'
 import { Localizer } from '@3mo/localization'
+import { type Scroller } from '@3mo/scroller'
 import { CsvGenerator, DataGridColumnComponent, DataGridSidePanelTab, type DataGridColumn, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, type DataGridSidePanel } from './index.js'
 import { DataGridSelectionController } from './DataGridSelectionController.js'
 
@@ -69,7 +70,6 @@ export type DataGridSorting<TData> = DataGridSortingDefinition<TData> | Array<Da
  * @attr columns - The columns to be displayed in the DataGrid. It is an array of objects, where each object represents a column.
  * @attr headerHidden - Whether the header should be hidden.
  * @attr preventVerticalContentScroll - Whether the content should be prevented from scrolling vertically.
- * @attr virtualizationThreshold - The threshold from which the virtualization will kick in.
  * @attr page - The current page.
  * @attr pagination - The pagination mode. It can be either `auto` or a number.
  * @attr sorting - The sorting mode. It is an object with `selector` and `strategy` properties.
@@ -130,7 +130,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	static readonly cellRelativeFontSize = new LocalStorage<number>('DataGrid.CellRelativeFontSize', 0.8)
 	static readonly pageSize = new LocalStorage<Exclude<DataGridPagination, 'auto'>>('DataGrid.PageSize', 25)
 	static readonly hasAlternatingBackground = new LocalStorage('DataGrid.HasAlternatingBackground', true)
-	protected static readonly virtualizationThreshold: number = 50
 
 	@event() readonly dataChange!: EventDispatcher<Array<TData>>
 	@event() readonly selectionChange!: EventDispatcher<Array<TData>>
@@ -157,7 +156,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	@property({ type: Boolean, reflect: true }) headerHidden = false
 	@property({ type: Boolean, reflect: true }) preventVerticalContentScroll = false
-	@property({ type: Number }) virtualizationThreshold = DataGrid.virtualizationThreshold
 	@property({ type: Number }) page = 1
 	@property({ reflect: true, converter: (value: string | null | undefined) => value === null || value === undefined ? undefined : Number.isNaN(Number(value)) ? value : Number(value) }) pagination?: DataGridPagination
 
@@ -208,15 +206,10 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		}
 	}) rowHeight = DataGrid.rowHeight.value
 
-	get rows(): Array<DataGridRow<TData, TDetailsElement>> {
-		const root = this.shallVirtualize
-			? this.renderRoot.querySelector('mo-virtualized-scroller')?.renderRoot?.firstElementChild
-			: this.renderRoot
-		return [...root?.querySelectorAll('[mo-data-grid-row]') ?? []] as Array<DataGridRow<TData, TDetailsElement>>
-	}
-
 	@query('mo-data-grid-header') private readonly header?: DataGridHeader<TData>
+	@query('mo-scroller') private readonly scroller?: Scroller
 	@query('#content') private readonly content?: HTMLElement
+	@queryAll('[mo-data-grid-row]') readonly rows!: Array<DataGridRow<TData, TDetailsElement>>
 	@query('mo-data-grid-footer') private readonly footer?: DataGridFooter<TData>
 	@query('mo-data-grid-side-panel') private readonly sidePanel?: DataGridSidePanel<TData>
 	@query('slot[name=column]') private readonly columnsSlot?: HTMLSlotElement
@@ -473,11 +466,22 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	readonly selectionController = new DataGridSelectionController(this)
 
+	readonly rowIntersectionObserver?: IntersectionObserver
+
 	protected override updated(...parameters: Parameters<Component['updated']>) {
 		this.header?.requestUpdate()
 		this.sidePanel?.requestUpdate()
 		this.footer?.requestUpdate()
 		this.rows.forEach(row => row.requestUpdate())
+		// @ts-expect-error rowIntersectionObserver is initialized once here
+		this.rowIntersectionObserver ??= new IntersectionObserver(entries => {
+			entries.forEach(({ target, isIntersecting }) => {
+				(target as DataGridRow<TData>).isIntersecting = isIntersecting
+			})
+		}, {
+			root: this.scroller,
+			rootMargin: '100% 0px',
+		})
 		return super.updated(...parameters)
 	}
 
@@ -738,11 +742,11 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 					@scroll=${this.handleScroll}
 				>
 					<mo-grid id='content' autoRows='min-content' columns='var(--mo-data-grid-columns)'>
-						${this.headerTemplate}
-						${this.contentTemplate}
+						${cache(this.headerTemplate)}
+						${cache(this.contentTemplate)}
 					</mo-grid>
 				</mo-scroller>
-				${this.footerTemplate}
+				${cache(this.footerTemplate)}
 			</mo-grid>
 		`
 	}
@@ -753,17 +757,9 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		`
 	}
 
-	private get shallVirtualize() {
-		return false && !this.preventVerticalContentScroll && this.renderData.length > this.virtualizationThreshold
-	}
-
 	private get rowsTemplate() {
-		const getRowTemplate = (data: TData, index: number) => this.getRowTemplate(data, index)
-		const content = this.shallVirtualize === false
-			? this.renderData.map(getRowTemplate)
-			: html`<mo-virtualized-scroller .items=${this.renderData} .getItemTemplate=${getRowTemplate as any} exportparts='row'></mo-virtualized-scroller>`
 		return html`
-			${content}
+			${repeat(this.renderData, data => data, (data, index) => this.getRowTemplate(data, index))}
 		`
 	}
 

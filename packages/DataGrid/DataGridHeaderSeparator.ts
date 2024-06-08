@@ -90,8 +90,8 @@ export class DataGridHeaderSeparator extends Component {
 		this.dataGrid.setColumns(this.dataGrid.columns)
 	}
 
-	@eventListener({ target: window, type: 'pointermove' })
-	@eventListener({ target: window, type: 'touchmove', options: { passive: false } as any })
+	@eventListener({ target: window, type: 'pointermove', options: { passive: false } })
+	@eventListener({ target: window, type: 'touchmove', options: { passive: false } })
 	protected handlePointerMove(e: PointerEvent | TouchEvent) {
 		if (this.isResizing === false || this.initialWidth === undefined) {
 			return
