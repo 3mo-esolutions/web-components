@@ -36,7 +36,7 @@ export class FocusRing extends MdFocusRing {
 
 	override dispatchEvent(event: Event) {
 		// Prevent dispatching "visibility-changed" event as it causes performance issues.
-		if (event.type !== 'visibility-changed') {
+		if (event.type === 'visibility-changed') {
 			return false
 		}
 		return super.dispatchEvent(event)
