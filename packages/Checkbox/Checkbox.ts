@@ -36,6 +36,8 @@ export class Checkbox extends Component {
 		return css`
 			:host {
 				display: inline-flex;
+				height: 32px;
+				align-items: center;
 			}
 
 			:host([disabled]) {
@@ -43,7 +45,6 @@ export class Checkbox extends Component {
 			}
 
 			md-checkbox {
-				margin-block: 7px;
 				flex-shrink: 0;
 				--md-checkbox-container-shape: var(--mo-border-radius);
 
