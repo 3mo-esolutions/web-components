@@ -1,4 +1,4 @@
-import { css, property, Component, html, query, queryAll, style, type HTMLTemplateResult, LitElement, event, state } from '@a11d/lit'
+import { css, property, Component, html, query, queryAll, style, type HTMLTemplateResult, LitElement, event } from '@a11d/lit'
 import { popover } from '@3mo/popover'
 import { ContextMenu } from '@3mo/context-menu'
 import { type DataGridColumn } from '../DataGridColumn.js'
@@ -22,6 +22,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	@property({ type: Object }) dataGrid!: DataGrid<TData, TDetailsElement>
 	@property({ type: Object }) data!: TData
 	@property({ type: Boolean, reflect: true }) selected = false
+	@property({ type: Number }) index?: number
 	@property({
 		type: Boolean,
 		reflect: true,
@@ -43,7 +44,14 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		}
 	}) level = 0
 
-	@state() isIntersecting = false
+	@property({
+		type: Boolean,
+		updated(this: DataGridRow<TData, TDetailsElement>) {
+			if (this.isIntersecting) {
+				this.dataGrid.rowIntersectionObserver?.unobserve?.(this)
+			}
+		}
+	}) isIntersecting = false
 
 	get detailsElement() {
 		return this.renderRoot.querySelector('#detailsContainer')?.firstElementChild as TDetailsElement as TDetailsElement | undefined
@@ -53,12 +61,17 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		return this.cells.find(cell => cell.column === column)
 	}
 
+	override connected() {
+		this.toggleAttribute('data-has-alternating-background', this.dataGrid.hasAlternatingBackground && (this.index ?? 0) % 2 === 1)
+		if ((this.index ?? 0) < 25) {
+			this.isIntersecting = true
+		}
+	}
+
 	protected override initialized() {
 		this.toggleAttribute('mo-data-grid-row', true)
-		if (this.dataGrid.rowIntersectionObserver) {
-			this.dataGrid.rowIntersectionObserver.observe(this)
-		} else {
-			this.isIntersecting = true
+		if (this.isIntersecting === false) {
+			this.dataGrid.rowIntersectionObserver?.observe(this)
 		}
 	}
 
@@ -237,8 +250,15 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				.row=${this as any}
 				.column=${column}
 				.value=${getValueByKeyPath(this.data, column.dataSelector as any)}
+				@keydown=${this.delegateToCell('handleKeyDown')}
+				@dblclick=${this.delegateToCell('handleDoubleClick')}
 			></mo-data-grid-cell>
 		`
+	}
+
+	private readonly delegateToCell = (method: 'handleDoubleClick' | 'handleKeyDown') => (e: Event) => {
+		const target = e.target as DataGridCell<any, TData, TDetailsElement>
+		target?.[method]?.(e as any)
 	}
 
 	protected get fillerTemplate() {

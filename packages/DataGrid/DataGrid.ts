@@ -1,4 +1,4 @@
-import { property, component, Component, html, css, live, query, ifDefined, type PropertyValues, event, style, literal, staticHtml, type HTMLTemplateResult, cache, eventOptions, queryAll, repeat } from '@a11d/lit'
+import { property, component, Component, html, css, live, query, ifDefined, type PropertyValues, event, style, literal, staticHtml, type HTMLTemplateResult, cache, eventOptions, queryAll, repeat, eventListener } from '@a11d/lit'
 import { NotificationComponent } from '@a11d/lit-application'
 import { LocalStorage } from '@a11d/local-storage'
 import { InstanceofAttributeController } from '@3mo/instanceof-attribute-controller'
@@ -208,7 +208,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	@query('mo-data-grid-header') private readonly header?: DataGridHeader<TData>
 	@query('mo-scroller') private readonly scroller?: Scroller
-	@query('#content') private readonly content?: HTMLElement
 	@queryAll('[mo-data-grid-row]') readonly rows!: Array<DataGridRow<TData, TDetailsElement>>
 	@query('mo-data-grid-footer') private readonly footer?: DataGridFooter<TData>
 	@query('mo-data-grid-side-panel') private readonly sidePanel?: DataGridSidePanel<TData>
@@ -424,7 +423,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		}
 
 		if (this.pagination === 'auto') {
-			const rowsHeight = (this.content?.clientHeight ?? 0) - (this.header?.clientHeight ?? 0)
+			const rowsHeight = (this.scroller?.clientHeight ?? 0) - (this.header?.clientHeight ?? 0)
 			const rowHeight = this.rowHeight
 			const pageSize = Math.floor(rowsHeight / rowHeight) || 1
 			return dynamicPageSize(pageSize)
@@ -474,12 +473,11 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		this.footer?.requestUpdate()
 		this.rows.forEach(row => row.requestUpdate())
 		// @ts-expect-error rowIntersectionObserver is initialized once here
-		this.rowIntersectionObserver ??= new IntersectionObserver((entries, observer) => {
+		this.rowIntersectionObserver ??= new IntersectionObserver(entries => {
 			entries.forEach(({ target, isIntersecting }) => {
 				const row = target as DataGridRow<TData>
 				if (row.isIntersecting === false && isIntersecting === true) {
 					row.isIntersecting = true
-					observer.unobserve(row)
 				}
 			})
 		}, {
@@ -773,7 +771,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				.level=${level}
 				.dataGrid=${this as any}
 				.data=${data}
-				?data-has-alternating-background=${index !== undefined && this.hasAlternatingBackground && index % 2 === 1}
+				index=${ifDefined(index)}
 				?data-grid-has-details=${this.hasDetails}
 				?selected=${live(this.selectedData.includes(data))}
 				?detailsOpen=${live(this.openDetailedData.includes(data))}
@@ -954,6 +952,11 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				}
 			}
 		}
+	}
+
+	@eventListener({ target: document, type: 'pointerdown' })
+	protected handlePointerDown(event: PointerEvent) {
+		this.rows.forEach(row => row.cells.forEach(cell => cell.handlePointerDown(event)))
 	}
 
 	getSorting() {

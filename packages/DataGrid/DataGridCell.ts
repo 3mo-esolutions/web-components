@@ -1,4 +1,4 @@
-import { component, Component, html, property, css, eventListener, state, type HTMLTemplateResult } from '@a11d/lit'
+import { component, Component, html, property, css, state, type HTMLTemplateResult } from '@a11d/lit'
 import { NotificationComponent } from '@a11d/lit-application'
 import { Localizer } from '@3mo/localization'
 import { type DataGridColumn, DataGridEditability, type DataGridRow } from './index.js'
@@ -49,23 +49,20 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 			&& (this.editing || this.dataGrid.editability === DataGridEditability.Always)
 	}
 
-	@eventListener({ target: document, type: 'pointerdown' })
-	protected handlePointerDown(event: PointerEvent) {
+	handlePointerDown(event: PointerEvent) {
 		if (this.isEditing && event.composedPath().includes(this) === false) {
 			this.editing = false
 		}
 	}
 
-	@eventListener('dblclick')
-	protected handleDoubleClick(event: MouseEvent) {
+	handleDoubleClick(event: MouseEvent) {
 		if (this.dataGrid.editability === DataGridEditability.Cell) {
 			event.preventDefault()
 			this.editing = true
 		}
 	}
 
-	@eventListener('keydown')
-	protected async handleKeyDown(event: KeyboardEvent) {
+	async handleKeyDown(event: KeyboardEvent) {
 		switch (event.key) {
 			case 'Enter':
 				event.preventDefault()
