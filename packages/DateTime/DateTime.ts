@@ -1,4 +1,4 @@
-import { Temporal, Intl } from '@js-temporal/polyfill'
+import { Temporal, Intl } from 'temporal-polyfill'
 import { Localizer } from '@3mo/localization'
 import { TimeSpan } from './TimeSpan.js'
 import { type DateTimeParser, DateTimeLocalParser, DateTimeShortcutParser, DateTimeOperationParser, DateTimeNativeParser, DateTimeZeroParser } from './parsers/index.js'
@@ -92,7 +92,7 @@ export class DateTime extends Date {
 	readonly calendar = Temporal.Calendar.from(DateTime.getCalendar())
 	readonly timeZone = Temporal.TimeZone.from(DateTime.getTimeZone())
 
-	@memoize() get temporalInstant() { return new Temporal.Instant(BigInt(this.valueOf() * 1_000_000)) }
+	@memoize() get temporalInstant() { return Temporal.Instant.fromEpochMilliseconds(this.valueOf()) }
 
 	@memoize() get zonedDateTime() { return this.temporalInstant.toZonedDateTime({ calendar: this.calendar, timeZone: this.timeZone }) }
 

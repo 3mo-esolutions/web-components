@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/date-time",
-	"version": "0.6.1",
+	"version": "0.7.0",
 	"description": "Global DateTime, TimeSpan, and DateRange classes.",
 	"repository": {
 		"type": "git",
@@ -21,7 +21,7 @@
 	],
 	"dependencies": {
 		"@3mo/localization": "x",
-		"@js-temporal/polyfill": "0.4.x",
+		"temporal-polyfill": "0.2.x",
 		"tslib": "x",
 		"typescript-memoize": "1.x"
 	}
