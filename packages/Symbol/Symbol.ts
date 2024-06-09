@@ -74,6 +74,7 @@ export class Symbol extends Component {
 				text-rendering: optimizeLegibility;
 				-moz-osx-font-smoothing: grayscale;
 				font-feature-settings: "liga";
+				user-select: none;
 			}
 		`
 	}

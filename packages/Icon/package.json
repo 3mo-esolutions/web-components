@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/icon",
-	"version": "1.0.15",
+	"version": "1.0.16",
 	"description": "Icon Web Component based on Material Icons.",
 	"repository": {
 		"type": "git",

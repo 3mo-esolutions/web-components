@@ -24,6 +24,10 @@ export const FileUploadDropArea: StoryObj = {
 			mo-file-upload-drop-area[drag] * {
 				color: var(--mo-color-accent) !important;
 			}
+
+			span {
+				user-select: none;
+			}
 		</style>
 		<mo-file-upload-drop-area .upload=${(file: File) => alert(`Upload file ${file.name}`)}>
 			<mo-flex alignItems='center' gap='10px'>

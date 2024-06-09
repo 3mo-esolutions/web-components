@@ -148,6 +148,7 @@ export class Field extends Component {
 				overflow: hidden !important;
 				text-overflow: ellipsis;
 				max-width: 100%;
+				user-select: none;
 			}
 
 			:host([dense][populated]) span {

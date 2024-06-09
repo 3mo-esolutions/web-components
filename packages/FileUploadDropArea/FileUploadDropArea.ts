@@ -17,7 +17,7 @@ export class FileUploadDropArea<TResult> extends Component {
 	@event() readonly uploadingChange!: EventDispatcher<boolean>
 	@event() readonly fileChange!: EventDispatcher<File | undefined>
 
-	@property({ type: Function }) upload!: (file: File) => Promise<TResult>
+	@property({ type: Object }) upload!: (file: File) => Promise<TResult>
 
 	@query('mo-file-upload') protected readonly uploadElement!: FileUpload<TResult>
 

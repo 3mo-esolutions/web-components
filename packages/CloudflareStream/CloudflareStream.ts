@@ -36,6 +36,7 @@ export class CloudflareStream extends Component {
 				position: relative;
 				aspect-ratio: 16 / 9;
 				width: 100%;
+				user-select: none;
 			}
 
 			iframe {

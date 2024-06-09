@@ -62,6 +62,7 @@ export class Icon extends Component {
 				text-rendering: optimizeLegibility;
 				-moz-osx-font-smoothing: grayscale;
 				font-feature-settings: "liga";
+				user-select: none;
 			}
 		`
 	}

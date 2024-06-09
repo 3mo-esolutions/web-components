@@ -136,7 +136,7 @@ export class DataGridSidePanel<TData> extends Component {
 						<mo-field-select label=${t('Row Height')} ${bind(this, 'dataGrid', { keyPath: 'rowHeight' as any })}>
 							${Array.from({ length: 7 }).map((_, i) => {
 								const value = 30 + i * 5
-								return html`<mo-option value=${value}>${value}px</mo-option>`
+								return html`<mo-option value=${value}>${value.format()}px</mo-option>`
 							})}
 						</mo-field-select>
 					</mo-flex>

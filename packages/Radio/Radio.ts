@@ -54,6 +54,7 @@ export class Radio extends Component {
 				line-height: 1.25rem;
 				letter-spacing: 0.0178571429em;
 				-webkit-font-smoothing: antialiased;
+				user-select: none;
 			}
 
 			:host([disabled]) label {

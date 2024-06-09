@@ -53,6 +53,8 @@ export class CheckboxGroup extends Checkbox {
 
 			:host {
 				--mo-checkbox-group-nested-margin: 32px;
+				height: auto;
+				min-height: 32px;
 			}
 
 			::slotted(*) {

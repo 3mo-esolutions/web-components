@@ -18,6 +18,7 @@ export class EmptyState extends Component {
 		return css`
 			:host {
 				display: flex;
+				user-select: none;
 			}
 
 			:host, mo-flex {

@@ -45,6 +45,7 @@ export class Fab extends Component {
 		return css`
 			:host {
 				display: inline-block;
+				user-select: none;
 			}
 
 			md-fab {

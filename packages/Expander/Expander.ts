@@ -29,6 +29,7 @@ export class Expander extends Component {
 		return css`
 			:host {
 				display: block;
+				user-select: none;
 			}
 
 			mo-flex[part=header] {

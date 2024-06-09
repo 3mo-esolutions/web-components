@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/symbol",
-	"version": "0.1.5",
+	"version": "0.1.6",
 	"description": "Icon Web Component based on Material Symbols.",
 	"repository": {
 		"type": "git",

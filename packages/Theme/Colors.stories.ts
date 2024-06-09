@@ -20,6 +20,7 @@ export const Colors: StoryObj = {
 			<div style='background: var(--mo-color-surface-container-highest); color: var(--mo-color-on-surface)'>Surface Container Highest</div>
 			<div style='background: var(--mo-color-red)'>Red</div>
 			<div style='background: var(--mo-color-green)'>Green</div>
+			<div style='background: var(--mo-color-yellow)'>Yellow</div>
 			<div style='background: var(--mo-color-blue)'>Blue</div>
 			<div style='background: var(--mo-color-gray); color: black;'>Gray</div>
 			<div style='background: var(--mo-color-gray-transparent)'>Gray Transparent</div>

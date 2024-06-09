@@ -64,6 +64,7 @@ export class DataGridHeader<TData> extends Component {
 				line-height: var(--mo-data-grid-header-height);
 				white-space: nowrap;
 				text-overflow: ellipsis;
+				user-select: none;
 			}
 
 			.sort-rank {
