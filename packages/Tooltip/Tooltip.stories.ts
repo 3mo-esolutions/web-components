@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
-import { popover } from '@3mo/popover'
 import p from './package.json'
 import './index.js'
 import { tooltip } from './index.js'

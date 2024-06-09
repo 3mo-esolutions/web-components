@@ -75,6 +75,10 @@ export class Option<T> extends SelectionListItem {
 				height: 0px;
 				pointer-events: none;
 			}
+
+			mo-checkbox {
+				height: fit-content;
+			}
 		`
 	}
 
