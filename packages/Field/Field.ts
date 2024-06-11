@@ -1,5 +1,6 @@
 import { css, html, property, Component, component } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
+import { DirectionsByLanguage } from '@3mo/localization'
 import { ThemeController } from '@3mo/theme'
 import '@3mo/theme'
 
@@ -226,7 +227,7 @@ export class Field extends Component {
 	}
 
 	protected override get template() {
-		this.style.setProperty('--mo-field-label-transform-origin', getComputedStyle(this).direction === 'rtl' ? 'right top' : 'left top')
+		this.style.setProperty('--mo-field-label-transform-origin', DirectionsByLanguage.get() === 'rtl' ? 'right top' : 'left top')
 		return html`
 			${!this.slotController.hasAssignedContent('start') ? html.nothing : html`<slot name='start'></slot>`}
 			<div part='container'>

@@ -1,4 +1,5 @@
 import { css, property, Component, html, query, queryAll, style, type HTMLTemplateResult, LitElement, event } from '@a11d/lit'
+import { DirectionsByLanguage } from '@3mo/localization'
 import { popover } from '@3mo/popover'
 import { ContextMenu } from '@3mo/context-menu'
 import { type DataGridColumn } from '../DataGridColumn.js'
@@ -218,7 +219,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			>
 			${this.hasDetails === false ? html.nothing : html`
 				<mo-icon-button id='detailsExpanderIconButton' ${style({ color: 'var(--mo-color-foreground)' })}
-					icon=${getComputedStyle(this).direction === 'rtl' ? 'keyboard_arrow_left' : 'keyboard_arrow_right'}
+					icon=${DirectionsByLanguage.get() === 'rtl' ? 'keyboard_arrow_left' : 'keyboard_arrow_right'}
 					?disabled=${this.dataGrid.hasDataDetail?.(this.data) === false}
 					@click=${() => this.toggleDetails()}
 				></mo-icon-button>
@@ -344,7 +345,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 
 		await this.updateComplete
 
-		this.content?.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, composed: true, ...(event ?? {}) }))
+		this.content?.dispatchEvent(new MouseEvent('contextmenu', event))
 	}
 
 	private get contextMenuData() {

@@ -27,6 +27,7 @@
 		"@a11d/lit": "x",
 		"tslib": "x",
 		"@3mo/theme": "x",
+		"@3mo/localization": "x",
 		"@3mo/focus-controller": "x",
 		"@3mo/slot-controller": "x"
 	},

@@ -1,4 +1,5 @@
 import { Component, component, property, html, css, state, eventListener, style } from '@a11d/lit'
+import { DirectionsByLanguage } from '@3mo/localization'
 import { type DataGridColumn, type DataGrid } from './index.js'
 
 @component('mo-data-grid-header-separator')
@@ -100,7 +101,7 @@ export class DataGridHeaderSeparator extends Component {
 		e.preventDefault()
 		this.updatePointerPosition(e)
 
-		const isRtl = getComputedStyle(this).direction === 'rtl'
+		const isRtl = DirectionsByLanguage.get() === 'rtl'
 		const { left: offsetLeft, right: offsetRight } = this.getBoundingClientRect()
 		const offsetInlineStart = !isRtl ? offsetLeft : offsetRight
 
@@ -118,7 +119,7 @@ export class DataGridHeaderSeparator extends Component {
 	}
 
 	private updatePointerPosition(e: PointerEvent | TouchEvent) {
-		const isRtl = getComputedStyle(this).direction === 'rtl'
+		const isRtl = DirectionsByLanguage.get() === 'rtl'
 		const clientX = 'touches' in e ? e.touches[0]!.clientX : e.clientX
 		this.pointerInlineStart = !isRtl ? clientX : window.innerWidth - clientX
 	}

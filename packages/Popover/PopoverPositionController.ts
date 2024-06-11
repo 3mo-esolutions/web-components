@@ -1,5 +1,6 @@
 import { Controller, EventListenerController } from '@a11d/lit'
 import { type Popover } from './Popover.js'
+import { DirectionsByLanguage } from '@3mo/localization'
 import { computePosition, flip, offset, shift } from '@floating-ui/dom'
 import { ResizeController } from '@3mo/resize-observer'
 import { PopoverPlacement } from './PopoverPlacement.js'
@@ -22,7 +23,7 @@ export class PopoverPositionController extends Controller {
 	})
 
 	private get floatingUiPlacement() {
-		const isRtl = getComputedStyle(this.host).direction === 'rtl'
+		const isRtl = DirectionsByLanguage.get() === 'rtl'
 		const placement = this.host.placement
 		const alignment = this.host.alignment
 

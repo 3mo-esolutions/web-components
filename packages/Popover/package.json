@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/popover",
-	"version": "0.7.0",
+	"version": "0.7.1",
 	"description": "A set of tools to help with creating popovers.",
 	"repository": {
 		"type": "git",
@@ -26,6 +26,7 @@
 		"@3mo/pointer-controller": "x",
 		"@3mo/resize-observer": "x",
 		"@3mo/theme": "x",
+		"@3mo/localization": "x",
 		"@a11d/lit": "x",
 		"@a11d/non-inertable-component": "x",
 		"@floating-ui/dom": "1.x",

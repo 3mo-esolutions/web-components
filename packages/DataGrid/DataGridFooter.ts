@@ -1,6 +1,6 @@
 import { component, property, Component, css, state, html, query, ifDefined, style } from '@a11d/lit'
 import { type FieldNumber } from '@3mo/number-fields'
-import { Localizer } from '@3mo/localization'
+import { DirectionsByLanguage, Localizer } from '@3mo/localization'
 import { TooltipPlacement, tooltip } from '@3mo/tooltip'
 import { type DataGrid, type DataGridPagination, type FieldSelectDataGridPageSize } from './index.js'
 import excelSvg from './excel.svg.js'
@@ -29,7 +29,8 @@ export class DataGridFooter<TData> extends Component {
 		async updated(this: DataGridFooter<TData>, value: boolean) {
 			if (value === true) {
 				await this.updateComplete
-				await new Promise(r => requestAnimationFrame(r))
+				const callback = 'requestIdleCallback' in globalThis ? requestIdleCallback : requestAnimationFrame
+				await new Promise(r => callback(r))
 				this.pageNumberField.focus()
 				this.pageNumberField.select()
 			}
@@ -40,7 +41,8 @@ export class DataGridFooter<TData> extends Component {
 		async updated(this: DataGridFooter<TData>, value: boolean) {
 			if (value === true) {
 				await this.updateComplete
-				await new Promise(r => requestAnimationFrame(r))
+				const callback = 'requestIdleCallback' in globalThis ? requestIdleCallback : requestAnimationFrame
+				await new Promise(r => callback(r))
 				this.pageSizeSelectField.focus()
 				this.pageSizeSelectField.open = true
 			}
@@ -83,7 +85,7 @@ export class DataGridFooter<TData> extends Component {
 	}
 
 	private get paginationTemplate() {
-		const isRtl = getComputedStyle(this).direction === 'rtl'
+		const isRtl = DirectionsByLanguage.get() === 'rtl'
 		const hasUnknownDataLength = this.dataGrid.maxPage === undefined
 		const pageText = hasUnknownDataLength ? this.page : t('${page:number} of ${maxPage:number}', { page: this.page, maxPage: this.dataGrid.maxPage ?? 0 })
 		const from = (this.page - 1) * this.dataGrid.pageSize + 1

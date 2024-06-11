@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/member-ordering */
-import { Binder, component, css, event, html, property, style } from '@a11d/lit'
+import { Binder, component, css, event, html, property } from '@a11d/lit'
 import { tooltip } from '@3mo/tooltip'
 import { Localizer } from '@3mo/localization'
 import { FetcherController } from '@3mo/fetcher-controller'
@@ -217,7 +217,7 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 		return html`
 			<mo-icon-button icon='refresh'
 				${tooltip(t('Refetch'))}
-				${style({ color: this.fetcherController.isFetching ? 'var(--mo-color-accent)' : 'var(--mo-color-gray)' })}
+				?data-selected=${this.fetcherController.isFetching}
 				@click=${() => this.requestFetch()}
 			></mo-icon-button>
 			${super.toolbarActionsTemplate}

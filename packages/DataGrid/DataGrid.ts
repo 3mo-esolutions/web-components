@@ -559,6 +559,16 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 					align-self: flex-start;
 					color: var(--mo-color-gray);
 				}
+
+				#actions {
+					mo-icon-button {
+						color: var(--mo-color-gray);
+
+						&[data-selected] {
+							color: var(--mo-color-accent);
+						}
+					}
+				}
 			}
 
 			#flexSelectionToolbar {
@@ -643,7 +653,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 					inset: 0;
 					width: 100%;
 					height: 100%;
-					z-index: 1;
+					z-index: 5;
 					background-color: var(--mo-color-surface);
 				}
 			}
@@ -827,7 +837,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				<mo-flex direction='horizontal' alignItems='inherit' gap='8px' wrap='wrap' ${style({ flex: '1' })}>
 					<slot name='toolbar'>${this.toolbarDefaultTemplate}</slot>
 				</mo-flex>
-				<mo-flex direction='horizontal' gap='8px'>
+				<mo-flex id='actions' direction='horizontal' gap='8px'>
 					<slot name='toolbarAction'>${this.toolbarActionDefaultTemplate}</slot>
 					${this.toolbarActionsTemplate}
 					${this.selectionToolbarTemplate}
@@ -882,14 +892,14 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			${!this.hasFilters ? html.nothing : html`
 				<mo-icon-button icon='filter_list'
 					${tooltip(t('More Filters'))}
-					${style({ color: this.sidePanelTab === DataGridSidePanelTab.Filters ? 'var(--mo-color-accent)' : 'var(--mo-color-gray)' })}
+					?data-selected=${this.sidePanelTab === DataGridSidePanelTab.Filters}
 					@click=${() => this.navigateToSidePanelTab(this.sidePanelTab === DataGridSidePanelTab.Filters ? undefined : DataGridSidePanelTab.Filters)}
 				></mo-icon-button>
 			`}
 
 			<mo-icon-button icon='settings'
 				${tooltip(t('Settings'))}
-				${style({ color: this.sidePanelTab === DataGridSidePanelTab.Settings ? 'var(--mo-color-accent)' : 'var(--mo-color-gray)' })}
+				?data-selected=${this.sidePanelTab === DataGridSidePanelTab.Settings}
 				@click=${() => this.navigateToSidePanelTab(this.sidePanelTab === DataGridSidePanelTab.Settings ? undefined : DataGridSidePanelTab.Settings)}
 			></mo-icon-button>
 		`
