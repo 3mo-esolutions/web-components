@@ -26,6 +26,10 @@ describe('Expander', () => {
 
 			expect(fixture.component.renderRoot.querySelector('mo-heading')?.textContent).toBe('heading')
 		})
+
+		it('should not be user-selectable', () => {
+			expect(getComputedStyle(fixture.component.renderRoot.querySelector('mo-heading')!)?.userSelect).toBe('none')
+		})
 	})
 
 	describe('expand-collapse-icon-button', () => {
@@ -68,6 +72,16 @@ describe('Expander', () => {
 
 			expect(fixture.component.open).toBe(true)
 			expect(fixture.component.openChange.dispatch).toHaveBeenCalledWith(true)
+		})
+	})
+
+	describe('content', () => {
+		it('should be user-selectable', () => {
+			const div = document.createElement('div')
+
+			fixture.component.appendChild(div)
+
+			expect(getComputedStyle(div)?.userSelect).toBe('auto')
 		})
 	})
 })
