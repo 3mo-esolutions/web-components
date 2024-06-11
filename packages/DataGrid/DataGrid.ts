@@ -354,7 +354,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		const cell = row?.getCell(column)
 		if (row && cell && value !== undefined && column.dataSelector && cell.value !== value) {
 			row.requestUpdate()
-			setValueByKeyPath(row, column.dataSelector as any, value)
+			setValueByKeyPath(row.data, column.dataSelector, value as any)
 			this.cellEdit.dispatch(cell)
 		}
 	}
@@ -668,11 +668,13 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		`
 	}
 
+	private readonly splitterResizerTemplate = html`
+		<mo-splitter-resizer-line style='--mo-splitter-resizer-line-thickness: 1px; --mo-splitter-resizer-line-idle-background: var(--mo-color-transparent-gray-3); --mo-splitter-resizer-line-horizontal-transform: scaleX(5);'></mo-splitter-resizer-line>
+	`
+
 	private get splitterModeTemplate() {
 		return html`
-			<mo-splitter direction='horizontal-reversed' ${style({ height: '100%' })} .resizerTemplate=${html`
-				<mo-splitter-resizer-line style='--mo-splitter-resizer-line-thickness: 1px; --mo-splitter-resizer-line-idle-background: var(--mo-color-transparent-gray-3); --mo-splitter-resizer-line-horizontal-transform: scaleX(5);'></mo-splitter-resizer-line>
-			`}>
+			<mo-splitter direction='horizontal-reversed' ${style({ height: '100%' })} .resizerTemplate=${this.splitterResizerTemplate}>
 				${cache(this.sidePanelTab === undefined ? html.nothing : html`
 					<mo-splitter-item size='min(25%, 300px)' min='max(15%, 250px)' max='clamp(100px, 50%, 750px)'>
 						${this.sidePanelTemplate}
@@ -1079,6 +1081,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			.map(key => {
 				const columnElement = document.createElement(getDefaultColumnElement(getValueByKeyPath(sampleData, key as any)))
 				columnElement.heading = key.replace(/([A-Z])/g, ' $1').charAt(0).toUpperCase() + key.replace(/([A-Z])/g, ' $1').slice(1)
+				columnElement.dataSelector = key
 				columnElement.dataGrid = this as any
 				const column = columnElement.column
 				columnElement.remove()

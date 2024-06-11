@@ -4,14 +4,12 @@ import { html } from '@a11d/lit'
 
 type Person = { id: number, name: string, birthDate: DateTime }
 
-const people: Array<Person> = [
-	{ id: 1, name: 'John', birthDate: new DateTime(2000, 0, 0) },
-	{ id: 2, name: 'Jane', birthDate: new DateTime(2000, 0, 0) },
-	{ id: 3, name: 'Joe', birthDate: new DateTime(2000, 0, 0) },
-]
-
 class TestDataGrid extends DataGrid<Person> {
-	override data = people
+	override data = [
+		{ id: 1, name: 'John', birthDate: new DateTime(2000, 0, 0) },
+		{ id: 2, name: 'Jane', birthDate: new DateTime(2000, 0, 0) },
+		{ id: 3, name: 'Joe', birthDate: new DateTime(2000, 0, 0) },
+	]
 
 	get headerSelectionCheckbox() { return this['header']?.renderRoot.querySelector('mo-checkbox') ?? undefined }
 	get rowsSelectionCheckboxes() { return this.rows.map(row => row.renderRoot.querySelector('mo-checkbox') ?? undefined).filter(Boolean) }
@@ -147,7 +145,7 @@ describe('DataGrid', () => {
 				expect(fixture.component.rowsSelectionCheckboxes.length).toBe(0)
 			})
 
-			it('should not dispatch the "selectionChange" event when a row is clicked', () => shouldDispatchSelectionChange(fixture, [people[0]], false))
+			it('should not dispatch the "selectionChange" event when a row is clicked', () => shouldDispatchSelectionChange(fixture, [fixture.component.data[0]], false))
 		})
 
 		describe('Single', () => {
@@ -157,7 +155,7 @@ describe('DataGrid', () => {
 
 			it('should render checkboxes only for rows', () => {
 				expect(fixture.component.headerSelectionCheckbox).not.toBeDefined()
-				expect(fixture.component.rowsSelectionCheckboxes.length).toBe(people.length)
+				expect(fixture.component.rowsSelectionCheckboxes.length).toBe(fixture.component.data.length)
 			})
 
 			it('should auto-select the right-clicked row', () => shouldAutoSelectTheRightClickedRow(fixture))
@@ -167,7 +165,7 @@ describe('DataGrid', () => {
 			it('should not select the row when isDataSelectable returns false', () => shouldNotSelectTheRowWhenIsDataSelectableReturnsFalse(fixture))
 			it('should select the row when clicked and selectOnClick is true', () => shouldSelectTheRowWhenSelectOnClick(fixture))
 			it('should select the row when clicked and selectionCheckboxesHidden is true', () => shouldSelectTheRowWhenSelectionCheckboxesHidden(fixture))
-			it('should dispatch the "selectionChange" event when a row is clicked', () => shouldDispatchSelectionChange(fixture, [people[0]], true))
+			it('should dispatch the "selectionChange" event when a row is clicked', () => shouldDispatchSelectionChange(fixture, [fixture.component.data[0]], true))
 		})
 
 		describe('Multiple', () => {
@@ -177,7 +175,7 @@ describe('DataGrid', () => {
 
 			it('should render checkboxes for header and rows', () => {
 				expect(fixture.component.headerSelectionCheckbox).toBeDefined()
-				expect(fixture.component.rowsSelectionCheckboxes.length).toBe(people.length)
+				expect(fixture.component.rowsSelectionCheckboxes.length).toBe(fixture.component.data.length)
 			})
 
 			it('should auto-select the right-clicked row', () => shouldAutoSelectTheRightClickedRow(fixture))
@@ -187,7 +185,7 @@ describe('DataGrid', () => {
 			it('should not select the row when isDataSelectable returns false', () => shouldNotSelectTheRowWhenIsDataSelectableReturnsFalse(fixture))
 			it('should select the row when clicked and selectOnClick is true', () => shouldSelectTheRowWhenSelectOnClick(fixture))
 			it('should select the row when clicked and selectionCheckboxesHidden is true', () => shouldSelectTheRowWhenSelectionCheckboxesHidden(fixture))
-			it('should dispatch the "selectionChange" event when a row is clicked', () => shouldDispatchSelectionChange(fixture, people, true))
+			it('should dispatch the "selectionChange" event when a row is clicked', () => shouldDispatchSelectionChange(fixture, fixture.component.data, true))
 		})
 	})
 
@@ -240,30 +238,37 @@ describe('DataGrid', () => {
 	})
 
 	describe('Editability', () => {
+		const expectCellToBeEditable = (fixture: ComponentTestFixture<TestDataGrid>, editable: boolean, alsoWithoutDoubleClick = false) => {
+			const cell = fixture.component.rows[0]?.cells[0]
+			if (alsoWithoutDoubleClick === false) {
+				cell?.dispatchEvent(new MouseEvent('dblclick'))
+			}
+			expect(cell?.isEditing).toBe(editable)
+		}
+
+		const shouldApplyTheEditedValueWhenChanged = async (fixture: ComponentTestFixture<TestDataGrid>, alsoWithoutKeyDown = false) => {
+			const row = fixture.component.rows[0]
+			const cell = row?.cells[1] // name
+
+			if (alsoWithoutKeyDown === false) {
+				cell?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }))
+				await fixture.updateComplete
+			}
+			cell?.renderRoot.querySelector('mo-field-text')?.change.dispatch('Not John!')
+
+			expect(fixture.component.data[0].name).toBe('Not John!')
+		}
+
 		describe('Never', () => {
 			const fixture = new ComponentTestFixture<TestDataGrid>(html`<test-data-grid></test-data-grid>`)
 
-			it('should not be editable', () => {
-				const cell = fixture.component.rows[0]?.cells[0]
-				cell?.dispatchEvent(new MouseEvent('dblclick'))
-				expect(cell?.isEditing).toBe(false)
-			})
+			it('should not be editable', () => expectCellToBeEditable(fixture, false))
 		})
 
 		describe('Cell', () => {
 			const fixture = new ComponentTestFixture<TestDataGrid>(html`<test-data-grid editability='cell'></test-data-grid>`)
 
-			it('should switch to edit mode on double-click', () => {
-				const cell = fixture.component.rows[0]?.cells[0]
-				cell?.dispatchEvent(new MouseEvent('dblclick'))
-				expect(cell?.isEditing).toBe(true)
-			})
-
-			it('should switch to edit mode on enter', () => {
-				const cell = fixture.component.rows[0]?.cells[0]
-				cell?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }))
-				expect(cell?.isEditing).toBe(true)
-			})
+			it('should switch to edit mode on double-click', () => expectCellToBeEditable(fixture, true))
 
 			it('should switch to edit mode on enter', () => {
 				const cell = fixture.component.rows[0]?.cells[0]
@@ -285,15 +290,16 @@ describe('DataGrid', () => {
 				anotherCell?.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, composed: true }))
 				expect(cell?.isEditing).toBe(false)
 			})
+
+			it('should apply the edited value when changed', () => shouldApplyTheEditedValueWhenChanged(fixture))
 		})
 
 		describe('Always', () => {
 			const fixture = new ComponentTestFixture<TestDataGrid>(html`<test-data-grid editability='always'></test-data-grid>`)
 
-			it('should be always editable', () => {
-				const cell = fixture.component.rows[0]?.cells[0]
-				expect(cell?.isEditing).toBe(true)
-			})
+			it('should be always editable', () => expectCellToBeEditable(fixture, true, true))
+
+			it('should apply the edited value when changed', () => shouldApplyTheEditedValueWhenChanged(fixture, true))
 		})
 	})
 })

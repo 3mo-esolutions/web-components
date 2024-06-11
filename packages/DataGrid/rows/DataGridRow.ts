@@ -59,7 +59,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	}
 
 	getCell(column: DataGridColumn<TData, any>) {
-		return this.cells.find(cell => cell.column === column)
+		return this.cells.find(cell => cell.column.equals(column))
 	}
 
 	override connected() {

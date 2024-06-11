@@ -41,6 +41,12 @@ export class DataGridColumn<TData, TValue = unknown> {
 		Object.assign(this, column)
 	}
 
+	equals(other: DataGridColumn<TData, any>): boolean {
+		return this.dataSelector === other.dataSelector
+			&& this.heading === other.heading
+			&& this.description === other.description
+	}
+
 	private _widthInPixels?: number
 	get widthInPixels() { return this._widthInPixels || 0 }
 	set widthInPixels(value) {
