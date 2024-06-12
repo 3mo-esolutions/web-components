@@ -29,8 +29,7 @@ export class DataGridFooter<TData> extends Component {
 		async updated(this: DataGridFooter<TData>, value: boolean) {
 			if (value === true) {
 				await this.updateComplete
-				const callback = 'requestIdleCallback' in globalThis ? requestIdleCallback : requestAnimationFrame
-				await new Promise(r => callback(r))
+				await new Promise(r => requestIdleCallback(r))
 				this.pageNumberField.focus()
 				this.pageNumberField.select()
 			}
@@ -41,8 +40,7 @@ export class DataGridFooter<TData> extends Component {
 		async updated(this: DataGridFooter<TData>, value: boolean) {
 			if (value === true) {
 				await this.updateComplete
-				const callback = 'requestIdleCallback' in globalThis ? requestIdleCallback : requestAnimationFrame
-				await new Promise(r => callback(r))
+				await new Promise(r => requestIdleCallback(r))
 				this.pageSizeSelectField.focus()
 				this.pageSizeSelectField.open = true
 			}

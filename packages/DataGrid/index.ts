@@ -1,3 +1,4 @@
+import 'requestidlecallback-polyfill'
 import '@3mo/flex'
 import '@3mo/grid'
 import '@a11d/key-path'

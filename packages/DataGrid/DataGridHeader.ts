@@ -169,8 +169,7 @@ export class DataGridHeader<TData> extends Component {
 		const observeResizeDeferred = (callback: ResizeObserverCallback) => observeResize((e, o) => {
 			// It is necessary to defer the callback to avoid
 			// this resize-observer triggering other resize-observers in a loop
-			const defer = 'requestIdleCallback' in globalThis ? requestIdleCallback : requestAnimationFrame
-			defer(() => callback(e, o))
+			requestIdleCallback(() => callback(e, o))
 		})
 		return html`
 			<mo-flex class='cell' alignItems='center' direction=${column.alignment === 'end' ? 'horizontal-reversed' : 'horizontal'}

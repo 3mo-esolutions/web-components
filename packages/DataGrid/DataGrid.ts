@@ -453,7 +453,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	protected readonly slotController = new SlotController(this, async () => {
 		this.hasSums
 		this.hasFabs
-		await this.updateComplete
+		await new Promise(r => requestIdleCallback(r))
 		this.style.setProperty('--mo-data-grid-fab-slot-width', `${this.renderRoot.querySelector('slot[name=fab]')?.getBoundingClientRect().width || 75}px`)
 	})
 
