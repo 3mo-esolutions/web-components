@@ -17,19 +17,19 @@ class PopoverDirective extends AsyncDirective {
 	}
 
 	override update(part: ElementPart, [template]: PopoverDirectiveParameters) {
-		if (!this.isConnected) {
-			return noChange
-		}
+		if (this.isConnected) {
+			requestIdleCallback(() => {
+				render(template(), this.container ??= document.createElement('mo-popover-renderer'))
 
-		render(template(), this.container ??= document.createElement('mo-popover-renderer'))
+				if (!this.popover) {
+					this.popover = this.container.firstElementChild as Popover
+					this.popover.anchor = part.element as HTMLElement
 
-		if (!this.popover) {
-			this.popover = this.container.firstElementChild as Popover
-			this.popover.anchor = part.element as HTMLElement
-
-			// Simulate the connectedCallback lifecycle event
-			this.popover.connectedCallback()
-			this.popover.addEventListener('openChange', this)
+					// Simulate the connectedCallback lifecycle event
+					this.popover!.connectedCallback()
+					this.popover!.addEventListener('openChange', this)
+				}
+			})
 		}
 
 		return noChange

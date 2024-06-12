@@ -1,4 +1,5 @@
 import '@3mo/theme'
+import 'requestidlecallback-polyfill'
 export * from './PopoverPlacement.js'
 export * from './PopoverAlignment.js'
 export * from './PopoverCoordinates.js'

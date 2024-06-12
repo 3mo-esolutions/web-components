@@ -31,7 +31,7 @@ export class PointerHoverController extends Controller {
 	protected async checkHover() {
 		const elements = await extractEventTargets(this.host, this.options?.target) as Array<Element>
 		// Without this delay, the :hover state won't work in Firefox sometimes
-		await new Promise(r => requestAnimationFrame(r))
+		await new Promise(requestAnimationFrame)
 		const hover = elements.some(e => e.matches(':hover'))
 		if (this._hover !== hover) {
 			this._hover = hover

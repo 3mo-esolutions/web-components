@@ -46,7 +46,7 @@ export class Popover extends Component {
 	@property({ reflect: true }) placement = PopoverPlacement.BlockEnd
 	@property({ reflect: true }) alignment = PopoverAlignment.Start
 	@property({ type: Number }) offset?: number
-	@property({ type: Boolean, reflect: true, updated(this: Popover) { this.openChanged() } }) open = false
+	@property({ type: Boolean, reflect: true }) open = false
 	@property({ type: Boolean }) manual = false
 
 	@property({ type: Object }) shouldOpen?: (e: Event) => boolean
@@ -65,20 +65,6 @@ export class Popover extends Component {
 				this.anchor?.focus()
 			}
 		}
-	}
-
-	private timerId?: number
-	protected async openChanged() {
-		if (this.timerId) {
-			window.clearTimeout(this.timerId)
-			this.timerId = undefined
-		}
-
-		if (this.open === false) {
-			await new Promise(r => this.timerId = window.setTimeout(r, 300))
-		}
-
-		this.toggleAttribute('displayOpen', this.open)
 	}
 
 	@eventListener({ target: document, type: 'keydown', options: { capture: true } })
@@ -207,11 +193,6 @@ export class Popover extends Component {
 			}
 
 			:host(:not([open])) {
-				visibility: collapse;
-				pointer-events: none;
-			}
-
-			:host(:not([displayOpen])) {
 				display: none;
 			}
 

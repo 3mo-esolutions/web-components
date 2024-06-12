@@ -21,15 +21,19 @@ export class PopoverContainer extends Component {
 
 	protected readonly slotController = new SlotController(this, this.assignSlottedPopovers.bind(this))
 
+	get popoverElement() {
+		return this.slotController.getAssignedElements('popover')[0] as Popover
+	}
+
+	get anchorElement() {
+		return this.slotController.getAssignedElements('')[0] as HTMLElement
+	}
+
 	assignSlottedPopovers() {
-		this.slotController.getAssignedElements('popover')
-			.forEach(x => {
-				const popover = x as Popover
-				popover.fixed = this.fixed
-				popover.anchor = this
-				popover.placement = this.placement
-				popover.alignment = this.alignment
-			})
+		this.popoverElement.anchor = this.anchorElement
+		this.popoverElement.fixed = this.fixed
+		this.popoverElement.placement = this.placement
+		this.popoverElement.alignment = this.alignment
 	}
 
 	static override get styles() {

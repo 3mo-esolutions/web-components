@@ -73,7 +73,7 @@ export class Dialog extends Component implements IDialog {
 		type: Boolean,
 		async updated(this: Dialog) {
 			if (this.open === true) {
-				await new Promise(r => requestAnimationFrame(r))
+				await new Promise(requestAnimationFrame)
 				this.querySelector<any>('[autofocus]')?.focus()
 			}
 		}
