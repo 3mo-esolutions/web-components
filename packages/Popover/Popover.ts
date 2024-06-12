@@ -47,7 +47,7 @@ export class Popover extends Component {
 	@property({ reflect: true }) alignment = PopoverAlignment.Start
 	@property({ type: Number }) offset?: number
 	@property({ type: Boolean, reflect: true, updated(this: Popover) { this.openUpdated() } }) open = false
-	@property({ type: Object }) shouldOpen?: (e: Event) => boolean
+	@property({ type: Object, noAccessor: true }) shouldOpen?: (e: Event) => boolean
 
 	readonly positionController = PopoverCssAnchorPositionController.supported
 		? new PopoverCssAnchorPositionController(this)
