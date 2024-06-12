@@ -49,9 +49,9 @@ export class Popover extends Component {
 	@property({ type: Boolean, reflect: true }) open = false
 	@property({ type: Boolean }) manual = false
 
-	@property({ type: Object }) shouldOpen?: (e: Event) => boolean
-	@property({ type: Array }) positionMiddleware?: Array<Middleware>
-	@property({ type: Object }) positionComputed?: (response: ComputePositionReturn) => void
+	@property({ type: Object, noAccessor: true }) shouldOpen?: (e: Event) => boolean
+	@property({ type: Array, noAccessor: true }) positionMiddleware?: Array<Middleware>
+	@property({ type: Object, noAccessor: true }) positionComputed?: (response: ComputePositionReturn) => void
 
 	protected readonly positionController = new PopoverPositionController(this)
 
