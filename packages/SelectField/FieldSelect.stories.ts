@@ -10,15 +10,16 @@ export default {
 		defaultText: 'No selection',
 		searchable: false,
 		multiple: false,
+		disabled: false,
 	},
 	package: p,
 	decorators: [story => html`<div style='height: 350px'>${story()}</div>`]
 } as Meta
 
 export const Select: StoryObj = {
-	render: ({ searchable, multiple, defaultText }) => html`
+	render: ({ searchable, multiple, disabled, defaultText }) => html`
 		<mo-card style='max-width: 300px'>
-			<mo-field-select label='Countries' ?searchable=${searchable} ?multiple=${multiple} default=${defaultText}>
+			<mo-field-select label='Countries' ?searchable=${searchable} ?multiple=${multiple} default=${defaultText} ?disabled=${disabled}>
 				${countries.map(country => html`
 					<mo-option value=${country.code} .data=${country}>
 						<img width='25px' src=${`https://flagcdn.com/h40/${country.code.toLowerCase()}.png`} />
@@ -31,9 +32,9 @@ export const Select: StoryObj = {
 }
 
 export const FreeInput: StoryObj = {
-	render: ({ multiple, defaultText }) => html`
+	render: ({ multiple, disabled, defaultText }) => html`
 		<mo-card style='max-width: 300px'>
-			<mo-field-select label='Countries' searchable freeInput ?multiple=${multiple} default=${defaultText}>
+			<mo-field-select label='Countries' searchable freeInput ?multiple=${multiple} default=${defaultText} ?disabled=${disabled}>
 				${countries.map(country => html`
 					<mo-option value=${country.code} .data=${country}>
 						<img width='25px' src=${`https://flagcdn.com/h40/${country.code.toLowerCase()}.png`} />
@@ -46,9 +47,9 @@ export const FreeInput: StoryObj = {
 }
 
 export const PreSelectedValue: StoryObj = {
-	render: ({ searchable, multiple, defaultText }) => html`
+	render: ({ searchable, disabled, multiple, defaultText }) => html`
 		<mo-card style='max-width: 300px'>
-			<mo-field-select label='Countries' ?searchable=${searchable} ?multiple=${multiple} default=${defaultText} .value=${multiple ? [] : 'DE'}>
+			<mo-field-select label='Countries' ?searchable=${searchable} ?multiple=${multiple} default=${defaultText} ?disabled=${disabled} .value=${multiple ? [] : 'DE'}>
 				${countries.map(country => html`
 					<mo-option value=${country.code} .data=${country}>
 						<img width='25px' src=${`https://flagcdn.com/h40/${country.code.toLowerCase()}.png`} />

@@ -96,6 +96,10 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 				flex-flow: column;
 			}
 
+			:host([disabled]) {
+				pointer-events: none;
+			}
+
 			input {
 				cursor: pointer;
 			}
