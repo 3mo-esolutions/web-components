@@ -28,7 +28,7 @@ describe('Expander', () => {
 		})
 
 		it('should not be user-selectable', () => {
-			expect(getComputedStyle(fixture.component.renderRoot.querySelector('mo-heading')!)?.userSelect).toBe('none')
+			expect(getComputedStyle(fixture.component.renderRoot.querySelector('summary')!)?.userSelect).toBe('none')
 		})
 	})
 

@@ -31,17 +31,14 @@ export class Expander extends Component {
 				display: block;
 			}
 
-			mo-flex[part=header] {
+			summary {
 				color: var(--mo-color-accent);
 				user-select: none;
-			}
-
-			details > summary {
 				list-style: none;
-			}
 
-			details summary::marker, details summary::-webkit-details-marker {
-				display: none;
+				&::marker, &::-webkit-details-marker {
+					display: none;
+				}
 			}
 		`
 	}

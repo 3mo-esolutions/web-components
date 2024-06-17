@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/expander",
-	"version": "1.0.4",
+	"version": "1.0.5",
 	"description": "An Expander web-component.",
 	"repository": {
 		"type": "git",
