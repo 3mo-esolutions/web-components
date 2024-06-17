@@ -143,8 +143,8 @@ export const Sums: StoryObj = {
 			<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
 			<mo-data-grid-column-number heading='Age' dataSelector='age' sumHeading='Ages Total'></mo-data-grid-column-number>
 			<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
-			<mo-data-grid-column-currency heading='Balance' dataSelector='balance' sumHeading='Balances Total'></mo-data-grid-column-currency>
-			<mo-data-grid-footer-sum slot='sum' heading='Customized Sum Maybe!' ${style({ alignItems: 'center', fontWeight: '800' })}>199,99 €</mo-data-grid-footer-sum>
+			<mo-data-grid-column-currency currency='EUR' heading='Balance' dataSelector='balance' sumHeading='Balances Total'></mo-data-grid-column-currency>
+			<mo-data-grid-footer-sum slot='sum' heading='Customized Sum!' ${style({ fontWeight: '800' })}>${199.0.formatAsCurrency('EUR')}</mo-data-grid-footer-sum>
 		</mo-data-grid>
 	`
 }
