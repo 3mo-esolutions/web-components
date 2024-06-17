@@ -827,9 +827,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	get sumsTemplate() {
 		return html`
-			<mo-flex direction='horizontal' gap='10px' wrap='wrap-reverse' alignItems='center' ${style({ padding: '2px 4px' })}>
-				${this.columns.map(c => c.sumTemplate)}
-			</mo-flex>
+			${this.columns.map(c => c.sumTemplate)}
 		`
 	}
 
