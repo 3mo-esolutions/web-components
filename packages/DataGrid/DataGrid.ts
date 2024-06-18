@@ -9,7 +9,7 @@ import { observeMutation } from '@3mo/mutation-observer'
 import { MediaQueryController } from '@3mo/media-query-observer'
 import { Localizer } from '@3mo/localization'
 import { type Scroller } from '@3mo/scroller'
-import { DataGridSelectionController, DataGridSelectionMode } from './DataGridSelectionController.js'
+import { DataGridSelectionController, DataGridSelectionMode, DataGridSelectionBehaviorOnDataChange } from './DataGridSelectionController.js'
 import { DataGridSortingController, type DataGridRankedSortDefinition, type DataGridSorting } from './DataGridSortingController.js'
 import { CsvGenerator, DataGridColumnComponent, DataGridSidePanelTab, type DataGridColumn, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, type DataGridSidePanel } from './index.js'
 
@@ -33,12 +33,6 @@ Localizer.register('de', {
 })
 
 export type DataGridPagination = 'auto' | number
-
-export enum DataGridSelectionBehaviorOnDataChange {
-	Reset = 'reset',
-	Prevent = 'prevent',
-	Maintain = 'maintain',
-}
 
 export enum DataGridEditability {
 	Never = 'never',
@@ -216,14 +210,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	setData(data: Array<TData>, selectionBehavior = this.selectionBehaviorOnDataChange) {
 		this.data = data
-		switch (selectionBehavior) {
-			case DataGridSelectionBehaviorOnDataChange.Reset:
-				this.deselectAll()
-				break
-			case DataGridSelectionBehaviorOnDataChange.Maintain:
-				this.selectionController.selectPreviouslySelectedData()
-				break
-		}
+		this.selectionController.handleDataChange(selectionBehavior)
 		this.dataChange.dispatch(data)
 	}
 

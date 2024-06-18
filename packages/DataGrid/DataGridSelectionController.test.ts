@@ -1,5 +1,5 @@
 import { PureEventDispatcher } from '@a11d/lit'
-import { DataGridSelectionController, DataGridSelectionMode } from './DataGridSelectionController'
+import { DataGridSelectionBehaviorOnDataChange, DataGridSelectionController, DataGridSelectionMode } from './DataGridSelectionController'
 
 type Data = { id: number }
 
@@ -112,5 +112,23 @@ describe('DataGridSelectionController', () => {
 
 			expect(controller.host.selectedData).toEqual([...data])
 		})
+	})
+
+	describe('handleDataChange', () => {
+		const dataToSelect = [{ id: 3 }, { id: 99 }]
+		for (const [behavior, selectedData] of [
+			[DataGridSelectionBehaviorOnDataChange.Reset, []],
+			[DataGridSelectionBehaviorOnDataChange.Maintain, [{ id: 3 }]],
+			[DataGridSelectionBehaviorOnDataChange.Prevent, dataToSelect],
+		] as const) {
+			it(`should ${!data.length ? 'not' : ''} select data on data change when behavior is ${behavior}`, () => {
+				controller.host.selectionMode = DataGridSelectionMode.Multiple
+				controller.host.selectedData = dataToSelect
+
+				controller.handleDataChange(behavior)
+
+				expect(controller.host.selectedData).toEqual(selectedData)
+			})
+		}
 	})
 })

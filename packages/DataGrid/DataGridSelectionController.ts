@@ -6,12 +6,14 @@ export enum DataGridSelectionMode {
 	Multiple = 'multiple',
 }
 
-/* Ideas to modularize this in the future:
- * - More abstraction so this can be used in other components
- * - Do we need to find a more abstract name for "selectionCheckboxesHidden"?
- * - Consider using symbols for expected host properties so the name is more explicit
- *    - This has the disadvantage of not being able to rule all controllers with one common name
- */
+export enum DataGridSelectionBehaviorOnDataChange {
+	/** Resets the selection of all data */
+	Reset = 'reset',
+	/** Tries to find the previously selected data to maintain the selection */
+	Maintain = 'maintain',
+	/** Prevents the selection from changing */
+	Prevent = 'prevent',
+}
 
 interface SelectableComponent<TData> {
 	selectionMode: DataGridSelectionMode
@@ -20,6 +22,7 @@ interface SelectableComponent<TData> {
 	isDataSelectable?(data: TData): boolean
 	selectionCheckboxesHidden?: boolean
 	readonly selectionChange?: EventDispatcher<Array<TData>>
+	readonly selectionBehaviorOnDataChange?: DataGridSelectionBehaviorOnDataChange
 }
 
 export class DataGridSelectionController<TData> {
@@ -43,7 +46,7 @@ export class DataGridSelectionController<TData> {
 	private set selectedData(data) { this.host.selectedData = data }
 
 	private get previouslySelectedData() {
-		const hasId = this.selectedData.every(d => Object.keys(d as any).includes('id'))
+		const hasId = this.selectedData.every(d => typeof d === 'object' && d !== null && 'id' in d)
 		if (hasId) {
 			const selectedIds = this.selectedData.map((d: any) => d.id) as Array<number>
 			return this.data.filter((d: any) => selectedIds.includes(d.id))
@@ -72,6 +75,17 @@ export class DataGridSelectionController<TData> {
 			const selectableData = data.filter(d => this.isSelectable(d))
 			this.selectedData = selectableData
 			this.host.selectionChange?.dispatch(selectableData)
+		}
+	}
+
+	handleDataChange(behavior: DataGridSelectionBehaviorOnDataChange) {
+		switch (behavior) {
+			case DataGridSelectionBehaviorOnDataChange.Reset:
+				this.deselectAll()
+				break
+			case DataGridSelectionBehaviorOnDataChange.Maintain:
+				this.selectPreviouslySelectedData()
+				break
 		}
 	}
 
