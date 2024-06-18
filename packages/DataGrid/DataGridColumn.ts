@@ -1,12 +1,10 @@
 import { html, style, type HTMLTemplateResult } from '@a11d/lit'
-import type { DataGrid, DataGridSortingDefinition } from './index.js'
+import type { DataGrid } from './index.js'
 import type * as CSS from 'csstype'
 
 export type DataGridColumnAlignment = 'start' | 'center' | 'end'
 
 export type DataGridColumnSticky = 'start' | 'both' | 'end'
-
-export type DataGridRankedSortDefinition<TData> = DataGridSortingDefinition<TData> & { rank: number }
 
 export class DataGridColumn<TData, TValue = unknown> {
 	dataGrid?: DataGrid<TData, any>
@@ -62,15 +60,9 @@ export class DataGridColumn<TData, TValue = unknown> {
 	}
 
 	get sortingDefinition() {
-		if (!this.dataGrid) {
-			return undefined
-		}
-		const sorting = this.dataGrid.getSorting()
-		const definition = sorting.find(s => s.selector === this.sortDataSelector)
-		return !definition ? undefined : {
-			...definition,
-			rank: sorting.indexOf(definition) + 1
-		} as DataGridRankedSortDefinition<TData>
+		return this.dataGrid
+			?.getSorting()
+			.find(s => s.selector === this.sortDataSelector)
 	}
 
 	get sumTemplate() {

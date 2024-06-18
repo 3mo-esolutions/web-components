@@ -9,8 +9,9 @@ import { observeMutation } from '@3mo/mutation-observer'
 import { MediaQueryController } from '@3mo/media-query-observer'
 import { Localizer } from '@3mo/localization'
 import { type Scroller } from '@3mo/scroller'
-import { CsvGenerator, DataGridColumnComponent, DataGridSidePanelTab, type DataGridColumn, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, type DataGridSidePanel } from './index.js'
 import { DataGridSelectionController, DataGridSelectionMode } from './DataGridSelectionController.js'
+import { DataGridSortingController, type DataGridRankedSortDefinition, type DataGridSorting } from './DataGridSortingController.js'
+import { CsvGenerator, DataGridColumnComponent, DataGridSidePanelTab, type DataGridColumn, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, type DataGridSidePanel } from './index.js'
 
 Localizer.register('en', {
 	'${count:pluralityNumber} entries selected': [
@@ -33,11 +34,6 @@ Localizer.register('de', {
 
 export type DataGridPagination = 'auto' | number
 
-export enum DataGridSortingStrategy {
-	Descending = 'descending',
-	Ascending = 'ascending',
-}
-
 export enum DataGridSelectionBehaviorOnDataChange {
 	Reset = 'reset',
 	Prevent = 'prevent',
@@ -49,13 +45,6 @@ export enum DataGridEditability {
 	Cell = 'cell',
 	Always = 'always',
 }
-
-export type DataGridSortingDefinition<TData> = {
-	selector: KeyPathOf<TData>
-	strategy: DataGridSortingStrategy
-}
-
-export type DataGridSorting<TData> = DataGridSortingDefinition<TData> | Array<DataGridSortingDefinition<TData>>
 
 /**
  * @element mo-data-grid
@@ -132,7 +121,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	@event() readonly columnsChange!: EventDispatcher<Array<DataGridColumn<TData>>>
 	@event() readonly sidePanelOpen!: EventDispatcher<DataGridSidePanelTab>
 	@event() readonly sidePanelClose!: EventDispatcher
-	@event() readonly sortingChange!: EventDispatcher<DataGridSorting<TData> | undefined>
+	@event() readonly sortingChange!: EventDispatcher<Array<DataGridRankedSortDefinition<TData>>>
 	@event() readonly rowDetailsOpen!: EventDispatcher<DataGridRow<TData, TDetailsElement>>
 	@event() readonly rowDetailsClose!: EventDispatcher<DataGridRow<TData, TDetailsElement>>
 	@event() readonly rowClick!: EventDispatcher<DataGridRow<TData, TDetailsElement>>
@@ -272,7 +261,9 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			return undefined
 		}
 		const subValue = getValueByKeyPath(data, this.subDataGridDataSelector)
-		return Array.isArray(subValue) && subValue.length > 0 ? subValue : undefined
+		return !Array.isArray(subValue) || !subValue.length
+			? undefined
+			: this.sortingController.toSorted(subValue)
 	}
 
 	hasDetail(data: TData) {
@@ -302,17 +293,12 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		}
 	}
 
-	sort(sorting?: DataGridSorting<TData>) {
-		this.sorting = sorting
-		this.sortingChange.dispatch(sorting)
+	sort(...parameters: Parameters<typeof this.sortingController.set>) {
+		this.sortingController.set(...parameters)
 	}
 
-	unsort() {
-		this.sort(undefined)
-	}
-
-	handleSortChange(sorting?: DataGridSorting<TData>) {
-		this.sort(sorting)
+	unsort(...parameters: Parameters<typeof this.sortingController.reset>) {
+		this.sortingController.reset(...parameters)
 	}
 
 	setColumns(columns: Array<DataGridColumn<TData>>) {
@@ -458,6 +444,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	readonly themeController = new ThemeController(this)
 
 	readonly selectionController = new DataGridSelectionController(this)
+	readonly sortingController = new DataGridSortingController(this)
 
 	readonly rowIntersectionObserver?: IntersectionObserver
 
@@ -964,11 +951,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}
 
 	getSorting() {
-		return !this.sorting
-			? []
-			: Array.isArray(this.sorting)
-				? this.sorting
-				: [this.sorting]
+		return this.sortingController.get()
 	}
 
 	private *getFlattenedData() {
@@ -999,30 +982,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}
 
 	protected get sortedData() {
-		const sorting = this.getSorting()
-
-		const sortedData = [...this.data]
-
-		if (!sorting?.length) {
-			return sortedData
-		}
-
-		return sortedData.sort((a, b) => {
-			for (const sortCriteria of sorting) {
-				const { selector, strategy } = sortCriteria
-				const aValue = getValueByKeyPath(a, selector) ?? Infinity as any
-				const bValue = getValueByKeyPath(b, selector) ?? Infinity as any
-
-				if (aValue < bValue) {
-					return strategy === DataGridSortingStrategy.Ascending ? -1 : 1
-				} else if (aValue > bValue) {
-					return strategy === DataGridSortingStrategy.Ascending ? 1 : -1
-				}
-				// If values are equal, continue to the next level of sorting
-			}
-
-			return 0 // Items are equal in all sorting criteria
-		})
+		return this.sortingController.toSorted([...this.data])
 	}
 
 	get renderData() {

@@ -146,8 +146,8 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 		}
 	}
 
-	override handleSortChange(...args: Parameters<DataGrid<TData, TDetailsElement>['handleSortChange']>) {
-		super.handleSortChange(...args)
+	override sort(...args: Parameters<DataGrid<TData, TDetailsElement>['sort']>) {
+		super.sort(...args)
 		if (this.hasServerSideSort) {
 			this.resetPageAndRequestFetch()
 		}

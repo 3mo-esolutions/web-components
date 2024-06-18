@@ -1,5 +1,4 @@
 import { component, Component, css, html, ifDefined, property, event, style } from '@a11d/lit'
-import { KeyboardController } from '@3mo/keyboard-controller'
 import { type Checkbox } from '@3mo/checkbox'
 import { tooltip } from '@3mo/tooltip'
 import { observeResize } from '@3mo/resize-observer'
@@ -72,7 +71,8 @@ export class DataGridHeader<TData> extends Component {
 				color: var(--mo-color-foreground);
 				border: 1px solid var(--mo-color-gray-transparent);
 				border-radius: 50%;
-				width: 20px;
+				width: fit-content;
+				user-select: none;
 				height: 20px;
 				aspect-ratio: 1 / 1;
 				display: flex;
@@ -189,7 +189,7 @@ export class DataGridHeader<TData> extends Component {
 
 					${sortIcon === undefined ? html.nothing : html`
 						${!sortingRank ? html.nothing : html`<span class='sort-rank'>${sortingRank}</span>`}
-						<mo-icon ${style({ color: 'var(--mo-color-accent)' })} icon=${ifDefined(sortIcon)}></mo-icon>
+						<mo-icon ${style({ color: 'var(--mo-color-accent)', marginInline: '3px' })} icon=${ifDefined(sortIcon)}></mo-icon>
 					`}
 				</mo-flex>
 				<mo-data-grid-header-separator
@@ -221,39 +221,10 @@ export class DataGridHeader<TData> extends Component {
 	}
 
 	private sort(column: DataGridColumn<TData>) {
-		if (column.sortable === false) {
-			return
+		if (column.sortable) {
+			this.dataGrid.sortingController.toggle(column.sortDataSelector)
+			this.requestUpdate()
 		}
-
-		const defaultSortingStrategy = DataGridSortingStrategy.Descending
-		const sortDataSelector = column.sortDataSelector
-		const sortingDefinition = column.sortingDefinition
-
-		if (KeyboardController.shift || KeyboardController.meta || KeyboardController.ctrl) {
-			const sortings = this.dataGrid.getSorting()
-			if (sortingDefinition?.selector !== sortDataSelector) {
-				this.dataGrid.handleSortChange([...sortings, { selector: sortDataSelector, strategy: defaultSortingStrategy }])
-			} else if (sortingDefinition.strategy === DataGridSortingStrategy.Descending) {
-				this.dataGrid.handleSortChange(
-					sortings.map(x => x.selector !== sortDataSelector ? x : {
-						selector: sortDataSelector,
-						strategy: DataGridSortingStrategy.Ascending,
-					})
-				)
-			} else {
-				this.dataGrid.handleSortChange(this.dataGrid.getSorting().filter(x => x.selector !== sortDataSelector))
-			}
-		} else {
-			if (sortingDefinition?.selector !== sortDataSelector) {
-				this.dataGrid.handleSortChange({ selector: sortDataSelector, strategy: defaultSortingStrategy })
-			} else if (sortingDefinition.strategy === DataGridSortingStrategy.Descending) {
-				this.dataGrid.handleSortChange({ selector: sortDataSelector, strategy: DataGridSortingStrategy.Ascending })
-			} else {
-				this.dataGrid.handleSortChange(undefined)
-			}
-		}
-
-		this.requestUpdate()
 	}
 
 	private toggleAllDetails() {
