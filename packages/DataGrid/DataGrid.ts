@@ -10,7 +10,7 @@ import { MediaQueryController } from '@3mo/media-query-observer'
 import { Localizer } from '@3mo/localization'
 import { type Scroller } from '@3mo/scroller'
 import { CsvGenerator, DataGridColumnComponent, DataGridSidePanelTab, type DataGridColumn, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, type DataGridSidePanel } from './index.js'
-import { DataGridSelectionController } from './DataGridSelectionController.js'
+import { DataGridSelectionController, DataGridSelectionMode } from './DataGridSelectionController.js'
 
 Localizer.register('en', {
 	'${count:pluralityNumber} entries selected': [
@@ -32,12 +32,6 @@ Localizer.register('de', {
 })
 
 export type DataGridPagination = 'auto' | number
-
-export enum DataGridSelectionMode {
-	None = 'none',
-	Single = 'single',
-	Multiple = 'multiple',
-}
 
 export enum DataGridSortingStrategy {
 	Descending = 'descending',

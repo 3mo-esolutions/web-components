@@ -1,28 +1,46 @@
 import { KeyboardController } from '@3mo/keyboard-controller'
-import { Controller } from '@a11d/lit'
-import { type DataGrid, DataGridSelectionMode } from './index.js'
 
-export class DataGridSelectionController<TData> extends Controller {
+export enum DataGridSelectionMode {
+	None = 'none',
+	Single = 'single',
+	Multiple = 'multiple',
+}
+
+/* Ideas to modularize this in the future:
+ * - More abstraction so this can be used in other components
+ * - Do we need to find a more abstract name for "selectionCheckboxesHidden"?
+ * - Consider using symbols for expected host properties so the name is more explicit
+ *    - This has the disadvantage of not being able to rule all controllers with one common name
+ */
+
+interface SelectableComponent<TData> {
+	selectionMode: DataGridSelectionMode
+	readonly flattenedData: Array<TData>
+	selectedData: Array<TData>
+	isDataSelectable?(data: TData): boolean
+	selectionCheckboxesHidden?: boolean
+	readonly selectionChange?: EventDispatcher<Array<TData>>
+}
+
+export class DataGridSelectionController<TData> {
 	private lastActiveSelection?: {
 		data: TData
 		selected: boolean
 	}
 
-	constructor(private readonly dataGrid: DataGrid<TData, any>) {
-		super(dataGrid)
-	}
+	constructor(readonly host: SelectableComponent<TData>) { }
 
 	get hasSelection() {
 		return this.mode !== DataGridSelectionMode.None
 	}
 
-	private get mode() { return this.dataGrid.selectionMode }
+	private get mode() { return this.host.selectionMode }
 
-	private get data() { return this.dataGrid.flattenedData }
+	private get data() { return this.host.flattenedData }
 	private get selectableData() { return this.data.filter(d => this.isSelectable(d)) }
 
-	private get selectedData() { return this.dataGrid.selectedData }
-	private set selectedData(data) { this.dataGrid.selectedData = data }
+	private get selectedData() { return this.host.selectedData }
+	private set selectedData(data) { this.host.selectedData = data }
 
 	private get previouslySelectedData() {
 		const hasId = this.selectedData.every(d => Object.keys(d as any).includes('id'))
@@ -36,7 +54,7 @@ export class DataGridSelectionController<TData> extends Controller {
 	}
 
 	isSelectable(data: TData) {
-		return this.dataGrid.isDataSelectable?.(data) ?? true
+		return this.host.isDataSelectable?.(data) ?? true
 	}
 
 	selectAll() {
@@ -53,7 +71,7 @@ export class DataGridSelectionController<TData> extends Controller {
 		if (this.hasSelection) {
 			const selectableData = data.filter(d => this.isSelectable(d))
 			this.selectedData = selectableData
-			this.dataGrid.selectionChange.dispatch(selectableData)
+			this.host.selectionChange?.dispatch(selectableData)
 		}
 	}
 
@@ -83,7 +101,7 @@ export class DataGridSelectionController<TData> extends Controller {
 		} else {
 			if (selected) {
 				if (this.mode === DataGridSelectionMode.Multiple) {
-					dataToSelect = this.dataGrid.selectionCheckboxesHidden
+					dataToSelect = this.host.selectionCheckboxesHidden
 						? [data]
 						: [...dataToSelect, data]
 				} else if (this.mode === DataGridSelectionMode.Single) {
