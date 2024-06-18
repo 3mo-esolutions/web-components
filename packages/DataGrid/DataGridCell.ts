@@ -122,12 +122,12 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 				position: relative;
 				padding-inline: var(--mo-data-grid-cell-padding);
 				user-select: none;
-				line-height: var(--mo-data-grid-row-height);
 				white-space: nowrap;
 				overflow: hidden !important;
 				text-overflow: ellipsis;
 				font-size: var(--mo-data-grid-cell-font-size);
 				outline: none;
+				margin-block: auto;
 			}
 
 			:host(:not([isEditing]):focus) {
@@ -157,10 +157,6 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 			:host([sticky]) /*[sticking]*/ {
 				z-index: 2;
 				background: var(--mo-data-grid-sticky-part-color);
-			}
-
-			:host > :first-child {
-				line-height: var(--mo-data-grid-row-height);
 			}
 
 			:host([isEditing]) > :first-child {
