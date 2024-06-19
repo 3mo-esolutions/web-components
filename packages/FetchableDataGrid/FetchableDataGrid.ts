@@ -250,10 +250,6 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 			</slot>
 		`
 	}
-
-	protected override get selectionToolbarTemplate() {
-		return this.fetcherController.isFetching ? html.nothing : super.selectionToolbarTemplate
-	}
 }
 
 declare global {

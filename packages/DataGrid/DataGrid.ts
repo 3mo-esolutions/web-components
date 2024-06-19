@@ -16,21 +16,9 @@ import { DataGridDetailsController } from './DataGridDetailsController.js'
 import { CsvGenerator, DataGridSidePanelTab, type DataGridColumn, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, type DataGridSidePanel } from './index.js'
 import { DataRecord } from './DataRecord.js'
 
-Localizer.register('en', {
-	'${count:pluralityNumber} entries selected': [
-		'1 entry selected',
-		'${count} entries selected',
-	]
-})
-
 Localizer.register('de', {
 	'Exporting excel file': 'Die Excel-Datei wird exportiert',
 	'No results': 'Kein Ergebnis',
-	'${count:pluralityNumber} entries selected': [
-		'1 Eintrag ausgewählt',
-		'${count} Einträge ausgewählt',
-	],
-	'Options': 'Optionen',
 	'More Filters': 'Weitere Filter',
 	'Deselect All': 'Alle deselektieren',
 })
@@ -69,7 +57,6 @@ export enum DataGridEditability {
  * @attr getRowContextMenuTemplate - A function which returns a template for the context menu of a given row.
  * @attr sidePanelTab - The side panel tab.
  * @attr sidePanelHidden - Whether the side panel should be hidden.
- * @attr selectionToolbarDisabled - Whether the selection toolbar should be disabled.
  * @attr hasAlternatingBackground - Whether the rows should have alternating background.
  * @attr preventFabCollapse - Whether the FAB should be prevented from collapsing.
  * @attr cellFontSize - The font size of the cells relative to the default font size. Defaults @see DataGrid.cellFontSize 's value which defaults to 0.8.
@@ -156,7 +143,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	@property() sidePanelTab: DataGridSidePanelTab | undefined
 	@property({ type: Boolean }) sidePanelHidden = false
-	@property({ type: Boolean }) selectionToolbarDisabled = false
 	@property({ type: Boolean }) hasAlternatingBackground = DataGrid.hasAlternatingBackground.value
 
 	@property({ type: Boolean }) preventFabCollapse = false
@@ -365,7 +351,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}
 
 	get dataLength() {
-		return this.renderDataRecords.length
+		return this.dataRecords.length
 	}
 
 	get maxPage() {
@@ -411,7 +397,14 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			root: this.scroller,
 			rootMargin: '100% 0px',
 		})
+		this.navigateToLastValidPageIfNeeded()
 		return super.updated(...parameters)
+	}
+
+	private navigateToLastValidPageIfNeeded() {
+		if (this.page > this.maxPage) {
+			this.setPage(this.maxPage)
+		}
 	}
 
 	protected override firstUpdated(props: PropertyValues) {
@@ -498,42 +491,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 					}
 				}
 			}
-
-			#flexSelectionToolbar {
-				background: var(--mo-color-surface);
-				position: absolute;
-				inset: 0px;
-				width: 100%;
-				height: 100%;
-				z-index: 5;
-
-				& > mo-flex {
-					background: var(--mo-data-grid-selection-background);
-					height: 100%;
-					align-items: center;
-				}
-
-				mo-icon-button {
-					align-self: center;
-					color: var(--mo-color-foreground);
-				}
-			}
-
-			mo-popover-container {
-				height: calc(100% - calc(2 * 6px));
-				max-height: 45px;
-				margin: 6px 0;
-
-				#flexActions {
-					align-items: center;
-					justify-content: center;
-					padding-inline: 14px 6px;
-					cursor: pointer;
-					background: var(--mo-color-accent-transparent);
-					height: 100%;
-				}
-			}
-
 
 			#fab {
 				position: absolute;
@@ -745,7 +702,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				<mo-flex id='actions' direction='horizontal' gap='8px'>
 					<slot name='toolbarAction'>${this.toolbarActionDefaultTemplate}</slot>
 					${this.toolbarActionsTemplate}
-					${this.selectionToolbarTemplate}
 				</mo-flex>
 			</mo-flex>
 		`
@@ -761,35 +717,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	protected get sumDefaultTemplate() {
 		return html.nothing
-	}
-
-	protected get selectionToolbarTemplate() {
-		return this.selectionToolbarDisabled === true || this.selectedData.length === 0 ? html.nothing : html`
-			<mo-flex id='flexSelectionToolbar'>
-				<mo-flex direction='horizontal' gap='30px' ${style({ placeSelf: 'stretch' })}>
-					<div ${style({ fontWeight: '500', margin: '0 6px' })}>
-						${t('${count:pluralityNumber} entries selected', { count: this.selectedData.length })}
-					</div>
-					${!this.getRowContextMenuTemplate ? html.nothing : html`
-						<mo-popover-container fixed>
-							<mo-flex id='flexActions' direction='horizontal'>
-								<div ${style({ flex: '1' })}>${t('Options')}</div>
-								<mo-icon-button dense icon='arrow_drop_down' ${style({ display: 'flex', alignItems: 'center', justifyContent: 'center' })}></mo-icon-button>
-							</mo-flex>
-
-							<mo-menu slot='popover'>
-								${this.getRowContextMenuTemplate?.(this.selectedData) ?? html.nothing}
-							</mo-menu>
-						</mo-popover-container>
-					`}
-					<div ${style({ flex: '1' })}></div>
-					<mo-icon-button icon='close'
-						${tooltip(t('Deselect All'))}
-						@click=${() => this.deselectAll()}
-					></mo-icon-button>
-				</mo-flex>
-			</mo-flex>
-		`
 	}
 
 	protected get toolbarActionsTemplate() {

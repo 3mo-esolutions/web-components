@@ -1,9 +1,31 @@
-import { component, Component, css, html, ifDefined, property, event, style } from '@a11d/lit'
-import { type Checkbox } from '@3mo/checkbox'
+import { component, Component, css, html, ifDefined, property, event, style, live } from '@a11d/lit'
 import { tooltip } from '@3mo/tooltip'
 import { observeResize } from '@3mo/resize-observer'
+import { Localizer } from '@3mo/localization'
 import { DataGridSelectionMode, DataGridSortingStrategy, type DataGridColumn, type DataGrid, DataGridSidePanelTab } from './index.js'
 import type { DataGridColumnsController } from './DataGridColumnsController.js'
+
+Localizer.register('en', {
+	'${count:pluralityNumber} entries selected': [
+		'1 entry selected',
+		'${count} entries selected',
+	],
+	'Options for ${count:pluralityNumber} selected entries': [
+		'Options for the selected entry',
+		'Options for ${count} selected entries',
+	],
+})
+
+Localizer.register('de', {
+	'${count:pluralityNumber} entries selected': [
+		'1 Eintrag ausgewählt',
+		'${count} Einträge ausgewählt',
+	],
+	'Options for ${count:pluralityNumber} selected entries': [
+		'Optionen für den ausgewählten Eintrag',
+		'Optionen für ${count} ausgewählte Einträge',
+	],
+})
 
 @component('mo-data-grid-header')
 export class DataGridHeader<TData> extends Component {
@@ -11,30 +33,28 @@ export class DataGridHeader<TData> extends Component {
 	@event() readonly modeSelectionChange!: EventDispatcher<string>
 
 	@property({ type: Object }) dataGrid!: DataGrid<TData, any>
-	@property() selection: CheckboxSelection = false
 	@property({ type: Boolean, reflect: true }) overlayOpen = false
 
 	protected override connected() {
 		this.dataGrid.dataChange.subscribe(this.handleDataGridDataChange)
-		this.dataGrid.selectionChange.subscribe(this.handleDataGridSelectionChange)
 	}
 
 	protected override disconnected() {
 		this.dataGrid.dataChange.unsubscribe(this.handleDataGridDataChange)
-		this.dataGrid.selectionChange.unsubscribe(this.handleDataGridSelectionChange)
 	}
 
 	private readonly handleDataGridDataChange = () => {
 		this.requestUpdate()
 	}
 
-	private readonly handleDataGridSelectionChange = (selectedData: Array<TData>) => {
-		if (selectedData.length === 0) {
-			this.selection = false
-		} else if (selectedData.length === this.dataGrid.dataLength) {
-			this.selection = true
-		} else {
-			this.selection = 'indeterminate'
+	get selection() {
+		switch (this.dataGrid.selectedData.length) {
+			case 0:
+				return false
+			case this.dataGrid.dataLength:
+				return true
+			default:
+				return 'indeterminate'
 		}
 	}
 
@@ -102,7 +122,7 @@ export class DataGridHeader<TData> extends Component {
 				z-index: 7;
 			}
 
-			.details, .selection, .more {
+			.details, .selection, .more, .context-menu {
 				position: sticky;
 				background: var(--mo-data-grid-sticky-part-color);
 				z-index: 5;
@@ -116,9 +136,31 @@ export class DataGridHeader<TData> extends Component {
 				inset-inline-start: 0px;
 			}
 
-			.more {
+			.more, .context-menu {
 				cursor: pointer;
 				inset-inline-end: 0px;
+			}
+
+			.more {
+				mo-icon-button {
+					color: var(--mo-color-accent);
+					font-size: large;
+				}
+			}
+
+			.context-menu {
+				background-color: var(--mo-data-grid-selection-background);
+
+				mo-icon-button {
+					color: var(--mo-color-on-accent);
+					font-size: 22px;
+				}
+
+				mo-menu div {
+					padding: 12px 8px;
+					color: var(--mo-color-gray);
+					pointer-events: none;
+				}
 			}
 		`
 	}
@@ -156,7 +198,7 @@ export class DataGridHeader<TData> extends Component {
 				${this.getResizeObserver('selectionColumnWidthInPixels')}
 			>
 				${this.dataGrid.selectionMode !== DataGridSelectionMode.Multiple ? html.nothing : html`
-					<mo-checkbox .selected=${this.selection} @change=${this.handleSelectionChange}></mo-checkbox>
+					<mo-checkbox .selected=${live(this.selection)} @click=${this.toggleSelection}></mo-checkbox>
 				`}
 			</mo-flex>
 		`
@@ -212,13 +254,35 @@ export class DataGridHeader<TData> extends Component {
 	}
 
 	private get moreTemplate() {
-		return this.dataGrid.hasToolbar || this.dataGrid.sidePanelHidden ? html.nothing : html`
-			<mo-flex class='more' alignItems='end' justifyContent='center' ${this.getResizeObserver('moreColumnWidthInPixels')}>
-				<mo-icon-button dense icon='settings' ${style({ color: 'var(--mo-color-accent)', fontSize: 'large' })}
-					@click=${() => this.dataGrid.navigateToSidePanelTab(this.dataGrid.sidePanelTab ? undefined : DataGridSidePanelTab.Settings)}
-				></mo-icon-button>
-			</mo-flex>
-		`
+		if (this.dataGrid.hasContextMenu && this.dataGrid.selectedData.length > 1) {
+			return html`
+				<mo-flex class='context-menu' alignItems='end' justifyContent='center' ${this.getResizeObserver('moreColumnWidthInPixels')}>
+					<mo-popover-container fixed>
+						<mo-icon-button dense icon='more_vert' title=${t('Actions for ${count:pluralityNumber} selected entries', { count: this.dataGrid.selectedData.length })}></mo-icon-button>
+
+						<mo-menu slot='popover'>
+							<div>
+								${t('${count:pluralityNumber} entries selected', { count: this.dataGrid.selectedData.length })}
+							</div>
+							<mo-line></mo-line>
+							${this.dataGrid.getRowContextMenuTemplate?.(this.dataGrid.selectedData) ?? html.nothing}
+						</mo-menu>
+					</mo-popover-container>
+				</mo-flex>
+			`
+		}
+
+		if (!this.dataGrid.hasToolbar && !this.dataGrid.sidePanelHidden) {
+			return html`
+				<mo-flex class='more' alignItems='end' justifyContent='center' ${this.getResizeObserver('moreColumnWidthInPixels')}>
+					<mo-icon-button dense icon='settings'
+						@click=${() => this.dataGrid.navigateToSidePanelTab(this.dataGrid.sidePanelTab ? undefined : DataGridSidePanelTab.Settings)}
+					></mo-icon-button>
+				</mo-flex>
+			`
+		}
+
+		return html.nothing
 	}
 
 	private getResizeObserver(property: keyof DataGridColumnsController<TData>) {
@@ -238,11 +302,12 @@ export class DataGridHeader<TData> extends Component {
 		this.requestUpdate()
 	}
 
-	private readonly handleSelectionChange = (e: CustomEvent) => {
-		const selected = (e.target as Checkbox).selected
-		if (selected === true) {
+	private readonly toggleSelection = (e: PointerEvent) => {
+		e.stopPropagation()
+		const selection = this.selection === 'indeterminate' ? false : !this.selection
+		if (selection === true) {
 			this.dataGrid.selectAll()
-		} else if (selected === false) {
+		} else {
 			this.dataGrid.deselectAll()
 		}
 	}
