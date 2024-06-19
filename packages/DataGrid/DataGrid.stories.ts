@@ -68,10 +68,8 @@ export const Selection: StoryObj = {
 	},
 	argTypes: {
 		selectionMode: {
-			control: {
-				type: 'select',
-				options: ['single', 'multiple']
-			}
+			control: 'select',
+			options: ['single', 'multiple']
 		}
 	},
 	parameters: {
@@ -208,10 +206,8 @@ export const Editability: StoryObj = {
 	},
 	argTypes: {
 		editability: {
-			control: {
-				type: 'select',
-				options: ['never', 'cell', 'always']
-			}
+			control: 'select',
+			options: ['never', 'cell', 'always']
 		}
 	},
 	parameters: {

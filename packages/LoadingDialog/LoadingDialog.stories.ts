@@ -8,8 +8,8 @@ export default {
 	component: 'mo-loading-dialog',
 	args: { loading: true, loadingHeading: 'Loading' },
 	argTypes: {
-		loading: { control: { type: 'boolean' } },
-		loadingHeading: { control: { type: 'text' } }
+		loading: { control: 'boolean' },
+		loadingHeading: { control: 'text' }
 	},
 	package: p,
 } as Meta

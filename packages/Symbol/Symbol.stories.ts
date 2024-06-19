@@ -18,8 +18,8 @@ export default {
 	title: 'Symbol',
 	component: 'mo-symbol',
 	argTypes: {
-		icon: { control: { type: 'select', options: icons } },
-		variant: { control: { type: 'select', options: variants } },
+		icon: { control: 'select', options: icons },
+		variant: { control: 'select', options: variants },
 		fill: {},
 		weight: {},
 		grade: {},

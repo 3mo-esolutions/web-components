@@ -26,7 +26,7 @@ export default {
 			proof-of-work chain as proof of what happened while they were gone.`,
 	},
 	argTypes: {
-		type: { control: { type: 'select', options: ['filled', 'outlined'] } },
+		type: { control: 'select', options: ['filled', 'outlined'] },
 		heading: { control: 'text' },
 		subHeading: { control: 'text' },
 		content: { control: 'text' },

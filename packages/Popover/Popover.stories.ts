@@ -13,16 +13,12 @@ export default {
 	},
 	argTypes: {
 		placement: {
-			control: {
-				type: 'select',
-				options: ['block-start', 'block-end', 'inline-start', 'inline-end'],
-			},
+			control: 'select',
+			options: ['block-start', 'block-end', 'inline-start', 'inline-end'],
 		},
 		alignment: {
-			control: {
-				type: 'select',
-				options: ['start', 'center', 'end'],
-			},
+			control: 'select',
+			options: ['start', 'center', 'end'],
 		},
 	},
 	package: p,

@@ -10,7 +10,7 @@ export default {
 		typography: 'heading1',
 	},
 	argTypes: {
-		typography: { control: { type: 'select', options: ['heading1', 'heading2', 'heading3', 'heading4', 'heading5', 'heading6', 'subtitle1', 'subtitle2'] } },
+		typography: { control: 'select', options: ['heading1', 'heading2', 'heading3', 'heading4', 'heading5', 'heading6', 'subtitle1', 'subtitle2'] },
 	},
 	package: p,
 } as Meta

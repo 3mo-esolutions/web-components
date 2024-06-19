@@ -20,13 +20,13 @@ export const Default: StoryObj = {
 	},
 	argTypes: {
 		collapsed: {
-			control: { type: 'boolean' }
+			control: 'boolean'
 		},
 		extraItems: {
-			control: { type: 'number' }
+			control: 'number'
 		},
 		overflowPosition: {
-			control: { type: 'radio' },
+			control: 'radio',
 			options: ['start', 'end']
 		}
 	},

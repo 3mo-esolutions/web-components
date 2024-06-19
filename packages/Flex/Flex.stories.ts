@@ -3,13 +3,13 @@ import { html, style } from '@a11d/lit'
 import p from './package.json'
 import '.'
 
-const itemsOption = [
+const itemsOptions = [
 	'normal', 'stretch',
 	'center', 'start', 'end', 'flex-start', 'flex-end',
 	'baseline', 'first baseline', 'last baseline', 'safe center', 'unsafe center',
 ]
 
-const contentsOption = [
+const contentsOptions = [
 	'center', 'start', 'end', 'flex-start', 'flex-end', 'left', 'right', 'normal',
 	'space-between', 'space-around', 'space-evenly', 'stretch',
 	'safe center', 'unsafe center',
@@ -30,30 +30,36 @@ export default {
 	argTypes: {
 		direction: {
 			description: 'Direction of the flex box, which is tunneled to `flex-direction` CSS property.',
-			control: { type: 'select', options: ['horizontal', 'vertical', 'horizontal-reversed', 'vertical-reversed'] },
+			control: 'select',
+			options: ['horizontal', 'vertical', 'horizontal-reversed', 'vertical-reversed']
 		},
 		wrap: {
 			description: 'Tunnels `flex-wrap` CSS property which indicates whether flex items are forced onto one line or can wrap onto multiple lines.',
-			control: { type: 'select', options: ['nowrap', 'wrap', 'wrap-reverse'] },
+			control: 'select',
+			options: ['nowrap', 'wrap', 'wrap-reverse']
 		},
 		gap: {
 			description: 'Tunnels `gap` CSS property which defines the gap between flex items.',
 		},
 		justifyItems: {
 			description: 'Tunnels `justify-items` CSS property',
-			control: { type: 'select', options: itemsOption },
+			control: 'select',
+			options: itemsOptions,
 		},
 		justifyContent: {
 			description: 'Tunnels `justifyContent` CSS property',
-			control: { type: 'select', options: contentsOption }
+			control: 'select',
+			options: contentsOptions,
 		},
 		alignItems: {
 			description: 'Tunnels `alignItems` CSS property',
-			control: { type: 'select', options: itemsOption },
+			control: 'select',
+			options: itemsOptions,
 		},
 		alignContent: {
 			description: 'Tunnels `alignContent` CSS property',
-			control: { type: 'select', options: contentsOption }
+			control: 'select',
+			options: contentsOptions,
 		},
 	},
 	package: p,

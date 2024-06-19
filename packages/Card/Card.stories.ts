@@ -28,7 +28,7 @@ export default {
 		image: 'https://image.winudf.com/v2/image/Y29tLnRydWVoZHdhbGxwYXBlcnMuYml0Y29pbndhbGxwYXBlcnNfc2NyZWVuXzBfMTUxMjU2ODY0OF8wNTU/screen-0.jpg?fakeurl=1&type=.jpg',
 	},
 	argTypes: {
-		type: { control: { type: 'select', options: ['filled', 'outlined'] } },
+		type: { control: 'select', options: ['filled', 'outlined'] },
 		heading: { control: 'text' },
 		subHeading: { control: 'text' },
 		content: { control: 'text' },

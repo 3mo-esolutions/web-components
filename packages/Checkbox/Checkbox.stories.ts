@@ -15,7 +15,7 @@ export default {
 	argTypes: {
 		disabled: { control: 'boolean' },
 		label: { control: 'text' },
-		selected: { control: { type: 'select', options: [true, false, 'indeterminate'] } },
+		selected: { control: 'select', options: [true, false, 'indeterminate'] },
 	},
 	package: p,
 } as Meta

@@ -17,17 +17,15 @@ export default {
 	},
 	argTypes: {
 		precision: {
-			control: {
-				type: 'select',
-				options: [
-					FieldDateTimePrecision.Year,
-					FieldDateTimePrecision.Month,
-					FieldDateTimePrecision.Day,
-					FieldDateTimePrecision.Hour,
-					FieldDateTimePrecision.Minute,
-					FieldDateTimePrecision.Second,
-				]
-			}
+			control: 'select',
+			options: [
+				FieldDateTimePrecision.Year,
+				FieldDateTimePrecision.Month,
+				FieldDateTimePrecision.Day,
+				FieldDateTimePrecision.Hour,
+				FieldDateTimePrecision.Minute,
+				FieldDateTimePrecision.Second,
+			]
 		}
 	},
 	package: p,

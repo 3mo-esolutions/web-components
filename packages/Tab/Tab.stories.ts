@@ -9,7 +9,7 @@ export default {
 	component: 'mo-tab',
 	args: { value: 'overview' },
 	argTypes: {
-		value: { control: { type: 'select', options: ['overview', 'flights', 'trips', 'explore'] } },
+		value: { control: 'select', options: ['overview', 'flights', 'trips', 'explore'] },
 	},
 	package: p,
 } as Meta

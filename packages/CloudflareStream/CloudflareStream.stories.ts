@@ -25,7 +25,7 @@ export const AutoPause: StoryObj = {
 	},
 	argTypes: {
 		autoPause: {
-			control: { type: 'select' },
+			control: 'select',
 			options: [
 				'when-not-in-viewport',
 				'when-quarter-in-viewport',

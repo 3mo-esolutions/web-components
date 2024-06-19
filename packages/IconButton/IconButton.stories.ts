@@ -15,7 +15,7 @@ export default {
 	title: 'Icon Button',
 	component: 'mo-icon-button',
 	argTypes: {
-		icon: { control: { type: 'select', options: icons } },
+		icon: { control: 'select', options: icons },
 		disabled: { control: 'boolean' },
 		dense: { control: 'boolean' },
 		fontSize: { control: 'text' }

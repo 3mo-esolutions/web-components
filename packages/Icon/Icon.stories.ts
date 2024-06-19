@@ -17,8 +17,8 @@ export default {
 	title: 'Icon',
 	component: 'mo-icon',
 	argTypes: {
-		icon: { control: { type: 'select', options: icons } },
-		variant: { control: { type: 'select', options: variants } },
+		icon: { control: 'select', options: icons },
+		variant: { control: 'select', options: variants },
 	},
 	package: p,
 } as Meta
