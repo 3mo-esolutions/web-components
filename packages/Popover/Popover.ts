@@ -179,25 +179,19 @@ export class Popover extends Component {
 				box-shadow: var(--mo-shadow);
 				width: max-content;
 				max-width: 100%;
-				opacity: 0;
 				z-index: 99;
-				transition: all .3s ease, transform none !important;
 				/* Do not move these to default values as resetting these values are important to prevent inheriting them from other parent popovers */
 				--mo-popover-translate-x: 0%;
 				--mo-popover-translate-y: 0%;
 				transform: translate(var(--mo-popover-translate-x), var(--mo-popover-translate-y));
 			}
 
+			:host(:not([open])) {
+				display: none !important;
+			}
+
 			:host([fixed]) {
 				position: fixed;
-			}
-
-			:host(:not([open])) {
-				display: none;
-			}
-
-			:host([open]) {
-				opacity: 1;
 			}
 
 			${Popover.translationStyles}

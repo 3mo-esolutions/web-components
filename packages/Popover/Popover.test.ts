@@ -51,6 +51,14 @@ describe('Popover', () => {
 		const autoFocus = new ComponentTestFixture(() => new FocusPopover)
 		const customTarget = new ComponentTestFixture(() => new CustomTargetPopover)
 
+		it('should ignore "display: flex" when not opened', () => {
+			expect(getComputedStyle(generic.component.popoverElement).display).toBe('none')
+
+			generic.component.popoverElement.style.display = 'flex'
+
+			expect(getComputedStyle(generic.component.popoverElement).display).toBe('none')
+		})
+
 		it('should set open and dispatch openChange event when setOpen is called', () => {
 			const openChangeSpy = jasmine.createSpy()
 			generic.component.popoverElement.addEventListener<any>('openChange', (e: CustomEvent<boolean>) => openChangeSpy(e.detail))
