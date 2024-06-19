@@ -355,7 +355,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}
 
 	get maxPage() {
-		return Math.ceil(this.dataLength / this.pageSize)
+		return Math.max(Math.ceil(this.dataLength / this.pageSize), 1)
 	}
 
 	get hasNextPage() {

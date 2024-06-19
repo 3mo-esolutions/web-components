@@ -138,7 +138,7 @@ export class DataGridHeader<TData> extends Component {
 			}
 
 			.context-menu {
-				background-color: var(--mo-data-grid-selection-background);
+				background-color: color-mix(in srgb, var(--mo-data-grid-sticky-part-color), var(--mo-color-accent) 50%);
 
 				mo-icon-button {
 					color: var(--mo-color-on-accent);
