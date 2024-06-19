@@ -1,17 +1,19 @@
-import { component, property, Component, css, state, html, query, ifDefined, style } from '@a11d/lit'
+import { component, property, Component, css, state, html, query, style } from '@a11d/lit'
 import { type FieldNumber } from '@3mo/number-fields'
 import { DirectionsByLanguage, Localizer } from '@3mo/localization'
 import { TooltipPlacement, tooltip } from '@3mo/tooltip'
-import { type DataGrid, type DataGridPagination, type FieldSelectDataGridPageSize } from './index.js'
+import { type DataGrid, type DataGridPagination } from './index.js'
 import excelSvg from './excel.svg.js'
 
 Localizer.register('de', {
 	'${page:number} of ${maxPage:number}': '${page} von ${maxPage}',
-	'Export current view to Excel': 'Aktuelle Ansicht nach Excel exportieren'
+	'Export current view to Excel': 'Aktuelle Ansicht nach Excel exportieren',
+	'Auto': 'Auto'
 })
 
 Localizer.register('fa', {
 	'${page:number} of ${maxPage:number}': '${page} از ${maxPage}',
+	'Auto': 'خودکار',
 })
 
 /**
@@ -21,6 +23,8 @@ Localizer.register('fa', {
  */
 @component('mo-data-grid-footer')
 export class DataGridFooter<TData> extends Component {
+	private static readonly pageSizes = new Array<DataGridPagination & number>(10, 25, 50, 100, 250, 500)
+
 	@property({ type: Object }) dataGrid!: DataGrid<TData, any>
 
 	@property({ type: Number }) page = 1
@@ -29,26 +33,14 @@ export class DataGridFooter<TData> extends Component {
 		async updated(this: DataGridFooter<TData>, value: boolean) {
 			if (value === true) {
 				await this.updateComplete
-				await new Promise(r => requestIdleCallback(r))
+				await new Promise(r => requestAnimationFrame(r))
 				this.pageNumberField.focus()
 				this.pageNumberField.select()
 			}
 		}
 	}) private manualPagination = false
 
-	@state({
-		async updated(this: DataGridFooter<TData>, value: boolean) {
-			if (value === true) {
-				await this.updateComplete
-				await new Promise(r => requestIdleCallback(r))
-				this.pageSizeSelectField.focus()
-				this.pageSizeSelectField.open = true
-			}
-		}
-	}) private manualPageSize = false
-
 	@query('mo-field-number') private readonly pageNumberField!: FieldNumber
-	@query('mo-field-select-data-grid-page-size') private readonly pageSizeSelectField!: FieldSelectDataGridPageSize
 
 	static override get styles() {
 		return css`
@@ -61,6 +53,58 @@ export class DataGridFooter<TData> extends Component {
 
 			:host(:not([hideTopBorder])) {
 				border-top: var(--mo-data-grid-border);
+			}
+
+			#page-info {
+				display: flex;
+				align-items: center;
+
+				span {
+					user-select: none;
+					padding-block: 0.25em;
+					font-size: small;
+
+					&:first-of-type {
+						&::after {
+							content: ' / ';
+							color: var(--mo-color-gray);
+							padding-inline: 0.25em;
+						}
+					}
+				}
+
+				#selected-length {
+					color: color-mix(in srgb, var(--mo-color-accent), currentColor 12.5%);
+					font-size: unset;
+				}
+
+				#length {
+					color: var(--mo-color-gray);
+				}
+
+				mo-menu-item {
+					font-size: smaller;
+					min-height: 20px;
+					cursor: pointer;
+					gap: 8px;
+
+					&::part(icon) {
+						font-size: 18px;
+					}
+
+					&:not([selected]) {
+						&::part(icon) {
+							opacity: 0;
+						}
+					}
+				}
+			}
+
+			#selection-info {
+				color: var(--mo-color-accent);
+				font-weight: 500;
+				margin: 0 6px;
+				font-size: smaller;
 			}
 		`
 	}
@@ -86,14 +130,8 @@ export class DataGridFooter<TData> extends Component {
 		const isRtl = DirectionsByLanguage.get() === 'rtl'
 		const hasUnknownDataLength = this.dataGrid.maxPage === undefined
 		const pageText = hasUnknownDataLength ? this.page : t('${page:number} of ${maxPage:number}', { page: this.page, maxPage: this.dataGrid.maxPage ?? 0 })
-		const from = (this.page - 1) * this.dataGrid.pageSize + 1
-		const to = from + this.dataGrid.renderDataRecords.length - 1
-		const pageSizeText = [
-			`${(Math.min(from, to)).format()}-${to.format()}`,
-			hasUnknownDataLength ? undefined : this.dataGrid.dataLength.format(),
-		].filter(Boolean).join(' / ')
 		return !this.dataGrid.hasPagination ? html.nothing : html`
-			<mo-flex direction='horizontal' alignItems='center' gap='1vw'>
+			<mo-flex direction='horizontal' alignItems='center' gap='2vw'>
 				<mo-flex direction='horizontal' gap='4px' alignItems='center' justifyContent='center'>
 					<mo-icon-button dense icon=${isRtl ? 'last_page' : 'first_page'}
 						?disabled=${this.page === 1}
@@ -127,18 +165,33 @@ export class DataGridFooter<TData> extends Component {
 					></mo-icon-button>
 				</mo-flex>
 
-				<div ${style({ color: 'var(--mo-color-gray)', marginInlineStart: '8px' })}>
-					${!this.manualPageSize ? html`
-						<div ${style({ fontSize: 'small', userSelect: 'none' })} @click=${() => this.manualPageSize = true}>${pageSizeText}</div>
-					` : html`
-						<mo-field-select-data-grid-page-size dense ${style({ width: '90px' })}
-							.dataGrid=${this.dataGrid}
-							value=${ifDefined(this.dataGrid.pagination)}
-							@change=${(e: CustomEvent<DataGridPagination>) => this.handlePaginationChange(e.detail)}>
-						</mo-field-select-data-grid-page-size>
-					`}
-				</div>
+				${this.paginationInfoTemplate}
 			</mo-flex>
+		`
+	}
+
+	private get paginationInfoTemplate() {
+		const from = (this.page - 1) * this.dataGrid.pageSize + 1
+		const to = from + this.dataGrid.renderDataRecords.length - 1
+		const rangeText = `${(Math.min(from, to)).format()}-${to.format()}`
+		const dataLengthText = this.dataGrid.maxPage === undefined ? undefined : this.dataGrid.dataLength.format()
+		return html`
+			<mo-popover-container id='page-info' placement='block-start' fixed>
+				${this.dataGrid.selectedData.length ? html`
+					<span id='selected-length'>${this.dataGrid.selectedData.length}</span>
+				` : html`
+					<span id='range' tabindex='0'>${rangeText}</span>
+				`}
+				<span id='length'>${dataLengthText}</span>
+				<mo-menu slot='popover'>
+					${!this.dataGrid?.supportsDynamicPageSize ? html.nothing : html`
+						<mo-menu-item icon='done' ?selected=${this.dataGrid.pagination === 'auto'} value='auto' @click=${() => this.handlePaginationChange('auto')}>${t('Auto')}</mo-menu-item>
+					`}
+					${DataGridFooter.pageSizes.map(size => html`
+						<mo-menu-item icon='done' ?selected=${this.dataGrid.pagination === size} value=${size} @click=${() => this.handlePaginationChange(size)}>${size.format()}</mo-menu-item>
+					`)}
+				</mo-menu>
+			</mo-popover-container>
 		`
 	}
 
@@ -147,7 +200,6 @@ export class DataGridFooter<TData> extends Component {
 			this.dataGrid.page = this.dataGrid.maxPage
 		}
 		this.dataGrid.setPagination(value)
-		this.manualPageSize = false
 	}
 
 	private handleManualPageChange(value: number) {
@@ -195,7 +247,6 @@ export class DataGridFooter<TData> extends Component {
 		}
 
 		this.manualPagination = false
-		this.manualPageSize = false
 		this.page = value
 		this.dataGrid.setPage(value)
 	}
