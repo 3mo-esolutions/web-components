@@ -44,6 +44,8 @@ export abstract class BusinessSuiteApplication extends Application {
 				--mo-thickness-m: 6px;
 				--mo-thickness-l: 8px;
 				--mo-thickness-xl: 14px;
+				/* Override defaults */
+				--mo-data-grid-nested-row-border-block-end: 1px solid var(--mo-color-transparent-gray-2);
 			}
 		`
 	}

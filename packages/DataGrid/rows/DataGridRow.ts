@@ -12,6 +12,8 @@ import { type DataGrid, type DataGridCell, DataGridPrimaryContextMenuItem, DataG
  * @attr detailsOpen
  *
  * @fires detailsOpenChange - Dispatched when the details open state changes
+ *
+ * @cssprop --mo-data-grid-nested-row-border-block-end - Optional border-block-end style for nested rows
  */
 export abstract class DataGridRow<TData, TDetailsElement extends Element | undefined = undefined> extends Component {
 	@event() readonly detailsOpenChange!: EventDispatcher<boolean>
@@ -42,6 +44,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		type: Number,
 		updated(this: DataGridRow<TData, TDetailsElement>) {
 			this.style.setProperty('--_level', this.level.toString())
+			this.style.setProperty('--_border-block-end', this.level > 0 ? 'var(--mo-data-grid-nested-row-border-block-end)' : 'none')
 		}
 	}) level = 0
 
@@ -100,6 +103,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				position: relative;
 				height: auto;
 				width: 100%;
+				border-block-end: var(--_border-block-end);
 			}
 
 			:host(:hover) #contentContainer {
@@ -117,7 +121,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				background-color: var(--mo-color-accent);
 			}
 
-			:host([data-has-alternating-background]) {
+			:host([data-has-alternating-background]) #contentContainer {
 				background: var(--mo-data-grid-alternating-background);
 			}
 
