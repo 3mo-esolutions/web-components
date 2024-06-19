@@ -4,7 +4,10 @@ import { type MaterialIcon } from '@3mo/icon'
 
 /**
  * @element mo-menu-item
+ *
  * @attr icon
+ *
+ * @csspart icon
  */
 @component('mo-menu-item')
 export class MenuItem extends ListItem {
@@ -23,7 +26,7 @@ export class MenuItem extends ListItem {
 
 	protected get iconTemplate() {
 		return !this.icon ? html.nothing : html`
-			<mo-icon style='opacity: 0.66' icon=${this.icon}></mo-icon>
+			<mo-icon part='icon' style='opacity: 0.66' icon=${this.icon}></mo-icon>
 		`
 	}
 
