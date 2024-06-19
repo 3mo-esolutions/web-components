@@ -141,8 +141,9 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 	}
 
 	override setPagination(...args: Parameters<DataGrid<TData, TDetailsElement>['setPagination']>) {
+		const changed = this.pagination !== args[0]
 		super.setPagination(...args)
-		if (this.hasServerSidePagination) {
+		if (this.hasServerSidePagination && changed) {
 			this.resetPageAndRequestFetch()
 		}
 	}
