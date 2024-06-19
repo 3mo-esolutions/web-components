@@ -12,6 +12,8 @@ import { type DataGrid, type DataGridCell, DataGridPrimaryContextMenuItem, DataG
  * @attr detailsOpen
  *
  * @fires detailsOpenChange - Dispatched when the details open state changes
+ *
+ * @cssprop --mo-data-grid-column-sub-row-indentation - The indentation of sub rows
  */
 export abstract class DataGridRow<TData, TDetailsElement extends Element | undefined = undefined> extends Component {
 	@event() readonly detailsOpenChange!: EventDispatcher<boolean>
@@ -119,6 +121,11 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 
 			:host([data-has-alternating-background]) {
 				background: var(--mo-data-grid-alternating-background);
+			}
+
+			:host([detailsOpen]) #contentContainer {
+				background: color-mix(in srgb, var(--mo-color-accent), transparent 85%);
+				font-weight: 600;
 			}
 
 			#contentContainer {
