@@ -11,7 +11,7 @@ export class DataGridColumnNumber<TData> extends DataGridColumnNumberBase<TData>
 
 	getEditContentTemplate(value: number | undefined, data: TData) {
 		return html`
-			<mo-field-number dense autofocus
+			<mo-field-number dense autofocus selectOnFocus
 				value=${ifDefined(value)}
 				@change=${(e: CustomEvent<number>) => this.handleEdit(e.detail, data)}
 			></mo-field-number>

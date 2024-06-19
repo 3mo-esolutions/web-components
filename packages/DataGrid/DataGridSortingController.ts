@@ -99,6 +99,10 @@ export class DataGridSortingController<TData> {
 	 * @returns - The sorted data
 	 */
 	toSorted(data: Array<TData>) {
+		return this.toSortedBy(data, d => d)
+	}
+
+	toSortedBy<T>(data: Array<T>, extractor: (data: T) => TData) {
 		const sorting = this.get()
 
 		if (!sorting?.length) {
@@ -108,8 +112,8 @@ export class DataGridSortingController<TData> {
 		return data.sort((a, b) => {
 			for (const definition of sorting) {
 				const { selector, strategy } = definition
-				const aValue = getValueByKeyPath(a, selector) ?? Infinity as any
-				const bValue = getValueByKeyPath(b, selector) ?? Infinity as any
+				const aValue = getValueByKeyPath(extractor(a), selector) ?? Infinity as any
+				const bValue = getValueByKeyPath(extractor(b), selector) ?? Infinity as any
 
 				if (aValue < bValue) {
 					return strategy === DataGridSortingStrategy.Ascending ? -1 : 1

@@ -1,4 +1,5 @@
 import { KeyboardController } from '@3mo/keyboard-controller'
+import type { DataRecord } from './DataRecord.js'
 
 export enum DataGridSelectionMode {
 	None = 'none',
@@ -17,7 +18,7 @@ export enum DataGridSelectionBehaviorOnDataChange {
 
 interface SelectableComponent<TData> {
 	selectionMode: DataGridSelectionMode
-	readonly flattenedData: Array<TData>
+	readonly dataRecords: Array<DataRecord<TData>>
 	selectedData: Array<TData>
 	isDataSelectable?(data: TData): boolean
 	selectionCheckboxesHidden?: boolean
@@ -39,7 +40,8 @@ export class DataGridSelectionController<TData> {
 
 	private get mode() { return this.host.selectionMode }
 
-	private get data() { return this.host.flattenedData }
+	private get data() { return this.host.dataRecords.map(d => d.data) }
+
 	private get selectableData() { return this.data.filter(d => this.isSelectable(d)) }
 
 	private get selectedData() { return this.host.selectedData }
@@ -58,6 +60,10 @@ export class DataGridSelectionController<TData> {
 
 	isSelectable(data: TData) {
 		return this.host.isDataSelectable?.(data) ?? true
+	}
+
+	isSelected(data: TData) {
+		return this.selectedData.includes(data)
 	}
 
 	selectAll() {
