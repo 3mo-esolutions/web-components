@@ -132,16 +132,18 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 		this.parametersChange.dispatch(this.parameters)
 	}
 
-	override handlePageChange(...args: Parameters<DataGrid<TData, TDetailsElement>['handlePageChange']>) {
-		super.handlePageChange(...args)
-		if (this.hasServerSidePagination) {
+	override setPage(...args: Parameters<DataGrid<TData, TDetailsElement>['setPage']>) {
+		const changed = this.page !== args[0]
+		super.setPage(...args)
+		if (this.hasServerSidePagination && changed) {
 			this.requestFetch()
 		}
 	}
 
-	override handlePaginationChange(...args: Parameters<DataGrid<TData, TDetailsElement>['handlePaginationChange']>) {
-		super.handlePaginationChange(...args)
-		if (this.hasServerSidePagination) {
+	override setPagination(...args: Parameters<DataGrid<TData, TDetailsElement>['setPagination']>) {
+		const changed = this.pagination !== args[0]
+		super.setPagination(...args)
+		if (this.hasServerSidePagination && changed) {
 			this.resetPageAndRequestFetch()
 		}
 	}
@@ -158,13 +160,12 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 		this.requestFetch()
 	}
 
-	override get renderData() {
-		if (this.hasFooter === false) {
-			return this.sortedData
-		}
-		return this.hasServerSidePagination
-			? this.sortedData.slice(0, this.pageSize)
-			: super.renderData
+	protected override get dataSkip() {
+		return !this.hasServerSidePagination ? super.dataSkip : 0
+	}
+
+	protected override get dataTake() {
+		return !this.hasServerSidePagination ? super.dataTake : Number.MAX_SAFE_INTEGER
 	}
 
 	override get hasPagination() {

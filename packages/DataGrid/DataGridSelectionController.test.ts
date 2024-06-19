@@ -1,5 +1,6 @@
 import { PureEventDispatcher } from '@a11d/lit'
 import { DataGridSelectionBehaviorOnDataChange, DataGridSelectionController, DataGridSelectionMode } from './DataGridSelectionController'
+import type { DataRecord } from '.'
 
 type Data = { id: number }
 
@@ -15,7 +16,7 @@ describe('DataGridSelectionController', () => {
 	beforeEach(() => {
 		controller = new DataGridSelectionController<Data>({
 			selectionMode: DataGridSelectionMode.None,
-			flattenedData: data,
+			dataRecords: data.map((data, index) => ({ data, index } as DataRecord<Data>)),
 			selectedData: [],
 			selectionChange: new PureEventDispatcher<Array<Data>>()
 		})
@@ -28,6 +29,34 @@ describe('DataGridSelectionController', () => {
 				expect(controller.hasSelection).toBe(hasSelection)
 			})
 		}
+	})
+
+	describe('isSelectable', () => {
+		it('should return true when isDataSelectable is not defined', () => {
+			expect(controller.isSelectable(data[0])).toBe(true)
+		})
+
+		it('should return isDataSelectable result', () => {
+			controller.host.isDataSelectable = (x: Data) => x.id % 2 === 0
+
+			expect(controller.isSelectable(data[0])).toBe(false)
+			expect(controller.isSelectable(data[1])).toBe(true)
+		})
+	})
+
+	describe('isSelected', () => {
+		it('should return true when data is selected', () => {
+			controller.host.selectionMode = DataGridSelectionMode.Single
+			controller.select([data[0]])
+
+			expect(controller.isSelected(data[0])).toBe(true)
+		})
+
+		it('should return false when data is not selected', () => {
+			controller.select([data[0]])
+
+			expect(controller.isSelected(data[1])).toBe(false)
+		})
 	})
 
 	describe('selectAll', () => {

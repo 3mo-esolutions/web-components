@@ -119,15 +119,20 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 	static override get styles() {
 		return css`
 			:host {
+				display: inline-grid;
+				align-items: center;
 				position: relative;
 				padding-inline: var(--mo-data-grid-cell-padding);
+				font-size: var(--mo-data-grid-cell-font-size);
+				outline: none;
+				min-height: var(--mo-data-grid-row-height);
+			}
+
+			:host(:not([isEditing])) div {
 				user-select: none;
 				white-space: nowrap;
 				overflow: hidden !important;
 				text-overflow: ellipsis;
-				font-size: var(--mo-data-grid-cell-font-size);
-				outline: none;
-				margin-block: auto;
 			}
 
 			:host(:not([isEditing]):focus) {
@@ -185,7 +190,9 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 
 	private get contentTemplate() {
 		return html`
-			${this.column.getContentTemplate?.(this.value, this.data) ?? html`${this.value}`}
+			<div>
+				${this.column.getContentTemplate?.(this.value, this.data) ?? html`${this.value}`}
+			</div>
 		`
 	}
 

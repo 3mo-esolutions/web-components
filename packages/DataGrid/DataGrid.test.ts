@@ -1,11 +1,11 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { DataGrid, type DataGridRow, DataGridSelectionMode, DataGridColumn } from './index.js'
+import { DataGrid, type DataGridRow, DataGridSelectionMode, DataGridColumn, DataRecord } from './index.js'
 import { html } from '@a11d/lit'
 
-type Person = { id: number, name: string, birthDate: DateTime }
+type Person = { id: number, name: string, birthDate: DateTime, children?: Array<Person> }
 
 class TestDataGrid extends DataGrid<Person> {
-	override data = [
+	override data: Array<Person> = [
 		{ id: 1, name: 'John', birthDate: new DateTime(2000, 0, 0) },
 		{ id: 2, name: 'Jane', birthDate: new DateTime(2000, 0, 0) },
 		{ id: 3, name: 'Joe', birthDate: new DateTime(2000, 0, 0) },
@@ -28,12 +28,62 @@ const getRowContextMenuTemplate = () => html`
 customElements.define('test-data-grid', TestDataGrid)
 
 describe('DataGrid', () => {
+	describe('Data', () => {
+		const fixture = new ComponentTestFixture<TestDataGrid>(html`<test-data-grid></test-data-grid>`)
+
+		it('should extract records out of data', () => {
+			const [first, second, third] = fixture.component.data
+
+			expect(fixture.component.dataRecords).toEqual([
+				new DataRecord(fixture.component, { index: 0, level: 0, data: first }),
+				new DataRecord(fixture.component, { index: 1, level: 0, data: second }),
+				new DataRecord(fixture.component, { index: 2, level: 0, data: third }),
+			])
+		})
+
+		it('should update records when data changes', async () => {
+			fixture.component.data = [
+				{ id: 4, name: 'John', birthDate: new DateTime(2000, 0, 0) },
+				{ id: 5, name: 'Jane', birthDate: new DateTime(2000, 0, 0) },
+			]
+			await fixture.updateComplete
+
+			const [first, second] = fixture.component.data
+
+			expect(fixture.component.dataRecords).toEqual([
+				new DataRecord(fixture.component, { index: 0, level: 0, data: first }),
+				new DataRecord(fixture.component, { index: 1, level: 0, data: second }),
+			])
+		})
+
+		it('should extract records out of nested data', async () => {
+			const [first, second, third] = fixture.component.data
+			fixture.component.subDataGridDataSelector = 'children'
+			fixture.component.data = [{ ...first, children: [third] }, second]
+			const firstWithChildren = fixture.component.data[0]
+
+			await fixture.updateComplete
+
+			expect(fixture.component.dataRecords).toEqual([
+				new DataRecord(fixture.component, {
+					index: 0,
+					level: 0,
+					data: firstWithChildren,
+					subData: [
+						new DataRecord(fixture.component, { index: 1, level: 1, data: third }),
+					]
+				}),
+				new DataRecord(fixture.component, { index: 1, level: 1, data: third }),
+				new DataRecord(fixture.component, { index: 2, level: 0, data: second }),
+			])
+		})
+	})
+
 	describe('Columns', () => {
 		const fixture = new ComponentTestFixture<TestDataGrid>(html`<test-data-grid></test-data-grid>`)
 
 		it('should auto-generate columns', () => {
 			const [firstColumn, secondColumn, thirdColumn] = fixture.component.columns
-			// TODO: dataSelector's type (KeyPath) leads to compiler exhaustion
 
 			// expect(firstColumn?.dataSelector as any).toEqual('id')
 			expect(firstColumn).toBeInstanceOf(DataGridColumn)
@@ -217,21 +267,16 @@ describe('DataGrid', () => {
 
 		it('should dispatch the "detailsOpenChange" event when a detail element of given row is opened or closed', async () => {
 			const row = fixture.component.rows[0] as DataGridRow<Person>
-			spyOn(row.detailsOpenChange, 'dispatch')
 			spyOn(fixture.component.rowDetailsOpen, 'dispatch')
 			spyOn(fixture.component.rowDetailsClose, 'dispatch')
 
 			row.renderRoot.querySelector('#detailsExpanderIconButton')?.dispatchEvent(new MouseEvent('click'))
 			await fixture.updateComplete
-			expect(row.detailsOpenChange.dispatch).toHaveBeenCalledTimes(1)
-			expect(row.detailsOpenChange.dispatch).toHaveBeenCalledWith(true)
 			expect(fixture.component.rowDetailsOpen.dispatch).toHaveBeenCalledTimes(1)
 			expect(fixture.component.rowDetailsOpen.dispatch).toHaveBeenCalledWith(row)
 
 			row.renderRoot.querySelector('#detailsExpanderIconButton')?.dispatchEvent(new MouseEvent('click'))
 			await fixture.updateComplete
-			expect(row.detailsOpenChange.dispatch).toHaveBeenCalledTimes(2)
-			expect(row.detailsOpenChange.dispatch).toHaveBeenCalledWith(false)
 			expect(fixture.component.rowDetailsClose.dispatch).toHaveBeenCalledTimes(1)
 			expect(fixture.component.rowDetailsClose.dispatch).toHaveBeenCalledWith(row)
 		})

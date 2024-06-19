@@ -19,7 +19,7 @@ export abstract class DataGridColumnDateTimeBase<TData, TDate extends { format(.
 	getEditContentTemplate(value: TDate | undefined, data: TData) {
 		return html`
 			${staticHtml`
-				<${this.fieldTag} dense autofocus
+				<${this.fieldTag} dense autofocus selectOnFocus
 					?pickerHidden=${this.pickerHidden}
 					.value=${value}
 					@change=${(e: CustomEvent<TDate>) => this.handleEdit(e.detail, data)}

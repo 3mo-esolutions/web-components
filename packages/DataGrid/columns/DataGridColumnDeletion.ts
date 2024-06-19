@@ -22,7 +22,6 @@ export class DataGridColumnDeletion<TData> extends DataGridColumnComponent<TData
 	@property() icon: MaterialIcon = 'delete'
 	@property({ type: Boolean }) prevent = false
 
-	override width = '40px'
 	override nonSortable = true
 	override nonEditable = true
 

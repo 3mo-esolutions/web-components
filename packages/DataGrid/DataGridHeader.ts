@@ -3,6 +3,7 @@ import { type Checkbox } from '@3mo/checkbox'
 import { tooltip } from '@3mo/tooltip'
 import { observeResize } from '@3mo/resize-observer'
 import { DataGridSelectionMode, DataGridSortingStrategy, type DataGridColumn, type DataGrid, DataGridSidePanelTab } from './index.js'
+import type { DataGridColumnsController } from './DataGridColumnsController.js'
 
 @component('mo-data-grid-header')
 export class DataGridHeader<TData> extends Component {
@@ -134,10 +135,12 @@ export class DataGridHeader<TData> extends Component {
 
 	private get detailsExpanderTemplate() {
 		return this.dataGrid.hasDetails === false ? html.nothing : html`
-			<mo-flex class='details' justifyContent='center' alignItems='center' ${this.getResizeObserver('detailsColumnWidthInPixels')}>
+			<mo-flex class='details' justifyContent='center' alignItems='center'
+				${style({ insetInlineStart: '0px' })}
+				${this.getResizeObserver('detailsColumnWidthInPixels')}
+			>
 				${!this.dataGrid.hasDetails || !this.dataGrid.multipleDetails ? html.nothing : html`
-					<mo-icon-button dense ${style({ padding: '-10px 0px 0 -10px' })}
-						${style({ display: 'inherit' })}
+					<mo-icon-button dense
 						icon=${this.dataGrid.allRowDetailsOpen ? 'unfold_less' : 'unfold_more'}
 						@click=${() => this.toggleAllDetails()}
 					></mo-icon-button>
@@ -148,9 +151,12 @@ export class DataGridHeader<TData> extends Component {
 
 	private get selectionTemplate() {
 		return this.dataGrid.hasSelection === false || this.dataGrid.selectionCheckboxesHidden ? html.nothing : html`
-			<mo-flex class='selection' justifyContent='center' alignItems='center' ${this.getResizeObserver('selectionColumnWidthInPixels')}>
+			<mo-flex class='selection' justifyContent='center' alignItems='center'
+				${style({ insetInlineStart: this.dataGrid.hasDetails ? '20px' : '0px' })}
+				${this.getResizeObserver('selectionColumnWidthInPixels')}
+			>
 				${this.dataGrid.selectionMode !== DataGridSelectionMode.Multiple ? html.nothing : html`
-					<mo-checkbox ${style({ position: 'absolute' })} .selected=${this.selection} @change=${this.handleSelectionChange}></mo-checkbox>
+					<mo-checkbox .selected=${this.selection} @change=${this.handleSelectionChange}></mo-checkbox>
 				`}
 			</mo-flex>
 		`
@@ -215,9 +221,9 @@ export class DataGridHeader<TData> extends Component {
 		`
 	}
 
-	private getResizeObserver(property: keyof DataGrid<TData>) {
+	private getResizeObserver(property: keyof DataGridColumnsController<TData>) {
 		// @ts-expect-error Readonly property set here
-		return observeResize(([entry]) => this.dataGrid[property] = entry?.contentRect.width ?? 0)
+		return observeResize(([entry]) => this.dataGrid.columnsController[property] = entry?.contentRect.width ?? 0)
 	}
 
 	private sort(column: DataGridColumn<TData>) {
