@@ -47,17 +47,6 @@ export class DataGridHeader<TData> extends Component {
 		this.requestUpdate()
 	}
 
-	get selection() {
-		switch (this.dataGrid.selectedData.length) {
-			case 0:
-				return false
-			case this.dataGrid.dataLength:
-				return true
-			default:
-				return 'indeterminate'
-		}
-	}
-
 	static override get styles() {
 		return css`
 			:host {
@@ -204,6 +193,27 @@ export class DataGridHeader<TData> extends Component {
 		`
 	}
 
+	private get selection() {
+		switch (this.dataGrid.selectedData.length) {
+			case 0:
+				return false
+			case this.dataGrid.dataLength:
+				return true
+			default:
+				return 'indeterminate'
+		}
+	}
+
+	private readonly toggleSelection = (e: PointerEvent) => {
+		e.stopPropagation()
+		const selection = this.selection === 'indeterminate' ? false : !this.selection
+		if (selection === true) {
+			this.dataGrid.selectAll()
+		} else {
+			this.dataGrid.deselectAll()
+		}
+	}
+
 	private get contentTemplate() {
 		return html`
 			${this.dataGrid.visibleColumns.map(this.getHeaderCellTemplate)}
@@ -300,16 +310,6 @@ export class DataGridHeader<TData> extends Component {
 	private toggleAllDetails() {
 		this.dataGrid.toggleRowDetails()
 		this.requestUpdate()
-	}
-
-	private readonly toggleSelection = (e: PointerEvent) => {
-		e.stopPropagation()
-		const selection = this.selection === 'indeterminate' ? false : !this.selection
-		if (selection === true) {
-			this.dataGrid.selectAll()
-		} else {
-			this.dataGrid.deselectAll()
-		}
 	}
 }
 
