@@ -70,7 +70,9 @@ export class DataGridColumn<TData, TValue = unknown> {
 			return
 		}
 
-		const sum = this.dataGrid.sumsData
+		const sumsData = this.dataGrid.selectedData.length ? this.dataGrid.selectedData : this.dataGrid.renderDataRecords.map(r => r.data)
+
+		const sum = sumsData
 			.map(data => parseFloat(getValueByKeyPath(data, this.dataSelector) as unknown as string))
 			.filter(n => isNaN(n) === false)
 			.reduce(((a, b) => a + b), 0)
@@ -97,8 +99,8 @@ export class DataGridColumn<TData, TValue = unknown> {
 			.filter(x => x !== undefined)
 			.reduce((a, b) => a! + b!, 0)!
 
-		const start = `${dataGrid.selectionColumnWidthInPixels + dataGrid.detailsColumnWidthInPixels + calculate('start')}px`
-		const end = `${calculate('end') + dataGrid.moreColumnWidthInPixels}px`
+		const start = `${dataGrid.columnsController.selectionColumnWidthInPixels + dataGrid.columnsController.detailsColumnWidthInPixels + calculate('start')}px`
+		const end = `${calculate('end') + dataGrid.columnsController.moreColumnWidthInPixels}px`
 
 		switch (this.sticky) {
 			case 'start':

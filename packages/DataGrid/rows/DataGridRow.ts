@@ -1,49 +1,14 @@
-import { css, property, Component, html, query, queryAll, style, type HTMLTemplateResult, LitElement, event } from '@a11d/lit'
+import { css, property, Component, html, query, queryAll, style, type HTMLTemplateResult, LitElement, live } from '@a11d/lit'
 import { DirectionsByLanguage } from '@3mo/localization'
 import { popover } from '@3mo/popover'
 import { ContextMenu } from '@3mo/context-menu'
 import { type DataGridColumn } from '../DataGridColumn.js'
-import { type DataGrid, type DataGridCell, DataGridPrimaryContextMenuItem, DataGridSelectionMode } from '../index.js'
+import { type DataGridCell, DataGridPrimaryContextMenuItem, DataGridSelectionMode, type DataRecord } from '../index.js'
 
-/**
- * @attr dataGrid
- * @attr data
- * @attr selected
- * @attr detailsOpen
- *
- * @fires detailsOpenChange - Dispatched when the details open state changes
- */
 export abstract class DataGridRow<TData, TDetailsElement extends Element | undefined = undefined> extends Component {
-	@event() readonly detailsOpenChange!: EventDispatcher<boolean>
-
 	@queryAll('mo-data-grid-cell') readonly cells!: Array<DataGridCell<any, TData, TDetailsElement>>
 	@queryAll('[mo-data-grid-row]') readonly subRows!: Array<DataGridRow<TData, TDetailsElement>>
 	@query('#contentContainer') readonly content!: HTMLElement
-
-	@property({ type: Object }) dataGrid!: DataGrid<TData, TDetailsElement>
-	@property({ type: Object }) data!: TData
-	@property({ type: Boolean, reflect: true }) selected = false
-	@property({ type: Number }) index?: number
-	@property({
-		type: Boolean,
-		reflect: true,
-		updated(this: DataGridRow<TData, TDetailsElement>, detailsOpen: boolean, wasDetailsOpen?: boolean) {
-			if (wasDetailsOpen !== undefined) {
-				if (detailsOpen) {
-					this.dataGrid.rowDetailsOpen.dispatch(this)
-				} else {
-					this.dataGrid.rowDetailsClose.dispatch(this)
-				}
-			}
-		}
-	}) detailsOpen = false
-
-	@property({
-		type: Number,
-		updated(this: DataGridRow<TData, TDetailsElement>) {
-			this.style.setProperty('--_level', this.level.toString())
-		}
-	}) level = 0
 
 	@property({
 		type: Boolean,
@@ -54,6 +19,14 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		}
 	}) isIntersecting = false
 
+	@property({ type: Object }) dataRecord!: DataRecord<TData>
+	get dataGrid() { return this.dataRecord.dataGrid }
+	get data() { return this.dataRecord.data }
+	get index() { return this.dataRecord.index }
+	get level() { return this.dataRecord.level }
+	get selected() { return this.dataRecord.isSelected }
+	get detailsOpen() { return this.dataRecord.detailsOpen }
+
 	get detailsElement() {
 		return this.renderRoot.querySelector('#detailsContainer')?.firstElementChild as TDetailsElement as TDetailsElement | undefined
 	}
@@ -63,7 +36,6 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	}
 
 	override connected() {
-		this.toggleAttribute('data-has-alternating-background', this.dataGrid.hasAlternatingBackground && (this.index ?? 0) % 2 === 1)
 		if ((this.index ?? 0) < 25) {
 			this.isIntersecting = true
 		}
@@ -90,7 +62,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	}
 
 	protected get hasDetails() {
-		return this.dataGrid.hasDetail(this.data)
+		return this.dataRecord.hasDetails
 	}
 
 	static override get styles() {
@@ -100,6 +72,12 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				position: relative;
 				height: auto;
 				width: 100%;
+			}
+
+			:host(:hover), :host([data-has-alternating-background]:hover) {
+				#contentContainer {
+					--mo-data-grid-sticky-part-color: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-accent) 25%);
+				}
 			}
 
 			:host(:hover) #contentContainer {
@@ -115,10 +93,12 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				inset-inline-start: 0;
 				position: absolute;
 				background-color: var(--mo-color-accent);
+				z-index: 2;
 			}
 
 			:host([data-has-alternating-background]) {
 				background: var(--mo-data-grid-alternating-background);
+				--mo-data-grid-sticky-part-color: color-mix(in srgb, var(--mo-color-surface), black var(--mo-data-grid-alternating-background-transparency));
 			}
 
 			#contentContainer {
@@ -136,7 +116,6 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			}
 
 			#contextMenuIconButton {
-				transition: 250ms;
 				opacity: 0.5;
 				color: var(--mo-color-gray);
 			}
@@ -144,26 +123,26 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			:host([selected]), :host([data-context-menu-open]) {
 				#contentContainer {
 					background: var(--mo-data-grid-selection-background) !important;
-					--mo-data-grid-sticky-part-color: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-accent));
+					--mo-data-grid-sticky-part-color: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-accent)) !important;
 				}
 
 				#contextMenuIconButton {
-					color: var(--mo-color-foreground);
+					color: currentColor;
 					opacity: 1;
 				}
 			}
 
 			#contentContainer:hover #contextMenuIconButton {
-				color: var(--mo-color-accent);
+				color: currentColor;
 				opacity: 1;
 			}
 
 			#detailsExpanderIconButton {
-				transition: 250ms;
-			}
+				transition: transform 250ms;
 
-			#detailsExpanderIconButton:hover {
-				color: var(--mo-color-accent);
+				&[data-rtl] {
+					transform: rotate(180deg);
+				}
 			}
 
 			:host([detailsOpen]) #detailsExpanderIconButton {
@@ -191,6 +170,9 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	}
 
 	protected override get template() {
+		this.style.setProperty('--_level', this.level.toString())
+		this.toggleAttribute('selected', this.dataRecord.isSelected)
+		this.toggleAttribute('detailsOpen', this.dataRecord.detailsOpen)
 		return !this.isIntersecting ? html.nothing : html`
 			<mo-grid id='contentContainer' columns='subgrid'
 				@click=${() => this.handleContentClick()}
@@ -217,13 +199,14 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				@click=${(e: Event) => e.stopPropagation()}
 				@dblclick=${(e: Event) => e.stopPropagation()}
 			>
-			${this.hasDetails === false ? html.nothing : html`
-				<mo-icon-button id='detailsExpanderIconButton' ${style({ color: 'var(--mo-color-foreground)' })}
-					icon=${DirectionsByLanguage.get() === 'rtl' ? 'keyboard_arrow_left' : 'keyboard_arrow_right'}
-					?disabled=${this.dataGrid.hasDataDetail?.(this.data) === false}
-					@click=${() => this.toggleDetails()}
-				></mo-icon-button>
-			`}
+				${this.hasDetails === false ? html.nothing : html`
+					<mo-icon-button id='detailsExpanderIconButton'
+						icon='keyboard_arrow_right'
+						?data-rtl=${DirectionsByLanguage.get() === 'rtl'}
+						?disabled=${this.dataRecord.hasDetails === false}
+						@click=${() => this.toggleDetails()}
+					></mo-icon-button>
+				`}
 			</mo-flex>
 		`
 	}
@@ -237,8 +220,8 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			>
 				<mo-checkbox
 					tabindex='-1'
-					?disabled=${this.dataGrid.selectionController.isSelectable(this.data) === false}
-					?selected=${this.selected}
+					?disabled=${this.dataRecord.isSelectable === false}
+					.selected=${live(this.selected)}
 					@change=${(e: CustomEvent<boolean>) => this.setSelection(e.detail)}
 				></mo-checkbox>
 			</mo-flex>
@@ -286,16 +269,11 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			return this.dataGrid.getRowDetailsTemplate(this.data)
 		}
 
-		const subData = this.dataGrid.getSubData(this.data)
-		this.toggleAttribute('has-sub-data', !!subData)
+		this.toggleAttribute('has-sub-data', !!this.dataRecord.hasSubData)
 
-		if (subData) {
-			return html`
-				${subData.map(data => this.dataGrid.getRowTemplate(data, undefined, this.level + 1))}
-			`
-		}
-
-		return html.nothing
+		return !this.dataRecord.hasSubData ? html.nothing : html`
+			${this.dataRecord.subData?.map(data => this.dataGrid.getRowTemplate(data))}
+		`
 	}
 
 	private setSelection(selected: boolean) {
@@ -363,13 +341,13 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		await this.updateComplete
 	}
 
-	protected toggleDetails() {
-		this.setDetailsOpen(!this.detailsOpen)
-	}
-
-	protected setDetailsOpen(value: boolean) {
-		this.detailsOpen = value
-		this.detailsOpenChange.dispatch(value)
+	toggleDetails() {
+		this.dataGrid.detailsController.toggle(this.dataRecord)
+		if (this.dataRecord.detailsOpen) {
+			this.dataGrid.rowDetailsOpen.dispatch(this)
+		} else {
+			this.dataGrid.rowDetailsClose.dispatch(this)
+		}
 	}
 }
 
