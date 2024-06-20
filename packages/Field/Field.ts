@@ -150,6 +150,7 @@ export class Field extends Component {
 				text-overflow: ellipsis;
 				max-width: 100%;
 				user-select: none;
+				font-size: var(--mo-field-label-font-size);
 			}
 
 			:host([dense][populated]) span {
