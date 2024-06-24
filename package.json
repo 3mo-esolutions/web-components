@@ -42,6 +42,7 @@
 		"@types/jasmine": "x",
 		"@typescript-eslint/eslint-plugin": "x",
 		"@typescript-eslint/parser": "x",
+		"ajv": "7.x",
 		"concurrently": "x",
 		"del-cli": "x",
 		"esbuild": "0.x",

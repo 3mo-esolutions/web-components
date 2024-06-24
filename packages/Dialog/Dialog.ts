@@ -252,7 +252,7 @@ export class Dialog extends Component implements IDialog {
 
 	protected override get template() {
 		return html`
-			<md-dialog exportparts='scrim' ?open=${this.open}
+			<md-dialog exportparts='scrim' ?open=${this.open} quick
 				@scroll=${(e: Event) => this.dispatchEvent(new Event('scroll', e))}
 				@cancel=${(e: Event) => e.preventDefault()}
 				@open=${() => this.showTopLayer = true}
