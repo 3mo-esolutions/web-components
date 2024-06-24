@@ -16,9 +16,9 @@ const queryActionElement = (slotName: string) => {
 @component('mo-business-suite-authentication-dialog')
 @DialogComponent.dialogElement()
 export class BusinessSuiteAuthenticationDialog extends Component implements IDialog {
-	@event({ bubbles: true, composed: true, cancelable: true }) readonly dialogHeadingChange!: EventDispatcher<string>
+	@event({ bubbles: true, composed: true, cancelable: true }) readonly pageHeadingChange!: EventDispatcher<string>
 
-	@property({ updated(this: IDialog) { this.dialogHeadingChange.dispatch(this.heading) } }) heading = ''
+	@property({ updated(this: IDialog) { this.pageHeadingChange.dispatch(this.heading) } }) heading = ''
 
 	@property({
 		updated(this: BusinessSuiteAuthenticationDialog, value: boolean) {

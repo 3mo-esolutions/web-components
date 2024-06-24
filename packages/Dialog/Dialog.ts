@@ -39,7 +39,7 @@ const queryActionElement = (slotName: string) => {
  * @slot - Content of the dialog
  * @slot primaryAction - Primary action of the dialog
  * @slot secondaryAction - Secondary action of the dialog
- * @slot header - Header of the dialog
+ * @slot action - Additional actions of the dialog which are displayed in the header
  * @slot footer - Footer of the dialog
  *
  * @csspart heading - Dialog heading
@@ -58,7 +58,7 @@ const queryActionElement = (slotName: string) => {
  * @i18n "Close"
  * @i18n "Open as Popup"
  *
- * @fires dialogHeadingChange - Dispatched when the dialog heading changes
+ * @fires pageHeadingChange - Dispatched when the dialog heading changes
  * @fires requestPopup - Dispatched when the dialog is requested to be popped up
  */
 @component('mo-dialog')
@@ -66,7 +66,7 @@ const queryActionElement = (slotName: string) => {
 export class Dialog extends Component implements IDialog {
 	static readonly executingActionAdaptersByComponent = new Map<Constructor<HTMLElement>, (actionElement: HTMLElement, isExecuting: boolean) => void>()
 
-	@event({ bubbles: true, cancelable: true, composed: true }) readonly dialogHeadingChange!: EventDispatcher<string>
+	@event({ bubbles: true, cancelable: true, composed: true }) readonly pageHeadingChange!: EventDispatcher<string>
 	@event() readonly requestPopup!: EventDispatcher
 
 	@property({
@@ -78,7 +78,7 @@ export class Dialog extends Component implements IDialog {
 			}
 		}
 	}) open = false
-	@property({ updated(this: Dialog) { this.dialogHeadingChange.dispatch(this.heading) } }) heading = ''
+	@property({ updated(this: Dialog) { this.pageHeadingChange.dispatch(this.heading) } }) heading = ''
 	@property({ reflect: true }) size = DialogSize.Small
 	@property({ type: Boolean }) blocking = false
 	@property({ type: Boolean }) primaryOnEnter = false
@@ -141,6 +141,31 @@ export class Dialog extends Component implements IDialog {
 
 			:host([boundToWindow]) {
 				--mo-dialog-default-scrim-color: var(--mo-color-background);
+				--_margin-alteration: calc(-1 * max(min(1rem, 1vw), min(1rem, 1vh)));
+
+				md-dialog::part(dialog) {
+					max-height: 100vh !important;
+					max-height: 100dvh !important;
+					max-width: 100vw !important;
+				}
+
+				mo-page {
+					--mo-page-gap: 0;
+				}
+
+				#content {
+					margin-inline: var(--_margin-alteration);
+				}
+
+				#footer {
+					position: sticky;
+					inset-block-end: 0;
+					inset-inline: 0;
+					background: var(--mo-color-background);
+					border-block-start: 1px solid var(--mo-color-transparent-gray-3);
+					margin-inline: var(--_margin-alteration);
+					margin-block-end: var(--_margin-alteration);
+				}
 			}
 
 			:host([boundToWindow][size=large]) md-dialog {
@@ -172,12 +197,12 @@ export class Dialog extends Component implements IDialog {
 				display: none;
 			}
 
-			mo-flex[slot=headline] {
+			#header {
 				padding-block: 14px 10px;
 				padding-inline: 24px 12px;
 			}
 
-			:host([size=large]) mo-flex[slot=headline] {
+			:host([size=large]) #header {
 				padding-bottom: 15px;
 			}
 
@@ -193,11 +218,12 @@ export class Dialog extends Component implements IDialog {
 				color: var(--mo-dialog-heading-color, var(--mo-color-foreground));
 			}
 
-			mo-flex[slot=actions] {
+			#footer {
 				padding: 16px;
+				gap: 8px;
 			}
 
-			form[slot=content] {
+			#content {
 				flex: 1;
 				padding: 20px 24px;
 				-webkit-font-smoothing: antialiased;
@@ -230,12 +256,6 @@ export class Dialog extends Component implements IDialog {
 				box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.2), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 9px 46px 8px rgba(0, 0, 0, 0.12);
 			}
 
-			:host([boundToWindow]) md-dialog::part(dialog) {
-				max-height: 100vh !important;
-				max-height: 100dvh !important;
-				max-width: 100vw !important;
-			}
-
 			@media (max-width: 1024px), (max-height: 768px) {
 				md-dialog::part(dialog) {
 					max-height: 100vh !important;
@@ -251,7 +271,13 @@ export class Dialog extends Component implements IDialog {
 	}
 
 	protected override get template() {
-		return html`
+		return this.boundToWindow ? html`
+			<mo-page heading=${this.heading}>
+				<slot name='action' slot='action'></slot>
+				${this.contentTemplate}
+				${this.footerTemplate}
+			</mo-page>
+		` : html`
 			<md-dialog exportparts='scrim' ?open=${this.open} quick
 				@scroll=${(e: Event) => this.dispatchEvent(new Event('scroll', e))}
 				@cancel=${(e: Event) => e.preventDefault()}
@@ -268,11 +294,11 @@ export class Dialog extends Component implements IDialog {
 
 	protected get headerTemplate() {
 		return html`
-			<mo-flex slot='headline' part='header' direction='horizontal'>
+			<mo-flex id='header' slot=${this.boundToWindow ? '' : 'headline'} part='header' direction='horizontal'>
 				${this.headingTemplate}
 				<mo-flex direction='horizontal-reversed' alignItems='center' gap='4px' style='flex: 1'>
-					${this.headerOptionsTemplate}
-					${this.headerSlotTemplate}
+					${this.actionsTemplate}
+					<slot name='action'></slot>
 				</mo-flex>
 			</mo-flex>
 		`
@@ -284,17 +310,7 @@ export class Dialog extends Component implements IDialog {
 		`
 	}
 
-	protected get headerSlotTemplate() {
-		return html`
-			<slot name='header'>${this.headerDefaultTemplate}</slot>
-		`
-	}
-
-	protected get headerDefaultTemplate() {
-		return html.nothing
-	}
-
-	protected get headerOptionsTemplate() {
+	protected get actionsTemplate() {
 		return html`
 			${this.boundToWindow || this.blocking ? html.nothing : html`
 				<mo-icon-button icon='close' ${tooltip(t('Close'))} @click=${() => this.handleAction(DialogActionKey.Cancellation)}></mo-icon-button>
@@ -307,7 +323,7 @@ export class Dialog extends Component implements IDialog {
 
 	protected get contentTemplate() {
 		return html`
-			<form slot='content' part='content' method='dialog'>
+			<form id='content' slot=${this.boundToWindow ? '' : 'content'} part='content' method='dialog'>
 				<slot>${this.contentDefaultTemplate}</slot>
 			</form>
 		`
@@ -335,7 +351,7 @@ export class Dialog extends Component implements IDialog {
 
 	protected get footerTemplate() {
 		return this.shallHideFooter ? html.nothing : html`
-			<mo-flex slot='actions' part='footer' direction='horizontal-reversed'>
+			<mo-flex id='footer' slot=${this.boundToWindow ? '' : 'actions'} part='footer' direction='horizontal-reversed'>
 				${this.primaryActionSlotTemplate}
 				${this.secondaryActionSlotTemplate}
 				${this.footerSlotTemplate}
