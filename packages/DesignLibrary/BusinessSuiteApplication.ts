@@ -69,7 +69,7 @@ export abstract class BusinessSuiteApplication extends Application {
 	}
 
 	private get navigationTemplate() {
-		return html`
+		return !window.locationbar.visible ? html.nothing : html`
 			<mo-navigation .navigations=${this.navigations}>
 				${this.navigationContentTemplate}
 			</mo-navigation>
