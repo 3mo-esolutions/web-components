@@ -333,7 +333,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	}
 
 	private get contextMenuTemplate() {
-		return this.dataGrid.getRowContextMenuTemplate?.(this.contextMenuData) ?? html.nothing
+		return this.dataGrid.contextMenuController.getMenuContentTemplate(this.contextMenuData)
 	}
 
 	async closeContextMenu() {

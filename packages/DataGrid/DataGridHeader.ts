@@ -6,10 +6,6 @@ import { DataGridSelectionMode, DataGridSortingStrategy, type DataGridColumn, ty
 import type { DataGridColumnsController } from './DataGridColumnsController.js'
 
 Localizer.register('en', {
-	'${count:pluralityNumber} entries selected': [
-		'1 entry selected',
-		'${count} entries selected',
-	],
 	'Options for ${count:pluralityNumber} selected entries': [
 		'Options for the selected entry',
 		'Options for ${count} selected entries',
@@ -17,10 +13,6 @@ Localizer.register('en', {
 })
 
 Localizer.register('de', {
-	'${count:pluralityNumber} entries selected': [
-		'1 Eintrag ausgewählt',
-		'${count} Einträge ausgewählt',
-	],
 	'Options for ${count:pluralityNumber} selected entries': [
 		'Optionen für den ausgewählten Eintrag',
 		'Optionen für ${count} ausgewählte Einträge',
@@ -138,17 +130,11 @@ export class DataGridHeader<TData> extends Component {
 			}
 
 			.context-menu {
-				background-color: color-mix(in srgb, var(--mo-data-grid-sticky-part-color), var(--mo-color-accent) 50%);
+				background-color: var(--mo-color-accent);
 
 				mo-icon-button {
 					color: var(--mo-color-on-accent);
-					font-size: 22px;
-				}
-
-				mo-menu div {
-					padding: 12px 8px;
-					color: var(--mo-color-gray);
-					pointer-events: none;
+					font-size: 20px;
 				}
 			}
 		`
@@ -271,11 +257,7 @@ export class DataGridHeader<TData> extends Component {
 						<mo-icon-button dense icon='more_vert' title=${t('Actions for ${count:pluralityNumber} selected entries', { count: this.dataGrid.selectedData.length })}></mo-icon-button>
 
 						<mo-menu slot='popover'>
-							<div>
-								${t('${count:pluralityNumber} entries selected', { count: this.dataGrid.selectedData.length })}
-							</div>
-							<mo-line></mo-line>
-							${this.dataGrid.getRowContextMenuTemplate?.(this.dataGrid.selectedData) ?? html.nothing}
+							${this.dataGrid.contextMenuController.getMenuContentTemplate()}
 						</mo-menu>
 					</mo-popover-container>
 				</mo-flex>

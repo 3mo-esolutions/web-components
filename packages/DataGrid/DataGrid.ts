@@ -13,7 +13,7 @@ import { DataGridColumnsController } from './DataGridColumnsController.js'
 import { DataGridSelectionBehaviorOnDataChange, DataGridSelectionController, DataGridSelectionMode } from './DataGridSelectionController.js'
 import { DataGridSortingController, type DataGridRankedSortDefinition, type DataGridSorting } from './DataGridSortingController.js'
 import { DataGridDetailsController } from './DataGridDetailsController.js'
-import { CsvGenerator, DataGridSidePanelTab, type DataGridColumn, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, type DataGridSidePanel } from './index.js'
+import { CsvGenerator, DataGridSidePanelTab, type DataGridColumn, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, type DataGridSidePanel, DataGridContextMenuController } from './index.js'
 import { DataRecord } from './DataRecord.js'
 
 Localizer.register('de', {
@@ -287,15 +287,15 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}
 
 	get hasContextMenu() {
-		return this.getRowContextMenuTemplate !== undefined
+		return this.contextMenuController.hasContextMenu
 	}
 
 	get toolbarElements() {
-		return Array.from(this.children).filter(c => c.slot === 'toolbar' && c.getAttribute('hidden') !== '')
+		return [...this.children].filter(c => c.slot === 'toolbar' && c.getAttribute('hidden') !== '')
 	}
 
 	get filterElements() {
-		return Array.from(this.children).filter(c => c.slot === 'filter' && c.getAttribute('hidden') !== '')
+		return [...this.children].filter(c => c.slot === 'filter' && c.getAttribute('hidden') !== '')
 	}
 
 	get hasToolbar() {
@@ -376,6 +376,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	readonly columnsController = new DataGridColumnsController(this)
 	readonly selectionController = new DataGridSelectionController(this)
 	readonly sortingController = new DataGridSortingController(this)
+	readonly contextMenuController = new DataGridContextMenuController(this)
 	readonly detailsController = new DataGridDetailsController(this)
 
 	readonly rowIntersectionObserver?: IntersectionObserver

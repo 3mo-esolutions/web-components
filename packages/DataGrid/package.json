@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/data-grid",
-	"version": "0.9.3",
+	"version": "0.9.4",
 	"description": "A data grid web component",
 	"repository": {
 		"type": "git",
@@ -51,6 +51,7 @@
 		"@3mo/theme": "x",
 		"@3mo/downloader": "x",
 		"@3mo/focus-ring": "x",
+		"@3mo/line": "x",
 		"@3mo/keyboard-controller": "x",
 		"requestidlecallback-polyfill": "x"
 	}
