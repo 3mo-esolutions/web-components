@@ -9,7 +9,7 @@ Icon.defaultVariant = IconVariant.Sharp
 Localizer.register('de', {
 	'User Settings': 'Benutzereinstellungen',
 	'Close': 'Schließen',
-	'Open as Popup': 'Als Popup öffnen',
+	'Open as Tab': 'Als Tab öffnen',
 	'Cancel': 'Abbrechen',
 	'Expand': 'Erweitern',
 	'Collapse': 'Reduzieren',

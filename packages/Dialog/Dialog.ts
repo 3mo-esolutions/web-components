@@ -56,7 +56,7 @@ const queryActionElement = (slotName: string) => {
  * @cssprop --mo-dialog-heading-line-height - Line height of the dialog heading
  *
  * @i18n "Close"
- * @i18n "Open as Popup"
+ * @i18n "Open as Tab"
  *
  * @fires pageHeadingChange - Dispatched when the dialog heading changes
  * @fires requestPopup - Dispatched when the dialog is requested to be popped up
@@ -316,7 +316,7 @@ export class Dialog extends Component implements IDialog {
 				<mo-icon-button icon='close' ${tooltip(t('Close'))} @click=${() => this.handleAction(DialogActionKey.Cancellation)}></mo-icon-button>
 			`}
 			${this.boundToWindow || !this.poppable ? html.nothing : html`
-				<mo-icon-button icon='launch' ${tooltip(t('Open as Popup'))} @click=${() => this.requestPopup.dispatch()}></mo-icon-button>
+				<mo-icon-button icon='launch' ${tooltip(t('Open as Tab'))} @click=${() => this.requestPopup.dispatch()}></mo-icon-button>
 			`}
 		`
 	}
