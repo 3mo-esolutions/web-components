@@ -63,15 +63,15 @@ class Commit {
 }
 
 class ChangeSet {
-	static regex = /(?<type>\w+)(\((?<scope>\w+)\))?(!?): (?<message>.+)/
+	static regex = /(?<type>\w+)(\((?<scope>\w+)\))?(?<breakingChangeMarker>!?): (?<message>.+)/
 
 	static fromMessage(/** @type string */ message) {
 		const match = message.match(ChangeSet.regex)?.groups
 		if (!match) {
 			return new ChangeSet({ message })
 		}
-		const { type, scope, message: _message } = match
-		return new ChangeSet({ type, scope, message: _message })
+		const { type, scope, breakingChangeMarker, message: _message } = match
+		return new ChangeSet({ type, scope, message: _message, breakingChange: !!breakingChangeMarker })
 	}
 
 	static order = ['feat', 'fix', 'chore', 'refactor', 'test', 'docs', 'perf']
@@ -98,13 +98,14 @@ class ChangeSet {
 	/** @readonly @type {string} */ scope
 	/** @readonly @type {string} */ message
 	/** @readonly @type {Commit} */ commit
+	/** @readonly @type {boolean} */ breakingChange
 
 	valueOf() {
 		return ChangeSet.order.indexOf(this.type)
 	}
 
 	toString() {
-		return `- ${this.emoji} **${this.typeName}**: ${this.message} ([${this.commit.hash.slice(0, 7)}](${this.commit.package.packageJson.repository.url}/commit/${this.commit.hash}))`
+		return `- **${this.emoji}${this.breakingChange ? '⚠️ Breaking ' : ' '}${this.typeName}**: ${this.message} ([${this.commit.hash.slice(0, 7)}](${this.commit.package.packageJson.repository.url}/commit/${this.commit.hash}))`
 	}
 }
 
