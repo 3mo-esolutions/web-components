@@ -38,7 +38,7 @@ export class DataGridContextMenuController<TData> extends Controller {
 		return !this.hasContextMenu ? html.nothing : html`
 			${data.length === 1 ? html.nothing : html`
 				<div ${style(DataGridContextMenuController.infoStyle)}>
-					<span ${style(DataGridContextMenuController.infoCountStyle)}>${data.length}</span>
+					<span ${style(DataGridContextMenuController.infoCountStyle)}>${data.length.format()}</span>
 					${t('selected')}
 				</div>
 				<mo-line></mo-line>
