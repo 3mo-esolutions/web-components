@@ -282,6 +282,32 @@ describe('DataGrid', () => {
 		})
 	})
 
+	describe('MultipleDetailsElement', () => {
+		const fixture = new ComponentTestFixture<TestDataGrid>(html`
+			<test-data-grid
+				detailsOnClick
+				subDataGridDataSelector='children'
+			></test-data-grid>
+		`)
+
+		it('should open only the next level without expanding further', async () => {
+			const [first, second, third] = fixture.component.data
+			fixture.component.data = [{ ...first, children: [{ ...second, children: [{ ...third }] }] }]
+
+			await fixture.updateComplete
+
+			const row = fixture.component.rows[0] as DataGridRow<Person>
+			row.renderRoot.querySelector('#contentContainer')?.dispatchEvent(new MouseEvent('click'))
+
+			await fixture.updateComplete
+
+			const children = row.renderRoot.querySelector('#detailsContainer')?.children
+
+			expect(row.detailsOpen).toBe(true)
+			expect(children?.length).toBe(1)
+		})
+	})
+
 	describe('Editability', () => {
 		const expectCellToBeEditable = (fixture: ComponentTestFixture<TestDataGrid>, editable: boolean, alsoWithoutDoubleClick = false) => {
 			const cell = fixture.component.rows[0]?.cells[0]
