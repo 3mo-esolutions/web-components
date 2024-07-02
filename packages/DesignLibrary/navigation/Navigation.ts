@@ -97,6 +97,16 @@ export class Navigation extends Component {
 				height: 40px;
 				font-size: 0.875rem;
 			}
+
+			@media (max-width: 576px) {
+				#navbar-navigations {
+					display: none;
+				}
+
+				#navbar {
+					justify-content: space-between;
+				}
+			}
 		`
 	}
 
@@ -134,6 +144,11 @@ export class Navigation extends Component {
 	private async checkNavigationOverflow() {
 		// As the items render using a "repeat" directive, they are not immediately available in the DOM sometimes.
 		await new Promise(resolve => setTimeout(resolve))
+
+		if (matchMedia('(max-width: 576px)').matches) {
+			this.mobileNavigation = true
+			return
+		}
 
 		const lastNavigationItem = this.navigationsContainer.style.flexDirection === 'row-reverse'
 			? this.navigationsContainer.firstElementChild
