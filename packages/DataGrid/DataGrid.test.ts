@@ -4,12 +4,14 @@ import { html } from '@a11d/lit'
 
 type Person = { id: number, name: string, birthDate: DateTime, children?: Array<Person> }
 
+const testData: Array<Person> = [
+	{ id: 1, name: 'John', birthDate: new DateTime(2000, 0, 0) },
+	{ id: 2, name: 'Jane', birthDate: new DateTime(2000, 0, 0) },
+	{ id: 3, name: 'Joe', birthDate: new DateTime(2000, 0, 0) },
+]
+
 class TestDataGrid extends DataGrid<Person> {
-	override data: Array<Person> = [
-		{ id: 1, name: 'John', birthDate: new DateTime(2000, 0, 0) },
-		{ id: 2, name: 'Jane', birthDate: new DateTime(2000, 0, 0) },
-		{ id: 3, name: 'Joe', birthDate: new DateTime(2000, 0, 0) },
-	]
+	override data: Array<Person> = [...testData]
 
 	get headerSelectionCheckbox() { return this['header']?.renderRoot.querySelector('mo-checkbox') ?? undefined }
 	get rowsSelectionCheckboxes() { return this.rows.map(row => row.renderRoot.querySelector('mo-checkbox') ?? undefined).filter(Boolean) }
@@ -279,6 +281,26 @@ describe('DataGrid', () => {
 			await fixture.updateComplete
 			expect(fixture.component.rowDetailsClose.dispatch).toHaveBeenCalledTimes(1)
 			expect(fixture.component.rowDetailsClose.dispatch).toHaveBeenCalledWith(row)
+		})
+	})
+
+	describe('with multi-level data', () => {
+		const [first, second, third] = [...testData]
+		const data = [{ ...first, children: [{ ...second, children: [{ ...third }] }] }]
+		const fixture = new ComponentTestFixture<TestDataGrid>(html`
+			<test-data-grid detailsOnClick subDataGridDataSelector='children' .data=${data}></test-data-grid>
+		`)
+
+		it('should not include sub-rows of different levels in the details', async () => {
+			const firstRow = fixture.component.rows[0]
+			firstRow.renderRoot.querySelector('#contentContainer')?.dispatchEvent(new MouseEvent('click'))
+
+			await fixture.updateComplete
+
+			const subRows = firstRow.renderRoot.querySelector('#detailsContainer')?.children.length ?? 0
+
+			expect(firstRow.detailsOpen).toBe(true)
+			expect(subRows).toBe(1)
 		})
 	})
 

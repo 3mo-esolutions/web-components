@@ -27,6 +27,10 @@ export class DataRecord<TData> {
 
 	readonly subData?: Array<DataRecord<TData>>
 
+	getSubDataByLevel(level: number) {
+		return this.subData?.filter(r => r.level === level)
+	}
+
 	get hasSubData(): boolean {
 		return (this.subData?.length ?? 0) > 0
 	}
