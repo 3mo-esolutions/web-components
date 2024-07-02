@@ -127,12 +127,14 @@ export class Card extends Component {
 
 	protected override get template() {
 		return html`
-			<mo-flex ${style({ width: '100%', height: '100%' })}>
-				${this.mediaTemplate}
-				${this.headerTemplate}
-				${this.bodyTemplate}
-				${this.footerTemplate}
-			</mo-flex>
+			<div ${style({ width: '100%', height: '100%' })}>
+				<mo-flex ${style({ width: '100%', height: '100%', marginBottom: '-2px' })}>
+					${this.mediaTemplate}
+					${this.headerTemplate}
+					${this.bodyTemplate}
+					${this.footerTemplate}
+				</mo-flex ${style({ width: '100%', height: '100%' })}>
+			</div>
 		`
 	}
 
