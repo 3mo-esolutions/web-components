@@ -272,9 +272,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		this.toggleAttribute('has-sub-data', !!this.dataRecord.hasSubData)
 
 		return !this.dataRecord.hasSubData ? html.nothing : html`
-			${this.dataRecord.subData
-				?.filter(data => data.level === this.level + 1)
-				.map(data => this.dataGrid.getRowTemplate(data))}
+			${this.dataRecord.getSubDataByLevel(this.level + 1)?.map(data => this.dataGrid.getRowTemplate(data))}
 		`
 	}
 
