@@ -147,7 +147,12 @@ export abstract class ModdableDataGrid<TData, TDataFetcherParameters extends Fet
 			</mo-flex>
 
 			${this.modesRepository.getArchived().length === 0 ? html.nothing : html`
-				<mo-icon-button icon='more_vert' ${contextMenu(() => this.archiveMenuTemplate)}></mo-icon-button>
+				<mo-popover-container fixed alignment='end'>
+					<mo-icon-button icon='more_vert'></mo-icon-button>
+					<mo-menu slot='popover'>
+						${this.archiveMenuTemplate}
+					</mo-menu>
+				</mo-popover-container>
 			`}
 		`
 	}

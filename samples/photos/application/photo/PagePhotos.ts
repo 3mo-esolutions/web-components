@@ -28,7 +28,7 @@ export class PagePhotos extends PageComponent {
 					}
 				</style>
 
-				<mo-tab-bar slot='headingDetails' value=${this.tab} @change=${(e: CustomEvent<Tab>) => this.tab = e.detail}>
+				<mo-tab-bar slot='action' value=${this.tab} @change=${(e: CustomEvent<Tab>) => this.tab = e.detail}>
 					<mo-tab value=${Tab.Card}>Card</mo-tab>
 					<mo-tab value=${Tab.DataGrid}>DataGrid</mo-tab>
 				</mo-tab-bar>

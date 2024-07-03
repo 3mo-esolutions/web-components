@@ -1,4 +1,4 @@
-import { html, component, css, property, eventListener, Component, style, state, bind } from '@a11d/lit'
+import { html, component, css, property, eventListener, Component, style } from '@a11d/lit'
 import { DialogAcknowledge, DialogAlert, DialogDeletion } from '@3mo/standard-dialogs'
 import { tooltip } from '@3mo/tooltip'
 import { Localizer } from '@3mo/localization'
@@ -47,8 +47,6 @@ export class DataGridModeChip extends Component {
 
 	@property({ type: Boolean, reflect: true }) selected = false
 	@property({ type: Boolean, reflect: true }) readOnly = false
-
-	@state() open = false
 
 	static override get styles() {
 		return css`
@@ -134,19 +132,19 @@ export class DataGridModeChip extends Component {
 					></mo-icon-button>
 				`}
 
-				<mo-icon-button ?data-no-border=${this.moddableDataGrid.modesRepository.isSelectedModeSaved} icon='more_vert' tabindex='-1' dense
-					${tooltip(t('More options'))}
-					@click=${(e: MouseEvent) => { this.open = !this.open; e.stopImmediatePropagation() }}
-				></mo-icon-button>
-
-				${this.menuTemplate}
+				<mo-popover-container fixed @click=${(e: PointerEvent) => e.stopPropagation()}>
+					<mo-icon-button ?data-no-border=${this.moddableDataGrid.modesRepository.isSelectedModeSaved} icon='more_vert' tabindex='-1' dense
+						${tooltip(t('More options'))}
+					></mo-icon-button>
+					${this.menuTemplate}
+				</mo-popover-container>
 			</mo-flex>
 		`
 	}
 
 	protected get menuTemplate() {
 		return html`
-			<mo-menu manual .anchor=${this} ${bind(this, 'open')}>
+			<mo-menu slot='popover'>
 				${this.moddableDataGrid.modesRepository.isSelectedModeSaved ? html.nothing : html`
 					<mo-menu-item icon='undo' @click=${this.discardChanges}>${t('Discard changes')}</mo-menu-item>
 					<mo-menu-item icon='save' @click=${this.saveChanges}>${t('Save changes')}</mo-menu-item>

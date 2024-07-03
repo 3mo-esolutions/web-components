@@ -1,4 +1,5 @@
 import { LocalStorage } from '@a11d/local-storage'
+import { type DataGridColumn } from '@3mo/data-grid'
 import { type FetchableDataGridParametersType } from '@3mo/fetchable-data-grid'
 import { type ModdableDataGrid } from './ModdableDataGrid.js'
 import { Mode } from './Mode.js'
@@ -66,6 +67,20 @@ export class ModeRepository<TData, TDataFetcherParameters extends FetchableDataG
 
 	save(mode: Mode<TData, TDataFetcherParameters> = this.currentMode) {
 		const existingMode = !mode.id ? undefined : this.get(mode.id)
+
+		mode.columns = mode.columns?.map(c => ({
+			dataSelector: c.dataSelector,
+			heading: c.heading,
+			description: c.description,
+			width: c.width,
+			alignment: c.alignment,
+			hidden: c.hidden,
+			sortable: c.sortable,
+			sticky: c.sticky,
+			sortDataSelector: c.sortDataSelector,
+			sumHeading: c.sumHeading,
+			editable: c.editable,
+		})) as Array<DataGridColumn<TData>>
 
 		if (existingMode) {
 			this.value = this.value.map(m => m.id !== mode.id ? m : mode)
