@@ -131,7 +131,7 @@ export class DataGridFooter<TData> extends Component {
 		const hasUnknownDataLength = this.dataGrid.maxPage === undefined
 		const pageText = hasUnknownDataLength ? this.page : t('${page:number} of ${maxPage:number}', { page: this.page, maxPage: this.dataGrid.maxPage ?? 0 })
 		return !this.dataGrid.hasPagination ? html.nothing : html`
-			<mo-flex direction='horizontal' alignItems='center' gap='2vw'>
+			<mo-flex direction='horizontal' alignItems='center' gap='3vw'>
 				<mo-flex direction='horizontal' gap='4px' alignItems='center' justifyContent='center'>
 					<mo-icon-button dense icon=${isRtl ? 'last_page' : 'first_page'}
 						?disabled=${this.page === 1}
@@ -177,12 +177,18 @@ export class DataGridFooter<TData> extends Component {
 		const dataLengthText = this.dataGrid.maxPage === undefined ? undefined : this.dataGrid.dataLength.format()
 		return html`
 			<mo-popover-container id='page-info' placement='block-start' fixed>
-				${this.dataGrid.selectedData.length ? html`
-					<span id='selected-length'>${this.dataGrid.selectedData.length.format()}</span>
-				` : html`
-					<span id='range' tabindex='0'>${rangeText}</span>
-				`}
-				<span id='length'>${dataLengthText}</span>
+				<mo-flex alignItems='center' gap='6px' direction='horizontal' style='cursor: pointer'>
+					<mo-flex direction='horizontal' alignItems='center'>
+						${this.dataGrid.selectedData.length ? html`
+							<span id='selected-length'>${this.dataGrid.selectedData.length.format()}</span>
+						` : html`
+							<span id='range' tabindex='0'>${rangeText}</span>
+						`}
+						<span id='length'>${dataLengthText}</span>
+					</mo-flex>
+
+					<mo-icon icon='keyboard_arrow_up' style='font-size: 20px'></mo-icon>
+				</mo-flex>
 				<mo-menu slot='popover'>
 					${!this.dataGrid?.supportsDynamicPageSize ? html.nothing : html`
 						<mo-menu-item icon='done' ?selected=${this.dataGrid.pagination === 'auto'} value='auto' @click=${() => this.handlePaginationChange('auto')}>${t('Auto')}</mo-menu-item>

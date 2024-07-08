@@ -93,8 +93,8 @@ export const Selection: StoryObj = {
 export const ContextMenu: StoryObj = {
 	render: () => html`
 		<mo-data-grid .data=${hundredPeople} pagination='auto' selectionMode='multiple' style='height: 500px' .getRowContextMenuTemplate=${() => html`
-			<mo-context-menu-item>Item1</mo-context-menu-item>
-			<mo-context-menu-item>Item2</mo-context-menu-item>
+			<mo-context-menu-item>Item 1</mo-context-menu-item>
+			<mo-context-menu-item>Item 2</mo-context-menu-item>
 		`}>
 			${columnsTemplate}
 		</mo-data-grid>
@@ -106,8 +106,8 @@ export const StickyColumns: StoryObj = {
 		<mo-data-grid style='height: 500px' .data=${twentyPeople}
 		selectionMode='multiple'
 		.getRowContextMenuTemplate=${() => html`
-			<mo-context-menu-item>Item1</mo-context-menu-item>
-			<mo-context-menu-item>Item2</mo-context-menu-item>
+			<mo-context-menu-item>Item 1</mo-context-menu-item>
+			<mo-context-menu-item>Item 2</mo-context-menu-item>
 		`}>
 			<mo-data-grid-column-text sticky='start' heading='Name' width='200px' dataSelector='name'></mo-data-grid-column-text>
 			<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
