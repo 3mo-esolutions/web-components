@@ -120,6 +120,10 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 				color: var(--mo-color-foreground);
 			}
 
+			mo-list-item {
+				min-width: var(--mo-field-width);
+			}
+
 			slot:not([name]) {
 				display: flex;
 				flex-direction: column;

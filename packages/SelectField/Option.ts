@@ -54,10 +54,7 @@ export class Option<T> extends SelectionListItem {
 
 			:host {
 				cursor: pointer;
-				transform: scaleY(1);
-				transition: 0.2s ease-in-out;
 				min-height: 36px;
-				opacity: 1;
 				min-width: var(--mo-field-width);
 			}
 
@@ -70,9 +67,7 @@ export class Option<T> extends SelectionListItem {
 			}
 
 			:host([data-search-no-match]) {
-				transform: scaleY(0);
-				opacity: 0;
-				height: 0px;
+				display: none;
 				pointer-events: none;
 			}
 
