@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 import { css, html, property, event, style } from '@a11d/lit'
 import { LocalStorage } from '@a11d/local-storage'
-import { contextMenu } from '@3mo/context-menu'
 import { tooltip } from '@3mo/tooltip'
 import { DataGridColumn, type DataGrid } from '@3mo/data-grid'
 import { type FetchableDataGridParametersType, FetchableDataGrid } from '@3mo/fetchable-data-grid'

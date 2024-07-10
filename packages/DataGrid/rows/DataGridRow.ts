@@ -179,7 +179,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				@dblclick=${() => this.handleContentDoubleClick()}
 				@auxclick=${(e: PointerEvent) => e.button !== 1 ? void 0 : this.handleContentMiddleClick()}
 				${this.contextMenuTemplate === html.nothing ? html.nothing : popover(() => html`
-					<mo-context-menu @openChange=${(e: CustomEvent<boolean>) => this.toggleAttribute('data-context-menu-open', e.detail)}>
+					<mo-context-menu @openChange=${(e: CustomEvent<boolean>) => this.handleContextMenuOpenChange(e.detail)}>
 						${this.contextMenuTemplate}
 					</mo-context-menu>
 				`)}
@@ -311,19 +311,23 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	}
 
 	async openContextMenu(event?: PointerEvent) {
-		if (!this.dataGrid.hasContextMenu) {
-			return
+		if (this.dataGrid.hasContextMenu) {
+			event?.stopPropagation()
+			this.content?.dispatchEvent(new MouseEvent('contextmenu', event))
+
+			// We need this only for testing environments, but should not be necessary.
+			this.handleContextMenuOpenChange(true)
+
+			await this.updateComplete
 		}
+	}
 
-		event?.stopPropagation()
+	protected handleContextMenuOpenChange(open: boolean) {
+		this.toggleAttribute('data-context-menu-open', open)
 
-		if (this.dataGrid.selectedData.includes(this.data) === false) {
+		if (this.dataRecord.isSelected === false) {
 			this.dataGrid.select(this.dataGrid.selectionMode !== DataGridSelectionMode.None ? [this.data] : [])
 		}
-
-		await this.updateComplete
-
-		this.content?.dispatchEvent(new MouseEvent('contextmenu', event))
 	}
 
 	private get contextMenuData() {

@@ -1,6 +1,6 @@
+import { html } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { DataGrid, type DataGridRow, DataGridSelectionMode, DataGridColumn, DataRecord } from './index.js'
-import { html } from '@a11d/lit'
 
 type Person = { id: number, name: string, birthDate: DateTime, children?: Array<Person> }
 
