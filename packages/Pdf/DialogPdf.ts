@@ -71,7 +71,7 @@ export abstract class DialogPdf<TFile extends IFile, TParameters = {}> extends D
 				height: 100vh;
 			}
 
-			mo-pdf {
+			mo-pdf-old {
 				height: 100%;
 			}
 
@@ -142,7 +142,7 @@ export abstract class DialogPdf<TFile extends IFile, TParameters = {}> extends D
 		}
 
 		return html`
-			<mo-pdf source=${pathname}></mo-pdf>
+			<mo-pdf-old source=${pathname}></mo-pdf-old>
 		`
 	}
 

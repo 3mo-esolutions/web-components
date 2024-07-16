@@ -5,12 +5,12 @@ import './index.js'
 
 export default {
 	title: 'Pdf',
-	component: 'mo-pdf',
+	component: 'mo-pdf-old',
 	package: p,
 } as Meta
 
 export const Pdf: StoryObj = {
 	render: () => html`
-		<mo-pdf style='height: 600px' source='https://www.africau.edu/images/default/sample.pdf'></mo-pdf>
+		<mo-pdf-old style='height: 600px' source='https://www.africau.edu/images/default/sample.pdf'></mo-pdf-old>
 	`
 }

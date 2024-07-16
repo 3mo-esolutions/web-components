@@ -1,7 +1,7 @@
 import { component, html, Component, property, css } from '@a11d/lit'
 import * as System from 'detect-browser'
 
-@component('mo-pdf')
+@component('mo-pdf-old')
 export class Pdf extends Component {
 	@property() source?: string
 
@@ -72,6 +72,6 @@ export class Pdf extends Component {
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'mo-pdf': Pdf
+		'mo-pdf-old': Pdf
 	}
 }
