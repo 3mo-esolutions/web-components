@@ -29,12 +29,8 @@ const generatePeople = (count: number) => {
 			id: i + 1,
 			name: names[Math.floor(Math.random() * names.length)],
 			birthDate,
-			price: Math.floor(Math.random() * 10000),
-			percentage: Math.floor(Math.random() * 100),
 			age: Math.floor((new DateTime().since(birthDate).years)),
 			address: addresses[Math.floor(Math.random() * addresses.length)],
-			currency: 'EUR',
-			isRich: Math.random() > 0.8,
 		}
 	})
 }
@@ -49,20 +45,11 @@ const fivePeopleWithChildren = fivePeople.map(p => ({
 	children: generatePeople(Math.floor(Math.random() * 10) + 1)
 }))
 
-const twentyPeopleWithChildren = twentyPeople.map(p => ({
-	...p,
-	children: generatePeople(Math.floor(Math.random() * 10) + 1)
-}))
-
 const columnsTemplate = html`
 	<mo-data-grid-column-number hidden nonEditable heading='ID' dataSelector='id'></mo-data-grid-column-number>
 	<mo-data-grid-column-text heading='Name' width='200px' dataSelector='name'></mo-data-grid-column-text>
 	<mo-data-grid-column-number .nonEditable=${(person: Person) => person.age > 30} heading='Age' dataSelector='age'></mo-data-grid-column-number>
 	<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
-	<mo-data-grid-column-currency heading='Price' dataSelector='price' currencyDataSelector='currency'></mo-data-grid-column-currency>
-	<mo-data-grid-column-percent heading='Percent' dataSelector='percentage'></mo-data-grid-column-percent>
-	<mo-data-grid-column-date-time heading='Birth Date' dataSelector='birthDate'></mo-data-grid-column-date-time>
-	<mo-data-grid-column-boolean heading='Rich' dataSelector='isRich'></mo-data-grid-column-boolean>
 `
 
 export const DataGrid: StoryObj = {
@@ -283,7 +270,7 @@ export const Fab: StoryObj = {
 
 export const Exportable: StoryObj = {
 	render: () => html`
-		<mo-data-grid exportable subDataGridDataSelector='children' pagination='auto' .data=${twentyPeopleWithChildren} style='height: 500px'>
+		<mo-data-grid exportable subDataGridDataSelector='children' pagination='auto' .data=${fivePeopleWithChildren} style='height: 500px'>
 			${columnsTemplate}
 		</mo-data-grid>
 	`
