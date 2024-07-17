@@ -18,10 +18,10 @@ export class CsvGenerator {
 		const maxLevel = Math.max(...flattenedData.map(d => d.level))
 
 		const [firstHeading, ...restHeadings] = dataGrid.visibleColumns.map(c =>
-			this.escape(c.heading.length < 3 && c.description ? c.description : c.heading))
+			`${this.escape(c.heading.length < 3 && c.description ? c.description : c.heading)}${!c.suffix ? '' : ` ${c.suffix}`}`)
 
 		const rows = [
-			[firstHeading!, ...Array.from({ length: maxLevel }).fill(''), ...restHeadings],
+			[firstHeading!, ...Array.from({ length: maxLevel }).fill(firstHeading), ...restHeadings],
 			...flattenedData.map(d => {
 				const nestedPadding = Array.from({ length: d.level }).fill('')
 				const childrenPadding = Array.from({ length: maxLevel - d.level }).fill('')

@@ -34,9 +34,14 @@ export abstract class DataGridColumnComponent<TData, TValue> extends Component {
 		}
 	}) nonEditable: boolean | Predicate<TData> = false
 
+	get suffix(): string | undefined {
+		return undefined
+	}
+
 	get column(): DataGridColumn<TData, TValue> {
 		const nonEditable = this.nonEditable
 		return new DataGridColumn({
+			suffix: this.suffix,
 			dataSelector: this.dataSelector,
 			sortDataSelector: this.sortDataSelector,
 			heading: this.heading,

@@ -7,6 +7,8 @@ export type DataGridColumnAlignment = 'start' | 'center' | 'end'
 export type DataGridColumnSticky = 'start' | 'both' | 'end'
 
 export class DataGridColumn<TData, TValue = unknown> {
+	suffix?: string
+
 	dataGrid?: DataGrid<TData, any>
 	dataSelector!: KeyPathOf<TData>
 
