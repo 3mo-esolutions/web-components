@@ -1,0 +1,27 @@
+{
+	"name": "@3mo/commit-analyzer",
+	"version": "0.1.0",
+	"description": "Analyzer for commit messages supporting optional conventional commits",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/3mo-esolutions/web-components"
+	},
+	"keywords": [
+		"commit",
+		"analyzer",
+		"conventional",
+		"commits"
+	],
+	"author": "3MO GmbH",
+	"license": "MIT",
+	"homepage": "https://www.3mo.de",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"dependencies": {
+		"tslib": "x"
+	}
+}
