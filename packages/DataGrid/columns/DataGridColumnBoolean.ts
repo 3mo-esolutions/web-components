@@ -35,6 +35,10 @@ export class DataGridColumnBoolean<TData> extends DataGridColumnComponent<TData,
 			></mo-checkbox>
 		`
 	}
+
+	override format = (value: boolean) => {
+		return value ? 'Yes' : 'No'
+	}
 }
 
 declare global {

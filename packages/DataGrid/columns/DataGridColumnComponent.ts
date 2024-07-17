@@ -46,6 +46,7 @@ export abstract class DataGridColumnComponent<TData, TValue> extends Component {
 			sticky: this.sticky,
 			width: this.width,
 			sortable: !this.nonSortable,
+			format: this.format,
 			editable: this.getEditContentTemplate !== undefined && (typeof nonEditable !== 'function' ? !nonEditable : x => !nonEditable(x)),
 			getContentTemplate: this.getContentTemplate.bind(this),
 			getEditContentTemplate: this.getEditContentTemplate?.bind(this),
@@ -69,5 +70,9 @@ export abstract class DataGridColumnComponent<TData, TValue> extends Component {
 	protected override updated() {
 		this.dataGrid?.extractColumns()
 		this.dataGrid?.requestUpdate()
+	}
+
+	format = (value: any, _data: TData) => {
+		return value === undefined || value === null ? '' : String(value)
 	}
 }

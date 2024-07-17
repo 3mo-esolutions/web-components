@@ -113,4 +113,8 @@ export class DataGridColumn<TData, TValue = unknown> {
 				return ''
 		}
 	}
+
+	format = (value: any, _data: TData) => {
+		return String(value ?? '')
+	}
 }
