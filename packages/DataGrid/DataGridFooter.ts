@@ -243,7 +243,7 @@ export class DataGridFooter<TData> extends Component {
 					height: 16px;
 				}
 			</style>
-			<div style='position: relative'>
+			<div style='position: relative; display: flex; align-items: center'>
 				<img id='export'
 					src=${`data:image/svg+xml,${encodeURIComponent(excelSvg)}`}
 					${tooltip(t('Export to Excel'), TooltipPlacement.BlockStart)}
