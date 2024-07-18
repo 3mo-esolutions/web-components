@@ -1,4 +1,4 @@
-import { css, html, property, Component, component } from '@a11d/lit'
+import { css, html, property, Component, component, eventListener } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
 import { DirectionsByLanguage } from '@3mo/localization'
 import { ThemeController } from '@3mo/theme'
@@ -224,6 +224,13 @@ export class Field extends Component {
 				caret-color: var(--mo-color-red);
 			}
 		`
+	}
+
+	@eventListener('keydown')
+	protected handleKeyPress(e: KeyboardEvent) {
+		if (e.altKey) {
+			e.stopPropagation()
+		}
 	}
 
 	protected override get template() {
