@@ -238,6 +238,7 @@ export class DataGridFooter<TData> extends Component {
 			<img id='export'
 				src=${`data:image/svg+xml,${encodeURIComponent(excelSvg)}`}
 				${tooltip(t('Export current view to Excel'), TooltipPlacement.BlockStart)}
+				${style({ filter: this.dataGrid.isGenerating ? 'opacity(0.5)' : undefined })}
 				@click=${() => this.dataGrid.exportExcelFile()}
 			/>
 		`

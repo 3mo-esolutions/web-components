@@ -1,4 +1,4 @@
-import { property, component, Component, html, css, query, ifDefined, type PropertyValues, event, style, literal, staticHtml, type HTMLTemplateResult, cache, eventOptions, queryAll, repeat, eventListener } from '@a11d/lit'
+import { property, component, Component, html, css, query, ifDefined, type PropertyValues, event, style, literal, staticHtml, type HTMLTemplateResult, cache, eventOptions, queryAll, repeat, eventListener, state } from '@a11d/lit'
 import { NotificationComponent } from '@a11d/lit-application'
 import { LocalStorage } from '@a11d/local-storage'
 import { InstanceofAttributeController } from '@3mo/instanceof-attribute-controller'
@@ -172,6 +172,8 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	@query('mo-data-grid-footer') private readonly footer?: DataGridFooter<TData>
 	@query('mo-data-grid-side-panel') private readonly sidePanel?: DataGridSidePanel<TData>
 
+	@state() isGenerating = false
+
 	setPage(page: number) {
 		this.page = page
 		this.pageChange.dispatch(page)
@@ -278,8 +280,10 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	async exportExcelFile() {
 		try {
+			this.isGenerating = true
 			NotificationComponent.notifyInfo(t('Exporting excel file'))
 			await CsvGenerator.generate(this)
+			this.isGenerating = false
 		} catch (error: any) {
 			NotificationComponent.notifyError(error.message)
 			throw error
