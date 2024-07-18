@@ -1,9 +1,8 @@
 import { Downloader } from '@3mo/downloader'
 import type { DataGrid } from './DataGrid.js'
-import type { FetchableDataGrid } from '@3mo/fetchable-data-grid'
 
 export class CsvGenerator {
-	static fetchAll = async <TData>(dataGrid: DataGrid<TData, any> | FetchableDataGrid<TData, any>): Promise<Array<TData>> => {
+	static fetchAll = async <TData>(dataGrid: any): Promise<Array<TData>> => {
 		if (!('fetch' in dataGrid)) {
 			return dataGrid.data
 		}
