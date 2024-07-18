@@ -234,13 +234,26 @@ export class DataGridFooter<TData> extends Component {
 					-webkit-filter: grayscale(0%);
 					filter: grayscale(0%);
 				}
+
+				mo-circular-progress {
+					position: absolute;
+					right: -4px;
+					bottom: 4px;
+					width: 16px;
+					height: 16px;
+				}
 			</style>
-			<img id='export'
-				src=${`data:image/svg+xml,${encodeURIComponent(excelSvg)}`}
-				${tooltip(t('Export current view to Excel'), TooltipPlacement.BlockStart)}
-				${style({ filter: this.dataGrid.isGenerating ? 'opacity(0.5)' : undefined })}
-				@click=${() => this.dataGrid.exportExcelFile()}
-			/>
+			<div style='position: relative'>
+				<img id='export'
+					src=${`data:image/svg+xml,${encodeURIComponent(excelSvg)}`}
+					${tooltip(t('Export current view to Excel'), TooltipPlacement.BlockStart)}
+					${style({ filter: this.dataGrid.isGenerating ? 'opacity(0.5)' : undefined })}
+					@click=${() => this.dataGrid.isGenerating ? undefined : this.dataGrid.exportExcelFile()}
+				/>
+				${!this.dataGrid.isGenerating ? html.nothing : html`
+					<mo-circular-progress></mo-circular-progress>
+				`}
+			</div>
 		`
 	}
 
