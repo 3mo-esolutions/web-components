@@ -1,7 +1,16 @@
 import { Downloader } from '@3mo/downloader'
 import type { DataGrid } from './DataGrid.js'
+import type { FetchableDataGrid } from '@3mo/fetchable-data-grid'
 
 export class CsvGenerator {
+	static fetchAll = async <TData>(dataGrid: DataGrid<TData, any> | FetchableDataGrid<TData, any>): Promise<Array<TData>> => {
+		if (!('fetch' in dataGrid)) {
+			return dataGrid.data
+		}
+		const values = await dataGrid.fetch({ ...dataGrid.parameters, page: 1, perPage: dataGrid.dataLength })
+		return values instanceof Array ? values : values.data
+}
+
 	static escape = (value: string) => {
 		if (value.includes(',')) {
 			if (value.includes('"')) {
@@ -13,8 +22,9 @@ export class CsvGenerator {
 		return value
 	}
 
-	static generate<TData>(dataGrid: DataGrid<TData, any>) {
-		const flattenedData = [...dataGrid['getFlattenedData']()]
+	static generate = async <TData>(dataGrid: DataGrid<TData, any>) => {
+		const flattenedData = [...dataGrid['getFlattenedData'](await CsvGenerator.fetchAll<TData>(dataGrid))]
+
 		const maxLevel = Math.max(...flattenedData.map(d => d.level))
 
 		const [firstHeading, ...restHeadings] = dataGrid.visibleColumns.map(c =>

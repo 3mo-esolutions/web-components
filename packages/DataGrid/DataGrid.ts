@@ -276,10 +276,10 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		!tab ? this.sidePanelClose.dispatch() : this.sidePanelOpen.dispatch(tab)
 	}
 
-	exportExcelFile() {
+	async exportExcelFile() {
 		try {
-			CsvGenerator.generate(this)
 			NotificationComponent.notifyInfo(t('Exporting excel file'))
+			await CsvGenerator.generate(this)
 		} catch (error: any) {
 			NotificationComponent.notifyError(error.message)
 			throw error
@@ -763,10 +763,14 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		this.rows.forEach(row => row.cells.forEach(cell => cell.handlePointerDown(event)))
 	}
 
-	private *getFlattenedData(): Generator<DataRecord<TData>, void, undefined> {
+	private *getFlattenedData(values?: Array<TData>): Generator<DataRecord<TData>, void, undefined> {
+		if (!values) {
+			values = this.data
+		}
+
 		if (!this.subDataGridDataSelector) {
 			yield* this.sortingController.toSortedBy(
-				this.data.map((data, index) => new DataRecord(this, { level: 0, index, data })),
+				values.map((data, index) => new DataRecord(this, { level: 0, index, data })),
 				({ data }) => data,
 			)
 			return
@@ -787,7 +791,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			]
 		}
 
-		for (const data of this.sortingController.toSorted(this.data)) {
+		for (const data of this.sortingController.toSorted(values)) {
 			yield* flatten(data)
 		}
 
