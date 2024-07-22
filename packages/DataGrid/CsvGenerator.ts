@@ -12,8 +12,8 @@ export class CsvGenerator {
 		const values = await Promise.all(
 			Array
 				.from({ length: Math.ceil(dataGrid.dataLength / this.itemsPerPage) })
-				.map((_, page) => {
-					const values =  dataGrid.fetch({ ...dataGrid.parameters, page: page + 1, perPage: this.itemsPerPage, isBulk: 1 })
+				.map(async (_, i) => {
+					const values = await dataGrid.fetch({ ...dataGrid.parameters, page: i + 1, perPage: this.itemsPerPage, isBulk: 1 })
 					return values instanceof Array ? values : values.data
 				})
 		)
