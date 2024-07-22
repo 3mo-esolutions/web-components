@@ -2,12 +2,25 @@ import { Downloader } from '@3mo/downloader'
 import type { DataGrid } from './DataGrid.js'
 
 export class CsvGenerator {
+	private static readonly itemsPerPage = 1000
+
 	static fetchAll = async <TData>(dataGrid: any): Promise<Array<TData>> => {
 		if (!('fetch' in dataGrid)) {
 			return dataGrid.data
 		}
-		const values = await dataGrid.fetch({ ...dataGrid.parameters, page: 1, perPage: dataGrid.dataLength })
-		return values instanceof Array ? values : values.data
+
+		const values = await Promise.all(
+			Array
+			.from({
+				length: Math.ceil(dataGrid.dataLength / this.itemsPerPage),
+			})
+			.map((_, page) => {
+				const values =  dataGrid.fetch({ ...dataGrid.parameters, page: page + 1, perPage: this.itemsPerPage, isBulk: 1 })
+				return values instanceof Array ? values : values.data
+			})
+		)
+
+		return values.flat()
 }
 
 	static escape = (value: string) => {
