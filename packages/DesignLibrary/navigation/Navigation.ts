@@ -29,12 +29,12 @@ export class Navigation extends Component {
 
 	@query('mo-drawer mo-list') private readonly drawerNavigationList?: HTMLElement
 	@query('#navbar-navigations') private readonly navigationsContainer!: HTMLElement
-	@queryAll('#navbar-navigations mo-navigation-item') private readonly navigationItems!: Array<HTMLElement>
-	@query('mo-icon-button[icon=menu]') private readonly menuButton?: HTMLElement
+	@queryAll('#navbar-navigations mo-navigation-item') readonly navigationItems!: Array<HTMLElement>
+	@query('mo-icon-button[icon=menu]') readonly menuButton?: HTMLElement
 
 	@eventListener({ target: window, type: 'keydown' })
 	protected handleKeyPress(event: KeyboardEvent) {
-		if (event.key === Key.Alt) {
+		if (event.key === Key.Alt && event.composedPath().filter(e => e instanceof Element).every(e => e.tagName.toLowerCase() !== 'input')) {
 			event.preventDefault()
 			const toFocus = this.mobileNavigation ? this.menuButton : this.navigationItems[0]
 			toFocus?.focus()
