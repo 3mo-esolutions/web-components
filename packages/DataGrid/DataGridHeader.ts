@@ -53,6 +53,7 @@ export class DataGridHeader<TData> extends Component {
 				z-index: 4;
 				font-size: small;
 				border-block: var(--mo-data-grid-border);
+				border-top: var(--mo-data-grid-border-top, var(--mo-data-grid-border));
 				height: var(--mo-data-grid-header-height);
 			}
 
