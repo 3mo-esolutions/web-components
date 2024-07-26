@@ -3,7 +3,6 @@ import { type FieldNumber } from '@3mo/number-fields'
 import { DirectionsByLanguage, Localizer } from '@3mo/localization'
 import { TooltipPlacement, tooltip } from '@3mo/tooltip'
 import { type DataGrid, type DataGridPagination } from './index.js'
-import excelSvg from './excel.svg.js'
 
 Localizer.register('de', {
 	'${page:number} of ${maxPage:number}': '${page} von ${maxPage}',
@@ -219,41 +218,11 @@ export class DataGridFooter<TData> extends Component {
 
 	private get exportTemplate() {
 		return !this.dataGrid.exportable ? html.nothing : html`
-			<style>
-				#export {
-					height: 21px;
-					width: 21px;
-					aspect-ratio: 1 / 1;
-					transition: .25s;
-					-webkit-filter: grayscale(100%);
-					filter: grayscale(100%);
-					cursor: pointer;
-				}
-
-				#export:hover {
-					-webkit-filter: grayscale(0%);
-					filter: grayscale(0%);
-				}
-
-				mo-circular-progress {
-					position: absolute;
-					right: -4px;
-					bottom: 4px;
-					width: 16px;
-					height: 16px;
-				}
-			</style>
-			<div style='position: relative; display: flex; align-items: center'>
-				<img id='export'
-					src=${`data:image/svg+xml,${encodeURIComponent(excelSvg)}`}
-					${tooltip(t('Export to Excel'), TooltipPlacement.BlockStart)}
-					${style({ filter: this.dataGrid.isGenerating ? 'opacity(0.5)' : undefined })}
-					@click=${() => this.dataGrid.isGenerating ? undefined : this.dataGrid.exportExcelFile()}
-				/>
-				${!this.dataGrid.isGenerating ? html.nothing : html`
-					<mo-circular-progress></mo-circular-progress>
-				`}
-			</div>
+			<mo-icon-button dense icon='download_for_offline'
+				${tooltip(t('Export to Excel'), TooltipPlacement.BlockStart)}
+				${style({ color: 'var(--mo-color-green)', fontSize: '24px', opacity: this.dataGrid.isGenerating ? '0.5' : undefined })}
+				@click=${() => this.dataGrid.isGenerating ? undefined : this.dataGrid.exportExcelFile()}
+			></mo-icon-button>
 		`
 	}
 
