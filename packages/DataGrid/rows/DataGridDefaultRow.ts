@@ -33,7 +33,6 @@ export class DataGridDefaultRow<TData, TDetailsElement extends Element | undefin
 				background: color-mix(in srgb, var(--mo-color-accent), transparent 95%);
         padding-left: 20px;
         width: calc(100% - 20px);
-				--mo-data-grid-header-background: transparent;
 				--mo-data-grid-border-top: none;
 			}
 
@@ -48,7 +47,6 @@ export class DataGridDefaultRow<TData, TDetailsElement extends Element | undefin
 			}
 
 			#detailsContainer [instanceof*=mo-data-grid] {
-				--mo-data-grid-header-background: color-mix(in srgb, var(--mo-color-foreground), transparent 96%);
 				--mo-data-grid-alternating-background: transparent;
 				--_content-min-height-default: 0px;
 			}
