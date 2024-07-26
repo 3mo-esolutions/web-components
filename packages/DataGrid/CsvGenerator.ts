@@ -13,7 +13,7 @@ export class CsvGenerator {
 			Array
 				.from({ length: Math.ceil(dataGrid.dataLength / this.itemsPerPage) })
 				.map(async (_, i) => {
-					const values = await dataGrid.fetch({ ...dataGrid.parameters, page: i + 1, perPage: this.itemsPerPage, isBulk: 1 })
+					const values = await dataGrid.fetch({ ...dataGrid.parameters, page: i + 1, perPage: this.itemsPerPage, isBulk: true })
 					return values instanceof Array ? values : values.data
 				})
 		)
@@ -58,8 +58,14 @@ export class CsvGenerator {
 
 		const csv = rows.map(row => row.join(',')).join('\n')
 
-		// @ts-expect-error manifest can be undefined
-		const fileName = (globalThis.manifest?.short_name ?? '') + 'Export'.replace(/ /g, '_')
+		const now = new Date()
+
+		const fileName = [
+			'3MO',
+			document.title.split(' | ')[0]?.toLowerCase(),
+			`${now.getFullYear()}${now.getMonth()}${now.getDate()}${now.getHours()}${now.getMinutes()}${now.getSeconds()}`,
+		].filter(Boolean).join('_')
+
 		Downloader.download(`data:text/csv;charset=utf-8,${encodeURIComponent(csv)}`, `${fileName}.csv`)
 	}
 }
