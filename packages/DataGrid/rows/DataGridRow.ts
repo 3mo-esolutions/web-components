@@ -198,6 +198,8 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	}
 
 	protected get selectionTemplate() {
+		this.toggleAttribute('has-checkbox', this.dataGrid.hasSelection && !this.dataGrid.selectionCheckboxesHidden)
+
 		return this.dataGrid.hasSelection === false || this.dataGrid.selectionCheckboxesHidden ? html.nothing : html`
 			<mo-flex id='selectionContainer' justifyContent='center' alignItems='center'
 				${style({ width: 'var(--mo-data-grid-column-selection-width)', position: 'sticky', zIndex: '2', insetInlineStart: this.dataGrid.hasDetails ? '20px' : '0px', height: '100%', background: 'var(--mo-data-grid-sticky-part-color)' })}

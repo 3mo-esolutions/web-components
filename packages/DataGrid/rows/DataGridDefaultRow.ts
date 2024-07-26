@@ -31,9 +31,16 @@ export class DataGridDefaultRow<TData, TDetailsElement extends Element | undefin
 
 			:host(:not([has-sub-data])) #detailsContainer {
 				background: color-mix(in srgb, var(--mo-color-accent), transparent 95%);
+        padding-left: 20px;
+        width: calc(100% - 20px);
 				--mo-data-grid-header-background: transparent;
 				--mo-data-grid-border-top: none;
 			}
+
+      :host([has-checkbox]:not([has-sub-data])) #detailsContainer {
+        padding-left: 60px !important;
+        width: calc(100% - 60px) !important;
+      }
 
 			:host([has-sub-data]) #detailsContainer {
 				display: grid;
