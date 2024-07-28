@@ -20,6 +20,7 @@ const generatePeople = (count: number) => {
 		'7234 Elmstraße, 21001 Berlin, Deutschland',
 		'9692 Elm Street, Springfield, NSW 62701, Australia',
 		'7792 Elm Street, London, England',
+		'1232 Elm Street, "P-432"'
 	]
 
 	return new Array(count).fill(0).map((_, i) => {
@@ -49,7 +50,6 @@ const columnsTemplate = html`
 	<mo-data-grid-column-text heading='Name' width='200px' dataSelector='name'></mo-data-grid-column-text>
 	<mo-data-grid-column-number .nonEditable=${(person: Person) => person.age > 30} heading='Age' dataSelector='age'></mo-data-grid-column-number>
 	<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
-	<mo-data-grid-column-date heading='Birth Date' dataSelector='birthDate'></mo-data-grid-column-date>
 `
 
 export const DataGrid: StoryObj = {

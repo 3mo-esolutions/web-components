@@ -34,9 +34,14 @@ export abstract class DataGridColumnComponent<TData, TValue> extends Component {
 		}
 	}) nonEditable: boolean | Predicate<TData> = false
 
+	get suffix(): string | undefined {
+		return undefined
+	}
+
 	get column(): DataGridColumn<TData, TValue> {
 		const nonEditable = this.nonEditable
 		return new DataGridColumn({
+			suffix: this.suffix,
 			dataSelector: this.dataSelector,
 			sortDataSelector: this.sortDataSelector,
 			heading: this.heading,
@@ -46,6 +51,7 @@ export abstract class DataGridColumnComponent<TData, TValue> extends Component {
 			sticky: this.sticky,
 			width: this.width,
 			sortable: !this.nonSortable,
+			format: this.format,
 			editable: this.getEditContentTemplate !== undefined && (typeof nonEditable !== 'function' ? !nonEditable : x => !nonEditable(x)),
 			getContentTemplate: this.getContentTemplate.bind(this),
 			getEditContentTemplate: this.getEditContentTemplate?.bind(this),
@@ -69,5 +75,9 @@ export abstract class DataGridColumnComponent<TData, TValue> extends Component {
 	protected override updated() {
 		this.dataGrid?.extractColumns()
 		this.dataGrid?.requestUpdate()
+	}
+
+	format = (value: any, _data: TData) => {
+		return value === undefined || value === null ? '' : String(value)
 	}
 }

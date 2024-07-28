@@ -41,6 +41,12 @@ export class DataGridColumnCurrency<TData> extends DataGridColumnNumberBase<TDat
 			<span style='font-weight: 500'>${sum.formatAsCurrency(this.currency ?? DataGridColumnCurrency.defaultCurrency!)}</span>
 		`
 	}
+
+	override format = (value: number | undefined, data: TData) => {
+		return value === undefined ? '' : value.formatAsCurrency(this.getCurrency(data), {
+			useGrouping: false,
+		})
+	}
 }
 
 declare global {
