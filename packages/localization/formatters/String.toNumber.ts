@@ -17,13 +17,17 @@ String.prototype.toNumber = function (this: string, language = Localizer.current
 
 	const { thousandRegex, decimalRegex } = separatorRegexByLanguage.get(language)!
 
-	const numberString = this.replace(spaceRegex, '')
-	const number = parseFloat(numberString
+	const number = parseFloat(this
+		.replace(spaceRegex, '')
 		.replace(thousandRegex, '')
 		.replace(decimalRegex, '.')
 	)
 
-	return Number.isNaN(number) ? undefined : number
+	return Number.isNaN(number)
+		? undefined
+		: Object.is(number, -0)
+			? 0
+			: number
 }
 
 declare global {
