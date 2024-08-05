@@ -153,5 +153,6 @@ export default {
 			})
 			return story()
 		}
-	]
+	],
+	tags: ['autodocs']
 }
