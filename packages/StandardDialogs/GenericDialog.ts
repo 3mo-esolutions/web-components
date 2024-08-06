@@ -13,7 +13,7 @@ interface Parameters<TResult> extends BaseDialogParameters<GenericDialog<TResult
 @component('mo-generic-dialog')
 export class GenericDialog<TResult = void> extends DialogComponent<Parameters<TResult>, TResult> {
 	protected override get template(): HTMLTemplateResult {
-		const { heading, primaryButtonText, secondaryButtonText, blocking, size, content } = this.parameters
+		const { heading, primaryButtonText, secondaryButtonText, blocking, size, content, errorHandler } = this.parameters
 		return html`
 			<mo-dialog
 				heading=${heading}
@@ -22,7 +22,7 @@ export class GenericDialog<TResult = void> extends DialogComponent<Parameters<TR
 				secondaryButtonText=${secondaryButtonText ?? t('Cancel')}
 				?blocking=${blocking}
 				primaryOnEnter
-				.errorHandler=${this.parameters.errorHandler}
+				.errorHandler=${errorHandler}
 			>
 				${getContentTemplate(this, content)}
 			</mo-dialog>
