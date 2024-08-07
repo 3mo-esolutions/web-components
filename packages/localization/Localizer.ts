@@ -87,12 +87,14 @@ export class Localizer {
 
 		const replace = (text: string, parameterKey: string, parameterValue: string) => {
 			const match = matchedParameters.find(p => p.key === parameterKey)
-			return !match?.group ? text : text.replace(match.group, parameterValue).replace(
-				`\${${match.key}}`,
-				typeof (parameterValue as any)?.format === 'function'
-					? (parameterValue as any).format()
-					: parameterValue,
-			)
+			return !match?.group ? text : text
+				.replace(match.group, `\${${match.key}}`)
+				.replace(
+					`\${${match.key}}`,
+					typeof (parameterValue as any)?.format === 'function'
+						? (parameterValue as any).format()
+						: parameterValue
+				)
 		}
 
 		const replaceAll = (text: string) => {
