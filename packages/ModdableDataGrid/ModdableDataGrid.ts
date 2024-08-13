@@ -150,7 +150,7 @@ export abstract class ModdableDataGrid<TData, TDataFetcherParameters extends Fet
 	protected override get toolbarActionsTemplate() {
 		return html`
 			${this.hasModebar || ModdableDataGrid.disableModes ? html.nothing : html`
-				<mo-icon-button icon='visibility'
+				<mo-icon-button icon='playlist_add'
 					@click=${() => this.createOrEditMode()}
 					${tooltip(t('New Mode'))}
 				></mo-icon-button>
@@ -186,6 +186,7 @@ export abstract class ModdableDataGrid<TData, TDataFetcherParameters extends Fet
 				</mo-scroller>
 
 				<mo-icon-button icon='add'
+					${style({ color: 'var(--mo-color-gray)' })}
 					${tooltip(t('New Mode'))}
 					@click=${() => this.createOrEditMode()}
 				></mo-icon-button>
@@ -193,7 +194,10 @@ export abstract class ModdableDataGrid<TData, TDataFetcherParameters extends Fet
 
 			${this.modesRepository.getArchived().length === 0 ? html.nothing : html`
 				<mo-popover-container fixed alignment='end'>
-					<mo-icon-button icon='archive' ${tooltip(t('Archive'))}></mo-icon-button>
+					<mo-icon-button icon='archive'
+						${tooltip(t('Archive'))}
+						${style({ color: 'var(--mo-color-gray)' })}
+					></mo-icon-button>
 					<mo-menu slot='popover'>
 						${this.archiveMenuTemplate}
 					</mo-menu>
