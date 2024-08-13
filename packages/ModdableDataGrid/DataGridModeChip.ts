@@ -124,7 +124,7 @@ export class DataGridModeChip extends Component {
 			if (this.moddableDataGrid.modesRepository.isSelectedModeSaved === false) {
 				const result = await new DialogAcknowledge({
 					heading: t('Unsaved changes'),
-					content: t('Do you want to save the new changes to "${name:string}" before switching views?'),
+					content: t('Do you want to save the new changes to "${name:string}" before switching views?', { name: this.mode.name }),
 					primaryButtonText: t('Save'),
 					secondaryButtonText: t('Don\'t Save'),
 				}).confirm()

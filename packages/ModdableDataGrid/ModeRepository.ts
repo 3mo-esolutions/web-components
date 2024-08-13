@@ -60,7 +60,8 @@ export class ModeRepository<TData, TDataFetcherParameters extends FetchableDataG
 			...(this.dataGrid.mode ?? {}),
 			sorting: this.dataGrid.sorting,
 			parameters: this.dataGrid.parameters ?? undefined,
-			columns: this.dataGrid.columns,
+			// sync?
+			columns: this.dataGrid.mode?.columns ?? this.dataGrid.columns,
 			pagination: this.dataGrid.pagination,
 		} as Required<Mode<TData, TDataFetcherParameters>>
 	}
