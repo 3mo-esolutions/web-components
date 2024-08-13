@@ -25,8 +25,12 @@ Localizer.register('fa', {
 })
 
 @component('mo-dialog-data-grid-mode')
-export class DialogDataGridMode extends DialogComponent<{ readonly moddableDataGrid: ModdableDataGrid<unknown>, readonly mode?: Mode<unknown, any> }> {
-	@state() private mode = this.parameters.mode ?? new Mode<unknown, any>()
+export class DialogDataGridMode extends DialogComponent<{ readonly moddableDataGrid: ModdableDataGrid<unknown>, readonly mode?: Mode<unknown, any>, readonly originMode?: Mode<unknown, any>, readonly copying?: boolean }, Mode<unknown, any> | void> {
+	@state() private mode = this.parameters.mode ?? new Mode<unknown, any>({
+		...this.parameters.originMode ?? {},
+		id: undefined,
+		name: this.parameters.copying ? `${this.parameters.originMode!.name} (Kopie)` : '',
+})
 
 	override confirm(...parameters: Parameters<DialogDeletion['confirm']>) {
 		return this.parameters.mode && this.parameters.moddableDataGrid.modes.includes(this.parameters.mode)
@@ -36,7 +40,7 @@ export class DialogDataGridMode extends DialogComponent<{ readonly moddableDataG
 
 	private get heading() {
 		return this.parameters.mode
-			? t('View ${name:string}"', { name: this.parameters.mode.name })
+			? t('Mode "${name:string}"', { name: `${this.parameters.mode.name}${this.parameters.copying ? ' (Kopie)' : ''}` })
 			: t('New Mode')
 	}
 
@@ -46,21 +50,28 @@ export class DialogDataGridMode extends DialogComponent<{ readonly moddableDataG
 				heading=${this.heading}
 				primaryOnEnter
 				primaryButtonText=${t('Save')}
-				secondaryButtonText=${this.parameters.mode ? t('Delete') : ''}
 			>
-				<mo-field-text selectOnFocus autofocus
+				<mo-field-text selectOnFocus autofocus required
 					label=${t('Name')}
 					value=${this.mode.name}
 					@input=${(e: CustomEvent<string>) => this.mode.name = e.detail.trim()}
 				></mo-field-text>
 
-				<mo-flex slot='footer'>
-					<mo-checkbox ${style({ flex: '1' })}
-						label=${t('Archived')}
-						?selected=${this.mode.isArchived}
-						@change=${(e: CustomEvent<boolean>) => this.mode.isArchived = e.detail}
-					></mo-checkbox>
-				</mo-flex>
+				${!this.parameters.mode ? html.nothing : html`
+					<mo-flex slot='footer'>
+						<mo-checkbox
+							label=${t('Archived')}
+							?selected=${this.mode.isArchived}
+							@change=${(e: CustomEvent<boolean>) => this.mode.isArchived = e.detail}
+						></mo-checkbox>
+					</mo-flex>
+				`}
+
+				${!this.parameters.mode ? html.nothing : html`
+					<mo-button type='raised' slot='secondaryAction' ${style({ '--mo-button-accent-color': 'var(--mo-color-red)' })}>
+						${t('Delete')}
+					</mo-button>
+				`}
 			</mo-dialog>
 		`
 	}
@@ -72,6 +83,7 @@ export class DialogDataGridMode extends DialogComponent<{ readonly moddableDataG
 		this.mode.parameters = currentMode.parameters
 		this.mode.sorting = currentMode.sorting
 		this.parameters.moddableDataGrid.modesRepository.save(this.mode)
+		return this.mode
 	}
 
 	protected override secondaryAction = async () => {

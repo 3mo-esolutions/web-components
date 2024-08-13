@@ -6,6 +6,16 @@ import { DataGridColumn, type DataGrid } from '@3mo/data-grid'
 import { type FetchableDataGridParametersType, FetchableDataGrid } from '@3mo/fetchable-data-grid'
 import { DialogDataGridMode, type Mode, ModeRepository } from './index.js'
 import { sortable } from './SortableDirective.js'
+import { Localizer } from '@3mo/localization'
+import { DialogDeletion } from '@3mo/standard-dialogs'
+
+Localizer.register('de', {
+	'New Mode': 'Neue Ansicht erstellen',
+	'Archive': 'Archiv',
+	'Edit mode': 'Ansicht bearbeiten',
+	'Delete mode': 'Ansicht löschen',
+	'Keep in Dock': 'Ansicht im Dock anheften',
+})
 
 /** @fires modeChange */
 export abstract class ModdableDataGrid<TData, TDataFetcherParameters extends FetchableDataGridParametersType = Record<string, never>, TDetailsElement extends Element | undefined = undefined> extends FetchableDataGrid<TData, TDataFetcherParameters, TDetailsElement> {
@@ -65,10 +75,32 @@ export abstract class ModdableDataGrid<TData, TDataFetcherParameters extends Fet
 				border-radius: var(--mo-border-radius);
 			}
 
-			#modebarFlex {
+			#modes {
 				border-radius: var(--mo-border-radius) var(--mo-border-radius) 0 0;
 				padding: 14px;
-				background: var(--mo-color-transparent-gray-2);
+				background-color: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-accent) 8%);
+
+				mo-scroller::part(container) {
+					display: flex;
+					align-items: center;
+				}
+			}
+
+			.archived {
+				min-width: 320px;
+				font-size: 12px;
+
+				mo-icon-button {
+					font-size: 18px;
+					color: var(--mo-color-gray);
+				}
+			}
+
+			#archive-title {
+				font-size: 12px;
+    		padding: 8px 16px;
+    		display: block;
+    		font-weight: 500;
 			}
 		`
 	}
@@ -100,7 +132,7 @@ export abstract class ModdableDataGrid<TData, TDataFetcherParameters extends Fet
 	protected override get template() {
 		return html`
 			${!this.hasModebar ? html.nothing : html`
-				<mo-flex id='modebarFlex' direction='horizontal'>
+				<mo-flex id='modes' direction='horizontal'>
 					${this.modebarTemplate}
 				</mo-flex>
 			`}
@@ -114,7 +146,12 @@ export abstract class ModdableDataGrid<TData, TDataFetcherParameters extends Fet
 
 	protected override get toolbarActionsTemplate() {
 		return html`
-			${this.hasModebar || ModdableDataGrid.disableModes ? html.nothing : html`<mo-icon-button icon='visibility' @click=${this.createNewMode} ${tooltip(t('New Mode'))}></mo-icon-button>`}
+			${this.hasModebar || ModdableDataGrid.disableModes ? html.nothing : html`
+				<mo-icon-button icon='visibility'
+					@click=${() => this.createOrEditMode()}
+					${tooltip(t('New Mode'))}
+				></mo-icon-button>
+			`}
 			${super.toolbarActionsTemplate}
 		`
 	}
@@ -129,11 +166,13 @@ export abstract class ModdableDataGrid<TData, TDataFetcherParameters extends Fet
 				?selected=${this.mode?.id === mode.id}
 			></mo-data-grid-mode-chip>
 		`
+
+		console.log({ modes: this.modes })
+
 		return html`
 			<mo-flex ${style({ flex: '1' })} direction='horizontal' alignItems='center' gap='14px'>
 				<mo-scroller ${style({ overflow: 'auto hidden', maxWidth: 'calc(100% - 40px)' })}>
-					<mo-flex direction='horizontal' gap='8px'>
-						${this.modes.map(getModeChipTemplate)}
+					<mo-flex direction='horizontal' alignItems='center' gap='var(--mo-thickness-l)'>
 						${this.temporarySelectedModeTab}
 						${sortable({
 							data: this.modesRepository.getUnarchived(),
@@ -142,12 +181,16 @@ export abstract class ModdableDataGrid<TData, TDataFetcherParameters extends Fet
 						})}
 					</mo-flex>
 				</mo-scroller>
-				<mo-icon-button icon='add' ${tooltip('New Mode')} @click=${this.createNewMode}></mo-icon-button>
+
+				<mo-icon-button icon='add'
+					${tooltip(t('New Mode'))}
+					@click=${() => this.createOrEditMode()}
+				></mo-icon-button>
 			</mo-flex>
 
 			${this.modesRepository.getArchived().length === 0 ? html.nothing : html`
 				<mo-popover-container fixed alignment='end'>
-					<mo-icon-button icon='more_vert'></mo-icon-button>
+					<mo-icon-button icon='archive' ${tooltip(t('Archive'))}></mo-icon-button>
 					<mo-menu slot='popover'>
 						${this.archiveMenuTemplate}
 					</mo-menu>
@@ -165,22 +208,53 @@ export abstract class ModdableDataGrid<TData, TDataFetcherParameters extends Fet
 
 	private get temporarySelectedModeTab() {
 		return !this.mode || this.modes.includes(this.mode) || this.mode.isArchived === false ? html.nothing : html`
-			<mo-data-grid-mode-chip data-non-sortable .moddableDataGrid=${this as any} .mode=${this.mode} selected></mo-data-grid-mode-chip>
+			<mo-data-grid-mode-chip data-non-sortable selected
+				.moddableDataGrid=${this as any}
+				.mode=${this.mode}
+			></mo-data-grid-mode-chip>
 		`
 	}
 
 	private get archiveMenuTemplate() {
 		return html`
+			<span id='archive-title'>Ansichten Archiv</span>
 			${this.modesRepository.getArchived().map(mode => html`
-				<mo-context-menu-item
+				<mo-context-menu-item class='archived'
 					?activated=${this.mode?.id === mode.id}
 					@click=${() => this.mode = mode}
-				>${mode.name}</mo-context-menu-item>
+				>
+					${mode.name}
+
+					<mo-flex direction='horizontal' alignItems='center' gap='8px' ${style({ marginLeft: 'auto' })}>
+						<mo-icon-button dense icon='push_pin'
+							${tooltip(t('Keep in Dock'))}
+							@click=${(e: MouseEvent) => (e.stopPropagation(), this.modesRepository.unarchive(mode))}
+						></mo-icon-button>
+
+						<mo-icon-button dense icon='edit'
+							${tooltip(t('Edit mode'))}
+							@click=${(e: MouseEvent) => (e.stopPropagation(), this.createOrEditMode(mode))}
+						></mo-icon-button>
+
+						<mo-icon-button dense icon='delete'
+							${tooltip(t('Delete mode'))}
+							${style({ color: 'var(--mo-color-red)' })}
+							@click=${(e: MouseEvent) => (e.stopPropagation(), this.deleteMode(mode as any))}
+						></mo-icon-button>
+					</mo-flex>
+				</mo-context-menu-item>
 			`)}
 		`
 	}
 
-	private readonly createNewMode = async () => {
-		await new DialogDataGridMode({ moddableDataGrid: this as any }).confirm()
+	private readonly createOrEditMode = async (mode?: Mode<TData, TDataFetcherParameters>) => {
+		await new DialogDataGridMode({ moddableDataGrid: this as any, mode: mode as any }).confirm()
+	}
+
+	private readonly deleteMode = async (mode: Mode<TData, TDataFetcherParameters>) => {
+		await new DialogDeletion({
+			content: `${t('Do you want to delete the view "${name:string}"?', { name: mode.name })} ${t('This process is irreversible.')}`,
+			deletionAction: () => this.modesRepository.remove(mode)
+		}).confirm()
 	}
 }
