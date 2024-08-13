@@ -170,8 +170,6 @@ export abstract class ModdableDataGrid<TData, TDataFetcherParameters extends Fet
 			></mo-data-grid-mode-chip>
 		`
 
-		console.log({ modes: this.modes })
-
 		return html`
 			<mo-flex ${style({ flex: '1' })} direction='horizontal' alignItems='center' gap='14px'>
 				<mo-scroller ${style({ overflow: 'auto hidden', maxWidth: 'calc(100% - 40px)' })}>

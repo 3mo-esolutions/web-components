@@ -61,6 +61,8 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 				}
 			}
 
+			this.parametersChange.dispatch(this.parameters)
+
 			this.resetPageAndRequestFetch()
 		}
 	}) parameters?: TDataFetcherParameters
@@ -129,7 +131,6 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 
 	setParameters(parameters: TDataFetcherParameters) {
 		this.parameters = parameters
-		this.parametersChange.dispatch(this.parameters)
 	}
 
 	override setPage(...args: Parameters<DataGrid<TData, TDetailsElement>['setPage']>) {
