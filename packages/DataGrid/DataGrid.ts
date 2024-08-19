@@ -448,13 +448,12 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				--mo-data-grid-alternating-background-transparency: 20%;
 			}
 
-			:host([preventVerticalContentScroll]) mo-scroller {
+			:host([preventVerticalContentScroll]) {
 				mo-scroller {
 					overflow-y: hidden;
-				}
-
-				mo-scroller::part(container) {
-					position: relative;
+					&::part(container) {
+						position: relative;
+					}
 				}
 			}
 
