@@ -1,4 +1,4 @@
-import { EventListenerController, component, event, html, property } from '@a11d/lit'
+import { EventListenerController, component, css, event, html, property } from '@a11d/lit'
 import { ListItem } from '@3mo/list'
 import { type MaterialIcon } from '@3mo/icon'
 
@@ -16,6 +16,16 @@ export class MenuItem extends ListItem {
 	@property({ reflect: true }) icon?: MaterialIcon
 
 	override readonly role = 'menuitem'
+
+	static override get styles() {
+		return css`
+			${super.styles}
+
+			:host {
+				min-height: unset;
+			}
+		`
+	}
 
 	protected override get template() {
 		return html`

@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/menu",
-	"version": "0.6.7",
+	"version": "0.6.8",
 	"description": "Menus display a list of choices on a temporary surface.",
 	"repository": {
 		"type": "git",
