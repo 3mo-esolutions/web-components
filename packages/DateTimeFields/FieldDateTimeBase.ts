@@ -120,6 +120,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 				box-shadow: var(--mo-shadow);
 				border-radius: var(--mo-border-radius);
 				color: var(--mo-color-foreground);
+				font-size: 0.875em;
 			}
 
 			#selector {
