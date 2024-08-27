@@ -22,7 +22,7 @@ export class MenuItem extends ListItem {
 			${super.styles}
 
 			:host {
-				min-height: unset;
+				min-height: 36px;
 			}
 		`
 	}
