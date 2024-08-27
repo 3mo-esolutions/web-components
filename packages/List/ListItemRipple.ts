@@ -32,6 +32,7 @@ export class ListItemRipple extends Component {
 			:host {
 				display: block;
 				position: absolute;
+				border-radius: inherit;
 				inset: 0;
 				width: 100%;
 				height: 100%;
