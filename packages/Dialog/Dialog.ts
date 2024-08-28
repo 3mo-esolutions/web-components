@@ -165,6 +165,7 @@ export class Dialog extends Component implements IDialog {
 					border-block-start: 1px solid var(--mo-color-transparent-gray-3);
 					margin-inline: var(--_margin-alteration);
 					margin-block-end: var(--_margin-alteration);
+					z-index: 10;
 				}
 			}
 
