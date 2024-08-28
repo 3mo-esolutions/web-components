@@ -6,7 +6,7 @@ import { Authentication, BusinessSuiteAuthenticationDialogComponent, PagePrefere
 
 Icon.defaultVariant = IconVariant.Sharp
 
-Localizer.register('de', {
+Localizer.dictionaries.add('de', {
 	'User Settings': 'Benutzereinstellungen',
 	'Close': 'Schließen',
 	'Open as Tab': 'Als Tab öffnen',

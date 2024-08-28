@@ -6,7 +6,6 @@ export type FormatOptionsWithLanguage<T> =
 	| [language: LanguageCode, options?: T]
 
 export function extractFormatOptions<T>(options: FormatOptionsWithLanguage<T> | undefined): [language?: LanguageCode, explicitOptions?: T | undefined] {
-	const defaultLanguage = Localizer.currentLanguage
 	let language: LanguageCode | undefined
 	let explicitOptions: T | undefined
 
@@ -27,7 +26,7 @@ export function extractFormatOptions<T>(options: FormatOptionsWithLanguage<T> | 
 	}
 
 	return [
-		language ?? defaultLanguage,
+		language ?? Localizer.languages.current,
 		Object.keys(explicitOptions ?? {}).length === 0 ? undefined : explicitOptions
 	]
 }

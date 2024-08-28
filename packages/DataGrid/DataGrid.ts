@@ -16,7 +16,7 @@ import { DataGridDetailsController } from './DataGridDetailsController.js'
 import { CsvGenerator, DataGridSidePanelTab, type DataGridColumn, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, type DataGridSidePanel, DataGridContextMenuController } from './index.js'
 import { DataRecord } from './DataRecord.js'
 
-Localizer.register('de', {
+Localizer.dictionaries.add('de', {
 	'Exporting excel file': 'Die Excel-Datei wird exportiert',
 	'No results': 'Kein Ergebnis',
 	'More Filters': 'Weitere Filter',

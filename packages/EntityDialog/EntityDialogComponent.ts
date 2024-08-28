@@ -4,7 +4,7 @@ import { Localizer } from '@3mo/localization'
 import { type FetchableDialogComponentParameters, FetchableDialogComponent } from '@3mo/fetchable-dialog'
 import { EntityDialog } from './EntityDialog.js'
 
-Localizer.register('de', {
+Localizer.dictionaries.add('de', {
 	'Saved successfully': 'Erfolgreich gespeichert',
 	'Open': 'Öffnen',
 })

@@ -2,7 +2,7 @@ import { Controller, html, style } from '@a11d/lit'
 import { Localizer } from '@3mo/localization'
 import { type DataGrid } from './index.js'
 
-Localizer.register('de', {
+Localizer.dictionaries.add('de', {
 	'selected': 'ausgewählt',
 })
 

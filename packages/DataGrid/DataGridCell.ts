@@ -3,7 +3,7 @@ import { NotificationComponent } from '@a11d/lit-application'
 import { Localizer } from '@3mo/localization'
 import { type DataGridColumn, DataGridEditability, type DataGridRow } from './index.js'
 
-Localizer.register('de', {
+Localizer.dictionaries.add('de', {
 	'Using the clipboard is not allowed in an insecure browser environment': 'In einer unsicheren Browser-Umgebung darf kein Text in die Zwischenablage kopiert werden',
 	'Copied to clipboard': 'In die Zwischenablage kopiert',
 })

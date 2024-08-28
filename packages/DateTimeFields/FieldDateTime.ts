@@ -1,14 +1,24 @@
 
 import { component, html, property } from '@a11d/lit'
+import { Localizer } from '@3mo/localization'
 import { FieldDateTimeBase, FieldDateTimePrecision } from './FieldDateTimeBase.js'
 import { Memoize as memoize } from 'typescript-memoize'
 
-/** @element mo-field-date-time */
+Localizer.dictionaries.add('de', {
+	'Date & Time': 'Datum & Uhrzeit',
+})
+
+/**
+ * @element mo-field-date-time
+ *
+ * @i18n "Date & Time"
+ */
 @component('mo-field-date-time')
 export class FieldDateTime extends FieldDateTimeBase<Date | undefined> {
 	protected get navigatingDate() { return this.value ? new DateTime(this.value) : new DateTime() }
 	protected get selectedDate() { return this.value ? new DateTime(this.value) : undefined }
 
+	@property() override label = t('Date & Time')
 	@property({ type: Object }) value?: Date
 
 	@memoize()

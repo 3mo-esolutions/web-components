@@ -4,7 +4,7 @@ import { LocalStorage } from '@a11d/local-storage'
 import { Localizer } from '@3mo/localization'
 import { getContentTemplate, type DialogContent, type DialogSize } from '@3mo/dialog'
 
-Localizer.register('de', {
+Localizer.dictionaries.add('de', {
 	'Deletion Confirmation': 'Löschbestätigung',
 })
 

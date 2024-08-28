@@ -6,14 +6,14 @@ import { Localizer, type LanguageCode } from './index.js'
 
 export default { title: 'Localization', package: p } as Meta
 
-Localizer.register('en', {
+Localizer.dictionaries.add('en', {
 	'You have ${count:pluralityNumber} new messages': [
 		'You have ${count} new message',
 		'You have ${count} new messages',
 	]
 })
 
-Localizer.register('de', {
+Localizer.dictionaries.add('de', {
 	'Home': 'Startseite',
 	'Inbox (${count:number})': 'Posteingang (${count})',
 	'Count': 'Anzahl',
@@ -25,7 +25,7 @@ Localizer.register('de', {
 	]
 })
 
-Localizer.register('fa', {
+Localizer.dictionaries.add('fa', {
 	'Home': 'خانه',
 	'Count': 'تعداد',
 	'Inbox (${count:number})': 'صندوق ورودی (${count})',
@@ -49,8 +49,8 @@ export class StoryLocalizer extends Component {
 					<mo-flex direction='horizontal' gap='8px'>
 						<mo-field-number label=${t('Count')} ${bind(this, 'count')}></mo-field-number>
 						<mo-field-select label=${t('Language')}
-							value=${Localizer.currentLanguage}
-							@change=${(e: CustomEvent<LanguageCode>) => Localizer.currentLanguage = e.detail}
+							value=${Localizer.languages.current}
+							@change=${(e: CustomEvent<LanguageCode>) => Localizer.languages.current = e.detail}
 						>
 							<mo-option value='en'>English</mo-option>
 							<mo-option value='de'>Deutsch</mo-option>

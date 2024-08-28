@@ -5,7 +5,7 @@ import { LocalStorage } from '@a11d/local-storage'
 import { NotificationComponent } from '@a11d/lit-application'
 import { updateAllComponentsOnDispatch } from './updateAllComponentsOnDispatch.js'
 
-Localizer.register('de', {
+Localizer.dictionaries.add('de', {
 	'Authenticated successfully': 'Erfolgreich authentifiziert',
 	'Incorrect Credentials': 'Ungültige Anmeldeinformationen',
 	'Password reset instructions have been sent to your email address': 'Anweisungen zum Zurücksetzen des Passworts wurden an Ihre E-Mail-Adresse gesendet',

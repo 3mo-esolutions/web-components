@@ -13,15 +13,15 @@ export class DirectionsByLanguage {
 
 	static {
 		DirectionsByLanguage.updateAttributes()
-		Localizer.languageChange.subscribe(() => DirectionsByLanguage.updateAttributes())
+		Localizer.languages.change.subscribe(() => DirectionsByLanguage.updateAttributes())
 	}
 
-	static get(language = Localizer.currentLanguage) {
+	static get(language = Localizer.languages.current) {
 		return DirectionsByLanguage.directions.get(language) ?? 'ltr'
 	}
 
 	static updateAttributes() {
-		window?.document.body.setAttribute('lang', Localizer.currentLanguage)
+		window?.document.body.setAttribute('lang', Localizer.languages.current)
 		window?.document.body.setAttribute('dir', DirectionsByLanguage.get())
 	}
 

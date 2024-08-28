@@ -5,13 +5,13 @@ import { TooltipPlacement, tooltip } from '@3mo/tooltip'
 import { type DataGrid, type DataGridPagination } from './index.js'
 import excelSvg from './excel.svg.js'
 
-Localizer.register('de', {
+Localizer.dictionaries.add('de', {
 	'${page:number} of ${maxPage:number}': '${page} von ${maxPage}',
 	'Export current view to Excel': 'Aktuelle Ansicht nach Excel exportieren',
 	'Auto': 'Auto'
 })
 
-Localizer.register('fa', {
+Localizer.dictionaries.add('fa', {
 	'${page:number} of ${maxPage:number}': '${page} از ${maxPage}',
 	'Auto': 'خودکار',
 })

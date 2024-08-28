@@ -3,9 +3,10 @@ import { FieldText, type FieldTextAutoComplete } from './FieldText.js'
 import { Localizer } from '@3mo/localization'
 import '@3mo/icon-button'
 
-Localizer.register('de', {
+Localizer.dictionaries.add('de', {
+	Password: 'Passwort',
 	Reveal: 'Anzeigen',
-	Hide: 'Verbergen'
+	Hide: 'Verbergen',
 })
 
 /**
@@ -13,6 +14,8 @@ Localizer.register('de', {
  *
  * @attr reveal
  * @attr autoComplete
+ *
+ * @i18n "Password"
  */
 @component('mo-field-password')
 export class FieldPassword extends FieldText {
@@ -36,6 +39,7 @@ export class FieldPassword extends FieldText {
 		return this.reveal ? 'text' : 'password'
 	}
 
+	@property() override label = t('Password')
 	@property() override autoComplete: FieldTextAutoComplete = 'current-password'
 
 	protected override get lengthTemplate() {

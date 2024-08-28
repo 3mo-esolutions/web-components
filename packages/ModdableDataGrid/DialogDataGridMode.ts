@@ -4,7 +4,7 @@ import { Localizer } from '@3mo/localization'
 import { DialogDeletion } from '@3mo/standard-dialogs'
 import { type ModdableDataGrid, Mode } from './index.js'
 
-Localizer.register('de', {
+Localizer.dictionaries.add('de', {
 	'Mode ${name:string}': 'Ansicht "${name}"',
 	'New Mode': 'Neue Ansicht',
 	'Name': 'Bezeichnung',
@@ -14,7 +14,7 @@ Localizer.register('de', {
 	'Delete': 'Löschen',
 })
 
-Localizer.register('fa', {
+Localizer.dictionaries.add('fa', {
 	'Mode ${name:string}': 'نمایش "${name}"',
 	'New Mode': 'نمایش جدید',
 	'Name': 'نام',

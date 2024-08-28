@@ -19,22 +19,22 @@ export class DateTime extends Date {
 	}
 
 	@memoize()
-	static getResolvedOptions(language = Localizer.currentLanguage) {
+	static getResolvedOptions(language = Localizer.languages.current) {
 		return Intl.DateTimeFormat(language).resolvedOptions()
 	}
 
 	@memoize()
-	static getCalendar(language = Localizer.currentLanguage) {
+	static getCalendar(language = Localizer.languages.current) {
 		return DateTime.getResolvedOptions(language).calendar
 	}
 
 	@memoize()
-	static getTimeZone(language = Localizer.currentLanguage) {
+	static getTimeZone(language = Localizer.languages.current) {
 		return DateTime.getResolvedOptions(language).timeZone
 	}
 
 	@memoize()
-	static getDateSeparator(language = Localizer.currentLanguage) {
+	static getDateSeparator(language = Localizer.languages.current) {
 		return Intl.DateTimeFormat(language)
 			.formatToParts(new DateTime)
 			.find(part => part.type === 'literal')
@@ -42,7 +42,7 @@ export class DateTime extends Date {
 	}
 
 	@memoize()
-	static getTimeSeparator(language = Localizer.currentLanguage) {
+	static getTimeSeparator(language = Localizer.languages.current) {
 		return Intl.DateTimeFormat(language, { timeStyle: 'short' })
 			.formatToParts(new DateTime)
 			.find(part => part.type === 'literal')

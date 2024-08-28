@@ -5,14 +5,14 @@ import { Localizer } from '@3mo/localization'
 import { DataGridSelectionMode, DataGridSortingStrategy, type DataGridColumn, type DataGrid, DataGridSidePanelTab } from './index.js'
 import type { DataGridColumnsController } from './DataGridColumnsController.js'
 
-Localizer.register('en', {
+Localizer.dictionaries.add('en', {
 	'Actions for ${count:pluralityNumber} selected entries': [
 		'Actions for the selected entry',
 		'Actions for ${count} selected entries',
 	],
 })
 
-Localizer.register('de', {
+Localizer.dictionaries.add('de', {
 	'Actions for ${count:pluralityNumber} selected entries': [
 		'Optionen für den ausgewählten Eintrag',
 		'Optionen für ${count} ausgewählte Einträge',
