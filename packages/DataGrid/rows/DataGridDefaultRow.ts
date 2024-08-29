@@ -29,13 +29,19 @@ export class DataGridDefaultRow<TData, TDetailsElement extends Element | undefin
 				grid-column: -1 / 1;
 			}
 
+      :host(:not([has-sub-data])) #detailsContainer > * {
+        margin: 15px 60px !important;
+				width: calc(100% - 120px);
+				height: calc(100% - 30px);
+				background-color: var(--mo-color-surface) !important;
+      }
+
 			:host([has-sub-data]) #detailsContainer {
 				display: grid;
 				grid-template-columns: subgrid;
 			}
 
 			#detailsContainer [instanceof*=mo-data-grid] {
-				--mo-data-grid-header-background: color-mix(in srgb, var(--mo-color-foreground), transparent 96%);
 				--mo-data-grid-alternating-background: transparent;
 				--_content-min-height-default: 0px;
 			}
