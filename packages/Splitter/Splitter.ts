@@ -1,4 +1,4 @@
-import { component, html, property, Component, css, styleMap, queryAll, ifDefined, eventListener, style, state } from '@a11d/lit'
+import { component, html, property, Component, css, styleMap, queryAll, ifDefined, eventListener, style, state, event } from '@a11d/lit'
 import { type Flex } from '@3mo/flex'
 import { MutationController } from '@3mo/mutation-observer'
 import { SplitterItem, type SplitterResizerHost } from './index.js'
@@ -12,10 +12,14 @@ import '@3mo/theme'
  * @attr gap
  * @attr resizerTemplate
  *
+ * @fires sizeChange
+ *
  * @slot
  */
 @component('mo-splitter')
 export class Splitter extends Component {
+	@event() readonly sizeChange!: EventDispatcher
+
 	private static readonly itemSlotPrefix = 'item-'
 
 	@property() direction: Flex['direction'] = 'vertical'
@@ -100,6 +104,7 @@ export class Splitter extends Component {
 			}
 		}
 		resizingItem.size = `${getSize() / oldTotalSize * 100}%`
+		this.sizeChange.dispatch()
 	}
 
 	protected override get template() {
