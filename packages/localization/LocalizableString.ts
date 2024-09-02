@@ -58,7 +58,7 @@ export class LocalizableString<Key extends LocalizableStringKey> {
 	localize(language = Localizer.languages.current, parameters = this.parameters) {
 		const languageDictionary = Localizer.dictionaries.get(language)
 
-		if (language !== LocalizableString.defaultLanguage && !languageDictionary.has(language)) {
+		if (language !== LocalizableString.defaultLanguage && !languageDictionary.has(this.key)) {
 			/* eslint-disable-next-line no-console */
 			console.warn(`[Localizer] No "${language}" localization found for "${this.key}".`)
 		}
