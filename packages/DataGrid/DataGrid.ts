@@ -20,7 +20,6 @@ Localizer.dictionaries.add('de', {
 	'Exporting excel file': 'Die Excel-Datei wird exportiert',
 	'No results': 'Kein Ergebnis',
 	'More Filters': 'Weitere Filter',
-	'Deselect All': 'Alle deselektieren',
 })
 
 export type DataGridPagination = 'auto' | number

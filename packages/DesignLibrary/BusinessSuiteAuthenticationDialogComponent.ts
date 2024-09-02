@@ -7,16 +7,12 @@ import { updateAllComponentsOnDispatch } from './updateAllComponentsOnDispatch.j
 
 Localizer.dictionaries.add('de', {
 	'Authenticated successfully': 'Erfolgreich authentifiziert',
-	'Incorrect Credentials': 'Ungültige Anmeldeinformationen',
 	'Password reset instructions have been sent to your email address': 'Anweisungen zum Zurücksetzen des Passworts wurden an Ihre E-Mail-Adresse gesendet',
 	'Password could not be reset': 'Passwort konnte nicht zurückgesetzt werden',
-	'Something went wrong. Try again.': 'Etwas ist schief gelaufen. Versuche nochmal.',
 	'Username': 'Benutzer',
 	'Password': 'Passwort',
 	'Remember Password': 'Passwort merken',
-	'Show Password': 'Passwort anzeigen',
 	'Reset Password': 'Passwort zurücksetzen',
-	'Welcome': 'Willkommen',
 	'Login': 'Anmelden'
 })
 
@@ -84,9 +80,9 @@ export abstract class BusinessSuiteAuthenticationDialogComponent extends DialogA
 	async resetPassword() {
 		try {
 			await this.requestPasswordReset()
-			NotificationComponent.notifyInfo('Password reset instructions have been sent to your email address')
+			NotificationComponent.notifyInfo(t('Password reset instructions have been sent to your email address'))
 		} catch (error: any) {
-			NotificationComponent.notifyError(error.message ?? 'Password could not be reset')
+			NotificationComponent.notifyError(error.message ?? t('Password could not be reset'))
 			throw error
 		}
 	}
