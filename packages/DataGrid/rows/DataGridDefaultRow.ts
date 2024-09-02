@@ -40,6 +40,15 @@ export class DataGridDefaultRow<TData, TDetailsElement extends Element | undefin
 				background-color: var(--mo-color-surface) !important;
       }
 
+			:host(:not([data-has-alternating-background])) #detailsContainer {
+				background-color: var(--mo-color-surface) !important;
+
+				& > [instanceof*=mo-data-grid] {
+					--mo-data-grid-header-background: transparent;
+					background-color: var(--mo-color-transparent-gray-1) !important;
+				}
+			}
+
 			:host([has-sub-data]) #detailsContainer {
 				display: grid;
 				grid-template-columns: subgrid;
