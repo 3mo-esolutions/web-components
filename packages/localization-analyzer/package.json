@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/localization-analyzer",
-	"version": "0.1.2",
+	"version": "0.1.3",
 	"description": "A set of tools for analyzing localizations done with the @3mo/localization package.",
 	"repository": {
 		"type": "git",
