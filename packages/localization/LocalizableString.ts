@@ -1,7 +1,7 @@
 import { Localizer } from './Localizer.js'
 import { CardinalPluralizationRulesByLanguage } from './CardinalPluralizationRulesByLanguage.js'
 
-type ExtractProperties<T extends string> =
+type ExtractProperties<T extends LocalizableStringKey> =
 	T extends `${string}${'${'}${infer P}${'}'}${infer Rest}` ? P | ExtractProperties<Rest> : never
 
 type ExtractKey<TProperty extends string> =
@@ -26,20 +26,22 @@ interface LocalizationFormatterTypeMap {
 	'': string
 }
 
-type LocalizationParameters<T extends string> = {
+type LocalizationParameters<T extends LocalizableStringKey> = {
 	[P in ExtractProperties<T> as ExtractKey<P>]: ExtractType<P>
 }
 
-export class LocalizableString<Key extends string> {
+type LocalizableStringKey = keyof LocalizableStringKeys | (string & {})
+
+export class LocalizableString<Key extends LocalizableStringKey> {
 	static readonly defaultLanguage = 'en'
 	static readonly pluralityIdentityType = 'pluralityNumber'
 	private static readonly regex = /\${(.+?)(?::(.+?))?}/g
 
-	static get<Key extends string>(key: Key, parameters?: LocalizationParameters<Key>) {
+	static get<Key extends LocalizableStringKey>(key: Key, parameters?: LocalizationParameters<Key>) {
 		return new LocalizableString<Key>(key, parameters)
 	}
 
-	static getAsString<Key extends string>(key: Key, parameters?: LocalizationParameters<Key>) {
+	static getAsString<Key extends LocalizableStringKey>(key: Key, parameters?: LocalizationParameters<Key>) {
 		return LocalizableString.get(key, parameters) as unknown as string
 	}
 
@@ -97,13 +99,5 @@ declare global {
 	// eslint-disable-next-line no-var
 	var t: typeof LocalizableString.getAsString
 
-	// namespace LocalizableString {
-	// 	type LocalizationProvider<K extends keyof LocalizationParametersMap> = (...args: Localizer.LocalizationParametersMap[K]) => string
-
-	// 	type Localization = {
-	// 		[K in keyof LocalizationParametersMap]: string | LocalizationProvider<K>
-	// 	}
-
-	// 	interface LocalizationParametersMap { }
-	// }
+	interface LocalizableStringKeys { }
 }

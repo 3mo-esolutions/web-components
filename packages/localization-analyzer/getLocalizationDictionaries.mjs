@@ -20,9 +20,9 @@ export async function getLocalizationDictionaries(url) {
 	})
 	const page = await browser.newPage()
 	await page.goto(url)
-	await page.waitForFunction('window.Localizer')
+	await page.waitForFunction('globalThis.Localizer')
 	// @ts-ignore
-	const mapAsArray = await page.evaluate(() => [...window.Localizer.dictionariesByLanguageCode].map(([language, dictionary]) => ({ language, dictionary: [...dictionary] })))
+	const mapAsArray = await page.evaluate(() => [...globalThis.Localizer.dictionaries.byLanguageCode].map(([language, dictionary]) => ({ language, dictionary: [...dictionary] })))
 	await browser.close()
 
 	/** @type {Map<string, Map<string, string>>} */
