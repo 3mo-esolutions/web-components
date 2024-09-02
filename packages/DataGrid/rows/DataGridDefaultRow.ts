@@ -29,10 +29,6 @@ export class DataGridDefaultRow<TData, TDetailsElement extends Element | undefin
 				grid-column: -1 / 1;
 			}
 
-			:host(:not([has-sub-data])) #detailsContainer {
-				background-color: var(--mo-color-transparent-gray-1);
-			}
-
       :host(:not([has-sub-data])) #detailsContainer > * {
         margin: 15px 60px !important;
 				width: calc(100% - 120px);
