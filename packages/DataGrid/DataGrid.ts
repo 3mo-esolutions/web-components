@@ -247,6 +247,14 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		return this.columnsController.extractColumns(...parameters)
 	}
 
+	get extractedColumns() {
+		return this.columnsController.extractedColumns
+	}
+
+	extractedColumnsUpdated(extractedColumns: Array<DataGridColumn<TData, TDetailsElement>>) {
+		this.setColumns(extractedColumns)
+	}
+
 	get visibleColumns() {
 		return this.columnsController.visibleColumns
 	}
