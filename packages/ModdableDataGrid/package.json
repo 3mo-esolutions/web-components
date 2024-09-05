@@ -26,17 +26,29 @@
 		"dist"
 	],
 	"dependencies": {
-		"tslib": "x",
+		"@3mo/flex": "x",
+		"@3mo/card": "x",
+		"@3mo/scroller": "x",
+		"@3mo/icon-button": "x",
+		"@3mo/popover": "x",
+		"@3mo/dialog": "x",
+		"@3mo/standard-dialogs": "x",
+		"@3mo/data-grid": "x",
+		"@3mo/fetchable-data-grid": "x",
 		"@a11d/lit": "x",
 		"@a11d/lit-application": "x",
-		"@a11d/local-storage": "x",
-		"@3mo/flex": "x",
-		"@3mo/icon-button": "x",
-		"@3mo/scroller": "x",
-		"@3mo/fetchable-data-grid": "x",
-		"@3mo/standard-dialogs": "x",
 		"@3mo/tooltip": "x",
+		"@3mo/menu": "x",
+		"@3mo/context-menu": "x",
 		"@3mo/localization": "x",
-		"@3mo/context-menu": "x"
+		"@a11d/equals": "^0.1.1",
+		"localforage": "^1.10.0",
+		"lodash.clonedeep": "^4.5.0",
+		"sortablejs": "^1.15.3",
+		"tslib": "x"
+	},
+	"devDependencies": {
+		"@types/lodash.clonedeep": "^4.5.9",
+		"@types/sortablejs": "^1.15.8"
 	}
 }
