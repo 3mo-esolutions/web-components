@@ -69,7 +69,10 @@ export class DocumentController extends Controller {
 	}
 
 	async fetchNatively() {
-		const response = await fetch(this.host.source)
+		const response = await fetch(this.host.source, {
+			// Get rid to test in the Storybook (leave only `fetch(this.host.source)`)
+			credentials: 'include',
+		})
 
 		const binary = await response.blob()
 		const reader = new FileReader()
