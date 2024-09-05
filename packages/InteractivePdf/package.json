@@ -1,0 +1,34 @@
+{
+	"name": "@3mo/interactive-pdf",
+	"version": "0.1.0",
+	"description": "",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/3mo-esolutions/web-components"
+	},
+	"keywords": [
+		"lit",
+		"web-component",
+		"pdf"
+	],
+	"author": "3MO GmbH",
+	"license": "MIT",
+	"homepage": "https://www.3mo.de",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"customElements": "dist/custom-elements.json",
+	"files": [
+		"dist"
+	],
+	"dependencies": {
+		"@3mo/color": "x",
+		"@3mo/media-query-observer": "x",
+		"@3mo/tooltip": "x",
+		"@a11d/lit": "x",
+		"fabric": "6.4.1",
+		"pdf-lib": "^1.17.1",
+		"pdfjs-dist": "4.6.82",
+		"tslib": "x"
+	}
+}
