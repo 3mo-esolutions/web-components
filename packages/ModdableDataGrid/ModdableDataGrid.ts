@@ -72,35 +72,6 @@ export abstract class ModdableDataGrid<T, P extends FetchableDataGridParametersT
 		this.mode.apply(this)
   }
 
-	private enableReordering = () => {
-		if (!this.modesListNode) {
-			this.isReorderingEnabled = false
-			return
-		}
-
-		if (this.isReorderingEnabled) {
-			return
-		}
-
-		this.isReorderingEnabled = true
-
-		new Sortable(this.modesListNode, {
-			filter: '[data-temporary]',
-			animation: 500,
-			onEnd: () => this.onReorder(),
-		})
-	}
-
-	private onReorder = async () => {
-		const visibleModesIds = [...this.renderRoot.querySelectorAll('mo-moddable-data-grid-chip')]
-			.map(mode => mode.dataset.modeId)
-		this.repository.value = [
-			...visibleModesIds
-				.map(modeId => this.repository.value.find((mode: Mode<T, P>) => mode.id === modeId)!)
-				.filter(mode => !mode.archived),
-			...this.repository.getArchived(),
-		]
-	}
 
 	static override get styles() {
 		return css`
@@ -195,6 +166,36 @@ export abstract class ModdableDataGrid<T, P extends FetchableDataGridParametersT
 			parameters: this.parameters ? cloneDeep(this.parameters) : undefined,
 			sorting: this.sorting ? cloneDeep(this.sorting) : [],
 		})
+	}
+
+	private enableReordering = () => {
+		if (!this.modesListNode) {
+			this.isReorderingEnabled = false
+			return
+		}
+
+		if (this.isReorderingEnabled) {
+			return
+		}
+
+		this.isReorderingEnabled = true
+
+		new Sortable(this.modesListNode, {
+			filter: '[data-temporary]',
+			animation: 500,
+			onEnd: () => this.onReorder(),
+		})
+	}
+
+	private onReorder = async () => {
+		const visibleModesIds = [...this.renderRoot.querySelectorAll('mo-moddable-data-grid-chip')]
+			.map(mode => mode.dataset.modeId)
+		this.repository.value = [
+			...visibleModesIds
+				.map(modeId => this.repository.value.find((mode: Mode<T, P>) => mode.id === modeId)!)
+				.filter(mode => !mode.archived),
+			...this.repository.getArchived(),
+		]
 	}
 
 	protected override get template() {

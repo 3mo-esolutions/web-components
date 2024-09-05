@@ -19,7 +19,7 @@ Localizer.dictionaries.add({
 	},
 	en: {
 		'Archive (Archivieren)': 'Archive',
-	}
+	},
 })
 
 type Parameters<T, P extends FetchableDataGridParametersType> = {
