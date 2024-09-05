@@ -96,30 +96,30 @@ describe('ModdableDataGrid', () => {
 		await fixture.component.updateComplete
 	}
 
-	fit('should have an icon in toolbar if there are no modes', () => {
+	it('should have an icon in toolbar if there are no modes', () => {
 		expect((fixture.component as any).hasModebar).toBeFalse()
 		expect(fixture.component.renderRoot.querySelector('#toolbar [data-qa-id=addMode]')).not.toBeNull()
 	})
 
-	fit('should open a dialog when clicks an icon in the toolbar', () => {
+	it('should open a dialog when clicks an icon in the toolbar', () => {
 		spyOn(DialogMode.prototype, 'confirm')
 		fixture.component.renderRoot.querySelector('#toolbar [data-qa-id=addMode]')?.dispatchEvent(new MouseEvent('click'))
 		expect(DialogMode.prototype.confirm).toHaveBeenCalledTimes(1)
 	})
 
-	fit('should have a modebar if there is at least one mode', async () => {
+	it('should have a modebar if there is at least one mode', async () => {
 		await setupModes(dummyModes)
 		expect((fixture.component as any).hasModebar).toBeTrue()
 		expect(fixture.component.renderRoot.querySelector('#modebar')).not.toBeNull()
 		expect(fixture.component.renderRoot.querySelector('[data-qa-id=addMode]')).toBeNull()
 	})
 
-	fit('should display an archive icon if there is at least one archived mode', async () => {
+	it('should display an archive icon if there is at least one archived mode', async () => {
 		await setupModes(dummyModes.map(mode => new Mode({ ...mode, archived: true })))
 		expect(fixture.component.renderRoot.querySelector('[data-qa-id=archive]')).not.toBeNull()
 	})
 
-	fit('should display only unarchived modes', async () => {
+	it('should display only unarchived modes', async () => {
 		await setupModes([
 			...dummyModes,
 			...dummyModes.map(dummyMode => new Mode({ ...dummyMode, id: undefined, archived: true })),
@@ -149,13 +149,13 @@ describe('ModdableDataGrid', () => {
 		return modifiedColumns
 	}
 
-	fit('should set default mode on initialization', async () => {
+	it('should set default mode on initialization', async () => {
 		const modifiedColumns = await initWithDefaultMode()
 		expect((fixture.component as any).defaultModeIdStorage.value).toBe(dummyModes[0].id)
 		expect(fixture.component.currentMode.columns?.map(getPlainColumn)).toEqual(modifiedColumns.map(getPlainColumn))
 	})
 
-	fit('should reset mode to default', async () => {
+	it('should reset mode to default', async () => {
 		await fixture.initialize()
 
 		const defaultColumns = fixture.component.currentMode.columns?.map(getPlainColumn)
@@ -179,13 +179,13 @@ describe('ModdableDataGrid', () => {
 			return chipNode
 		}
 
-		fit('should change a mode on clicking a chip', async () => {
+		it('should change a mode on clicking a chip', async () => {
 			await setupModes(dummyModes)
 			const chipNode = await selectMode()
 			expect(fixture.component.mode).toEqual(chipNode.mode)
 		})
 
-		fit('should apply changes to data grid on switching modes', async () => {
+		it('should apply changes to data grid on switching modes', async () => {
 			await setupModes(dummyModes)
 			const chipNode = await selectMode()
 			expect(fixture.component.parameters).toEqual(chipNode.mode.parameters!)
@@ -195,7 +195,7 @@ describe('ModdableDataGrid', () => {
 			expect(fixture.component.parameters).toEqual({ searchString: undefined })
 		})
 
-		fit('should display shortcuts and have more context menu items if there are any changes', async () => {
+		it('should display shortcuts and have more context menu items if there are any changes', async () => {
 			await setupModes(dummyModes)
 			const chipNode = await selectMode()
 
@@ -215,7 +215,7 @@ describe('ModdableDataGrid', () => {
 			expect(chipNode.renderRoot.querySelectorAll('mo-context-menu-item').length).toBe(7)
 		})
 
-		fit('should discard changes on clicking "undo" icon', async () => {
+		it('should discard changes on clicking "undo" icon', async () => {
 			await setupModes(dummyModes)
 			const chipNode = await selectMode()
 
@@ -230,7 +230,7 @@ describe('ModdableDataGrid', () => {
 			expect((fixture.component.parameters as TParameters).searchString).toBe(chipNode.mode.parameters?.searchString)
 		})
 
-		fit('should apply changes on clicking "done" icon', async () => {
+		it('should apply changes on clicking "done" icon', async () => {
 			await setupModes(dummyModes)
 			const chipNode = await selectMode()
 
@@ -245,7 +245,7 @@ describe('ModdableDataGrid', () => {
 			expect(fixture.component.repository.value.find(mode => mode.id === chipNode.mode.id)?.parameters?.searchString).toBe('')
 		})
 
-		fit('should delete a mode on clicking "delete" icon', async () => {
+		it('should delete a mode on clicking "delete" icon', async () => {
 			spyOn(RepositoryController.prototype, 'delete').and.returnValue(Promise.resolve())
 
 			await setupModes(dummyModes)
@@ -257,7 +257,7 @@ describe('ModdableDataGrid', () => {
 			expect(RepositoryController.prototype.delete).toHaveBeenCalledWith(chipNode.mode)
 		})
 
-		fit('should archive or unarchive a mode on clicking "archive" icon', async () => {
+		it('should archive or unarchive a mode on clicking "archive" icon', async () => {
 			await setupModes(dummyModes)
 
 			const chipNode = await selectMode(true)
@@ -266,7 +266,7 @@ describe('ModdableDataGrid', () => {
 			expect(chipNode.mode.archived).toBe(true)
 		})
 
-		fit('should open a copying dialog on clicking "content_copy" icon', async () => {
+		it('should open a copying dialog on clicking "content_copy" icon', async () => {
 			let parameters!: typeof DialogMode.prototype['parameters']
 
 			spyOn(DialogMode.prototype, 'confirm').and.callFake(function(this: DialogMode<unknown, any>) {
@@ -284,7 +284,7 @@ describe('ModdableDataGrid', () => {
 			expect(parameters.isCopying).toBeTrue()
 		})
 
-		fit('should open an edit dialog on cicking "edit" icon', async () => {
+		it('should open an edit dialog on cicking "edit" icon', async () => {
 			let parameters!: typeof DialogMode.prototype['parameters']
 
 			await setupModes(dummyModes)
@@ -301,7 +301,7 @@ describe('ModdableDataGrid', () => {
 			expect(parameters.mode).toEqual(chipNode.mode)
 		})
 
-		fit('should open a create as new dialog on clicking "check_circle"', async () => {
+		it('should open a create as new dialog on clicking "check_circle"', async () => {
 			let parameters!: typeof DialogMode.prototype['parameters']
 
 			await setupModes(dummyModes)
