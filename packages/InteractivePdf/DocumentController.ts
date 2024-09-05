@@ -43,6 +43,7 @@ export class DocumentController extends Controller {
 		if (this.host.source === this.currentSource || !this.host.source) {
 			return
 		}
+		this.host.loading = true
 		this.currentSource = this.host.source
 		this.document = await pdfjsLib.getDocument(this.currentSource).promise
 		this.host.requestUpdate()
@@ -63,6 +64,8 @@ export class DocumentController extends Controller {
 		}
 
 		this.host['fabricController'].render()
+
+		this.host.loading = false
 	}
 
 	async fetchNatively() {

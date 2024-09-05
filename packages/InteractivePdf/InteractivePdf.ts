@@ -43,14 +43,27 @@ export class InteractivePdf extends Component {
 		}
 	}) private scale = 200
 
+	@state() loading = true
+
 	protected readonly documentController = new DocumentController(this)
 	protected readonly fabricController = new FabricController(this)
 
 	static override get styles() {
 		return css`
 			#container {
+				position: relative;
 				height: 100%;
 				background-color: rgb(82, 86, 89);
+			}
+
+			#loader {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				z-index: 1000;
+				background-color: rgba(255, 255, 255, 0.3);
 			}
 
 			#toolbar {
@@ -165,15 +178,34 @@ export class InteractivePdf extends Component {
 					border-radius: 32px;
 				}
 			}
+
+			[icon=download] {
+				margin-left: auto;
+			}
+
+			.documentOuter {
+				position: relative;
+				width: fit-content;
+				max-height: 100%;
+			}
 		`
 	}
 
 	protected override get template() {
 		return html`
 			<mo-flex id='container'>
+				${this.loadingTemplate}
 				${this.toolbarTemplate}
 				${this.viewerTemplate}
 				${this.fabricOverlayTemplate}
+			</mo-flex>
+		`
+	}
+
+	protected get loadingTemplate() {
+		return !this.loading ? html.nothing : html`
+			<mo-flex id='loader' alignItems='center' justifyContent='center'>
+				<mo-circular-progress></mo-circular-progress>
 			</mo-flex>
 		`
 	}
@@ -184,6 +216,7 @@ export class InteractivePdf extends Component {
 				<mo-icon-button icon='fit_screen'
 					${style({ color: this.fitWidth ? 'var(--mo-color-accent)' : 'unset' })}
 					${tooltip(t('Fit to window'))}
+					?disabled=${this.loading}
 					@click=${() => this.fitWidth = !this.fitWidth}
 				></mo-icon-button>
 				${this.scaleTemplate}
@@ -197,10 +230,11 @@ export class InteractivePdf extends Component {
 			<mo-icon-button icon='remove'
 				${tooltip(t('Zoom out'))}
 				${style({ color: this.scale <= 10 || this.fitWidth ? 'rgba(255, 255, 255, 0.4)' : 'unset', pointerEvents: this.scale <= 10 || this.fitWidth ? 'none' : 'unset' })}
+				?disabled=${this.loading}
 				@click=${() => this.scale -= 10}
 			></mo-icon-button>
 			<input
-				?disabled=${this.fitWidth}
+				?disabled=${this.fitWidth || this.loading}
 				.value=${this.scale + '%'}
 				@change=${this.onScaleChange}
 			/>
@@ -210,15 +244,17 @@ export class InteractivePdf extends Component {
 					color: this.fitWidth ? 'rgba(255, 255, 255, 0.4)' : 'unset',
 					pointerEvents: this.fitWidth ? 'none' : 'unset',
 				})}
+				?disabled=${this.loading}
 				@click=${() => this.scale += 10}
 			></mo-icon-button>
 			<mo-icon-button icon='download'
 				${tooltip(t('Download'))}
-				${style({ marginLeft: 'auto' })}
+				?disabled=${this.loading}
 				@click=${() => this.download()}
 			></mo-icon-button>
 			<mo-icon-button icon='print'
 				${tooltip(t('Print'))}
+				?disabled=${this.loading}
 				@click=${() => this.print()}
 			></mo-icon-button>
 		`
@@ -238,7 +274,7 @@ export class InteractivePdf extends Component {
 					${style({ width: 'fit-content', padding: this.fitWidth ? '32px 0' : '32px 32px 0' })}
 				>
 					${new Array(this.documentController?.numberOfPages ?? 0).fill(undefined).map(() => html`
-						<div ${style({ position: 'relative', width: 'fit-content', maxHeight: '100%' })}>
+						<div class='documentOuter'>
 							<canvas class='document' ${style({ maxWidth: !this.fitWidth ? 'unset' : '100%' })}></canvas>
 							<canvas class='fabric'></canvas>
 						</div>
@@ -256,7 +292,7 @@ export class InteractivePdf extends Component {
 			})
 		}
 
-		return this.overlayHidden ? html.nothing : html`
+		return this.overlayHidden || this.loading ? html.nothing : html`
 			<mo-flex id='fabricOverlay' gap='var(--mo-thickness-xl)'>
 				<mo-icon-button icon='gesture' ${getStyles(FabricMode.Brush)}
 					@click=${() => this.fabricController.setMode(FabricMode.Brush)}
@@ -279,12 +315,15 @@ export class InteractivePdf extends Component {
 	}
 
 	private async toObjectUrl() {
+		this.loading = true
 		const arrayBuffer = await this.documentController.fetchNatively()
 		if (!arrayBuffer) {
 			return
 		}
 		const binary = await this.documentController.mergeWithFiber(arrayBuffer)
-		return URL.createObjectURL(binary)
+		const objectUrl = URL.createObjectURL(binary)
+		this.loading = false
+		return objectUrl
 	}
 
 	private async download() {
