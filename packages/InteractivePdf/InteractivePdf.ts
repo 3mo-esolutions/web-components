@@ -43,8 +43,6 @@ export class InteractivePdf extends Component {
 		}
 	}) private scale = 200
 
-	@state() currentPage = 1
-
 	protected readonly documentController = new DocumentController(this)
 	protected readonly fabricController = new FabricController(this)
 
@@ -235,7 +233,7 @@ export class InteractivePdf extends Component {
 
 	protected get viewerTemplate() {
 		return html`
-			<mo-scroller id='viewer' part='viewer' @scroll=${this.onScroll}>
+			<mo-scroller id='viewer' part='viewer'>
 				<mo-flex id='renderer' gap='32px' alignItems='center' justifyContent='center'
 					${style({ width: 'fit-content', padding: this.fitWidth ? '32px 0' : '32px 32px 0' })}
 				>
@@ -249,16 +247,6 @@ export class InteractivePdf extends Component {
 				</mo-flex>
 			</mo-scroller>
 		`
-	}
-
-	private onScroll = () => {
-		const document = this.documentNodes
-			.map(page => {
-				const rect = page.getBoundingClientRect()
-				return [rect.top + rect.height / 3, Number(page.dataset.page)]
-			})
-			.find(([y]) => y !== undefined && y > 0)
-		this.currentPage = document ? document[1]! : 1
 	}
 
 	protected get fabricOverlayTemplate() {
