@@ -80,13 +80,13 @@ export class PagePreferencesUserInterface extends PageSettings {
 				<mo-flex gap='18px'>
 					<mo-section heading='Farbthemen'>
 						<mo-card ${style({ flex: '1', alignItems: 'center' })}>
-							<mo-flex direction='horizontal' gap='10px'>
-								<mo-flex direction='horizontal' gap='10px' ${style({ flex: '1' })}>
+							<mo-flex direction='horizontal' gap='10px' justifyContent='center'>
+								<mo-flex direction='horizontal' gap='10px' ${style({ flex: '1', maxWidth: '1000px' })}>
 									${this.getBackgroundColorTemplate(Background.System)}
 									${this.getBackgroundColorTemplate(Background.Light)}
 									${this.getBackgroundColorTemplate(Background.Dark)}
 								</mo-flex>
-								<mo-grid gap='10px' columns='* * *'>
+								<mo-grid gap='10px' columns='* * *' style='display: none'>
 									${PagePreferencesUserInterface.accentPresetColors.map(color => this.getForegroundColorTemplate(color))}
 									<!-- .presets={PagePreferencesUserInterface.accentPresetColors} -->
 									<mo-color-picker ${style({ width: '100%', gridColumn: '1 / -1' })}

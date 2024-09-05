@@ -1,19 +1,9 @@
-import { component, css } from '@a11d/lit'
+import { component } from '@a11d/lit'
 import { NestedMenuItem } from '@3mo/menu'
 
 /** @element mo-context-menu-item */
 @component('mo-context-menu-item')
-export class ContextMenuItem extends NestedMenuItem {
-	static override get styles() {
-		return css`
-			${super.styles}
-
-			:host {
-				min-height: 40px;
-			}
-		`
-	}
-}
+export class ContextMenuItem extends NestedMenuItem { }
 
 declare global {
 	interface HTMLElementTagNameMap {

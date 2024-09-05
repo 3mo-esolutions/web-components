@@ -32,7 +32,7 @@ export class DateTimeRange {
 		return undefined
 	}
 
-	private static getUntilDelimiter(language: LanguageCode = Localizer.currentLanguage) {
+	private static getUntilDelimiter(language: LanguageCode = Localizer.languages.current) {
 		const parts = Intl.DateTimeFormat(language).formatRangeToParts(
 			new Date('2010-01-01T00:00:00.000Z'),
 			new Date('2020-01-01T00:00:00.000Z')

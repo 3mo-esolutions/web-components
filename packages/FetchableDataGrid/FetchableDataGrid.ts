@@ -19,7 +19,7 @@ type PaginatedResult<TData> = Readonly<{ data: NonPaginatedResult<TData> } & ({
 
 type Result<TData> = PaginatedResult<TData> | NonPaginatedResult<TData>
 
-Localizer.register('de', {
+Localizer.dictionaries.add('de', {
 	'Make a filter selection': 'Filterauswahl vornehmen',
 	'Refetch': 'Neu laden',
 })

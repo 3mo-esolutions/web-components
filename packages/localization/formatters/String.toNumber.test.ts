@@ -11,4 +11,9 @@ describe('String.toNumber()', () => {
 		expect('12.345,67'.toNumber('de')).toBe(12345.67)
 		expect('12,345.67'.toNumber('en')).toBe(12345.67)
 	})
+
+	it('should not allow -0 and return 0 instead', () => {
+		expect(Object.is('-0'.toNumber('en'), 0)).toBeTrue()
+		expect(Object.is('-0'.toNumber('de'), 0)).toBeTrue()
+	})
 })

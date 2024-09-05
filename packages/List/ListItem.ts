@@ -26,9 +26,8 @@ export class ListItem extends Component {
 				width: 100%;
 				box-sizing: border-box;
 				user-select: none;
-				font-size: 16px;
 				padding-inline: 16px;
-				padding-block: 8px;
+				padding-block: 0.48em;
 				display: flex;
 				gap: 16px;
 				align-items: center;

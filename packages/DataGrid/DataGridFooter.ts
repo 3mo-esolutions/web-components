@@ -4,13 +4,13 @@ import { DirectionsByLanguage, Localizer } from '@3mo/localization'
 import { TooltipPlacement, tooltip } from '@3mo/tooltip'
 import { type DataGrid, type DataGridPagination } from './index.js'
 
-Localizer.register('de', {
+Localizer.dictionaries.add('de', {
 	'${page:number} of ${maxPage:number}': '${page} von ${maxPage}',
 	'Export to Excel': 'Ansicht nach Excel exportieren',
 	'Auto': 'Auto'
 })
 
-Localizer.register('fa', {
+Localizer.dictionaries.add('fa', {
 	'${page:number} of ${maxPage:number}': '${page} از ${maxPage}',
 	'Auto': 'خودکار',
 })

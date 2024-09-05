@@ -5,7 +5,7 @@ export class LocalizerController extends Controller {
 	static readonly connectedComponents = new Set<ReactiveElement>()
 
 	static {
-		Localizer.languageChange.subscribe(() => LocalizerController.requestUpdate())
+		Localizer.languages.change.subscribe(() => LocalizerController.requestUpdate())
 	}
 
 	static requestUpdate() {

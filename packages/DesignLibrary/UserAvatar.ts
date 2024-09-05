@@ -2,7 +2,7 @@ import { html, component, Component, css, join, bind, property, event } from '@a
 import { Authentication } from '@a11d/lit-application-authentication'
 import { Localizer } from '@3mo/localization'
 
-Localizer.register('de', {
+Localizer.dictionaries.add('de', {
 	'Sign out': 'Abmelden'
 })
 

@@ -1,8 +1,15 @@
 import { component, html, property, style } from '@a11d/lit'
+import { Localizer } from '@3mo/localization'
 import { FieldText } from './FieldText.js'
+
+Localizer.dictionaries.add('de', {
+	'Search': 'Suche',
+})
 
 /**
  * @element mo-field-search
+ *
+ * @i18n "Search"
  */
 @component('mo-field-search')
 export class FieldSearch extends FieldText {
@@ -10,6 +17,7 @@ export class FieldSearch extends FieldText {
 		return 'search'
 	}
 
+	@property() override label = t('Search')
 	@property({ event: 'input' }) override value?: string
 
 	protected override get startSlotTemplate() {

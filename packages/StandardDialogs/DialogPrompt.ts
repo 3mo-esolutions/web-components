@@ -4,14 +4,14 @@ import { DialogComponent } from '@a11d/lit-application'
 import { Localizer } from '@3mo/localization'
 import { type BaseDialogParameters, getContentTemplate } from '@3mo/dialog'
 
-Localizer.register('de', {
+Localizer.dictionaries.add('de', {
 	'OK': 'OK',
 	'Cancel': 'Abbrechen',
 	'Apply': 'Übernehmen',
 	'Input': 'Eingabe'
 })
 
-Localizer.register('fa', {
+Localizer.dictionaries.add('fa', {
 	'OK': 'تایید',
 	'Cancel': 'لغو',
 	'Apply': 'اعمال',

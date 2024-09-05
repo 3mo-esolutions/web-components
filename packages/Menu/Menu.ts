@@ -130,6 +130,7 @@ export class Menu extends Component {
 			:host {
 				display: contents;
 				position: static;
+				font-size: 0.875rem;
 			}
 
 			:host([disabled]) {

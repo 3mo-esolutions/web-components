@@ -28,5 +28,5 @@ export function extractParsingParameters(parameters: ParsingParameters): [text: 
 		[text, referenceDate, language] = parameters
 	}
 
-	return [text!, language ?? Localizer.currentLanguage, referenceDate ?? new DateTime]
+	return [text!, language ?? Localizer.languages.current, referenceDate ?? new DateTime]
 }

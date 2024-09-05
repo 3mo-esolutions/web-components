@@ -3,7 +3,7 @@ import { FieldDateTimeRange } from './FieldDateTimeRange.js'
 import { FieldDateTimePrecision } from './FieldDateTimeBase.js'
 import { Localizer } from '@3mo/localization'
 
-Localizer.register('de', {
+Localizer.dictionaries.add('de', {
 	'Include time': 'Zeitauswahl',
 })
 

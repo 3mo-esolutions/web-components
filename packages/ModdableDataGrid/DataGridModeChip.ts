@@ -4,8 +4,7 @@ import { tooltip } from '@3mo/tooltip'
 import { Localizer } from '@3mo/localization'
 import { DialogDataGridMode, type ModdableDataGrid, type Mode } from './index.js'
 
-Localizer.register('de', {
-	'Changing Filter': 'Filterwechsel',
+Localizer.dictionaries.add('de', {
 	'Save changes': 'Änderungen speichern',
 	'Discard changes': 'Änderungen verwerfen',
 	'Archive': 'Archivieren',

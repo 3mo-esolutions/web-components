@@ -1,7 +1,7 @@
 import { Localizer, type LanguageCode } from '@3mo/localization'
 import { DateTimeRange } from './DateTimeRange.js'
 
-String.prototype.toDateTimeRange = function (this: string, language = Localizer.currentLanguage) {
+String.prototype.toDateTimeRange = function (this: string, language = Localizer.languages.current) {
 	return DateTimeRange.parse(this, language)
 }
 

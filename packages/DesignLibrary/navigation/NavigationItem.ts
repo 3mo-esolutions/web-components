@@ -87,7 +87,6 @@ export class NavigationItem extends Component {
 
 			mo-navigation-menu-item {
 				font-size: 14px;
-				height: 40px;
 				min-width: 200px;
 			}
 		`

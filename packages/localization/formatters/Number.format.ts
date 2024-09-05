@@ -5,7 +5,7 @@ type NumberFormatOptions = FormatOptionsWithLanguage<Intl.NumberFormatOptions>
 
 Number.prototype.format = function (this: number, ...options: NumberFormatOptions) {
 	const [language, explicitOptions] = extractFormatOptions(options)
-	return Intl.NumberFormat(language ?? Localizer.currentLanguage, {
+	return Intl.NumberFormat(language ?? Localizer.languages.current, {
 		maximumFractionDigits: 16,
 		minimumFractionDigits: 0,
 		useGrouping: false,

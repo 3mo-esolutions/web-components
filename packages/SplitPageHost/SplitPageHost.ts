@@ -1,7 +1,7 @@
 import { html, css, property, style, component, Component } from '@a11d/lit'
 import { Localizer } from '@3mo/localization'
 
-Localizer.register('de', {
+Localizer.dictionaries.add('de', {
 	'Select a page': 'Wählen Sie eine Seite'
 })
 

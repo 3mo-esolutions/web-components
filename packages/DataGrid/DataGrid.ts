@@ -16,11 +16,10 @@ import { DataGridDetailsController } from './DataGridDetailsController.js'
 import { CsvGenerator, DataGridSidePanelTab, type DataGridColumn, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, type DataGridSidePanel, DataGridContextMenuController } from './index.js'
 import { DataRecord } from './DataRecord.js'
 
-Localizer.register('de', {
+Localizer.dictionaries.add('de', {
 	'Exporting excel file': 'Die Excel-Datei wird exportiert',
 	'No results': 'Kein Ergebnis',
 	'More Filters': 'Weitere Filter',
-	'Deselect All': 'Alle deselektieren',
 })
 
 export type DataGridPagination = 'auto' | number
@@ -250,6 +249,14 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		return this.columnsController.extractColumns(...parameters)
 	}
 
+	get extractedColumns() {
+		return this.columnsController.extractedColumns
+	}
+
+	extractedColumnsUpdated(extractedColumns: Array<DataGridColumn<TData, TDetailsElement>>) {
+		this.setColumns(extractedColumns)
+	}
+
 	get visibleColumns() {
 		return this.columnsController.visibleColumns
 	}
@@ -452,13 +459,12 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				--mo-data-grid-alternating-background-transparency: 20%;
 			}
 
-			:host([preventVerticalContentScroll]) mo-scroller {
+			:host([preventVerticalContentScroll]) {
 				mo-scroller {
 					overflow-y: hidden;
-				}
-
-				mo-scroller::part(container) {
-					position: relative;
+					&::part(container) {
+						position: relative;
+					}
 				}
 			}
 

@@ -4,24 +4,26 @@ import { Localizer } from '@3mo/localization'
 import { DialogDeletion } from '@3mo/standard-dialogs'
 import { type ModdableDataGrid, Mode } from './index.js'
 
-Localizer.register('de', {
-	'Mode ${name:string}': 'Ansicht "${name}"',
-	'New Mode': 'Neue Ansicht',
+Localizer.dictionaries.add('de', {
+	'View ${name:string}': 'Ansicht "${name}"',
+	'New View': 'Neue Ansicht',
 	'Name': 'Bezeichnung',
 	'Archived': 'Archiviert',
 	'Save': 'Speichern',
 	'Edit': 'Bearbeiten',
 	'Delete': 'Löschen',
+	'Do you want to delete the view ${name:string}?': 'Soll die Ansicht "${name}" gelöscht werden?',
 })
 
-Localizer.register('fa', {
-	'Mode ${name:string}': 'نمایش "${name}"',
-	'New Mode': 'نمایش جدید',
+Localizer.dictionaries.add('fa', {
+	'View ${name:string}': 'نمایش "${name}"',
+	'New View': 'نمایش جدید',
 	'Name': 'نام',
 	'Archived': 'بایگانی شده',
 	'Save': 'ذخیره',
 	'Edit': 'ویرایش',
 	'Delete': 'حذف',
+	'Do you want to delete the view ${name:string}?': 'آیا می‌خواهید نمایش "${name}" را حذف کنید؟',
 })
 
 @component('mo-dialog-data-grid-mode')
@@ -36,8 +38,8 @@ export class DialogDataGridMode extends DialogComponent<{ readonly moddableDataG
 
 	private get heading() {
 		return this.parameters.mode
-			? t('View ${name:string}"', { name: this.parameters.mode.name })
-			: t('New Mode')
+			? t('View ${name:string}', { name: this.parameters.mode.name })
+			: t('New View')
 	}
 
 	protected override get template() {

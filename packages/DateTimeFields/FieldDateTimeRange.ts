@@ -6,7 +6,8 @@ import { DateRangeParser } from './DateRangeParser.js'
 import { Memoize as memoize } from 'typescript-memoize'
 import { Localizer } from '@3mo/localization'
 
-Localizer.register('de', {
+Localizer.dictionaries.add('de', {
+	'Period': 'Zeitraum',
 	'Start': 'Start',
 	'End': 'Ende',
 })
@@ -22,6 +23,7 @@ enum FieldDateRangeSelection {
  * @attr selection - The selected date range. Either "start" or "end". Defaults to "start".
  * @attr value - The selected date range.
  *
+ * @i18n "Period"
  * @i18n "Start"
  * @i18n "End"
  */
@@ -31,6 +33,7 @@ export class FieldDateTimeRange extends FieldDateTimeBase<DateTimeRange | undefi
 
 	protected get selectedDate() { return this.selection === FieldDateRangeSelection.Start ? this.value?.start : this.value?.end }
 
+	@property() override label = t('Period')
 	@property() selection = FieldDateRangeSelection.Start
 	@property({ type: Object }) value?: DateTimeRange
 
