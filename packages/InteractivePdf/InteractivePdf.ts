@@ -314,13 +314,20 @@ export class InteractivePdf extends Component {
 		`
 	}
 
-	private async toObjectUrl() {
-		this.loading = true
-		const arrayBuffer = await this.documentController.fetchNatively()
+	async toBinary() {
+		const arrayBuffer = await this.documentController.fetchNatively();
 		if (!arrayBuffer) {
+			return;
+		}
+		const binary = await this.documentController.mergeWithFiber(arrayBuffer);
+		return binary
+	}
+
+	private async toObjectUrl() {
+		const binary = await this.toBinary()
+		if (!binary) {
 			return
 		}
-		const binary = await this.documentController.mergeWithFiber(arrayBuffer)
 		const objectUrl = URL.createObjectURL(binary)
 		this.loading = false
 		return objectUrl
