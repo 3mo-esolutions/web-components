@@ -2,11 +2,6 @@ import { Controller } from '@a11d/lit'
 import { type InteractivePdf } from './InteractivePdf.js'
 import * as fabric from 'fabric'
 
-// @ts-ignore
-import * as localFabric from './fabric.min.js'
-
-console.log(localFabric, localFabric.EraserBrush)
-
 type FabricEvent = { target: fabric.FabricObject }
 
 export enum FabricMode { Brush, Text, Picture }
