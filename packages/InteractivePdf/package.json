@@ -22,18 +22,18 @@
 		"dist"
 	],
 	"dependencies": {
-		"@a11d/lit": "x",
-		"@3mo/flex": "x",
 		"@3mo/circular-progress": "x",
-		"@3mo/icon-button": "x",
-		"@3mo/scroller": "x",
-		"@3mo/tooltip": "x",
-		"@3mo/localization": "x",
 		"@3mo/color": "x",
 		"@3mo/color-field": "x",
-		"fabric": "6.4.1",
+		"@3mo/flex": "x",
+		"@3mo/icon-button": "x",
+		"@3mo/localization": "x",
+		"@3mo/scroller": "x",
+		"@3mo/tooltip": "x",
+		"@a11d/lit": "x",
+		"fabric": "^6.4.1",
 		"pdf-lib": "^1.17.1",
-		"pdfjs-dist": "4.6.82",
+		"pdfjs-dist": "^4.6.82",
 		"tslib": "x"
 	}
 }
