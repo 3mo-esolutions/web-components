@@ -5,7 +5,6 @@ import { Localizer } from '@3mo/localization'
 import { DialogDataGridMode, type ModdableDataGrid, type Mode } from './index.js'
 
 Localizer.dictionaries.add('de', {
-	'Changing Filter': 'Filterwechsel',
 	'Save changes': 'Änderungen speichern',
 	'Discard changes': 'Änderungen verwerfen',
 	'Archive': 'Archivieren',

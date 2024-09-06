@@ -52,3 +52,9 @@ export class Localizer {
 	static readonly languages = new Languages()
 	static readonly dictionaries = new Dictionaries()
 }
+
+globalThis.Localizer = Localizer
+
+declare global {
+	var Localizer: import('./Localizer.js').Localizer
+}

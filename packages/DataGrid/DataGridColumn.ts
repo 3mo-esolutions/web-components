@@ -45,6 +45,10 @@ export class DataGridColumn<TData, TValue = unknown> {
 			&& this.description === other.description
 	}
 
+	with(other: Partial<this>): DataGridColumn<TData, TValue> {
+		return new DataGridColumn({ ...this, ...other })
+	}
+
 	private _widthInPixels?: number
 	get widthInPixels() { return this._widthInPixels || 0 }
 	set widthInPixels(value) {

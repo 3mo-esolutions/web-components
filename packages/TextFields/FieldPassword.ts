@@ -50,7 +50,7 @@ export class FieldPassword extends FieldText {
 		return html`
 			${super.endSlotTemplate}
 			<mo-icon-button slot='end'
-				title=${t(this.reveal ? 'Hide' : 'Reveal')}
+				title=${this.reveal ? t('Hide') : t('Reveal')}
 				style='color: var(--mo-color-gray)'
 				@click=${() => this.reveal = !this.reveal}
 				icon=${this.reveal ? 'visibility_off' : 'visibility'}

@@ -48,7 +48,7 @@ export class CollapsibleCard extends Card {
 			${super.defaultHeaderActionTemplate}
 
 			<mo-expand-collapse-icon-button
-				${tooltip(t(this.collapsed ? 'Expand' : 'Collapse'))}
+				${tooltip(this.collapsed ? t('Expand') : t('Collapse'))}
 				?disabled=${this.disableCollapse}
 				?open=${!this.collapsed}
 				@click=${() => this.toggleCollapse()}

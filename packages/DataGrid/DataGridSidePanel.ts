@@ -10,7 +10,6 @@ Localizer.dictionaries.add('de', {
 	'Columns': 'Spalten',
 	'Font Size': 'Schriftgröße',
 	'Row Height': 'Zeilenhöhe',
-	'Tools': 'Tools',
 	'Design': 'Design',
 })
 

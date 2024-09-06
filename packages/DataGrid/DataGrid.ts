@@ -20,7 +20,6 @@ Localizer.dictionaries.add('de', {
 	'Exporting excel file': 'Die Excel-Datei wird exportiert',
 	'No results': 'Kein Ergebnis',
 	'More Filters': 'Weitere Filter',
-	'Deselect All': 'Alle deselektieren',
 })
 
 export type DataGridPagination = 'auto' | number
@@ -246,6 +245,14 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	extractColumns(...parameters: Parameters<typeof this.columnsController.extractColumns>) {
 		return this.columnsController.extractColumns(...parameters)
+	}
+
+	get extractedColumns() {
+		return this.columnsController.extractedColumns
+	}
+
+	extractedColumnsUpdated(extractedColumns: Array<DataGridColumn<TData, TDetailsElement>>) {
+		this.setColumns(extractedColumns)
 	}
 
 	get visibleColumns() {
