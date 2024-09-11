@@ -24,6 +24,17 @@ Localizer.dictionaries.add('de', {
 	'Reset all filters': 'Alle Filter zurücksetzen',
 })
 
+const deepCloneKeepingClasses = <T = {}>(origin: T) => {
+	const clonedObject = structuredClone(origin)
+	for (const keyName in origin) {
+		if (origin[keyName] instanceof DateTimeRange) {
+			const { start, end } = origin[keyName]
+			clonedObject[keyName] = new DateTimeRange(start, end) as T[Extract<keyof T, string>]
+		}
+	}
+	return clonedObject
+}
+
 /**
  * @element mo-fetchable-data-grid
  *
@@ -82,7 +93,7 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 				return undefined
 			}
 			if (!this.initialParameters) {
-				this.initialParameters = this.parameters
+				this.initialParameters = deepCloneKeepingClasses(this.parameters)
 			}
 			const paginationParameters = this.paginationParameters?.({ page: this.page, pageSize: this.pageSize }) ?? {}
 			const sortParameters = this.sortParameters?.() ?? {}
@@ -318,8 +329,8 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 
 					${[html.nothing, undefined].includes(this.filtersDefaultTemplate) || !this.hasFilters ? html.nothing : html`
 						<mo-button type='raised'
-							?disabled=${this.areParametersDirty}
-							@click=${() => this.resetAllParameters()}
+							?disabled=${this.hasParametersChanged}
+							@click=${() => this.restoreDefaultParameters()}
 						>
 							${t('Reset all filters')}
 						</mo-button>
@@ -329,12 +340,12 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 		`
 	}
 
-	private get areParametersDirty() {
-		return JSON.stringify(this.parameters) === JSON.stringify(this.initialParameters)
+	private get hasParametersChanged() {
+		return JSON.stringify(this.parameters) !== JSON.stringify(this.initialParameters)
 	}
 
-	private resetAllParameters = () => {
-		this.parameters = this.initialParameters
+	private restoreDefaultParameters = () => {
+		this.parameters = deepCloneKeepingClasses(this.initialParameters)
 	}
 }
 
