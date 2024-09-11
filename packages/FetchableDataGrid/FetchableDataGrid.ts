@@ -27,9 +27,12 @@ Localizer.dictionaries.add('de', {
 const deepCloneKeepingClasses = <T = {}>(origin: T) => {
 	const clonedObject = structuredClone(origin)
 	for (const keyName in origin) {
-		if (origin[keyName] instanceof DateTimeRange) {
-			const { start, end } = origin[keyName]
-			clonedObject[keyName] = new DateTimeRange(start, end) as T[Extract<keyof T, string>]
+		const value = origin[keyName]
+		if (value instanceof DateTimeRange) {
+			clonedObject[keyName] = new DateTimeRange(value.start, value.end) as T[Extract<keyof T, string>]
+		}
+		if (value === undefined || value === '' || (value instanceof Array && !value.length)) {
+			delete origin[keyName]
 		}
 	}
 	return clonedObject
