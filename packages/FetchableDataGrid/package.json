@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/fetchable-data-grid",
-	"version": "0.2.3-preview.1",
+	"version": "0.2.3-preview.2",
 	"description": "A fetchable variant of @3mo/data-grid",
 	"repository": {
 		"type": "git",
@@ -30,7 +30,7 @@
 		"@3mo/icon-button": "x",
 		"@3mo/circular-progress": "x",
 		"@3mo/empty-state": "x",
-		"@3mo/data-grid": "0.9.16-preview.0",
+		"@3mo/data-grid": "x",
 		"@3mo/fetcher-controller": "x",
 		"@3mo/tooltip": "x"
 	}
