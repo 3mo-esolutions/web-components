@@ -67,6 +67,8 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 	@property({ type: Object }) sortParameters?: () => Partial<TDataFetcherParameters>
 	// protected filterParameters?: () => TDataFetcherParameters
 
+	initialParameters!: TDataFetcherParameters
+
 	protected readonly parametersBinder = new Binder<TDataFetcherParameters>(this, 'parameters')
 
 	protected fetchDirty?(parameters: TDataFetcherParameters): Array<TData> | undefined
@@ -77,7 +79,9 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 			if (!this.parameters) {
 				return undefined
 			}
-
+			if (!this.initialParameters) {
+				this.initialParameters = this.parameters
+			}
 			const paginationParameters = this.paginationParameters?.({ page: this.page, pageSize: this.pageSize }) ?? {}
 			const sortParameters = this.sortParameters?.() ?? {}
 			const data = await this.fetch({

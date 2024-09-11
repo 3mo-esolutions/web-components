@@ -1,5 +1,7 @@
 import 'requestidlecallback-polyfill'
 import '@3mo/flex'
+import '@3mo/button'
+import '@3mo/fetchable-data-grid'
 import '@3mo/grid'
 import '@a11d/key-path'
 import '@3mo/icon'
