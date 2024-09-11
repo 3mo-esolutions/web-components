@@ -3,6 +3,7 @@ import { Localizer } from '@3mo/localization'
 import { tooltip } from '@3mo/tooltip'
 import { type DataGridColumn } from './DataGridColumn.js'
 import { type DataGrid } from './DataGrid.js'
+import { type FetchableDataGrid } from '@3mo/fetchable-data-grid'
 
 Localizer.dictionaries.add('de', {
 	'Settings': 'Einstellungen',
@@ -11,6 +12,7 @@ Localizer.dictionaries.add('de', {
 	'Font Size': 'Schriftgröße',
 	'Row Height': 'Zeilenhöhe',
 	'Design': 'Design',
+	'Reset all filters': 'Alle Filter zurücksetzen',
 })
 
 export enum DataGridSidePanelTab {
@@ -115,8 +117,26 @@ export class DataGridSidePanel<TData> extends Component {
 		return html`
 			<mo-flex gap='14px' style='padding: 14px'>
 				<slot name='filter'></slot>
+				${!this.dataGrid.hasFilters || !('parameters' in this.dataGrid) ? html.nothing : html`
+					<mo-button type='raised'
+						?disabled=${this.areParametersDirty}
+						@click=${() => this.resetAllParameters()}
+					>
+						${t('Reset all filters')}
+					</mo-button>
+				`}
 			</mo-flex>
 		`
+	}
+
+	private get areParametersDirty() {
+		const { parameters, initialParameters } = this.dataGrid as FetchableDataGrid<TData, any>
+		return JSON.stringify(parameters) === JSON.stringify(initialParameters)
+	}
+
+	private resetAllParameters = () => {
+		(this.dataGrid as FetchableDataGrid<TData, any>).parameters =
+			(this.dataGrid as FetchableDataGrid<TData, any>).initialParameters
 	}
 
 	protected get settingsTemplate() {
