@@ -1,4 +1,4 @@
-import { Binder, component, css, event, html, property } from '@a11d/lit'
+import { Binder, component, css, event, html, ifDefined, property } from '@a11d/lit'
 import { tooltip } from '@3mo/tooltip'
 import { Localizer } from '@3mo/localization'
 import { FetcherController } from '@3mo/fetcher-controller'
@@ -21,6 +21,7 @@ type Result<TData> = PaginatedResult<TData> | NonPaginatedResult<TData>
 Localizer.dictionaries.add('de', {
 	'Make a filter selection': 'Filterauswahl vornehmen',
 	'Refetch': 'Neu laden',
+	'Reset all filters': 'Alle Filter zurücksetzen',
 })
 
 /**
@@ -302,6 +303,37 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 				<mo-empty-state icon='touch_app'>${t('Make a filter selection')}</mo-empty-state>
 			</slot>
 		`
+	}
+
+	protected override get sidePanelTemplate() {
+		return html`
+			<mo-data-grid-side-panel
+				.dataGrid=${this as any}
+				tab=${ifDefined(this.sidePanelTab)}
+			>
+				<slot slot='settings' name='settings'>${this.settingsDefaultTemplate}</slot>
+				<slot slot='filter' name='filter'>
+					${this.filtersDefaultTemplate}
+
+					${[html.nothing, undefined].includes(this.filtersDefaultTemplate) || !this.hasFilters ? html.nothing : html`
+						<mo-button type='raised'
+							?disabled=${this.areParametersDirty}
+							@click=${() => this.resetAllParameters()}
+						>
+							${t('Reset all filters')}
+						</mo-button>
+					`}
+				</slot>
+			</mo-data-grid-side-panel>
+		`
+	}
+
+	private get areParametersDirty() {
+		return JSON.stringify(this.parameters) === JSON.stringify(this.initialParameters)
+	}
+
+	private resetAllParameters = () => {
+		this.parameters = this.initialParameters
 	}
 }
 
