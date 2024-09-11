@@ -28,8 +28,6 @@
 		"@a11d/lit-application": "x",
 		"@a11d/equals": "x",
 		"@3mo/flex": "x",
-		"@3mo/button": "x",
-		"@3mo/fetchable-data-grid": "x",
 		"@3mo/grid": "x",
 		"@a11d/key-path": "1.x",
 		"@3mo/icon": "x",
