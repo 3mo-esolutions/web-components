@@ -31,9 +31,6 @@ const deepCloneKeepingClasses = <T = {}>(origin: T) => {
 		if (value instanceof DateTimeRange) {
 			clonedObject[keyName] = new DateTimeRange(value.start, value.end) as T[Extract<keyof T, string>]
 		}
-		if (value === undefined || value === '' || (value instanceof Array && !value.length)) {
-			delete origin[keyName]
-		}
 	}
 	return clonedObject
 }
@@ -344,7 +341,11 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 	}
 
 	private get hasParametersChanged() {
-		return JSON.stringify(this.parameters) !== JSON.stringify(this.initialParameters)
+		return Object.entries(this.parameters ?? {})
+			.filter(([_, value]) => value !== undefined
+				&& value !== ''
+				&& (!(value instanceof Array) || value.length > 0))
+			.some(([key, value]) => JSON.stringify(this.initialParameters[key]) !== JSON.stringify(value))
 	}
 
 	private restoreDefaultParameters = () => {
