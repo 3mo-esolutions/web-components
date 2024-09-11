@@ -329,7 +329,7 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 
 					${[html.nothing, undefined].includes(this.filtersDefaultTemplate) || !this.hasFilters ? html.nothing : html`
 						<mo-button type='raised'
-							?disabled=${this.hasParametersChanged}
+							?disabled=${!this.hasParametersChanged}
 							@click=${() => this.restoreDefaultParameters()}
 						>
 							${t('Reset all filters')}
