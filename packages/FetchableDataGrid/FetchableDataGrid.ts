@@ -50,7 +50,6 @@ const deepCloneKeepingClasses = <T = {}>(origin: T) => {
  * @fires dataFetch
  */
 @component('mo-fetchable-data-grid')
-// @ts-ignore `sidePanelTemplate` is private in `DataGrid`
 export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDataGridParametersType = Record<string, never>, TDetailsElement extends Element | undefined = undefined> extends DataGrid<TData, TDetailsElement> {
 	@event() readonly parametersChange!: EventDispatcher<TDataFetcherParameters | undefined>
 	@event() readonly dataFetch!: EventDispatcher<Result<TData>>
@@ -317,7 +316,7 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 		`
 	}
 
-	override get sidePanelTemplate() {
+	protected override get sidePanelTemplate() {
 		return html`
 			<mo-data-grid-side-panel
 				.dataGrid=${this as any}
