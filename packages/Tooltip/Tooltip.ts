@@ -19,8 +19,6 @@ function targetAnchor(this: Tooltip) {
  */
 @component('mo-tooltip')
 export class Tooltip extends Component {
-	static mobileInteractionDelay = 1
-
 	private static readonly tipSideByPlacement = new Map([
 		['top', 'bottom'],
 		['right', 'left'],
@@ -53,11 +51,7 @@ export class Tooltip extends Component {
 		return osName && ['iOS', 'Android OS', 'BlackBerry OS', 'Windows Mobile', 'Amazon OS'].includes(osName)
 	}
 
-	private openIfApplicable = async () => {
-		if (this.isMobile) {
-			await new Promise(resolve => setTimeout(resolve, Tooltip.mobileInteractionDelay))
-		}
-
+	private _openIfApplicable = () => {
 		if (this.pointerController.type === 'touch') {
 			this.setOpen(this.anchorPointerController.press)
 			return
@@ -69,6 +63,14 @@ export class Tooltip extends Component {
 		}
 
 		this.setOpen(this.pointerController.hover || this.anchorPointerController.hover)
+	}
+
+	private openIfApplicable = () => {
+		if (this.isMobile) {
+			return requestIdleCallback(() => this._openIfApplicable())
+		}
+
+		return this._openIfApplicable()
 	}
 
 	private setOpen(open: boolean) {
