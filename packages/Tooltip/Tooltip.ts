@@ -45,7 +45,11 @@ export class Tooltip extends Component {
 		},
 	})
 
-	private openIfApplicable = () => {
+	private openIfApplicable = async () => {
+		if (window.matchMedia('(max-width: 576px)').matches) {
+			await new Promise(resolve => setTimeout(resolve, 1_000))
+		}
+
 		if (this.pointerController.type === 'touch') {
 			this.setOpen(this.anchorPointerController.press)
 			return
