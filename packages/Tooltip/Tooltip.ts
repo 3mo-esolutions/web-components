@@ -3,6 +3,7 @@ import { type TooltipPlacement } from './TooltipPlacement.js'
 import { type FocusMethod, FocusController } from '@3mo/focus-controller'
 import { PointerController } from '@3mo/pointer-controller'
 import { type ComputePositionReturn, arrow, type Middleware } from '@floating-ui/core'
+import * as System from 'detect-browser'
 
 function targetAnchor(this: Tooltip) {
 	return this.anchor || []
@@ -18,6 +19,8 @@ function targetAnchor(this: Tooltip) {
  */
 @component('mo-tooltip')
 export class Tooltip extends Component {
+	static mobileInteractionDelay = 1
+
 	private static readonly tipSideByPlacement = new Map([
 		['top', 'bottom'],
 		['right', 'left'],
@@ -45,9 +48,14 @@ export class Tooltip extends Component {
 		},
 	})
 
+	private get isMobile() {
+		const osName = System.detect()?.os
+		return osName && ['iOS', 'Android OS', 'BlackBerry OS', 'Windows Mobile', 'Amazon OS'].includes(osName)
+	}
+
 	private openIfApplicable = async () => {
-		if (window.matchMedia('(max-width: 576px)').matches) {
-			await new Promise(resolve => setTimeout(resolve, 1_000))
+		if (this.isMobile) {
+			await new Promise(resolve => setTimeout(resolve, Tooltip.mobileInteractionDelay))
 		}
 
 		if (this.pointerController.type === 'touch') {
