@@ -67,7 +67,7 @@ export class Tooltip extends Component {
 
 	private openIfApplicable = () => {
 		if (this.isMobile) {
-			return requestAnimationFrame(() => this.handleOpen())
+			return setTimeout(() => requestAnimationFrame(() => this.handleOpen()), 0)
 		}
 
 		return this.handleOpen()
