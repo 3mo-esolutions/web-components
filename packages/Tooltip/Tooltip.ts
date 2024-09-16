@@ -51,7 +51,7 @@ export class Tooltip extends Component {
 		return osName && ['iOS', 'Android OS', 'BlackBerry OS', 'Windows Mobile', 'Amazon OS'].includes(osName)
 	}
 
-	private _openIfApplicable = () => {
+	private handleOpen = () => {
 		if (this.pointerController.type === 'touch') {
 			this.setOpen(this.anchorPointerController.press)
 			return
@@ -67,10 +67,10 @@ export class Tooltip extends Component {
 
 	private openIfApplicable = () => {
 		if (this.isMobile) {
-			return requestIdleCallback(() => this._openIfApplicable())
+			return setTimeout(() => this.handleOpen(), 1)
 		}
 
-		return this._openIfApplicable()
+		return this.handleOpen()
 	}
 
 	private setOpen(open: boolean) {
