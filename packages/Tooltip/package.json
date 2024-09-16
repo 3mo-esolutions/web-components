@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/tooltip",
-	"version": "0.7.2-preview.3",
+	"version": "0.7.2-preview.4",
 	"description": "A tooltip web-component with Lit directives.",
 	"repository": {
 		"type": "git",
