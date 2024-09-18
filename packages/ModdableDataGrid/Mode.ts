@@ -22,7 +22,7 @@ export class Mode<T, P extends FetchableDataGridParametersType> {
 		}
 	}
 
-	clone() {
+	clone(): Mode<T, P> {
 		return new Mode(cloneDeep(this))
 	}
 
