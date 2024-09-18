@@ -10,6 +10,7 @@ import { LocalForageController } from './LocalForageController.js'
 import { RepositoryController } from './RepositoryController.js'
 import { DialogMode } from './DialogMode.js'
 import { type ModdableDataGridChip } from './ModdableDataGridChip.js'
+import * as System from 'detect-browser'
 
 Localizer.dictionaries.add({
 	de: {
@@ -167,6 +168,10 @@ export abstract class ModdableDataGrid<T, P extends FetchableDataGridParametersT
 		})
 	}
 
+	private get supportsReordering() {
+		return System.detect()?.os !== 'Android OS'
+	}
+
 	private enableReordering = () => {
 		if (!this.modesListNode) {
 			this.isReorderingEnabled = false
@@ -178,6 +183,10 @@ export abstract class ModdableDataGrid<T, P extends FetchableDataGridParametersT
 		}
 
 		this.isReorderingEnabled = true
+
+		if (!this.supportsReordering) {
+			return
+		}
 
 		new Sortable(this.modesListNode, {
 			filter: '[data-temporary]',

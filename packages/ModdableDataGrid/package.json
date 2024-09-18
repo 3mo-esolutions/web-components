@@ -42,6 +42,7 @@
 		"@3mo/context-menu": "x",
 		"@3mo/localization": "x",
 		"@a11d/equals": "^0.1.1",
+		"detect-browser": "x",
 		"localforage": "^1.10.0",
 		"lodash.clonedeep": "^4.5.0",
 		"sortablejs": "^1.15.3",
