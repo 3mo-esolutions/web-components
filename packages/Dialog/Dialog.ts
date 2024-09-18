@@ -314,7 +314,7 @@ export class Dialog extends Component implements IDialog {
 		return html`
 			<mo-flex id='header' slot=${this.boundToWindow ? '' : 'headline'} part='header' direction='horizontal'>
 				${this.headingTemplate}
-				<mo-flex direction='horizontal-reversed' alignItems='center' gap='4px' style='flex: 1'>
+				<mo-flex id='actions' direction='horizontal-reversed' alignItems='center' gap='4px' style='flex: 1'>
 					${this.actionsTemplate}
 					<slot name='action' style='font-size: 1rem; line-height: initial;'></slot>
 				</mo-flex>
