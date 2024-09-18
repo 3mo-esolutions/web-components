@@ -34,7 +34,7 @@ export class Package {
 	 */
 	async release(versionBumpType) {
 		await run('npm run clean')
-		console.log(await run('tsc', this.relativePath) || 'TypeScript compiled successfully')
+		// console.log(await run('tsc', this.relativePath) || 'TypeScript compiled successfully')
 		await run('npm run analyze', undefined, true)
 		if (versionBumpType.startsWith('pre')) {
 			versionBumpType = versionBumpType.replace('prepatch', 'prerelease')
