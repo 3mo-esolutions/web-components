@@ -76,14 +76,12 @@ export class ModdableDataGridChip<T, P extends FetchableDataGridParametersType> 
 				font-size: 12px;
 			}
 
-			:host([selected]) {
-				#container {
-					background-color: var(--mo-color-accent);
+			:host([selected]) #container {
+				background-color: var(--mo-color-accent);
 
-					#title, #changed {
-						color: var(--mo-color-on-accent);
-						font-weight: 500;
-					}
+				#title, #changed {
+					color: var(--mo-color-on-accent);
+					font-weight: 500;
 				}
 			}
 
