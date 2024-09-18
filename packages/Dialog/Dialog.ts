@@ -257,11 +257,28 @@ export class Dialog extends Component implements IDialog {
 				box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.2), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 9px 46px 8px rgba(0, 0, 0, 0.12);
 			}
 
-			@media (max-width: 1024px), (max-height: 768px) {
+			@media (width <= 1024px), (height <= 768px) {
 				md-dialog::part(dialog) {
 					max-height: 100vh !important;
 					max-height: 100dvh !important;
 					max-width: 100vw !important;
+				}
+			}
+
+			@media (width <= 768px) {
+				#header {
+					flex-direction: column-reverse !important;
+					align-items: start;
+					gap: 0;
+
+					mo-heading {
+						font-size: min(1.5em, 18px);
+						line-height: var(--mo-dialog-heading-line-height, 1.5rem);
+					}
+				}
+
+				#actions {
+					margin-left: auto;
 				}
 			}
 		`
