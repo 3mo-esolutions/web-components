@@ -24,12 +24,12 @@ export class RepositoryController<T, P extends FetchableDataGridParametersType> 
 	private _defaultMode?: Required<Mode<T, P>>
 
 	get defaultMode() {
-		return this._defaultMode!
+		return this._defaultMode!.clone()
 	}
 
 	updateDefaultIfNeeded = () => {
 		if (!this._defaultMode) {
-			this._defaultMode = this.host.currentMode as Required<Mode<T, P>>
+			this._defaultMode = this.host.currentMode!.clone() as Required<Mode<T, P>>
 		}
 	}
 

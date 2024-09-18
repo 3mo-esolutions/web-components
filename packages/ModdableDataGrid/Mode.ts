@@ -3,6 +3,7 @@ import type { DataGridColumn, DataGridSorting, DataGridPagination } from '@3mo/d
 import { equals } from '@a11d/equals'
 import { type ModdableDataGrid } from './ModdableDataGrid.js'
 import { getPlainColumn } from './RepositoryController.js'
+import cloneDeep from 'lodash.clonedeep'
 
 export class Mode<T, P extends FetchableDataGridParametersType> {
 	name!: string
@@ -19,6 +20,10 @@ export class Mode<T, P extends FetchableDataGridParametersType> {
 		if (!origin?.id) {
 			this.id = crypto.randomUUID()
 		}
+	}
+
+	clone() {
+		return new Mode(cloneDeep(this))
 	}
 
 	get definedParameters() {

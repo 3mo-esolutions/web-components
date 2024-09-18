@@ -42,8 +42,6 @@ export abstract class ModdableDataGrid<T, P extends FetchableDataGridParametersT
 
 			this.deselectAll()
 
-			this.repository.updateDefaultIfNeeded()
-
 			this.preventFetch = true
 			;(mode ?? this.repository.defaultMode).apply(this)
 			this.preventFetch = false
@@ -147,6 +145,7 @@ export abstract class ModdableDataGrid<T, P extends FetchableDataGridParametersT
 	private preventFetch = false
 
 	override requestFetch() {
+		this.repository.updateDefaultIfNeeded()
 		return this.preventFetch ? Promise.resolve() : super.requestFetch()
 	}
 
