@@ -266,19 +266,9 @@ export class Dialog extends Component implements IDialog {
 			}
 
 			@media (width <= 768px) {
-				#header {
-					flex-direction: column-reverse !important;
-					align-items: start;
-					gap: 0;
-
-					mo-heading {
-						font-size: min(1.5em, 18px);
-						line-height: var(--mo-dialog-heading-line-height, 1.5rem);
-					}
-				}
-
-				#actions {
-					margin-left: auto;
+				#header mo-heading {
+					font-size: min(1.5em, 18px);
+					line-height: var(--mo-dialog-heading-line-height, 1.5rem);
 				}
 			}
 		`
@@ -314,7 +304,7 @@ export class Dialog extends Component implements IDialog {
 		return html`
 			<mo-flex id='header' slot=${this.boundToWindow ? '' : 'headline'} part='header' direction='horizontal'>
 				${this.headingTemplate}
-				<mo-flex id='actions' direction='horizontal-reversed' alignItems='center' gap='4px' style='flex: 1'>
+				<mo-flex direction='horizontal-reversed' alignItems='center' gap='4px' style='flex: 1'>
 					${this.actionsTemplate}
 					<slot name='action' style='font-size: 1rem; line-height: initial;'></slot>
 				</mo-flex>
