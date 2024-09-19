@@ -269,6 +269,7 @@ export class Dialog extends Component implements IDialog {
 				#header mo-heading {
 					font-size: min(1.5em, 18px);
 					line-height: var(--mo-dialog-heading-line-height, 1.5rem);
+					margin-top: 0;
 				}
 			}
 		`
