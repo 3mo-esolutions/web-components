@@ -122,6 +122,11 @@ export class Card extends Component {
 				display: block;
 				padding: var(--mo-card-footer-padding, 8px);
 			}
+
+			mo-heading {
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
 		`
 	}
 
@@ -156,7 +161,7 @@ export class Card extends Component {
 		return !isServer && !hasHeader ? html.nothing : html`
 			<slot part='header' name='header'>
 				${this.defaultHeaderAvatarTemplate}
-				<mo-flex justifyContent='space-around' ${style({ flex: '1' })}>
+				<mo-flex justifyContent='space-around' ${style({ flexGrow: '1', overflow: 'hidden' })}>
 					${this.defaultHeaderHeadingTemplate}
 					${this.defaultHeaderSubHeadingTemplate}
 				</mo-flex>
