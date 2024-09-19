@@ -9,6 +9,14 @@ export enum CardType {
 	Outlined = 'outlined'
 }
 
+const unwrapShadowDOM = (element: HTMLElement): Array<HTMLElement> => {
+	return [...element.shadowRoot?.querySelectorAll('*') ?? [], ...element?.querySelectorAll('*') ?? []]
+		.map(slotOrNode => slotOrNode.tagName === 'SLOT'
+			? (slotOrNode as HTMLSlotElement).assignedElements() as Array<HTMLElement>
+			: [slotOrNode as HTMLElement, ...unwrapShadowDOM(slotOrNode as HTMLElement)])
+		.flat()
+ }
+
 /**
  * @element mo-card
  *
@@ -130,6 +138,22 @@ export class Card extends Component {
 		`
 	}
 
+	private truncateIsolatedText = () => {
+		const [customHeadingNode] = this.slotController.getAssignedElements('heading')
+
+		 if (!customHeadingNode) {
+			return
+		 }
+
+		const isolatedTextNodes = unwrapShadowDOM(customHeadingNode as HTMLElement)
+			.filter(element => element.tagName === 'MO-HEADING')
+
+		isolatedTextNodes.forEach((textNode) => {
+			textNode.style.overflow = 'hidden'
+			textNode.style.textOverflow = 'ellipsis'
+		})
+	}
+
 	protected override get template() {
 		return html`
 			<mo-flex ${style({ width: '100%', height: '100%' })}>
@@ -152,12 +176,22 @@ export class Card extends Component {
 
 	protected get headerTemplate() {
 		const hasHeader = this.slotController.hasAssignedElements('header')
-			|| !!this.avatar || !!this.heading || !!this.subHeading
-			|| this.slotController.hasAssignedElements('avatar') || this.slotController.hasAssignedElements('heading')
-			|| this.slotController.hasAssignedElements('subHeading') || this.slotController.hasAssignedElements('action')
-		if (isServer === false) {
+			|| !!this.avatar
+			|| !!this.heading
+			|| !!this.subHeading
+			|| this.slotController.hasAssignedElements('avatar')
+			|| this.slotController.hasAssignedElements('heading')
+			|| this.slotController.hasAssignedElements('subHeading')
+			|| this.slotController.hasAssignedElements('action')
+
+		if (!isServer) {
 			this.toggleAttribute('hasHeader', hasHeader)
 		}
+
+		if (isServer || hasHeader) {
+			this.truncateIsolatedText()
+		}
+
 		return !isServer && !hasHeader ? html.nothing : html`
 			<slot part='header' name='header'>
 				${this.defaultHeaderAvatarTemplate}
