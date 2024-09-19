@@ -550,6 +550,17 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 					background-color: var(--mo-color-surface);
 				}
 			}
+
+			@media (width <= 480px) {
+				#toolbar {
+					flex-direction: column !important;
+					align-items: unset !important;
+
+					#actions {
+						margin-left: auto;
+					}
+				}
+			}
 		`
 	}
 
