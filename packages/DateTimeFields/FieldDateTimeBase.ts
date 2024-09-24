@@ -152,6 +152,22 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 			mo-field[active]:not([dense]) input::placeholder {
 				color: var(--mo-color-gray);
 			}
+
+			@media (width <= 576px) {
+				mo-popover {
+					left: 0 !important;
+					bottom: 0 !important;
+					top: unset !important;
+					right: unset !important;
+					width: 100% !important;
+					border-radius: 12px 12px 0 0;
+
+					mo-selectable-calendar,
+          mo-selectable-range-calendar {
+          	--mo-calendar-day-size: calc((100vw - 20px) / 7);
+          }
+				}
+			}
 		`
 	}
 
@@ -197,7 +213,27 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	}
 
 	protected get popoverTemplate() {
-		return this.pickerHidden ? html.nothing : html`
+		if (this.pickerHidden) {
+			return html.nothing
+		}
+		if (this.smQuery.matches) {
+			 return html`
+				<mo-popover tabindex='-1' fixed .anchor=${this} ?open=${bind(this, 'open')}>
+					<mo-flex>
+						<mo-icon-button icon='close'
+							${style({ color: 'var(--mo-color-gray)', margin: '12px 16px -8px auto' })}
+							@click=${() => {
+              	this.pickerHidden = true
+                this.open = false
+              	setTimeout(() => this.pickerHidden = false, 0)
+              }}
+						></mo-icon-button>
+						${cache(!this.open ? html.nothing : this.popoverContentTemplate)}
+					</mo-flex>
+				</mo-popover>
+			 `
+		}
+		return html`
 			<mo-popover tabindex='-1' fixed .anchor=${this} ?open=${bind(this, 'open')}>
 				${cache(!this.open ? html.nothing : this.popoverContentTemplate)}
 			</mo-popover>
