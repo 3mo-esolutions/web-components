@@ -1,5 +1,6 @@
 
-import { type HTMLTemplateResult, cache, css, html, live, property, style, bind, state } from '@a11d/lit'
+import { type HTMLTemplateResult, cache, css, html, live, property, style, bind, ifDefined, state } from '@a11d/lit'
+import { MediaQueryController } from '@3mo/media-query-observer'
 import { InputFieldComponent } from '@3mo/field'
 import { type MaterialIcon } from '@3mo/icon'
 
@@ -45,6 +46,8 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	@property({ type: Boolean }) pickerHidden = false
 	@property({ type: Object }) shortcutReferenceDate = new DateTime
 	@property() precision = FieldDateTimePrecision.Minute
+
+	private readonly smQuery = new MediaQueryController(this, '(max-width: 576px)')
 
 	@state() navigatingDate = new DateTime()
 
@@ -170,10 +173,10 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 		return html`
 			<input
 				part='input'
-				?readonly=${this.readonly}
+				?readonly=${this.readonly || this.smQuery.matches}
 				?required=${this.required}
 				?disabled=${this.disabled}
-				placeholder=${this.placeholder}
+				placeholder=${ifDefined(this.smQuery.matches ? undefined : this.placeholder)}
 				.value=${live(this.inputStringValue || '')}
 				@input=${(e: Event) => this.handleInput(this.inputValueToValue(this.inputElement.value || ''), e)}
 				@change=${(e: Event) => this.handleChange(this.inputValueToValue(this.inputElement.value || ''), e)}
@@ -202,9 +205,22 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	}
 
 	protected get popoverContentTemplate() {
-		return html`
+		return this.smQuery.matches ? this.compactPopoverContentTemplate : html`
 			<mo-flex id='selector' direction='horizontal' style='height: 100%'>
 				${this.dateTemplate}
+				${this.timeTemplate}
+			</mo-flex>
+		`
+	}
+
+	protected get compactPopoverContentTemplate() {
+		return html`
+			<mo-flex alignItems='center' ${style({ paddingBlock: '10px' })}>
+				<mo-flex direction='horizontal' gap='8px' ${style({ width: 'calc(100% - 20px)' })}>
+					${this.monthListTemplate}
+					${this.yearListTemplate}
+				</mo-flex>
+				${this.dayTemplate}
 				${this.timeTemplate}
 			</mo-flex>
 		`
@@ -219,6 +235,19 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	}
 
 	private get yearListTemplate() {
+		if (this.smQuery.matches) {
+			return html`
+				<mo-field-year ${style({ width: '80px' })}
+					.value=${this.selectedDate?.getFullYear()}
+					@change=${(e: CustomEvent<number>) => {
+						const currentDate = this.selectedDate ?? new DateTime()
+						currentDate.setFullYear(e.detail)
+						this.handleSelectedDateChange(currentDate, FieldDateTimePrecision.Year)
+					}}
+				></mo-field-year>
+			`
+		}
+
 		return html`
 			<mo-year-list
 				.navigatingValue=${bind(this, 'navigatingDate')}
@@ -229,7 +258,25 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	}
 
 	private get monthListTemplate() {
-		return [FieldDateTimePrecision.Year].includes(this.precision) ? html.nothing : html`
+		if ([FieldDateTimePrecision.Year].includes(this.precision)) {
+			return html.nothing
+		}
+
+		if (this.smQuery.matches) {
+			return html`
+				<mo-field-month ${style({ flexGrow: '1' })}
+					.navigatingDate=${this.navigatingDate}
+					.value=${this.selectedDate?.getMonth()}
+					@change=${(e: CustomEvent<number>) => {
+						const currentDate = this.selectedDate ?? new DateTime()
+						currentDate.setMonth(e.detail)
+						this.handleSelectedDateChange(currentDate, FieldDateTimePrecision.Month)
+					}}
+				></mo-field-month>
+			`
+		}
+
+		return html`
 			<mo-month-list
 				.navigatingValue=${bind(this, 'navigatingDate')}
 				.value=${this.selectedDate}
@@ -245,7 +292,98 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	protected abstract get calendarTemplate(): HTMLTemplateResult
 
 	private get timeTemplate() {
-		return [FieldDateTimePrecision.Year, FieldDateTimePrecision.Month, FieldDateTimePrecision.Day].includes(this.precision) ? html.nothing : html`
+		if ([FieldDateTimePrecision.Year, FieldDateTimePrecision.Month, FieldDateTimePrecision.Day].includes(this.precision)) {
+			return html.nothing
+		}
+
+		if (this.smQuery.matches) {
+			const hours = (this.selectedDate ?? this.navigatingDate).getHours()
+			const minutes = (this.selectedDate ?? this.navigatingDate).getMinutes()
+
+			const setHours = (hours: number) => {
+				const currentDate = this.selectedDate ?? new DateTime()
+				currentDate.setHours(hours)
+				this.handleSelectedDateChange(currentDate, FieldDateTimePrecision.Hour)
+			}
+
+			const setMinutes = (minutes: number) => {
+				const currentDate = this.selectedDate ?? new DateTime()
+				currentDate.setMinutes(minutes)
+				this.handleSelectedDateChange(currentDate, FieldDateTimePrecision.Minute)
+			}
+
+			return html`
+				<mo-flex direction='horizontal' alignItems='center'>
+					<mo-flex alignItems='center'>
+						<mo-icon-button icon='keyboard_arrow_up'
+							${style({ color: 'var(--mo-color-gray)' })}
+							@click=${() => setHours(hours - 1)}
+						></mo-icon-button>
+						<span contenteditable inputmode='decimal' ${style({ fontSize: '1.5em' })}
+							@keydown=${(e: KeyboardEvent) => {
+								if (e.key.length === 1 && isNaN(Number(e.key))) {
+									e.preventDefault()
+								}
+								if (e.key === 'Enter') {
+									(e.target as HTMLElement)?.blur()
+								}
+							}}
+							@change=${(e: UIEvent) => {
+								const textNode = e.target as HTMLElement
+								const value = Number(textNode?.innerText)
+								if (isNaN(value) || value < 0 || value > 23) {
+									textNode.innerText = hours.toString()
+								} else {
+									setHours(value)
+								}
+							}}
+						>
+							${hours}
+						</span>
+						<mo-icon-button icon='keyboard_arrow_down'
+							${style({ color: 'var(--mo-color-gray)' })}
+							@click=${() => setHours(hours + 1)}
+						></mo-icon-button>
+					</mo-flex>
+
+					<span ${style({ fontSize: '1.5em' })}>:</span>
+
+					<mo-flex alignItems='center'>
+						<mo-icon-button icon='keyboard_arrow_up'
+							${style({ color: 'var(--mo-color-gray)' })}
+							@click=${() => setMinutes(minutes - 1)}
+						></mo-icon-button>
+						<span contenteditable inputmode='decimal' ${style({ fontSize: '1.5em' })}
+							@keydown=${(e: KeyboardEvent) => {
+								if (e.key.length === 1 && isNaN(Number(e.key))) {
+									e.preventDefault()
+								}
+								if (e.key === 'Enter') {
+									(e.target as HTMLElement)?.blur()
+								}
+							}}
+							@change=${(e: UIEvent) => {
+								const textNode = e.target as HTMLElement
+								const value = Number(textNode?.innerText)
+								if (isNaN(value) || value < 0 || value > 59) {
+									textNode.innerText = minutes < 10 ? `0${minutes}`: minutes.toString()
+								} else {
+									setMinutes(value)
+								}
+							}}
+						>
+							${minutes < 10 ? `0${minutes}`: minutes}
+						</span>
+						<mo-icon-button icon='keyboard_arrow_down'
+							${style({ color: 'var(--mo-color-gray)' })}
+							@click=${() => setMinutes(minutes + 1)}
+						></mo-icon-button>
+					</mo-flex>
+				</mo-flex>
+			`
+		}
+
+		return html`
 			<mo-flex gap='6px'>
 				<div class='timezone'>
 					${this.navigatingDate?.formatToParts({ timeZoneName: 'long' }).find(x => x.type === 'timeZoneName')?.value}
