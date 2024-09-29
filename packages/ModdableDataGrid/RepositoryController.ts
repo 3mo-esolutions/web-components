@@ -59,11 +59,11 @@ export class RepositoryController<T, P extends FetchableDataGridParametersType> 
 		this.host.requestUpdate()
 	}
 
-	find = (id?: string) => {
+	find(id?: string) {
 		return this.value.find(mode => mode.id === id)
 	}
 
-	save = (mode: ModdableDataGridMode<T, P>) => {
+	save(mode: ModdableDataGridMode<T, P>) {
 		const existingMode = !mode.id ? undefined : this.find(mode.id)
 
 		if (existingMode) {
@@ -93,11 +93,11 @@ export class RepositoryController<T, P extends FetchableDataGridParametersType> 
 		}).confirm()
 	}
 
-	getArchived = () => {
+	getArchived() {
 		return this.value.filter(mode => mode.archived)
 	}
 
-	getVisible = (currentModeId?: string) => {
+	getVisible(currentModeId?: string) {
 		return this.value.filter(mode => !mode.archived || currentModeId === mode.id)
 	}
 }

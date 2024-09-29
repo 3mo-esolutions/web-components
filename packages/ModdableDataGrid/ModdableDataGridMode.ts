@@ -29,6 +29,9 @@ export class ModdableDataGridModeColumn<T> {
 
 	[equals](other: ModdableDataGridModeColumn<T>) {
 		return other.dataSelector === this.dataSelector
+			&& other.width === this.width
+			&& other.hidden === this.hidden
+			&& other.sticky === this.sticky
 	}
 
 	apply(column: DataGridColumn<T>) {
@@ -54,7 +57,7 @@ export class ModdableDataGridMode<T, P extends FetchableDataGridParametersType> 
 	 * @param dataGrid The data grid to extract the mode from
 	 * @returns The extracted mode
 	 */
-	static fromDataGrid<T, P extends FetchableDataGridParametersType>(dataGrid: ModdableDataGrid<T, P>) {
+	static from<T, P extends FetchableDataGridParametersType>(dataGrid: ModdableDataGrid<T, P>) {
 		return new ModdableDataGridMode<T, P>({
 			// Non situational properties
 			id: dataGrid.mode?.id,
@@ -84,6 +87,15 @@ export class ModdableDataGridMode<T, P extends FetchableDataGridParametersType> 
 
 	clone(): ModdableDataGridMode<T, P> {
 		return new ModdableDataGridMode(this)
+	}
+
+	with(mode: Partial<ModdableDataGridMode<T, P>>): this {
+		return new ModdableDataGridMode({ ...this, ...mode }) as this
+	}
+
+	copy(name?: string): ModdableDataGridMode<T, P> {
+		name ??= `${this.name} - ${t('Copy')}`
+		return this.with({ id: undefined, name })
 	}
 
 	[equals](other: ModdableDataGridMode<T, P>) {

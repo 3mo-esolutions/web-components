@@ -1,5 +1,6 @@
 import '@3mo/card'
 import '@3mo/popover'
+import '@3mo/chip'
 import '@3mo/dialog'
 import '@3mo/fetchable-data-grid'
 import '@3mo/data-grid'

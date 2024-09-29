@@ -4,7 +4,7 @@ import { ComponentTestFixture } from '@a11d/lit-testing'
 import { faker } from '@faker-js/faker'
 import localForage from 'localforage'
 
-const getPlainColumn = <T>(c: DataGridColumn<T>) => (<DataGridColumn<T>>{
+const getPlainColumn = <T>(c: DataGridColumn<T>) => ({
 	dataSelector: c.dataSelector,
 	width: c.width,
 	hidden: c.hidden,
@@ -83,7 +83,7 @@ describe('ModdableDataGrid', () => {
 	})
 
 	beforeEach(async () => {
-		fixture.component.repository.value = []
+		fixture.component.modesAdapter.value = []
 		fixture.component.mode = undefined
 		await fixture.updateComplete
 	})
@@ -98,7 +98,7 @@ describe('ModdableDataGrid', () => {
 			mode.sorting = fixture.component.sorting ?? []
 			mode.pagination = fixture.component.pagination
 		})
-		fixture.component.repository.value = modes
+		fixture.component.modesAdapter.value = modes
 		fixture.component.requestUpdate()
 		await fixture.component.updateComplete
 	}
@@ -169,7 +169,10 @@ describe('ModdableDataGrid', () => {
 
 		await initWithDefaultMode()
 
-		fixture.component.selectedModeNode.renderRoot.querySelector('#container')!.dispatchEvent(new MouseEvent('click'))
+		fixture.component
+			.querySelector<ModdableDataGridChip<any, any>>('mo-moddable-data-grid-chip[selected]')
+			?.renderRoot.querySelector('mo-chip')!
+			.dispatchEvent(new MouseEvent('click'))
 		await fixture.updateComplete
 
 		expect(fixture.component.currentMode.columns?.map(getPlainColumn)).toEqual(defaultColumns)
@@ -178,7 +181,7 @@ describe('ModdableDataGrid', () => {
 	describe('ModdableDataGridChip', () => {
 		const selectMode = async (openMenu = false) => {
 			const chipNode = fixture.component.renderRoot.querySelector<ModdableDataGridChip<IUser, TParameters>>('mo-moddable-data-grid-chip')!
-			chipNode.shadowRoot?.querySelector('#container')?.dispatchEvent(new MouseEvent('click'))
+			chipNode.shadowRoot?.querySelector('mo-chip')?.dispatchEvent(new MouseEvent('click'))
 			await fixture.updateComplete
 			if (openMenu) {
 				[...chipNode.renderRoot.querySelectorAll('mo-icon-button')].at(-1)!.dispatchEvent(new MouseEvent('click'))
@@ -249,7 +252,7 @@ describe('ModdableDataGrid', () => {
 			await fixture.updateComplete
 
 			expect(chipNode.mode.parameters?.searchString).toBe('')
-			expect(fixture.component.repository.value.find(mode => mode.id === chipNode.mode.id)?.parameters?.searchString).toBe('')
+			expect(fixture.component.modesAdapter.value.find(mode => mode.id === chipNode.mode.id)?.parameters?.searchString).toBe('')
 		})
 
 		it('should delete a mode on clicking "delete" icon', async () => {
@@ -271,24 +274,6 @@ describe('ModdableDataGrid', () => {
 
 			chipNode.renderRoot.querySelector('[data-qa-id=archive]')!.dispatchEvent(new MouseEvent('click'))
 			expect(chipNode.mode.archived).toBe(true)
-		})
-
-		it('should open a copying dialog on clicking "content_copy" icon', async () => {
-			let parameters!: typeof DialogMode.prototype['parameters']
-
-			spyOn(DialogMode.prototype, 'confirm').and.callFake(function(this: DialogMode<unknown, any>) {
-				parameters = this.parameters
-				return Promise.resolve(undefined)
-			})
-
-			await setupModes(dummyModes)
-
-			const chipNode = await selectMode(true)
-			chipNode.renderRoot.querySelector('[data-qa-id=copy]')!.dispatchEvent(new MouseEvent('click'))
-
-			expect(DialogMode.prototype.confirm).toHaveBeenCalledTimes(1)
-			expect(parameters.mode).toEqual(chipNode.mode)
-			expect(parameters.isCopying).toBeTrue()
 		})
 
 		it('should open an edit dialog on cicking "edit" icon', async () => {

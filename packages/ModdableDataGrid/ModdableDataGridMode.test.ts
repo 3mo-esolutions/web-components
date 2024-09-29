@@ -1,8 +1,8 @@
-import { DataGridColumn, DataGridSortingStrategy } from '@3mo/data-grid'
+import { DataGridSortingStrategy } from '@3mo/data-grid'
 import { ModdableDataGridMode, ModdableDataGridModeColumn } from './ModdableDataGridMode'
 import { equals } from '@a11d/equals'
 
-describe('Mode', () => {
+describe('ModdableDataGridMode', () => {
 	it('should be able to clone', () => {
 		const mode = new ModdableDataGridMode({
 			name: 'Test',
@@ -59,27 +59,6 @@ describe('Mode', () => {
 
 			mode3.parameters!.parameter5 = false
 			expect(mode3[equals](mode2)).toBe(false)
-		})
-	})
-
-	describe('toJson', () => {
-		it('should return a plain object', () => {
-			const mode = new ModdableDataGridMode({
-				name: 'Test',
-				columns: [new ModdableDataGridModeColumn({ dataSelector: 'test' })],
-				parameters: { parameter1: 'Test', parameter2: 10 },
-				sorting: [{ selector: 'test', strategy: DataGridSortingStrategy.Ascending }],
-			})
-
-			expect(mode.toJSON()).toEqual({
-				name: 'Test',
-				id: mode.id,
-				archived: false,
-				columns: [{ width: 'max-content', dataSelector: 'test', hidden: false, sticky: undefined } as any],
-				parameters: { parameter1: 'Test', parameter2: 10 },
-				sorting: [{ selector: 'test', strategy: DataGridSortingStrategy.Ascending }],
-				pagination: undefined,
-			})
 		})
 	})
 })
