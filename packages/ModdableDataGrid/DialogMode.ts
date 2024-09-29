@@ -11,15 +11,12 @@ Localizer.dictionaries.add({
 		'${name:string} (Copy)': '${name} (Kopie)',
 		'New view': 'Neue Ansicht',
 		'Name': 'Bezeichnung',
-		'Archive (Archivieren)': 'Archivieren',
+		'Archive': 'Archivieren',
 		'Save': 'Speichern',
 		'Edit': 'Bearbeiten',
 		'Delete': 'Löschen',
 		'Please enter a valid name!': 'Bitte eine Bezeichnung eingeben!',
-	},
-	en: {
-		'Archive (Archivieren)': 'Archive',
-	},
+	}
 })
 
 type Parameters<T, P extends FetchableDataGridParametersType> = {
@@ -62,7 +59,7 @@ export class DialogMode<T, P extends FetchableDataGridParametersType> extends Di
 
 				${!this.parameters.mode?.id || this.parameters.isNew || this.parameters.isCopying ? html.nothing : html`
 					<mo-flex slot='footer'>
-						<mo-checkbox label=${t('Archive (Archivieren)')} ${bind('archived')} ${style({ marginLeft: '8px' })}></mo-checkbox>
+						<mo-checkbox label=${t('Archive')} ${bind('archived')} ${style({ marginLeft: '8px' })}></mo-checkbox>
 					</mo-flex>
 
 					<mo-button type='raised' slot='secondaryAction' ${style({ '--mo-button-accent-color': 'var(--mo-color-red)' })}>
