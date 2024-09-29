@@ -1,5 +1,5 @@
 import { component, DialogAlert, html, type DataGridColumn } from '@3mo/del'
-import { DialogMode, ModdableDataGrid, type ModdableDataGridChip, ModdableDataGridMode, RepositoryController } from '.'
+import { DialogMode, ModdableDataGrid, type ModdableDataGridChip, ModdableDataGridMode } from '.'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { faker } from '@faker-js/faker'
 import localForage from 'localforage'

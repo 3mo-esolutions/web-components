@@ -1,15 +1,13 @@
-import { css, html, style, state, event, query, repeat, type PropertyValues, keyed } from '@a11d/lit'
+import { css, html, style, event, property, repeat } from '@a11d/lit'
 import { tooltip } from '@3mo/tooltip'
 import { FetchableDataGrid, type FetchableDataGridParametersType } from '@3mo/fetchable-data-grid'
 import { DataGridColumn } from '@3mo/data-grid'
 import { Localizer } from '@3mo/localization'
-import Sortable from 'sortablejs'
 import { ModdableDataGridMode } from './ModdableDataGridMode.js'
-import { LocalForageController } from './LocalForageController.js'
-import { RepositoryController } from './RepositoryController.js'
 import { DialogMode } from './DialogMode.js'
-import * as System from 'detect-browser'
 import { equals } from '@a11d/equals'
+import { IndexedDbAdapter, type ModdableDataGridModesAdapter } from './adapter/index.js'
+import { DataGridModesController } from './DataGridModesController.js'
 
 Localizer.dictionaries.add({
 	de: {
@@ -23,48 +21,25 @@ Localizer.dictionaries.add({
 })
 
 /**
+ * @prop modesAdapter - Adapter for modes storage. Defaults to IndexedDbAdapter.
  * @fires modeChange
  */
-export abstract class ModdableDataGrid<T, P extends FetchableDataGridParametersType> extends FetchableDataGrid<T, P> {
-	@event() readonly modeChange!: EventDispatcher<ModdableDataGridMode<T, P> | void>
+export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataGridParametersType> extends FetchableDataGrid<TData, TParameters> {
+	static defaultAdapter: Constructor<ModdableDataGridModesAdapter<any, any>> = IndexedDbAdapter
 
-	@query('#modes') readonly modesListNode!: HTMLElement
+	@event() readonly modeChange!: EventDispatcher<ModdableDataGridMode<TData, TParameters> | void>
 
-	readonly modesAdapter = new RepositoryController<T, P>(this)
+	@property({ type: Object }) modesAdapter: ModdableDataGridModesAdapter<TData, TParameters> = new ModdableDataGrid.defaultAdapter()
 
-	private readonly defaultModeIdStorage =
-		new LocalForageController<string | undefined>(this, `ModdableDataGrid.${this.tagName.toLowerCase()}.Mode`)
+	get mode() { return this.modesController.selectedMode }
 
-	@state({
-		updated(this: ModdableDataGrid<T, P>, mode?: ModdableDataGridMode<T, P>) {
-			this.defaultModeIdStorage.write(mode?.id)
-			this.deselectAll()
-			this.preventFetch = true;
-			(mode ?? this.modesAdapter.defaultMode).apply(this)
-			this.preventFetch = false
-			this.requestFetch()
-			this.modeChange.dispatch(mode)
-		}
-	}) mode?: ModdableDataGridMode<T, P>
+	readonly modesController = new DataGridModesController<TData, TParameters>(this)
 
-	isReorderingEnabled = false
-
-	override async updated(values: PropertyValues) {
-		super.updated(values)
-
-		if (!this.isReorderingEnabled && this.modesAdapter.value.length > 0) {
-			this.mode = this.modesAdapter.find(await this.defaultModeIdStorage.read())
-			this.enableReordering()
-		}
-	}
-
-	override extractedColumnsUpdated(columns: Array<DataGridColumn<T, unknown>>) {
+	override extractedColumnsUpdated(columns: Array<DataGridColumn<TData, unknown>>) {
 		if (!this.mode) {
 			return super.extractedColumnsUpdated(columns)
 		}
-		this.mode.apply(this)
-  }
-
+	}
 
 	static override get styles() {
 		return css`
@@ -130,9 +105,9 @@ export abstract class ModdableDataGrid<T, P extends FetchableDataGridParametersT
 
 			#archive-title {
 				font-size: 12px;
-    		padding: 8px 16px;
-    		display: block;
-    		font-weight: 500;
+				padding: 8px 16px;
+				display: block;
+				font-weight: 500;
 			}
 		`
 	}
@@ -140,12 +115,11 @@ export abstract class ModdableDataGrid<T, P extends FetchableDataGridParametersT
 	private preventFetch = false
 
 	override requestFetch() {
-		this.modesAdapter.updateDefaultIfNeeded()
 		return this.preventFetch ? Promise.resolve() : super.requestFetch()
 	}
 
 	private get hasModebar() {
-		const hasModebar = this.modesAdapter.value.length > 0
+		const hasModebar = this.modesController.modes.length > 0
 		this.toggleAttribute('hasModebar', hasModebar)
 		return hasModebar
 	}
@@ -156,44 +130,6 @@ export abstract class ModdableDataGrid<T, P extends FetchableDataGridParametersT
 
 	get hasUnsavedChanges() {
 		return this.mode && !this.currentMode[equals](this.mode)
-	}
-
-	private get supportsReordering() {
-		return System.detect()?.os !== 'Android OS'
-	}
-
-	private enableReordering = () => {
-		if (!this.modesListNode) {
-			this.isReorderingEnabled = false
-			return
-		}
-
-		if (this.isReorderingEnabled) {
-			return
-		}
-
-		this.isReorderingEnabled = true
-
-		if (!this.supportsReordering) {
-			return
-		}
-
-		new Sortable(this.modesListNode, {
-			filter: '[data-temporary]',
-			animation: 500,
-			onEnd: () => this.onReorder(),
-		})
-	}
-
-	private onReorder = async () => {
-		const visibleModesIds = [...this.renderRoot.querySelectorAll('mo-moddable-data-grid-chip')]
-			.map(mode => mode.dataset.modeId)
-		this.modesAdapter.value = [
-			...visibleModesIds
-				.map(modeId => this.modesAdapter.value.find((mode: ModdableDataGridMode<T, P>) => mode.id === modeId)!)
-				.filter(mode => !mode.archived),
-			...this.modesAdapter.getArchived(),
-		]
 	}
 
 	protected override get template() {
@@ -214,7 +150,7 @@ export abstract class ModdableDataGrid<T, P extends FetchableDataGridParametersT
 				<mo-flex ${style({ flexGrow: '1' })} direction='horizontal' alignItems='center' gap='14px'>
 					<mo-scroller>
 						<mo-flex id='modes' direction='horizontal' alignItems='center' gap='var(--mo-thickness-l)'>
-							${repeat(this.modesAdapter.getVisible(this.currentMode.id), mode => mode.id, mode => html`
+							${repeat(this.modesController.visibleModes, mode => mode.id, mode => html`
 								<mo-moddable-data-grid-chip ?data-temporary=${mode.archived} data-mode-id=${mode.id!}
 									.dataGrid=${this}
 									.mode=${mode}
@@ -231,7 +167,7 @@ export abstract class ModdableDataGrid<T, P extends FetchableDataGridParametersT
 					></mo-icon-button>
 				</mo-flex>
 
-				${!this.modesAdapter.getArchived().length ? html.nothing : html`
+				${!this.modesController.archivedModes.length ? html.nothing : html`
 					<mo-popover-container fixed alignment='end'>
 						<mo-icon-button icon='archive' data-qa-id='archive'
 							${tooltip(t('Archive'))}
@@ -261,7 +197,7 @@ export abstract class ModdableDataGrid<T, P extends FetchableDataGridParametersT
 	private get archiveMenuTemplate() {
 		return html`
 			<span id='archive-title'>${t('Archive view')}</span>
-			${this.modesAdapter.getArchived().map((mode: ModdableDataGridMode<T, P>) => html`
+			${this.modesController.archivedModes.map((mode: ModdableDataGridMode<TData, TParameters>) => html`
 				<mo-context-menu-item class='archived'
 					${style({
 						backgroundColor: this.currentMode.id === mode.id
@@ -276,7 +212,7 @@ export abstract class ModdableDataGrid<T, P extends FetchableDataGridParametersT
 					<mo-flex direction='horizontal' alignItems='center' gap='8px' ${style({ marginLeft: 'auto' })}>
 						<mo-icon-button dense icon='push_pin'
 							${tooltip(t('Keep in Dock'))}
-							@click=${() => this.unarchiveMode(mode)}
+							@click=${() => mode.unarchive(this)}
 						></mo-icon-button>
 
 						<mo-icon-button dense icon='edit'
@@ -287,12 +223,72 @@ export abstract class ModdableDataGrid<T, P extends FetchableDataGridParametersT
 						<mo-icon-button dense icon='delete'
 							${tooltip(t('Delete view'))}
 							${style({ color: 'var(--mo-color-red)' })}
-							@click=${() => this.deleteMode(mode)}
+							@click=${() => this.modesController.delete(mode)}
 						></mo-icon-button>
 					</mo-flex>
 				</mo-context-menu-item>
 			`)}
 		`
+	}
+
+	private temporaryUnarchiveMode(e: MouseEvent, mode: ModdableDataGridMode<TData, TParameters>) {
+		if (['mo-context-menu-item', 'span'].includes((e.target as HTMLElement).tagName.toLowerCase())) {
+			this.modesController.set(this.mode?.id === mode.id ? undefined : mode)
+		}
+	}
+
+	private createOrEditMode(mode?: ModdableDataGridMode<TData, TParameters>) {
+		new DialogMode<TData, TParameters>({ dataGrid: this, mode }).confirm()
+	}
+
+	/* As we don't have any back-end to order the modes, we ignore it for now
+
+	async deleteMode(mode: ModdableDataGridMode<TData, TParameters>) {
+		const requiresDirectDOMUpdate = !mode.archived || this.currentMode.id === mode.id
+		await this.modesController.delete(mode)
+		if (requiresDirectDOMUpdate) {
+			this.eliminateModeElementDirectly(mode.id!)
+		}
+	}
+
+	private isReorderingEnabled = false
+
+	private get supportsReordering() {
+		return System.detect()?.os !== 'Android OS'
+	}
+
+	private enableReordering() {
+		if (!this.modesListNode) {
+			this.isReorderingEnabled = false
+			return
+		}
+
+		if (this.isReorderingEnabled) {
+			return
+		}
+
+		this.isReorderingEnabled = true
+
+		if (!this.supportsReordering) {
+			return
+		}
+
+		new Sortable(this.renderRoot.querySelector('#modes')!, {
+			filter: '[data-temporary]',
+			animation: 500,
+			onEnd: () => this.onReorder(),
+		})
+	}
+
+	private onReorder = async () => {
+		const visibleModesIds = [...this.renderRoot.querySelectorAll('mo-moddable-data-grid-chip')]
+			.map(mode => mode.dataset.modeId)
+		this.modesController.modes = [
+			...visibleModesIds
+				.map(modeId => this.modesController.modes.find(mode => mode.id === modeId)!)
+				.filter(mode => !mode.archived),
+			...this.modesAdapter.getArchived(),
+		]
 	}
 
 	// Changing arrangement mutates DOM directly and lit does not like it ¯\_(ツ)_/¯
@@ -301,27 +297,5 @@ export abstract class ModdableDataGrid<T, P extends FetchableDataGridParametersT
 		(this.renderRoot.querySelector(`[data-mode-id="${modeId}"]`) as HTMLElement)?.remove()
 		requestIdleCallback(() => this.requestUpdate())
 	}
-
-	async deleteMode(mode: ModdableDataGridMode<T, P>) {
-		const requiresDirectDOMUpdate = !mode.archived || this.currentMode.id === mode.id
-		await this.modesAdapter.delete(mode as any)
-		if (requiresDirectDOMUpdate) {
-			this.eliminateModeElementDirectly(mode.id!)
-		}
-	}
-
-	private unarchiveMode(mode: ModdableDataGridMode<T, P>) {
-		mode.archived = false
-		this.modesAdapter.save(mode)
-	}
-
-	private temporaryUnarchiveMode(e: MouseEvent, mode: ModdableDataGridMode<T, P>) {
-		if (['mo-context-menu-item', 'span'].includes((e.target as HTMLElement).tagName.toLowerCase())) {
-			this.mode = this.mode?.id === mode.id ? undefined : mode
-		}
-	}
-
-	private createOrEditMode(mode?: ModdableDataGridMode<T, P>) {
-		new DialogMode<T, P>({ dataGrid: this, mode: mode as any }).confirm()
-	}
+	*/
 }

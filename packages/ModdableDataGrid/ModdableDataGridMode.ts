@@ -1,14 +1,18 @@
 import { type FetchableDataGridParametersType } from '@3mo/fetchable-data-grid'
-import { DataGridColumn, DataGridSorting, DataGridPagination, type DataGridColumnSticky } from '@3mo/data-grid'
+import { NotificationComponent } from '@a11d/lit-application'
 import { equals } from '@a11d/equals'
+import { DataGridColumn, DataGridSorting, DataGridPagination, type DataGridColumnSticky } from '@3mo/data-grid'
+import { Localizer } from '@3mo/localization'
 import { type ModdableDataGrid } from './ModdableDataGrid.js'
 import type * as CSS from 'csstype'
 
-export class ModdableDataGridModeColumn<T> {
-	static fromJSON(json: any) {
-		return new ModdableDataGridModeColumn(json)
+Localizer.dictionaries.add({
+	de: {
+		'View "${name:string}" moved to archive': 'Ansicht "${name}" ins Archiv verschoben',
 	}
+})
 
+export class ModdableDataGridModeColumn<T> {
 	static fromColumn<T>(column: DataGridColumn<T>) {
 		return new ModdableDataGridModeColumn<T>({
 			dataSelector: column.dataSelector,
@@ -113,6 +117,29 @@ export class ModdableDataGridMode<T, P extends FetchableDataGridParametersType> 
 			Object.entries(this.parameters ?? {})
 				.filter(([_, value]) => value !== undefined && value !== null && value !== '' && (Array.isArray(value) ? value.length > 0 : true))
 		)
+	}
+
+	save(dataGrid: ModdableDataGrid<T, P>) {
+		return dataGrid.modesController.save(this)
+	}
+
+	select(dataGrid: ModdableDataGrid<T, P>) {
+		return dataGrid.modesController.set(this)
+	}
+
+	async archive(dataGrid: ModdableDataGrid<T, P>) {
+		this.archived = true
+		await this.save(dataGrid)
+		NotificationComponent.notifySuccess(t('View "${name:string}" moved to archive', { name: this.name }))
+	}
+
+	async unarchive(dataGrid: ModdableDataGrid<T, P>) {
+		this.archived = false
+		await this.save(dataGrid)
+	}
+
+	delete(dataGrid: ModdableDataGrid<T, P>) {
+		return dataGrid.modesController.delete(this)
 	}
 
 	apply(dataGrid: ModdableDataGrid<T, P>) {

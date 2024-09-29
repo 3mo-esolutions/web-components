@@ -59,17 +59,17 @@ export class DialogMode<T, P extends FetchableDataGridParametersType> extends Di
 		`
 	}
 
-	protected override primaryAction() {
+	protected override async primaryAction() {
 		if (!this.mode.name) {
 			throw new Error(t('Please enter a valid name!'))
 		}
 		this.mode = this.dataGrid.currentMode.with(this.mode)
-		this.dataGrid.modesAdapter.save(this.mode)
+		await this.mode.save(this.dataGrid)
 		return this.mode
 	}
 
-	protected override secondaryAction() {
-		this.parameters.dataGrid.deleteMode(this.mode)
+	protected override async secondaryAction() {
+		await this.parameters.dataGrid.modesController.delete(this.mode)
 		return undefined
 	}
 }

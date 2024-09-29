@@ -193,7 +193,18 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 			&& !this.hasServerSideSort
 	}
 
+	private _preventFetch = false
+	async runPreventingFetch(action: () => void | PromiseLike<void>) {
+		this._preventFetch = true
+		await action()
+		this._preventFetch = false
+	}
+
 	async requestFetch() {
+		if (this._preventFetch) {
+			return
+		}
+
 		if (this.parameters && this.fetchDirty) {
 			const dirtyData = this.fetchDirty(this.parameters)
 			if (dirtyData) {

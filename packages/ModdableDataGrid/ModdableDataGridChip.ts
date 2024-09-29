@@ -25,7 +25,6 @@ Localizer.dictionaries.add({
 		'Unsaved changes': 'Änderungen',
 		'Do you want to save the new changes for "${name:string}" before switching view?': 'Sollen die Änderungen in der Ansicht "${name}" vor dem Fortfahren gespeichert werden?',
 		'Do you want to discard changes of view "${name:string}"?': 'Sollen die Änderungen in der Ansicht "${name}" verworfen werden?',
-		'View "${name:string}" is archived!': 'Ansicht "${name}" ins Archiv verschoben!',
 	}
 })
 
@@ -42,7 +41,7 @@ export class ModdableDataGridChip<T, P extends FetchableDataGridParametersType> 
 
 	@property({ type: Boolean, reflect: true }) selected = false
 
-	@query('mo-menu') readonly menuNode!: Menu
+	@query('mo-menu') readonly menu!: Menu
 	@query('mo-flex') readonly optionsContainer!: HTMLElement
 
 	static override get styles() {
@@ -195,36 +194,36 @@ export class ModdableDataGridChip<T, P extends FetchableDataGridParametersType> 
 			content: t('Do you want to discard changes of view "${name:string}"?', { name: this.mode.name }),
 			primaryButtonText: t('Discard'),
 		}).confirm()
-		this.dataGrid.modesAdapter.save(this.mode)
+		await this.mode.save(this.dataGrid)
 	}
 
 	private async edit() {
 		const mode = await new DialogMode<T, P>({ dataGrid: this.dataGrid, mode: this.mode }).confirm()
-		mode?.apply(this.dataGrid)
+		await mode?.select(this.dataGrid)
 	}
 
-	private copy() {
-		new DialogMode<T, P>({ dataGrid: this.dataGrid, mode: this.mode.copy() }).confirm()
+	private async copy() {
+		const mode = await new DialogMode<T, P>({ dataGrid: this.dataGrid, mode: this.mode.copy() }).confirm()
+		await mode?.select(this.dataGrid)
 	}
 
 	private async saveAsNew() {
-		await new DialogMode<T, P>({ dataGrid: this.dataGrid, mode: this.dataGrid.currentMode.copy('') }).confirm()
+		const mode = await new DialogMode<T, P>({ dataGrid: this.dataGrid, mode: this.dataGrid.currentMode.copy('') }).confirm()
+		await mode?.select(this.dataGrid)
 	}
 
-	private saveChanges() {
+	private async saveChanges() {
 		this.mode = this.dataGrid.currentMode
-		this.dataGrid.modesAdapter.save(this.mode)
+		await this.mode.save(this.dataGrid)
 	}
 
-	private archive() {
-		this.mode.archived = true
-		this.dataGrid.modesAdapter.save(this.mode)
-		NotificationComponent.notifySuccess(t('View "${name:string}" is archived!', { name: this.mode.name }))
-		this.menuNode.removeAttribute('open')
+	private async archive() {
+		await this.mode.archive(this.dataGrid)
+		this.menu.open = false
 	}
 
 	private delete() {
-		this.dataGrid.deleteMode(this.mode)
+		return this.mode.delete(this.dataGrid)
 	}
 
 	@eventListener('click')
@@ -234,13 +233,13 @@ export class ModdableDataGridChip<T, P extends FetchableDataGridParametersType> 
 		}
 
 		if (this.dataGrid.mode?.id === this.mode.id) {
-			this.dataGrid.mode = undefined
+			this.dataGrid.modesController.set(undefined)
 			return
 		}
 
-		if (this.dataGrid.mode && !this.dataGrid.hasUnsavedChanges && this.dataGrid.mode.archived) {
-			this.dataGrid.eliminateModeElementDirectly()
-		}
+		// if (this.dataGrid.mode && !this.dataGrid.hasUnsavedChanges && this.dataGrid.mode.archived) {
+		// 	this.dataGrid.eliminateModeElementDirectly()
+		// }
 
 		if (this.dataGrid.mode && this.dataGrid.hasUnsavedChanges) {
 			const saveChanges = await new DialogAcknowledge({
@@ -251,15 +250,15 @@ export class ModdableDataGridChip<T, P extends FetchableDataGridParametersType> 
 			}).confirm()
 
 			if (saveChanges) {
-				this.dataGrid.modesAdapter.save(this.dataGrid.currentMode)
+				await this.dataGrid.currentMode.save(this.dataGrid)
 
-				if (this.dataGrid.currentMode.archived) {
-					this.dataGrid.eliminateModeElementDirectly()
-				}
+				// if (this.dataGrid.currentMode.archived) {
+				// 	this.dataGrid.eliminateModeElementDirectly()
+				// }
 			}
 		}
 
-		this.dataGrid.mode = this.mode
+		await this.mode.select(this.dataGrid)
 	}
 }
 

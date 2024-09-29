@@ -45,12 +45,10 @@
 		"@a11d/equals": "x",
 		"detect-browser": "x",
 		"localforage": "1.x",
-		"lodash.clonedeep": "x",
 		"sortablejs": "1.x",
 		"tslib": "x"
 	},
 	"devDependencies": {
-		"@types/lodash.clonedeep": "x",
 		"@types/sortablejs": "1.x"
 	}
 }
