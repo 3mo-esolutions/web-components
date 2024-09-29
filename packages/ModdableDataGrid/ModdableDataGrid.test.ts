@@ -1,8 +1,15 @@
-import { component, DialogAlert, html } from '@3mo/del'
-import { DialogMode, getPlainColumn, ModdableDataGrid, type ModdableDataGridChip, Mode, RepositoryController } from '.'
+import { component, DialogAlert, html, type DataGridColumn } from '@3mo/del'
+import { DialogMode, ModdableDataGrid, type ModdableDataGridChip, ModdableDataGridMode, RepositoryController } from '.'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { faker } from '@faker-js/faker'
 import localForage from 'localforage'
+
+const getPlainColumn = <T>(c: DataGridColumn<T>) => (<DataGridColumn<T>>{
+	dataSelector: c.dataSelector,
+	width: c.width,
+	hidden: c.hidden,
+	sticky: c.sticky,
+})
 
 interface IUser {
 	id: number
@@ -61,9 +68,9 @@ class ModdableDataGridStory extends ModdableDataGrid<IUser, TParameters> {
 }
 
 const dummyModes = [
-	new Mode({ id: '1', name: 'Mode 1', parameters: { searchString: 'Friedrich Nietzsche' } }),
-	new Mode({ id: '2', name: 'Mode 2', parameters: {} }),
-] as Array<Mode<IUser, TParameters>>
+	new ModdableDataGridMode({ id: '1', name: 'Mode 1', parameters: { searchString: 'Friedrich Nietzsche' } }),
+	new ModdableDataGridMode({ id: '2', name: 'Mode 2', parameters: {} }),
+] as Array<ModdableDataGridMode<IUser, TParameters>>
 
 describe('ModdableDataGrid', () => {
 	const storage: Record<string, any> = {}
@@ -85,7 +92,7 @@ describe('ModdableDataGrid', () => {
 		Object.keys(storage).forEach(storageKey => storage[storageKey] = undefined)
 	})
 
-	const setupModes = async (modes: Array<Mode<IUser, TParameters>>) => {
+	const setupModes = async (modes: Array<ModdableDataGridMode<IUser, TParameters>>) => {
 		modes.forEach(mode => {
 			mode.columns = fixture.component.currentMode.columns
 			mode.sorting = fixture.component.sorting ?? []
@@ -115,14 +122,14 @@ describe('ModdableDataGrid', () => {
 	})
 
 	it('should display an archive icon if there is at least one archived mode', async () => {
-		await setupModes(dummyModes.map(mode => new Mode({ ...mode, archived: true })))
+		await setupModes(dummyModes.map(mode => new ModdableDataGridMode({ ...mode, archived: true })))
 		expect(fixture.component.renderRoot.querySelector('[data-qa-id=archive]')).not.toBeNull()
 	})
 
 	it('should display only unarchived modes', async () => {
 		await setupModes([
 			...dummyModes,
-			...dummyModes.map(dummyMode => new Mode({ ...dummyMode, id: undefined, archived: true })),
+			...dummyModes.map(dummyMode => new ModdableDataGridMode({ ...dummyMode, id: undefined, archived: true })),
 		])
 		const chipNodes =
 			fixture.component.renderRoot.querySelectorAll<ModdableDataGridChip<IUser, TParameters>>('mo-moddable-data-grid-chip')!
@@ -139,7 +146,7 @@ describe('ModdableDataGrid', () => {
 		})
 
 		storage[defaultModeIdKey] = dummyModes[0].id
-		storage[modesKey] = dummyModes.map((mode, i) => i === 0 ? new Mode({ ...mode, columns: modifiedColumns as any }) : mode) as any
+		storage[modesKey] = dummyModes.map((mode, i) => i === 0 ? new ModdableDataGridMode({ ...mode, columns: modifiedColumns as any }) : mode) as any
 
 		await fixture.initialize()
 		await fixture.updateComplete
@@ -319,7 +326,7 @@ describe('ModdableDataGrid', () => {
 			chipNode.renderRoot.querySelector('[data-qa-id=saveAsNew]')!.dispatchEvent(new MouseEvent('click'))
 
 			expect(DialogMode.prototype.confirm).toHaveBeenCalledTimes(1)
-			expect(parameters.mode).toEqual(new Mode<unknown, any>({ ...fixture.component.currentMode, id: parameters.mode!.id, name: '' } as any))
+			expect(parameters.mode).toEqual(new ModdableDataGridMode<unknown, any>({ ...fixture.component.currentMode, id: parameters.mode!.id, name: '' } as any))
 			expect(parameters.isNew).toBeTrue()
 		})
 	})

@@ -1,27 +1,19 @@
 import { html } from '@a11d/lit'
 import { type FetchableDataGridParametersType } from '@3mo/fetchable-data-grid'
-import { type DataGridColumn } from '@3mo/data-grid'
 import { DialogDeletion } from '@3mo/standard-dialogs'
 import { Localizer } from '@3mo/localization'
 import { LocalForageController } from './LocalForageController.js'
-import { Mode } from './Mode.js'
+import { ModdableDataGridMode } from './ModdableDataGridMode.js'
 import { type ModdableDataGrid } from './ModdableDataGrid.js'
 
 Localizer.dictionaries.add({
 	de: {
-		'Do you want to delete the view <b>${name:string}</b>? This process is irreversible.': 'Soll die Ansicht <b>${name}</b> gelöscht werden? Dieser Vorgang ist unwiderruflich.',
+		'Do you want to delete the view "${name:string}" irreversibly?': 'Möchten Sie die Ansicht "${name}" unwiderruflich löschen?',
 	}
 })
 
-export const getPlainColumn = <T>(c: DataGridColumn<T>) => (<DataGridColumn<T>>{
-	dataSelector: c.dataSelector,
-	width: c.width,
-	hidden: c.hidden,
-	sticky: c.sticky,
-})
-
-export class RepositoryController<T, P extends FetchableDataGridParametersType> extends LocalForageController<Array<Mode<T, P>>> {
-	private _defaultMode?: Required<Mode<T, P>>
+export class RepositoryController<T, P extends FetchableDataGridParametersType> extends LocalForageController<Array<ModdableDataGridMode<T, P>>> {
+	private _defaultMode?: Required<ModdableDataGridMode<T, P>>
 
 	get defaultMode() {
 		return this._defaultMode!.clone()
@@ -29,13 +21,11 @@ export class RepositoryController<T, P extends FetchableDataGridParametersType> 
 
 	updateDefaultIfNeeded = () => {
 		if (!this._defaultMode) {
-			this._defaultMode = this.host.currentMode!.clone() as Required<Mode<T, P>>
+			this._defaultMode = this.host.currentMode!.clone() as Required<ModdableDataGridMode<T, P>>
 		}
 	}
 
-	constructor(
-		override readonly host: ModdableDataGrid<any, any>
-	) {
+	constructor(override readonly host: ModdableDataGrid<T, P>) {
 		super(host, `ModdableDataGrid.${host.tagName.toLowerCase()}.Modes`, [], (modes: any) => {
 			return modes.map((mode: any) => {
 				if (mode.parameters) {
@@ -59,13 +49,13 @@ export class RepositoryController<T, P extends FetchableDataGridParametersType> 
 	}
 
 	override get value() {
-		return (super.value ?? []).map(mode => new Mode<T, P>(mode))
+		return (super.value ?? []).map(mode => new ModdableDataGridMode<T, P>(mode))
 	}
 
 	override set value(value) {
 		// console.log('setting value', value[0]!.columns)
 		// console.log('expected to be after json', value[0]!.toJSON().columns)
-		super.value = value.map(mode => mode.toJSON()) as Array<Mode<T, P>>
+		super.value = value.map(mode => mode.toJSON()) as Array<ModdableDataGridMode<T, P>>
 		this.host.requestUpdate()
 	}
 
@@ -73,7 +63,7 @@ export class RepositoryController<T, P extends FetchableDataGridParametersType> 
 		return this.value.find(mode => mode.id === id)
 	}
 
-	save = (mode: Mode<T, P>) => {
+	save = (mode: ModdableDataGridMode<T, P>) => {
 		const existingMode = !mode.id ? undefined : this.find(mode.id)
 
 		if (existingMode) {
@@ -87,14 +77,12 @@ export class RepositoryController<T, P extends FetchableDataGridParametersType> 
 		}
 	}
 
-	async delete(mode: Mode<T, P>) {
+	async delete(mode: ModdableDataGridMode<T, P>) {
 		await new DialogDeletion({
 			content: html`
-				<span
-					.innerHTML=${t('Do you want to delete the view <b>${name:string}</b>? This process is irreversible.', {
-						name: mode.name,
-					})}
-				></span>
+				<span>
+					${t('Do you want to delete the view "${name:string}" irreversibly?', { name: mode.name }) }
+				</span>
 			`,
 			deletionAction: () => {
 				if (this.host.mode?.id === mode.id) {

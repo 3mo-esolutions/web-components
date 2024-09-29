@@ -6,7 +6,7 @@ import { DialogAlert, DialogAcknowledge } from '@3mo/standard-dialogs'
 import { equals } from '@a11d/equals'
 import { Localizer } from '@3mo/localization'
 import { type Menu } from '@3mo/menu'
-import { Mode } from './Mode.js'
+import { ModdableDataGridMode } from './ModdableDataGridMode.js'
 import { DialogMode } from './DialogMode.js'
 import { type ModdableDataGrid } from './ModdableDataGrid.js'
 
@@ -39,23 +39,20 @@ export class ModdableDataGridChip<T, P extends FetchableDataGridParametersType> 
 	@property({
 		type: Object,
 		updated(this: ModdableDataGridChip<T, P>) {
-			const onChange = () => {
-				this.requestUpdate()
-			}
-
-			this.dataGrid.columnsChange.subscribe(onChange)
-			this.dataGrid.sortingChange.subscribe(onChange)
-			this.dataGrid.parametersChange.subscribe(onChange)
-			this.dataGrid.paginationChange.subscribe(onChange)
+			const handler = () => this.requestUpdate()
+			this.dataGrid.columnsChange.subscribe(handler)
+			this.dataGrid.sortingChange.subscribe(handler)
+			this.dataGrid.parametersChange.subscribe(handler)
+			this.dataGrid.paginationChange.subscribe(handler)
 		}
 	}) dataGrid!: ModdableDataGrid<T, P>
 
 	@property({
 		type: Object,
-		updated(this: ModdableDataGridChip<T, P>, mode?: Mode<T, P>) {
+		updated(this: ModdableDataGridChip<T, P>, mode?: ModdableDataGridMode<T, P>) {
 			this.toggleAttribute('data-archived', mode?.archived)
 		}
-	}) mode!: Mode<T, P>
+	}) mode!: ModdableDataGridMode<T, P>
 
 	@property({ type: Boolean, reflect: true }) selected = false
 	@property({ type: Boolean, reflect: true }) readOnly = false
@@ -127,7 +124,7 @@ export class ModdableDataGridChip<T, P extends FetchableDataGridParametersType> 
 
 	protected override get template() {
 		return html`
-			<div id='container' @click=${this.onClick}>
+			<div id='container' @click=${this.handleClick}>
 				<span id='title'>
 					${this.mode.archived ? `[${this.mode.name}]` : this.mode.name}
 				</span>
@@ -138,8 +135,8 @@ export class ModdableDataGridChip<T, P extends FetchableDataGridParametersType> 
 							? this.contextMenuTemplate
 							: html`
 								<span id='changed'>*</span>
-								<mo-icon-button dense icon='undo' ${tooltip(t('Discard changes (Änderungen verwerfen)'))} @click=${this.discard}></mo-icon-button>
-								<mo-icon-button dense icon='done' ${tooltip(t('Save changes'))} @click=${this.saveChanges}></mo-icon-button>
+								<mo-icon-button dense icon='undo' ${tooltip(t('Discard changes (Änderungen verwerfen)'))} @click=${() => this.discard()}></mo-icon-button>
+								<mo-icon-button dense icon='done' ${tooltip(t('Save changes'))} @click=${() => this.saveChanges()}></mo-icon-button>
 								${this.contextMenuTemplate}
 							`}
 					</mo-flex>
@@ -206,7 +203,7 @@ export class ModdableDataGridChip<T, P extends FetchableDataGridParametersType> 
 	private edit = async () => {
 		const changes = this.dataGrid.currentMode
 		await new DialogMode<T, P>({ dataGrid: this.dataGrid, mode: this.mode }).confirm()
-		const mode = new Mode<T, P>({
+		const mode = new ModdableDataGridMode<T, P>({
 			...this.dataGrid.currentMode,
 			columns: changes.columns,
 			sorting: changes.sorting,
@@ -216,35 +213,35 @@ export class ModdableDataGridChip<T, P extends FetchableDataGridParametersType> 
 		mode.apply(this.dataGrid)
 	}
 
-	private copy = () => {
+	private copy() {
 		new DialogMode<T, P>({ dataGrid: this.dataGrid, mode: this.mode, isCopying: true }).confirm()
 	}
 
-	private saveChanges = () => {
-		this.dataGrid.repository.save(this.dataGrid.currentMode as Mode<T, P>)
-		this.mode = this.dataGrid.currentMode as Mode<T, P>
+	private saveChanges() {
+		this.dataGrid.repository.save(this.dataGrid.currentMode as ModdableDataGridMode<T, P>)
+		this.mode = this.dataGrid.currentMode as ModdableDataGridMode<T, P>
 	}
 
-	private saveAsNew = async () => {
+	private async saveAsNew() {
 		await new DialogMode<T, P>({
 			dataGrid: this.dataGrid,
-			mode: new Mode({ ...this.dataGrid.currentMode, id: undefined, name: '' }),
+			mode: new ModdableDataGridMode({ ...this.dataGrid.currentMode, id: undefined, name: '' }),
 			isNew: true,
 		}).confirm()
 	}
 
-	private archive = () => {
+	private archive() {
 		this.mode.archived = true
 		this.dataGrid.repository.save(this.mode)
 		NotificationComponent.notifySuccess(t('View "${name:string}" is archived!', { name: this.mode.name }))
 		this.menuNode.removeAttribute('open')
 	}
 
-	private delete = () => {
+	private delete() {
 		this.dataGrid.deleteMode(this.mode)
 	}
 
-	private onClick = async (e: MouseEvent) => {
+	private handleClick = async (e: MouseEvent) => {
 		if (!['container', 'title'].includes((e.target as HTMLElement).id)) {
 			return
 		}
@@ -275,7 +272,7 @@ export class ModdableDataGridChip<T, P extends FetchableDataGridParametersType> 
 				}).confirm()
 
 				if (saveChanges) {
-					this.dataGrid.repository.save(this.dataGrid.currentMode as Mode<T, P>)
+					this.dataGrid.repository.save(this.dataGrid.currentMode as ModdableDataGridMode<T, P>)
 
 					if (this.dataGrid.currentMode.archived) {
 						this.dataGrid.eliminateModeElementDirectly(currentModeId!)
