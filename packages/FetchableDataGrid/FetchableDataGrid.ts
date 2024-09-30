@@ -196,7 +196,10 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 	private _preventFetch = false
 	async runPreventingFetch(action: () => void | PromiseLike<void>) {
 		this._preventFetch = true
-		await action()
+		const result = action()
+		if (result instanceof Promise) {
+			await result
+		}
 		this._preventFetch = false
 	}
 

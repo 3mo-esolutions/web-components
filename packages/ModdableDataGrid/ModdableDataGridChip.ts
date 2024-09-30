@@ -1,7 +1,7 @@
 import { css, html, style, Component, component, property, query, eventListener } from '@a11d/lit'
 import { type FetchableDataGridParametersType } from '@3mo/fetchable-data-grid'
 import { tooltip } from '@3mo/tooltip'
-import { DialogAlert, DialogAcknowledge } from '@3mo/standard-dialogs'
+import { DialogAlert, GenericDialog } from '@3mo/standard-dialogs'
 import { Localizer } from '@3mo/localization'
 import { type Menu } from '@3mo/menu'
 import { ModdableDataGridMode } from './ModdableDataGridMode.js'
@@ -29,7 +29,7 @@ Localizer.dictionaries.add({
 
 @component('mo-moddable-data-grid-chip')
 export class ModdableDataGridChip<T, P extends FetchableDataGridParametersType> extends Component {
-	@property({ type: Object, updated(this: ModdableDataGridChip<T, P>, _, oldValue: ModdableDataGrid<T, P>) { this.dataGridUpdated(oldValue) } }) dataGrid!: ModdableDataGrid<T, P>
+	@property({ type: Object }) dataGrid!: ModdableDataGrid<T, P>
 
 	@property({
 		type: Object,
@@ -97,33 +97,6 @@ export class ModdableDataGridChip<T, P extends FetchableDataGridParametersType> 
 			}
 		`
 	}
-
-	private dataGridUpdated(oldDataGrid?: ModdableDataGrid<T, P>) {
-		if (oldDataGrid) {
-			this.unsubscribeFromDataGridChanges(oldDataGrid)
-		}
-		this.subscribeToDataGridChanges(this.dataGrid)
-	}
-
-	protected override disconnected() {
-		this.unsubscribeFromDataGridChanges(this.dataGrid)
-	}
-
-	private subscribeToDataGridChanges(dataGrid: ModdableDataGrid<T, P>) {
-		dataGrid.columnsChange.subscribe(this.dataGridChangeHandler)
-		dataGrid.sortingChange.subscribe(this.dataGridChangeHandler)
-		dataGrid.parametersChange.subscribe(this.dataGridChangeHandler)
-		dataGrid.paginationChange.subscribe(this.dataGridChangeHandler)
-	}
-
-	private unsubscribeFromDataGridChanges(dataGrid: ModdableDataGrid<T, P>) {
-		dataGrid.columnsChange.unsubscribe(this.dataGridChangeHandler)
-		dataGrid.sortingChange.unsubscribe(this.dataGridChangeHandler)
-		dataGrid.parametersChange.unsubscribe(this.dataGridChangeHandler)
-		dataGrid.paginationChange.unsubscribe(this.dataGridChangeHandler)
-	}
-
-	private dataGridChangeHandler = () => this.requestUpdate()
 
 	protected override get template() {
 		return html`
@@ -237,11 +210,13 @@ export class ModdableDataGridChip<T, P extends FetchableDataGridParametersType> 
 		}
 
 		if (this.dataGrid.mode && this.dataGrid.hasUnsavedChanges) {
-			const saveChanges = await new DialogAcknowledge({
+			const saveChanges = await new GenericDialog({
 				heading: t('Unsaved changes'),
 				content: t('Do you want to save the new changes for "${name:string}" before switching view?', { name: this.dataGrid.mode.name }),
 				primaryButtonText: t('Save'),
+				primaryAction: () => true,
 				secondaryButtonText: t('Don\'t Save'),
+				secondaryAction: () => false,
 			}).confirm()
 
 			if (saveChanges) {

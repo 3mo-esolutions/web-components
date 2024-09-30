@@ -1,4 +1,4 @@
-import { css, html, style, event, property, repeat } from '@a11d/lit'
+import { css, html, style, event, property, repeat, queryAll } from '@a11d/lit'
 import { tooltip } from '@3mo/tooltip'
 import { FetchableDataGrid, type FetchableDataGridParametersType } from '@3mo/fetchable-data-grid'
 import { DataGridColumn } from '@3mo/data-grid'
@@ -6,7 +6,7 @@ import { Localizer } from '@3mo/localization'
 import { ModdableDataGridMode } from './ModdableDataGridMode.js'
 import { DialogMode } from './DialogMode.js'
 import { equals } from '@a11d/equals'
-import { IndexedDbAdapter, type ModdableDataGridModesAdapter } from './index.js'
+import { IndexedDbAdapter, type ModdableDataGridChip, type ModdableDataGridModesAdapter } from './index.js'
 import { DataGridModesController } from './DataGridModesController.js'
 
 Localizer.dictionaries.add({
@@ -31,9 +31,16 @@ export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataG
 
 	@property({ type: Object }) modesAdapter: ModdableDataGridModesAdapter<TData, TParameters> = new ModdableDataGrid.defaultAdapter()
 
+	@queryAll('mo-moddable-data-grid-chip') readonly modeChips!: Array<ModdableDataGridChip<TData, TParameters>>
+
 	get mode() { return this.modesController.selectedMode }
 
 	readonly modesController = new DataGridModesController<TData, TParameters>(this)
+
+	protected override updated(...parameters: Parameters<FetchableDataGrid<TData, TParameters, TDetailsElement>['updated']>) {
+		super.updated(...parameters)
+		this.modeChips.forEach(chip => chip.requestUpdate())
+	}
 
 	override extractedColumnsUpdated(columns: Array<DataGridColumn<TData, unknown>>) {
 		if (!this.mode) {
@@ -230,7 +237,8 @@ export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataG
 		`
 	}
 
-	private createOrEditMode(mode?: ModdableDataGridMode<TData, TParameters>) {
-		return new DialogMode<TData, TParameters>({ dataGrid: this, mode }).confirm()
+	private async createOrEditMode(mode?: ModdableDataGridMode<TData, TParameters>) {
+		await new DialogMode<TData, TParameters>({ dataGrid: this, mode }).confirm()
+		await this.modesController.set(mode)
 	}
 }

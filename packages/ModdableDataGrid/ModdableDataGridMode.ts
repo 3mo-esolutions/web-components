@@ -52,8 +52,8 @@ export class ModdableDataGridMode<TData, TDataFetcherParameters extends Fetchabl
 	 * @param dataGrid The data grid to extract the mode from
 	 * @returns The extracted mode
 	 */
-	static fromDataGrid<T, P extends FetchableDataGridParametersType>(dataGrid: ModdableDataGrid<T, P>) {
-		return new ModdableDataGridMode<T, P>({
+	static fromDataGrid<TData, TParameters extends FetchableDataGridParametersType>(dataGrid: ModdableDataGrid<TData, TParameters, any>) {
+		return new ModdableDataGridMode<TData, TParameters>({
 			// Non situational properties
 			id: dataGrid.mode?.id,
 			name: dataGrid.mode?.name,
@@ -61,7 +61,7 @@ export class ModdableDataGridMode<TData, TDataFetcherParameters extends Fetchabl
 			// Situational properties
 			columns: dataGrid.columns.map(c => ModdableDataGridModeColumn.fromColumn(c)),
 			pagination: dataGrid.pagination,
-			parameters: structuredClone(dataGrid.parameters) ?? {} as P,
+			parameters: structuredClone(dataGrid.parameters) ?? {} as TParameters,
 			sorting: structuredClone(dataGrid.sorting) ?? [],
 		})
 	}
@@ -71,8 +71,8 @@ export class ModdableDataGridMode<TData, TDataFetcherParameters extends Fetchabl
 	 * @param object The literal object to create the mode from
 	 * @returns The created mode
 	 */
-	static fromObject<T, P extends FetchableDataGridParametersType>(object: any) {
-		const mode = new ModdableDataGridMode<T, P>(object)
+	static fromObject<TData, TParameters extends FetchableDataGridParametersType>(object: any) {
+		const mode = new ModdableDataGridMode<TData, TParameters>(object)
 		if (mode.parameters) {
 			for (const [key, value] of Object.entries(mode.parameters)) {
 				if (value && typeof value === 'string' && DateTime.isoRegularExpression.test(value)) {

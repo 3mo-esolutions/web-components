@@ -18,16 +18,16 @@ Localizer.dictionaries.add({
 	}
 })
 
-type Parameters<T, P extends FetchableDataGridParametersType> = {
-	readonly dataGrid: ModdableDataGrid<T, P>
-	readonly mode?: ModdableDataGridMode<T, P>
+type Parameters<TData, TParameters extends FetchableDataGridParametersType> = {
+	readonly dataGrid: ModdableDataGrid<TData, TParameters, any>
+	readonly mode?: ModdableDataGridMode<TData, TParameters>
 }
 
 @component('mo-dialog-mode')
-export class DialogMode<T, P extends FetchableDataGridParametersType> extends DialogComponent<Parameters<T, P>, ModdableDataGridMode<T, P> | undefined> {
-	@state() mode = this.parameters.mode ?? new ModdableDataGridMode<T, P>()
+export class DialogMode<TData, TParameters extends FetchableDataGridParametersType> extends DialogComponent<Parameters<TData, TParameters>, ModdableDataGridMode<TData, TParameters> | undefined> {
+	@state() mode = this.parameters.mode ?? new ModdableDataGridMode<TData, TParameters>()
 
-	private readonly binder = new Binder<ModdableDataGridMode<T, P>>(this, 'mode')
+	private readonly binder = new Binder<ModdableDataGridMode<TData, TParameters>>(this, 'mode')
 
 	private get dataGrid() {
 		return this.parameters.dataGrid
