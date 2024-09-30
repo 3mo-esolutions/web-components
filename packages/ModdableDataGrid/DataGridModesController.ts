@@ -34,7 +34,7 @@ export class DataGridModesController<TData, TParameters extends FetchableDataGri
 		return this.host.modesAdapter
 	}
 
-	constructor(override readonly host: ModdableDataGrid<TData, TParameters>) {
+	constructor(override readonly host: ModdableDataGrid<TData, TParameters, any>) {
 		super(host)
 	}
 

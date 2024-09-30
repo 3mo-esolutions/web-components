@@ -46,7 +46,7 @@ export class ModdableDataGridModeColumn<T> {
 	}
 }
 
-export class ModdableDataGridMode<T, P extends FetchableDataGridParametersType> {
+export class ModdableDataGridMode<TData, TDataFetcherParameters extends FetchableDataGridParametersType> {
 	/**
 	 * Extracts the mode from the current point in time of the data grid
 	 * @param dataGrid The data grid to extract the mode from
@@ -89,32 +89,32 @@ export class ModdableDataGridMode<T, P extends FetchableDataGridParametersType> 
 
 	readonly id!: string
 	readonly name!: string
-	readonly parameters?: P
-	columns?: Array<ModdableDataGridModeColumn<T>>
-	sorting?: DataGridSorting<T>
+	readonly parameters?: TDataFetcherParameters
+	columns?: Array<ModdableDataGridModeColumn<TData>>
+	sorting?: DataGridSorting<TData>
 	pagination?: DataGridPagination
 	archived = false
 
-	constructor(init?: Partial<ModdableDataGridMode<T, P>>) {
+	constructor(init?: Partial<ModdableDataGridMode<TData, TDataFetcherParameters>>) {
 		Object.assign(this, structuredClone(init))
 		this.columns = init?.columns?.map(c => new ModdableDataGridModeColumn(c))
 		this.id ??= crypto.randomUUID()
 	}
 
-	clone(): ModdableDataGridMode<T, P> {
+	clone(): ModdableDataGridMode<TData, TDataFetcherParameters> {
 		return new ModdableDataGridMode(this)
 	}
 
-	with(mode: Partial<ModdableDataGridMode<T, P>>): this {
+	with(mode: Partial<ModdableDataGridMode<TData, TDataFetcherParameters>>): this {
 		return new ModdableDataGridMode({ ...this, ...mode }) as this
 	}
 
-	copy(name?: string): ModdableDataGridMode<T, P> {
+	copy(name?: string): ModdableDataGridMode<TData, TDataFetcherParameters> {
 		name ??= `${this.name} - ${t('Copy')}`
 		return this.with({ id: undefined, name })
 	}
 
-	[equals](other: ModdableDataGridMode<T, P>) {
+	[equals](other: ModdableDataGridMode<TData, TDataFetcherParameters>) {
 		return other.name === this.name
 			&& other.id === this.id
 			&& other.archived === this.archived
@@ -131,33 +131,33 @@ export class ModdableDataGridMode<T, P extends FetchableDataGridParametersType> 
 		)
 	}
 
-	save(dataGrid: ModdableDataGrid<T, P>) {
+	save(dataGrid: ModdableDataGrid<TData, TDataFetcherParameters, any>) {
 		return dataGrid.modesController.save(this)
 	}
 
-	select(dataGrid: ModdableDataGrid<T, P>) {
+	select(dataGrid: ModdableDataGrid<TData, TDataFetcherParameters, any>) {
 		return dataGrid.modesController.set(this)
 	}
 
-	async archive(dataGrid: ModdableDataGrid<T, P>) {
+	async archive(dataGrid: ModdableDataGrid<TData, TDataFetcherParameters, any>) {
 		this.archived = true
 		await this.save(dataGrid)
 		NotificationComponent.notifySuccess(t('View "${name:string}" moved to archive', { name: this.name }))
 	}
 
-	async unarchive(dataGrid: ModdableDataGrid<T, P>) {
+	async unarchive(dataGrid: ModdableDataGrid<TData, TDataFetcherParameters, any>) {
 		this.archived = false
 		await this.save(dataGrid)
 	}
 
-	delete(dataGrid: ModdableDataGrid<T, P>) {
+	delete(dataGrid: ModdableDataGrid<TData, TDataFetcherParameters, any>) {
 		return dataGrid.modesController.delete(this)
 	}
 
-	apply(dataGrid: ModdableDataGrid<T, P>) {
+	apply(dataGrid: ModdableDataGrid<TData, TDataFetcherParameters, any>) {
 		dataGrid.setColumns(dataGrid.extractedColumns.map(c1 => this.columns?.find(c2 => c1.dataSelector === c2.dataSelector)?.apply(c1) ?? c1))
 		dataGrid.sort(this.sorting ?? [])
 		dataGrid.setPagination(this.pagination)
-		dataGrid.setParameters(this.parameters ?? {} as P)
+		dataGrid.setParameters(this.parameters ?? {} as TDataFetcherParameters)
 	}
 }

@@ -24,7 +24,7 @@ Localizer.dictionaries.add({
  * @prop modesAdapter - Adapter for modes storage. Defaults to IndexedDbAdapter.
  * @fires modeChange
  */
-export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataGridParametersType> extends FetchableDataGrid<TData, TParameters> {
+export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataGridParametersType = Record<string, never>, TDetailsElement extends Element | undefined = undefined> extends FetchableDataGrid<TData, TParameters, TDetailsElement> {
 	static defaultAdapter: Constructor<ModdableDataGridModesAdapter<any, any>> = IndexedDbAdapter
 
 	@event() readonly modeChange!: EventDispatcher<ModdableDataGridMode<TData, TParameters> | void>
