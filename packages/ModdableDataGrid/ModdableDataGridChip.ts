@@ -163,24 +163,24 @@ export class ModdableDataGridChip<T, P extends FetchableDataGridParametersType> 
 						<mo-menu-item icon='done' @click=${() => this.saveChanges()}>
 							${t('Save changes')}
 						</mo-menu-item>
-						<mo-menu-item icon='check_circle' data-qa-id='saveAsNew' @click=${() => this.saveAsNew()}>
+						<mo-menu-item icon='check_circle' data-test-id='save-as-new' @click=${() => this.saveAsNew()}>
 							${t('Save as a new view')}
 						</mo-menu-item>
 						<mo-line role='separator'></mo-line>
 					`}
 
-					<mo-menu-item icon='edit' data-qa-id='edit' @click=${() => this.edit()}>${t('Edit')}</mo-menu-item>
-					<mo-menu-item icon='content_copy' data-qa-id='copy' @click=${() => this.copy()}>${t('Copy')}</mo-menu-item>
+					<mo-menu-item icon='edit' data-test-id='edit' @click=${() => this.edit()}>${t('Edit')}</mo-menu-item>
+					<mo-menu-item icon='content_copy' data-test-id='copy' @click=${() => this.copy()}>${t('Copy')}</mo-menu-item>
 
 					${this.mode.archived ? html.nothing : html`
-						<mo-menu-item data-qa-id='archive' icon='archive' @click=${() => this.archive()}>
+						<mo-menu-item data-test-id='archive' icon='archive' @click=${() => this.archive()}>
 							${t('Move to archive')}
 						</mo-menu-item>
 					`}
 
 					<mo-line role='separator'></mo-line>
 
-					<mo-menu-item icon='delete' data-qa-id='delete' @click=${() => this.delete()}>
+					<mo-menu-item icon='delete' data-test-id='delete' @click=${() => this.delete()}>
 						${t('Delete')}
 					</mo-menu-item>
 				</mo-menu>

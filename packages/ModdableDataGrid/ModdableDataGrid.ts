@@ -169,7 +169,7 @@ export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataG
 
 				${!this.modesController.archivedModes.length ? html.nothing : html`
 					<mo-popover-container fixed alignment='end'>
-						<mo-icon-button icon='archive' data-qa-id='archive'
+						<mo-icon-button icon='archive' data-test-id='archive'
 							${tooltip(t('Archive'))}
 							${style({ color: 'var(--mo-color-gray)', alignSelf: 'center' })}
 						></mo-icon-button>
@@ -185,7 +185,7 @@ export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataG
 	protected override get toolbarActionsTemplate() {
 		return html`
 			${this.hasModebar ? html.nothing : html`
-				<mo-icon-button icon='playlist_add' data-qa-id='addMode'
+				<mo-icon-button icon='playlist_add' data-test-id='add-mode'
 					@click=${() => this.createOrEditMode()}
 					${tooltip(t('Add new view'))}
 				></mo-icon-button>
