@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/moddable-data-grid",
-	"version": "0.0.19",
+	"version": "0.1.0",
 	"description": "A moddable variant of @3mo/fetchable-data-grid",
 	"repository": {
 		"type": "git",
@@ -26,29 +26,22 @@
 		"dist"
 	],
 	"dependencies": {
-		"@3mo/flex": "x",
-		"@3mo/card": "x",
-		"@3mo/scroller": "x",
-		"@3mo/icon-button": "x",
-		"@3mo/popover": "x",
-		"@3mo/chip": "x",
-		"@3mo/dialog": "x",
-		"@3mo/standard-dialogs": "x",
-		"@3mo/data-grid": "x",
-		"@3mo/fetchable-data-grid": "x",
+		"tslib": "x",
 		"@a11d/lit": "x",
 		"@a11d/lit-application": "x",
-		"@3mo/tooltip": "x",
-		"@3mo/menu": "x",
-		"@3mo/context-menu": "x",
-		"@3mo/localization": "x",
 		"@a11d/equals": "x",
-		"detect-browser": "x",
-		"localforage": "1.x",
-		"sortablejs": "1.x",
-		"tslib": "x"
-	},
-	"devDependencies": {
-		"@types/sortablejs": "1.x"
+		"@3mo/flex": "x",
+		"@3mo/card": "x",
+		"@3mo/icon-button": "x",
+		"@3mo/scroller": "x",
+		"@3mo/popover": "x",
+		"@3mo/chip": "x",
+		"@3mo/data-grid": "x",
+		"@3mo/fetchable-data-grid": "x",
+		"@3mo/standard-dialogs": "x",
+		"@3mo/tooltip": "x",
+		"@3mo/localization": "x",
+		"@3mo/context-menu": "x",
+		"localforage": "1.x"
 	}
 }
