@@ -14,7 +14,7 @@ export class IndexedDbAdapter<T, P extends FetchableDataGridParametersType> impl
 
 	async getAll(dataGridKey: DataGridKey) {
 		const modes = await localForage.getItem<Array<ModdableDataGridMode<T, P>>>(this.modesKey(dataGridKey)) ?? []
-		return modes.map(m => new ModdableDataGridMode(m))
+		return modes.map(m => ModdableDataGridMode.fromObject<T, P>(m))
 	}
 
 	async get(dataGridKey: DataGridKey, modeId: ModeId) {

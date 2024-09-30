@@ -125,7 +125,7 @@ export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataG
 	}
 
 	get currentMode() {
-		return ModdableDataGridMode.from(this)
+		return ModdableDataGridMode.fromDataGrid(this)
 	}
 
 	get hasUnsavedChanges() {

@@ -61,4 +61,26 @@ describe('ModdableDataGridMode', () => {
 			expect(mode3[equals](mode2)).toBe(false)
 		})
 	})
+
+	describe('fromObject', () => {
+		it('should convert date strings to Date objects', () => {
+			const mode = ModdableDataGridMode.fromObject({
+				name: 'Test',
+				parameters: { date: '2021-01-01T00:00:00.000Z' },
+			})
+
+			expect(mode.parameters!.date).toBeInstanceOf(Date)
+			expect(mode.parameters!.date).toEqual(new Date('2021-01-01T00:00:00.000Z'))
+		})
+
+		it('should convert date range objects to DateTimeRange objects', () => {
+			const mode = ModdableDataGridMode.fromObject({
+				name: 'Test',
+				parameters: { dateRange: { start: '2021-01-01T00:00:00.000Z', end: '2021-01-02T00:00:00.000Z' } },
+			})
+
+			expect(mode.parameters!.dateRange).toBeInstanceOf(DateTimeRange)
+			expect(mode.parameters!.dateRange).toEqual(new DateTimeRange(new Date('2021-01-01T00:00:00.000Z'), new Date('2021-01-02T00:00:00.000Z')))
+		})
+	})
 })
