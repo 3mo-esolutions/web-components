@@ -28,15 +28,15 @@ Localizer.dictionaries.add({
 })
 
 @component('mo-moddable-data-grid-chip')
-export class ModdableDataGridChip<T, P extends FetchableDataGridParametersType> extends Component {
-	@property({ type: Object }) dataGrid!: ModdableDataGrid<T, P>
+export class ModdableDataGridChip<TData, TParameters extends FetchableDataGridParametersType> extends Component {
+	@property({ type: Object }) dataGrid!: ModdableDataGrid<TData, TParameters>
 
 	@property({
 		type: Object,
-		updated(this: ModdableDataGridChip<T, P>, mode?: ModdableDataGridMode<T, P>) {
+		updated(this: ModdableDataGridChip<TData, TParameters>, mode?: ModdableDataGridMode<TData, TParameters>) {
 			this.toggleAttribute('data-archived', mode?.archived)
 		}
-	}) mode!: ModdableDataGridMode<T, P>
+	}) mode!: ModdableDataGridMode<TData, TParameters>
 
 	@property({ type: Boolean, reflect: true }) selected = false
 
@@ -170,17 +170,17 @@ export class ModdableDataGridChip<T, P extends FetchableDataGridParametersType> 
 	}
 
 	private async edit() {
-		const mode = await new DialogMode<T, P>({ dataGrid: this.dataGrid, mode: this.mode }).confirm()
+		const mode = await new DialogMode<TData, TParameters>({ dataGrid: this.dataGrid, mode: this.mode }).confirm()
 		await mode?.select(this.dataGrid)
 	}
 
 	private async copy() {
-		const mode = await new DialogMode<T, P>({ dataGrid: this.dataGrid, mode: this.mode.copy() }).confirm()
+		const mode = await new DialogMode<TData, TParameters>({ dataGrid: this.dataGrid, mode: this.mode.copy() }).confirm()
 		await mode?.select(this.dataGrid)
 	}
 
 	private async saveAsNew() {
-		const mode = await new DialogMode<T, P>({ dataGrid: this.dataGrid, mode: this.dataGrid.currentMode.copy('') }).confirm()
+		const mode = await new DialogMode<TData, TParameters>({ dataGrid: this.dataGrid, mode: this.dataGrid.currentMode.copy('') }).confirm()
 		await mode?.select(this.dataGrid)
 	}
 

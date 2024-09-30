@@ -3,7 +3,7 @@ import { ModdableDataGridMode } from './ModdableDataGridMode.js'
 import type { DataGridKey, ModdableDataGridModesAdapter, ModeId } from './ModdableDataGridModesAdapter.js'
 import localForage from 'localforage'
 
-export class IndexedDbAdapter<T, P extends FetchableDataGridParametersType> implements ModdableDataGridModesAdapter<T, P> {
+export class IndexedDbAdapter<TData, TParameters extends FetchableDataGridParametersType> implements ModdableDataGridModesAdapter<TData, TParameters> {
 	static {
 		localForage.setDriver([localForage.INDEXEDDB, localForage.LOCALSTORAGE])
 	}
@@ -13,8 +13,8 @@ export class IndexedDbAdapter<T, P extends FetchableDataGridParametersType> impl
 	}
 
 	async getAll(dataGridKey: DataGridKey) {
-		const modes = await localForage.getItem<Array<ModdableDataGridMode<T, P>>>(this.modesKey(dataGridKey)) ?? []
-		return modes.map(m => ModdableDataGridMode.fromObject<T, P>(m))
+		const modes = await localForage.getItem<Array<ModdableDataGridMode<TData, TParameters>>>(this.modesKey(dataGridKey)) ?? []
+		return modes.map(m => ModdableDataGridMode.fromObject<TData, TParameters>(m))
 	}
 
 	async get(dataGridKey: DataGridKey, modeId: ModeId) {
@@ -22,7 +22,7 @@ export class IndexedDbAdapter<T, P extends FetchableDataGridParametersType> impl
 		return all.find(m => m.id === modeId)
 	}
 
-	async save(dataGridKey: DataGridKey, mode: ModdableDataGridMode<T, P>) {
+	async save(dataGridKey: DataGridKey, mode: ModdableDataGridMode<TData, TParameters>) {
 		const all = await this.getAll(dataGridKey)
 		const existing = all.find(m => m.id === mode.id)
 		if (existing) {
@@ -34,7 +34,7 @@ export class IndexedDbAdapter<T, P extends FetchableDataGridParametersType> impl
 		return mode
 	}
 
-	async delete(dataGridKey: DataGridKey, mode: ModdableDataGridMode<T, P>) {
+	async delete(dataGridKey: DataGridKey, mode: ModdableDataGridMode<TData, TParameters>) {
 		const all = await this.getAll(dataGridKey)
 		await localForage.setItem(this.modesKey(dataGridKey), all.filter(m => m.id !== mode.id))
 	}
