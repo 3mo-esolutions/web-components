@@ -66,27 +66,6 @@ export class ModdableDataGridMode<TData, TDataFetcherParameters extends Fetchabl
 		})
 	}
 
-	/**
-	 * Creates a mode from a literal object. It also revives specific data-types in parameters such as DateTime, DateTimeRange, etc.
-	 * @param object The literal object to create the mode from
-	 * @returns The created mode
-	 */
-	static fromObject<TData, TParameters extends FetchableDataGridParametersType>(object: any) {
-		const mode = new ModdableDataGridMode<TData, TParameters>(object)
-		if (mode.parameters) {
-			for (const [key, value] of Object.entries(mode.parameters)) {
-				if (value && typeof value === 'string' && DateTime.isoRegularExpression.test(value)) {
-					(mode.parameters as any)[key] = new Date(value)
-				}
-				if (value && typeof value === 'object' && ('start' in value || 'end' in value)) {
-					(mode.parameters as any)[key] = new DateTimeRange((value as any).start, (value as any).end)
-				}
-
-			}
-		}
-		return mode
-	}
-
 	readonly id!: string
 	readonly name!: string
 	readonly parameters?: TDataFetcherParameters
@@ -98,6 +77,19 @@ export class ModdableDataGridMode<TData, TDataFetcherParameters extends Fetchabl
 	constructor(init?: Partial<ModdableDataGridMode<TData, TDataFetcherParameters>>) {
 		Object.assign(this, structuredClone(init))
 		this.columns = init?.columns?.map(c => new ModdableDataGridModeColumn(c))
+		if (this.parameters) {
+			for (const [key, value] of Object.entries(this.parameters)) {
+				if (value && typeof value === 'string' && DateTime.isoRegularExpression.test(value)) {
+					(this.parameters as any)[key] = new Date(value)
+				}
+				if (value && typeof value === 'object' && ('start' in value || 'end' in value)) {
+					(this.parameters as any)[key] = new DateTimeRange((value as any).start, (value as any).end)
+				}
+				if (value instanceof DateTimeRange) {
+					(this.parameters as any)[key] = new DateTimeRange(value.start, value.end)
+				}
+			}
+		}
 		this.id ??= crypto.randomUUID()
 	}
 
