@@ -1,5 +1,5 @@
 import { type FetchableDataGridParametersType } from '@3mo/fetchable-data-grid'
-import { ModdableDataGridMode } from '../ModdableDataGridMode.js'
+import { ModdableDataGridMode } from './ModdableDataGridMode.js'
 import type { DataGridKey, ModdableDataGridModesAdapter, ModeId } from './ModdableDataGridModesAdapter.js'
 import localForage from 'localforage'
 

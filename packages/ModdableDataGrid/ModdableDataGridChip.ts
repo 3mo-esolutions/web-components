@@ -1,5 +1,4 @@
 import { css, html, style, Component, component, property, query, eventListener } from '@a11d/lit'
-import { NotificationComponent } from '@a11d/lit-application'
 import { type FetchableDataGridParametersType } from '@3mo/fetchable-data-grid'
 import { tooltip } from '@3mo/tooltip'
 import { DialogAlert, DialogAcknowledge } from '@3mo/standard-dialogs'
@@ -237,10 +236,6 @@ export class ModdableDataGridChip<T, P extends FetchableDataGridParametersType> 
 			return
 		}
 
-		// if (this.dataGrid.mode && !this.dataGrid.hasUnsavedChanges && this.dataGrid.mode.archived) {
-		// 	this.dataGrid.eliminateModeElementDirectly()
-		// }
-
 		if (this.dataGrid.mode && this.dataGrid.hasUnsavedChanges) {
 			const saveChanges = await new DialogAcknowledge({
 				heading: t('Unsaved changes'),
@@ -251,10 +246,6 @@ export class ModdableDataGridChip<T, P extends FetchableDataGridParametersType> 
 
 			if (saveChanges) {
 				await this.dataGrid.currentMode.save(this.dataGrid)
-
-				// if (this.dataGrid.currentMode.archived) {
-				// 	this.dataGrid.eliminateModeElementDirectly()
-				// }
 			}
 		}
 

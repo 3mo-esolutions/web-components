@@ -44,15 +44,6 @@ export class ModdableDataGridModeColumn<T> {
 		column.sticky = this.sticky ?? column.sticky
 		return column
 	}
-
-	toJSON() {
-		return {
-			dataSelector: this.dataSelector,
-			width: this.width,
-			hidden: this.hidden,
-			sticky: this.sticky,
-		}
-	}
 }
 
 export class ModdableDataGridMode<T, P extends FetchableDataGridParametersType> {
@@ -168,17 +159,5 @@ export class ModdableDataGridMode<T, P extends FetchableDataGridParametersType> 
 		dataGrid.sort(this.sorting ?? [])
 		dataGrid.setPagination(this.pagination)
 		dataGrid.setParameters(this.parameters ?? {} as P)
-	}
-
-	toJSON() {
-		return {
-			name: this.name,
-			id: this.id,
-			archived: this.archived,
-			columns: this.columns?.map(c => c.toJSON()) ?? [],
-			sorting: this.sorting ?? [],
-			pagination: this.pagination,
-			parameters: this.parameters,
-		}
 	}
 }

@@ -6,7 +6,7 @@ import { Localizer } from '@3mo/localization'
 import { ModdableDataGridMode } from './ModdableDataGridMode.js'
 import { DialogMode } from './DialogMode.js'
 import { equals } from '@a11d/equals'
-import { IndexedDbAdapter, type ModdableDataGridModesAdapter } from './adapter/index.js'
+import { IndexedDbAdapter, type ModdableDataGridModesAdapter } from './index.js'
 import { DataGridModesController } from './DataGridModesController.js'
 
 Localizer.dictionaries.add({
@@ -198,14 +198,14 @@ export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataG
 		return html`
 			<span id='archive-title'>${t('Archive view')}</span>
 			${this.modesController.archivedModes.map((mode: ModdableDataGridMode<TData, TParameters>) => html`
-				<mo-context-menu-item class='archived'
+				<mo-menu-item class='archived'
 					${style({
 						backgroundColor: this.currentMode.id === mode.id
 							? 'color-mix(in srgb, var(--mo-color-foreground), transparent 95%)'
 							: 'unset',
 					})}
 					?activated=${this.mode?.id === mode.id}
-					@click=${(e: MouseEvent) => this.temporaryUnarchiveMode(e, mode)}
+					@click=${() => this.modesController.set(this.mode?.id === mode.id ? undefined : mode) }
 				>
 					<span>${mode.name}</span>
 
@@ -226,76 +226,12 @@ export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataG
 							@click=${() => this.modesController.delete(mode)}
 						></mo-icon-button>
 					</mo-flex>
-				</mo-context-menu-item>
+				</mo-menu-item>
 			`)}
 		`
-	}
-
-	private temporaryUnarchiveMode(e: MouseEvent, mode: ModdableDataGridMode<TData, TParameters>) {
-		if (['mo-context-menu-item', 'span'].includes((e.target as HTMLElement).tagName.toLowerCase())) {
-			this.modesController.set(this.mode?.id === mode.id ? undefined : mode)
-		}
 	}
 
 	private createOrEditMode(mode?: ModdableDataGridMode<TData, TParameters>) {
 		new DialogMode<TData, TParameters>({ dataGrid: this, mode }).confirm()
 	}
-
-	/* As we don't have any back-end to order the modes, we ignore it for now
-
-	async deleteMode(mode: ModdableDataGridMode<TData, TParameters>) {
-		const requiresDirectDOMUpdate = !mode.archived || this.currentMode.id === mode.id
-		await this.modesController.delete(mode)
-		if (requiresDirectDOMUpdate) {
-			this.eliminateModeElementDirectly(mode.id!)
-		}
-	}
-
-	private isReorderingEnabled = false
-
-	private get supportsReordering() {
-		return System.detect()?.os !== 'Android OS'
-	}
-
-	private enableReordering() {
-		if (!this.modesListNode) {
-			this.isReorderingEnabled = false
-			return
-		}
-
-		if (this.isReorderingEnabled) {
-			return
-		}
-
-		this.isReorderingEnabled = true
-
-		if (!this.supportsReordering) {
-			return
-		}
-
-		new Sortable(this.renderRoot.querySelector('#modes')!, {
-			filter: '[data-temporary]',
-			animation: 500,
-			onEnd: () => this.onReorder(),
-		})
-	}
-
-	private onReorder = async () => {
-		const visibleModesIds = [...this.renderRoot.querySelectorAll('mo-moddable-data-grid-chip')]
-			.map(mode => mode.dataset.modeId)
-		this.modesController.modes = [
-			...visibleModesIds
-				.map(modeId => this.modesController.modes.find(mode => mode.id === modeId)!)
-				.filter(mode => !mode.archived),
-			...this.modesAdapter.getArchived(),
-		]
-	}
-
-	// Changing arrangement mutates DOM directly and lit does not like it ¯\_(ツ)_/¯
-	// TODO: Find a way to make it work without direct DOM manipulation. Sortable ignore?
-	eliminateModeElementDirectly = (modeId = this.mode?.id) => {
-		(this.renderRoot.querySelector(`[data-mode-id="${modeId}"]`) as HTMLElement)?.remove()
-		requestIdleCallback(() => this.requestUpdate())
-	}
-	*/
 }

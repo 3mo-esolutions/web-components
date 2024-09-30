@@ -1,5 +1,5 @@
 import { type FetchableDataGridParametersType } from '@3mo/fetchable-data-grid'
-import { type ModdableDataGridMode } from '../ModdableDataGridMode.js'
+import { type ModdableDataGridMode } from './ModdableDataGridMode.js'
 
 export type DataGridKey = string
 export type ModeId = string
