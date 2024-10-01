@@ -85,4 +85,43 @@ describe('ModdableDataGridMode', () => {
 			expect(mode.parameters!.dateRange).toEqual(new DateTimeRange(new Date('2021-01-01T00:00:00.000Z'), new Date('2021-01-02T00:00:00.000Z')) as any)
 		})
 	})
+
+	describe('apply', () => {
+		const dataGridMock = new class {
+			parameters = {}
+			readonly extractedColumns = []
+			setColumns = jasmine.createSpy()
+			sort = jasmine.createSpy()
+			setPagination = jasmine.createSpy()
+			setParameters = jasmine.createSpy().and.callFake(p => this.parameters = p)
+		}
+
+		it('should not set any associated properties by reference', () => {
+			const mode = new ModdableDataGridMode({
+				name: 'Test',
+				parameters: { date: '2021-01-01T00:00:00.000Z' },
+			})
+
+			mode.apply(dataGridMock as any)
+
+			expect(dataGridMock.parameters).not.toBe(mode.parameters!)
+		})
+
+		it('should apply the mode to the data grid', () => {
+			const mode = new ModdableDataGridMode({
+				name: 'Test',
+				parameters: { date: '2021-01-01T00:00:00.000Z' },
+				sorting: [{ selector: 'test', strategy: DataGridSortingStrategy.Ascending }],
+				pagination: 100,
+				columns: [new ModdableDataGridModeColumn({ dataSelector: 'test', width: '100px', hidden: true, sticky: 'start' })],
+			})
+
+			mode.apply(dataGridMock as any)
+
+			expect(dataGridMock.setParameters).toHaveBeenCalledWith({ date: new Date('2021-01-01') })
+			expect(dataGridMock.sort).toHaveBeenCalledWith([{ selector: 'test', strategy: DataGridSortingStrategy.Ascending }])
+			expect(dataGridMock.setPagination).toHaveBeenCalledWith(100)
+			expect(dataGridMock.setColumns).toHaveBeenCalledWith([])
+		})
+	})
 })

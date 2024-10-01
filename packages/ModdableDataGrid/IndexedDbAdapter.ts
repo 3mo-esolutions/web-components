@@ -1,7 +1,7 @@
 import { type FetchableDataGridParametersType } from '@3mo/fetchable-data-grid'
+import localForage from 'localforage'
 import { ModdableDataGridMode } from './ModdableDataGridMode.js'
 import type { DataGridKey, ModdableDataGridModesAdapter, ModeId } from './ModdableDataGridModesAdapter.js'
-import localForage from 'localforage'
 
 export class IndexedDbAdapter<TData, TParameters extends FetchableDataGridParametersType> implements ModdableDataGridModesAdapter<TData, TParameters> {
 	static {
