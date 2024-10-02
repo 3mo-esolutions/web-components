@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/data-grid",
-	"version": "0.9.15",
+	"version": "0.9.16",
 	"description": "A data grid web component",
 	"repository": {
 		"type": "git",
@@ -26,6 +26,7 @@
 		"tslib": "x",
 		"@a11d/lit": "x",
 		"@a11d/lit-application": "x",
+		"@a11d/equals": "x",
 		"@3mo/flex": "x",
 		"@3mo/grid": "x",
 		"@a11d/key-path": "1.x",

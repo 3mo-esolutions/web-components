@@ -1,4 +1,5 @@
 import { css, property, Component, html, query, queryAll, style, type HTMLTemplateResult, LitElement, live } from '@a11d/lit'
+import { equals } from '@a11d/equals'
 import { DirectionsByLanguage } from '@3mo/localization'
 import { popover } from '@3mo/popover'
 import { ContextMenu } from '@3mo/context-menu'
@@ -32,7 +33,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	}
 
 	getCell(column: DataGridColumn<TData, any>) {
-		return this.cells.find(cell => cell.column.equals(column))
+		return this.cells.find(cell => cell.column[equals](column))
 	}
 
 	override connected() {

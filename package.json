@@ -69,5 +69,8 @@
 		"tsconfig-paths-webpack-plugin": "x",
 		"typescript": "5.x",
 		"web-component-analyzer": "2.x"
+	},
+	"dependencies": {
+		"@faker-js/faker": "^9.0.0"
 	}
 }

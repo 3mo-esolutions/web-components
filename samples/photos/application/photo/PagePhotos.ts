@@ -12,7 +12,6 @@ export class PagePhotos extends PageComponent {
 	@state() private photos = new Array<Photo>()
 	@state() private selectedPhotos = new Array<Photo>()
 	@state() private tab = Tab.DataGrid
-	@state() private dataGridParameters: FirstParameter<typeof Photo.getAll> = {}
 
 	protected override get template() {
 		return html`
@@ -29,8 +28,8 @@ export class PagePhotos extends PageComponent {
 				</style>
 
 				<mo-tab-bar slot='action' value=${this.tab} @change=${(e: CustomEvent<Tab>) => this.tab = e.detail}>
-					<mo-tab value=${Tab.Card}>Card</mo-tab>
 					<mo-tab value=${Tab.DataGrid}>DataGrid</mo-tab>
+					<mo-tab value=${Tab.Card}>Card</mo-tab>
 				</mo-tab-bar>
 
 				${cache(this.tab === Tab.Card ? this.cardTemplate : this.dataGridTemplate)}
@@ -72,19 +71,10 @@ export class PagePhotos extends PageComponent {
 	private get dataGridTemplate() {
 		return html`
 			<photos-data-grid-photo selectionMode='multiple' selectOnClick multipleDetails
-				.parameters=${this.dataGridParameters}
 				.selectedData=${this.selectedPhotos}
 				@dataChange=${(event: CustomEvent<Array<Photo>>) => this.photos = event.detail}
 				@selectionChange=${(event: CustomEvent<Array<Photo>>) => this.selectedPhotos = event.detail}
-				@parametersChange=${(event: CustomEvent<FirstParameter<typeof Photo.getAll>>) => this.dataGridParameters = event.detail}
-			>
-				<app-field-select-album multiple slot='toolbar' default='All'
-					.value=${this.dataGridParameters.albumIds}
-					@change=${(event: CustomEvent<Array<number>>) => this.dataGridParameters = { ...this.dataGridParameters, albumIds: event.detail }}>
-				</app-field-select-album>
-
-				<mo-fab slot='fab' icon='add'></mo-fab>
-			</photos-data-grid-photo>
+			></photos-data-grid-photo>
 		`
 	}
 
