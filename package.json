@@ -4,7 +4,7 @@
 		"dev": "node ./scripts/test.mjs",
 		"watch": "npm-watch",
 		"test": "node ./scripts/test.mjs && karma start --single-run",
-		"lint": "eslint . --ext .ts",
+		"lint": "eslint **/*.ts",
 		"docs:build": "node ./scripts/docs-build.mjs",
 		"clean": "node ./scripts/clean.mjs",
 		"release": "node ./scripts/release.mjs",
@@ -71,6 +71,6 @@
 		"web-component-analyzer": "2.x"
 	},
 	"dependencies": {
-		"@faker-js/faker": "^9.0.0"
+		"@faker-js/faker": "x"
 	}
 }

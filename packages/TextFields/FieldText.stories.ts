@@ -49,7 +49,7 @@ export const WithTextAlignEnd: StoryObj = {
 	`
 }
 
-const setTextAlign = async (e: Event, textAlign: 'start' | 'end') => {
+const setTextAlign = (e: Event, textAlign: 'start' | 'end') => {
 	const field = (e.target as HTMLElement)!.closest('mo-field-text')!
 	field.style.textAlign = textAlign
 	field.renderRoot.querySelector('mo-field')?.requestUpdate()

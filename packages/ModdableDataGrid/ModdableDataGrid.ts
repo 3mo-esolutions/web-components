@@ -211,7 +211,7 @@ export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataG
 							? 'color-mix(in srgb, var(--mo-color-foreground), transparent 95%)'
 							: 'unset',
 					})}
-					@click=${() => this.modesController.set(this.mode?.id === mode.id ? undefined : mode) }
+					@click=${() => this.modesController.set(this.mode?.id === mode.id ? undefined : mode)}
 				>
 					<span>${mode.name}</span>
 

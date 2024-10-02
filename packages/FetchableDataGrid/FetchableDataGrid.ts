@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/member-ordering */
 import { Binder, component, css, event, html, property } from '@a11d/lit'
 import { tooltip } from '@3mo/tooltip'
 import { Localizer } from '@3mo/localization'

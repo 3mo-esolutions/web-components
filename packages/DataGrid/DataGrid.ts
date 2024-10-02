@@ -744,7 +744,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		`
 	}
 
-	// eslint-disable-next-line @typescript-eslint/member-ordering
 	private lastScrollElementTop = 0
 	@eventOptions({ passive: true })
 	private handleScroll(e: Event) {

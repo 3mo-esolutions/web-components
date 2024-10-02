@@ -22,7 +22,7 @@ describe('Navigation', () => {
 			expect(firstNavItemSpy).toHaveBeenCalled()
 		})
 
-		it('should prevent activation if any input is focused', async () => {
+		it('should prevent activation if any input is focused', () => {
 			const input = document.createElement('input')
 			document.body.appendChild(input)
 			const firstNavItemSpy = spyOn(fixture.component.navigationItems[0]!, 'focus')

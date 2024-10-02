@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 export type MaterialIcon =
 	| '10k'
 	| '10mp'

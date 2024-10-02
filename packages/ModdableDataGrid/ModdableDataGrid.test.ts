@@ -25,15 +25,21 @@ class ModesAdapterMock implements ModdableDataGridModesAdapter<User, Parameters>
 	modes = new Array<ModdableDataGridMode<User, Parameters>>()
 	selectedModeId?: string
 
-	getAll = async () => this.modes
-	get = async (_, modeId: string) => this.modes.find(m => m.id === modeId)
-	save = async (_, mode: ModdableDataGridMode<User, Parameters>) => {
+	getAll = () => Promise.resolve(this.modes)
+	get = (_, modeId: string) => Promise.resolve(this.modes.find(m => m.id === modeId))
+	save = (_, mode: ModdableDataGridMode<User, Parameters>) => {
 		this.modes = this.modes.map(m => m.id === mode.id ? mode : m)
-		return mode
+		return Promise.resolve(mode)
 	}
-	delete = async (_, mode: ModdableDataGridMode<User, Parameters>) => void (this.modes = this.modes.filter(m => m.id !== mode.id))
-	getSelectedId = async () => this.selectedModeId
-	setSelectedId = async (_, modeId: string) => void (this.selectedModeId = modeId)
+	delete = (_, mode: ModdableDataGridMode<User, Parameters>) => {
+		this.modes = this.modes.filter(m => m.id !== mode.id)
+		return Promise.resolve()
+	}
+	getSelectedId = () => Promise.resolve(this.selectedModeId)
+	setSelectedId = (_, modeId: string) => {
+		this.selectedModeId = modeId
+		return Promise.resolve()
+	}
 }
 
 @component('story-moddable-data-grid')
@@ -112,7 +118,7 @@ class ModdableDataGridTestFixture extends ComponentTestFixture<ModdableDataGridS
 	}
 
 	constructor(readonly options: {
-		readonly modes: ModdableDataGridMode<User, Parameters>[],
+		readonly modes: ModdableDataGridMode<User, Parameters>[]
 		readonly selectedModeId?: '1' | '2'
 	}) {
 		super(() => {
@@ -182,7 +188,7 @@ describe('ModdableDataGrid', () => {
 		// It takes a bit for chips to be rendered due to the async nature of the component
 		beforeEach(() => new Promise<void>(r => setTimeout(r)))
 
-		it('should have a modebar if there is at least one mode', async () => {
+		it('should have a modebar if there is at least one mode', () => {
 			expect(fixture.component['hasModebar']).toBeTrue()
 			expect(fixture.component.renderRoot.querySelector('#modebar')).not.toBeNull()
 			expect(fixture.addModeIconButton).toBeNull()
@@ -317,11 +323,11 @@ describe('ModdableDataGrid', () => {
 				})
 			})
 
-			it('should display an archive icon-button when at least one mode is archived', async () => {
+			it('should display an archive icon-button when at least one mode is archived', () => {
 				expect(fixture.archiveIconButton).not.toBeNull()
 			})
 
-			it('should render chips for each non-archived mode', async () => {
+			it('should render chips for each non-archived mode', () => {
 				expect(fixture.modeChips.length).toBe(1)
 			})
 		})
@@ -332,7 +338,7 @@ describe('ModdableDataGrid', () => {
 			// The columns are not extracted/applied immediately, so we need to wait for the next microtask
 			beforeEach(() => new Promise(r => setTimeout(r)))
 
-			it('should apply pre-selected mode on initialization', async () => fixture.expectModeToBeSelected('2'))
+			it('should apply pre-selected mode on initialization', () => fixture.expectModeToBeSelected('2'))
 
 			it('should reset to the "default" mode when clicking the pre-selected mode', async () => {
 				fixture.selectedModeChip?.dispatchEvent(new MouseEvent('click'))

@@ -14,7 +14,6 @@ export class DataGridColumn<TData, TValue = unknown> {
 	heading!: string
 	description?: string
 
-	// eslint-disable-next-line @typescript-eslint/ban-types
 	width: CSS.DataType.TrackBreadth<(string & {}) | 0> = 'max-content'
 
 	alignment: DataGridColumnAlignment = 'start'
