@@ -76,7 +76,9 @@ export class ModdableDataGridMode<TData, TDataFetcherParameters extends Fetchabl
 
 	constructor(init?: Partial<ModdableDataGridMode<TData, TDataFetcherParameters>>) {
 		Object.assign(this, structuredClone(init))
-		this.columns = init?.columns?.map(c => new ModdableDataGridModeColumn(c))
+		if (this.columns) {
+			this.columns = init?.columns?.map(c => new ModdableDataGridModeColumn(c))
+		}
 		if (this.parameters) {
 			for (const [key, value] of Object.entries(this.parameters)) {
 				if (value && typeof value === 'string' && DateTime.isoRegularExpression.test(value)) {

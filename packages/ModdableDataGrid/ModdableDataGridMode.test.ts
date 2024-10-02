@@ -21,6 +21,16 @@ describe('ModdableDataGridMode', () => {
 		expect(clone.sorting).not.toBe(mode.sorting)
 	})
 
+	it('should not set columns to undefined if not provided', () => {
+		const mode = new ModdableDataGridMode({
+			name: 'Test',
+			parameters: { parameter1: 'Test', parameter2: 10 },
+			sorting: [{ selector: 'test', strategy: DataGridSortingStrategy.Ascending }],
+		})
+
+		expect(Object.keys(mode)).not.toContain('columns')
+	})
+
 	describe('equals', () => {
 		const mode1 = new ModdableDataGridMode({
 			id: '9b5d0b93-00fc-4384-aef2-4ee2b3aecbd4',

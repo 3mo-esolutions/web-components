@@ -238,7 +238,7 @@ export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataG
 	}
 
 	private async createOrEditMode(mode?: ModdableDataGridMode<TData, TParameters>) {
-		await new DialogMode<TData, TParameters>({ dataGrid: this, mode }).confirm()
-		await this.modesController.set(mode)
+		const savedMode = await new DialogMode<TData, TParameters>({ dataGrid: this, mode }).confirm()
+		await this.modesController.set(savedMode)
 	}
 }
