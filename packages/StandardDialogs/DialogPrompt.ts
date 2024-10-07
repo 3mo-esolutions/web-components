@@ -21,6 +21,7 @@ Localizer.dictionaries.add('fa', {
 interface Parameters extends BaseDialogParameters<DialogPrompt> {
 	readonly inputLabel?: string
 	readonly value?: string
+	readonly rows?: number
 	readonly isTextArea?: boolean
 }
 
@@ -51,7 +52,7 @@ export class DialogPrompt extends DialogComponent<Parameters, string> {
 
 	private get textFieldTemplate() {
 		return this.parameters.isTextArea ? html`
-			<mo-field-text-area id='inputElement' autofocus
+			<mo-field-text-area id='inputElement' autofocus rows=${ifDefined(this.parameters.rows)}
 				label=${this.parameters.inputLabel ?? t('Input')}
 				value=${this.value}
 				@input=${(e: CustomEvent<string>) => this.value = e.detail}
