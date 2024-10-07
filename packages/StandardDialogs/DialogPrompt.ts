@@ -18,12 +18,12 @@ Localizer.dictionaries.add('fa', {
 	'Input': 'ورودی'
 })
 
-interface Parameters extends BaseDialogParameters<DialogPrompt> {
-	readonly inputLabel?: string
-	readonly value?: string
-	readonly rows?: number
-	readonly isTextArea?: boolean
-}
+type Parameters = BaseDialogParameters<DialogPrompt>
+	& { readonly inputLabel?: string, readonly value?: string }
+	& (
+		| { readonly isTextArea?: false, readonly rows?: never }
+		| { readonly isTextArea: true, readonly rows?: number }
+	)
 
 @component('mo-dialog-prompt')
 export class DialogPrompt extends DialogComponent<Parameters, string> {
