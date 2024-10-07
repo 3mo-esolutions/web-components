@@ -96,6 +96,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	static readonly cellRelativeFontSize = new LocalStorage<number>('DataGrid.CellRelativeFontSize', 0.8)
 	static readonly pageSize = new LocalStorage<Exclude<DataGridPagination, 'auto'>>('DataGrid.PageSize', 25)
 	static readonly hasAlternatingBackground = new LocalStorage('DataGrid.HasAlternatingBackground', true)
+	protected static readonly defaultRowElementTag = literal`mo-data-grid-default-row`
 
 	@event() readonly dataChange!: EventDispatcher<Array<TData>>
 	@event() readonly selectionChange!: EventDispatcher<Array<TData>>
@@ -614,7 +615,11 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}
 
 	protected get rowElementTag() {
-		return literal`mo-data-grid-default-row`
+		return DataGrid.defaultRowElementTag
+	}
+
+	get hasDefaultRowElements() {
+		return this.rowElementTag === DataGrid.defaultRowElementTag
 	}
 
 	protected get fabTemplate() {

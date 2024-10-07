@@ -63,7 +63,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	}
 
 	protected get hasDetails() {
-		return this.dataRecord.hasDetails
+		return this.dataGrid.detailsController.hasDetail(this.dataRecord)
 	}
 
 	static override get styles() {
@@ -204,7 +204,6 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 					<mo-icon-button id='detailsExpanderIconButton'
 						icon='keyboard_arrow_right'
 						?data-rtl=${DirectionsByLanguage.get() === 'rtl'}
-						?disabled=${this.dataRecord.hasDetails === false}
 						@click=${() => this.toggleDetails()}
 					></mo-icon-button>
 				`}
