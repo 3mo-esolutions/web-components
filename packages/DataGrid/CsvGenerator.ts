@@ -32,7 +32,7 @@ export class CsvGenerator {
 		return value
 	}
 
-	static generate = async <TData>(dataGrid: DataGrid<TData, any>) => {
+	static generate = async <TData>(dataGrid: DataGrid<TData, any>, onProgress: (progress: number) => void) => {
 		const flattenedData = [...dataGrid['getFlattenedData'](await this.fetchAll(dataGrid))]
 
 		const maxLevel = Math.max(...flattenedData.map(d => d.level))
@@ -46,10 +46,11 @@ export class CsvGenerator {
 				const nestedPadding = Array.from({ length: d.level }).fill('')
 				const childrenPadding = Array.from({ length: maxLevel - d.level }).fill('')
 				const [first, ...rest] = dataGrid.visibleColumns
-					.flatMap(column => {
-                        const value = getValueByKeyPath(d.data, column.dataSelector)
-                        return column.formatAsCsv(value, d.data).map(cell => this.escape(String(cell)))
-                    })
+					.flatMap((column, i, array) => {
+						onProgress((i + 1) / array.length)
+						const value = getValueByKeyPath(d.data, column.dataSelector)
+						return column.formatAsCsv(value, d.data).map(cell => this.escape(String(cell)))
+          })
 				return [
 					...nestedPadding,
 					first,

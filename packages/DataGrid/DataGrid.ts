@@ -15,6 +15,7 @@ import { DataGridSortingController, type DataGridRankedSortDefinition, type Data
 import { DataGridDetailsController } from './DataGridDetailsController.js'
 import { CsvGenerator, DataGridSidePanelTab, type DataGridColumn, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, type DataGridSidePanel, DataGridContextMenuController } from './index.js'
 import { DataRecord } from './DataRecord.js'
+import { GenericDialog } from '@3mo/standard-dialogs'
 
 Localizer.dictionaries.add('de', {
 	'Exporting excel file': 'Die Excel-Datei wird exportiert',
@@ -287,14 +288,45 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}
 
 	async exportExcelFile() {
+		let progress = 0
+
+		const dataGrid = this
+
 		try {
 			this.isGenerating = true
-			NotificationComponent.notifyInfo(t('Exporting excel file'))
-			await CsvGenerator.generate(this)
-			this.isGenerating = false
+
+			await new GenericDialog({
+				heading: t('Exporting excel file'),
+				primaryButtonText: '',
+				secondaryButtonText: '',
+				content() {
+					const dialog = this.renderRoot.querySelector('mo-dialog')
+
+					if (dialog) {
+						dialog.primaryOnEnter = false
+					}
+
+					CsvGenerator.generate(dataGrid, (currentProgress) => {
+						progress = Math.max(currentProgress, 0.05)
+						if (progress === 1) {
+							setTimeout(() => this['close'](), 1000)
+						} else {
+							this.requestUpdate()
+						}
+					})
+
+					return html`
+						<mo-flex alignItems='center' justifyContent='center'>
+							<mo-circular-progress .progress=${progress}></mo-circular-progress>
+						</mo-flex>
+					`
+				}
+			}).confirm()
 		} catch (error: any) {
 			NotificationComponent.notifyError(error.message)
 			throw error
+		} finally {
+			this.isGenerating = false
 		}
 	}
 
