@@ -2,6 +2,11 @@ import { component, html, ifDefined, property } from '@a11d/lit'
 import { Currency, type CurrencyCode } from '@3mo/localization'
 import { FieldCurrency } from '@3mo/number-fields'
 import { DataGridColumnNumberBase } from './DataGridColumnNumberBase.js'
+import { Localizer } from '@3mo/localization'
+
+Localizer.dictionaries.add('de', {
+	'Currency': 'Währung',
+})
 
 /**
  * @element mo-data-grid-column-currency
@@ -15,6 +20,8 @@ export class DataGridColumnCurrency<TData> extends DataGridColumnNumberBase<TDat
 
 	@property({ type: Object, converter: FieldCurrency.currencyConverter }) currency?: Currency
 	@property() currencyDataSelector?: KeyPathOf<TData>
+
+	@property() exchangeRateDataSelector?: KeyPathOf<TData>
 
 	private getCurrency(data: TData) {
 		return (this.currencyDataSelector ? Currency[getValueByKeyPath(data, this.currencyDataSelector) as CurrencyCode] : undefined)
@@ -44,11 +51,17 @@ export class DataGridColumnCurrency<TData> extends DataGridColumnNumberBase<TDat
 
 	override formatHeaderAsCsv() {
 		const title = this.heading.length < 3 && this.description ? this.description  : this.heading
-		return [title, 'Währung']
+		return [title, t('Currency')]
 	}
 
 	override formatAsCsv(value: unknown, data: TData) {
-		return value === undefined || value === null ? [''] : [value as any, this.getCurrency(data).code as string]
+		if (value === undefined || value === null) {
+			return ['', '']
+		}
+
+		const currencyCode = this.getCurrency(data).code
+
+		return [value as any, currencyCode]
 	}
 }
 
