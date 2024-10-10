@@ -8,6 +8,8 @@ export type DataGridColumnAlignment = 'start' | 'center' | 'end'
 export type DataGridColumnSticky = 'start' | 'both' | 'end'
 
 export class DataGridColumn<TData, TValue = unknown> {
+	suffix?: string
+
 	dataGrid?: DataGrid<TData, any>
 	dataSelector!: KeyPathOf<TData>
 
@@ -116,5 +118,14 @@ export class DataGridColumn<TData, TValue = unknown> {
 			default:
 				return ''
 		}
+	}
+
+	formatAsCsv(value: any, data: TData) {
+		data
+		return value === undefined || value === null ? [''] : [String(value)]
+	}
+
+	formatHeaderAsCsv() {
+		return this.heading.length < 3 && this.description ? [this.description]  : [this.heading]
 	}
 }

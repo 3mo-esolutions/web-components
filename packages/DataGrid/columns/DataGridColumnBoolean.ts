@@ -36,6 +36,10 @@ export class DataGridColumnBoolean<TData> extends DataGridColumnComponent<TData,
 			></mo-checkbox>
 		`
 	}
+
+	override formatAsCsv(value: boolean) {
+		return value ? ['1'] : ['0']
+	}
 }
 
 declare global {

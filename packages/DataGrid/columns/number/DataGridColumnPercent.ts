@@ -4,6 +4,10 @@ import { DataGridColumnNumberBase } from './DataGridColumnNumberBase.js'
 /** @element mo-data-grid-column-percent */
 @component('mo-data-grid-column-percent')
 export class DataGridColumnPercent<TData> extends DataGridColumnNumberBase<TData> {
+	override get suffix() {
+		return '(%)'
+	}
+
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	getContentTemplate(value: number | undefined, _data: TData) {
 		return html`${this.getNumber(value)?.formatAsPercent() ?? html.nothing}`
@@ -20,6 +24,10 @@ export class DataGridColumnPercent<TData> extends DataGridColumnNumberBase<TData
 
 	getSumTemplate(sum: number) {
 		return html`${sum.formatAsPercent()}`
+	}
+
+	override formatHeaderAsCsv() {
+		return [`${this.heading.length < 3 && this.description ? this.description  : this.heading} (%)`]
 	}
 }
 
