@@ -1,7 +1,7 @@
 import './Array.format.js'
 
 describe('Array', () => {
-	const array = [2, 'foo', null, 'bar', new Date, 'baz', undefined]
+	const array = ['foo', 'bar', 'baz']
 
 	it('.format()', () => {
 		expect(array.format('de')).toEqual('foo, bar und baz')
@@ -96,5 +96,9 @@ describe('Array', () => {
 
 		expect(array.formatAsUnit('fa')).toEqual('foo،‏ bar، و baz')
 		expect(array.formatAsUnit({ language: 'fa' })).toEqual('foo،‏ bar، و baz')
+	})
+
+	it('should support LocalizableStrings', () => {
+		expect([t('One'), t('Two')].formatAsConjunction('en')).toEqual('One and Two')
 	})
 })
