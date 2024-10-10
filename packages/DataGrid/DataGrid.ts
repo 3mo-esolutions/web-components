@@ -288,7 +288,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}
 
 	async exportExcelFile() {
-		let progress = 0
+		let progress = 0.03
 
 		const dataGrid = this
 
