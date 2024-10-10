@@ -42,8 +42,9 @@ export class DataGridColumnImage<TData> extends DataGridColumnComponent<TData, s
 
 	override getEditContentTemplate = undefined
 
-	override format = (_value: string, data: TData) => {
-		return this.getTooltipText(data) ?? ''
+	override formatAsCsv(value: string, data: TData) {
+		value
+		return [this.getTooltipText(data) ?? '']
 	}
 }
 

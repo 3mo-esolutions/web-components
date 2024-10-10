@@ -120,7 +120,12 @@ export class DataGridColumn<TData, TValue = unknown> {
 		}
 	}
 
-	format = (value: any, _data: TData) => {
-		return String(value ?? '')
+	formatAsCsv(value: any, data: TData) {
+		data
+		return value === undefined || value === null ? [''] : [String(value)]
+	}
+
+	formatHeaderAsCsv() {
+		return this.heading.length < 3 && this.description ? [this.description]  : [this.heading]
 	}
 }

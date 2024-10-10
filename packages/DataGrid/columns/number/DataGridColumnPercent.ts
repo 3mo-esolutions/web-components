@@ -26,13 +26,8 @@ export class DataGridColumnPercent<TData> extends DataGridColumnNumberBase<TData
 		return html`${sum.formatAsPercent()}`
 	}
 
-	override format = (value: number | undefined) => {
-		const numerical = this.getNumber(value)
-
-		return numerical === undefined ? '' : numerical.format({
-			minimumFractionDigits: 0,
-			maximumFractionDigits: 2,
-		})
+	override formatHeaderAsCsv() {
+		return [`${this.heading.length < 3 && this.description ? this.description  : this.heading} (%)`]
 	}
 }
 

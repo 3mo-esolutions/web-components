@@ -36,8 +36,8 @@ export class DataGridColumnBoolean<TData> extends DataGridColumnComponent<TData,
 		`
 	}
 
-	override format = (value: boolean) => {
-		return value ? 'Yes' : 'No'
+	override formatAsCsv(value: boolean) {
+		return value ? ['1'] : ['0']
 	}
 }
 

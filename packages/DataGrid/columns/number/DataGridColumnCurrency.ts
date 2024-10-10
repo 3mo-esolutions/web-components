@@ -42,10 +42,13 @@ export class DataGridColumnCurrency<TData> extends DataGridColumnNumberBase<TDat
 		`
 	}
 
-	override format = (value: number | undefined, data: TData) => {
-		return value === undefined ? '' : value.formatAsCurrency(this.getCurrency(data), {
-			useGrouping: false,
-		})
+	override formatHeaderAsCsv() {
+		const title = this.heading.length < 3 && this.description ? this.description  : this.heading
+		return [title, 'Währung']
+	}
+
+	override formatAsCsv(value: unknown, data: TData) {
+		return value === undefined || value === null ? [''] : [value as any, this.getCurrency(data).code as string]
 	}
 }
 
