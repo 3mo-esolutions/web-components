@@ -72,7 +72,7 @@ export class DataGridColumnCurrency<TData> extends DataGridColumnNumberBase<TDat
 
 		if (this.exchangeRateDataSelector) {
 			const exchangeRate = getValueByKeyPath(data, this.exchangeRateDataSelector)
-			values.push([exchangeRate, DataGridColumnCurrency.defaultCurrency])
+			values.push(exchangeRate, DataGridColumnCurrency.defaultCurrency)
 		}
 
 		return values

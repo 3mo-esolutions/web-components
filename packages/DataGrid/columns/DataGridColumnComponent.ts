@@ -52,7 +52,7 @@ export abstract class DataGridColumnComponent<TData, TValue> extends Component {
 			width: this.width,
 			sortable: !this.nonSortable,
 			formatAsCsv: (value, data) => this.formatAsCsv(value, data),
-      formatHeaderAsCsv: this.formatHeaderAsCsv,
+      formatHeaderAsCsv: () => this.formatHeaderAsCsv(),
 			editable: this.getEditContentTemplate !== undefined && (typeof nonEditable !== 'function' ? !nonEditable : x => !nonEditable(x)),
 			getContentTemplate: this.getContentTemplate.bind(this),
 			getEditContentTemplate: this.getEditContentTemplate?.bind(this),
