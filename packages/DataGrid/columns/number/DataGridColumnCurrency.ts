@@ -50,15 +50,7 @@ export class DataGridColumnCurrency<TData> extends DataGridColumnNumberBase<TDat
 	}
 
 	override formatHeaderAsCsv() {
-		const title = this.heading.length < 3 && this.description ? this.description  : this.heading
-
-		const values = [title, '' + t('Currency')]
-
-		if (this.exchangeRateDataSelector) {
-			values.push(title, '' + t('Currency'))
-		}
-
-		return values
+		return [this.heading.length < 3 && this.description ? this.description : this.heading, '' + t('Currency')]
 	}
 
 	override formatAsCsv(value: unknown, data: TData) {
@@ -66,16 +58,7 @@ export class DataGridColumnCurrency<TData> extends DataGridColumnNumberBase<TDat
 			return ['', '']
 		}
 
-		const currencyCode = this.getCurrency(data).code
-
-		const values = [value as any, currencyCode]
-
-		if (this.exchangeRateDataSelector) {
-			const exchangeRate = getValueByKeyPath(data, this.exchangeRateDataSelector)
-			values.push(exchangeRate, DataGridColumnCurrency.defaultCurrency)
-		}
-
-		return values
+		return [value as any, this.getCurrency(data).code]
 	}
 }
 
