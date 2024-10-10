@@ -149,6 +149,16 @@ describe('Popover', () => {
 			expect(fixture1.component.popoverElement.open).toBe(false)
 		})
 
+		it('should toggle close the popover when clicked the anchor', async () => {
+			fixture1.component.popoverElement.open = true
+
+			await fixture1.updateComplete
+
+			fixture1.component.click()
+
+			expect(fixture1.component.popoverElement.open).toBe(false)
+		})
+
 		it('should not close the popover when clicked inside of the popover', async () => {
 			fixture1.component.popoverElement.open = true
 
