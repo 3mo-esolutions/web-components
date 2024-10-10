@@ -52,10 +52,10 @@ export class DataGridColumnCurrency<TData> extends DataGridColumnNumberBase<TDat
 	override formatHeaderAsCsv() {
 		const title = this.heading.length < 3 && this.description ? this.description  : this.heading
 
-		const values = [title, t('Currency')]
+		const values = [title, '' + t('Currency')]
 
 		if (this.exchangeRateDataSelector) {
-			values.push(title, t('Currency'))
+			values.push(title, '' + t('Currency'))
 		}
 
 		return values
