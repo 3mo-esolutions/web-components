@@ -97,4 +97,8 @@ describe('Array', () => {
 		expect(array.formatAsUnit('fa')).toEqual('foo،‏ bar، و baz')
 		expect(array.formatAsUnit({ language: 'fa' })).toEqual('foo،‏ bar، و baz')
 	})
+
+	it('should support LocalizableStrings', () => {
+		expect([t('One'), t('Two')].formatAsConjunction('en')).toEqual('One and Two')
+	})
 })

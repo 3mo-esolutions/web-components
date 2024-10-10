@@ -6,6 +6,7 @@ export interface VirtualizedListItem {
 	scrollIntoView(options?: ScrollIntoViewOptions): void
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface ListItem extends HTMLElement { }
 
 export interface ListElement extends HTMLElement {

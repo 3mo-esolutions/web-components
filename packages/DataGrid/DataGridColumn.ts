@@ -1,4 +1,5 @@
 import { html, style, type HTMLTemplateResult } from '@a11d/lit'
+import { equals } from '@a11d/equals'
 import type { DataGrid } from './index.js'
 import type * as CSS from 'csstype'
 
@@ -15,7 +16,6 @@ export class DataGridColumn<TData, TValue = unknown> {
 	heading!: string
 	description?: string
 
-	// eslint-disable-next-line @typescript-eslint/ban-types
 	width: CSS.DataType.TrackBreadth<(string & {}) | 0> = 'max-content'
 
 	alignment: DataGridColumnAlignment = 'start'
@@ -41,10 +41,10 @@ export class DataGridColumn<TData, TValue = unknown> {
 		Object.assign(this, column)
 	}
 
-	equals(other: DataGridColumn<TData, any>): boolean {
-		return this.dataSelector === other.dataSelector
-			&& this.heading === other.heading
-			&& this.description === other.description
+	[equals](other: DataGridColumn<TData, any>): boolean {
+		return !!this.dataSelector || !!other.dataSelector
+			? this.dataSelector === other.dataSelector
+			: this.heading === other.heading && this.description === other.description
 	}
 
 	with(other: Partial<this>): DataGridColumn<TData, TValue> {

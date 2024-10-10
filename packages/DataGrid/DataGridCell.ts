@@ -142,16 +142,16 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 				display: grid;
 			}
 
-			:host([alignment=end]) {
-				text-align: end;
-			}
-
 			:host([alignment=start]) {
-				text-align: start
+				text-align: start;
 			}
 
 			:host([alignment=center]) {
 				text-align: center;
+			}
+
+			:host([alignment=end]) {
+				text-align: end;
 			}
 
 			:host([sticky]) {
@@ -161,11 +161,6 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 			:host([sticky]) /*[sticking]*/ {
 				z-index: 2;
 				background: var(--mo-data-grid-sticky-part-color);
-			}
-
-			:host([isEditing]) > :first-child {
-				align-self: center;
-				justify-self: stretch;
 			}
 		`
 	}

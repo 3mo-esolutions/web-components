@@ -5,6 +5,8 @@ import { Photo } from '../../sdk/index.js'
 export class DataGridPhoto extends ModdableDataGrid<Photo, FirstParameter<typeof Photo.getAll>> {
 	override readonly fetch = Photo.getAll
 
+	override parameters: FirstParameter<typeof Photo.getAll> = {}
+
 	override readonly paginationParameters = () => ({
 		take: this.pageSize,
 		skip: (this.page - 1) * this.pageSize
@@ -30,6 +32,16 @@ export class DataGridPhoto extends ModdableDataGrid<Photo, FirstParameter<typeof
 		${rowData.length > 1 ? html.nothing : html`<mo-data-grid-primary-context-menu-item icon='edit' @click=${() => alert('edit')}>Edit</mo-data-grid-primary-context-menu-item>`}
 		<mo-context-menu-item icon='delete' @click=${() => alert('delete')}>Delete</mo-context-menu-item>
 	`
+
+	override get hasToolbar() {
+		return true
+	}
+
+	protected override get toolbarDefaultTemplate() {
+		return html`
+			<app-field-select-album multiple default='All' ${this.parametersBinder.bind('albumIds')}></app-field-select-album>
+		`
+	}
 }
 
 declare global {

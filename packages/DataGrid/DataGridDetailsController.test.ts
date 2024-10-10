@@ -9,6 +9,7 @@ describe('DataGridDetailsController', () => {
 
 	beforeEach(() =>
 		controller = new DataGridDetailsController<Data>({
+			hasDefaultRowElements: true,
 			dataRecords: [{ data: 'record1', hasSubData: true }, { data: 'record2', hasSubData: false }] as Array<DataRecord<Data>>,
 			getRowDetailsTemplate: data => data === 'record1' ? html`<p>${data}</p>` : html.nothing,
 			multipleDetails: true,
@@ -22,6 +23,7 @@ describe('DataGridDetailsController', () => {
 			expect(controller.hasDetails).toBe(true)
 
 			controller = new DataGridDetailsController<Data>({
+				hasDefaultRowElements: true,
 				dataRecords: [{ data: 'record2', hasSubData: false }] as Array<DataRecord<Data>>,
 			})
 
@@ -33,6 +35,17 @@ describe('DataGridDetailsController', () => {
 		it('should return true only if record has subData or it is included and has details template', () => {
 			expect(controller.hasDetail(controller.host.dataRecords[0])).toBe(true)
 			expect(controller.hasDetail(controller.host.dataRecords[1])).toBe(false)
+		})
+
+		it('should return true only if hasDataDetail returns true explicitly if non-default rows are used', () => {
+			controller = new DataGridDetailsController<Data>({
+				hasDefaultRowElements: false,
+				dataRecords: [{ data: 'record1', hasSubData: true }, { data: 'record2', hasSubData: false }] as Array<DataRecord<Data>>,
+				hasDataDetail: data => data === 'record2',
+			})
+
+			expect(controller.hasDetail(controller.host.dataRecords[0])).toBe(false)
+			expect(controller.hasDetail(controller.host.dataRecords[1])).toBe(true)
 		})
 	})
 

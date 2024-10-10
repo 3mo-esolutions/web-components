@@ -1,7 +1,9 @@
 import { extractFormatOptions, type FormatOptionsWithLanguage } from './OptionsWithLanguage.js'
 
 function prepareFormatting(array: Array<unknown>, options: FormatOptionsWithLanguage<Intl.ListFormatOptions>): readonly [stringArray: Array<string>, listFormatter: Intl.ListFormat] {
-	const stringArray = array.filter(e => typeof e === 'string') as Array<string>
+	const stringArray = array
+		.map(e => e?.toString())
+		.filter(e => typeof e === 'string') as Array<string>
 	const extractedOptions = extractFormatOptions(options)
 	const listFormatter = new Intl.ListFormat(...extractedOptions)
 	return [stringArray, listFormatter] as const

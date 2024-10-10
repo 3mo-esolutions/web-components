@@ -76,8 +76,8 @@ export class DateTimeRange {
 	}
 
 	equals(other: DateTimeRange) {
-		return other.start && this.start?.equals(other.start)
-			&& this.end && other.end?.equals(this.end)
+		return (other.start && this.start?.equals(other.start) || this.start === other.start) &&
+			(other.end && this.end?.equals(other.end) || this.end === other.end)
 	}
 
 	toString() {

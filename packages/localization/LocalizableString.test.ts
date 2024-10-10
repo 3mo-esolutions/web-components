@@ -26,6 +26,7 @@ describe('LocalizableString', () => {
 		const ls = LocalizableString.get(key)
 
 		expect(ls.localize('de')).toBe(key)
+		// eslint-disable-next-line no-console
 		expect(console.warn).toHaveBeenCalledWith(`[Localizer] No "${'de'}" localization found for "${key}".`)
 	})
 
