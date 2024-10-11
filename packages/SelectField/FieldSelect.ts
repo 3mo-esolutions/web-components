@@ -163,15 +163,9 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 	}
 
 	protected override get inputTemplate() {
-		if (this.freeInput) {
-			return this.searchInputTemplate
-		}
-
-		if (this.searchable && this.focusController.focused) {
-			return this.searchInputTemplate
-		}
-
-		return this.valueInputTemplate
+		return this.freeInput || this.searchable
+			? this.searchInputTemplate
+			: this.valueInputTemplate
 	}
 
 	private get valueInputTemplate() {
@@ -206,7 +200,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 		return html`
 			${this.clearIconButtonTemplate}
 			${super.endSlotTemplate}
-			<mo-icon slot='end' part='dropDownIcon' icon='expand_more'></mo-icon>
+			<mo-icon slot='end' part='dropDownIcon' icon='unfold_more'></mo-icon>
 		`
 	}
 
@@ -290,9 +284,6 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 
 	protected override async handleFocus(bubbled: boolean, method: FocusMethod) {
 		super.handleFocus(bubbled, method)
-		if (method === 'pointer') {
-			this.open = true
-		}
 		await this.updateComplete
 		this.searchInputElement?.focus()
 		this.searchInputElement?.select()
