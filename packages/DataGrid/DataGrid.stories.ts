@@ -284,3 +284,9 @@ export const NoContent: StoryObj = {
 		</mo-data-grid>
 	`
 }
+
+export const AutoGrow: StoryObj = {
+	render: () => html`
+		<mo-data-grid autoGrow subDataGridDataSelector='children' .data=${fivePeopleWithChildren}></mo-data-grid>
+	`
+}

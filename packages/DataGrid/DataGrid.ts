@@ -114,7 +114,14 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	@event() readonly rowMiddleClick!: EventDispatcher<DataGridRow<TData, TDetailsElement>>
 	@event() readonly cellEdit!: EventDispatcher<DataGridCell<any, TData, TDetailsElement>>
 
-	@property({ type: Array }) data = new Array<TData>()
+	@property({
+		type: Array,
+		updated(this: DataGrid<TData>, data: Array<TData>) {
+			if (this.autoGrow) {
+				this.style.setProperty('--mo-data-grid-min-visible-rows', data.length.toString())
+			}
+		},
+	}) data = new Array<TData>()
 	@property({ type: Array }) columns = new Array<DataGridColumn<TData>>()
 
 	@property({ type: Boolean, reflect: true }) headerHidden = false
@@ -123,6 +130,8 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	@property({ reflect: true, converter: (value: string | null | undefined) => value === null || value === undefined ? undefined : Number.isNaN(Number(value)) ? value : Number(value) }) pagination?: DataGridPagination
 
 	@property({ type: Object }) sorting?: DataGridSorting<TData>
+
+	@property({ type: Boolean }) autoGrow = false
 
 	@property({ reflect: true }) selectionMode = DataGridSelectionMode.None
 	@property({ type: Object }) isDataSelectable?: (data: TData) => boolean
