@@ -25,6 +25,10 @@ export class DataGridDefaultRow<TData, TDetailsElement extends Element | undefin
 				height: var(--mo-data-grid-row-height);
 			}
 
+			#contentContainer {
+				height: var(--mo-data-grid-row-height);
+			}
+
 			#detailsContainer {
 				grid-column: -1 / 1;
 			}
