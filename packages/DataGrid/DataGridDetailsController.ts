@@ -2,6 +2,7 @@ import { html, type HTMLTemplateResult } from '@a11d/lit'
 import { type DataRecord } from './index.js'
 
 interface DetailedComponent<TData> {
+	readonly hasDefaultRowElements: boolean
 	readonly dataRecords: Array<DataRecord<TData>>
 	readonly getRowDetailsTemplate?: (data: TData) => HTMLTemplateResult
 	readonly multipleDetails?: boolean
@@ -27,7 +28,15 @@ export class DataGridDetailsController<TData> {
 	}
 
 	hasDetail(record: DataRecord<TData>) {
-		const hasDetailsTemplate = !!this.host.getRowDetailsTemplate && ![undefined, html.nothing].includes(this.host.getRowDetailsTemplate?.(record.data))
+		if (this.host.hasDefaultRowElements === false) {
+			// We make the assumption that custom rows don't use
+			// the `getRowDetailsTemplate` and implement their own way of showing details.
+			// If they do use it, they should also override `hasDataDetail`
+			// to return false for the records that don't have details.
+			return this.host.hasDataDetail?.(record.data) ?? false
+		}
+
+		const hasDetailsTemplate = !!this.host.getRowDetailsTemplate && ![undefined, html.nothing].includes(this.host.getRowDetailsTemplate(record.data))
 		const included = this.host.hasDataDetail?.(record.data) ?? true
 		return record.hasSubData || hasDetailsTemplate && included
 	}

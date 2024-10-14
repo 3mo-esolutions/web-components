@@ -40,12 +40,16 @@ export class Pdf extends Component {
 		return system?.os === 'Android OS' && system?.name !== 'firefox'
 	}
 
+	private get isIOS() {
+		return System.detect()?.os === 'iOS'
+	}
+
 	private get supportsLoading() {
-		return !this.isMacOrSafari && !this.isAndroidChromium
+		return !this.isMacOrSafari && !this.isAndroidChromium && !this.isIOS
 	}
 
 	private get supportsEmbed() {
-		return !this.isMacOrSafari
+		return !this.isMacOrSafari && !this.isIOS
 	}
 
 	protected get pdfSource() {

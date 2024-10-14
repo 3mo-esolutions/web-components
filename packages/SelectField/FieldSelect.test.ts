@@ -78,11 +78,37 @@ describe('FieldSelect', () => {
 	})
 
 	describe('freeInput', () => {
-		it('should get populated when freeInput is set and the input is not empty even if no option is selected', async () => {
-			fixture.component.freeInput = true
-			await fixture.updateComplete
+		const fixture = new ComponentTestFixture<FieldSelect<Person>>(html`
+			<mo-field-select label='Select' freeInput>
+				${people.map(p => html`<mo-option value=${p.id} .data=${p}>${p.name}</mo-option>`)}
+			</mo-field-select>
+		`)
 
+		it('should initialize the search keyword to the currently selected value', async () => {
+			fixture.component.value = 1
+
+			await Promise.all([fixture.updateComplete, new Promise(r => setTimeout(r))])
+
+			expect(fixture.component.searchInputElement!.value).toBe('John')
+		})
+
+		it('should not update the initialized search keyword only because options changed', async () => {
+			fixture.component.value = 1
+
+			await Promise.all([fixture.updateComplete, new Promise(r => setTimeout(r))])
+			fixture.component.searchInputElement!.value = 'User keyword'
+			fixture.component.searchInputElement!.dispatchEvent(new Event('input', { bubbles: true }))
+
+			// This can happen in many scenarios, e.g. when the options are fetched from a server
+			fixture.component.options[1].requestSelectValueUpdate.dispatch()
+			await Promise.all([fixture.updateComplete, new Promise(r => setTimeout(r))])
+
+			expect(fixture.component.searchInputElement!.value).toBe('User keyword')
+		})
+
+		it('should populate the field when the input is not empty even if no option is selected', async () => {
 			const input = fixture.component.searchInputElement!
+
 			input.value = 'John'
 			input.dispatchEvent(new Event('input', { bubbles: true }))
 			await fixture.updateComplete

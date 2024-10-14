@@ -30,12 +30,18 @@ export class List extends Component {
 	override readonly role = 'list'
 
 	readonly focusController = new ListFocusController(this)
-	readonly slotController = new SlotController(this)
 
-	get items() {
-		return this.slotController.getAssignedElements('')
+	readonly slotController = new SlotController(this, () => {
+		this.items = this.slotController.getAssignedElements('')
 			.flatMap(e => [e, ...e.querySelectorAll('*')])
 			.filter(i => isListItem(i)) as Array<HTMLElement>
+	})
+
+	private _items = new Array<HTMLElement>()
+	get items() { return this._items }
+	private set items(value) {
+		this._items = value
+		this.itemsChange.dispatch(this.items)
 	}
 
 	static override get styles() {
@@ -51,11 +57,7 @@ export class List extends Component {
 	}
 
 	protected override get template() {
-		return html`<slot @slotchange=${this.handleSlotChange.bind(this)}></slot>`
-	}
-
-	protected handleSlotChange() {
-		this.itemsChange.dispatch(this.items)
+		return html`<slot></slot>`
 	}
 }
 

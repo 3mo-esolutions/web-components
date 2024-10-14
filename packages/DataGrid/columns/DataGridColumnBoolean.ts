@@ -32,6 +32,7 @@ export class DataGridColumnBoolean<TData> extends DataGridColumnComponent<TData,
 			<mo-checkbox autofocus
 				?selected=${value}
 				@change=${(e: CustomEvent<boolean>) => this.handleEdit(e.detail, data)}
+				${style({ justifySelf: this.textAlign })}
 			></mo-checkbox>
 		`
 	}

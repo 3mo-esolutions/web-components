@@ -122,7 +122,7 @@ export class EntityDataGrid<TEntity extends EntityWithId, TDataFetcherParameters
 		await this.requestFetch()
 	}
 
-	// eslint-disable-next-line @typescript-eslint/ban-types
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 	private isEntityDialogClass(fn: Function): fn is Constructor<EntityDialogComponent<TEntity>> {
 		return typeof fn === 'function' && /^class\s/.test(fn.toString())
 	}

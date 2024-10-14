@@ -60,18 +60,21 @@ describe('DateTimeRange', () => {
 		expect(range.includes(new DateTime('2020-01-05'))).toBeFalse()
 	})
 
-	it('.equals() should return true for the same range', () => {
+	describe('equals()', () => {
 		const start = new DateTime('2020-01-02')
 		const end = new DateTime('2020-01-04')
-		const range = new DateTimeRange(start, end)
-		expect(range.equals(new DateTimeRange(start, end))).toBeTrue()
-	})
 
-	it('.equals() should return false for a different range', () => {
-		const start = new DateTime('2020-01-02')
-		const end = new DateTime('2020-01-04')
-		const range = new DateTimeRange(start, end)
-		expect(range.equals(new DateTimeRange(start, new DateTime('2020-01-04 00:00:01')))).toBeFalse()
+		it('should return true for the same range', () => {
+			expect(new DateTimeRange(start, end).equals(new DateTimeRange(start, end))).toBeTrue()
+			expect(new DateTimeRange(start, undefined).equals(new DateTimeRange(start, undefined))).toBeTrue()
+			expect(new DateTimeRange(undefined, end).equals(new DateTimeRange(undefined, end))).toBeTrue()
+		})
+
+		it('should return false for a different range', () => {
+			expect(new DateTimeRange(start, end).equals(new DateTimeRange(start, end.add({ seconds: 1 })))).toBeFalse()
+			expect(new DateTimeRange(start, undefined).equals(new DateTimeRange(start.add({ seconds: 1 }), undefined))).toBeFalse()
+			expect(new DateTimeRange(undefined, end).equals(new DateTimeRange(undefined, end.add({ seconds: 1 })))).toBeFalse()
+		})
 	})
 
 	it('.formatAsDateRange() should return an empty string for an infinite range', () => {

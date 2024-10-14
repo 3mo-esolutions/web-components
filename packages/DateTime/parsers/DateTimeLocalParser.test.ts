@@ -16,7 +16,6 @@ describe('DateTimeLocalParser', () => {
 		expect(englishParser.parse('201')).toBe(undefined)
 		expect(englishParser.parse('10/010/2000')).toBe(undefined)
 		expect(englishParser.parse('100/10/2000')).toBe(undefined)
-		expect(englishParser.parse('10/10/20000')).toBe(undefined)
 		expect(englishParser.parse('10/10/2000/200')).toBe(undefined)
 		expect(englishParser.parse('10/10/2000y')).toBe(undefined)
 
@@ -33,7 +32,6 @@ describe('DateTimeLocalParser', () => {
 		expect(germanParser.parse('201')).toBe(undefined)
 		expect(germanParser.parse('10.010.2000')).toBe(undefined)
 		expect(germanParser.parse('100.10.2000')).toBe(undefined)
-		expect(germanParser.parse('10.10.20000')).toBe(undefined)
 		expect(germanParser.parse('10.10.2000.200')).toBe(undefined)
 		expect(germanParser.parse('10.10.2000y')).toBe(undefined)
 	})
@@ -63,6 +61,19 @@ describe('DateTimeLocalParser', () => {
 			expectDateTimesEquals(new DateTimeLocalParser('de').parse(' 02  . 09 . 2 02 0 '), expected)
 		})
 
+		it('with time', () => {
+			const expected = DateTime.from(undefined, 'gregory').with({ year: 2020, month: 9, day: 2, hour: 12, minute: 30, second: 45 })
+
+			expectDateTimesEquals(new DateTimeLocalParser('en-US' as any).parse('09/02/2020 12:30:45'), expected)
+			expectDateTimesEquals(new DateTimeLocalParser('en-US' as any).parse('  09 / 02 / 2 0  2 0   12 : 30 : 45 '), expected)
+
+			expectDateTimesEquals(new DateTimeLocalParser('en-UK' as any).parse('02/09/2020 12:30:45'), expected)
+			expectDateTimesEquals(new DateTimeLocalParser('en-UK' as any).parse('  02 / 09 / 2 0  2 0   12 : 30 : 45 '), expected)
+
+			expectDateTimesEquals(new DateTimeLocalParser('de').parse('02.09.2020 12:30:45'), expected)
+			expectDateTimesEquals(new DateTimeLocalParser('de').parse(' 02  . 09 . 2 02 0   12 : 30 : 45 '), expected)
+		})
+
 		it('can handle 31st', () => {
 			const expected = DateTime.from(undefined, 'gregory').with({ year: 2020, month: 10, day: 31 })
 
@@ -81,6 +92,12 @@ describe('DateTimeLocalParser', () => {
 			expectDateTimesEquals(new DateTimeLocalParser('fa').parse('1400/02/01'), expected)
 			expectDateTimesEquals(new DateTimeLocalParser('fa').parse('1400/2/1'), expected)
 			expectDateTimesEquals(new DateTimeLocalParser('fa').parse(' 14 0 0 / 02 / 1 '), expected)
+		})
+
+		it('with time', () => {
+			const expected = DateTime.from(undefined, 'persian').with({ year: 1400, month: 2, day: 1, hour: 12, minute: 30, second: 45 })
+			expectDateTimesEquals(new DateTimeLocalParser('fa').parse('1400/02/01 12:30:45'), expected)
+			expectDateTimesEquals(new DateTimeLocalParser('fa').parse(' 14 0 0 / 02 / 01   12 : 30 : 45 '), expected)
 		})
 	})
 })

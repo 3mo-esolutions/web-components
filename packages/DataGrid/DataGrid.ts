@@ -64,6 +64,7 @@ export enum DataGridEditability {
  *
  * @slot - Use this slot only for declarative DataGrid APIs e.g. setting ColumnDefinitions via `mo-data-grid-columns` tag.
  * @slot toolbar - The horizontal bar above DataGrid's contents.
+ * @slot toolbar-action - A slot for action icon-buttons in the toolbar which are displayed on the end.
  * @slot filter - A vertical bar for elements which filter DataGrid's data. It is opened through an icon-button in the toolbar.
  * @slot sum - A horizontal bar in the DataGrid's footer for showing sums. Calculated sums are also placed here by default.
  * @slot settings - A vertical bar for elements which change DataGrid's settings. It is pre-filled with columns' settings and can be opened through an icon-button in the toolbar.
@@ -96,6 +97,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	static readonly cellRelativeFontSize = new LocalStorage<number>('DataGrid.CellRelativeFontSize', 0.8)
 	static readonly pageSize = new LocalStorage<Exclude<DataGridPagination, 'auto'>>('DataGrid.PageSize', 25)
 	static readonly hasAlternatingBackground = new LocalStorage('DataGrid.HasAlternatingBackground', true)
+	protected static readonly defaultRowElementTag = literal`mo-data-grid-default-row`
 
 	@event() readonly dataChange!: EventDispatcher<Array<TData>>
 	@event() readonly selectionChange!: EventDispatcher<Array<TData>>
@@ -483,15 +485,11 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				position: relative;
 				padding: var(--mo-data-grid-toolbar-padding);
 
-				mo-icon-button {
-					align-self: flex-start;
-					color: var(--mo-color-gray);
-				}
-
 				#actions {
-					mo-icon-button {
-						color: var(--mo-color-gray);
+					margin-inline-start: auto;
 
+					mo-icon-button, ::slotted(mo-icon-button[slot='toolbar-action']) {
+						color: var(--mo-color-gray);
 						&[data-selected] {
 							color: var(--mo-color-accent);
 						}
@@ -614,7 +612,11 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}
 
 	protected get rowElementTag() {
-		return literal`mo-data-grid-default-row`
+		return DataGrid.defaultRowElementTag
+	}
+
+	get hasDefaultRowElements() {
+		return this.rowElementTag === DataGrid.defaultRowElementTag
 	}
 
 	protected get fabTemplate() {
@@ -702,12 +704,10 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	protected get toolbarTemplate() {
 		return this.hasToolbar === false ? html.nothing : html`
-			<mo-flex id='toolbar' direction='horizontal' gap='8px' wrap='wrap' justifyContent='end' alignItems='center'>
-				<mo-flex direction='horizontal' alignItems='inherit' gap='8px' wrap='wrap' ${style({ flex: '1' })}>
-					<slot name='toolbar'>${this.toolbarDefaultTemplate}</slot>
-				</mo-flex>
-				<mo-flex id='actions' direction='horizontal' gap='8px'>
-					<slot name='toolbarAction'>${this.toolbarActionDefaultTemplate}</slot>
+			<mo-flex id='toolbar' direction='horizontal' gap='8px' wrap='wrap' alignItems='center'>
+				<slot name='toolbar'>${this.toolbarDefaultTemplate}</slot>
+				<mo-flex id='actions' direction='horizontal' gap='8px' alignContent='center'>
+					<slot name='toolbar-action'>${this.toolbarActionDefaultTemplate}</slot>
 					${this.toolbarActionsTemplate}
 				</mo-flex>
 			</mo-flex>
@@ -744,7 +744,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		`
 	}
 
-	// eslint-disable-next-line @typescript-eslint/member-ordering
 	private lastScrollElementTop = 0
 	@eventOptions({ passive: true })
 	private handleScroll(e: Event) {

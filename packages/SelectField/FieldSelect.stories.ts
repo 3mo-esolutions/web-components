@@ -33,7 +33,7 @@ export const Select: StoryObj = {
 export const FreeInput: StoryObj = {
 	render: ({ multiple, defaultText }) => html`
 		<mo-card style='max-width: 300px'>
-			<mo-field-select label='Countries' searchable freeInput ?multiple=${multiple} default=${defaultText}>
+			<mo-field-select label='Countries' searchable freeInput ?multiple=${multiple} default=${defaultText} .value=${multiple ? ['DE'] : 'DE'}>
 				${countries.map(country => html`
 					<mo-option value=${country.code} .data=${country}>
 						<img width='25px' src=${`https://flagcdn.com/h40/${country.code.toLowerCase()}.png`} />

@@ -167,6 +167,7 @@ export const RowDetails: StoryObj = {
 			.data=${fivePeople}
 			?multipleDetails=${multipleDetails}
 			?detailsOnClick=${detailsOnClick}
+			.hasDataDetail=${(p: Person) => p.age >= 18}
 			.getRowDetailsTemplate=${(p: Person) => Math.random() > 0.5 ? html`
 				<div style='margin: 10px; opacity: 0.5'>${p.name} details</div>
 			` : html`

@@ -7,7 +7,13 @@ module.exports = config => config.set({
 	reporters: ['helpful'],
 	logLevel: 'ERROR',
 	port: 9876,
-	browsers: ['ChromeHeadless', 'FirefoxHeadless'],
+	browsers: ['ChromeOldHeadless', 'FirefoxHeadless'],
+	customLaunchers: {
+		ChromeOldHeadless: {
+			base: 'Chrome',
+			flags: ['--headless=old', '--disable-gpu', '--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
+		},
+	},
 	colors: true,
 	autoWatch: true,
 	singleRun: false,
