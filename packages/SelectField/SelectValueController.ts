@@ -83,6 +83,7 @@ export class FieldSelectValueController<T> {
 		const v = value instanceof Array ? value : [value] as Array<T>
 		return this.multiple ? v : v[0]
 	}
+
 	private async setSelectValue<T>(value: PluralizeUnion<T>, predicate: (option: Option<T>, arrayValue: Array<T>) => boolean) {
 		await new Promise(r => setTimeout(r, 0))
 		const array = value instanceof Array ? value : [value] as Array<T>

@@ -271,6 +271,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 
 	requestValueUpdate() {
 		this.options.forEach(o => o.selected = o.index !== undefined && this.valueController.menuValue.includes(o.index))
+		this.searchString ??= this.valueToInputValue(this.value) || undefined
 	}
 
 	protected valueToInputValue(value: Value) {

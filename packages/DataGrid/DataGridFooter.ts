@@ -191,10 +191,10 @@ export class DataGridFooter<TData> extends Component {
 				</mo-flex>
 				<mo-menu slot='popover'>
 					${!this.dataGrid?.supportsDynamicPageSize ? html.nothing : html`
-						<mo-menu-item icon='done' ?selected=${this.dataGrid.pagination === 'auto'} value='auto' @click=${() => this.handlePaginationChange('auto')}>${t('Auto')}</mo-menu-item>
+						<mo-menu-item icon='done' ?selected=${this.dataGrid.pagination === 'auto'} @click=${() => this.handlePaginationChange('auto')}>${t('Auto')}</mo-menu-item>
 					`}
 					${DataGridFooter.pageSizes.map(size => html`
-						<mo-menu-item icon='done' ?selected=${this.dataGrid.pagination === size} value=${size} @click=${() => this.handlePaginationChange(size)}>${size.format()}</mo-menu-item>
+						<mo-menu-item icon='done' ?selected=${this.dataGrid.pageSize === size} @click=${() => this.handlePaginationChange(size)}>${size.format()}</mo-menu-item>
 					`)}
 				</mo-menu>
 			</mo-popover-container>
