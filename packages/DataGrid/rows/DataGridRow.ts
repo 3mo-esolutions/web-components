@@ -107,15 +107,6 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				cursor: pointer;
 			}
 
-			:host([selected]:not(:last-of-type)) #contentContainer:after {
-				content: '';
-				position: absolute;
-				bottom: 0;
-				inset-inline-start: 0;
-				width: 100%;
-				border-bottom: 1px solid var(--mo-color-gray-transparent);
-			}
-
 			#contextMenuIconButton {
 				opacity: 0.5;
 				color: var(--mo-color-gray);
