@@ -310,7 +310,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 					}
 
 					const progressChanged = (currentProgress: number) => {
-						progress = Math.min(Math.max(currentProgress, 0.05), 0.03)
+						progress = Math.max(currentProgress, 0.05)
 						if (progress === 1) {
 							setTimeout(() => this['close'](), 1000)
 						} else {
