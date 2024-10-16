@@ -3,6 +3,7 @@ import { type TooltipPlacement } from './TooltipPlacement.js'
 import { type FocusMethod, FocusController } from '@3mo/focus-controller'
 import { PointerController } from '@3mo/pointer-controller'
 import { type ComputePositionReturn, arrow, type Middleware } from '@floating-ui/core'
+import * as System from 'detect-browser'
 
 function targetAnchor(this: Tooltip) {
 	return this.anchor || []
@@ -45,7 +46,12 @@ export class Tooltip extends Component {
 		},
 	})
 
-	private openIfApplicable = () => {
+	private get isMobile() {
+		const osName = System.detect()?.os
+		return osName && ['iOS', 'Android OS', 'BlackBerry OS', 'Windows Mobile', 'Amazon OS'].includes(osName)
+	}
+
+	private handleOpen = () => {
 		if (this.pointerController.type === 'touch') {
 			this.setOpen(this.anchorPointerController.press)
 			return
@@ -57,6 +63,14 @@ export class Tooltip extends Component {
 		}
 
 		this.setOpen(this.pointerController.hover || this.anchorPointerController.hover)
+	}
+
+	private openIfApplicable = () => {
+		if (this.isMobile) {
+			return requestAnimationFrame(() => this.handleOpen())
+		}
+
+		return this.handleOpen()
 	}
 
 	private setOpen(open: boolean) {
