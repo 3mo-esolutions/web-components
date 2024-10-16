@@ -2,13 +2,13 @@ import { Controller, html, style } from '@a11d/lit'
 import { Localizer } from '@3mo/localization'
 import { type DataGrid } from './index.js'
 
-Localizer.register('de', {
+Localizer.dictionaries.add('de', {
 	'selected': 'ausgewählt',
 })
 
 export class DataGridContextMenuController<TData> extends Controller {
 	private static readonly infoStyle = {
-		padding: '12px 8px',
+		padding: '10px 16px',
 		color: 'var(--mo-color-gray)',
 		pointerEvents: 'none',
 		fontSize: 'small',
@@ -23,6 +23,7 @@ export class DataGridContextMenuController<TData> extends Controller {
 		color: 'var(--mo-color-on-accent)',
 		background: 'var(--mo-color-accent)',
 		padding: '2px 4px',
+		marginInlineEnd: '4px',
 		borderRadius: '100px',
 	}
 

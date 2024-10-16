@@ -4,25 +4,26 @@ import { DialogComponent } from '@a11d/lit-application'
 import { Localizer } from '@3mo/localization'
 import { type BaseDialogParameters, getContentTemplate } from '@3mo/dialog'
 
-Localizer.register('de', {
+Localizer.dictionaries.add('de', {
 	'OK': 'OK',
 	'Cancel': 'Abbrechen',
 	'Apply': 'Übernehmen',
 	'Input': 'Eingabe'
 })
 
-Localizer.register('fa', {
+Localizer.dictionaries.add('fa', {
 	'OK': 'تایید',
 	'Cancel': 'لغو',
 	'Apply': 'اعمال',
 	'Input': 'ورودی'
 })
 
-interface Parameters extends BaseDialogParameters<DialogPrompt> {
-	readonly inputLabel?: string
-	readonly value?: string
-	readonly isTextArea?: boolean
-}
+type Parameters = BaseDialogParameters<DialogPrompt>
+	& { readonly inputLabel?: string, readonly value?: string }
+	& (
+		| { readonly isTextArea?: false, readonly rows?: never }
+		| { readonly isTextArea: true, readonly rows?: number }
+	)
 
 @component('mo-dialog-prompt')
 export class DialogPrompt extends DialogComponent<Parameters, string> {
@@ -51,7 +52,7 @@ export class DialogPrompt extends DialogComponent<Parameters, string> {
 
 	private get textFieldTemplate() {
 		return this.parameters.isTextArea ? html`
-			<mo-field-text-area id='inputElement' autofocus
+			<mo-field-text-area id='inputElement' autofocus rows=${ifDefined(this.parameters.rows)}
 				label=${this.parameters.inputLabel ?? t('Input')}
 				value=${this.value}
 				@input=${(e: CustomEvent<string>) => this.value = e.detail}

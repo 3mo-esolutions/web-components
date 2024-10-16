@@ -38,10 +38,8 @@ export class Field extends Component {
 	static override get styles() {
 		return css`
 			:host {
-				--mo-field-label-scale-value-on-focus: 0.75;
-				--mo-field-label-scale-on-focus: scale(var(--mo-field-label-scale-value-on-focus));
-				--mo-field-label-translate-value-on-focus: -50%;
-				--mo-field-label-translate-on-focus: translateY(var(--mo-field-label-translate-value-on-focus));
+				--mo-field-label-scale-on-focus: scale(0.75);
+				--mo-field-label-translate-on-focus: translateY(-50%);
 				--mo-field-label-transform-on-focus : var(--mo-field-label-translate-on-focus) var(--mo-field-label-scale-on-focus);
 				position: relative;
 				overflow: hidden;
@@ -74,7 +72,7 @@ export class Field extends Component {
 
 			:host([dense]) {
 				height: 32px;
-				--mo-field-label-scale-value-on-focus: 1;
+				--mo-field-label-scale-on-focus: scale(1);
 			}
 
 			:host([disabled]) {
@@ -89,19 +87,19 @@ export class Field extends Component {
 			}
 
 			div:first-child {
-				padding-inline-start: 10px;
+				margin-inline-start: 10px;
 			}
 
 			slot[name=start]:first-child {
-				padding-inline-start: 8px;
+				margin-inline-start: 8px;
 			}
 
 			div:last-child {
-				padding-inline-end: var(--mo-field-input-padding-inline-end, 10px);
+				margin-inline-end: var(--mo-field-input-padding-inline-end, 10px);
 			}
 
 			slot[name=end]:last-child {
-				padding-inline-end: 8px;
+				margin-inline-end: 8px;
 			}
 
 			slot:not([name])::slotted(*) {
@@ -143,13 +141,22 @@ export class Field extends Component {
 				transform: var(--mo-field-label-translate-on-focus);
 				color: var(--mo-color-gray);
 				transition: .1s ease-out;
-				transform-origin: var(--mo-field-label-transform-origin);
 				pointer-events: none;
 				white-space: nowrap;
 				overflow: hidden !important;
 				text-overflow: ellipsis;
 				max-width: 100%;
 				user-select: none;
+			}
+
+			div[data-direction=left] span {
+				left: 0px;
+				transform-origin: top left;
+			}
+
+			div[data-direction=right] span {
+				right: 0px;
+				transform-origin: top right;
 			}
 
 			:host([dense][populated]) span {
@@ -226,11 +233,19 @@ export class Field extends Component {
 		`
 	}
 
+	private get direction() {
+		const styles = getComputedStyle(this)
+		const isRtl = DirectionsByLanguage.get() === 'rtl'
+			|| this.slotController.getAssignedElements('').some(e => e.getAttribute('dir') === 'rtl')
+		return isRtl
+			? ['end', 'left'].includes(styles.textAlign) ? 'left' : 'right'
+			: ['end', 'right'].includes(styles.textAlign) ? 'right' : 'left'
+	}
+
 	protected override get template() {
-		this.style.setProperty('--mo-field-label-transform-origin', DirectionsByLanguage.get() === 'rtl' ? 'right top' : 'left top')
 		return html`
 			${!this.slotController.hasAssignedContent('start') ? html.nothing : html`<slot name='start'></slot>`}
-			<div part='container'>
+			<div part='container' data-direction=${this.direction}>
 				<span>${this.label} ${this.required ? '*' : ''}</span>
 				<slot></slot>
 			</div>

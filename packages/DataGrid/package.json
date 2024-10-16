@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/data-grid",
-	"version": "0.9.6",
+	"version": "0.10.5",
 	"description": "A data grid web component",
 	"repository": {
 		"type": "git",
@@ -26,6 +26,7 @@
 		"tslib": "x",
 		"@a11d/lit": "x",
 		"@a11d/lit-application": "x",
+		"@a11d/equals": "x",
 		"@3mo/flex": "x",
 		"@3mo/grid": "x",
 		"@a11d/key-path": "1.x",
@@ -36,6 +37,7 @@
 		"@3mo/instanceof-attribute-controller": "x",
 		"@3mo/media-query-observer": "x",
 		"@3mo/mutation-observer": "x",
+		"@3mo/standard-dialogs": "x",
 		"@3mo/resize-observer": "x",
 		"@3mo/localization": "x",
 		"@3mo/context-menu": "x",

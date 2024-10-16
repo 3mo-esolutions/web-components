@@ -32,7 +32,7 @@ export class DateTimeRange {
 		return undefined
 	}
 
-	private static getUntilDelimiter(language: LanguageCode = Localizer.currentLanguage) {
+	private static getUntilDelimiter(language: LanguageCode = Localizer.languages.current) {
 		const parts = Intl.DateTimeFormat(language).formatRangeToParts(
 			new Date('2010-01-01T00:00:00.000Z'),
 			new Date('2020-01-01T00:00:00.000Z')
@@ -76,8 +76,8 @@ export class DateTimeRange {
 	}
 
 	equals(other: DateTimeRange) {
-		return other.start && this.start?.equals(other.start)
-			&& this.end && other.end?.equals(this.end)
+		return (other.start && this.start?.equals(other.start) || this.start === other.start) &&
+			(other.end && this.end?.equals(other.end) || this.end === other.end)
 	}
 
 	toString() {

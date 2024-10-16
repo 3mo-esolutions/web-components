@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/member-ordering */
 import { Binder, component, css, event, html, property } from '@a11d/lit'
 import { tooltip } from '@3mo/tooltip'
 import { Localizer } from '@3mo/localization'
@@ -19,7 +18,7 @@ type PaginatedResult<TData> = Readonly<{ data: NonPaginatedResult<TData> } & ({
 
 type Result<TData> = PaginatedResult<TData> | NonPaginatedResult<TData>
 
-Localizer.register('de', {
+Localizer.dictionaries.add('de', {
 	'Make a filter selection': 'Filterauswahl vornehmen',
 	'Refetch': 'Neu laden',
 })
@@ -193,7 +192,21 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 			&& !this.hasServerSideSort
 	}
 
+	private _preventFetch = false
+	async runPreventingFetch(action: () => void | PromiseLike<void>) {
+		this._preventFetch = true
+		const result = action()
+		if (result instanceof Promise) {
+			await result
+		}
+		this._preventFetch = false
+	}
+
 	async requestFetch() {
+		if (this._preventFetch) {
+			return
+		}
+
 		if (this.parameters && this.fetchDirty) {
 			const dirtyData = this.fetchDirty(this.parameters)
 			if (dirtyData) {

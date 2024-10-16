@@ -3,15 +3,14 @@ import { type FieldNumber } from '@3mo/number-fields'
 import { DirectionsByLanguage, Localizer } from '@3mo/localization'
 import { TooltipPlacement, tooltip } from '@3mo/tooltip'
 import { type DataGrid, type DataGridPagination } from './index.js'
-import excelSvg from './excel.svg.js'
 
-Localizer.register('de', {
+Localizer.dictionaries.add('de', {
 	'${page:number} of ${maxPage:number}': '${page} von ${maxPage}',
-	'Export current view to Excel': 'Aktuelle Ansicht nach Excel exportieren',
+	'Export to CSV': 'Ansicht nach CSV exportieren',
 	'Auto': 'Auto'
 })
 
-Localizer.register('fa', {
+Localizer.dictionaries.add('fa', {
 	'${page:number} of ${maxPage:number}': '${page} از ${maxPage}',
 	'Auto': 'خودکار',
 })
@@ -131,7 +130,7 @@ export class DataGridFooter<TData> extends Component {
 		const hasUnknownDataLength = this.dataGrid.maxPage === undefined
 		const pageText = hasUnknownDataLength ? this.page : t('${page:number} of ${maxPage:number}', { page: this.page, maxPage: this.dataGrid.maxPage ?? 0 })
 		return !this.dataGrid.hasPagination ? html.nothing : html`
-			<mo-flex direction='horizontal' alignItems='center' gap='2vw'>
+			<mo-flex direction='horizontal' alignItems='center' gap='3vw'>
 				<mo-flex direction='horizontal' gap='4px' alignItems='center' justifyContent='center'>
 					<mo-icon-button dense icon=${isRtl ? 'last_page' : 'first_page'}
 						?disabled=${this.page === 1}
@@ -177,18 +176,24 @@ export class DataGridFooter<TData> extends Component {
 		const dataLengthText = this.dataGrid.maxPage === undefined ? undefined : this.dataGrid.dataLength.format()
 		return html`
 			<mo-popover-container id='page-info' placement='block-start' fixed>
-				${this.dataGrid.selectedData.length ? html`
-					<span id='selected-length'>${this.dataGrid.selectedData.length.format()}</span>
-				` : html`
-					<span id='range' tabindex='0'>${rangeText}</span>
-				`}
-				<span id='length'>${dataLengthText}</span>
+				<mo-flex alignItems='center' gap='6px' direction='horizontal' style='cursor: pointer'>
+					<mo-flex direction='horizontal' alignItems='center'>
+						${this.dataGrid.selectedData.length ? html`
+							<span id='selected-length'>${this.dataGrid.selectedData.length.format()}</span>
+						` : html`
+							<span id='range' tabindex='0'>${rangeText}</span>
+						`}
+						<span id='length'>${dataLengthText}</span>
+					</mo-flex>
+
+					<mo-icon icon='keyboard_arrow_up' style='font-size: 20px'></mo-icon>
+				</mo-flex>
 				<mo-menu slot='popover'>
 					${!this.dataGrid?.supportsDynamicPageSize ? html.nothing : html`
-						<mo-menu-item icon='done' ?selected=${this.dataGrid.pagination === 'auto'} value='auto' @click=${() => this.handlePaginationChange('auto')}>${t('Auto')}</mo-menu-item>
+						<mo-menu-item icon='done' ?selected=${this.dataGrid.pagination === 'auto'} @click=${() => this.handlePaginationChange('auto')}>${t('Auto')}</mo-menu-item>
 					`}
 					${DataGridFooter.pageSizes.map(size => html`
-						<mo-menu-item icon='done' ?selected=${this.dataGrid.pagination === size} value=${size} @click=${() => this.handlePaginationChange(size)}>${size.format()}</mo-menu-item>
+						<mo-menu-item icon='done' ?selected=${this.dataGrid.pageSize === size} @click=${() => this.handlePaginationChange(size)}>${size.format()}</mo-menu-item>
 					`)}
 				</mo-menu>
 			</mo-popover-container>
@@ -213,27 +218,11 @@ export class DataGridFooter<TData> extends Component {
 
 	private get exportTemplate() {
 		return !this.dataGrid.exportable ? html.nothing : html`
-			<style>
-				#export {
-					height: 21px;
-					width: 21px;
-					aspect-ratio: 1 / 1;
-					transition: .25s;
-					-webkit-filter: grayscale(100%);
-					filter: grayscale(100%);
-					cursor: pointer;
-				}
-
-				#export:hover {
-					-webkit-filter: grayscale(0%);
-					filter: grayscale(0%);
-				}
-			</style>
-			<img id='export'
-				src=${`data:image/svg+xml,${encodeURIComponent(excelSvg)}`}
-				${tooltip(t('Export current view to Excel'), TooltipPlacement.BlockStart)}
-				@click=${() => this.dataGrid.exportExcelFile()}
-			/>
+			<mo-icon-button dense icon='download_for_offline'
+				${tooltip(t('Export to Excel'), TooltipPlacement.BlockStart)}
+				${style({ color: 'var(--mo-color-green)', fontSize: '24px', opacity: this.dataGrid.isGenerating ? '0.5' : undefined })}
+				@click=${() => this.dataGrid.isGenerating ? undefined : this.dataGrid.exportExcelFile()}
+			></mo-icon-button>
 		`
 	}
 

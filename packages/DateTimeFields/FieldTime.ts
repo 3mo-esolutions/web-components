@@ -1,10 +1,22 @@
-import { component, html, style } from '@a11d/lit'
+import { component, html, property, style } from '@a11d/lit'
+import { Localizer } from '@3mo/localization'
 import { FieldText } from '@3mo/text-fields'
+
+Localizer.dictionaries.add('de', {
+	'Time': 'Uhrzeit',
+})
 
 // TODO: Migrate to Temporal.PlainTime
 
+/**
+ * @element mo-field-time
+ *
+ * @i18n "Time"
+ */
 @component('mo-field-time')
 export class FieldTime extends FieldText {
+	@property() override label = t('Time')
+
 	override get inputType() {
 		return 'time'
 	}

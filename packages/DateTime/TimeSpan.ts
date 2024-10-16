@@ -36,7 +36,7 @@ export class TimeSpan {
 	format(options?: Intl.RelativeTimeFormatOptions & { readonly language?: LanguageCode }) {
 		const { language, ...explicitOptions } = options ?? {}
 		const formatter = new Intl.RelativeTimeFormat(
-			language ?? Localizer.currentLanguage,
+			language ?? Localizer.languages.current,
 			explicitOptions ?? { style: 'long', numeric: 'auto' }
 		)
 		const format = (value: number, unit: Intl.RelativeTimeFormatUnit) => formatter.format(Math.sign(value) * Math.floor(Math.abs(value)), unit)

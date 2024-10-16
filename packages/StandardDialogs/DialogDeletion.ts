@@ -1,15 +1,20 @@
-import { component, type TemplateResult, html, css } from '@a11d/lit'
+import { component, html, css, ifDefined, type HTMLTemplateResult } from '@a11d/lit'
 import { DialogComponent, NotificationComponent } from '@a11d/lit-application'
 import { LocalStorage } from '@a11d/local-storage'
 import { Localizer } from '@3mo/localization'
+import { getContentTemplate, type DialogContent, type DialogSize } from '@3mo/dialog'
 
-Localizer.register('de', {
+Localizer.dictionaries.add('de', {
 	'Deletion Confirmation': 'Löschbestätigung',
 })
 
-type Parameters = {
-	readonly content: string | TemplateResult
-	deletionAction?: () => void | PromiseLike<void>
+interface Parameters {
+	readonly heading?: string
+	readonly content?: DialogContent<DialogDeletion>
+	readonly primaryButtonText?: string
+	readonly blocking?: boolean
+	readonly size?: DialogSize
+	deletionAction?: (this: DialogDeletion) => void | PromiseLike<void>
 }
 
 @component('mo-dialog-deletion')
@@ -19,7 +24,7 @@ export class DialogDeletion extends DialogComponent<Parameters> {
 	override async confirm() {
 		if (DialogDeletion.deletionConfirmation.value === false) {
 			try {
-				await this.parameters.deletionAction?.()
+				await this.parameters.deletionAction?.call(this)
 				return
 			} catch (e: any) {
 				NotificationComponent.notifyAndThrowError(e)
@@ -41,14 +46,20 @@ export class DialogDeletion extends DialogComponent<Parameters> {
 		`
 	}
 
-	protected override get template() {
+	protected override get template(): HTMLTemplateResult {
+		const { heading, primaryButtonText, blocking, size, content } = this.parameters
 		return html`
-			<mo-dialog heading=${t('Deletion Confirmation')} errorHandler='no-op'>
-				<mo-loading-button type='raised' slot='primaryAction'>${t('Delete')}</mo-loading-button>
-				${this.parameters.content}
+			<mo-dialog
+				heading=${heading ?? t('Deletion Confirmation')}
+				size=${ifDefined(size)}
+				?blocking=${blocking}
+				errorHandler='no-op'
+			>
+				<mo-loading-button type='raised' slot='primaryAction'>${primaryButtonText ?? t('Delete')}</mo-loading-button>
+				${getContentTemplate(this, content)}
 			</mo-dialog>
 		`
 	}
 
-	protected override primaryAction = () => this.parameters.deletionAction?.() ?? Promise.resolve()
+	protected override primaryAction = () => this.parameters.deletionAction?.call(this) ?? Promise.resolve()
 }

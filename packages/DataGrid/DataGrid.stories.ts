@@ -20,6 +20,7 @@ const generatePeople = (count: number) => {
 		'7234 Elmstraße, 21001 Berlin, Deutschland',
 		'9692 Elm Street, Springfield, NSW 62701, Australia',
 		'7792 Elm Street, London, England',
+		'1232 Elm Street, "P-432"'
 	]
 
 	return new Array(count).fill(0).map((_, i) => {
@@ -93,8 +94,8 @@ export const Selection: StoryObj = {
 export const ContextMenu: StoryObj = {
 	render: () => html`
 		<mo-data-grid .data=${hundredPeople} pagination='auto' selectionMode='multiple' style='height: 500px' .getRowContextMenuTemplate=${() => html`
-			<mo-context-menu-item>Item1</mo-context-menu-item>
-			<mo-context-menu-item>Item2</mo-context-menu-item>
+			<mo-context-menu-item>Item 1</mo-context-menu-item>
+			<mo-context-menu-item>Item 2</mo-context-menu-item>
 		`}>
 			${columnsTemplate}
 		</mo-data-grid>
@@ -106,8 +107,8 @@ export const StickyColumns: StoryObj = {
 		<mo-data-grid style='height: 500px' .data=${twentyPeople}
 		selectionMode='multiple'
 		.getRowContextMenuTemplate=${() => html`
-			<mo-context-menu-item>Item1</mo-context-menu-item>
-			<mo-context-menu-item>Item2</mo-context-menu-item>
+			<mo-context-menu-item>Item 1</mo-context-menu-item>
+			<mo-context-menu-item>Item 2</mo-context-menu-item>
 		`}>
 			<mo-data-grid-column-text sticky='start' heading='Name' width='200px' dataSelector='name'></mo-data-grid-column-text>
 			<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
@@ -167,6 +168,7 @@ export const RowDetails: StoryObj = {
 			.data=${fivePeople}
 			?multipleDetails=${multipleDetails}
 			?detailsOnClick=${detailsOnClick}
+			.hasDataDetail=${(p: Person) => p.age >= 18}
 			.getRowDetailsTemplate=${(p: Person) => Math.random() > 0.5 ? html`
 				<div style='margin: 10px; opacity: 0.5'>${p.name} details</div>
 			` : html`

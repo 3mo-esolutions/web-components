@@ -44,7 +44,6 @@ export class Symbol extends Component {
 		return font
 	}
 
-	// eslint-disable-next-line @typescript-eslint/ban-types
 	@property({ updated(this: Symbol) { FontImporter.import(Symbol.get(this.variant).url) } }) variant = Symbol.defaultVariant
 	@property() fill? = Symbol.defaultFill
 	@property() weight? = Symbol.defaultWeight
@@ -97,7 +96,6 @@ export class Symbol extends Component {
 
 declare global {
 	interface HTMLElementTagNameMap {
-		// eslint-disable-next-line @typescript-eslint/ban-types
 		'mo-symbol': Symbol
 	}
 }

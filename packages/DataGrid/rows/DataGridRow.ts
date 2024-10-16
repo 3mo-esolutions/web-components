@@ -1,4 +1,5 @@
 import { css, property, Component, html, query, queryAll, style, type HTMLTemplateResult, LitElement, live } from '@a11d/lit'
+import { equals } from '@a11d/equals'
 import { DirectionsByLanguage } from '@3mo/localization'
 import { popover } from '@3mo/popover'
 import { ContextMenu } from '@3mo/context-menu'
@@ -32,7 +33,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	}
 
 	getCell(column: DataGridColumn<TData, any>) {
-		return this.cells.find(cell => cell.column.equals(column))
+		return this.cells.find(cell => cell.column[equals](column))
 	}
 
 	override connected() {
@@ -62,7 +63,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	}
 
 	protected get hasDetails() {
-		return this.dataRecord.hasDetails
+		return this.dataGrid.detailsController.hasDetail(this.dataRecord)
 	}
 
 	static override get styles() {
@@ -74,13 +75,12 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				width: 100%;
 			}
 
-			:host(:hover), :host([data-has-alternating-background]:hover) {
-				#contentContainer {
-					--mo-data-grid-sticky-part-color: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-accent) 25%);
-				}
+			:host([data-has-alternating-background]:hover) #contentContainer {
+				--mo-data-grid-sticky-part-color: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-accent) 25%);
 			}
 
 			:host(:hover) #contentContainer {
+				--mo-data-grid-sticky-part-color: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-accent) 25%);
 				color: inherit;
 				background: var(--mo-color-accent-transparent) !important;
 			}
@@ -106,30 +106,21 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				cursor: pointer;
 			}
 
-			:host([selected]:not(:last-of-type)) #contentContainer:after {
-				content: '';
-				position: absolute;
-				bottom: 0;
-				inset-inline-start: 0;
-				width: 100%;
-				border-bottom: 1px solid var(--mo-color-gray-transparent);
-			}
-
 			#contextMenuIconButton {
 				opacity: 0.5;
 				color: var(--mo-color-gray);
 			}
 
-			:host([selected]), :host([data-context-menu-open]) {
-				#contentContainer {
-					background: var(--mo-data-grid-selection-background) !important;
-					--mo-data-grid-sticky-part-color: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-accent)) !important;
-				}
+			:host([selected]) #contentContainer,
+			:host([data-context-menu-open]) #contentContainer {
+				--mo-data-grid-sticky-part-color: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-accent)) !important;
+				background: var(--mo-data-grid-selection-background) !important;
+			}
 
-				#contextMenuIconButton {
-					color: currentColor;
-					opacity: 1;
-				}
+			:host([selected]) #contextMenuIconButton,
+			:host([data-context-menu-open]) #contextMenuIconButton {
+				color: currentColor;
+				opacity: 1;
 			}
 
 			#contentContainer:hover #contextMenuIconButton {
@@ -179,7 +170,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				@dblclick=${() => this.handleContentDoubleClick()}
 				@auxclick=${(e: PointerEvent) => e.button !== 1 ? void 0 : this.handleContentMiddleClick()}
 				${this.contextMenuTemplate === html.nothing ? html.nothing : popover(() => html`
-					<mo-context-menu @openChange=${(e: CustomEvent<boolean>) => this.toggleAttribute('data-context-menu-open', e.detail)}>
+					<mo-context-menu @openChange=${(e: CustomEvent<boolean>) => this.handleContextMenuOpenChange(e.detail)}>
 						${this.contextMenuTemplate}
 					</mo-context-menu>
 				`)}
@@ -203,7 +194,6 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 					<mo-icon-button id='detailsExpanderIconButton'
 						icon='keyboard_arrow_right'
 						?data-rtl=${DirectionsByLanguage.get() === 'rtl'}
-						?disabled=${this.dataRecord.hasDetails === false}
 						@click=${() => this.toggleDetails()}
 					></mo-icon-button>
 				`}
@@ -311,19 +301,23 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	}
 
 	async openContextMenu(event?: PointerEvent) {
-		if (!this.dataGrid.hasContextMenu) {
-			return
+		if (this.dataGrid.hasContextMenu) {
+			event?.stopPropagation()
+			this.content?.dispatchEvent(new MouseEvent('contextmenu', event))
+
+			// We need this only for testing environments, but should not be necessary.
+			this.handleContextMenuOpenChange(true)
+
+			await this.updateComplete
 		}
+	}
 
-		event?.stopPropagation()
+	protected handleContextMenuOpenChange(open: boolean) {
+		this.toggleAttribute('data-context-menu-open', open)
 
-		if (this.dataGrid.selectedData.includes(this.data) === false) {
+		if (this.dataRecord.isSelected === false) {
 			this.dataGrid.select(this.dataGrid.selectionMode !== DataGridSelectionMode.None ? [this.data] : [])
 		}
-
-		await this.updateComplete
-
-		this.content?.dispatchEvent(new MouseEvent('contextmenu', event))
 	}
 
 	private get contextMenuData() {

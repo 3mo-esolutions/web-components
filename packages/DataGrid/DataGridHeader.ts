@@ -5,15 +5,15 @@ import { Localizer } from '@3mo/localization'
 import { DataGridSelectionMode, DataGridSortingStrategy, type DataGridColumn, type DataGrid, DataGridSidePanelTab } from './index.js'
 import type { DataGridColumnsController } from './DataGridColumnsController.js'
 
-Localizer.register('en', {
-	'Options for ${count:pluralityNumber} selected entries': [
-		'Options for the selected entry',
-		'Options for ${count} selected entries',
+Localizer.dictionaries.add('en', {
+	'Actions for ${count:pluralityNumber} selected entries': [
+		'Actions for the selected entry',
+		'Actions for ${count} selected entries',
 	],
 })
 
-Localizer.register('de', {
-	'Options for ${count:pluralityNumber} selected entries': [
+Localizer.dictionaries.add('de', {
+	'Actions for ${count:pluralityNumber} selected entries': [
 		'Optionen für den ausgewählten Eintrag',
 		'Optionen für ${count} ausgewählte Einträge',
 	],
@@ -173,7 +173,7 @@ export class DataGridHeader<TData> extends Component {
 				${this.getResizeObserver('selectionColumnWidthInPixels')}
 			>
 				${this.dataGrid.selectionMode !== DataGridSelectionMode.Multiple ? html.nothing : html`
-					<mo-checkbox .selected=${live(this.selection)} @click=${this.toggleSelection}></mo-checkbox>
+					<mo-checkbox .selected=${live(this.selection)} @change=${this.handleSelectionChange}></mo-checkbox>
 				`}
 			</mo-flex>
 		`
@@ -190,13 +190,13 @@ export class DataGridHeader<TData> extends Component {
 		}
 	}
 
-	private readonly toggleSelection = (e: PointerEvent) => {
-		e.stopPropagation()
-		const selection = this.selection === 'indeterminate' ? false : !this.selection
-		if (selection === true) {
-			this.dataGrid.selectAll()
-		} else {
+	private readonly handleSelectionChange = (e: CustomEvent<CheckboxSelection>) => {
+		const previousSelection = this.selection
+		const selection = e.detail
+		if (previousSelection === 'indeterminate' || selection === false) {
 			this.dataGrid.deselectAll()
+		} else {
+			this.dataGrid.selectAll()
 		}
 	}
 

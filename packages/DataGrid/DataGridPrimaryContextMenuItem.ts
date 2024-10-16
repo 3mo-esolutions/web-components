@@ -7,7 +7,7 @@ export class DataGridPrimaryContextMenuItem extends ContextMenuItem {
 		return css`
 			${super.styles}
 			:host {
-				font-weight: bold;
+				font-weight: bold !important;
 			}
 		`
 	}

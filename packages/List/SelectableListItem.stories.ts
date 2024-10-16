@@ -13,17 +13,17 @@ export const Selectable: StoryObj = {
 	render: () => html`
 		<mo-card heading='Connectivity' style='--mo-card-body-padding: 0px'>
 			<mo-list>
-				<mo-selectable-list-item>
+				<mo-selectable-list-item toggleable>
 					<mo-icon style='opacity: 0.66' icon='wifi'></mo-icon>
 					WiFi
 				</mo-selectable-list-item>
 
-				<mo-selectable-list-item>
+				<mo-selectable-list-item toggleable>
 					<mo-icon style='opacity: 0.66' icon='bluetooth'></mo-icon>
 					Bluetooth
 				</mo-selectable-list-item>
 
-				<mo-selectable-list-item>
+				<mo-selectable-list-item toggleable>
 					<mo-icon style='opacity: 0.66' icon='nfc'></mo-icon>
 					NFC
 				</mo-selectable-list-item>

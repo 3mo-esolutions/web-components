@@ -1,4 +1,4 @@
-import { property, component, Component, html, css, query, ifDefined, type PropertyValues, event, style, literal, staticHtml, type HTMLTemplateResult, cache, eventOptions, queryAll, repeat, eventListener } from '@a11d/lit'
+import { property, component, Component, html, css, query, ifDefined, type PropertyValues, event, style, literal, staticHtml, type HTMLTemplateResult, cache, eventOptions, queryAll, repeat, eventListener, state } from '@a11d/lit'
 import { NotificationComponent } from '@a11d/lit-application'
 import { LocalStorage } from '@a11d/local-storage'
 import { InstanceofAttributeController } from '@3mo/instanceof-attribute-controller'
@@ -15,12 +15,12 @@ import { DataGridSortingController, type DataGridRankedSortDefinition, type Data
 import { DataGridDetailsController } from './DataGridDetailsController.js'
 import { CsvGenerator, DataGridSidePanelTab, type DataGridColumn, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, type DataGridSidePanel, DataGridContextMenuController } from './index.js'
 import { DataRecord } from './DataRecord.js'
+import { GenericDialog } from '@3mo/standard-dialogs'
 
-Localizer.register('de', {
+Localizer.dictionaries.add('de', {
 	'Exporting excel file': 'Die Excel-Datei wird exportiert',
 	'No results': 'Kein Ergebnis',
 	'More Filters': 'Weitere Filter',
-	'Deselect All': 'Alle deselektieren',
 })
 
 export type DataGridPagination = 'auto' | number
@@ -65,6 +65,7 @@ export enum DataGridEditability {
  *
  * @slot - Use this slot only for declarative DataGrid APIs e.g. setting ColumnDefinitions via `mo-data-grid-columns` tag.
  * @slot toolbar - The horizontal bar above DataGrid's contents.
+ * @slot toolbar-action - A slot for action icon-buttons in the toolbar which are displayed on the end.
  * @slot filter - A vertical bar for elements which filter DataGrid's data. It is opened through an icon-button in the toolbar.
  * @slot sum - A horizontal bar in the DataGrid's footer for showing sums. Calculated sums are also placed here by default.
  * @slot settings - A vertical bar for elements which change DataGrid's settings. It is pre-filled with columns' settings and can be opened through an icon-button in the toolbar.
@@ -97,6 +98,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	static readonly cellRelativeFontSize = new LocalStorage<number>('DataGrid.CellRelativeFontSize', 0.8)
 	static readonly pageSize = new LocalStorage<Exclude<DataGridPagination, 'auto'>>('DataGrid.PageSize', 25)
 	static readonly hasAlternatingBackground = new LocalStorage('DataGrid.HasAlternatingBackground', true)
+	protected static readonly defaultRowElementTag = literal`mo-data-grid-default-row`
 
 	@event() readonly dataChange!: EventDispatcher<Array<TData>>
 	@event() readonly selectionChange!: EventDispatcher<Array<TData>>
@@ -171,6 +173,8 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	@queryAll('[mo-data-grid-row]') readonly rows!: Array<DataGridRow<TData, TDetailsElement>>
 	@query('mo-data-grid-footer') private readonly footer?: DataGridFooter<TData>
 	@query('mo-data-grid-side-panel') private readonly sidePanel?: DataGridSidePanel<TData>
+
+	@state() isGenerating = false
 
 	setPage(page: number) {
 		this.page = page
@@ -248,6 +252,14 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		return this.columnsController.extractColumns(...parameters)
 	}
 
+	get extractedColumns() {
+		return this.columnsController.extractedColumns
+	}
+
+	extractedColumnsUpdated(extractedColumns: Array<DataGridColumn<TData, TDetailsElement>>) {
+		this.setColumns(extractedColumns)
+	}
+
 	get visibleColumns() {
 		return this.columnsController.visibleColumns
 	}
@@ -276,13 +288,53 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		!tab ? this.sidePanelClose.dispatch() : this.sidePanelOpen.dispatch(tab)
 	}
 
-	exportExcelFile() {
+	async exportExcelFile() {
+		let progress = 0
+
+		const dataGrid = this
+
 		try {
-			CsvGenerator.generate(this)
-			NotificationComponent.notifyInfo(t('Exporting excel file'))
+			this.isGenerating = true
+
+			let didGenerate = false
+
+			await new GenericDialog({
+				heading: t('Exporting excel file'),
+				primaryButtonText: '',
+				secondaryButtonText: '',
+				content() {
+					const dialog = this.renderRoot.querySelector('mo-dialog')
+
+					if (dialog) {
+						dialog.primaryOnEnter = false
+					}
+
+					const progressChanged = (currentProgress: number) => {
+						progress = Math.min(Math.max(currentProgress, 0.05), 0.03)
+						if (progress === 1) {
+							setTimeout(() => this['close'](), 1000)
+						} else {
+							this.requestUpdate()
+						}
+					}
+
+					if (!didGenerate) {
+						didGenerate = true
+						CsvGenerator.generate(dataGrid, progressChanged)
+					}
+
+					return html`
+						<mo-flex alignItems='center' justifyContent='center'>
+							<mo-circular-progress  .progress=${progress === 0 ? undefined : progress}></mo-circular-progress>
+						</mo-flex>
+					`
+				}
+			}).confirm()
 		} catch (error: any) {
 			NotificationComponent.notifyError(error.message)
 			throw error
+		} finally {
+			this.isGenerating = false
 		}
 	}
 
@@ -449,11 +501,9 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			}
 
 			:host([preventVerticalContentScroll]) mo-scroller {
-				mo-scroller {
-					overflow-y: hidden;
-				}
+				overflow-y: hidden;
 
-				mo-scroller::part(container) {
+				&::part(container) {
 					position: relative;
 				}
 			}
@@ -477,15 +527,11 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				position: relative;
 				padding: var(--mo-data-grid-toolbar-padding);
 
-				mo-icon-button {
-					align-self: flex-start;
-					color: var(--mo-color-gray);
-				}
-
 				#actions {
-					mo-icon-button {
-						color: var(--mo-color-gray);
+					margin-inline-start: auto;
 
+					mo-icon-button, ::slotted(mo-icon-button[slot='toolbar-action']) {
+						color: var(--mo-color-gray);
 						&[data-selected] {
 							color: var(--mo-color-accent);
 						}
@@ -608,7 +654,11 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}
 
 	protected get rowElementTag() {
-		return literal`mo-data-grid-default-row`
+		return DataGrid.defaultRowElementTag
+	}
+
+	get hasDefaultRowElements() {
+		return this.rowElementTag === DataGrid.defaultRowElementTag
 	}
 
 	protected get fabTemplate() {
@@ -696,12 +746,10 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	protected get toolbarTemplate() {
 		return this.hasToolbar === false ? html.nothing : html`
-			<mo-flex id='toolbar' direction='horizontal' gap='8px' wrap='wrap' justifyContent='end' alignItems='center'>
-				<mo-flex direction='horizontal' alignItems='inherit' gap='8px' wrap='wrap' ${style({ flex: '1' })}>
-					<slot name='toolbar'>${this.toolbarDefaultTemplate}</slot>
-				</mo-flex>
-				<mo-flex id='actions' direction='horizontal' gap='8px'>
-					<slot name='toolbarAction'>${this.toolbarActionDefaultTemplate}</slot>
+			<mo-flex id='toolbar' direction='horizontal' gap='8px' wrap='wrap' alignItems='center'>
+				<slot name='toolbar'>${this.toolbarDefaultTemplate}</slot>
+				<mo-flex id='actions' direction='horizontal' gap='8px' alignContent='center'>
+					<slot name='toolbar-action'>${this.toolbarActionDefaultTemplate}</slot>
 					${this.toolbarActionsTemplate}
 				</mo-flex>
 			</mo-flex>
@@ -738,7 +786,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		`
 	}
 
-	// eslint-disable-next-line @typescript-eslint/member-ordering
 	private lastScrollElementTop = 0
 	@eventOptions({ passive: true })
 	private handleScroll(e: Event) {
@@ -763,10 +810,10 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		this.rows.forEach(row => row.cells.forEach(cell => cell.handlePointerDown(event)))
 	}
 
-	private *getFlattenedData(): Generator<DataRecord<TData>, void, undefined> {
+	*flattenData(values = this.data): Generator<DataRecord<TData>, void, undefined> {
 		if (!this.subDataGridDataSelector) {
 			yield* this.sortingController.toSortedBy(
-				this.data.map((data, index) => new DataRecord(this, { level: 0, index, data })),
+				values.map((data, index) => new DataRecord(this, { level: 0, index, data })),
 				({ data }) => data,
 			)
 			return
@@ -787,7 +834,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			]
 		}
 
-		for (const data of this.sortingController.toSorted(this.data)) {
+		for (const data of this.sortingController.toSorted(values)) {
 			yield* flatten(data)
 		}
 
@@ -795,7 +842,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}
 
 	get dataRecords(): Array<DataRecord<TData>> {
-		return [...this.getFlattenedData()]
+		return [...this.flattenData()]
 			.map((record, index) => {
 				// @ts-expect-error index is initialized here
 				record.index = index

@@ -103,9 +103,13 @@ export class Popover extends Component {
 			return
 		}
 
-		if (this.open && e.composedPath().includes(this) === false) {
+		const composedPath = e.composedPath()
+		if (this.open && composedPath.includes(this) === false) {
 			e.stopPropagation()
 			this.setOpen(false)
+			if (this.anchor && composedPath.includes(this.anchor)) {
+				return
+			}
 		}
 
 		const shouldOpen = this.shouldOpen ?? Popover.shouldOpen.bind(this)

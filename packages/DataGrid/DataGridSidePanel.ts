@@ -4,13 +4,12 @@ import { tooltip } from '@3mo/tooltip'
 import { type DataGridColumn } from './DataGridColumn.js'
 import { type DataGrid } from './DataGrid.js'
 
-Localizer.register('de', {
+Localizer.dictionaries.add('de', {
 	'Settings': 'Einstellungen',
 	'Extended Filters': 'Weitere Filter',
 	'Columns': 'Spalten',
 	'Font Size': 'Schriftgröße',
 	'Row Height': 'Zeilenhöhe',
-	'Tools': 'Tools',
 	'Design': 'Design',
 })
 

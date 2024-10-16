@@ -1,4 +1,4 @@
-import { html, property, css, event, component, live, query, eventListener, state, ifDefined } from '@a11d/lit'
+import { html, property, css, event, component, live, query, eventListener, state, ifDefined, type PropertyValues } from '@a11d/lit'
 import { FieldComponent } from '@3mo/field'
 import type { ListItem } from '@3mo/list'
 import type { Menu } from '@3mo/menu'
@@ -25,6 +25,8 @@ import { Option } from './Option.js'
  *
  * @csspart input - The input element.
  * @csspart dropDownIcon - The dropdown icon.
+ *
+ * @i18n "No results"
  *
  * @fires change
  * @fires input
@@ -62,6 +64,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 
 	@query('input#value') readonly valueInputElement!: HTMLInputElement
 	@query('input#search') readonly searchInputElement?: HTMLInputElement
+	@query('mo-menu') readonly menu?: Menu
 
 	override get isPopulated() {
 		const valueNotNullOrEmpty = ['', undefined, null].includes(this.value as any) === false
@@ -75,8 +78,6 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 		return this.dense
 	}
 
-	@query('mo-menu') readonly menu?: Menu
-
 	get listItems() { return (this.menu?.list?.items ?? []) as Array<ListItem> }
 	get options() { return this.listItems.filter(i => i instanceof Option) as Array<Option<T>> }
 	get selectedOptions() { return this.options.filter(o => o.selected) }
@@ -85,6 +86,17 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 
 	protected override get isActive() {
 		return super.isActive || this.open
+	}
+
+	protected get showNoOptionsHint() {
+		return this.searchable && !this.freeInput && !!this.searchString && !this.default &&
+			!this.options.filter(o => !o.hasAttribute('data-search-no-match')).length
+	}
+
+	protected override updated(props: PropertyValues) {
+		super.updated(props)
+		this.style.setProperty('--mo-field-width', this.offsetWidth + 'px')
+		this.toggleAttribute('data-show-no-options-hint', this.showNoOptionsHint)
 	}
 
 	static override get styles() {
@@ -118,16 +130,27 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 				overflow-y: auto;
 				scrollbar-width: thin;
 				color: var(--mo-color-foreground);
+				min-width: var(--mo-field-width);
 			}
 
 			mo-list-item {
-				min-width: var(--mo-field-width);
+				min-height: 40px;
 			}
 
 			slot:not([name]) {
 				display: flex;
 				flex-direction: column;
 				align-items: stretch;
+			}
+
+			#no-options-hint {
+				display: none;
+				padding: 10px;
+				color: var(--mo-color-gray);
+			}
+
+			:host([data-show-no-options-hint]) #no-options-hint {
+				display: block;
 			}
 		`
 	}
@@ -140,15 +163,9 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 	}
 
 	protected override get inputTemplate() {
-		if (this.freeInput) {
-			return this.searchInputTemplate
-		}
-
-		if (this.searchable && this.focusController.focused) {
-			return this.searchInputTemplate
-		}
-
-		return this.valueInputTemplate
+		return this.freeInput || this.searchable
+			? this.searchInputTemplate
+			: this.valueInputTemplate
 	}
 
 	private get valueInputTemplate() {
@@ -180,11 +197,10 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 	}
 
 	protected override get endSlotTemplate() {
-		this.style.setProperty('--mo-field-width', this.offsetWidth + 'px')
 		return html`
 			${this.clearIconButtonTemplate}
 			${super.endSlotTemplate}
-			<mo-icon slot='end' part='dropDownIcon' icon='expand_more'></mo-icon>
+			<mo-icon slot='end' part='dropDownIcon' icon='unfold_more'></mo-icon>
 		`
 	}
 
@@ -219,6 +235,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 				@change=${(e: CustomEvent<Array<number>>) => this.handleSelection(e.detail)}
 				@itemsChange=${() => this.handleItemsChange()}
 			>
+				${this.noResultsOptionTemplate}
 				${this.defaultOptionTemplate}
 				${this.optionsTemplate}
 			</mo-menu>
@@ -231,11 +248,18 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 		`
 	}
 
+	protected get noResultsOptionTemplate() {
+		return html`
+			<div id='no-options-hint'>${t('No results')}</div>
+		`
+	}
+
 	protected get defaultOptionTemplate() {
 		return !this.default ? html.nothing : html`
 			<mo-list-item value='' @click=${() => this.handleSelection([])}>
 				${this.default}
 			</mo-list-item>
+			<mo-line></mo-line>
 		`
 	}
 
@@ -247,6 +271,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 
 	requestValueUpdate() {
 		this.options.forEach(o => o.selected = o.index !== undefined && this.valueController.menuValue.includes(o.index))
+		this.searchString ??= this.valueToInputValue(this.value) || undefined
 	}
 
 	protected valueToInputValue(value: Value) {
@@ -260,9 +285,6 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 
 	protected override async handleFocus(bubbled: boolean, method: FocusMethod) {
 		super.handleFocus(bubbled, method)
-		if (method === 'pointer') {
-			this.open = true
-		}
 		await this.updateComplete
 		this.searchInputElement?.focus()
 		this.searchInputElement?.select()

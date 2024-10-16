@@ -17,7 +17,7 @@ export default {
 	package: p,
 } as Meta
 
-export const Text: StoryObj = {
+export const FieldText: StoryObj = {
 	render: ({ label, required, disabled, dense, readonly, value }) => html`
 		<mo-field-text label=${label} ?required=${required} ?disabled=${disabled} ?readonly=${readonly} ?dense=${dense} value=${value}></mo-field-text>
 	`
@@ -38,4 +38,19 @@ export const StartAndEndSlots: StoryObj = {
 			<span slot='end'>/gm</span>
 		</mo-field-text>
 	`
+}
+
+export const WithTextAlignEnd: StoryObj = {
+	render: ({ required, disabled, dense, readonly, value }) => html`
+		<mo-field-text label='Text Align End' ?required=${required} ?disabled=${disabled} ?readonly=${readonly} ?dense=${dense} value=${value} style='text-align: end'>
+			<span slot='start' @click=${(e: Event) => setTextAlign(e, 'start')}>⬅️</span>
+			<span slot='end' @click=${(e: Event) => setTextAlign(e, 'end')}>➡️</span>
+		</mo-field-text>
+	`
+}
+
+const setTextAlign = (e: Event, textAlign: 'start' | 'end') => {
+	const field = (e.target as HTMLElement)!.closest('mo-field-text')!
+	field.style.textAlign = textAlign
+	field.renderRoot.querySelector('mo-field')?.requestUpdate()
 }

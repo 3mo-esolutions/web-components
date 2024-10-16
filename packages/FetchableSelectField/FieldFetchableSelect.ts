@@ -91,6 +91,10 @@ export class FieldFetchableSelect<T, TDataFetcherParameters extends FieldFetchab
 		return this.fetcherController.fetch()
 	}
 
+	protected override get showNoOptionsHint() {
+		return super.showNoOptionsHint && !this.fetcherController.isFetching
+	}
+
 	protected override get optionsTemplate() {
 		return html`
 			${super.optionsTemplate}

@@ -4,7 +4,7 @@ import { Localizer } from '@3mo/localization'
 import { tooltip } from '@3mo/tooltip'
 import { DataGridColumnComponent } from './DataGridColumnComponent.js'
 
-Localizer.register('de', {
+Localizer.dictionaries.add('de', {
 	'Delete position': 'Position entfernen'
 })
 

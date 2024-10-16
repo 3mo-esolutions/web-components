@@ -10,6 +10,7 @@ export default {
 	package: p,
 } as Meta
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface Language extends LanguageBase { }
 
 class StoryLanguageField extends LanguageFieldBase<string, Language> {

@@ -11,6 +11,6 @@ export default {
 
 export const Pdf: StoryObj = {
 	render: () => html`
-		<mo-pdf style='height: 600px' source='https://www.africau.edu/images/default/sample.pdf'></mo-pdf>
+		<mo-pdf style='height: 600px' source='https://pdfobject.com/pdf/sample.pdf'></mo-pdf>
 	`
 }
