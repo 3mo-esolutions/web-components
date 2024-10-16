@@ -142,31 +142,31 @@ export class Dialog extends Component implements IDialog {
 			:host([boundToWindow]) {
 				--mo-dialog-default-scrim-color: var(--mo-color-background);
 				--_margin-alteration: calc(-1 * max(min(1rem, 1vw), min(1rem, 1vh)));
+			}
 
-				md-dialog::part(dialog) {
-					max-height: 100vh !important;
-					max-height: 100dvh !important;
-					max-width: 100vw !important;
-				}
+			:host([boundToWindow]) md-dialog::part(dialog) {
+				max-height: 100vh !important;
+				max-height: 100dvh !important;
+				max-width: 100vw !important;
+			}
 
-				mo-page {
-					--mo-page-gap: 0;
-				}
+			:host([boundToWindow]) mo-page {
+				--mo-page-gap: 0;
+			}
 
-				#content {
-					margin-inline: var(--_margin-alteration);
-				}
+			:host([boundToWindow]) #content {
+				margin-inline: var(--_margin-alteration);
+			}
 
-				#footer {
-					position: sticky;
-					inset-block-end: 0;
-					inset-inline: 0;
-					background: var(--mo-color-background);
-					border-block-start: 1px solid var(--mo-color-transparent-gray-3);
-					margin-inline: var(--_margin-alteration);
-					margin-block-end: var(--_margin-alteration);
-					z-index: 10;
-				}
+			:host([boundToWindow]) #footer {
+				position: sticky;
+				inset-block-end: 0;
+				inset-inline: 0;
+				background: var(--mo-color-background);
+				border-block-start: 1px solid var(--mo-color-transparent-gray-3);
+				margin-inline: var(--_margin-alteration);
+				margin-block-end: var(--_margin-alteration);
+				z-index: 10;
 			}
 
 			:host([boundToWindow][size=large]) md-dialog {
