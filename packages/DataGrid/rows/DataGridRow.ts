@@ -75,13 +75,12 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				width: 100%;
 			}
 
-			:host(:hover), :host([data-has-alternating-background]:hover) {
-				#contentContainer {
-					--mo-data-grid-sticky-part-color: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-accent) 25%);
-				}
+			:host([data-has-alternating-background]:hover) #contentContainer {
+				--mo-data-grid-sticky-part-color: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-accent) 25%);
 			}
 
 			:host(:hover) #contentContainer {
+				--mo-data-grid-sticky-part-color: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-accent) 25%);
 				color: inherit;
 				background: var(--mo-color-accent-transparent) !important;
 			}
@@ -121,16 +120,16 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				color: var(--mo-color-gray);
 			}
 
-			:host([selected]), :host([data-context-menu-open]) {
-				#contentContainer {
-					background: var(--mo-data-grid-selection-background) !important;
-					--mo-data-grid-sticky-part-color: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-accent)) !important;
-				}
+			:host([selected]) #contentContainer,
+			:host([data-context-menu-open]) #contentContainer {
+				--mo-data-grid-sticky-part-color: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-accent)) !important;
+				background: var(--mo-data-grid-selection-background) !important;
+			}
 
-				#contextMenuIconButton {
-					color: currentColor;
-					opacity: 1;
-				}
+			:host([selected]) #contextMenuIconButton,
+			:host([data-context-menu-open]) #contextMenuIconButton {
+				color: currentColor;
+				opacity: 1;
 			}
 
 			#contentContainer:hover #contextMenuIconButton {
