@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/field",
-	"version": "0.2.7",
+	"version": "0.2.8-preview.0",
 	"description": "A set of field web components.",
 	"repository": {
 		"type": "git",
