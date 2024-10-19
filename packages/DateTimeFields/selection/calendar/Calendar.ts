@@ -1,22 +1,47 @@
-import { Component, css, component, html, property, classMap, type ClassInfo, state } from '@a11d/lit'
+import { Component, css, component, html, property, classMap, type ClassInfo, state, style, type HTMLTemplateResult } from '@a11d/lit'
 import '@a11d/array.prototype.group'
 import { MemoizeExpiring as memoizeExpiring } from 'typescript-memoize'
+import { Temporal } from 'temporal-polyfill'
+
+type CalendarMonth = {
+	readonly month: Temporal.PlainYearMonth
+	readonly days: DateTime[]
+}
 
 @component('mo-calendar')
 export class Calendar extends Component {
+	private static * rangeOf(start: DateTime, end: DateTime) {
+		start = start.dayStart
+		while (!start.isAfter(end)) {
+			yield start
+			start = start.add({ days: 1 })
+		}
+	}
+
+	private group(dates: DateTime[]): CalendarMonth[] {
+		return dates.reduce((array, item) => {
+			const month = Temporal.PlainYearMonth.from(item)
+			const last = array[array.length - 1]
+			if (last && last.month.equals(month)) {
+				last.days.push(item)
+			} else {
+				array.push({ month, days: [item] })
+			}
+			return array
+		}, [] as CalendarMonth[])
+	}
+
 	@property({ type: Boolean, reflect: true }) includeWeekNumbers = false
 	@property({
 		type: Object,
 		updated(this: Calendar) {
-			const start = this.navigatingValue.monthStart.weekStart
-			const end = this.navigatingValue.monthEnd.weekEnd
-			const range = [...this.rangeOf(start, end)]
-			this.days = [...range.groupToMap(d => String(d.weekOfYear))]
-				.sort(([, dates1], [, dates2]) => dates1[0]?.isBefore(dates2[0]!) ? -1 : +1)
+			const start = this.navigatingValue.subtract({ months: 3 }).monthStart
+			const end = this.navigatingValue.add({ months: 3 }).monthEnd
+			this.months = this.group([...Calendar.rangeOf(start, end)])
 		}
 	}) navigatingValue = new DateTime
 
-	@state() private days = new Array<[weekNumber: string, days: Array<DateTime>]>()
+	@state() private months: CalendarMonth[] = []
 
 	static override get styles() {
 		return css`
@@ -26,9 +51,28 @@ export class Calendar extends Component {
 				padding-inline: 10px;
 			}
 
+			mo-scroller {
+				height: 288px;
+
+				&::part(container) {
+					position: relative;
+					display: grid;
+					grid-template-columns: repeat(7, var(--mo-calendar-day-size));
+				}
+			}
+
+			:host([includeWeekNumbers]) mo-scroller::part(container) {
+				grid-template-columns: var(--mo-calendar-week-number-width) repeat(7, var(--mo-calendar-day-size));
+			}
+
 			.month {
-				min-height: 270px;
+				display: grid;
+				grid-column: 1 / -1;
+				grid-template-columns: subgrid;
+				grid-template-rows: auto repeat(auto-fill, var(--mo-calendar-day-size));
 				place-items: center;
+				scroll-snap-align: start;
+				scroll-snap-stop: always;
 
 				.heading {
 					font-weight: 500;
@@ -37,7 +81,9 @@ export class Calendar extends Component {
 					place-self: stretch;
 					display: flex;
 					align-items: center;
-					margin-inline-start: 6px;
+					padding-inline-start: 6px;
+					padding-block-start: 18px;
+					padding-block-end: 12px;
 				}
 
 				.header {
@@ -67,10 +113,6 @@ export class Calendar extends Component {
 					background: var(--mo-color-transparent-gray-3);
 				}
 
-				&:not(.isInMonth) {
-					color: var(--mo-color-gray);
-				}
-
 				&.today {
 					outline: 2px dashed var(--mo-color-gray-transparent);
 				}
@@ -84,13 +126,18 @@ export class Calendar extends Component {
 
 	protected override get template() {
 		return html`
-			<mo-grid class='month'
-				rows='repeat(auto-fill, var(--mo-calendar-day-size))'
-				columns=${this.includeWeekNumbers ? 'var(--mo-calendar-week-number-width) repeat(7, var(--mo-calendar-day-size))' : 'repeat(7, var(--mo-calendar-day-size))'}
-			>
+			<mo-scroller snapType='y mandatory'>
+				${this.months.map(month => this.getMonthTemplate(month))}
+			</mo-scroller>
+		`
+	}
+
+	private getMonthTemplate(month: CalendarMonth) {
+		return html`
+			<div class='month'>
 				<div class='heading' style='grid-column: 1 / -1'>
-					${this.navigatingValue.format({ year: 'numeric' })}
-					${this.navigatingValue.format({ month: 'long' })}
+					${month.days[0]?.format({ year: 'numeric' })}
+					${month.days[0]?.format({ month: 'long' })}
 				</div>
 
 				${this.includeWeekNumbers === false ? html.nothing : html`<div></div>`}
@@ -101,24 +148,21 @@ export class Calendar extends Component {
 					</div>
 				`)}
 
-				${this.days.map(([weekNumber, days]) => html`
-					${this.includeWeekNumbers === false ? html.nothing : html`<div class='week'>${weekNumber}</div>`}
-					${days.map(day => this.getDayTemplate(day))}
-				`)}
-			</mo-grid>
+				${month.days.map(day => this.getDayTemplate(day))}
+			</div>
 		`
-	}
-
-	private * rangeOf(start: DateTime, end: DateTime) {
-		while (!start.isAfter(end)) {
-			yield start
-			start = start.add({ days: 1 })
-		}
 	}
 
 	protected getDayTemplate(day: DateTime) {
 		return html`
-			<mo-flex tabindex='0' class=${classMap(this.getDayElementClasses(day))} @click=${() => this.handleDayClick(day)}>
+			${!this.includeWeekNumbers || day.dayOfWeek !== 1 ? html.nothing : html`
+				<div class='week'>${day.weekOfYear}</div>
+			`}
+			<mo-flex tabindex='0'
+				class=${classMap(this.getDayElementClasses(day))}
+				@click=${() => this.handleDayClick(day)}
+				${style({ gridColumn: day.dayOfWeek })}
+			>
 				${day.format({ day: 'numeric' })}
 			</mo-flex>
 		`
@@ -135,7 +179,6 @@ export class Calendar extends Component {
 		return {
 			day: true,
 			today: this.now.year === day.year && this.now.month === day.month && this.now.day === day.day,
-			isInMonth: day.month === this.navigatingValue.month
 		}
 	}
 }
