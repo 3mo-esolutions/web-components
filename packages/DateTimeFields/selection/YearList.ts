@@ -10,12 +10,12 @@ export class YearList extends DateList {
 		.map((_, i) => this.nowYear - 100 + i)
 
 	protected override get listItemsTemplate() {
-		const now = this.now
 		return html`
 			${this.years.map(year => html`
 				<mo-selectable-list-item
 					?selected=${this.value?.year === year}
-					?data-now=${now.year === year}
+					?data-navigating=${this.navigatingValue.year === year}
+					@navigate=${() => this.navigate.dispatch(this.navigatingValue.with({ year }))}
 					@change=${(e: SelectionListItemChangeEvent<void>) => !e.selected ? void 0 : this.change.dispatch((this.value ?? new DateTime).with({ year }))}
 				>${year.format()}</mo-selectable-list-item>
 			`)}

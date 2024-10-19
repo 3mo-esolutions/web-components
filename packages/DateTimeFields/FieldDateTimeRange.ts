@@ -29,13 +29,17 @@ enum FieldDateRangeSelection {
  */
 @component('mo-field-date-time-range')
 export class FieldDateTimeRange extends FieldDateTimeBase<DateTimeRange | undefined> {
-	protected get navigatingDate() { return (this.selection === FieldDateRangeSelection.Start ? this.value?.start : this.value?.end) ?? new DateTime() }
-
 	protected get selectedDate() { return this.selection === FieldDateRangeSelection.Start ? this.value?.start : this.value?.end }
 
 	@property() override label = t('Period')
 	@property() selection = FieldDateRangeSelection.Start
 	@property({ type: Object }) value?: DateTimeRange
+
+	protected resetNavigatingDate() {
+		this.navigatingDate = this.selection === FieldDateRangeSelection.Start
+			? this.value?.start ?? this.navigatingDate
+			: this.value?.end ?? this.navigatingDate
+	}
 
 	static override get styles() {
 		return css`
@@ -49,10 +53,9 @@ export class FieldDateTimeRange extends FieldDateTimeBase<DateTimeRange | undefi
 
 			mo-tab {
 				--mdc-tab-height: 40px;
-			}
-
-			mo-tab:not([active]) {
-				opacity: 0.5;
+				&:not([active]) {
+					opacity: 0.5;
+				}
 			}
 		`
 	}
@@ -90,7 +93,7 @@ export class FieldDateTimeRange extends FieldDateTimeBase<DateTimeRange | undefi
 	private get startEndTabBarTemplate() {
 		return html`
 			<mo-flex>
-				<mo-tab-bar ${bind(this, 'selection')}>
+				<mo-tab-bar ${bind(this, 'selection', { sourceUpdated: () => this.resetNavigatingDate() })}>
 					<mo-tab value=${FieldDateRangeSelection.Start}>${t('Start')}</mo-tab>
 					<mo-tab value=${FieldDateRangeSelection.End}>${t('End')}</mo-tab>
 				</mo-tab-bar>

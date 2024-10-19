@@ -26,7 +26,8 @@ export class MonthList extends DateList {
 			${this.monthNames.map(([month, name]) => html`
 				<mo-selectable-list-item
 					?selected=${this.value?.month === month}
-					?data-now=${this.now.month === month}
+					?data-navigating=${this.navigatingValue.month === month}
+					@navigate=${() => this.navigate.dispatch(this.navigatingValue.with({ month }))}
 					@change=${(e: SelectionListItemChangeEvent<void>) => !e.selected ? void 0 : this.change.dispatch((this.value ?? new DateTime).with({ month }))}
 				>${name}</mo-selectable-list-item>
 			`)}

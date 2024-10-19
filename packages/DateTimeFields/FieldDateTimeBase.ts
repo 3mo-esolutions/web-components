@@ -1,7 +1,7 @@
 
-import { type HTMLTemplateResult, cache, css, html, live, property, style, bind } from '@a11d/lit'
+import { type HTMLTemplateResult, cache, css, html, live, property, style, bind, state } from '@a11d/lit'
 import { InputFieldComponent } from '@3mo/field'
-import type { MaterialIcon } from '@3mo/icon'
+import { type MaterialIcon } from '@3mo/icon'
 
 export enum FieldDateTimePrecision {
 	Year = 'year',
@@ -46,11 +46,11 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	@property({ type: Object }) shortcutReferenceDate = new DateTime
 	@property() precision = FieldDateTimePrecision.Minute
 
+	@state() navigatingDate = new DateTime()
+
 	private lastValue?: T
 
 	protected readonly calendarIconButtonIcon: MaterialIcon = 'today'
-
-	protected abstract get navigatingDate(): DateTime
 
 	protected abstract get selectedDate(): DateTime | undefined
 
@@ -89,6 +89,13 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 			.with({ day: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Day) ? date.daysInMonth : date.day })
 			.with({ hour: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Hour) ? date.hoursInDay : date.hour })
 	}
+
+	protected override valueUpdated() {
+		super.valueUpdated()
+		this.resetNavigatingDate()
+	}
+
+	protected abstract resetNavigatingDate(): void
 
 	protected override handleChange(value?: T, e?: Event) {
 		super.handleChange(value, e)
@@ -214,7 +221,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	private get yearListTemplate() {
 		return html`
 			<mo-year-list
-				.navigatingValue=${this.navigatingDate}
+				.navigatingValue=${bind(this, 'navigatingDate')}
 				.value=${this.selectedDate}
 				@change=${(e: CustomEvent<DateTime>) => this.handleSelectedDateChange(e.detail, FieldDateTimePrecision.Year)}
 			></mo-year-list>
@@ -224,7 +231,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	private get monthListTemplate() {
 		return [FieldDateTimePrecision.Year].includes(this.precision) ? html.nothing : html`
 			<mo-month-list
-				.navigatingValue=${this.navigatingDate}
+				.navigatingValue=${bind(this, 'navigatingDate')}
 				.value=${this.selectedDate}
 				@change=${(e: CustomEvent<DateTime>) => this.handleSelectedDateChange(e.detail, FieldDateTimePrecision.Month)}
 			></mo-month-list>
@@ -256,7 +263,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	private get hourListTemplate() {
 		return html`
 			<mo-hour-list style='flex: 1'
-				.navigatingValue=${this.navigatingDate}
+				.navigatingValue=${bind(this, 'navigatingDate')}
 				.value=${this.selectedDate}
 				@change=${(e: CustomEvent<DateTime>) => this.handleSelectedDateChange(e.detail, FieldDateTimePrecision.Hour)}
 			></mo-hour-list>
@@ -266,7 +273,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	private get minuteListTemplate() {
 		return [FieldDateTimePrecision.Hour].includes(this.precision) ? html.nothing : html`
 			<mo-minute-list style='flex: 1'
-				.navigatingValue=${this.navigatingDate}
+				.navigatingValue=${bind(this, 'navigatingDate')}
 				.value=${this.selectedDate}
 				@change=${(e: CustomEvent<DateTime>) => this.handleSelectedDateChange(e.detail, FieldDateTimePrecision.Minute)}
 			></mo-minute-list>
@@ -276,7 +283,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	private get secondListTemplate() {
 		return [FieldDateTimePrecision.Hour, FieldDateTimePrecision.Minute].includes(this.precision) ? html.nothing : html`
 			<mo-second-list style='flex: 1'
-				.navigatingValue=${this.navigatingDate}
+				.navigatingValue=${bind(this, 'navigatingDate')}
 				.value=${this.selectedDate}
 				@change=${(e: CustomEvent<DateTime>) => this.handleSelectedDateChange(e.detail, FieldDateTimePrecision.Second)}
 			></mo-second-list>

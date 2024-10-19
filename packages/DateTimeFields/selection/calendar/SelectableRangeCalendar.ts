@@ -11,30 +11,31 @@ export class SelectableRangeCalendar extends SelectableCalendar {
 		return css`
 			${super.styles}
 
-			.day.isInRange:not(.selected) {
-				background: color-mix(in srgb, var(--mo-color-accent), transparent 92%);
-			}
+			.day {
+				&.isInRange {
+					border-radius: 0px;
+					&:not(.selected) {
+						background: color-mix(in srgb, var(--mo-color-accent), transparent 92%);
+					}
+				}
 
-			.day.isInRange {
-				border-radius: 0px;
-			}
+				&.selected {
+					&.first {
+						border-radius: 100px;
+						border-start-start-radius: 100px;
+						border-start-end-radius: 0;
+						border-end-start-radius: 100px;
+						border-end-end-radius: 0;
+					}
 
-			.day.selected.first {
-				border-start-start-radius: 100px;
-				border-start-end-radius: 0;
-				border-end-start-radius: 100px;
-				border-end-end-radius: 0;
-			}
-
-			.day.selected.last {
-				border-start-start-radius: 0;
-				border-start-end-radius: 100px;
-				border-end-start-radius: 0;
-				border-end-end-radius: 100px;
-			}
-
-			.day.selected.first.last {
-				border-radius: 100px;
+					&.last {
+						border-radius: 100px;
+						border-start-start-radius: 0;
+						border-start-end-radius: 100px;
+						border-end-start-radius: 0;
+						border-end-end-radius: 100px;
+					}
+				}
 			}
 		`
 	}
