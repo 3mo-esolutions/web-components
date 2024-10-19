@@ -37,6 +37,7 @@ export abstract class FieldComponent<T> extends Component {
 
 	@state() private focused = false
 	@state() protected inputValue?: T
+	@state() private dirty = false
 
 	protected readonly slotController = new SlotController(this)
 	protected readonly focusController = new FocusController(this, {
@@ -115,8 +116,9 @@ export abstract class FieldComponent<T> extends Component {
 				?readonly=${this.readonly}
 				?required=${this.required}
 				?dense=${this.isDense}
-				?invalid=${this.invalid}
+				?invalid=${this.invalid && this.dirty}
 				?active=${this.isActive}
+				@keydown=${() => this.dirty = true}
 			>
 				${this.startSlotTemplate}
 				${this.inputTemplate}
