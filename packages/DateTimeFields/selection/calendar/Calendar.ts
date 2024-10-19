@@ -1,4 +1,4 @@
-import { Component, css, component, html, property, classMap, style, type ClassInfo, state } from '@a11d/lit'
+import { Component, css, component, html, property, classMap, type ClassInfo, state } from '@a11d/lit'
 import '@a11d/array.prototype.group'
 import { MemoizeExpiring as memoizeExpiring } from 'typescript-memoize'
 
@@ -26,9 +26,23 @@ export class Calendar extends Component {
 				padding-inline: 10px;
 			}
 
-			.monthHeader {
-				color: var(--mo-color-gray);
-				align-items: center;
+			.month {
+				min-height: 270px;
+				place-items: center;
+
+				.heading {
+					font-weight: 500;
+					font-size: 16px;
+					grid-column: 1 / -1;
+					place-self: stretch;
+					display: flex;
+					align-items: center;
+					margin-inline-start: 6px;
+				}
+
+				.header {
+					color: var(--mo-color-gray);
+				}
 			}
 
 			.week {
@@ -47,26 +61,23 @@ export class Calendar extends Component {
 				-webkit-user-select: none;
 				align-items: center;
 				justify-content: center;
-			}
-
-			.day {
 				height: var(--mo-calendar-day-size);
-			}
 
-			.day:hover {
-				background: var(--mo-color-transparent-gray-3);
-			}
+				&:hover {
+					background: var(--mo-color-transparent-gray-3);
+				}
 
-			.day:not(.isInMonth) {
-				color: var(--mo-color-gray);
-			}
+				&:not(.isInMonth) {
+					color: var(--mo-color-gray);
+				}
 
-			.day.today {
-				outline: 2px dashed var(--mo-color-gray-transparent);
-			}
+				&.today {
+					outline: 2px dashed var(--mo-color-gray-transparent);
+				}
 
-			.day.navigation {
-				background: var(--mo-color-transparent-gray-3);
+				&.navigation {
+					background: var(--mo-color-transparent-gray-3);
+				}
 			}
 		`
 	}
@@ -76,12 +87,16 @@ export class Calendar extends Component {
 			<mo-grid class='month'
 				rows='repeat(auto-fill, var(--mo-calendar-day-size))'
 				columns=${this.includeWeekNumbers ? 'var(--mo-calendar-week-number-width) repeat(7, var(--mo-calendar-day-size))' : 'repeat(7, var(--mo-calendar-day-size))'}
-				${style({ alignItems: 'center', justifyItems: 'center' })}
 			>
+				<div class='heading' style='grid-column: 1 / -1'>
+					${this.navigatingValue.format({ year: 'numeric' })}
+					${this.navigatingValue.format({ month: 'long' })}
+				</div>
+
 				${this.includeWeekNumbers === false ? html.nothing : html`<div></div>`}
 
 				${this.navigatingValue.weekDayNames.map(dayName => html`
-					<div class='monthHeader'>
+					<div class='header'>
 						${dayName.charAt(0).toUpperCase() + dayName.charAt(1)}
 					</div>
 				`)}

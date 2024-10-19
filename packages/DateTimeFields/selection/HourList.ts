@@ -9,7 +9,8 @@ export class HourList extends DateList {
 			${[...range(0, this.navigatingValue.hoursInDay)].map(hour => html`
 				<mo-selectable-list-item
 					?selected=${this.value?.hour === hour}
-					?data-now=${this.now.hour === hour}
+					?data-navigating=${this.navigatingValue.hour === hour}
+					@navigate=${() => this.navigate.dispatch(this.navigatingValue.with({ hour }))}
 					@change=${(e: SelectionListItemChangeEvent<void>) => !e.selected ? void 0 : this.change.dispatch((this.value ?? new DateTime).with({ hour }))}
 				>${hour.format().padStart(2, this.zero.format())}</mo-selectable-list-item>
 			`)}

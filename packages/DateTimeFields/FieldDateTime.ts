@@ -15,7 +15,6 @@ Localizer.dictionaries.add('de', {
  */
 @component('mo-field-date-time')
 export class FieldDateTime extends FieldDateTimeBase<Date | undefined> {
-	protected get navigatingDate() { return this.value ? new DateTime(this.value) : new DateTime() }
 	protected get selectedDate() { return this.value ? new DateTime(this.value) : undefined }
 
 	@property() override label = t('Date & Time')
@@ -24,6 +23,10 @@ export class FieldDateTime extends FieldDateTimeBase<Date | undefined> {
 	@memoize()
 	protected override get placeholder() {
 		return new DateTime().format(this.formatOptions)
+	}
+
+	protected resetNavigatingDate() {
+		this.navigatingDate = this.selectedDate ?? new DateTime()
 	}
 
 	protected get calendarTemplate() {

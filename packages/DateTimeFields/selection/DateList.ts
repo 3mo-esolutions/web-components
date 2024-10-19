@@ -1,58 +1,68 @@
-import { Component, type HTMLTemplateResult, css, event, html, property, query } from '@a11d/lit'
-import { IntervalController } from '@3mo/interval-controller'
+import { Component, type HTMLTemplateResult, css, event, eventOptions, html, property, query, queryAll } from '@a11d/lit'
 import { type SelectableListItem } from '@3mo/list'
 
 export abstract class DateList extends Component {
 	@event() readonly change!: EventDispatcher<DateTime>
+	@event() readonly navigate!: EventDispatcher<DateTime>
 
-	@property({ type: Object }) navigatingValue!: DateTime
-	@property({ type: Object, updated(this: DateList) { this.scrollIntoSelectedItem() } }) value?: DateTime
+	@property({ type: Object, event: 'navigate' }) navigatingValue!: DateTime
+	@property({ type: Object }) value?: DateTime
 
-	private preventIntervalScrolling = false
-
-	get now() { return new DateTime() }
+	@query('.selector') private readonly selector!: HTMLElement
+	@queryAll('mo-selectable-list-item') private readonly items!: Array<SelectableListItem>
+	@query('mo-selectable-list-item[data-navigating]') private readonly navigatingItem?: SelectableListItem
+	@query('mo-selectable-list-item[selected]') private readonly selectedItem?: SelectableListItem
 
 	get zero() { return 0 }
 
-	readonly intervalController = new IntervalController(this, 1000, () => {
-		this.requestUpdate()
-		if (this.preventIntervalScrolling === false) {
-			this.scrollIntoSelectedItem()
-		}
-	})
-
 	static override get styles() {
 		return css`
+			:host {
+				position: relative;
+			}
+
 			mo-scroller {
 				min-width: 70px;
 			}
 
+			.selector {
+				position: absolute;
+				transform: translateY(-50%);
+				inset-block-start: 50%;
+				inset-inline: 0;
+				width: 100%;
+				height: 32px;
+				border-block: 2px dashed var(--mo-color-gray-transparent);
+			}
+
 			.pad {
-				height: 50px;
+				height: 130px;
 			}
 
 			mo-selectable-list-item {
 				min-height: 32px;
 				padding-block: 8px;
-			}
-
-			mo-selectable-list-item[data-now] {
-				outline: 2px dashed var(--mo-color-gray-transparent);
+				scroll-snap-align: center;
+				scroll-snap-stop: always;
 			}
 		`
 	}
 
-	@query('mo-selectable-list-item[selected]') private readonly selectedListItem?: SelectableListItem
-	@query('mo-selectable-list-item[data-now]') private readonly nowListItem?: SelectableListItem
-
 	protected override connected() {
-		this.scrollIntoSelectedItem('instant')
+		this.scrollIntoItem('navigating', 'instant')
 	}
 
 	protected override get template() {
 		return this.navigatingValue === undefined ? html.nothing : html`
-			<mo-scroller @pointerenter=${() => this.preventIntervalScrolling = true} @pointerleave=${() => this.preventIntervalScrolling = false}>
-				<mo-selectable-list @change=${() => this.scrollIntoSelectedItem()}>
+			<div class='selector'></div>
+			<mo-scroller snapType='y mandatory'
+				@scroll=${this.handleScroll}
+				@mouseenter=${() => this.navigateOnScroll = true}
+				@mouseleave=${() => this.navigateOnScroll = false}
+				@touchstart=${() => this.navigateOnScroll = true}
+				@touchend=${() => this.navigateOnScroll = false}
+			>
+				<mo-selectable-list @change=${() => this.scrollIntoItem('selected', 'smooth')}>
 					<div class='pad'></div>
 					${this.listItemsTemplate}
 					<div class='pad'></div>
@@ -61,12 +71,34 @@ export abstract class DateList extends Component {
 		`
 	}
 
-	protected async scrollIntoSelectedItem(behavior: ScrollBehavior = 'smooth') {
-		await this.updateComplete;
-		(this.selectedListItem ?? this.nowListItem)?.scrollIntoView({
-			behavior,
-			block: 'center',
+	private async scrollIntoItem(key: 'navigating' | 'selected', behavior: ScrollBehavior = 'smooth') {
+		await this.updateComplete
+		const item = key === 'navigating' ? this.navigatingItem : this.selectedItem
+		item?.scrollIntoView({ block: 'center', behavior })
+	}
+
+	private _navigateOnScroll = false
+	get navigateOnScroll() { return this._navigateOnScroll }
+	set navigateOnScroll(value) {
+		if (value) {
+			this._navigateOnScroll = value
+		} else {
+			setTimeout(() => this._navigateOnScroll = value, 100)
+		}
+	}
+
+
+	@eventOptions({ passive: true })
+	protected handleScroll() {
+		if (!this.navigateOnScroll) {
+			return
+		}
+		const middleY = this.selector.getBoundingClientRect().y
+		const middleItem = this.items.reduce((closest, item) => {
+			const itemY = item.getBoundingClientRect().y
+			return Math.abs(itemY - middleY) < Math.abs(closest.getBoundingClientRect().y - middleY) ? item : closest
 		})
+		middleItem?.dispatchEvent(new CustomEvent('navigate'))
 	}
 
 	protected abstract get listItemsTemplate(): HTMLTemplateResult
