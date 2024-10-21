@@ -20,6 +20,7 @@ const generatePeople = (count: number) => {
 		'7234 Elmstraße, 21001 Berlin, Deutschland',
 		'9692 Elm Street, Springfield, NSW 62701, Australia',
 		'7792 Elm Street, London, England',
+		'1232 Elm Street, "P-432"'
 	]
 
 	return new Array(count).fill(0).map((_, i) => {

@@ -117,4 +117,7 @@ export class DataGridColumn<TData, TValue = unknown> {
 				return ''
 		}
 	}
+
+	formatValueForCsv?(value: any, data: TData): string | string[]
+	formatHeaderForCsv?(): string | string[]
 }

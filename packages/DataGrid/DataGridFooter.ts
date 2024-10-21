@@ -3,11 +3,10 @@ import { type FieldNumber } from '@3mo/number-fields'
 import { DirectionsByLanguage, Localizer } from '@3mo/localization'
 import { TooltipPlacement, tooltip } from '@3mo/tooltip'
 import { type DataGrid, type DataGridPagination } from './index.js'
-import excelSvg from './excel.svg.js'
 
 Localizer.dictionaries.add('de', {
 	'${page:number} of ${maxPage:number}': '${page} von ${maxPage}',
-	'Export current view to Excel': 'Aktuelle Ansicht nach Excel exportieren',
+	'Export to CSV': 'Ansicht nach CSV exportieren',
 	'Auto': 'Auto'
 })
 
@@ -219,27 +218,11 @@ export class DataGridFooter<TData> extends Component {
 
 	private get exportTemplate() {
 		return !this.dataGrid.exportable ? html.nothing : html`
-			<style>
-				#export {
-					height: 21px;
-					width: 21px;
-					aspect-ratio: 1 / 1;
-					transition: .25s;
-					-webkit-filter: grayscale(100%);
-					filter: grayscale(100%);
-					cursor: pointer;
-				}
-
-				#export:hover {
-					-webkit-filter: grayscale(0%);
-					filter: grayscale(0%);
-				}
-			</style>
-			<img id='export'
-				src=${`data:image/svg+xml,${encodeURIComponent(excelSvg)}`}
-				${tooltip(t('Export current view to Excel'), TooltipPlacement.BlockStart)}
-				@click=${() => this.dataGrid.exportExcelFile()}
-			/>
+			<mo-icon-button dense icon='download_for_offline'
+				${tooltip(t('Export to CSV'), TooltipPlacement.BlockStart)}
+				${style({ color: 'var(--mo-color-green)', fontSize: '24px', opacity: this.dataGrid.isGenerating ? '0.5' : undefined })}
+				@click=${() => this.dataGrid.isGenerating ? undefined : this.dataGrid.exportExcelFile()}
+			></mo-icon-button>
 		`
 	}
 
