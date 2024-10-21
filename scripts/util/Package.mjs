@@ -39,7 +39,7 @@ export class Package {
 		if (versionBumpType.startsWith('pre')) {
 			versionBumpType = versionBumpType.replace('prepatch', 'prerelease')
 			if (!versionBumpType.includes('--preid')) {
-				versionBumpType += ' --preid=beta'
+				versionBumpType += ' --preid=preview'
 			}
 		}
 		console.log(await run(`npm version --loglevel=error ${versionBumpType}`, this.relativePath))
