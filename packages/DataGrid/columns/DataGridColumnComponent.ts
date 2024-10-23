@@ -46,6 +46,8 @@ export abstract class DataGridColumnComponent<TData, TValue> extends Component {
 			sticky: this.sticky,
 			width: this.width,
 			sortable: !this.nonSortable,
+			formatValueForCsv: (value, data) => this.formatValueForCsv(value, data),
+      formatHeaderForCsv: () => this.formatHeaderForCsv(),
 			editable: this.getEditContentTemplate !== undefined && (typeof nonEditable !== 'function' ? !nonEditable : x => !nonEditable(x)),
 			getContentTemplate: this.getContentTemplate.bind(this),
 			getEditContentTemplate: this.getEditContentTemplate?.bind(this),
@@ -69,5 +71,14 @@ export abstract class DataGridColumnComponent<TData, TValue> extends Component {
 	protected override updated() {
 		this.dataGrid?.extractColumns()
 		this.dataGrid?.requestUpdate()
+	}
+
+	formatValueForCsv(value: any, data: TData): string | string[] {
+		data
+		return value === undefined || value === null ? '' : String(value)
+	}
+
+	formatHeaderForCsv(): string | string[] {
+		return this.heading.length < 3 && this.description ? this.description  : this.heading
 	}
 }

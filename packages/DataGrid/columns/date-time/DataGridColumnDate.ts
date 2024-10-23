@@ -10,6 +10,10 @@ export class DataGridColumnDate<TData> extends DataGridColumnDateTimeBase<TData,
 	}
 
 	override readonly fieldTag = literal`mo-field-date`
+
+	override formatValueForCsv(value: Date | undefined) {
+		return !value ? '' : value.toISOString().split('T')[0]!
+	}
 }
 
 declare global {

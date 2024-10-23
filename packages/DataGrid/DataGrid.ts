@@ -1,4 +1,4 @@
-import { property, component, Component, html, css, query, ifDefined, type PropertyValues, event, style, literal, staticHtml, type HTMLTemplateResult, cache, eventOptions, queryAll, repeat, eventListener } from '@a11d/lit'
+import { property, component, Component, html, css, query, ifDefined, type PropertyValues, event, style, literal, staticHtml, type HTMLTemplateResult, cache, eventOptions, queryAll, repeat, eventListener, state } from '@a11d/lit'
 import { NotificationComponent } from '@a11d/lit-application'
 import { LocalStorage } from '@a11d/local-storage'
 import { InstanceofAttributeController } from '@3mo/instanceof-attribute-controller'
@@ -15,6 +15,7 @@ import { DataGridSortingController, type DataGridRankedSortDefinition, type Data
 import { DataGridDetailsController } from './DataGridDetailsController.js'
 import { CsvGenerator, DataGridSidePanelTab, type DataGridColumn, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, type DataGridSidePanel, DataGridContextMenuController } from './index.js'
 import { DataRecord } from './DataRecord.js'
+import { GenericDialog } from '@3mo/standard-dialogs'
 
 Localizer.dictionaries.add('de', {
 	'Exporting excel file': 'Die Excel-Datei wird exportiert',
@@ -173,6 +174,8 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	@query('mo-data-grid-footer') private readonly footer?: DataGridFooter<TData>
 	@query('mo-data-grid-side-panel') private readonly sidePanel?: DataGridSidePanel<TData>
 
+	@state() isGenerating = false
+
 	setPage(page: number) {
 		this.page = page
 		this.pageChange.dispatch(page)
@@ -285,13 +288,53 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		!tab ? this.sidePanelClose.dispatch() : this.sidePanelOpen.dispatch(tab)
 	}
 
-	exportExcelFile() {
+	async exportExcelFile() {
+		let progress = 0
+
+		const dataGrid = this
+
 		try {
-			CsvGenerator.generate(this)
-			NotificationComponent.notifyInfo(t('Exporting excel file'))
+			this.isGenerating = true
+
+			let didGenerate = false
+
+			await new GenericDialog({
+				heading: t('Exporting excel file'),
+				primaryButtonText: '',
+				secondaryButtonText: '',
+				content() {
+					const dialog = this.renderRoot.querySelector('mo-dialog')
+
+					if (dialog) {
+						dialog.primaryOnEnter = false
+					}
+
+					const progressChanged = (currentProgress: number) => {
+						progress = Math.max(currentProgress, 0.05)
+						if (progress === 1) {
+							setTimeout(() => this['close'](), 1000)
+						} else {
+							this.requestUpdate()
+						}
+					}
+
+					if (!didGenerate) {
+						didGenerate = true
+						CsvGenerator.generate(dataGrid, progressChanged)
+					}
+
+					return html`
+						<mo-flex alignItems='center' justifyContent='center'>
+							<mo-circular-progress  .progress=${progress}></mo-circular-progress>
+						</mo-flex>
+					`
+				}
+			}).confirm()
 		} catch (error: any) {
 			NotificationComponent.notifyError(error.message)
 			throw error
+		} finally {
+			this.isGenerating = false
 		}
 	}
 
@@ -767,10 +810,10 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		this.rows.forEach(row => row.cells.forEach(cell => cell.handlePointerDown(event)))
 	}
 
-	private *getFlattenedData(): Generator<DataRecord<TData>, void, undefined> {
+	*flattenData(values = this.data): Generator<DataRecord<TData>, void, undefined> {
 		if (!this.subDataGridDataSelector) {
 			yield* this.sortingController.toSortedBy(
-				this.data.map((data, index) => new DataRecord(this, { level: 0, index, data })),
+				values.map((data, index) => new DataRecord(this, { level: 0, index, data })),
 				({ data }) => data,
 			)
 			return
@@ -791,7 +834,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			]
 		}
 
-		for (const data of this.sortingController.toSorted(this.data)) {
+		for (const data of this.sortingController.toSorted(values)) {
 			yield* flatten(data)
 		}
 
@@ -799,7 +842,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}
 
 	get dataRecords(): Array<DataRecord<TData>> {
-		return [...this.getFlattenedData()]
+		return [...this.flattenData()]
 			.map((record, index) => {
 				// @ts-expect-error index is initialized here
 				record.index = index
