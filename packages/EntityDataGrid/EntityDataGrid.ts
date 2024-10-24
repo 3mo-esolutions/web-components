@@ -37,6 +37,7 @@ export class EntityDataGrid<TEntity extends EntityWithId, TDataFetcherParameters
 	}) createOrEdit?: CreateOrEditAction<TEntity> | Constructor<EntityDialogComponent<TEntity>>
 
 	@property({ type: Object }) delete?: (...entities: Array<TEntity>) => void | PromiseLike<void>
+	@property({ type: Boolean }) highlightOnDeleteConfirm = false
 	@property({ type: Object }) isEntityDeletable?: (entity: TEntity) => boolean
 
 	@property({ type: Object }) rowContextMenuTemplate?: (rowData: Array<TEntity>) => TemplateResult
@@ -118,7 +119,16 @@ export class EntityDataGrid<TEntity extends EntityWithId, TDataFetcherParameters
 		if (!this.delete) {
 			return
 		}
-		await this.delete(...entities)
+		try {
+			if (this.highlightOnDeleteConfirm) {
+				this.selectionController.select(entities)
+			}
+			await this.delete(...entities)
+		} finally {
+			if (this.highlightOnDeleteConfirm) {
+				this.selectionController.deselectAll()
+			}
+		}
 		await this.requestFetch()
 	}
 
