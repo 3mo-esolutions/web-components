@@ -78,7 +78,7 @@ export const OptionContent: Story = {
 		<mo-field-select label='Country' ?multiple=${multiple} ?searchable=${searchable}>
 			${countries.map(country => html`
 				<mo-option value=${country.code} .data=${country}>
-					<img width='25' alt='' src=${flag(country.code)}>
+					<img slot='start' width='25' alt='' src=${flag(country.code)}>
 					${country.label}
 				</mo-option>
 			`)}
@@ -151,7 +151,10 @@ export const Actions: Story = {
 	},
 	render: ({ onAddCountry }) => html`
 		<mo-field-select label='Country' value='DE'>
-			<mo-list-item icon='add' @click=${onAddCountry}>Add a country</mo-list-item>
+			<mo-list-item @click=${onAddCountry}>
+				<mo-icon slot='start' style='opacity: 0.66' icon='add'></mo-icon>
+				Add a country
+			</mo-list-item>
 			<mo-option value='DE'>Germany</mo-option>
 			<mo-option value='FR'>France</mo-option>
 			<mo-option value='IT'>Italy</mo-option>
@@ -198,7 +201,7 @@ export const SubgridLayout: Story = {
 		<mo-field-select class='columns' label='Country' ?multiple=${multiple} ?searchable=${searchable} value='DE'>
 			${countries.map(country => html`
 				<mo-option value=${country.code} inputText=${country.label}>
-					<img width='25' alt='' src=${flag(country.code)}>
+					<img slot='start' width='25' alt='' src=${flag(country.code)}>
 					<span style='opacity: 0.5'>+${country.phone}</span>
 					<span>${country.label}</span>
 				</mo-option>

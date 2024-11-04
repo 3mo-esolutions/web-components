@@ -97,16 +97,16 @@ export const ItemContent: Story = {
 			<mo-button type='outlined' endIcon='expand_more'>Edit</mo-button>
 			<mo-menu slot='popover'>
 				<mo-menu-item icon='content_cut'>
-					<span style='flex: 1'>Cut</span>
-					<span style='font-size: 13px; opacity: 0.6'>Ctrl + X</span>
+					Cut
+					<span slot='end' style='font-size: 13px; opacity: 0.6'>Ctrl + X</span>
 				</mo-menu-item>
 				<mo-menu-item icon='content_copy'>
-					<span style='flex: 1'>Copy</span>
-					<span style='font-size: 13px; opacity: 0.6'>Ctrl + C</span>
+					Copy
+					<span slot='end' style='font-size: 13px; opacity: 0.6'>Ctrl + C</span>
 				</mo-menu-item>
 				<mo-menu-item icon='content_paste'>
-					<span style='flex: 1'>Paste</span>
-					<span style='font-size: 13px; opacity: 0.6'>Ctrl + V</span>
+					Paste
+					<span slot='end' style='font-size: 13px; opacity: 0.6'>Ctrl + V</span>
 				</mo-menu-item>
 				<mo-line></mo-line>
 				<mo-menu-item>Dictionary</mo-menu-item>
