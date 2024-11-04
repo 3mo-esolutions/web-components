@@ -45,19 +45,19 @@ export const WithCustomContainer: StoryObj = {
 	`
 }
 
-const keyboardShortcut = (shortcut: string) => html`<span style='font-size: 13px; color: darkgray'>${shortcut}</span>`
+const keyboardShortcut = (shortcut: string) => html`<span slot='end' style='font-size: 13px; color: darkgray'>${shortcut}</span>`
 
 const items = html`
 	<mo-menu-item icon='content_cut'>
-		<span style='flex: 1'>Cut</span>
+		Cut
 		${keyboardShortcut('Ctrl + X')}
 	</mo-menu-item>
 	<mo-menu-item icon='content_copy'>
-		<span style='flex: 1'>Copy</span>
+		Copy
 		${keyboardShortcut('Ctrl + C')}
 	</mo-menu-item>
 	<mo-menu-item icon='content_paste'>
-		<span style='flex: 1'>Paste</span>
+		Paste
 		${keyboardShortcut('Ctrl + V')}
 	</mo-menu-item>
 
