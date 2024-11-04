@@ -16,31 +16,48 @@ type Story = StoryObj<Args>
 export const Default: Story = {
 	render: () => html`
 		<mo-list>
-			<mo-list-item icon='inbox'>Inbox</mo-list-item>
-			<mo-list-item icon='drafts'>Drafts</mo-list-item>
-			<mo-list-item icon='send'>Sent</mo-list-item>
-			<mo-list-item icon='delete'>Trash</mo-list-item>
+			<mo-list-item>
+				<mo-icon slot='start' style='opacity: 0.66' icon='inbox'></mo-icon>
+				Inbox
+			</mo-list-item>
+			<mo-list-item>
+				<mo-icon slot='start' style='opacity: 0.66' icon='drafts'></mo-icon>
+				Drafts
+			</mo-list-item>
+			<mo-list-item>
+				<mo-icon slot='start' style='opacity: 0.66' icon='send'></mo-icon>
+				Sent
+			</mo-list-item>
+			<mo-list-item>
+				<mo-icon slot='start' style='opacity: 0.66' icon='delete'></mo-icon>
+				Trash
+			</mo-list-item>
 		</mo-list>
 	`,
 }
 
-/** An item holds any content after its `icon`, such as a shortcut at its end, and an element with `role='separator'` divides the groups. */
+/** An item holds any content after the icon in its `start` slot, such as a shortcut in its `end` slot, and an element with `role='separator'` divides the groups. */
 export const Content: Story = {
 	render: () => html`
 		<mo-list style='max-width: 360px'>
-			<mo-list-item icon='inbox'>
-				<span style='flex: 1'>Inbox</span>
-				<mo-key>Meta+I</mo-key>
+			<mo-list-item>
+				<mo-icon slot='start' style='opacity: 0.66' icon='inbox'></mo-icon>
+				Inbox
+				<mo-key slot='end'>Meta+I</mo-key>
 			</mo-list-item>
-			<mo-list-item icon='drafts'>
-				<span style='flex: 1'>Drafts</span>
-				<mo-key>Meta+D</mo-key>
+			<mo-list-item>
+				<mo-icon slot='start' style='opacity: 0.66' icon='drafts'></mo-icon>
+				Drafts
+				<mo-key slot='end'>Meta+D</mo-key>
 			</mo-list-item>
 			<div role='separator' style='height: 1px; background: var(--mo-color-transparent-gray-3)'></div>
 			<mo-list-item>Trash</mo-list-item>
 			<mo-list-item>Spam</mo-list-item>
 			<div role='separator' style='height: 1px; background: var(--mo-color-transparent-gray-3)'></div>
-			<mo-list-item icon='logout'>Sign out</mo-list-item>
+			<mo-list-item>
+				<mo-icon slot='start' style='opacity: 0.66' icon='logout'></mo-icon>
+				Sign out
+			</mo-list-item>
 		</mo-list>
 	`,
 }
@@ -49,9 +66,16 @@ export const Content: Story = {
 export const Disabled: Story = {
 	render: () => html`
 		<mo-list style='max-width: 360px'>
-			<mo-list-item icon='inbox'>Inbox</mo-list-item>
-			<mo-list-item icon='archive' disabled>Archive</mo-list-item>
-			<mo-list-item icon='settings_suggest' disabled style='opacity: 1'>
+			<mo-list-item>
+				<mo-icon slot='start' style='opacity: 0.66' icon='inbox'></mo-icon>
+				Inbox
+			</mo-list-item>
+			<mo-list-item disabled>
+				<mo-icon slot='start' style='opacity: 0.66' icon='archive'></mo-icon>
+				Archive
+			</mo-list-item>
+			<mo-list-item disabled style='opacity: 1'>
+				<mo-icon slot='start' style='opacity: 0.33' icon='settings_suggest'></mo-icon>
 				<span>
 					<span style='opacity: 0.5'>Personalization -</span>
 					<mo-anchor style='pointer-events: auto'>Upgrade to Pro</mo-anchor>
@@ -78,21 +102,21 @@ export const SubgridLayout: Story = {
 			}
 		</style>
 		<mo-list class='subgrid'>
-			<mo-list-item icon='inbox'>
-				<span>Inbox</span>
-				<mo-key>Meta+I</mo-key>
-			</mo-list-item>
-			<mo-list-item icon='drafts'>
-				<span>Drafts</span>
-				<mo-key>Meta+D</mo-key>
+			<mo-list-item>
+				<mo-icon slot='start' style='opacity: 0.66' icon='inbox'></mo-icon>
+				Inbox
+				<mo-key slot='end'>Meta+I</mo-key>
 			</mo-list-item>
 			<mo-list-item>
-				<span></span>
-				<span>Trash</span>
+				<mo-icon slot='start' style='opacity: 0.66' icon='drafts'></mo-icon>
+				Drafts
+				<mo-key slot='end'>Meta+D</mo-key>
 			</mo-list-item>
-			<mo-list-item icon='logout'>
-				<span>Sign out</span>
-				<mo-key>Meta+Shift+Q</mo-key>
+			<mo-list-item>Trash</mo-list-item>
+			<mo-list-item>
+				<mo-icon slot='start' style='opacity: 0.66' icon='logout'></mo-icon>
+				Sign out
+				<mo-key slot='end'>Meta+Shift+Q</mo-key>
 			</mo-list-item>
 		</mo-list>
 	`,
