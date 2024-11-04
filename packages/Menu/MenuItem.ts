@@ -11,7 +11,20 @@ export class MenuItem extends ListItem {
 	static override get styles() {
 		return css`
 			${super.styles}
-			:host { min-height: 2.25rem; }
+
+			:host {
+				min-height: 2.25rem;
+			}
+		`
+	}
+
+	protected override get startSlotDefaultContent() {
+		return this.iconTemplate
+	}
+
+	protected get iconTemplate() {
+		return !this.icon ? html.nothing : html`
+			<mo-icon part='icon' style='opacity: 0.66' icon=${this.icon}></mo-icon>
 		`
 	}
 }
