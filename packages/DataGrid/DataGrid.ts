@@ -533,7 +533,8 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			}
 
 			mo-empty-state, ::slotted(mo-empty-state) {
-				height: calc(100% + var(--mo-data-grid-header-height));
+				height: calc(100%);
+				margin-top: calc(var(--mo-data-grid-header-height) / 2);
 				position: absolute;
 				inset: 0;
 			}
