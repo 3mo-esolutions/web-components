@@ -95,7 +95,7 @@ export const CatalogFixed: StoryObj = {
 export const Fixed: StoryObj = {
 	render: ({ placement, alignment }) => {
 		return html`
-			<mo-popover-container fixed placement=${placement} alignment=${alignment} @click=${handleClick}>
+			<mo-popover-container fixed placement=${placement} alignment=${alignment}>
 				<mo-button type='outlined'>Click to open the popover</mo-button>
 				<mo-popover slot='popover'>${content}</mo-popover>
 			</mo-popover-container>
