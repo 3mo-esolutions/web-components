@@ -42,14 +42,6 @@ export class ListItem extends Component {
 			:host(:focus) {
 				outline: none;
 			}
-
-			slot:not([name]) {
-				display: inline-flex;
-				gap: inherit;
-				align-items: inherit;
-				justify-content: inherit;
-				flex: 1;
-			}
 		`
 	}
 
