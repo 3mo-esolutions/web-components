@@ -54,3 +54,21 @@ export const Default: StoryObj = {
 export const ItemsWithoutList: StoryObj = {
 	render: () => items
 }
+
+export const CustomLayout: StoryObj = {
+	render: () => html`
+		<style>
+			#custom {
+				display: grid;
+				grid-template-columns: auto 1fr auto;
+
+				mo-list-item {
+					grid-column: 1 / -1;
+					display: grid;
+					grid-template-columns: subgrid;
+				}
+			}
+		</style>
+		<mo-list id='custom'>${items}</mo-list>
+	`
+}
