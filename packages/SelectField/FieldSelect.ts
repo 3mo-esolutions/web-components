@@ -259,7 +259,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 
 	protected get defaultOptionTemplate() {
 		return !this.default ? html.nothing : html`
-			<mo-list-item id='default' value='' @click=${() => this.handleSelection([])}>
+			<mo-list-item value='' @click=${() => this.handleSelection([])}>
 				${this.default}
 			</mo-list-item>
 			<mo-line></mo-line>
