@@ -49,6 +49,7 @@ export class NestedMenuItem extends MenuItem {
 			}
 
 			mo-icon[icon=chevron_right] {
+				margin-inline-start: auto;
 				margin-inline-end: -8px;
 			}
 

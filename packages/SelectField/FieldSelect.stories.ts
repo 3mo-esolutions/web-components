@@ -60,6 +60,37 @@ export const PreSelectedValue: StoryObj = {
 	`
 }
 
+export const WithSubGridLayout: StoryObj = {
+	render: ({ searchable, multiple, defaultText }) => html`
+		<style>
+			mo-field-select#with-sub-grid {
+				&::part(list) {
+					display: grid;
+					column-gap: 1em;
+					grid-template-columns: auto auto 1fr;
+				}
+
+				& > * {
+					display: grid;
+					grid-column: 1 / -1;
+					grid-template-columns: subgrid;
+				}
+			}
+		</style>
+		<mo-card style='max-width: 300px'>
+			<mo-field-select id='with-sub-grid' label='Countries' ?searchable=${searchable} ?multiple=${multiple} default=${defaultText} .value=${multiple ? [] : 'DE'}>
+				${countries.map(country => html`
+					<mo-option value=${country.code} .data=${country} inputText=${country.label}>
+						<img width='25px' src=${`https://flagcdn.com/h40/${country.code.toLowerCase()}.png`} />
+						<span style='opacity: 0.5'>+${country.phone}</span>
+						<span>${country.label}</span>
+					</mo-option>
+				`)}
+			</mo-field-select>
+		</mo-card>
+	`
+}
+
 const countries = [
 	{ code: 'AD', label: 'Andorra', phone: '376' },
 	{
