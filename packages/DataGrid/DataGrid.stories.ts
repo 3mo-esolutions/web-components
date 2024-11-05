@@ -13,7 +13,7 @@ export default {
 type Person = { id: number, name: string, age: number, birthDate: DateTime, address: string }
 
 const generatePeople = (count: number) => {
-	const names = ['Octavia Blake', 'Charmaine Diyoza', 'Clarke Griffin', 'Elliot Anderson', 'Darlene Anderson', 'Max Caufield']
+	const names = ['Octavia Blake', 'Charmaine Diyoza', 'Clarke Griffin', 'Elliot Alderson', 'Arya Stark', 'Darlene Alderson', 'Max Caufield']
 	const addresses = [
 		'112 Rue de Elm, 1265 Paris, France',
 		'1234 Elm Street, Springfield, IL 62701, USA',
