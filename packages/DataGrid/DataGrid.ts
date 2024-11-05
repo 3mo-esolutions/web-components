@@ -426,6 +426,8 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	static override get styles() {
 		return css`
 			:host {
+				--_content-min-height-default: calc(var(--mo-data-grid-min-visible-rows, 2.5) * var(--mo-data-grid-row-height) + var(--mo-data-grid-header-height));
+
 				--mo-data-grid-column-details-width: 20px;
 				--mo-data-grid-column-selection-width: 40px;
 				--mo-data-grid-column-more-width: 28px;
@@ -447,6 +449,10 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				flex-direction: column;
 				height: 100%;
 				overflow-x: hidden;
+			}
+
+			:not(:has([mo-data-grid-row])) {
+				--_content-min-height-default: 150px;
 			}
 
 			:host([data-theme=light]) {
@@ -527,7 +533,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			}
 
 			mo-empty-state, ::slotted(mo-empty-state) {
-				height: 100%;
+				height: calc(100% + var(--mo-data-grid-header-height));
 				position: absolute;
 				inset: 0;
 			}
@@ -644,7 +650,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		return html`
 			<mo-grid rows='* auto' ${style({ position: 'relative', height: '100%' })}>
 				<mo-scroller
-					${style({ minHeight: 'var(--mo-data-grid-content-min-height, calc(var(--mo-data-grid-min-visible-rows, 2.5) * var(--mo-data-grid-row-height) + var(--mo-data-grid-header-height)))' })}
+					${style({ minHeight: 'var(--mo-data-grid-content-min-height, var(--_content-min-height-default))' })}
 					@scroll=${this.handleScroll}
 				>
 					<mo-grid id='content' autoRows='min-content' columns='var(--mo-data-grid-columns)'>
