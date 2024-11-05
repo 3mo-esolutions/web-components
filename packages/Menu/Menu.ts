@@ -29,6 +29,9 @@ export function isMenu(element: EventTarget): element is HTMLElement {
  * @fires change - Dispatched when the menu value changes.
  * @fires openChange - Dispatched when the menu open state changes.
  * @fires itemsChange - Dispatched when the menu items change.
+ *
+ * @csspart popover - The popover part of the menu.
+ * @csspart list - The list part of the menu.
  */
 @component('mo-menu')
 export class Menu extends Component {
@@ -141,7 +144,6 @@ export class Menu extends Component {
 				border-radius: var(--mo-toolbar-border-radius, var(--mo-border-radius));
 				background: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-gray) 8%);
 				border-radius: var(--mo-border-radius);
-				/*overflow: hidden;*/
 				transition: opacity 100ms;
 			}
 		`
@@ -162,7 +164,7 @@ export class Menu extends Component {
 				.shouldOpen=${this.shouldOpen}
 				.positionMiddleware=${this.positionMiddleware}
 			>
-				<mo-selectable-list
+				<mo-selectable-list part='list'
 					selectionMode=${ifDefined(this.selectionMode)}
 					.value=${this.value ?? []}
 					@change=${this.handleChange.bind(this)}
