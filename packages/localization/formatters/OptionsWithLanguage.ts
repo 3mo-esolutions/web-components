@@ -5,7 +5,7 @@ export type FormatOptionsWithLanguage<T> =
 	| [options?: T & { readonly language?: LanguageCode }]
 	| [language: LanguageCode, options?: T]
 
-export function extractFormatOptions<T>(options: FormatOptionsWithLanguage<T> | undefined): [language?: LanguageCode, explicitOptions?: T | undefined] {
+export function extractFormatOptions<T>(options: FormatOptionsWithLanguage<T> | undefined): [language: LanguageCode, explicitOptions?: T | undefined] {
 	let language: LanguageCode | undefined
 	let explicitOptions: T | undefined
 
