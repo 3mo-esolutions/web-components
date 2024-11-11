@@ -91,6 +91,30 @@ export const WithSubGridLayout: StoryObj = {
 	`
 }
 
+export const CloseMenuWhenNotInViewport: StoryObj = {
+	render: ({ searchable, multiple, defaultText }) => html`
+		<mo-card style='max-width: 300px'>
+			<span style='color: var(--mo-color-red)'>Open the menu and scroll the page to see the menu close automatically when it's not in the viewport</span>
+			<mo-field-select label='Countries' ?searchable=${searchable} ?multiple=${multiple} default=${defaultText} .value=${multiple ? [] : 'DE'}>
+				${countries.map(country => html`
+					<mo-option value=${country.code} .data=${country}>
+						<img width='25px' src=${`https://flagcdn.com/h40/${country.code.toLowerCase()}.png`} />
+						${country.label}
+					</mo-option>
+				`)}
+			</mo-field-select>
+			Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem accusamus laborum beatae sit sunt aliquam quam repellendus. Sapiente sunt officia, incidunt nulla similique nobis ut quae eius sequi adipisci tempora.
+			Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam velit ducimus, beatae libero, eos aspernatur doloremque ut, cum quis possimus dolorem pariatur reprehenderit voluptates nulla laudantium dolore illum voluptas fugit.
+			Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia nulla unde nam laudantium quasi, tenetur incidunt sit quibusdam ut optio dolor illum hic nobis quas assumenda corrupti. Expedita, aliquid corrupti?
+			Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem accusamus laborum beatae sit sunt aliquam quam repellendus. Sapiente sunt officia, incidunt nulla similique nobis ut quae eius sequi adipisci tempora.
+			Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam velit ducimus, beatae libero, eos aspernatur doloremque ut, cum quis possimus dolorem pariatur reprehenderit voluptates nulla laudantium dolore illum voluptas fugit.
+			Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia nulla unde nam laudantium quasi, tenetur incidunt sit quibusdam ut optio dolor illum hic nobis quas assumenda corrupti. Expedita, aliquid corrupti?
+			Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem accusamus laborum beatae sit sunt aliquam quam repellendus. Sapiente sunt officia, incidunt nulla similique nobis ut quae eius sequi adipisci tempora.
+			Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam velit ducimus, beatae libero, eos aspernatur doloremque ut, cum quis possimus dolorem pariatur reprehenderit voluptates nulla laudantium dolore illum voluptas fugit.
+		</mo-card>
+	`
+}
+
 const countries = [
 	{ code: 'AD', label: 'Andorra', phone: '376' },
 	{
