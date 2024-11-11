@@ -4,8 +4,10 @@ import type { ListItem } from '@3mo/list'
 import type { Menu } from '@3mo/menu'
 import type { FocusMethod } from '@3mo/focus-controller'
 import type { PopoverAlignment, PopoverPlacement } from '@3mo/popover'
+import { type Middleware } from '@floating-ui/dom'
 import { FieldSelectValueController, type Data, type Index, type Value } from './SelectValueController.js'
 import { Option } from './Option.js'
+import { closeWhenOutOfViewport } from './closeWhenOutOfViewport.js'
 
 /**
  * @element mo-field-select
@@ -53,6 +55,8 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 	@property({ type: Number, updated(this: FieldSelect<T>) { this.valueController.index = this.index } }) index: Index
 	@property({ type: Object, updated(this: FieldSelect<T>) { this.valueController.data = this.data } }) data: Data<T>
 
+	@state() protected searchString?: string
+	@state() private positionMiddleware?: Array<Middleware>
 	@state({
 		updated(this: FieldSelect<T>, value: number, oldValue: number) {
 			if (value && value !== oldValue) {
@@ -61,8 +65,6 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 			}
 		}
 	}) protected [FieldSelectValueController.requestSyncKey] = 0
-
-	@state() protected searchString?: string
 
 	@query('input#value') readonly valueInputElement!: HTMLInputElement
 	@query('input#search') readonly searchInputElement?: HTMLInputElement
@@ -97,6 +99,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 
 	protected override updated(props: PropertyValues) {
 		super.updated(props)
+		this.positionMiddleware ??= [closeWhenOutOfViewport()]
 		this.style.setProperty('--mo-field-width', this.offsetWidth + 'px')
 		this.toggleAttribute('data-show-no-options-hint', this.showNoOptionsHint)
 	}
@@ -237,6 +240,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 				.value=${this.valueController.menuValue}
 				@change=${(e: CustomEvent<Array<number>>) => this.handleSelection(e.detail)}
 				@itemsChange=${() => this.handleItemsChange()}
+				.positionMiddleware=${this.positionMiddleware}
 			>
 				${this.noResultsOptionTemplate}
 				${this.defaultOptionTemplate}
