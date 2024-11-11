@@ -1,4 +1,4 @@
-import { EventListenerController, component, css, event, html, property } from '@a11d/lit'
+import { component, css, html, property } from '@a11d/lit'
 import { ListItem } from '@3mo/list'
 import { type MaterialIcon } from '@3mo/icon'
 
@@ -11,8 +11,6 @@ import { type MaterialIcon } from '@3mo/icon'
  */
 @component('mo-menu-item')
 export class MenuItem extends ListItem {
-	@event({ bubbles: true, composed: true }) readonly menuItemClick!: EventDispatcher
-
 	@property({ reflect: true }) icon?: MaterialIcon
 
 	override readonly role = 'menuitem'
@@ -38,12 +36,6 @@ export class MenuItem extends ListItem {
 		return !this.icon ? html.nothing : html`
 			<mo-icon part='icon' style='opacity: 0.66' icon=${this.icon}></mo-icon>
 		`
-	}
-
-	protected readonly clickEventListenerController = new EventListenerController(this, 'click', this.handleClick.bind(this))
-
-	protected handleClick() {
-		this.menuItemClick.dispatch()
 	}
 }
 

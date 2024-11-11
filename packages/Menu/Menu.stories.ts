@@ -80,7 +80,7 @@ const items = html`
 		${keyboardShortcut('Ctrl + V')}
 	</mo-menu-item>
 	<div role='separator' style='width: 100%; height: 1px; background: darkgray; opacity: 0.3'></div>
-	<mo-menu-item>Dictionary</mo-menu-item>
+	<mo-selectable-list-item>Dictionary</mo-selectable-list-item>
 	<mo-menu-item>Thesaurus</mo-menu-item>
 	<mo-nested-menu-item>(not) Sub-menu</mo-nested-menu-item>
 	<mo-nested-menu-item>

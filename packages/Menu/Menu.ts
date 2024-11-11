@@ -3,7 +3,7 @@ import { Popover, type PopoverCoordinates } from '@3mo/popover'
 import { SlotController } from '@3mo/slot-controller'
 import { disabledProperty } from '@3mo/disabled-property'
 import type { Middleware } from '@floating-ui/dom'
-import type { ListElement, ListItem, SelectableList } from '@3mo/list'
+import { isListItem, type ListElement, type ListItem, type SelectableList } from '@3mo/list'
 import type { MenuPlacement, MenuAlignment } from './index.js'
 
 export function isMenu(element: EventTarget): element is HTMLElement {
@@ -35,6 +35,8 @@ export function isMenu(element: EventTarget): element is HTMLElement {
  */
 @component('mo-menu')
 export class Menu extends Component {
+	static readonly preventClose = Symbol('Menu.preventClose')
+
 	@event() readonly change!: EventDispatcher<Array<number>>
 	@event() readonly openChange!: EventDispatcher<boolean>
 	@event() readonly itemsChange!: EventDispatcher<Array<ListItem & HTMLElement>>
@@ -168,7 +170,7 @@ export class Menu extends Component {
 					selectionMode=${ifDefined(this.selectionMode)}
 					.value=${this.value ?? []}
 					@change=${this.handleChange.bind(this)}
-					@menuItemClick=${this.handleMenuItemClick.bind(this)}
+					@click=${this.handleMenuClick.bind(this)}
 					@itemsChange=${this.handleItemsChange.bind(this)}
 					@listKeyDown=${(e: CustomEvent<KeyboardEvent>) => this.dispatchEvent(new CustomEvent('listKeyDown', { detail: e.detail }))}
 				>
@@ -188,8 +190,12 @@ export class Menu extends Component {
 		this.change.dispatch(e.detail)
 	}
 
-	protected handleMenuItemClick() {
-		this.setOpen(false)
+	protected handleMenuClick(e: PointerEvent & { [Menu.preventClose]?: boolean }) {
+		if (e[Menu.preventClose] !== true &&
+			e.composedPath().some(element => isListItem(element as Element))
+		) {
+			this.setOpen(false)
+		}
 	}
 
 	protected handleItemsChange() {

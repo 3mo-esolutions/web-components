@@ -1,7 +1,7 @@
 import { bind, component, css, eventListener, html, property, query } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
 import { MenuItem } from './MenuItem.js'
-import { type Menu } from './Menu.js'
+import { Menu } from './Menu.js'
 
 /**
  * @element mo-nested-menu-item
@@ -91,9 +91,10 @@ export class NestedMenuItem extends MenuItem {
 		`
 	}
 
-	protected override handleClick() {
-		if (this.hasSubMenu === false) {
-			super.handleClick()
+	@eventListener('click')
+	protected handleClick(e: PointerEvent & { [Menu.preventClose]?: boolean }) {
+		if (e.target === this && this.hasSubMenu === true) {
+			e[Menu.preventClose] = true
 		}
 	}
 }
