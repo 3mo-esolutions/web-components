@@ -37,7 +37,6 @@
 		"@3mo/instanceof-attribute-controller": "x",
 		"@3mo/media-query-observer": "x",
 		"@3mo/mutation-observer": "x",
-		"@3mo/standard-dialogs": "x",
 		"@3mo/resize-observer": "x",
 		"@3mo/localization": "x",
 		"@3mo/context-menu": "x",
