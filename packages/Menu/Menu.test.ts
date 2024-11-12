@@ -36,13 +36,13 @@ describe('Menu', () => {
 			expect(getComputedStyle(fixture.component).pointerEvents).toBe('none')
 		})
 
-		it('should not close when a list-item other than menu item is clicked', () => {
+		it('should close when a list-item other than menu item is clicked', () => {
 			fixture.component.open = true
 
 			const item = fixture.component.querySelector('mo-list-item')
 			item?.click()
 
-			expect(fixture.component.open).toBeTruthy()
+			expect(fixture.component.open).toBeFalse()
 		})
 
 		it('should not close when a nested-menu-item with submenu is clicked', () => {
@@ -72,13 +72,13 @@ describe('Menu', () => {
 			expect(fixture.component.open).toBeFalse()
 		})
 
-		it('should not close when a list-item in a submenu is clicked', () => {
+		it('should close when a list-item in a submenu is clicked', () => {
 			fixture.component.open = true
 
 			const item = fixture.component.querySelector<MenuItem>('mo-nested-menu-item mo-list-item')
 			item?.click()
 
-			expect(fixture.component.open).toBeTrue()
+			expect(fixture.component.open).toBeFalse()
 		})
 	})
 })
