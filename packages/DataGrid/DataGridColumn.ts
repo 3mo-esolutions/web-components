@@ -119,5 +119,5 @@ export class DataGridColumn<TData, TValue = unknown> {
 	}
 
 	generateCsvHeading?(): Generator<string>
-	generateCsvValue?(value: any, data: TData): Generator<string>
+	generateCsvValue?(value: TValue, data: TData): Generator<string>
 }

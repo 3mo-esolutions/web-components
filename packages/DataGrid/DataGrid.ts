@@ -1,5 +1,4 @@
-import { property, component, Component, html, css, query, ifDefined, type PropertyValues, event, style, literal, staticHtml, type HTMLTemplateResult, cache, eventOptions, queryAll, repeat, eventListener, state } from '@a11d/lit'
-import { NotificationComponent } from '@a11d/lit-application'
+import { property, component, Component, html, css, query, ifDefined, type PropertyValues, event, style, literal, staticHtml, type HTMLTemplateResult, cache, eventOptions, queryAll, repeat, eventListener } from '@a11d/lit'
 import { LocalStorage } from '@a11d/local-storage'
 import { InstanceofAttributeController } from '@3mo/instanceof-attribute-controller'
 import { SlotController } from '@3mo/slot-controller'
@@ -13,12 +12,10 @@ import { DataGridColumnsController } from './DataGridColumnsController.js'
 import { DataGridSelectionBehaviorOnDataChange, DataGridSelectionController, DataGridSelectionMode } from './DataGridSelectionController.js'
 import { DataGridSortingController, type DataGridRankedSortDefinition, type DataGridSorting } from './DataGridSortingController.js'
 import { DataGridDetailsController } from './DataGridDetailsController.js'
-import { CsvGenerator, DataGridSidePanelTab, type DataGridColumn, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, type DataGridSidePanel, DataGridContextMenuController } from './index.js'
+import { DataGridCsvController, DataGridSidePanelTab, type DataGridColumn, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, type DataGridSidePanel, DataGridContextMenuController } from './index.js'
 import { DataRecord } from './DataRecord.js'
-import { GenericDialog } from '@3mo/standard-dialogs'
 
 Localizer.dictionaries.add('de', {
-	'Exporting excel file': 'Die Excel-Datei wird exportiert',
 	'No results': 'Kein Ergebnis',
 	'More Filters': 'Weitere Filter',
 })
@@ -174,8 +171,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	@query('mo-data-grid-footer') private readonly footer?: DataGridFooter<TData>
 	@query('mo-data-grid-side-panel') private readonly sidePanel?: DataGridSidePanel<TData>
 
-	@state() isGeneratingCsv = false
-
 	setPage(page: number) {
 		this.page = page
 		this.pageChange.dispatch(page)
@@ -252,6 +247,10 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		return this.columnsController.extractColumns(...parameters)
 	}
 
+	generateCsv(...parameters: Parameters<typeof this.csvController.generateCsv>) {
+		return this.csvController.generateCsv(...parameters)
+	}
+
 	get extractedColumns() {
 		return this.columnsController.extractedColumns
 	}
@@ -286,59 +285,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	navigateToSidePanelTab(tab?: DataGridSidePanelTab) {
 		this.sidePanelTab = tab
 		!tab ? this.sidePanelClose.dispatch() : this.sidePanelOpen.dispatch(tab)
-	}
-
-	async generateCsv() {
-		if (this.isGeneratingCsv) {
-			return
-		}
-		let progress = 0
-
-		const dataGrid = this
-
-		try {
-			this.isGeneratingCsv = true
-
-			let didGenerate = false
-
-			await new GenericDialog({
-				heading: t('Exporting excel file'),
-				primaryButtonText: '',
-				secondaryButtonText: '',
-				content() {
-					const dialog = this.renderRoot.querySelector('mo-dialog')
-
-					if (dialog) {
-						dialog.primaryOnEnter = false
-					}
-
-					const progressChanged = (currentProgress: number) => {
-						progress = Math.max(currentProgress, 0.05)
-						if (progress === 1) {
-							setTimeout(() => this['close'](), 1000)
-						} else {
-							this.requestUpdate()
-						}
-					}
-
-					if (!didGenerate) {
-						didGenerate = true
-						CsvGenerator.generate(dataGrid, progressChanged)
-					}
-
-					return html`
-						<mo-flex alignItems='center' justifyContent='center'>
-							<mo-circular-progress  .progress=${progress}></mo-circular-progress>
-						</mo-flex>
-					`
-				}
-			}).confirm()
-		} catch (error: any) {
-			NotificationComponent.notifyError(error.message)
-			throw error
-		} finally {
-			this.isGeneratingCsv = false
-		}
 	}
 
 	get hasContextMenu() {
@@ -433,6 +379,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	readonly sortingController = new DataGridSortingController(this)
 	readonly contextMenuController = new DataGridContextMenuController(this)
 	readonly detailsController = new DataGridDetailsController(this)
+	readonly csvController = new DataGridCsvController<TData>(this)
 
 	readonly rowIntersectionObserver?: IntersectionObserver
 
@@ -820,7 +767,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		this.rows.forEach(row => row.cells.forEach(cell => cell.handlePointerDown(event)))
 	}
 
-	*flattenData(values = this.data): Generator<DataRecord<TData>, void, undefined> {
+	protected *getFlattenedData(values = this.data): Generator<DataRecord<TData>, void, undefined> {
 		if (!this.subDataGridDataSelector) {
 			yield* this.sortingController.toSortedBy(
 				values.map((data, index) => new DataRecord(this, { level: 0, index, data })),
@@ -852,7 +799,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}
 
 	get dataRecords(): Array<DataRecord<TData>> {
-		return [...this.flattenData()]
+		return [...this.getFlattenedData()]
 			.map((record, index) => {
 				// @ts-expect-error index is initialized here
 				record.index = index
@@ -878,6 +825,11 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	protected get dataTake() {
 		return this.pageSize
+	}
+
+	async *getCsvData() {
+		yield 1
+		return this.dataRecords
 	}
 }
 
