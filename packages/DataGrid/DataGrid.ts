@@ -174,7 +174,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	@query('mo-data-grid-footer') private readonly footer?: DataGridFooter<TData>
 	@query('mo-data-grid-side-panel') private readonly sidePanel?: DataGridSidePanel<TData>
 
-	@state() isGenerating = false
+	@state() isGeneratingCsv = false
 
 	setPage(page: number) {
 		this.page = page
@@ -288,13 +288,16 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		!tab ? this.sidePanelClose.dispatch() : this.sidePanelOpen.dispatch(tab)
 	}
 
-	async exportExcelFile() {
+	async generateCsv() {
+		if (this.isGeneratingCsv) {
+			return
+		}
 		let progress = 0
 
 		const dataGrid = this
 
 		try {
-			this.isGenerating = true
+			this.isGeneratingCsv = true
 
 			let didGenerate = false
 
@@ -334,7 +337,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			NotificationComponent.notifyError(error.message)
 			throw error
 		} finally {
-			this.isGenerating = false
+			this.isGeneratingCsv = false
 		}
 	}
 

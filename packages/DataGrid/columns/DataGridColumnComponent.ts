@@ -46,11 +46,11 @@ export abstract class DataGridColumnComponent<TData, TValue> extends Component {
 			sticky: this.sticky,
 			width: this.width,
 			sortable: !this.nonSortable,
-			formatValueForCsv: (value, data) => this.formatValueForCsv(value, data),
-      formatHeaderForCsv: () => this.formatHeaderForCsv(),
 			editable: this.getEditContentTemplate !== undefined && (typeof nonEditable !== 'function' ? !nonEditable : x => !nonEditable(x)),
 			getContentTemplate: this.getContentTemplate.bind(this),
 			getEditContentTemplate: this.getEditContentTemplate?.bind(this),
+			generateCsvHeading: this.generateCsvHeading.bind(this),
+			generateCsvValue: this.generateCsvValue.bind(this),
 		})
 	}
 
@@ -73,12 +73,12 @@ export abstract class DataGridColumnComponent<TData, TValue> extends Component {
 		this.dataGrid?.requestUpdate()
 	}
 
-	formatValueForCsv(value: any, data: TData): string | string[] {
-		data
-		return value === undefined || value === null ? '' : String(value)
+	*generateCsvHeading(): Generator<string> {
+		yield [this.heading, this.description].filter(Boolean).join(' - ')
 	}
 
-	formatHeaderForCsv(): string | string[] {
-		return this.heading.length < 3 && this.description ? this.description  : this.heading
+	*generateCsvValue(value: any, data: TData): Generator<string> {
+		data
+		yield value?.toString() ?? ''
 	}
 }

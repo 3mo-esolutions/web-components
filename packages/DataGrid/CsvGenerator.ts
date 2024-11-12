@@ -54,14 +54,10 @@ export class CsvGenerator {
 
 		const maxLevel = Math.max(...flattenedData.map(d => d.level))
 
-		const [firstHeading, ...restHeadings] = dataGrid.visibleColumns
-    	.flatMap(c => {
-				const formattedOrVoid = c.formatHeaderForCsv?.()
-				return formattedOrVoid === undefined ? [] : new Array<string>().concat(formattedOrVoid).map(this.sanitize)
-			})
+		const [firstHeading, ...otherHeadings] = dataGrid.visibleColumns.flatMap(c => [...c.generateCsvHeading?.() ?? []].map(this.sanitize))
 
 		const rows = [
-			[firstHeading, ...Array.from({ length: maxLevel }).fill(firstHeading), ...restHeadings],
+			[firstHeading, ...Array.from({ length: maxLevel }).fill(firstHeading), ...otherHeadings],
 			...flattenedData.map(d => {
 				const nestedPadding = Array.from({ length: d.level }).fill('')
 				const childrenPadding = Array.from({ length: maxLevel - d.level }).fill('')
@@ -69,9 +65,9 @@ export class CsvGenerator {
 					.flatMap((column, i, array) => {
 						didUpdate?.(progressEntryPoint + ((i + 1) / array.length) * progressScale)
 						const value = getValueByKeyPath(d.data, column.dataSelector)
-						const formattedOrVoid = column.formatValueForCsv?.(value, d.data)
+						const formattedOrVoid = [...column.generateCsvValue?.(value, d.data) ?? []]
 						return formattedOrVoid === undefined ? [] : new Array<string>().concat(formattedOrVoid).map(this.sanitize)
-          })
+					})
 				return [
 					...nestedPadding,
 					first,

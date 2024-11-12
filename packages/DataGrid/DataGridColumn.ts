@@ -118,6 +118,6 @@ export class DataGridColumn<TData, TValue = unknown> {
 		}
 	}
 
-	formatValueForCsv?(value: any, data: TData): string | string[]
-	formatHeaderForCsv?(): string | string[]
+	generateCsvHeading?(): Generator<string>
+	generateCsvValue?(value: any, data: TData): Generator<string>
 }

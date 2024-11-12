@@ -22,8 +22,8 @@ export class DataGridColumnPercent<TData> extends DataGridColumnNumberBase<TData
 		return html`${sum.formatAsPercent()}`
 	}
 
-	override formatHeaderForCsv() {
-		return `${this.heading.length < 3 && this.description ? this.description  : this.heading} (%)`
+	override *generateCsvHeading() {
+		yield* [...super.generateCsvHeading()].map(heading => `${heading} (%)`)
 	}
 }
 

@@ -37,8 +37,8 @@ export class DataGridColumnBoolean<TData> extends DataGridColumnComponent<TData,
 		`
 	}
 
-	override formatValueForCsv(value: boolean) {
-		return value ? 'TRUE' : 'FALSE'
+	override *generateCsvValue(value: boolean) {
+		yield value ? 'TRUE' : 'FALSE'
 	}
 }
 

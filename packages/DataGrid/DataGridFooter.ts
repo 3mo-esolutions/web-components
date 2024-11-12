@@ -105,6 +105,13 @@ export class DataGridFooter<TData> extends Component {
 				margin: 0 6px;
 				font-size: smaller;
 			}
+
+			#export {
+				font-size: '24px';
+				&:hover {
+					color: var(--mo-color-green);
+				}
+			}
 		`
 	}
 
@@ -218,10 +225,10 @@ export class DataGridFooter<TData> extends Component {
 
 	private get exportTemplate() {
 		return !this.dataGrid.exportable ? html.nothing : html`
-			<mo-icon-button dense icon='download_for_offline'
+			<mo-icon-button id='export' dense icon='download_for_offline'
 				${tooltip(t('Export to CSV'), TooltipPlacement.BlockStart)}
-				${style({ color: 'var(--mo-color-green)', fontSize: '24px', opacity: this.dataGrid.isGenerating ? '0.5' : undefined })}
-				@click=${() => this.dataGrid.isGenerating ? undefined : this.dataGrid.exportExcelFile()}
+				${style({ opacity: this.dataGrid.isGeneratingCsv ? '0.5' : undefined })}
+				@click=${() => this.dataGrid.isGeneratingCsv ? undefined : this.dataGrid.generateCsv()}
 			></mo-icon-button>
 		`
 	}

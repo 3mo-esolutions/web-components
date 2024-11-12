@@ -14,14 +14,6 @@ export class DataGridColumnImage<TData> extends DataGridColumnComponent<TData, s
 	override nonSortable = true
 	override nonEditable = true
 
-	private getTooltipText = (data: TData) => {
-		return !this.tooltipSelector
-			? undefined
-			: typeof this.tooltipSelector === 'function'
-				? this.tooltipSelector(data)
-				: getValueByKeyPath(data, this.tooltipSelector) as string | undefined
-	}
-
 	getContentTemplate(value: string | undefined, data: TData) {
 		if (!value) {
 			return html.nothing
@@ -42,9 +34,17 @@ export class DataGridColumnImage<TData> extends DataGridColumnComponent<TData, s
 
 	override getEditContentTemplate = undefined
 
-	override formatValueForCsv(value: string, data: TData) {
+	override *generateCsvValue(value: string, data: TData) {
 		value
-		return this.getTooltipText(data) ?? ''
+		yield this.getTooltipText(data) ?? ''
+	}
+
+	private getTooltipText(data: TData) {
+		return !this.tooltipSelector
+			? undefined
+			: typeof this.tooltipSelector === 'function'
+				? this.tooltipSelector(data)
+				: getValueByKeyPath(data, this.tooltipSelector) as string | undefined
 	}
 }
 

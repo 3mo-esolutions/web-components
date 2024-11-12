@@ -11,8 +11,8 @@ export class DataGridColumnDate<TData> extends DataGridColumnDateTimeBase<TData,
 
 	override readonly fieldTag = literal`mo-field-date`
 
-	override formatValueForCsv(value: Date | undefined) {
-		return !value ? '' : value.toISOString().split('T')[0]!
+	override *generateCsvValue(value: Date | undefined) {
+		yield value?.toISOString().split('T')[0] ?? ''
 	}
 }
 
