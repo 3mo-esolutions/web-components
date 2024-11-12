@@ -2,7 +2,7 @@ import { AsyncDirective, directive, type PartInfo, isServer } from '@a11d/lit'
 
 type AtLeastOneOf<T, U = { [K in keyof T]: Pick<T, K> }> = Partial<T> & U[keyof U]
 
-export const enum ScreenSize {
+export enum ScreenSize {
 	Mobile = 'mobile',
 	Tablet = 'tablet',
 	Desktop = 'desktop',
