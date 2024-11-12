@@ -10,6 +10,7 @@ import '@3mo/theme'
  * @attr progress - The progress of the circular progress indicator. Unset to display an indeterminate progress indicator.
  *
  * @cssprop --mo-circular-progress-accent-color
+ * @cssprop --mo-circular-progress-track-color
  */
 @component('mo-circular-progress')
 export class CircularProgress extends Component {
@@ -28,6 +29,7 @@ export class CircularProgress extends Component {
 				width: 100%;
 				height: 100%;
 				--md-circular-progress-active-indicator-color: var(--mo-circular-progress-accent-color, var(--mo-color-accent));
+				--md-circular-progress-track-color: var(--mo-circular-progress-track-color, rgba(0, 0, 0, 0));
 			}
 		`
 	}
@@ -52,6 +54,10 @@ MdCircularProgress.elementStyles.push(css`
 		width: 100% !important;
 		height: 100% !important;
 		margin: 0 !important;
+	}
+
+	.track {
+		stroke: var(--md-circular-progress-track-color);
 	}
 `)
 
