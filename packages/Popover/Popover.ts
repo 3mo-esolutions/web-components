@@ -182,7 +182,6 @@ export class Popover extends Component {
 				position: absolute;
 				box-shadow: var(--mo-shadow);
 				width: max-content;
-				max-width: 100%;
 				z-index: 99;
 				/* Do not move these to default values as resetting these values are important to prevent inheriting them from other parent popovers */
 				--mo-popover-translate-x: 0%;

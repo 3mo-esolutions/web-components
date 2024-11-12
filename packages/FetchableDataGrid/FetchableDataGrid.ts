@@ -99,8 +99,9 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 				position: absolute;
 				width: 48px;
 				height: 48px;
-				inset-inline-start: calc(50% - 24px);
-				inset-block-start: calc(50% - 24px);
+				inset-inline-start: 50%;
+				inset-block-start: 50%;
+				transform: translate(-50%, calc(-50% + var(--mo-data-grid-header-height) / 2));
 			}
 
 			:host([fetching]) mo-icon-button[icon=refresh] {

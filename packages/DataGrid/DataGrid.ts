@@ -486,10 +486,16 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				--mo-data-grid-alternating-background: color-mix(in srgb, black var(--mo-data-grid-alternating-background-transparency), transparent 0%);
 
 				--mo-data-grid-selection-background: color-mix(in srgb, var(--mo-color-accent), transparent 50%);
+
+				--_content-min-height-default: calc(var(--mo-data-grid-min-visible-rows, 2.5) * var(--mo-data-grid-row-height) + var(--mo-data-grid-header-height));
 				display: flex;
 				flex-direction: column;
 				height: 100%;
 				overflow-x: hidden;
+			}
+
+			:not(:has([mo-data-grid-row])) {
+				--_content-min-height-default: 150px;
 			}
 
 			:host([data-theme=light]) {
@@ -570,7 +576,8 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			}
 
 			mo-empty-state, ::slotted(mo-empty-state) {
-				height: 100%;
+				height: calc(100% - var(--mo-data-grid-header-height) / 2);
+				margin-block-start: calc(var(--mo-data-grid-header-height) / 2);
 				position: absolute;
 				inset: 0;
 			}
@@ -687,7 +694,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		return html`
 			<mo-grid rows='* auto' ${style({ position: 'relative', height: '100%' })}>
 				<mo-scroller
-					${style({ minHeight: 'var(--mo-data-grid-content-min-height, calc(var(--mo-data-grid-min-visible-rows, 2.5) * var(--mo-data-grid-row-height) + var(--mo-data-grid-header-height)))' })}
+					${style({ minHeight: 'var(--mo-data-grid-content-min-height, var(--_content-min-height-default))' })}
 					@scroll=${this.handleScroll}
 				>
 					<mo-grid id='content' autoRows='min-content' columns='var(--mo-data-grid-columns)'>

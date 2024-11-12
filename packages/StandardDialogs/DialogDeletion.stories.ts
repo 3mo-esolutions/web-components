@@ -12,7 +12,13 @@ export default {
 
 export const Default: StoryObj = {
 	render: () => html`
-		<mo-button @click=${() => new DialogDeletion({ content: 'Content' }).confirm()}>Open</mo-button>
+		<mo-button @click=${() => new DialogDeletion({}).confirm()}>Open</mo-button>
+	`
+}
+
+export const WithLabel: StoryObj = {
+	render: () => html`
+		<mo-button @click=${() => new DialogDeletion({ label: 'order #1234' }).confirm()}>Open</mo-button>
 	`
 }
 

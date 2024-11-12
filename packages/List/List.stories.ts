@@ -10,7 +10,7 @@ export default {
 } as Meta
 
 const keyboardShortcut = (shortcut: string) => html`
-	<span style='font-size: 13px; color: darkgray'>${shortcut}</span>
+	<span style='font-size: 13px; color: darkgray; text-align: end'>${shortcut}</span>
 `
 
 const separator = html`
@@ -29,8 +29,8 @@ const items = html`
 		${keyboardShortcut('Ctrl + D')}
 	</mo-list-item>
 	${separator}
-	<mo-list-item>Trash</mo-list-item>
-	<mo-list-item>Spam</mo-list-item>
+	<mo-list-item><span class='first-column-padding' hidden></span>Trash</mo-list-item>
+	<mo-list-item><span class='first-column-padding' hidden></span>Spam</mo-list-item>
 	${separator}
 	<mo-list-item disabled style='opacity: 1'>
 		<mo-icon style='opacity: 0.33' icon='settings_suggest'></mo-icon>
@@ -53,4 +53,26 @@ export const Default: StoryObj = {
 
 export const ItemsWithoutList: StoryObj = {
 	render: () => items
+}
+
+export const CustomSubGridLayout: StoryObj = {
+	render: () => html`
+		<style>
+			#custom {
+				display: grid;
+				grid-template-columns: auto 1fr auto;
+
+				& > * {
+					grid-column: 1 / -1;
+					display: grid;
+					grid-template-columns: subgrid;
+				}
+
+				.first-column-padding {
+					display: inline-block;
+				}
+			}
+		</style>
+		<mo-list id='custom'>${items}</mo-list>
+	`
 }

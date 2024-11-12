@@ -4,8 +4,10 @@ import type { ListItem } from '@3mo/list'
 import type { Menu } from '@3mo/menu'
 import type { FocusMethod } from '@3mo/focus-controller'
 import type { PopoverAlignment, PopoverPlacement } from '@3mo/popover'
+import { type Middleware } from '@floating-ui/dom'
 import { FieldSelectValueController, type Data, type Index, type Value } from './SelectValueController.js'
 import { Option } from './Option.js'
+import { closeWhenOutOfViewport } from './closeWhenOutOfViewport.js'
 
 /**
  * @element mo-field-select
@@ -25,6 +27,8 @@ import { Option } from './Option.js'
  *
  * @csspart input - The input element.
  * @csspart dropDownIcon - The dropdown icon.
+ * @csspart menu - The menu consisting of list of options.
+ * @csspart list - The list of options.
  *
  * @i18n "No results"
  *
@@ -51,6 +55,8 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 	@property({ type: Number, updated(this: FieldSelect<T>) { this.valueController.index = this.index } }) index: Index
 	@property({ type: Object, updated(this: FieldSelect<T>) { this.valueController.data = this.data } }) data: Data<T>
 
+	@state() protected searchString?: string
+	@state() private positionMiddleware?: Array<Middleware>
 	@state({
 		updated(this: FieldSelect<T>, value: number, oldValue: number) {
 			if (value && value !== oldValue) {
@@ -59,8 +65,6 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 			}
 		}
 	}) protected [FieldSelectValueController.requestSyncKey] = 0
-
-	@state() protected searchString?: string
 
 	@query('input#value') readonly valueInputElement!: HTMLInputElement
 	@query('input#search') readonly searchInputElement?: HTMLInputElement
@@ -95,6 +99,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 
 	protected override updated(props: PropertyValues) {
 		super.updated(props)
+		this.positionMiddleware ??= [closeWhenOutOfViewport()]
 		this.style.setProperty('--mo-field-width', this.offsetWidth + 'px')
 		this.toggleAttribute('data-show-no-options-hint', this.showNoOptionsHint)
 	}
@@ -106,6 +111,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 			:host {
 				display: flex;
 				flex-flow: column;
+				--_grid-column-full-span-in-case: 1 / -1;
 			}
 
 			input {
@@ -135,18 +141,18 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 
 			mo-list-item {
 				min-height: 40px;
+				grid-column: var(--_grid-column-full-span-in-case);
 			}
 
-			slot:not([name]) {
-				display: flex;
-				flex-direction: column;
-				align-items: stretch;
+			mo-line {
+				grid-column: var(--_grid-column-full-span-in-case);
 			}
 
 			#no-options-hint {
 				display: none;
 				padding: 10px;
 				color: var(--mo-color-gray);
+				grid-column: var(--_grid-column-full-span-in-case);
 			}
 
 			:host([data-show-no-options-hint]) #no-options-hint {
@@ -221,7 +227,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 
 	protected get menuTemplate() {
 		return html`
-			<mo-menu
+			<mo-menu part='menu' exportparts='list'
 				fixed
 				target='field'
 				selectionMode=${this.multiple ? 'multiple' : 'single'}
@@ -234,6 +240,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 				.value=${this.valueController.menuValue}
 				@change=${(e: CustomEvent<Array<number>>) => this.handleSelection(e.detail)}
 				@itemsChange=${() => this.handleItemsChange()}
+				.positionMiddleware=${this.positionMiddleware}
 			>
 				${this.noResultsOptionTemplate}
 				${this.defaultOptionTemplate}
