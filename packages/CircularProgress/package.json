@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/circular-progress",
-	"version": "0.2.5",
+	"version": "0.3.0",
 	"description": "A circular progress web-component based on Material Web Components.",
 	"repository": {
 		"type": "git",
