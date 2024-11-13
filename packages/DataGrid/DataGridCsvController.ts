@@ -26,6 +26,17 @@ export class DataGridCsvController<TData> {
 		return value
 	}
 
+	static async download(data: string) {
+		const fileName = [
+			document.title.split(' | ')[0],
+			new Date().toISOString().replace(/[-:.T]/g, '').slice(0, 14),
+		].filter(Boolean).join('_')
+
+		Downloader.download(`data:text/csv;charset=utf-8,${encodeURIComponent(data)}`, `${fileName}.csv`)
+
+		await new Promise(r => setTimeout(r, 1000))
+	}
+
 	constructor(protected readonly host: Host<TData>) { }
 
 	private _progress?: number
@@ -82,22 +93,11 @@ export class DataGridCsvController<TData> {
 			]
 
 			const csvContent = rows.map(row => row.join(',')).join('\n')
-			await this.download(csvContent)
+			await DataGridCsvController.download(csvContent)
 		} catch (error: any) {
 			NotificationComponent.notifyAndThrowError(error.message)
 		} finally {
 			this.generationProgress = undefined
 		}
-	}
-
-	private async download(data: string) {
-		const fileName = [
-			document.title.split(' | ')[0],
-			new Date().toISOString().replace(/[-:.T]/g, '').slice(0, 14),
-		].filter(Boolean).join('_')
-
-		Downloader.download(`data:text/csv;charset=utf-8,${encodeURIComponent(data)}`, `${fileName}.csv`)
-
-		await new Promise(r => setTimeout(r, 1000))
 	}
 }

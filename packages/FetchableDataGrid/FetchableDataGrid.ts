@@ -170,7 +170,7 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 
 	override async * getCsvData() {
 		const data = new Array<TData>()
-		const pageSize = 1_000
+		const pageSize = 500
 		const parameters = { ...this.parameters } as TDataFetcherParameters
 		const sortParameters = this.sortParameters?.() ?? {} as TDataFetcherParameters
 

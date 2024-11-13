@@ -63,20 +63,20 @@ describe('DataGridCsvController', () => {
 
 	describe('generateCsv', () => {
 		it('should generate csv from data', async () => {
-			spyOn(controller as any, 'download')
+			spyOn(DataGridCsvController, 'download')
 
 			await controller.generateCsv()
 
-			expect(controller['download']).toHaveBeenCalledWith('Name,Age,Birth Date\nJohn,30,1990-01-01\nJane,25,1991-01-01\nJohn,30,1992-01-01')
+			expect(DataGridCsvController.download).toHaveBeenCalledWith('Name,Age,Birth Date\nJohn,30,1990-01-01\nJane,25,1991-01-01\nJohn,30,1992-01-01')
 		})
 
 		it('should be able to handle nested data', async () => {
 			csvData[1] = new DataRecord(undefined!, { data: { name: 'Jane', age: 25, birthDate: new DateTime('1991-01-01') } as Person, index: 1, level: 1 })
-			spyOn(controller as any, 'download')
+			spyOn(DataGridCsvController, 'download')
 
 			await controller.generateCsv()
 
-			expect(controller['download']).toHaveBeenCalledWith('Name,Name,Age,Birth Date\nJohn,,30,1990-01-01\n,Jane,25,1991-01-01\nJohn,,30,1992-01-01')
+			expect(DataGridCsvController.download).toHaveBeenCalledWith('Name,Name,Age,Birth Date\nJohn,,30,1990-01-01\n,Jane,25,1991-01-01\nJohn,,30,1992-01-01')
 		})
 	})
 })
