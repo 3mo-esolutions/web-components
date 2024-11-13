@@ -78,19 +78,18 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 				return undefined
 			}
 
-			const data = await this._fetch()
+			const paginationParameters = this.paginationParameters?.({ page: this.page, pageSize: this.pageSize }) ?? {}
+			const sortParameters = this.sortParameters?.() ?? {}
+			const data = await this.fetch({
+				...this.parameters,
+				...paginationParameters,
+				...sortParameters,
+			}) ?? []
 			this.dataFetch.dispatch(data)
+
 			return data
 		},
 	})
-
-	private _fetch(parameters?: { readonly page: number, readonly pageSize: number }) {
-		return this.fetch({
-			...this.parameters,
-			...(this.paginationParameters?.(parameters ?? { page: this.page, pageSize: this.pageSize }) ?? {}),
-			...(this.sortParameters?.() ?? {}),
-		} as TDataFetcherParameters)
-	}
 
 	static override get styles() {
 		return css`
@@ -172,12 +171,19 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 	override async * getCsvData() {
 		const data = new Array<TData>()
 		const pageSize = 1_000
+		const parameters = { ...this.parameters } as TDataFetcherParameters
+		const sortParameters = this.sortParameters?.() ?? {} as TDataFetcherParameters
 
 		let dataLength = this.dataLength
 		let hasNextPage = true
 		let page = 1
 		while (true) {
-			const result = await this._fetch({ page, pageSize })
+			const paginationParameters = this.paginationParameters?.({ page, pageSize }) ?? {}
+			const result = await this.fetch({
+				...parameters,
+				...paginationParameters,
+				...sortParameters,
+			}) ?? []
 			if (result instanceof Array) {
 				data.push(...result)
 				hasNextPage = false
@@ -188,7 +194,7 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 				data.push(...result.data)
 			}
 			page++
-			yield Math.min(page / Math.ceil(dataLength / pageSize), 1)
+			yield Math.min(Math.floor(data.length / dataLength * 100) / 100, 1)
 			if (!hasNextPage) {
 				break
 			}
