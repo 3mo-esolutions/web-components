@@ -21,6 +21,10 @@ export class DataGridColumnPercent<TData> extends DataGridColumnNumberBase<TData
 	getSumTemplate(sum: number) {
 		return html`${sum.formatAsPercent()}`
 	}
+
+	override *generateCsvHeading() {
+		yield* [...super.generateCsvHeading()].map(heading => `${heading} (%)`)
+	}
 }
 
 declare global {

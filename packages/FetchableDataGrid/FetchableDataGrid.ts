@@ -63,7 +63,7 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 			this.resetPageAndRequestFetch()
 		}
 	}) parameters?: TDataFetcherParameters
-	@property({ type: Object }) paginationParameters?: () => Partial<TDataFetcherParameters>
+	@property({ type: Object }) paginationParameters?: (parameters: { readonly page: number, readonly pageSize: number }) => Partial<TDataFetcherParameters>
 	@property({ type: Object }) sortParameters?: () => Partial<TDataFetcherParameters>
 	// protected filterParameters?: () => TDataFetcherParameters
 
@@ -78,7 +78,7 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 				return undefined
 			}
 
-			const paginationParameters = this.paginationParameters?.() ?? {}
+			const paginationParameters = this.paginationParameters?.({ page: this.page, pageSize: this.pageSize }) ?? {}
 			const sortParameters = this.sortParameters?.() ?? {}
 			const data = await this.fetch({
 				...this.parameters,
@@ -166,6 +166,41 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 
 	protected override get dataTake() {
 		return !this.hasServerSidePagination ? super.dataTake : Number.MAX_SAFE_INTEGER
+	}
+
+	override async * getCsvData() {
+		const data = new Array<TData>()
+		const pageSize = 500
+		const parameters = { ...this.parameters } as TDataFetcherParameters
+		const sortParameters = this.sortParameters?.() ?? {} as TDataFetcherParameters
+
+		let dataLength = this.dataLength
+		let hasNextPage = true
+		let page = 1
+		while (true) {
+			const paginationParameters = this.paginationParameters?.({ page, pageSize }) ?? {}
+			const result = await this.fetch({
+				...parameters,
+				...paginationParameters,
+				...sortParameters,
+			}) ?? []
+			if (result instanceof Array) {
+				data.push(...result)
+				hasNextPage = false
+				dataLength = data.length
+			} else {
+				dataLength = result.dataLength ?? 0
+				hasNextPage = result.hasNextPage ?? (page < Math.ceil(result.dataLength / pageSize))
+				data.push(...result.data)
+			}
+			page++
+			yield Math.min(Math.floor(data.length / dataLength * 100) / 100, 1)
+			if (!hasNextPage) {
+				break
+			}
+		}
+
+		return [...this.getFlattenedData(data)]
 	}
 
 	override get hasPagination() {

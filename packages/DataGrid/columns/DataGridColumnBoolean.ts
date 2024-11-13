@@ -36,6 +36,10 @@ export class DataGridColumnBoolean<TData> extends DataGridColumnComponent<TData,
 			></mo-checkbox>
 		`
 	}
+
+	override *generateCsvValue(value: boolean) {
+		yield value ? 'TRUE' : 'FALSE'
+	}
 }
 
 declare global {

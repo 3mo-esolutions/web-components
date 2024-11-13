@@ -49,6 +49,8 @@ export abstract class DataGridColumnComponent<TData, TValue> extends Component {
 			editable: this.getEditContentTemplate !== undefined && (typeof nonEditable !== 'function' ? !nonEditable : x => !nonEditable(x)),
 			getContentTemplate: this.getContentTemplate.bind(this),
 			getEditContentTemplate: this.getEditContentTemplate?.bind(this),
+			generateCsvHeading: this.generateCsvHeading.bind(this),
+			generateCsvValue: this.generateCsvValue.bind(this),
 		})
 	}
 
@@ -69,5 +71,14 @@ export abstract class DataGridColumnComponent<TData, TValue> extends Component {
 	protected override updated() {
 		this.dataGrid?.extractColumns()
 		this.dataGrid?.requestUpdate()
+	}
+
+	*generateCsvHeading(): Generator<string> {
+		yield [this.heading, this.description].filter(Boolean).join(' - ')
+	}
+
+	*generateCsvValue(value: any, data: TData): Generator<string> {
+		data
+		yield value?.toString() ?? ''
 	}
 }

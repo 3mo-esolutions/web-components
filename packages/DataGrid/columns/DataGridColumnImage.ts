@@ -19,11 +19,7 @@ export class DataGridColumnImage<TData> extends DataGridColumnComponent<TData, s
 			return html.nothing
 		}
 
-		const tooltipText = !this.tooltipSelector
-			? undefined
-			: typeof this.tooltipSelector === 'function'
-				? this.tooltipSelector(data)
-				: getValueByKeyPath(data, this.tooltipSelector) as string | undefined
+		const tooltipText = this.getTooltipText(data)
 
 		return !value ? html.nothing : html`
 			<img
@@ -37,6 +33,19 @@ export class DataGridColumnImage<TData> extends DataGridColumnComponent<TData, s
 	}
 
 	override getEditContentTemplate = undefined
+
+	override *generateCsvValue(value: string, data: TData) {
+		value
+		yield this.getTooltipText(data) ?? ''
+	}
+
+	private getTooltipText(data: TData) {
+		return !this.tooltipSelector
+			? undefined
+			: typeof this.tooltipSelector === 'function'
+				? this.tooltipSelector(data)
+				: getValueByKeyPath(data, this.tooltipSelector) as string | undefined
+	}
 }
 
 declare global {

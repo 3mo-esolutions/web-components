@@ -1,13 +1,13 @@
-import { component, property, Component, css, state, html, query, style } from '@a11d/lit'
+import { component, property, Component, css, state, html, query, style, ifDefined } from '@a11d/lit'
 import { type FieldNumber } from '@3mo/number-fields'
 import { DirectionsByLanguage, Localizer } from '@3mo/localization'
 import { TooltipPlacement, tooltip } from '@3mo/tooltip'
 import { type DataGrid, type DataGridPagination } from './index.js'
-import excelSvg from './excel.svg.js'
 
 Localizer.dictionaries.add('de', {
 	'${page:number} of ${maxPage:number}': '${page} von ${maxPage}',
-	'Export current view to Excel': 'Aktuelle Ansicht nach Excel exportieren',
+	'Export to CSV': 'Ansicht nach CSV exportieren',
+	'Exporting file...': 'Datei wird exportiert...',
 	'Auto': 'Auto'
 })
 
@@ -105,6 +105,51 @@ export class DataGridFooter<TData> extends Component {
 				font-weight: 500;
 				margin: 0 6px;
 				font-size: smaller;
+			}
+
+			#csv {
+				position: relative;
+				color: var(--mo-color-gray);
+				height: 32px;
+				font-size: small;
+
+				mo-icon-button {
+					grid-row: 1;
+					grid-column: 1;
+					font-size: 24px;
+					transition: 100ms;
+					&[data-generating] {
+						color: var(--mo-color-green);
+						&:not([data-progress='1']) {
+							transform: scale(0.66);
+						}
+					}
+					&:hover {
+						color: var(--mo-color-accent);
+					}
+				}
+
+				mo-circular-progress {
+					grid-row: 1;
+					grid-column: 1;
+					height: 32px;
+					width: 32px;
+					place-self: center;
+					--mo-circular-progress-accent-color: var(--mo-color-green);
+					--mo-circular-progress-track-color: var(--mo-color-transparent-gray-3);
+				}
+
+				span#exporting-percent {
+					grid-column: 2;
+					color: var(--mo-color-green);
+					font-size: medium;
+				}
+
+				span#exporting-text {
+					grid-column: 3;
+					margin-inline-start: 4px;
+					color: var(--mo-color-foreground);
+				}
 			}
 		`
 	}
@@ -218,28 +263,28 @@ export class DataGridFooter<TData> extends Component {
 	}
 
 	private get exportTemplate() {
-		return !this.dataGrid.exportable ? html.nothing : html`
-			<style>
-				#export {
-					height: 21px;
-					width: 21px;
-					aspect-ratio: 1 / 1;
-					transition: .25s;
-					-webkit-filter: grayscale(100%);
-					filter: grayscale(100%);
-					cursor: pointer;
-				}
-
-				#export:hover {
-					-webkit-filter: grayscale(0%);
-					filter: grayscale(0%);
-				}
-			</style>
-			<img id='export'
-				src=${`data:image/svg+xml,${encodeURIComponent(excelSvg)}`}
-				${tooltip(t('Export current view to Excel'), TooltipPlacement.BlockStart)}
-				@click=${() => this.dataGrid.exportExcelFile()}
-			/>
+		if (!this.dataGrid.exportable) {
+			return html.nothing
+		}
+		const { generationProgress, isGenerating } = this.dataGrid.csvController
+		return html`
+			<div id='csv'>
+				<mo-grid columns='auto auto auto' gap='6px' rows='auto' alignItems='center'>
+					<mo-icon-button dense
+						?data-generating=${isGenerating}
+						data-progress=${ifDefined(generationProgress)}
+						${tooltip(t('Export to CSV'), TooltipPlacement.BlockStart)}
+						@click=${() => this.dataGrid.generateCsv()}
+					>
+						<mo-icon slot='icon' variant='outlined' icon=${generationProgress === 1 ? 'cloud_done' : 'cloud_download'}></mo-icon>
+					</mo-icon-button>
+					${!isGenerating ? html.nothing : html`
+						${generationProgress === 1 ? html.nothing : html`<mo-circular-progress></mo-circular-progress>`}
+						<span id='exporting-percent'>${(generationProgress! * 100).formatAsPercent()}</span>
+						<span id='exporting-text'>${t('Exporting file...')}</span>
+					`}
+				</mo-grid>
+			</div>
 		`
 	}
 

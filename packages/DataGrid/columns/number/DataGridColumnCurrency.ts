@@ -1,7 +1,11 @@
 import { component, html, ifDefined, property } from '@a11d/lit'
-import { Currency, type CurrencyCode } from '@3mo/localization'
+import { Localizer, Currency, type CurrencyCode } from '@3mo/localization'
 import { FieldCurrency } from '@3mo/number-fields'
 import { DataGridColumnNumberBase } from './DataGridColumnNumberBase.js'
+
+Localizer.dictionaries.add('de', {
+	'Currency': 'Währung',
+})
 
 /**
  * @element mo-data-grid-column-currency
@@ -40,6 +44,16 @@ export class DataGridColumnCurrency<TData> extends DataGridColumnNumberBase<TDat
 		return html`
 			<span style='font-weight: 500'>${sum.formatAsCurrency(this.currency ?? DataGridColumnCurrency.defaultCurrency!)}</span>
 		`
+	}
+
+	override *generateCsvHeading() {
+		yield* super.generateCsvHeading()
+		yield t('Currency')
+	}
+
+	override *generateCsvValue(value: number | undefined, data: TData) {
+		yield* super.generateCsvValue(value, data)
+		yield this.getCurrency(data).code
 	}
 }
 
