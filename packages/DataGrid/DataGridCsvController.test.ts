@@ -1,21 +1,55 @@
+import { DataGridColumn } from './DataGridColumn'
 import { DataGridCsvController } from './DataGridCsvController'
+import { DataRecord } from './DataRecord'
 
-type Data = {}
+type Person = { id: number, name: string, age: number, birthDate: DateTime }
 
 describe('DataGridCsvController', () => {
-	let controller: DataGridCsvController<Data>
+	let controller: DataGridCsvController<Person>
+	const requestUpdate = jasmine.createSpy('requestUpdate')
 
-	beforeEach(() =>
-		controller = new DataGridCsvController<Data>({
+	let csvData: Array<DataRecord<Person>>
 
-			// hasDefaultRowElements: true,
-			// dataRecords: [{ data: 'record1', hasSubData: true }, { data: 'record2', hasSubData: false }] as Array<DataRecord<Data>>,
-			// getRowDetailsTemplate: data => data === 'record1' ? html`<p>${data}</p>` : html.nothing,
-			// multipleDetails: true,
-			// hasDataDetail: data => data === 'record1',
-			// requestUpdate: jasmine.createSpy('requestUpdate')
+	beforeEach(() => {
+		csvData = [
+			new DataRecord(undefined!, { data: { name: 'John', age: 30, birthDate: new DateTime('1990-01-01') } as Person, index: 0, level: 0 }),
+			new DataRecord(undefined!, { data: { name: 'Jane', age: 25, birthDate: new DateTime('1991-01-01') } as Person, index: 1, level: 0 }),
+			new DataRecord(undefined!, { data: { name: 'John', age: 30, birthDate: new DateTime('1992-01-01') } as Person, index: 2, level: 0 }),
+		]
+		controller = new DataGridCsvController<Person>({
+			async *getCsvData() {
+				yield 1
+				return csvData
+			},
+			visibleColumns: [
+				new DataGridColumn<Person, string>({
+					dataSelector: 'name',
+					*generateCsvHeading() { yield 'Name' },
+					*generateCsvValue(value, data) {
+						data
+						yield value
+					},
+				}),
+				new DataGridColumn<Person, number>({
+					dataSelector: 'age',
+					*generateCsvHeading() { yield 'Age' },
+					*generateCsvValue(value, data) {
+						data
+						yield value.toString()
+					},
+				}),
+				new DataGridColumn<Person, DateTime>({
+					dataSelector: 'birthDate',
+					*generateCsvHeading() { yield 'Birth Date' },
+					*generateCsvValue(value, data) {
+						data
+						yield value.toISOString().split('T')[0]
+					},
+				}),
+			],
+			requestUpdate,
 		})
-	)
+	})
 
 	describe('sanitize', () => {
 		it('should stringify the input if it is not a string', () => {
@@ -27,8 +61,22 @@ describe('DataGridCsvController', () => {
 		})
 	})
 
-	describe('hasDetails', () => {
-		it('should return true only if there are detailed data', () => {
+	describe('generateCsv', () => {
+		it('should generate csv from data', async () => {
+			spyOn(controller as any, 'download')
+
+			await controller.generateCsv()
+
+			expect(controller['download']).toHaveBeenCalledWith('Name,Age,Birth Date\nJohn,30,1990-01-01\nJane,25,1991-01-01\nJohn,30,1992-01-01')
+		})
+
+		it('should be able to handle nested data', async () => {
+			csvData[1] = new DataRecord(undefined!, { data: { name: 'Jane', age: 25, birthDate: new DateTime('1991-01-01') } as Person, index: 1, level: 1 })
+			spyOn(controller as any, 'download')
+
+			await controller.generateCsv()
+
+			expect(controller['download']).toHaveBeenCalledWith('Name,Name,Age,Birth Date\nJohn,,30,1990-01-01\n,Jane,25,1991-01-01\nJohn,,30,1992-01-01')
 		})
 	})
 })
