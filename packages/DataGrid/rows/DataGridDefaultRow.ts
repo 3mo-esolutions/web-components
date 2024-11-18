@@ -25,38 +25,15 @@ export class DataGridDefaultRow<TData, TDetailsElement extends Element | undefin
 				height: var(--mo-data-grid-row-height);
 			}
 
-			#detailsContainer {
-				grid-column: -1 / 1;
-			}
-
-      :host(:not([has-sub-data])) #detailsContainer > * {
-        margin: 15px 60px !important;
-				width: calc(100% - 120px);
-				height: calc(100% - 30px);
-				background-color: var(--mo-color-surface) !important;
-      }
-
-			:host(:not([data-has-alternating-background])) #detailsContainer {
-				background-color: var(--mo-color-surface) !important;
-
-				& > [instanceof*=mo-data-grid] {
-					--mo-data-grid-header-background: transparent;
-					background-color: var(--mo-color-transparent-gray-1) !important;
-				}
-			}
-
 			:host([has-sub-data]) #detailsContainer {
 				display: grid;
 				grid-template-columns: subgrid;
 			}
 
 			#detailsContainer [instanceof*=mo-data-grid] {
+				--mo-data-grid-header-background: color-mix(in srgb, var(--mo-color-foreground), transparent 96%);
 				--mo-data-grid-alternating-background: transparent;
 				--_content-min-height-default: 0px;
-			}
-
-			#detailsContainer [instanceof*=mo-data-grid]:not([headerHidden]) {
-				background: var(--mo-color-transparent-gray-1);
 			}
 
 			:host([data-grid-has-details]) #detailsContainer > [instanceof*=mo-data-grid][headerHidden] {

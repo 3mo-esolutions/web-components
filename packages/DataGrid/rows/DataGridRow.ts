@@ -141,13 +141,29 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			}
 
 			#detailsContainer {
-				display: inline-block;
-				padding: 0;
-				width: 100%;
-			}
+				display: grid;
+				grid-template-columns: subgrid;
+				grid-column: -1 / 1;
 
-			#detailsContainer:empty {
-				display: none;
+				&:empty {
+					display: none;
+				}
+
+				& > * {
+					grid-column: data / -1;
+					box-sizing: border-box;
+					margin-inline: var(--mo-data-grid-cell-padding);
+					margin-block: 16px;
+
+					&[mo-data-grid-row] {
+						grid-column: -1 / 1;
+						margin: 0;
+					}
+
+					&[instanceof*=mo-data-grid] {
+						margin-inline: 0;
+					}
+				}
 			}
 
 			mo-data-grid-cell:first-of-type:not([alignment=end]), mo-data-grid-cell[alignment=end]:first-of-type + mo-data-grid-cell {
