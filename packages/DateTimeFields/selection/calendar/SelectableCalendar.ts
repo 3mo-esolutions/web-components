@@ -1,6 +1,7 @@
 import { component, css, event, property } from '@a11d/lit'
-import { Calendar } from './Calendar.js'
+import { Temporal } from 'temporal-polyfill'
 import { type DateTime } from '@3mo/date-time'
+import { Calendar } from './Calendar.js'
 
 /** @fires change */
 @component('mo-selectable-calendar')
@@ -25,10 +26,10 @@ export class SelectableCalendar extends Calendar {
 		this.change.dispatch(day)
 	}
 
-	protected override getDayElementClasses(day: DateTime) {
+	protected override getDayElementClasses(month: Temporal.PlainYearMonth, day: number) {
 		return {
-			...super.getDayElementClasses(day),
-			selected: !!this.value && day.year === this.value.year && day.month === this.value.month && day.day === this.value.day
+			...super.getDayElementClasses(month, day),
+			selected: !!this.value && month.year === this.value.year && month.month === this.value.month && day === this.value.day
 		}
 	}
 }

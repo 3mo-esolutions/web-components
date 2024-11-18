@@ -1,6 +1,6 @@
 import { component, css, property } from '@a11d/lit'
-import { type DateTime } from '@3mo/date-time'
 import { SelectableCalendar } from './SelectableCalendar.js'
+import { Temporal } from 'temporal-polyfill'
 
 /** @fires change */
 @component('mo-selectable-range-calendar')
@@ -40,12 +40,20 @@ export class SelectableRangeCalendar extends SelectableCalendar {
 		`
 	}
 
-	protected override getDayElementClasses(day: DateTime) {
-		const first = this.dateRange?.start?.dayStart.equals(day.dayStart) ?? false
-		const last = this.dateRange?.end?.dayStart.equals(day.dayStart) ?? false
+	protected override getDayElementClasses(month: Temporal.PlainYearMonth, day: number) {
+		const start = this.dateRange?.start
+		const first = month.year === start?.year && month.month === start?.month && day === start?.day
+
+		const end = this.dateRange?.end
+		const last = month.year === end?.year && month.month === end?.month && day === end?.day
+
+		const date = month.toPlainDate({ day })
+		const isInRange = (!!start || !!end)
+			&& (!start || Temporal.PlainYearMonth.compare(date, start) !== -1)
+			&& (!end || Temporal.PlainYearMonth.compare(date, end) !== 1)
 		return {
-			...super.getDayElementClasses(day),
-			isInRange: this.dateRange?.includes(day) ?? false,
+			...super.getDayElementClasses(month, day),
+			isInRange,
 			first,
 			last,
 			selected: first || last,
