@@ -162,6 +162,9 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 
 					&[instanceof*=mo-data-grid] {
 						margin-inline: 0;
+						--mo-data-grid-header-background: color-mix(in srgb, var(--mo-color-foreground), transparent 96%);
+						--mo-data-grid-alternating-background: transparent;
+						--_content-min-height-default: 0px;
 					}
 				}
 			}
@@ -270,8 +273,6 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		if (this.dataGrid.getRowDetailsTemplate) {
 			return this.dataGrid.getRowDetailsTemplate(this.data)
 		}
-
-		this.toggleAttribute('has-sub-data', !!this.dataRecord.hasSubData)
 
 		return !this.dataRecord.hasSubData ? html.nothing : html`
 			${this.dataRecord.getSubDataByLevel(this.level + 1)?.map(data => this.dataGrid.getRowTemplate(data))}
