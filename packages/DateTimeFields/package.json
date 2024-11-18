@@ -1,7 +1,7 @@
 {
 	"name": "@3mo/date-time-fields",
 	"version": "0.6.0",
-	"description": "A set of date-time related fields.",
+	"description": "Date time fields let people select dates, date-ranges, and times.",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/3mo-esolutions/web-components"

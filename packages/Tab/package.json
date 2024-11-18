@@ -1,7 +1,7 @@
 {
 	"name": "@3mo/tab",
 	"version": "0.1.5",
-	"description": "A tab web-component based on Material Web Components (MWC).",
+	"description": "Tabs organize content across different screens and views.",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/3mo-esolutions/web-components"
