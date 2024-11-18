@@ -1,6 +1,7 @@
 import { Component, css, component, html, property, classMap, type ClassInfo, state } from '@a11d/lit'
 import '@a11d/array.prototype.group'
 import { MemoizeExpiring as memoizeExpiring } from 'typescript-memoize'
+import { Temporal } from 'temporal-polyfill'
 
 @component('mo-calendar')
 export class Calendar extends Component {
@@ -8,15 +9,11 @@ export class Calendar extends Component {
 	@property({
 		type: Object,
 		updated(this: Calendar) {
-			const start = this.navigatingValue.monthStart.weekStart
-			const end = this.navigatingValue.monthEnd.weekEnd
-			const range = [...this.rangeOf(start, end)]
-			this.days = [...range.groupToMap(d => String(d.weekOfYear))]
-				.sort(([, dates1], [, dates2]) => dates1[0]?.isBefore(dates2[0]!) ? -1 : +1)
+			this.month = Temporal.PlainYearMonth.from(this.navigatingValue, { overflow: 'reject' })
 		}
 	}) navigatingValue = new DateTime
 
-	@state() private days = new Array<[weekNumber: string, days: Array<DateTime>]>()
+	@state() private month?: Temporal.PlainYearMonth
 
 	static override get styles() {
 		return css`
@@ -53,7 +50,6 @@ export class Calendar extends Component {
 				text-align: center;
 				border-radius: 100px;
 				cursor: pointer;
-				transition: 100ms;
 				font-weight: 500;
 				user-select: none;
 				font-size: medium;
@@ -101,25 +97,21 @@ export class Calendar extends Component {
 					</div>
 				`)}
 
-				${this.days.map(([weekNumber, days]) => html`
-					${this.includeWeekNumbers === false ? html.nothing : html`<div class='week'>${weekNumber}</div>`}
-					${days.map(day => this.getDayTemplate(day))}
+				${new Array(this.month?.daysInMonth ?? 0).fill(undefined).map((_, index) => html`
+					${this.includeWeekNumbers === false ? html.nothing : html`<div class='week'>${index}</div>`}
+					${this.getDayTemplate(this.month!, index + 1)}
 				`)}
 			</mo-grid>
 		`
 	}
 
-	private * rangeOf(start: DateTime, end: DateTime) {
-		while (!start.isAfter(end)) {
-			yield start
-			start = start.add({ days: 1 })
-		}
-	}
-
-	protected getDayTemplate(day: DateTime) {
+	protected getDayTemplate(yearMonth: Temporal.PlainYearMonth, day: number) {
 		return html`
-			<mo-flex tabindex='0' class=${classMap(this.getDayElementClasses(day))} @click=${() => this.handleDayClick(day)}>
-				${day.format({ day: 'numeric' })}
+			<mo-flex tabindex='0'
+				class=${classMap(this.getDayElementClasses(yearMonth, day))}
+				@click=${() => this.handleDayClick(DateTime.from(yearMonth.toPlainDate({ day }).toZonedDateTime({ timeZone: this.navigatingValue.timeZone })))}
+			>
+				${day.format()}
 			</mo-flex>
 		`
 	}
@@ -131,11 +123,11 @@ export class Calendar extends Component {
 	@memoizeExpiring(60_000)
 	private get now() { return new DateTime }
 
-	protected getDayElementClasses(day: DateTime): ClassInfo {
+	protected getDayElementClasses({ year, month }: Temporal.PlainYearMonth, day: number): ClassInfo {
 		return {
 			day: true,
-			today: this.now.year === day.year && this.now.month === day.month && this.now.day === day.day,
-			isInMonth: day.month === this.navigatingValue.month
+			today: this.now.year === year && this.now.month === month && this.now.day === day,
+			isInMonth: month === this.navigatingValue.month
 		}
 	}
 }
