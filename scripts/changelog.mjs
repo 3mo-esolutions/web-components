@@ -1,6 +1,8 @@
+// @ts-check
 import { run, Package } from './util/index.mjs'
 import FileSystem from 'fs'
 import Path from 'path'
+import * as CommitAnalyzer from '@3mo/commit-analyzer/Chan'
 
 class Release {
 	/** @readonly @type {Package} */ package
@@ -26,86 +28,40 @@ class Release {
 }
 
 class Commit {
-	static regex = /(?<body>.+)?\((?<hash>\w+)\)\s?\((?<date>.+)\)/s
+	static changeTypeInfo = new Map([
+		['feat', { emoji: '🚀', name: 'Feature', order: 1 }],
+		['fix', { emoji: '🐛', name: 'Fix', order: 2 }],
+		['chore', { emoji: '🧹', name: 'Chore', order: 3 }],
+		['refactor', { emoji: '🛠️', name: 'Refactoring', order: 4 }],
+		['test', { emoji: '🧪', name: 'Test', order: 5 }],
+		['docs', { emoji: '📝', name: 'Documentation', order: 6 }],
+		['perf', { emoji: '⚡️', name: 'Performance Improvement', order: 7 }],
+	])
 
-	static fromMessage(/** @type string */ message, /** @type Package */ pkg) {
-		const match = message.match(Commit.regex)?.groups
-		if (!match) {
-			throw new Error(`Invalid commit message: ${message}`)
-		}
-		const { body, hash, date } = match
-		return new Commit({
-			hash,
-			date: new Date(date),
-			package: pkg,
-			changeSets: body?.split('\n').map(s => s.trim()).filter(Boolean).map(cs => ChangeSet.fromMessage(cs))
-		})
+
+	static parse(/** @type string */ message, /** @type Package */ pkg) {
+		const commit = CommitAnalyzer.Commit.parse(message)
+		return new Commit({ commit, package: pkg })
 	}
 
 	/** @param {Partial<Commit>} init */
-	constructor(init) {
-		Object.assign(this, init)
-		this.changeSets.forEach(cs => cs.commit = this)
-	}
+	constructor(init) { Object.assign(this, init) }
 
 	valueOf() {
-		return this.changeSets.map(cs => cs.valueOf()).reduce((a, b) => a + b, 0)
+		return this.commit.changes
+			.map(cs => Commit.changeTypeInfo.get(cs.type)?.order ?? 0)
+			.reduce((a, b) => a + b, 0)
 	}
 
 	/** @readonly @type {Package} */ package
-	/** @readonly @type {string} */ hash
-	/** @readonly @type {Date} */ date
-	/** @readonly @type {ChangeSet[]} */ changeSets
+	/** @readonly @type {CommitAnalyzer.Commit} */ commit
 
 	toString() {
-		return [...new Set(this.changeSets.map(cs => cs.toString())).values()].join('\n')
-	}
-}
-
-class ChangeSet {
-	static regex = /(?<type>\w+)(\((?<scope>\w+)\))?(?<breakingChangeMarker>!?): (?<message>.+)/
-
-	static fromMessage(/** @type string */ message) {
-		const match = message.match(ChangeSet.regex)?.groups
-		if (!match) {
-			return new ChangeSet({ message })
-		}
-		const { type, scope, breakingChangeMarker, message: _message } = match
-		return new ChangeSet({ type, scope, message: _message, breakingChange: !!breakingChangeMarker })
-	}
-
-	static order = ['feat', 'fix', 'chore', 'refactor', 'test', 'docs', 'perf']
-	static typeInfo = new Map([
-		['feat', { emoji: '🚀', name: 'Feature' }],
-		['fix', { emoji: '🐛', name: 'Fix' }],
-		['chore', { emoji: '🧹', name: 'Chore' }],
-		['refactor', { emoji: '🛠️', name: 'Refactoring' }],
-		['test', { emoji: '🧪', name: 'Test' }],
-		['docs', { emoji: '📝', name: 'Documentation' }],
-		['perf', { emoji: '⚡️', name: 'Performance Improvement' }],
-	])
-
-	/** @param {Partial<ChangeSet>} init */
-	constructor(init) {
-		Object.assign(this, init)
-		this.type ||= 'chore'
-		this.message = this.message?.charAt(0).toUpperCase() + this.message?.slice(1)
-	}
-	get typeName() { return ChangeSet.typeInfo.get(this.type)?.name ?? 'Chore' }
-	get emoji() { return ChangeSet.typeInfo.get(this.type)?.emoji ?? '🧹' }
-
-	/** @readonly @type {string} */ type
-	/** @readonly @type {string} */ scope
-	/** @readonly @type {string} */ message
-	/** @readonly @type {Commit} */ commit
-	/** @readonly @type {boolean} */ breakingChange
-
-	valueOf() {
-		return ChangeSet.order.indexOf(this.type)
-	}
-
-	toString() {
-		return `- **${this.emoji}${this.breakingChange ? '⚠️ Breaking ' : ' '}${this.typeName}**: ${this.message} ([${this.commit.hash.slice(0, 7)}](${this.commit.package.packageJson.repository.url}/commit/${this.commit.hash}))`
+		return [...new Set(this.commit.changes.map(change => {
+			const typeName = Commit.changeTypeInfo.get(change.type)?.name ?? 'Chore'
+			const emoji = Commit.changeTypeInfo.get(change.type)?.emoji ?? '🧹'
+			return `- **${emoji}${change.isBreaking ? '⚠️ Breaking ' : ' '}${typeName}**: ${change.heading} ([${this.commit.hash.slice(0, 7)}](${this.package.packageJson.repository.url}/commit/${this.commit.hash}))\n\n${change.description}`.trim()
+		})).values()].join('\n')
 	}
 }
 
@@ -144,7 +100,7 @@ export class ChangeLog {
 				version ||= releases.filter(l => !!l.oldVersion).at(-1)?.oldVersion
 			}
 			const release = !version ? lastRelease : (lastRelease = new Release({ package: p, version, oldVersion, date: new Date(date) }))
-			release?.commits.push(Commit.fromMessage(commit, p))
+			release?.commits.push(Commit.parse(commit))
 			if (release && !releases.includes(release)) {
 				releases.push(release)
 			}

@@ -27,6 +27,7 @@
 		"./packages/*"
 	],
 	"devDependencies": {
+		"@3mo/commit-analyzer": "0.x",
 		"@a11d/eslint-config": "x",
 		"@a11d/lit": "x",
 		"@custom-elements-manifest/analyzer": "x",
