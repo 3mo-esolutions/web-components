@@ -75,10 +75,6 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				width: 100%;
 			}
 
-			:host([data-has-alternating-background]:hover) #contentContainer {
-				--mo-data-grid-sticky-part-color: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-accent) 25%);
-			}
-
 			:host(:hover) #contentContainer {
 				--mo-data-grid-sticky-part-color: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-accent) 25%);
 				color: inherit;
@@ -97,8 +93,10 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			}
 
 			:host([data-has-alternating-background]) {
-				background: var(--mo-data-grid-alternating-background);
-				--mo-data-grid-sticky-part-color: color-mix(in srgb, var(--mo-color-surface), black var(--mo-data-grid-alternating-background-transparency));
+				#contentContainer, #detailsContainer:not(:has([instanceof*=mo-data-grid])) {
+					background: var(--mo-data-grid-alternating-background);
+					--mo-data-grid-sticky-part-color: color-mix(in srgb, var(--mo-color-surface), black var(--mo-data-grid-alternating-background-transparency));
+				}
 			}
 
 			#contentContainer {
@@ -164,7 +162,12 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 						margin-inline: 0;
 						--mo-data-grid-header-background: color-mix(in srgb, var(--mo-color-foreground), transparent 96%);
 						--mo-data-grid-alternating-background: transparent;
+						--mo-data-grid-alternating-background-transparency: 0;
 						--_content-min-height-default: 0px;
+
+						&::part(row) {
+							border-block-end: var(--mo-data-grid-border);
+						}
 					}
 				}
 			}
