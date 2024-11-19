@@ -24,39 +24,6 @@ export class DataGridDefaultRow<TData, TDetailsElement extends Element | undefin
 			#selectionContainer {
 				height: var(--mo-data-grid-row-height);
 			}
-
-			#detailsContainer {
-				grid-column: -1 / 1;
-			}
-
-			:host([has-sub-data]) #detailsContainer {
-				display: grid;
-				grid-template-columns: subgrid;
-			}
-
-			#detailsContainer [instanceof*=mo-data-grid] {
-				--mo-data-grid-header-background: color-mix(in srgb, var(--mo-color-foreground), transparent 96%);
-				--mo-data-grid-alternating-background: transparent;
-				--_content-min-height-default: 0px;
-			}
-
-			#detailsContainer [instanceof*=mo-data-grid]:not([headerHidden]) {
-				background: var(--mo-color-transparent-gray-1);
-			}
-
-			:host([data-grid-has-details]) #detailsContainer > [instanceof*=mo-data-grid][headerHidden] {
-				margin-inline-start: var(--mo-details-data-grid-start-margin);
-				width: calc(100% - var(--mo-details-data-grid-start-margin));
-			}
-
-			:host([data-grid-has-details]) #detailsContainer > [instanceof*=mo-data-grid]:not([headerHidden]) {
-				margin: 16px var(--mo-details-data-grid-start-margin);
-				width: calc(100% - calc(var(--mo-details-data-grid-start-margin) * 2));
-			}
-
-			:host([data-grid-has-details]) #detailsContainer > [instanceof*=mo-data-grid] {
-				padding: 0px !important;
-			}
 		`
 	}
 

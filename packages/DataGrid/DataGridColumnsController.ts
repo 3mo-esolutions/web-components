@@ -49,25 +49,20 @@ export class DataGridColumnsController<TData> extends Controller {
 	// The reason for not doing this in the CSS is that we need to trim all the 0px values out of the columns
 	// because the 'grid column gap' renders a gap no matter if the column is 0px or not
 	private provideCssColumnsProperties() {
-		const contentWidth = this.dataColumnsWidths.join(' ')
-		if (this.host.style.getPropertyValue('--mo-data-grid-content-width') !== contentWidth) {
-			this.host.style.setProperty('--mo-data-grid-content-width', this.dataColumnsWidths.join(' '))
-		}
-
-		const columns = this.columnsWidths.join(' ')
+		const columns = this.columns.map(c => `[${c.name}] ${c.width}`).join(' ')
 		if (this.host.style.getPropertyValue('--mo-data-grid-columns') !== columns) {
 			this.host.style.setProperty('--mo-data-grid-columns', columns)
 		}
 	}
 
-	private get columnsWidths() {
+	private get columns() {
 		return [
-			this.detailsColumnWidth,
-			this.selectionColumnWidth,
-			...this.dataColumnsWidths,
-			'1fr',
-			this.moreColumnWidth
-		].filter((c): c is string => c !== undefined)
+			{ name: 'details', width: this.detailsColumnWidth },
+			{ name: 'selection', width: this.selectionColumnWidth },
+			...this.dataColumnsWidths.map(width => ({ name: 'data', width })),
+			{ name: 'padding', width: '1fr' },
+			{ name: 'more', width: this.moreColumnWidth }
+		].filter(c => c.width !== undefined) as Array<{ readonly name: string, readonly width: string }>
 	}
 
 	private get detailsColumnWidth() {

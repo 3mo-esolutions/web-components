@@ -2,11 +2,40 @@ import type { Meta, StoryObj } from '@storybook/web-components'
 import { html, ifDefined, style } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
-import { DataGridSortingStrategy } from './index.js'
+import { DataGridEditability, DataGridSelectionBehaviorOnDataChange, DataGridSelectionMode, DataGridSortingStrategy } from './index.js'
 
 export default {
 	title: 'Data Grid',
 	component: 'mo-data-grid',
+	argTypes: {
+		headerHidden: { control: 'boolean' },
+		preventVerticalContentScroll: { control: 'boolean' },
+		selectionMode: {
+			control: 'select',
+			options: [DataGridSelectionMode.None, DataGridSelectionMode.Single, DataGridSelectionMode.Multiple]
+		},
+		selectOnClick: { control: 'boolean', type: 'boolean' },
+		selectionCheckboxesHidden: { control: 'boolean' },
+		selectionBehaviorOnDataChange: {
+			control: 'select',
+			options: [DataGridSelectionBehaviorOnDataChange.Reset, DataGridSelectionBehaviorOnDataChange.Maintain, DataGridSelectionBehaviorOnDataChange.Prevent]
+		},
+		multipleDetails: { control: 'boolean' },
+		subDataGridDataSelector: { control: 'text' },
+		hasDataDetail: { control: 'boolean' },
+		detailsOnClick: { control: 'boolean' },
+		primaryContextMenuItemOnDoubleClick: { control: 'text' },
+		editability: {
+			control: {
+				type: 'select',
+				options: [DataGridEditability.Never, DataGridEditability.Cell, DataGridEditability.Always]
+			}
+		},
+		sidePanelHidden: { control: 'boolean' },
+		hasAlternatingBackground: { control: 'boolean' },
+		preventFabCollapse: { control: 'boolean' },
+		exportable: { control: 'boolean' }
+	},
 	package: p,
 } as Meta
 
@@ -66,12 +95,6 @@ export const Selection: StoryObj = {
 		selectionMode: 'single',
 		selectOnClick: false,
 		selectionCheckboxesHidden: false,
-	},
-	argTypes: {
-		selectionMode: {
-			control: 'select',
-			options: ['single', 'multiple']
-		}
 	},
 	parameters: {
 		docs: {
@@ -158,7 +181,26 @@ export const Sorting: StoryObj = {
 	`
 }
 
-export const RowDetails: StoryObj = {
+export const WithDetails: StoryObj = {
+	name: 'With Details',
+	render: ({ multipleDetails, detailsOnClick }) => html`
+		<mo-data-grid style='height: 500px'
+			.data=${fivePeople}
+			selectionMode='multiple'
+			?multipleDetails=${multipleDetails}
+			?detailsOnClick=${detailsOnClick}
+			.hasDataDetail=${(p: Person) => p.age >= 18}
+			.getRowDetailsTemplate=${(p: Person) => html`
+				<div style='margin: 10px; opacity: 0.5'>${p.name} details</div>
+			`}
+		>
+			${columnsTemplate}
+		</mo-data-grid>
+	`
+}
+
+export const WithDetails_SubDataGrid: StoryObj = {
+	name: 'With Details - Sub Data Grid',
 	args: {
 		multipleDetails: false,
 		detailsOnClick: false,
@@ -166,13 +208,12 @@ export const RowDetails: StoryObj = {
 	render: ({ multipleDetails, detailsOnClick }) => html`
 		<mo-data-grid style='height: 500px'
 			.data=${fivePeople}
+			selectionMode='multiple'
 			?multipleDetails=${multipleDetails}
 			?detailsOnClick=${detailsOnClick}
 			.hasDataDetail=${(p: Person) => p.age >= 18}
-			.getRowDetailsTemplate=${(p: Person) => Math.random() > 0.5 ? html`
-				<div style='margin: 10px; opacity: 0.5'>${p.name} details</div>
-			` : html`
-				<mo-data-grid .data=${generatePeople(5)} style='height: 200px'>
+			.getRowDetailsTemplate=${() => html`
+				<mo-data-grid .data=${generatePeople(5)}>
 					${columnsTemplate}
 				</mo-data-grid>
 			`}
@@ -182,7 +223,8 @@ export const RowDetails: StoryObj = {
 	`
 }
 
-export const WithAutoSubDataGrid: StoryObj = {
+export const WithDetails_SubRows: StoryObj = {
+	name: 'With Details - Sub Rows',
 	args: {
 		multipleDetails: false,
 		detailsOnClick: false,
@@ -203,12 +245,6 @@ export const WithAutoSubDataGrid: StoryObj = {
 export const Editability: StoryObj = {
 	args: {
 		editability: 'always'
-	},
-	argTypes: {
-		editability: {
-			control: 'select',
-			options: ['never', 'cell', 'always']
-		}
 	},
 	parameters: {
 		docs: {

@@ -75,10 +75,6 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				width: 100%;
 			}
 
-			:host([data-has-alternating-background]:hover) #contentContainer {
-				--mo-data-grid-sticky-part-color: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-accent) 25%);
-			}
-
 			:host(:hover) #contentContainer {
 				--mo-data-grid-sticky-part-color: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-accent) 25%);
 				color: inherit;
@@ -97,8 +93,10 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			}
 
 			:host([data-has-alternating-background]) {
-				background: var(--mo-data-grid-alternating-background);
-				--mo-data-grid-sticky-part-color: color-mix(in srgb, var(--mo-color-surface), black var(--mo-data-grid-alternating-background-transparency));
+				#contentContainer, #detailsContainer:not(:has([instanceof*=mo-data-grid])) {
+					background: var(--mo-data-grid-alternating-background);
+					--mo-data-grid-sticky-part-color: color-mix(in srgb, var(--mo-color-surface), black var(--mo-data-grid-alternating-background-transparency));
+				}
 			}
 
 			#contentContainer {
@@ -141,17 +139,37 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			}
 
 			#detailsContainer {
-				display: inline-block;
-				padding: 0;
-				width: 100%;
-			}
+				display: grid;
+				grid-template-columns: subgrid;
+				grid-column: -1 / 1;
 
-			#detailsContainer:empty {
-				display: none;
-			}
+				&:empty {
+					display: none;
+				}
 
-			:host(:not([has-sub-data])) #detailsContainer > :first-child {
-				padding: 8px 0;
+				& > * {
+					grid-column: data / -1;
+					box-sizing: border-box;
+					margin-inline: var(--mo-data-grid-cell-padding);
+					margin-block: 16px;
+
+					&[mo-data-grid-row] {
+						grid-column: -1 / 1;
+						margin: 0;
+					}
+
+					&[instanceof*=mo-data-grid] {
+						margin-inline: 0;
+						--mo-data-grid-header-background: color-mix(in srgb, var(--mo-color-foreground), transparent 96%);
+						--mo-data-grid-alternating-background: transparent;
+						--mo-data-grid-alternating-background-transparency: 0;
+						--_content-min-height-default: 0px;
+
+						&::part(row) {
+							border-block-end: var(--mo-data-grid-border);
+						}
+					}
+				}
 			}
 
 			mo-data-grid-cell:first-of-type:not([alignment=end]), mo-data-grid-cell[alignment=end]:first-of-type + mo-data-grid-cell {
@@ -258,8 +276,6 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		if (this.dataGrid.getRowDetailsTemplate) {
 			return this.dataGrid.getRowDetailsTemplate(this.data)
 		}
-
-		this.toggleAttribute('has-sub-data', !!this.dataRecord.hasSubData)
 
 		return !this.dataRecord.hasSubData ? html.nothing : html`
 			${this.dataRecord.getSubDataByLevel(this.level + 1)?.map(data => this.dataGrid.getRowTemplate(data))}
