@@ -20,7 +20,7 @@ import { tooltip } from '@3mo/tooltip'
 export class CollapsibleCard extends Card {
 	@event() readonly collapse!: EventDispatcher<boolean>
 
-	@property({ type: Boolean, reflect: true }) collapsed = false
+	@property({ type: Boolean, reflect: true, event: 'collapse' }) collapsed = false
 	@property({ type: Boolean }) disableCollapse = false
 	@property({ type: Boolean }) showSubHeadingOnlyWhenCollapsed = false
 
