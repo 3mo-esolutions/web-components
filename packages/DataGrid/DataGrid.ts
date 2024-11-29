@@ -786,7 +786,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 						({ data }) => data)
 					.flatMap(({ data }) => flatten(data, level + 1))
 			return [
-				new DataRecord(this, { data, level, subData: subDataRecords }),
+				new DataRecord(this, { data, level, subDataRecords }),
 				...(subDataRecords ?? [])
 			]
 		}

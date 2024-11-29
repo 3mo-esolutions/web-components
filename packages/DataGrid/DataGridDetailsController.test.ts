@@ -4,13 +4,26 @@ import type { DataRecord } from './DataRecord'
 
 type Data = string
 
+const dataRecords = [
+	{ data: 'record1', hasSubData: false, level: 0 },
+	{ data: 'record2', hasSubData: false, level: 0 },
+	{
+		data: 'record3', hasSubData: true, level: 0, subDataRecords: [
+			{ data: 'record3-1', hasSubData: true, level: 1 },
+			{ data: 'record3-2', hasSubData: false, level: 1 },
+		]
+	},
+	{ data: 'record3-1', hasSubData: true, level: 1 },
+	{ data: 'record3-2', hasSubData: false, level: 1 },
+] as Array<DataRecord<Data>>
+
 describe('DataGridDetailsController', () => {
 	let controller: DataGridDetailsController<any>
 
 	beforeEach(() =>
 		controller = new DataGridDetailsController<Data>({
 			hasDefaultRowElements: true,
-			dataRecords: [{ data: 'record1', hasSubData: true }, { data: 'record2', hasSubData: false }] as Array<DataRecord<Data>>,
+			dataRecords,
 			getRowDetailsTemplate: data => data === 'record1' ? html`<p>${data}</p>` : html.nothing,
 			multipleDetails: true,
 			hasDataDetail: data => data === 'record1',
@@ -64,6 +77,15 @@ describe('DataGridDetailsController', () => {
 			controller.open(controller.host.dataRecords[0])
 
 			expect(controller.isOpen(controller.host.dataRecords[0])).toBe(true)
+			expect(controller.host.requestUpdate).toHaveBeenCalled()
+		})
+
+		it('should maintain open parent records if a child record is opened', () => {
+			controller.open(controller.host.dataRecords[2])
+			controller.open(controller.host.dataRecords[3])
+
+			expect(controller.isOpen(controller.host.dataRecords[2])).toBe(true)
+			expect(controller.isOpen(controller.host.dataRecords[3])).toBe(true)
 			expect(controller.host.requestUpdate).toHaveBeenCalled()
 		})
 	})

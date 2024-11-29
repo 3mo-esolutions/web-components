@@ -72,7 +72,10 @@ const thousandPeople = generatePeople(1000)
 
 const fivePeopleWithChildren = fivePeople.map(p => ({
 	...p,
-	children: generatePeople(Math.floor(Math.random() * 10) + 1)
+	children: generatePeople(Math.floor(Math.random() * 10) + 1).map(c => ({
+		...c,
+		children: generatePeople(Math.floor(Math.random() * 5) + 1)
+	}))
 }))
 
 const columnsTemplate = html`

@@ -1,5 +1,5 @@
 import { html, type HTMLTemplateResult } from '@a11d/lit'
-import { type DataRecord } from './index.js'
+import { DataRecord } from './index.js'
 
 interface DetailedComponent<TData> {
 	readonly hasDefaultRowElements: boolean
@@ -11,7 +11,7 @@ interface DetailedComponent<TData> {
 }
 
 export class DataGridDetailsController<TData> {
-	private openData = new Array<TData>()
+	private openRecords = new Array<DataRecord<TData>>()
 
 	constructor(readonly host: DetailedComponent<TData>) { }
 
@@ -42,30 +42,35 @@ export class DataGridDetailsController<TData> {
 	}
 
 	get areAllOpen() {
-		return this.openData.length === this.detailedData.length
+		return this.openRecords.length === this.detailedData.length
 	}
 
 	open(record: DataRecord<TData>) {
 		if (this.hasDetail(record)) {
-			this.openData = this.supportsMultiple ? [...this.openData, record.data] : [record.data]
+			this.openRecords = [
+				...this.supportsMultiple
+					? this.openRecords
+					: this.openRecords.filter(r => r.subDataRecords?.some(subRecord => subRecord.data === record.data)),
+				record
+			]
 			this.host.requestUpdate?.()
 		}
 	}
 
 	openAll() {
 		if (this.supportsMultiple) {
-			this.openData = this.detailedData.map(d => d.data)
+			this.openRecords = this.detailedData
 			this.host.requestUpdate?.()
 		}
 	}
 
 	close(record: DataRecord<TData>) {
-		this.openData = this.openData.filter(data => data !== record.data)
+		this.openRecords = this.openRecords.filter(r => r.data !== record.data)
 		this.host.requestUpdate?.()
 	}
 
 	closeAll() {
-		this.openData = []
+		this.openRecords = []
 		this.host.requestUpdate?.()
 	}
 
@@ -86,6 +91,6 @@ export class DataGridDetailsController<TData> {
 	}
 
 	isOpen(record: DataRecord<TData>) {
-		return this.openData.includes(record.data)
+		return this.openRecords.map(r => r.data).includes(record.data)
 	}
 }

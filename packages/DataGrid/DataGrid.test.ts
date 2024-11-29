@@ -71,7 +71,7 @@ describe('DataGrid', () => {
 					index: 0,
 					level: 0,
 					data: firstWithChildren,
-					subData: [
+					subDataRecords: [
 						new DataRecord(fixture.component, { index: 1, level: 1, data: third }),
 					]
 				}),

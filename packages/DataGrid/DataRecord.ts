@@ -3,9 +3,9 @@ import { type DataGrid } from './DataGrid.js'
 export class DataRecord<TData> {
 	constructor(readonly dataGrid: DataGrid<TData, any>, init: Partial<DataRecord<TData>>) {
 		Object.assign(this, init)
-		if (!this.subData?.length) {
+		if (!this.subDataRecords?.length) {
 			// @ts-expect-error This is the constructor!
-			delete this.subData
+			delete this.subDataRecords
 		}
 	}
 
@@ -25,14 +25,14 @@ export class DataRecord<TData> {
 		return this.dataGrid.detailsController.isOpen(this)
 	}
 
-	readonly subData?: Array<DataRecord<TData>>
+	readonly subDataRecords?: Array<DataRecord<TData>>
 
 	getSubDataByLevel(level: number) {
-		return this.subData?.filter(r => r.level === level)
+		return this.subDataRecords?.filter(r => r.level === level)
 	}
 
 	get hasSubData(): boolean {
-		return (this.subData?.length ?? 0) > 0
+		return (this.subDataRecords?.length ?? 0) > 0
 	}
 
 	get hasDetails(): boolean {
