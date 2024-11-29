@@ -38,7 +38,7 @@ export enum DataGridEditability {
  * @attr page - The current page.
  * @attr pagination - The pagination mode. It can be either `auto` or a number.
  * @attr sorting - The sorting mode. It is an object with `selector` and `strategy` properties.
- * @attr selectionMode - The selection mode.
+ * @attr selectionMode - The selection mode. Default to 'single' with @see DataGrid.selectionCheckboxesHidden set to true if context menus available, 'none' otherwise.
  * @attr isDataSelectable - Whether data of a given row is selectable.
  * @attr selectedData - The selected data.
  * @attr selectOnClick - Whether the row should be selected on click.
@@ -122,7 +122,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	@property({ type: Object }) sorting?: DataGridSorting<TData>
 
-	@property({ reflect: true }) selectionMode = DataGridSelectionMode.None
+	@property({ reflect: true }) selectionMode?: DataGridSelectionMode
 	@property({ type: Object }) isDataSelectable?: (data: TData) => boolean
 	@property({ type: Array, event: 'selectionChange' }) selectedData = new Array<TData>()
 	@property({ type: Boolean }) selectOnClick = false

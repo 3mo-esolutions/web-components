@@ -3,6 +3,7 @@ import { html, ifDefined, style } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 import { DataGridEditability, DataGridSelectionBehaviorOnDataChange, DataGridSelectionMode, DataGridSortingStrategy } from './index.js'
+import { DialogAlert } from '../StandardDialogs/index.js'
 
 export default {
 	title: 'Data Grid',
@@ -116,9 +117,9 @@ export const Selection: StoryObj = {
 
 export const ContextMenu: StoryObj = {
 	render: () => html`
-		<mo-data-grid .data=${hundredPeople} pagination='auto' selectionMode='multiple' style='height: 500px' .getRowContextMenuTemplate=${() => html`
+		<mo-data-grid .data=${hundredPeople} pagination='auto' style='height: 500px' .getRowContextMenuTemplate=${() => html`
 			<mo-context-menu-item>Item 1</mo-context-menu-item>
-			<mo-context-menu-item>Item 2</mo-context-menu-item>
+			<mo-context-menu-item @click=${() => new DialogAlert({ heading: 'Test' }).confirm()}>Item 2</mo-context-menu-item>
 		`}>
 			${columnsTemplate}
 		</mo-data-grid>

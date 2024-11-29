@@ -17,13 +17,14 @@ export enum DataGridSelectionBehaviorOnDataChange {
 }
 
 interface SelectableComponent<TData> {
-	selectionMode: DataGridSelectionMode
+	selectionMode?: DataGridSelectionMode
 	readonly dataRecords: Array<DataRecord<TData>>
 	selectedData: Array<TData>
 	isDataSelectable?(data: TData): boolean
 	selectionCheckboxesHidden?: boolean
 	readonly selectionChange?: EventDispatcher<Array<TData>>
 	readonly selectionBehaviorOnDataChange?: DataGridSelectionBehaviorOnDataChange
+	readonly hasContextMenu?: boolean
 }
 
 export class DataGridSelectionController<TData> {
@@ -34,11 +35,28 @@ export class DataGridSelectionController<TData> {
 
 	constructor(readonly host: SelectableComponent<TData>) { }
 
+	private get mode() {
+		this.setDefaultsIfNotDefined()
+		return this.host.selectionMode
+	}
+
+	private setDefaultsIfNotDefined() {
+		if (this.host.selectionMode !== undefined) {
+			return
+		}
+
+		if (this.host.hasContextMenu === true && this.host.selectionMode === undefined) {
+			this.host.selectionMode = DataGridSelectionMode.Single
+			this.host.selectionCheckboxesHidden = true
+			return
+		}
+
+		this.host.selectionMode = DataGridSelectionMode.None
+	}
+
 	get hasSelection() {
 		return this.mode !== DataGridSelectionMode.None
 	}
-
-	private get mode() { return this.host.selectionMode }
 
 	private get data() { return this.host.dataRecords.map(d => d.data) }
 

@@ -187,7 +187,7 @@ describe('DataGrid', () => {
 
 		describe('None', () => {
 			const fixture = new ComponentTestFixture<TestDataGrid>(html`
-				<test-data-grid .getRowContextMenuTemplate=${getRowContextMenuTemplate}></test-data-grid>
+				<test-data-grid></test-data-grid>
 			`)
 
 			it('should be the default', () => expect(fixture.component.selectionMode).toEqual(DataGridSelectionMode.None))

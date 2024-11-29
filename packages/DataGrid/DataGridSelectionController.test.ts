@@ -15,7 +15,6 @@ describe('DataGridSelectionController', () => {
 
 	beforeEach(() => {
 		controller = new DataGridSelectionController<Data>({
-			selectionMode: DataGridSelectionMode.None,
 			dataRecords: data.map((data, index) => ({ data, index } as DataRecord<Data>)),
 			selectedData: [],
 			selectionChange: new PureEventDispatcher<Array<Data>>()
@@ -29,6 +28,35 @@ describe('DataGridSelectionController', () => {
 				expect(controller.hasSelection).toBe(hasSelection)
 			})
 		}
+	})
+
+	describe('selectionMode', () => {
+		it('should default to "none" normally', () => {
+			controller.hasSelection
+			expect(controller.host.selectionMode).toBe(DataGridSelectionMode.None)
+		})
+
+		it('should default to "single" when has context menu', () => {
+			controller = new DataGridSelectionController<Data>({
+				hasContextMenu: true,
+				dataRecords: [],
+				selectedData: [],
+			})
+			controller.hasSelection
+			expect(controller.host.selectionMode).toBe(DataGridSelectionMode.Single)
+		})
+
+		it('should not change when already defined', () => {
+			for (const selectionMode of [DataGridSelectionMode.None, DataGridSelectionMode.Multiple]) {
+				controller = new DataGridSelectionController<Data>({
+					selectionMode,
+					hasContextMenu: true,
+					dataRecords: [],
+					selectedData: [],
+				})
+				expect(controller.host.selectionMode).toBe(selectionMode)
+			}
+		})
 	})
 
 	describe('isSelectable', () => {
