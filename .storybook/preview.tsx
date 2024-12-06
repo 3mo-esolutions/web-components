@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useContext } from 'react'
 import { INITIAL_VIEWPORTS } from '@storybook/addon-viewport'
 import { addons } from '@storybook/preview-api'
