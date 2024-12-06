@@ -586,7 +586,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		`
 	}
 
-	private get sidePanelTemplate() {
+	protected get sidePanelTemplate() {
 		return html`
 			<mo-data-grid-side-panel
 				.dataGrid=${this as any}
