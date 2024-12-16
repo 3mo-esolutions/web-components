@@ -1,8 +1,8 @@
-import { Binder, component, css, event, html, property } from '@a11d/lit'
-import { tooltip } from '@3mo/tooltip'
+import { Binder, component, css, event, html, property, bind } from '@a11d/lit'
 import { Localizer } from '@3mo/localization'
-import { FetcherController } from '@3mo/fetcher-controller'
-import { DataGrid, DataGridSelectionBehaviorOnDataChange } from '@3mo/data-grid'
+import { DataGrid } from '@3mo/data-grid'
+import { FetchableDataGridFetcherController } from './FetchableDataGridFetcherController.js'
+import './FetchableDataGridRefetchIconButton.js'
 
 export type FetchableDataGridParametersType = Record<string, unknown>
 
@@ -16,11 +16,10 @@ type PaginatedResult<TData> = Readonly<{ data: NonPaginatedResult<TData> } & ({
 	dataLength: number
 })>
 
-type Result<TData> = PaginatedResult<TData> | NonPaginatedResult<TData>
+export type FetchableDataGridResult<TData> = PaginatedResult<TData> | NonPaginatedResult<TData>
 
 Localizer.dictionaries.add('de', {
 	'Make a filter selection': 'Filterauswahl vornehmen',
-	'Refetch': 'Neu laden',
 })
 
 /**
@@ -31,6 +30,7 @@ Localizer.dictionaries.add('de', {
  * @attr parameters - The parameters that are passed to the fetch function.
  * @attr paginationParameters - The parameters that are passed to the fetch function when the page changes. This enables server-side pagination.
  * @attr sortParameters - The parameters that are passed to the fetch function when the sort changes. This enables server-side sorting.
+ * @attr autoRefetch - The interval in seconds at which the data should be refetched automatically. If set, the DataGrid will automatically refetch the data at the specified interval.
  *
  * @slot error-no-selection - A slot for displaying an error message when user action is required in order for DataGrid to initiate the fetch.
  *
@@ -40,9 +40,9 @@ Localizer.dictionaries.add('de', {
 @component('mo-fetchable-data-grid')
 export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDataGridParametersType = Record<string, never>, TDetailsElement extends Element | undefined = undefined> extends DataGrid<TData, TDetailsElement> {
 	@event() readonly parametersChange!: EventDispatcher<TDataFetcherParameters | undefined>
-	@event() readonly dataFetch!: EventDispatcher<Result<TData>>
+	@event() readonly dataFetch!: EventDispatcher<FetchableDataGridResult<TData>>
 
-	@property({ type: Object }) fetch: (parameters: TDataFetcherParameters) => Promise<Result<TData>> = () => Promise.resolve([])
+	@property({ type: Object }) fetch: (parameters: TDataFetcherParameters) => Promise<FetchableDataGridResult<TData>> = () => Promise.resolve([])
 	@property({ type: Boolean }) silentFetch = false
 
 	@property({
@@ -67,29 +67,29 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 	@property({ type: Object }) sortParameters?: () => Partial<TDataFetcherParameters>
 	// protected filterParameters?: () => TDataFetcherParameters
 
+	@property({ type: Number })
+	get autoRefetch() { return this.fetcherController.autoRefetch }
+	set autoRefetch(value) { this.fetcherController.autoRefetch = value }
+
+	readonly fetcherController = new FetchableDataGridFetcherController<TData>(this)
+
+	override get hasNextPage() {
+		return this.fetcherController.hasNextPage ?? super.hasNextPage
+	}
+
+	override get dataLength() {
+		return this.fetcherController.dataLength ?? super.dataLength
+	}
+
+	runPreventingFetch(...parameters: Parameters<typeof this.fetcherController.runPreventingFetch>) {
+		return this.fetcherController.runPreventingFetch(...parameters)
+	}
+
+	requestFetch(...parameters: Parameters<typeof this.fetcherController.fetch>) {
+		return this.fetcherController.fetch(...parameters)
+	}
+
 	protected readonly parametersBinder = new Binder<TDataFetcherParameters>(this, 'parameters')
-
-	protected fetchDirty?(parameters: TDataFetcherParameters): Array<TData> | undefined
-
-	readonly fetcherController = new FetcherController<Result<TData> | undefined>(this, {
-		throttle: 500,
-		fetch: async () => {
-			if (!this.parameters) {
-				return undefined
-			}
-
-			const paginationParameters = this.paginationParameters?.({ page: this.page, pageSize: this.pageSize }) ?? {}
-			const sortParameters = this.sortParameters?.() ?? {}
-			const data = await this.fetch({
-				...this.parameters,
-				...paginationParameters,
-				...sortParameters,
-			}) ?? []
-			this.dataFetch.dispatch(data)
-
-			return data
-		},
-	})
 
 	static override get styles() {
 		return css`
@@ -102,19 +102,6 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 				inset-inline-start: 50%;
 				inset-block-start: 50%;
 				transform: translate(-50%, calc(-50% + var(--mo-data-grid-header-height) / 2));
-			}
-
-			:host([fetching]) mo-icon-button[icon=refresh] {
-				animation: rotate 1500ms ease-in-out infinite;
-			}
-
-			@keyframes rotate {
-				from {
-					transform: rotate(0deg);
-				}
-				to {
-					transform: rotate(360deg);
-				}
 			}
 		`
 	}
@@ -211,65 +198,13 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 		return super.supportsDynamicPageSize && !this.hasServerSidePagination
 	}
 
-	private _hasNextPage?: boolean
-	override get hasNextPage() {
-		return this._hasNextPage ?? super.hasNextPage
-	}
-
-	private _dataLength = 0
-	override get dataLength() {
-		return this.hasServerSidePagination ? this._dataLength : super.dataLength
-	}
-
-	protected get shallFetchSilently() {
-		return this.silentFetch
-			&& this.data.length > 0
-			&& !this.hasServerSidePagination
-			&& !this.hasServerSideSort
-	}
-
-	private _preventFetch = false
-	async runPreventingFetch(action: () => void | PromiseLike<void>) {
-		this._preventFetch = true
-		const result = action()
-		if (result instanceof Promise) {
-			await result
-		}
-		this._preventFetch = false
-	}
-
-	async requestFetch() {
-		if (this._preventFetch) {
-			return
-		}
-
-		if (this.parameters && this.fetchDirty) {
-			const dirtyData = this.fetchDirty(this.parameters)
-			if (dirtyData) {
-				this.data = dirtyData
-			}
-		}
-
-		const result = await this.fetcherController.fetch() || []
-
-		if (!(result instanceof Array)) {
-			this._dataLength = result.dataLength ?? 0
-			this._hasNextPage = result.hasNextPage ?? (this.page < Math.ceil(result.dataLength / this.pageSize))
-		}
-
-		this.setData(
-			result instanceof Array ? result : result.data,
-			this.shallFetchSilently ? DataGridSelectionBehaviorOnDataChange.Maintain : this.selectionBehaviorOnDataChange,
-		)
-	}
-
 	protected override get toolbarActionsTemplate() {
 		return html`
-			<mo-icon-button icon='refresh'
-				${tooltip(t('Refetch'))}
-				?data-selected=${this.fetcherController.isFetching}
-				@click=${() => this.requestFetch()}
-			></mo-icon-button>
+			<mo-fetchable-data-grid-refetch-icon-button
+				?fetching=${this.fetcherController.isFetching}
+				autoRefetch=${bind(this, 'autoRefetch')}
+				@requestFetch=${() => this.requestFetch()}
+			></mo-fetchable-data-grid-refetch-icon-button>
 			${super.toolbarActionsTemplate}
 		`
 	}
@@ -277,7 +212,7 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 	protected override get contentTemplate() {
 		this.toggleAttribute('fetching', this.fetcherController.isFetching)
 		switch (true) {
-			case this.fetcherController.isFetching && this.shallFetchSilently === false:
+			case this.fetcherController.isFetching && this.fetcherController.silent === false:
 				return this.fetchingTemplate
 			case this.data.length === 0 && this.parameters === undefined:
 				return this.noSelectionTemplate

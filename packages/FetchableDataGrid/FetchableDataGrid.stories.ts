@@ -44,6 +44,15 @@ export const FetchableDataGrid: StoryObj = {
 	`
 }
 
+export const AutoRefetch: StoryObj = {
+	render: () => html`
+		<mo-fetchable-data-grid .parameters=${{}} .fetch=${fetchData(twentyPeople)} autoRefetch='5' style='height: 500px; flex: 1'>
+			${columnsTemplate}
+			<span slot='toolbar'>Auto refetch every 5 seconds</span>
+		</mo-fetchable-data-grid>
+	`
+}
+
 export const NoFilters: StoryObj = {
 	render: () => html`
 		<mo-fetchable-data-grid .fetch=${fetchData(twentyPeople)} style='height: 500px; flex: 1'>
