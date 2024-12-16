@@ -119,12 +119,6 @@ export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataG
 		`
 	}
 
-	private preventFetch = false
-
-	override requestFetch() {
-		return this.preventFetch ? Promise.resolve() : super.requestFetch()
-	}
-
 	private get hasModebar() {
 		const hasModebar = this.modesController.modes.length > 0
 		this.toggleAttribute('hasModebar', hasModebar)
