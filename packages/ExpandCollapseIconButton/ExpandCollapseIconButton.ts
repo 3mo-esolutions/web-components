@@ -18,6 +18,7 @@ export class ExpandCollapseIconButton extends Component {
 		return css`
 			:host {
 				display: inline-block;
+				view-transition-name: mo-expand-collapse-icon-button;
 			}
 
 			mo-icon-button {

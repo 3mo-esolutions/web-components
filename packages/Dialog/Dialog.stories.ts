@@ -10,8 +10,9 @@ export default {
 } as Meta
 
 export const Dialog: StoryObj = {
-	render: () => html`
-		<mo-dialog heading='Heading' open>
+	args: { open: true },
+	render: ({ open }) => html`
+		<mo-dialog heading='Heading' ?open=${open}>
 			Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius quidem eaque earum obcaecati qui? Nihil quaerat,
 			repudiandae error delectus labore quasi inventore fugit corporis maxime eos aspernatur aliquid temporibus vitae.
 		</mo-dialog>

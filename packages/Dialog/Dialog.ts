@@ -456,6 +456,28 @@ MdDialog.elementStyles.push(css`
 	.actions {
 		z-index: 0;
 	}
+
+	dialog {
+		display: none;
+		opacity: 0;
+		transition-timing-function: ease-out;
+		transition:
+			opacity 0.15s,
+			display 0.15s allow-discrete,
+			overlay 0.15s allow-discrete;
+
+		&[open] {
+			display: block;
+			opacity: 1;
+		}
+	}
+
+	@starting-style {
+		dialog {
+			display: none;
+			opacity: 1;
+		}
+	}
 `)
 
 MdDialog.addInitializer(element => {
@@ -467,6 +489,8 @@ MdDialog.addInitializer(element => {
 		async hostConnected() {
 			await element.updateComplete
 			this.scrollerElement?.addEventListener('scroll', this.handleScroll)
+			const dialog = element as MdDialog
+			dialog['animateDialog'] = () => { }
 		}
 
 		hostDisconnected() {

@@ -30,6 +30,7 @@ export class CollapsibleCard extends Card {
 
 			:host {
 				position: relative;
+				view-transition-name: mo-collapsible-card;
 			}
 
 			:host([collapsed]) {
@@ -62,8 +63,11 @@ export class CollapsibleCard extends Card {
 
 	protected toggleCollapse() {
 		if (this.disableCollapse === false) {
-			this.collapsed = !this.collapsed
-			this.collapse.dispatch(this.collapsed)
+			document.startViewTransition(async () => {
+				this.collapsed = !this.collapsed
+				this.collapse.dispatch(this.collapsed)
+				await this.updateComplete
+			})
 		}
 	}
 }
