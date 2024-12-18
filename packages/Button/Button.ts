@@ -305,7 +305,6 @@ Buttons.forEach(Button => Button.elementStyles.push(css`
 
 	.label {
 		width: 100%;
-		letter-spacing: 0.06rem;
 		line-height: normal;
 		overflow: unset;
 	}

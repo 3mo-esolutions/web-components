@@ -38,7 +38,6 @@ export class Chip extends Component {
 
 			mo-button::part(button) {
 				font-weight: auto;
-				letter-spacing: normal;
 				text-decoration: auto;
 			}
 

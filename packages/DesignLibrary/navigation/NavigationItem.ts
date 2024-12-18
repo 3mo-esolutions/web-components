@@ -73,7 +73,6 @@ export class NavigationItem extends Component {
 			span {
 				line-height: 2rem;
 				font-weight: 500;
-				letter-spacing: 0.0125em;
 				font-size: medium;
 			}
 

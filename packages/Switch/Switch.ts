@@ -101,7 +101,6 @@ export class Switch extends Component {
 				color: var(--mo-color-foreground);
 				font-size: 0.875rem;
 				line-height: 1.25rem;
-				letter-spacing: 0.0178571429em;
 				-webkit-font-smoothing: antialiased;
 				user-select: none;
 			}

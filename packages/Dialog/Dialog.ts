@@ -213,7 +213,6 @@ export class Dialog extends Component implements IDialog {
 				font-size: 1.25rem;
 				line-height: var(--mo-dialog-heading-line-height, 2rem);
 				font-weight: 500;
-				letter-spacing: 0.0125em;
 				text-decoration: inherit;
 				text-transform: inherit;
 				color: var(--mo-dialog-heading-color, var(--mo-color-foreground));
@@ -231,7 +230,6 @@ export class Dialog extends Component implements IDialog {
 				font-size: 1rem;
 				line-height: 1.5rem;
 				font-weight: 400;
-				letter-spacing: 0.03125em;
 				text-decoration: inherit;
 				text-transform: inherit;
 				color: var(--mo-dialog-content-color, var(--mo-color-foreground));
