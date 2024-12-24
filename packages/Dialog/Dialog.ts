@@ -181,7 +181,7 @@ export class Dialog extends Component implements IDialog {
 			}
 
 			md-dialog {
-				--md-dialog-scroll-divider-color: var(--mo-dialog-divider-color, var(--mo-color-gray-transparent));
+				--md-dialog-scroll-divider-color: var(--mo-dialog-divider-color, var(--mo-color-transparent-gray-3));
 				--md-sys-color-surface-container-high: var(--mo-color-surface);
 				border-radius: var(--mo-border-radius);
 			}
