@@ -90,9 +90,9 @@ export class PagePreferencesUserInterface extends PageSettings {
 									${PagePreferencesUserInterface.accentPresetColors.map(color => this.getForegroundColorTemplate(color))}
 									<!-- .presets={PagePreferencesUserInterface.accentPresetColors} -->
 									<mo-color-picker ${style({ width: '100%', gridColumn: '1 / -1' })}
-										.value=${Theme.accent.value}
-										@input=${(e: CustomEvent<Color>) => Theme.accent.value = e.detail}
-										@change=${(e: CustomEvent<Color>) => Theme.accent.value = e.detail}
+										.value=${!Theme.accent.value ? undefined : new Color(Theme.accent.value)}
+										@input=${(e: CustomEvent<Color>) => Theme.accent.value = e.detail.rgb}
+										@change=${(e: CustomEvent<Color>) => Theme.accent.value = e.detail.rgb}
 									></mo-color-picker>
 								</mo-grid>
 							</mo-flex>
@@ -183,7 +183,7 @@ export class PagePreferencesUserInterface extends PageSettings {
 	private getForegroundColorTemplate(color: Color) {
 		return html`
 			<button class='accentPreview' ${style({ background: color.hex })}
-				@click=${() => Theme.accent.value = color}
+				@click=${() => Theme.accent.value = color.rgb}
 			></button>
 		`
 	}

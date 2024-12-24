@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
+import { Color } from '@3mo/color'
 import p from './package.json'
 import '.'
 
@@ -53,6 +54,13 @@ export const Colors: StoryObj = {
 				}
 			</style>
 			<mo-flex gap='10px'>
+				<mo-field-color label='Accent'
+					.value=${Theme.accent.toColor()}
+					@change=${(e: CustomEvent<Color>) => Theme.accent.value = e.detail.rgb}
+				>
+					<mo-icon-button slot='end' icon='restart_alt' @click=${() => Theme.accent.value = undefined}></mo-icon-button>
+				</mo-field-color>
+
 				<mo-grid>
 					<span>Background</span>
 					${colors}

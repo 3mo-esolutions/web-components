@@ -11,8 +11,6 @@ RootCssInjector.inject(css`
 		--mo-color-surface-container-lowest: var(--mo-color-surface);
 		--mo-color-surface-container-low: var(--mo-color-surface);
 		--mo-color-surface-container: var(--mo-color-surface);
-		--mo-color-surface-container-high: color-mix(in srgb, var(--mo-color-surface), black 4%);
-		--mo-color-surface-container-highest: color-mix(in srgb, var(--mo-color-surface), black 8%);
 		--mo-shadow-base: 95, 81, 78;
 	}
 
@@ -25,8 +23,6 @@ RootCssInjector.inject(css`
 		--mo-color-surface-container-lowest: color-mix(in srgb, var(--mo-color-surface) 100%, black 64%);
 		--mo-color-surface-container-low: color-mix(in srgb, var(--mo-color-surface) 100%, black 32%);
 		--mo-color-surface-container: var(--mo-color-surface);
-		--mo-color-surface-container-high: color-mix(in srgb, var(--mo-color-surface) 100%, white 4%);
-		--mo-color-surface-container-highest: color-mix(in srgb, var(--mo-color-surface) 100%, white 8%);
 		--mo-shadow-base: 0, 1, 3;
 	}
 
@@ -46,11 +42,19 @@ RootCssInjector.inject(css`
 		--mo-color-transparent-gray-2: color-mix(in srgb, var(--mo-color-foreground), transparent calc(100% - var(--mo-color-transparent-gray-alpha) * 2)); /* 8% */
 		--mo-color-transparent-gray-3: color-mix(in srgb, var(--mo-color-foreground), transparent calc(100% - var(--mo-color-transparent-gray-alpha) * 3)); /* 12% */
 		--mo-color-transparent-gray: var(--mo-color-transparent-gray-1);
+		--mo-color-surface-container-high: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-foreground) 4%);
+		--mo-color-surface-container-highest: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-foreground) 8%);
 		--mo-color-green: rgb(93, 170, 96);
 		--mo-color-yellow: rgb(232, 152, 35);
 		--mo-color-red: rgb(221, 61, 49);
 		--mo-color-blue: rgb(0, 119, 200);
 		--mo-color-accent-transparent: color-mix(in srgb, var(--mo-color-accent), transparent 75%);
+		--mo-color-on-accent: color(
+			from var(--mo-color-accent) srgb
+			calc(1 - min(1, max(0, (r * 299 + g * 587 + b * 114) / 1000 * 255 - 128)))
+			calc(1 - min(1, max(0, (r * 299 + g * 587 + b * 114) / 1000 * 255 - 128)))
+			calc(1 - min(1, max(0, (r * 299 + g * 587 + b * 114) / 1000 * 255 - 128)))
+		);
 
 		/* Override Material Web Components variables */
 		--mdc-icon-font: Material Icons Sharp !important;
