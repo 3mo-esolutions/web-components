@@ -4,7 +4,7 @@ import { DataGridColumnComponent, type DataGrid, type DataGridColumn } from './i
 export class DataGridColumnsController<TData> extends Controller {
 	readonly detailsColumnWidthInPixels = 0
 	readonly selectionColumnWidthInPixels = 0
-	readonly moreColumnWidthInPixels = 0
+	readonly actionsColumnWidthInPixels = 0
 
 	private _extractedColumns = new Array<DataGridColumn<TData>>()
 	private initialized = false
@@ -61,7 +61,7 @@ export class DataGridColumnsController<TData> extends Controller {
 			{ name: 'selection', width: this.selectionColumnWidth },
 			...this.dataColumnsWidths.map(width => ({ name: 'data', width })),
 			{ name: 'padding', width: '1fr' },
-			{ name: 'more', width: this.moreColumnWidth }
+			{ name: 'actions', width: this.actionsColumnWidth }
 		].filter(c => c.width !== undefined) as Array<{ readonly name: string, readonly width: string }>
 	}
 
@@ -79,8 +79,8 @@ export class DataGridColumnsController<TData> extends Controller {
 			.filter((c): c is string => c !== undefined)
 	}
 
-	private get moreColumnWidth() {
-		return this.host.sidePanelHidden && !this.host.hasContextMenu ? undefined : window.getComputedStyle(this.host).getPropertyValue('--mo-data-grid-column-more-width')
+	private get actionsColumnWidth() {
+		return this.host.sidePanelHidden && !this.host.hasContextMenu ? undefined : window.getComputedStyle(this.host).getPropertyValue('--mo-data-grid-column-actions-width')
 	}
 
 	private get columnsElements() {

@@ -103,7 +103,7 @@ export class DataGridHeader<TData> extends Component {
 				z-index: 7;
 			}
 
-			.details, .selection, .more, .context-menu {
+			.details, .selection, .actions, .context-menu {
 				position: sticky;
 				background: var(--mo-data-grid-sticky-part-color);
 				z-index: 5;
@@ -117,12 +117,12 @@ export class DataGridHeader<TData> extends Component {
 				inset-inline-start: 0px;
 			}
 
-			.more, .context-menu {
+			.actions, .context-menu {
 				cursor: pointer;
 				inset-inline-end: 0px;
 			}
 
-			.more {
+			.actions {
 				mo-icon-button {
 					color: var(--mo-color-accent);
 					font-size: large;
@@ -146,7 +146,7 @@ export class DataGridHeader<TData> extends Component {
 			${this.selectionTemplate}
 			${this.contentTemplate}
 			${this.fillerTemplate}
-			${this.moreTemplate}
+			${this.actionsTemplate}
 		`
 	}
 
@@ -249,10 +249,10 @@ export class DataGridHeader<TData> extends Component {
 		return html`<span></span>`
 	}
 
-	private get moreTemplate() {
+	private get actionsTemplate() {
 		if (this.dataGrid.hasContextMenu && this.dataGrid.selectedData.length > 1) {
 			return html`
-				<mo-flex class='context-menu' alignItems='end' justifyContent='center' ${this.getResizeObserver('moreColumnWidthInPixels')}>
+				<mo-flex class='context-menu' alignItems='end' justifyContent='center' ${this.getResizeObserver('actionsColumnWidthInPixels')}>
 					<mo-popover-container fixed>
 						<mo-icon-button dense icon='more_vert' title=${t('Actions for ${count:pluralityNumber} selected entries', { count: this.dataGrid.selectedData.length })}></mo-icon-button>
 
@@ -266,7 +266,7 @@ export class DataGridHeader<TData> extends Component {
 
 		if (!this.dataGrid.hasToolbar && !this.dataGrid.sidePanelHidden) {
 			return html`
-				<mo-flex class='more' alignItems='end' justifyContent='center' ${this.getResizeObserver('moreColumnWidthInPixels')}>
+				<mo-flex class='actions' alignItems='end' justifyContent='center' ${this.getResizeObserver('actionsColumnWidthInPixels')}>
 					<mo-icon-button dense icon='settings'
 						@click=${() => this.dataGrid.navigateToSidePanelTab(this.dataGrid.sidePanelTab ? undefined : DataGridSidePanelTab.Settings)}
 					></mo-icon-button>

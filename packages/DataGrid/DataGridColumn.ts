@@ -104,7 +104,7 @@ export class DataGridColumn<TData, TValue = unknown> {
 			.reduce((a, b) => a! + b!, 0)!
 
 		const start = `${dataGrid.columnsController.selectionColumnWidthInPixels + dataGrid.columnsController.detailsColumnWidthInPixels + calculate('start')}px`
-		const end = `${calculate('end') + dataGrid.columnsController.moreColumnWidthInPixels}px`
+		const end = `${calculate('end') + dataGrid.columnsController.actionsColumnWidthInPixels}px`
 
 		switch (this.sticky) {
 			case 'start':

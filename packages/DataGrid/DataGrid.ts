@@ -421,7 +421,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			:host {
 				--mo-data-grid-column-details-width: 20px;
 				--mo-data-grid-column-selection-width: 40px;
-				--mo-data-grid-column-more-width: 28px;
+				--mo-data-grid-column-actions-width: 28px;
 				--mo-data-grid-cell-padding: 10px;
 				--mo-data-grid-header-height: 32px;
 				--mo-data-grid-footer-min-height: 40px;
