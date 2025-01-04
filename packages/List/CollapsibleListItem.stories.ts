@@ -47,13 +47,13 @@ export const WithSelection: StoryObj = {
 		<mo-card id='with-selection' heading='Navigation Menu' style='--mo-card-body-padding: 0px'>
 			<mo-selectable-list>
 				<mo-selectable-list-item>
-					<mo-icon style='opacity: 0.66' icon='home'></mo-icon>
+					<mo-icon slot='start' style='opacity: 0.66' icon='home'></mo-icon>
 					Home
 				</mo-selectable-list-item>
 
 				<mo-collapsible-list-item>
 					<mo-list-item>
-						<mo-icon style='opacity: 0.66' icon='inventory_2'></mo-icon>
+						<mo-icon slot='start' style='opacity: 0.66' icon='inventory_2'></mo-icon>
 						Sales
 					</mo-list-item>
 					<mo-selectable-list-item slot='details' style='padding-inline-start: 56px; height: 40px'>Products</mo-selectable-list-item>
