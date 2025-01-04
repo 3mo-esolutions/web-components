@@ -10,7 +10,7 @@ export class SelectionListItemChangeEvent<T> extends CustomEvent<T> {
 	}
 }
 
-export enum SelectableListSelectionMode {
+export enum SelectableListSelectability {
 	Single = 'single',
 	Multiple = 'multiple',
 }
@@ -18,7 +18,7 @@ export enum SelectableListSelectionMode {
 /**
  * @element mo-selectable-list
  *
- * @attr selectionMode - The selection mode of the list
+ * @attr selectability - The selectability of the list
  * @attr value - The selected list items' indices
  *
  * @slot - Default slot for list items
@@ -30,7 +30,7 @@ export class SelectableList extends List {
 	@event() readonly change!: EventDispatcher<Array<number>>
 
 	@property({ type: Array, bindingDefault: true }) value = new Array<number>()
-	@property() selectionMode = SelectableListSelectionMode.Single
+	@property() selectability = SelectableListSelectability.Single
 
 	@queryAsync('slot') protected readonly slotElement!: Promise<HTMLSlotElement>
 
@@ -46,7 +46,7 @@ export class SelectableList extends List {
 
 			const value = new Set(this.value)
 
-			if (this.selectionMode === SelectableListSelectionMode.Single) {
+			if (this.selectability === SelectableListSelectability.Single) {
 				for (const [i, item] of this.items.entries()) {
 					if (i !== index) {
 						if ('selected' in item) {
