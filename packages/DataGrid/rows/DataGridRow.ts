@@ -75,21 +75,25 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				width: 100%;
 			}
 
-			:host(:hover) #contentContainer {
-				--mo-data-grid-sticky-part-color: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-accent) 25%);
-				color: inherit;
-				background: var(--mo-color-accent-transparent) !important;
-			}
+			:host(:hover) {
+				#contentContainer {
+					--mo-data-grid-sticky-part-color: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-accent) 25%) !important;
+					color: inherit;
+					background: var(--mo-color-accent-transparent) !important;
+				}
 
-			:host(:hover) #contentContainer::before, #detailsContainer::before {
-				content: '';
-				width: 2px;
-				height: 100%;
-				top: 0;
-				inset-inline-start: 0;
-				position: absolute;
-				background-color: var(--mo-color-accent);
-				z-index: 2;
+				#contentContainer, #detailsContainer {
+					&::before {
+						content: '';
+						width: 2px;
+						height: 100%;
+						top: 0;
+						inset-inline-start: 0;
+						position: absolute;
+						background-color: var(--mo-color-accent);
+						z-index: 2;
+					}
+				}
 			}
 
 			:host([data-has-alternating-background]) {
@@ -109,16 +113,16 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				color: var(--mo-color-gray);
 			}
 
-			:host([selected]) #contentContainer,
-			:host([data-context-menu-open]) #contentContainer {
-				--mo-data-grid-sticky-part-color: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-accent)) !important;
-				background: var(--mo-data-grid-selection-background) !important;
-			}
+			:host([selected]), :host([data-context-menu-open]) {
+				#contentContainer {
+					--mo-data-grid-sticky-part-color: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-accent)) !important;
+					background: var(--mo-data-grid-selection-background) !important;
+				}
 
-			:host([selected]) #contextMenuIconButton,
-			:host([data-context-menu-open]) #contextMenuIconButton {
-				color: currentColor;
-				opacity: 1;
+				#contextMenuIconButton {
+					color: currentColor;
+					opacity: 1;
+				}
 			}
 
 			#contentContainer:hover #contextMenuIconButton {
