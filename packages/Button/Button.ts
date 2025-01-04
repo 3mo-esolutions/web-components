@@ -1,4 +1,4 @@
-import { component, property, css, Component, html, literal, staticHtml } from '@a11d/lit'
+import { component, property, css, Component, html, literal, staticHtml, unsafeCSS } from '@a11d/lit'
 import { InstanceofAttributeController } from '@3mo/instanceof-attribute-controller'
 import { type MaterialIcon } from '@3mo/icon'
 import { MdTextButton } from '@material/web/button/text-button.js'
@@ -10,10 +10,10 @@ import '@3mo/theme'
 import '@3mo/flex'
 
 export enum ButtonType {
-	Normal = 'normal',
+	Text = 'text',
 	Outlined = 'outlined',
-	Raised = 'raised',
-	Unelevated = 'unelevated',
+	Elevated = 'elevated',
+	Filled = 'filled',
 }
 
 /**
@@ -23,12 +23,12 @@ export enum ButtonType {
  *
  * @attr type
  * @attr disabled
- * @attr leadingIcon
- * @attr trailingIcon
+ * @attr startIcon
+ * @attr endIcon
  *
  * @slot - The content of the button.
- * @slot leading - The leading content of the button.
- * @slot trailing - The trailing content of the button.
+ * @slot start - The starting content of the button.
+ * @slot end - The end content of the button.
  *
  * @cssprop --mo-button-accent-color
  * @cssprop --mo-button-on-accent-color
@@ -45,17 +45,17 @@ export class Button extends Component {
 	static override shadowRootOptions: ShadowRootInit = { ...Component.shadowRootOptions, delegatesFocus: true }
 
 	private static readonly tagByType = new Map([
-		[ButtonType.Normal, literal`md-text-button`],
+		[ButtonType.Text, literal`md-text-button`],
 		[ButtonType.Outlined, literal`md-outlined-button`],
-		[ButtonType.Raised, literal`md-elevated-button`],
-		[ButtonType.Unelevated, literal`md-filled-button`],
+		[ButtonType.Elevated, literal`md-elevated-button`],
+		[ButtonType.Filled, literal`md-filled-button`],
 	])
 
-	@property({ reflect: true }) type = ButtonType.Normal
+	@property({ reflect: true }) type = ButtonType.Text
 	@disabledProperty() disabled = false
 
-	@property() leadingIcon?: MaterialIcon
-	@property() trailingIcon?: MaterialIcon
+	@property() startIcon?: MaterialIcon
+	@property() endIcon?: MaterialIcon
 
 	static override get styles() {
 		return css`
@@ -70,11 +70,11 @@ export class Button extends Component {
 				pointer-events: none;
 			}
 
-			:host([type=normal]) [md-button] {
+			:host([type=${unsafeCSS(ButtonType.Text)}]) [md-button] {
 				--mo-button-default-horizontal-padding: 12px;
 			}
 
-			:host(:not([type=normal])) [md-button] {
+			:host(:not([type=${unsafeCSS(ButtonType.Text)}])) [md-button] {
 				--mo-button-default-horizontal-padding: 16px;
 			}
 
@@ -87,20 +87,20 @@ export class Button extends Component {
 				white-space: nowrap;
 			}
 
-			slot[name=leading] {
+			slot[name=start] {
 				place-self: center start;
 			}
 
-			slot[name=leading] *, slot[name=leading]::slotted(*) {
+			slot[name=start] *, slot[name=start]::slotted(*) {
 				margin-inline-end: calc(var(--mo-button-horizontal-padding, var(--mo-button-default-horizontal-padding)) * 0.5);
 				margin-inline-start: calc(var(--mo-button-horizontal-padding, var(--mo-button-default-horizontal-padding)) * -0.5);
 			}
 
-			slot[name=trailing] {
+			slot[name=end] {
 				place-self: center end;
 			}
 
-			slot[name=trailing] *, slot[name=trailing]::slotted(*) {
+			slot[name=end] *, slot[name=end]::slotted(*) {
 				margin-inline-start: calc(var(--mo-button-horizontal-padding, var(--mo-button-default-horizontal-padding)) * 0.5);
 				margin-inline-end: calc(var(--mo-button-horizontal-padding, var(--mo-button-default-horizontal-padding)) * -0.5);
 			}
@@ -235,39 +235,39 @@ export class Button extends Component {
 	protected get contentTemplate() {
 		return html`
 			<mo-flex direction='horizontal' alignItems='center'>
-				${this.leadingSlotTemplate}
+				${this.startSlotTemplate}
 				${this.slotTemplate}
-				${this.trailingSlotTemplate}
+				${this.endSlotTemplate}
 			</mo-flex>
 		`
 	}
 
-	protected get leadingSlotTemplate() {
+	protected get startSlotTemplate() {
 		return html`
-			<slot name='leading'>
-				${this.leadingIconTemplate}
+			<slot name='start'>
+				${this.startIconTemplate}
 			</slot>
 		`
 	}
 
-	protected get leadingIconTemplate() {
-		return !this.leadingIcon ? html.nothing : html`<mo-icon icon=${this.leadingIcon}></mo-icon>`
+	protected get startIconTemplate() {
+		return !this.startIcon ? html.nothing : html`<mo-icon icon=${this.startIcon}></mo-icon>`
 	}
 
 	protected get slotTemplate() {
 		return html`<slot></slot>`
 	}
 
-	protected get trailingSlotTemplate() {
+	protected get endSlotTemplate() {
 		return html`
-			<slot name='trailing'>
-				${this.trailingIconTemplate}
+			<slot name='end'>
+				${this.endIconTemplate}
 			</slot>
 		`
 	}
 
-	protected get trailingIconTemplate() {
-		return !this.trailingIcon ? html.nothing : html`<mo-icon icon=${this.trailingIcon}></mo-icon>`
+	protected get endIconTemplate() {
+		return !this.endIcon ? html.nothing : html`<mo-icon icon=${this.endIcon}></mo-icon>`
 	}
 }
 

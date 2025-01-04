@@ -105,7 +105,7 @@ export class ModdableDataGridChip<TData, TParameters extends FetchableDataGridPa
 				</span>
 
 				${!this.selected ? html.nothing : html`
-					<mo-flex slot='trailing' direction='horizontal' ${style({ margin: '0 -4px 0 4px' })}>
+					<mo-flex slot='end' direction='horizontal' ${style({ margin: '0 -4px 0 4px' })}>
 						${!this.dataGrid.hasUnsavedChanges ? this.contextMenuTemplate : html`
 							<span id='changed'>*</span>
 							<mo-icon-button dense icon='undo' ${tooltip(t('Discard changes'))} @click=${() => this.discard()}></mo-icon-button>

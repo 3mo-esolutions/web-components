@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/web-components'
 import { html, style } from '@a11d/lit'
+import { ButtonType } from '@3mo/button'
 import p from './package.json'
 import './index.js'
 
@@ -7,11 +8,11 @@ export default {
 	title: 'Button Group',
 	component: 'mo-button-group',
 	args: {
-		type: 'outlined',
+		type: ButtonType.Outlined,
 		direction: 'horizontal',
 	},
 	argTypes: {
-		type: { control: 'select', options: ['normal', 'outlined', 'raised', 'unelevated'] },
+		type: { control: 'select', options: [ButtonType.Text, ButtonType.Outlined, ButtonType.Filled] },
 		direction: { control: 'select', options: ['horizontal', 'vertical', 'horizontal-reversed', 'vertical-reversed'] },
 	},
 	package: p,

@@ -36,7 +36,7 @@ export abstract class BusinessSuiteAuthenticationDialogComponent extends DialogA
 		return html`
 			<mo-business-suite-authentication-dialog ${style({ '--mdc-dialog-scrim-color': 'var(--mo-color-background)' })}>
 				<mo-anchor slot='footer' ${style({ fontSize: 'small' })} @click=${() => this.resetPassword()}>${t('Reset Password')}</mo-anchor>
-				<mo-loading-button slot='primaryAction' type='raised'>${this.primaryButtonText}</mo-loading-button>
+				<mo-loading-button slot='primaryAction' type='elevated'>${this.primaryButtonText}</mo-loading-button>
 				${this.additionalTemplate}
 				<mo-flex alignItems='center' gap='40px'>
 					${this.logoTemplate}

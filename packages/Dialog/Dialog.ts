@@ -378,7 +378,7 @@ export class Dialog extends Component implements IDialog {
 
 	protected get primaryActionDefaultTemplate() {
 		return !this.primaryButtonText ? html.nothing : html`
-			<mo-loading-button type='raised'>
+			<mo-loading-button type='elevated'>
 				${this.primaryButtonText}
 			</mo-loading-button>
 		`

@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/button",
-	"version": "0.5.0",
+	"version": "1.0.0",
 	"description": "Buttons let people take action and make choices with one tap.",
 	"repository": {
 		"type": "git",

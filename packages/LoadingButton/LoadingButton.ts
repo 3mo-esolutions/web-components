@@ -58,7 +58,7 @@ export class LoadingButton extends Button {
 	protected override get contentTemplate() {
 		return html`
 			${super.contentTemplate}
-			${!this.circularProgressReplacesLeadingIcon && this.loading ? this.circularProgressTemplate : html.nothing}
+			${!this.circularProgressReplacesStartIcon && this.loading ? this.circularProgressTemplate : html.nothing}
 		`
 	}
 
@@ -66,23 +66,23 @@ export class LoadingButton extends Button {
 		return super.isDisabled || this.loading
 	}
 
-	protected override get leadingIconTemplate() {
-		return this.circularProgressReplacesLeadingIcon && this.loading ? this.circularProgressTemplate : super.leadingIconTemplate
+	protected override get startIconTemplate() {
+		return this.circularProgressReplacesStartIcon && this.loading ? this.circularProgressTemplate : super.startIconTemplate
 	}
 
-	protected get circularProgressReplacesLeadingIcon() {
-		return !!this.leadingIcon
+	protected get circularProgressReplacesStartIcon() {
+		return !!this.startIcon
 	}
 
 	private get circularProgressTemplate() {
 		return html`
 			<mo-circular-progress ${style({
-				position: this.circularProgressReplacesLeadingIcon ? undefined : 'absolute',
-				top: this.circularProgressReplacesLeadingIcon ? undefined : '50%',
-				insetInlineStart: this.circularProgressReplacesLeadingIcon ? undefined : '50%',
-				transform: this.circularProgressReplacesLeadingIcon ? undefined : getComputedStyle(this).direction === 'rtl' ? 'translate(+50%, -50%)' : 'translate(-50%, -50%)',
-				width: this.circularProgressReplacesLeadingIcon ? '24px' : 'auto',
-				height: this.circularProgressReplacesLeadingIcon ? '24px' : '75%',
+				position: this.circularProgressReplacesStartIcon ? undefined : 'absolute',
+				top: this.circularProgressReplacesStartIcon ? undefined : '50%',
+				insetInlineStart: this.circularProgressReplacesStartIcon ? undefined : '50%',
+				transform: this.circularProgressReplacesStartIcon ? undefined : getComputedStyle(this).direction === 'rtl' ? 'translate(+50%, -50%)' : 'translate(-50%, -50%)',
+				width: this.circularProgressReplacesStartIcon ? '24px' : 'auto',
+				height: this.circularProgressReplacesStartIcon ? '24px' : '75%',
 			})}></mo-circular-progress>
 		`
 	}

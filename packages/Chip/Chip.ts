@@ -8,8 +8,8 @@ import '@3mo/button'
  * @ssr true
  *
  * @slot - The default slot.
- * @slot leading - The icon slot.
- * @slot trailing - The icon slot.
+ * @slot start - The icon slot.
+ * @slot end - The icon slot.
  *
  * @cssprop --mo-chip-background-color - The background color of the chip.
  * @cssprop --mo-chip-foreground-color - The foreground color of the chip.
@@ -49,10 +49,10 @@ export class Chip extends Component {
 
 	protected override get template() {
 		return html`
-			<mo-button type='unelevated' exportparts='ripple'>
-				<slot name='leading' slot='leading'></slot>
+			<mo-button type='filled' exportparts='ripple'>
+				<slot name='start' slot='start'></slot>
 				<slot></slot>
-				<slot name='trailing' slot='trailing'></slot>
+				<slot name='end' slot='end'></slot>
 			</mo-button>
 		`
 	}

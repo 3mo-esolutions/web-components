@@ -13,20 +13,20 @@ export const Chip: StoryObj = {
 	render: () => html`<mo-chip>Chip</mo-chip>`
 }
 
-export const WithLeadingIcon: StoryObj = {
+export const WithStartIcon: StoryObj = {
 	render: () => html`
 		<mo-chip>
-			<mo-icon-button dense slot='leading' icon='calendar_today'></mo-icon-button>
-			With Leading Icon
+			<mo-icon-button dense slot='start' icon='calendar_today'></mo-icon-button>
+			With Start Icon
 		</mo-chip>
 	`
 }
 
-export const WithTrailingIcon: StoryObj = {
+export const WithEndIcon: StoryObj = {
 	render: () => html`
 		<mo-chip>
-			With Trailing Icon
-			<mo-icon-button dense slot='trailing' icon='delete'></mo-icon-button>
+			With End Icon
+			<mo-icon-button dense slot='end' icon='delete'></mo-icon-button>
 		</mo-chip>
 	`
 }
@@ -57,11 +57,11 @@ export const Customized: StoryObj = {
 			}
 		</style>
 		<mo-chip id='inactive'>
-			<mo-icon-button dense slot='leading' icon='calendar_today'></mo-icon-button>
+			<mo-icon-button dense slot='start' icon='calendar_today'></mo-icon-button>
 			Inactive
 		</mo-chip>
 		<mo-chip id='active'>
-			<mo-icon-button dense slot='leading' icon='calendar_today'></mo-icon-button>
+			<mo-icon-button dense slot='start' icon='calendar_today'></mo-icon-button>
 			Active
 		</mo-chip>
 	`

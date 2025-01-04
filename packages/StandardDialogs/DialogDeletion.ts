@@ -74,7 +74,7 @@ export class DialogDeletion extends DialogComponent<Parameters> {
 				?blocking=${blocking}
 				errorHandler='no-op'
 			>
-				<mo-loading-button type='raised' slot='primaryAction'>${primaryButtonText ?? t('Delete')}</mo-loading-button>
+				<mo-loading-button type='elevated' slot='primaryAction'>${primaryButtonText ?? t('Delete')}</mo-loading-button>
 				${getContentTemplate(this, content, this.defaultContentTemplate)}
 			</mo-dialog>
 		`

@@ -42,7 +42,7 @@ export const WithCustomTarget: StoryObj = {
 			<mo-popover-container placement='block-end' alignment='end' fixed>
 				<mo-button type='outlined'>
 					Click on the icon-button to open the menu
-					<mo-icon-button id='icon-button' slot='trailing' icon='more_vert'></mo-icon-button>
+					<mo-icon-button id='icon-button' slot='end' icon='more_vert'></mo-icon-button>
 				</mo-button>
 				<mo-menu slot='popover' target='icon-button'>
 					${items}

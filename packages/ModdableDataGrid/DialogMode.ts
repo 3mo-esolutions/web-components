@@ -51,7 +51,7 @@ export class DialogMode<TData, TParameters extends FetchableDataGridParametersTy
 				${!this.parameters.mode?.id ? html.nothing : html`
 					<mo-checkbox slot='footer' label=${t('Archive')} ${bind('archived')} ${style({ marginInlineStart: '8px' })}></mo-checkbox>
 
-					<mo-button type='raised' slot='secondaryAction' ${style({ '--mo-button-accent-color': 'var(--mo-color-red)' })}>
+					<mo-button type='elevated' slot='secondaryAction' ${style({ '--mo-button-accent-color': 'var(--mo-color-red)' })}>
 						${t('Delete')}
 					</mo-button>
 				`}

@@ -36,7 +36,7 @@ export class SplitButton extends Component {
 
 	protected get buttonGroupTemplate() {
 		return html`
-			<mo-button-group type='raised'>
+			<mo-button-group type='filled'>
 				<slot></slot>
 				${this.moreButtonTemplate}
 			</mo-button-group>

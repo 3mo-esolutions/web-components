@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/web-components'
 import { html, style } from '@a11d/lit'
+import { ButtonType } from '@3mo/button'
 import p from './package.json'
 import '.'
 
@@ -7,13 +8,13 @@ export default {
 	title: 'Loading Button',
 	component: 'mo-loading-button',
 	args: {
-		type: 'outlined',
+		type: ButtonType.Outlined,
 		disabled: false,
 		loading: false,
 		preventClickEventInference: false,
 	},
 	argTypes: {
-		type: { control: 'select', options: ['normal', 'outlined', 'raised', 'unelevated'] },
+		type: { control: 'select', options: [ButtonType.Text, ButtonType.Outlined, ButtonType.Elevated, ButtonType.Filled] },
 		disabled: { control: 'boolean' },
 	},
 	package: p,
@@ -32,16 +33,16 @@ export const WithCustomBorderRadius: StoryObj = {
 	render: ({ type, disabled, loading, preventClickEventInference }) => html`<mo-loading-button @click=${handler} type=${type} ?disabled=${disabled} ?loading=${loading} ?preventClickEventInference=${preventClickEventInference} ${style({ borderRadius: '100px' })}>Custom Border Radius</mo-loading-button>`
 }
 
-export const WithLeadingIcon: StoryObj = {
-	render: ({ type, disabled, loading, preventClickEventInference }) => html`<mo-loading-button @click=${handler} leadingIcon='add' type=${type} ?disabled=${disabled} ?loading=${loading} ?preventClickEventInference=${preventClickEventInference}>Leading Icon</mo-loading-button>`
+export const WithStartIcon: StoryObj = {
+	render: ({ type, disabled, loading, preventClickEventInference }) => html`<mo-loading-button @click=${handler} startIcon='add' type=${type} ?disabled=${disabled} ?loading=${loading} ?preventClickEventInference=${preventClickEventInference}>Start Icon</mo-loading-button>`
 }
 
-export const WithTrailingIcon: StoryObj = {
-	render: ({ type, disabled, loading, preventClickEventInference }) => html`<mo-loading-button @click=${handler} trailingIcon='done' type=${type} ?disabled=${disabled} ?loading=${loading} ?preventClickEventInference=${preventClickEventInference}>Trailing Icon</mo-loading-button>`
+export const WithEndIcon: StoryObj = {
+	render: ({ type, disabled, loading, preventClickEventInference }) => html`<mo-loading-button @click=${handler} endIcon='done' type=${type} ?disabled=${disabled} ?loading=${loading} ?preventClickEventInference=${preventClickEventInference}>End Icon</mo-loading-button>`
 }
 
-export const WithLeadingAndTrailingIcon: StoryObj = {
-	render: ({ type, disabled, loading, preventClickEventInference }) => html`<mo-loading-button @click=${handler} leadingIcon='add' trailingIcon='done' type=${type} ?disabled=${disabled} ?loading=${loading} ?preventClickEventInference=${preventClickEventInference}>Leading & Trailing Icon</mo-loading-button>`
+export const WithStartAndEndIcon: StoryObj = {
+	render: ({ type, disabled, loading, preventClickEventInference }) => html`<mo-loading-button @click=${handler} startIcon='add' endIcon='done' type=${type} ?disabled=${disabled} ?loading=${loading} ?preventClickEventInference=${preventClickEventInference}>Start & End Icon</mo-loading-button>`
 }
 
 export const WithNonTextContent: StoryObj = {
@@ -63,14 +64,14 @@ export const WithComplexContent: StoryObj = {
 	`
 }
 
-export const WithComplexContentAndTrailingContent: StoryObj = {
+export const WithComplexContentAndEndContent: StoryObj = {
 	render: ({ type, disabled, loading, preventClickEventInference }) => html`
 		<mo-loading-button @click=${handler} type=${type} ?disabled=${disabled} ?loading=${loading} ?preventClickEventInference=${preventClickEventInference} ${style({ minHeight: '50px', minWidth: '250px' })}>
 			<mo-flex>
 				<div ${style({ fontSize: '12px' })}>To Pay</div>
 				<div ${style({ fontSize: '25px' })}>0.0001</div>
 			</mo-flex>
-			<span slot='trailing' ${style({ fontSize: '36px' })}>₿</span>
+			<span slot='end' ${style({ fontSize: '36px' })}>₿</span>
 		</mo-loading-button>
 	`
 }
@@ -78,7 +79,7 @@ export const WithComplexContentAndTrailingContent: StoryObj = {
 export const WithCustomizedAccentColor: StoryObj = {
 	render: ({ type, disabled, loading, preventClickEventInference }) => html`
 		<mo-loading-button @click=${handler} type=${type} ?disabled=${disabled} ?loading=${loading} ?preventClickEventInference=${preventClickEventInference} ${style({ '--mo-loading-button-accent-color': 'red' })}>
-			<span slot='leading' ${style({ fontSize: '36px' })}>⚠️</span>
+			<span slot='start' ${style({ fontSize: '36px' })}>⚠️</span>
 			<mo-flex>
 				<div ${style({ fontSize: '12px' })}>Danger</div>
 				<div ${style({ fontSize: '25px' })}>Proceed with your own risk</div>
@@ -87,11 +88,11 @@ export const WithCustomizedAccentColor: StoryObj = {
 	`
 }
 
-export const WithTrailingInteractiveContent: StoryObj = {
+export const WithEndInteractiveContent: StoryObj = {
 	render: ({ type, disabled, loading, preventClickEventInference }) => html`
 		<mo-loading-button type=${type} ?disabled=${disabled} ?loading=${loading} ?preventClickEventInference=${preventClickEventInference} @click=${handler}>
 			Proceed
-			<mo-icon-button slot='trailing' icon='help' dense ?disabled=${disabled} ${style({ fontSize: '20px' })} @click=${(e: PointerEvent) => { e.stopImmediatePropagation(); alert('Help') }}></mo-icon-button>
+			<mo-icon-button slot='end' icon='help' dense ?disabled=${disabled} ${style({ fontSize: '20px' })} @click=${(e: PointerEvent) => { e.stopImmediatePropagation(); alert('Help') }}></mo-icon-button>
 		</mo-loading-button>
 	`
 }

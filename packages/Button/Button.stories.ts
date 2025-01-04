@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components'
 import { html, style } from '@a11d/lit'
 import p from './package.json'
+import { ButtonType } from './Button.js'
 import '.'
 
 export default {
@@ -11,7 +12,7 @@ export default {
 		disabled: false,
 	},
 	argTypes: {
-		type: { control: 'select', options: ['normal', 'outlined', 'raised', 'unelevated'] },
+		type: { control: 'select', options: [ButtonType.Text, ButtonType.Outlined, ButtonType.Elevated, ButtonType.Filled] },
 		disabled: { control: 'boolean' },
 	},
 	package: p,
@@ -36,20 +37,20 @@ export const WithCustomHorizontalPadding: StoryObj = {
 	render: ({ type, disabled }) => html`<mo-button type=${type} ?disabled=${disabled} ${style({ '--mo-button-horizontal-padding': '80px' })}>Custom horizontal Padding</mo-button>`
 }
 
-export const WithLeadingIcon: StoryObj = {
-	render: ({ type, disabled }) => html`<mo-button leadingIcon='contact_mail' type=${type} ?disabled=${disabled}>Leading Icon</mo-button>`
+export const WithStartIcon: StoryObj = {
+	render: ({ type, disabled }) => html`<mo-button startIcon='contact_mail' type=${type} ?disabled=${disabled}>Start Icon</mo-button>`
 }
 
-export const WithTrailingIcon: StoryObj = {
-	render: ({ type, disabled }) => html`<mo-button trailingIcon='done' type=${type} ?disabled=${disabled}>Trailing Icon</mo-button>`
+export const WithEndIcon: StoryObj = {
+	render: ({ type, disabled }) => html`<mo-button endIcon='done' type=${type} ?disabled=${disabled}>End Icon</mo-button>`
 }
 
-export const WithLeadingAndTrailingIcon: StoryObj = {
-	render: ({ type, disabled }) => html`<mo-button leadingIcon='add' trailingIcon='done' type=${type} ?disabled=${disabled}>Leading & Trailing Icon</mo-button>`
+export const WithStartAndEndIcon: StoryObj = {
+	render: ({ type, disabled }) => html`<mo-button startIcon='add' endIcon='done' type=${type} ?disabled=${disabled}>Start & End Icon</mo-button>`
 }
 
-export const WithLeadingAndTrailingIconRtl: StoryObj = {
-	render: ({ type, disabled }) => html`<mo-button dir='rtl' leadingIcon='add' trailingIcon='done' type=${type} ?disabled=${disabled}>با آیکان سر و ته</mo-button>`
+export const WithStartAndEndIconRtl: StoryObj = {
+	render: ({ type, disabled }) => html`<mo-button dir='rtl' startIcon='add' endIcon='done' type=${type} ?disabled=${disabled}>با آیکون شروع و پایان</mo-button>`
 }
 
 export const WithNonTextContent: StoryObj = {
@@ -79,14 +80,14 @@ export const WithComplexContent: StoryObj = {
 	`
 }
 
-export const WithComplexContentAndTrailingContent: StoryObj = {
+export const WithComplexContentAndEndContent: StoryObj = {
 	render: ({ type, disabled }) => html`
 		<mo-button type=${type} ?disabled=${disabled} ${style({ minHeight: '50px', minWidth: '250px' })}>
 			<mo-flex>
 				<div ${style({ fontSize: '12px' })}>To Pay</div>
 				<div ${style({ fontSize: '25px' })}>0.0001</div>
 			</mo-flex>
-			<span slot='trailing' ${style({ fontSize: '36px' })}>₿</span>
+			<span slot='end' ${style({ fontSize: '36px' })}>₿</span>
 		</mo-button>
 	`
 }
@@ -94,7 +95,7 @@ export const WithComplexContentAndTrailingContent: StoryObj = {
 export const WithCustomAccentColors: StoryObj = {
 	render: ({ type, disabled }) => html`
 		<mo-button type=${type} ?disabled=${disabled} ${style({ '--mo-button-accent-color': 'var(--mo-color-red)', '--mo-button-on-accent-color': 'rgb(255, 189, 46)' })}>
-			<span slot='leading' ${style({ fontSize: '36px' })}>⚠️</span>
+			<span slot='start' ${style({ fontSize: '36px' })}>⚠️</span>
 			<mo-flex>
 				<div ${style({ fontSize: '12px' })}>Danger</div>
 				<div ${style({ fontSize: '25px' })}>Proceed with your own risk</div>
@@ -103,11 +104,11 @@ export const WithCustomAccentColors: StoryObj = {
 	`
 }
 
-export const WithTrailingInteractiveContent: StoryObj = {
+export const WithEndInteractiveContent: StoryObj = {
 	render: ({ type, disabled }) => html`
 		<mo-button type=${type} ?disabled=${disabled} @click=${() => alert('Proceed')}>
 			Proceed
-			<mo-icon-button slot='trailing' icon='help' dense ?disabled=${disabled} ${style({ fontSize: '20px' })} @click=${(e: PointerEvent) => { e.stopImmediatePropagation(); alert('Help') }}></mo-icon-button>
+			<mo-icon-button slot='end' icon='help' dense ?disabled=${disabled} ${style({ fontSize: '20px' })} @click=${(e: PointerEvent) => { e.stopImmediatePropagation(); alert('Help') }}></mo-icon-button>
 		</mo-button>
 	`
 }

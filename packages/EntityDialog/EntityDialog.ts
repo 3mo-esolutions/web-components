@@ -9,7 +9,7 @@ export class EntityDialog<TEntity> extends FetchableDialog<TEntity> {
 
 	protected override get primaryActionDefaultTemplate() {
 		return this.primaryButtonText === '' ? html.nothing : html`
-			<mo-loading-button type='raised' ?disabled=${this.fetcherController.isFetching}>
+			<mo-loading-button type='elevated' ?disabled=${this.fetcherController.isFetching}>
 				${this.primaryButtonText || t('Save')}
 			</mo-loading-button>
 		`

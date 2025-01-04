@@ -117,7 +117,7 @@ export const Footer: StoryObj = {
 export const PrimaryAction: StoryObj = {
 	render: () => html`
 		<mo-dialog heading='Heading' open>
-			<mo-loading-button slot='primaryAction' type='raised' leadingIcon='save'>Save</mo-loading-button>
+			<mo-loading-button slot='primaryAction' type='elevated' startIcon='save'>Save</mo-loading-button>
 			Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius quidem eaque earum obcaecati qui? Nihil quaerat,
 			repudiandae error delectus labore quasi inventore fugit corporis maxime eos aspernatur aliquid temporibus vitae.
 		</mo-dialog>
@@ -127,7 +127,7 @@ export const PrimaryAction: StoryObj = {
 export const SecondaryAction: StoryObj = {
 	render: () => html`
 		<mo-dialog heading='Heading' open primaryButtonText='Save'>
-			<mo-loading-button slot='secondaryAction' type='outlined' leadingIcon='delete' style='--mo-button-accent-color: darkred'>Delete</mo-loading-button>
+			<mo-loading-button slot='secondaryAction' type='outlined' startIcon='delete' style='--mo-button-accent-color: darkred'>Delete</mo-loading-button>
 			Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius quidem eaque earum obcaecati qui? Nihil quaerat,
 			repudiandae error delectus labore quasi inventore fugit corporis maxime eos aspernatur aliquid temporibus vitae.
 		</mo-dialog>
