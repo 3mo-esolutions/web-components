@@ -21,17 +21,43 @@ function getTestFiles(directory) {
 
 FileSystem.mkdirSync('./dist', { recursive: true })
 
-const testIndexFileContent = `
-globalThis.environment = 'test'
-${getTestFiles('./packages').map(file => {
+const fileImports = getTestFiles('./packages').map(file => {
 	const relativePath = Path.relative('./dist', file)
 	return `import '${relativePath.replace(/\\/g, '/').replace(/\.ts$/, '')}'`
-}).join('\n')}`
-FileSystem.writeFileSync('./dist/test.ts', testIndexFileContent)
+}).join('\n')
 
+const content = `
+globalThis.environment = 'test'
+${fileImports}`
+
+FileSystem.writeFileSync('./dist/test.ts', content)
 await esbuild.build({
 	bundle: true,
 	outdir: './dist',
 	entryPoints: ['./dist/test.ts'],
 	tsconfig: './tsconfig.json',
+	legalComments: 'none',
+})
+
+FileSystem.writeFileSync('./dist/test-ssr-config.js', `
+import * as dom from '@lit-labs/ssr-dom-shim'
+Object.assign(globalThis, dom);
+globalThis.window ??= undefined;
+globalThis.document ??= undefined;
+globalThis.navigator ??= undefined;
+globalThis.location ??= {};
+`)
+
+FileSystem.writeFileSync('./dist/test-ssr.ts', `
+import './test-ssr-config.js'
+import '@lit-labs/ssr'
+import '@lit-labs/ssr-client/lit-element-hydrate-support.js'
+${content}
+`)
+await esbuild.build({
+	bundle: true,
+	outdir: './dist',
+	entryPoints: ['./dist/test-ssr.ts'],
+	tsconfig: './tsconfig.json',
+	legalComments: 'none',
 })
