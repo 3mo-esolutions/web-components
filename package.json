@@ -32,6 +32,7 @@
 		"@a11d/eslint-config": "x",
 		"@a11d/lit": "x",
 		"@custom-elements-manifest/analyzer": "x",
+		"@lit-labs/ssr": "3.x",
 		"@storybook/addon-docs": "10.x",
 		"@storybook/addon-links": "10.x",
 		"@storybook/addon-themes": "10.x",
