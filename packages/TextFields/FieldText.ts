@@ -123,6 +123,13 @@ export class FieldText extends InputFieldComponent<string> {
 			<span slot='end' ${style({ color: 'var(--mo-color-gray-transparent)' })}>${remainingLength}</span>
 		`
 	}
+
+	override async checkValidity() {
+		return await super.checkValidity()
+			&& (!this.required || !!this.value)
+			&& (!this.minLength || (this.value?.length ?? 0) >= this.minLength)
+			&& (!this.maxLength || (this.value?.length ?? 0) <= this.maxLength)
+	}
 }
 
 declare global {
