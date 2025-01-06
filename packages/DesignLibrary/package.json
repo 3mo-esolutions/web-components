@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/del",
-	"version": "0.1.79",
+	"version": "0.1.80",
 	"description": "3MO Design Library to build business-suite web applications",
 	"repository": {
 		"type": "git",
@@ -27,6 +27,7 @@
 		"tslib": "x",
 		"@lit/task": "x",
 		"@a11d/equals": "x",
+		"@a11d/metadata": "x",
 		"@a11d/lit": "x",
 		"@a11d/lit-application": "x",
 		"@a11d/lit-application-authentication": "x",

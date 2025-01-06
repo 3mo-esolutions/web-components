@@ -11,22 +11,32 @@ export default {
 	package: p,
 } as Meta
 
-type Data = {
-	id: number
-	name: string
+@label(t('Data'))
+class Data {
+	id!: number
+	name!: string
+
+	constructor(init?: Partial<Data>) {
+		Object.assign(this, init)
+	}
+
+	toString() {
+		return this.name
+	}
 }
 
 class DialogData extends EntityDialogComponent<Data> {
-	protected override entity = { id: 1, name: 'Test' }
-	protected override fetch = (id: EntityId) => new Promise<Data>(resolve => setTimeout(() => resolve({ id: Number(id), name: 'Test' }), 2000))
-	protected override save = (entity: Data) => new Promise<Data>(resolve => setTimeout(() => resolve(entity), 2000))
-	protected override delete = () => new Promise<void>(resolve => setTimeout(() => resolve(), 2000))
+	protected override entity = new Data()
+	protected override fetch = (id: EntityId) => new Promise<Data>(resolve => setTimeout(() => resolve(new Data({ id: Number(id), name: 'Test' })), 1000))
+	protected override save = (entity: Data) => new Promise<Data>(resolve => setTimeout(() => resolve(entity), 1000))
+	protected override delete = () => new Promise<void>(resolve => setTimeout(() => resolve(), 1000))
 
 	protected override get template() {
+		const { bind } = this.entityBinder
 		return html`
-			<mo-entity-dialog heading='Data'>
-				<mo-field-number disabled label='Id' .value=${this.entity.id}></mo-field-number>
-				<mo-field-text label='Name' .value=${this.entity.name}></mo-field-text>
+			<mo-entity-dialog>
+				<mo-field-number disabled label='Id' ${bind('id')}></mo-field-number>
+				<mo-field-text label='Name' ${bind({ keyPath: 'name', event: 'input' })}></mo-field-text>
 			</mo-entity-dialog>
 		`
 	}

@@ -3,7 +3,7 @@ import { type BaseDialogParameters, getContentTemplate } from '@3mo/dialog'
 import { EntityDialogComponent } from './EntityDialogComponent.js'
 import { type EntityId } from '@3mo/fetchable-dialog'
 
-interface GenericEntityDialogParameters<T> extends BaseDialogParameters<GenericEntityDialog<T>> {
+interface GenericEntityDialogParameters<T extends object> extends BaseDialogParameters<GenericEntityDialog<T>> {
 	readonly secondaryButtonText?: string
 	readonly id?: EntityId
 	readonly entity: T
@@ -13,7 +13,7 @@ interface GenericEntityDialogParameters<T> extends BaseDialogParameters<GenericE
 }
 
 @component('mo-generic-entity-dialog')
-export class GenericEntityDialog<T> extends EntityDialogComponent<T, GenericEntityDialogParameters<T>, T> {
+export class GenericEntityDialog<T extends object> extends EntityDialogComponent<T, GenericEntityDialogParameters<T>, T> {
 	@state() entity = this.parameters.entity
 	protected override fetch = this.parameters.fetch
 	protected override save = this.parameters.save

@@ -9,7 +9,7 @@ export abstract class FetchableDialogComponent<
 	TEntity,
 	TParameters extends Exclude<DialogParameters, void> = FetchableDialogComponentParameters,
 	TResult = void
-	> extends DialogComponent<TParameters, TResult> {
+> extends DialogComponent<TParameters, TResult> {
 	static {
 		state()(FetchableDialogComponent.prototype, 'entity')
 	}

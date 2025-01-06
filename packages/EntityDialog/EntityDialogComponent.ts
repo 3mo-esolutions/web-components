@@ -3,14 +3,15 @@ import { DialogActionKey, type DialogParameters, NotificationComponent } from '@
 import { Localizer } from '@3mo/localization'
 import { type FetchableDialogComponentParameters, FetchableDialogComponent } from '@3mo/fetchable-dialog'
 import { EntityDialog } from './EntityDialog.js'
+import { getEntityLabel } from './getEntityLabel.js'
 
 Localizer.dictionaries.add('de', {
-	'Saved successfully': 'Erfolgreich gespeichert',
+	'${label:string} saved successfully.': '${label:string} erfolgreich gespeichert.',
 	'Open': 'Öffnen',
 })
 
 export abstract class EntityDialogComponent<
-	TEntity,
+	TEntity extends object,
 	TParameters extends Exclude<DialogParameters, void> = FetchableDialogComponentParameters,
 	TResult = TEntity
 > extends FetchableDialogComponent<TEntity, TParameters, TResult | undefined> {
@@ -24,12 +25,18 @@ export abstract class EntityDialogComponent<
 		return super.dialogElement as EntityDialog<TEntity>
 	}
 
-	protected override firstUpdated(props: PropertyValues) {
+	protected override firstUpdated(props: PropertyValues<this>) {
 		super.firstUpdated(props)
 		this.dialogElement.save = () => this.save(this.entity)
 		if (this.delete && this.parameters.id) {
 			this.dialogElement.delete = () => this.delete?.(this.entity)
 		}
+	}
+
+	protected override updated(props: PropertyValues<this>) {
+		super.updated(props)
+		this.dialogElement.parameters = this.parameters
+		this.dialogElement.entity = this.entity
 	}
 
 	@eventListener({ target: window, type: 'keydown' })
@@ -58,7 +65,7 @@ export abstract class EntityDialogComponent<
 	}
 
 	protected get successMessage() {
-		return t('Saved successfully')
+		return t('${label:string} saved successfully.', { label: getEntityLabel(this.entity) })
 	}
 
 	protected override async secondaryAction() {

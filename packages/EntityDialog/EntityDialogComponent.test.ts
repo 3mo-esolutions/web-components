@@ -32,6 +32,17 @@ describe('EntityDialogComponent', () => {
 		saveSpy.calls.reset()
 	})
 
+	const expectHeadingToBe = async (heading: string) => {
+		await fixture.component.fetcherController.fetch()
+		expect(fixture.component.dialogElement['dialogHeading'].toString()).toBe(heading)
+	}
+
+	it('should not automatically set the header if it is already set', async () => {
+		fixture.component.dialogElement.heading = 'Custom Heading'
+		await fixture.updateComplete
+		expectHeadingToBe('Custom Heading')
+	})
+
 	describe('in creation mode', () => {
 		beforeAll(() => entityId = undefined)
 
@@ -42,6 +53,16 @@ describe('EntityDialogComponent', () => {
 		it('should not delete entity when secondary-button is clicked', () => {
 			fixture.component.secondaryActionElement?.click()
 			expect(deleteSpy).not.toHaveBeenCalled()
+		})
+
+		it('should automatically set the header according to the entity label', async () => {
+			await expectHeadingToBe('Create Entity')
+
+			spyOn(label, 'get').and.returnValue('Label')
+			await expectHeadingToBe('Create Label')
+
+			spyOn(entity as any, 'toString').and.returnValue('Name')
+			await expectHeadingToBe('Create Label "Name"')
 		})
 	})
 
@@ -56,6 +77,16 @@ describe('EntityDialogComponent', () => {
 		it('should delete entity when secondary-button is clicked', () => {
 			fixture.component.secondaryActionElement?.click()
 			expect(deleteSpy).toHaveBeenCalledWith(entity)
+		})
+
+		it('should automatically set the header according to the entity label', async () => {
+			await expectHeadingToBe('Edit Entity')
+
+			spyOn(label, 'get').and.returnValue('Label')
+			await expectHeadingToBe('Edit Label')
+
+			spyOn(entity as any, 'toString').and.returnValue('Name')
+			await expectHeadingToBe('Edit Label "Name"')
 		})
 	})
 })
