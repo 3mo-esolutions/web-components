@@ -14,7 +14,7 @@ describe('DataGridColumnsController', () => {
 			options: { data: [] },
 			selection: { get hasSelection() { return state.hasSelection } },
 			details: { get hasDetails() { return state.hasDetails } },
-			contextMenu: { get hasContextMenu() { return state.hasContextMenu } },
+			contextMenu: { get hasContextMenus() { return state.hasContextMenu } },
 			reorderability: { get visible() { return state.reorderabilityVisible }, enabled: false },
 			restampSticky: () => { },
 		} as any

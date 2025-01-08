@@ -264,7 +264,7 @@ export class DataGridColumnsController<TData> extends Controller implements Even
 
 	private get layout() {
 		const { reorderability, details, selection, contextMenu } = this.grid
-		return [reorderability.visible, details.hasDetails, selection.hasSelection, contextMenu.hasContextMenu, ...this.columns.visible.map(column => `${column.dataSelector}:${column.sticky}`)].join()
+		return [reorderability.visible, details.hasDetails, selection.hasSelection, contextMenu.hasContextMenus, ...this.columns.visible.map(column => `${column.dataSelector}:${column.sticky}`)].join()
 	}
 
 	private get currentInsets() {
@@ -295,7 +295,7 @@ export class DataGridColumnsController<TData> extends Controller implements Even
 			reordering: !this.grid.reorderability.visible ? 0 : this.columnWidths.reordering,
 			details: !this.grid.details.hasDetails ? 0 : this.columnWidths.details,
 			selection: !this.grid.selection.hasSelection ? 0 : this.columnWidths.selection,
-			actions: !this.grid.contextMenu.hasContextMenu ? 0 : this.columnWidths.actions
+			actions: !this.grid.contextMenu.hasContextMenus ? 0 : this.columnWidths.actions
 		}
 		const insets = new Map<unknown, string>([
 			['reordering', '0px'],

@@ -306,7 +306,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}
 
 	get hasContextMenu() {
-		return this.controller.contextMenu.hasContextMenu
+		return this.controller.contextMenu.hasContextMenus
 	}
 
 	get toolbarElements() {
