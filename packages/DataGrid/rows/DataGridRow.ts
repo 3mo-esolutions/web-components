@@ -262,7 +262,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	}
 
 	protected get contextMenuIconButtonTemplate() {
-		return this.dataGrid.hasContextMenu === false ? html.nothing : html`
+		return this.dataGrid.contextMenuController.hasContextMenu(this.dataRecord) === false ? html.nothing : html`
 			<mo-flex justifyContent='center' ${style({ height: '100%', placeSelf: 'end', position: 'sticky', insetInlineEnd: '0px', zIndex: '3', background: 'var(--mo-data-grid-sticky-part-color)' })}>
 				<mo-icon-button id='contextMenuIconButton' icon='more_vert' dense
 					@click=${this.openContextMenu}
