@@ -280,7 +280,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	}
 
 	protected get contextMenuIconButtonTemplate() {
-		return this.dataGrid.hasContextMenu === false ? html.nothing : html`
+		return this.dataGrid.contextMenuController.hasContextMenu(this.dataRecord) === false ? html.nothing : html`
 			<mo-flex id='contextMenuIconButtonContainer' justifyContent='center'>
 				<mo-icon-button id='contextMenuIconButton' icon='more_vert' dense
 					@click=${this.openContextMenu}

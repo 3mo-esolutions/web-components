@@ -1,6 +1,6 @@
 import { Controller, html, style } from '@a11d/lit'
 import { Localizer } from '@3mo/localization'
-import { type DataGrid } from './index.js'
+import { type DataGrid, type DataRecord } from './index.js'
 
 Localizer.dictionaries.add('de', {
 	'selected': 'ausgewählt',
@@ -31,12 +31,17 @@ export class DataGridContextMenuController<TData> extends Controller {
 		super(host)
 	}
 
-	get hasContextMenu() {
+	get hasContextMenus() {
 		return this.host.getRowContextMenuTemplate !== undefined
 	}
 
+	hasContextMenu(record: DataRecord<TData>) {
+		const contextMenu = this.host.getRowContextMenuTemplate?.([record.data])
+		return !!contextMenu && contextMenu !== html.nothing
+	}
+
 	getMenuContentTemplate(data = this.host.selectedData) {
-		return !this.hasContextMenu ? html.nothing : html`
+		return !this.hasContextMenus ? html.nothing : html`
 			${data.length === 1 ? html.nothing : html`
 				<div ${style(DataGridContextMenuController.infoStyle)}>
 					<span ${style(DataGridContextMenuController.infoCountStyle)}>${data.length.format()}</span>
