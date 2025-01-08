@@ -7,8 +7,12 @@ import { type ModdableDataGrid } from './ModdableDataGrid.js'
 import type * as CSS from 'csstype'
 
 Localizer.dictionaries.add({
+	en: {
+		'ModdableDataGridMode.Copy': 'Copy',
+	},
 	de: {
 		'View "${name:string}" moved to archive': 'Ansicht "${name}" ins Archiv verschoben',
+		'ModdableDataGridMode.Copy': 'Kopie',
 	}
 })
 
@@ -104,7 +108,7 @@ export class ModdableDataGridMode<TData, TDataFetcherParameters extends Fetchabl
 	}
 
 	copy(name?: string): ModdableDataGridMode<TData, TDataFetcherParameters> {
-		name ??= `${this.name} - ${t('Copy')}`
+		name ??= `${this.name} - ${t('ModdableDataGridMode.Copy')}`
 		return this.with({ id: undefined, name })
 	}
 

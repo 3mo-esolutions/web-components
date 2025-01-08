@@ -11,7 +11,7 @@ import { type ModdableDataGrid } from './ModdableDataGrid.js'
 Localizer.dictionaries.add({
 	de: {
 		'Save changes': 'Änderungen speichern',
-		'Copy': 'Kopie',
+		'Copy': 'Kopieren',
 		'Move to archive': 'Ins Archiv verschieben',
 		'Save as a new view': 'Als neue Ansicht speichern',
 		'Discard changes': 'Änderungen verwerfen',

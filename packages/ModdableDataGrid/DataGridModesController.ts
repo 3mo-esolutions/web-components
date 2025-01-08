@@ -6,7 +6,7 @@ import { type ModdableDataGrid, type ModdableDataGridMode } from './index.js'
 
 Localizer.dictionaries.add({
 	de: {
-		'Do you want to delete the view "${name:string}" irreversibly?': 'Möchten Sie die Ansicht "${name}" unwiderruflich löschen?',
+		'view "${name:string}"': 'Ansicht "${name}"',
 	}
 })
 
@@ -78,7 +78,7 @@ export class DataGridModesController<TData, TParameters extends FetchableDataGri
 
 	async delete(mode: ModdableDataGridMode<TData, TParameters>) {
 		await new DialogDeletion({
-			content: t('Do you want to delete the view "${name:string}" irreversibly?', { name: mode.name }),
+			label: t('view "${name:string}"', { name: mode.name }),
 			deletionAction: async () => {
 				if (this.selectedMode?.id === mode.id) {
 					this.set(undefined)
