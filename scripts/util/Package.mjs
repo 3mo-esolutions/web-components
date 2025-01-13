@@ -36,14 +36,20 @@ export class Package {
 		await run('npm run clean')
 		console.log(await run('tsc', this.relativePath) || 'TypeScript compiled successfully')
 		await run('npm run analyze', undefined, true)
+
+		let publishCommand = 'npm publish --loglevel=error --access public'
+
 		if (versionBumpType.startsWith('pre')) {
 			versionBumpType = versionBumpType.replace('prepatch', 'prerelease')
 			if (!versionBumpType.includes('--preid')) {
 				versionBumpType += ' --preid=preview'
 			}
+			publishCommand += ' --tag alpha'
 		}
+
 		console.log(await run(`npm version --loglevel=error ${versionBumpType}`, this.relativePath))
-		console.log(await run('npm publish --loglevel=error --access public', this.relativePath))
+		console.log(await run(publishCommand, this.relativePath))
+
 		await run('npm run clean')
 	}
 }
