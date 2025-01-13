@@ -37,18 +37,14 @@ export class Package {
 		console.log(await run('tsc', this.relativePath) || 'TypeScript compiled successfully')
 		await run('npm run analyze', undefined, true)
 
-		let publishCommand = 'npm publish --loglevel=error --access public'
-
-		if (versionBumpType.startsWith('pre')) {
-			versionBumpType = versionBumpType.replace('prepatch', 'prerelease')
-			if (!versionBumpType.includes('--preid')) {
-				versionBumpType += ' --preid=preview'
-			}
-			publishCommand += ' --tag alpha'
+		if (versionBumpType.includes('--preid')) {
+			throw new Error('Do not include the --preid flag in the version bump type. Use "prerelease" instead.')
 		}
 
-		console.log(await run(`npm version --loglevel=error ${versionBumpType}`, this.relativePath))
-		console.log(await run(publishCommand, this.relativePath))
+		const isPreRelease = versionBumpType.startsWith('pre')
+
+		console.log(await run(`npm version --loglevel=error ${versionBumpType.replace('prepatch', 'prerelease')} ${!isPreRelease ? '' : '--preid=preview'}`, this.relativePath))
+		console.log(await run(`npm publish --loglevel=error --access public ${!isPreRelease ? '' : '--tag preview'}`, this.relativePath))
 
 		await run('npm run clean')
 	}
