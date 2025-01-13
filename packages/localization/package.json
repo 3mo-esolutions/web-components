@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/localization",
-	"version": "0.7.4",
+	"version": "0.8.1",
 	"description": "A set of tools for localization.",
 	"repository": {
 		"type": "git",

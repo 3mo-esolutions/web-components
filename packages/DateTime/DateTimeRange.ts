@@ -88,11 +88,7 @@ export class DateTimeRange {
 		return this._format({
 			options,
 			formatter: (dateTime, ...options) => dateTime.formatAsDate(...options),
-			defaultOptions: {
-				year: 'numeric',
-				month: '2-digit',
-				day: '2-digit',
-			}
+			defaultOptions: { dateStyle: 'medium' }
 		})
 	}
 
@@ -100,13 +96,7 @@ export class DateTimeRange {
 		return this._format({
 			options,
 			formatter: (dateTime, ...options) => dateTime.format(...options),
-			defaultOptions: {
-				year: 'numeric',
-				month: '2-digit',
-				day: '2-digit',
-				hour: '2-digit',
-				minute: '2-digit',
-			}
+			defaultOptions: { dateStyle: 'medium', timeStyle: 'medium' }
 		})
 	}
 

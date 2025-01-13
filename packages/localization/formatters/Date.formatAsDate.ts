@@ -6,11 +6,7 @@ type DateFormatOptions = FormatOptionsWithLanguage<
 >
 
 Date.prototype.formatAsDate = function (this: Date, ...options: DateFormatOptions) {
-	const [language, opt] = extractDateTimeFormatOptions(this.calendarId, this.timeZoneId, options, {
-		year: 'numeric',
-		month: '2-digit',
-		day: '2-digit',
-	})
+	const [language, opt] = extractDateTimeFormatOptions(this.calendarId, this.timeZoneId, options, { dateStyle: 'medium' })
 	return Intl.DateTimeFormat(language, opt).format(this)
 }
 

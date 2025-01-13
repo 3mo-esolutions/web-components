@@ -12,14 +12,8 @@ export function extractDateTimeFormatOptions(calendarId?: string, timeZoneId?: s
 }
 
 const defaultOptions: Intl.DateTimeFormatOptions = {
-	year: 'numeric',
-	month: '2-digit',
-	day: '2-digit',
-	hour: '2-digit',
-	minute: '2-digit',
-	second: '2-digit',
-	hourCycle: 'h23',
-	timeZoneName: 'shortOffset'
+	dateStyle: 'medium',
+	timeStyle: 'medium',
 }
 
 Date.prototype.format = function (this: Date, ...options: DateFormatOptions) {

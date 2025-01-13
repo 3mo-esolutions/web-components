@@ -86,14 +86,14 @@ describe('DateTimeRange', () => {
 		const start = new DateTime('2020-01-02')
 		const range = new DateTimeRange(start)
 		expect(range.formatAsDateRange({ language: 'de' }).replace(/\s/g, '')).toBe('02.01.2020–')
-		expect(range.formatAsDateRange({ language: 'fa' }).replaceAll(/\s/g, '')).toBe('۲۰۲۰/۰۱/۰۲تا')
+		expect(range.formatAsDateRange({ language: 'fa' }).replace(/\s/g, '')).toBe('۲ژانویه۲۰۲۰تا')
 	})
 
 	it('.formatAsDateRange() should return a formatted end date for a range with only an end date', () => {
 		const end = new DateTime('2020-01-02')
 		const range = new DateTimeRange(undefined, end)
 		expect(range.formatAsDateRange({ language: 'de' }).replace(/\s/g, '')).toBe('–02.01.2020')
-		expect(range.formatAsDateRange({ language: 'fa' }).replaceAll(/\s/g, '')).toBe('تا۲۰۲۰/۰۱/۰۲')
+		expect(range.formatAsDateRange({ language: 'fa' }).replace(/\s/g, '')).toBe('تا۲ژانویه۲۰۲۰')
 	})
 
 	it('.formatAsDateRange() should return a formatted start and end date for a range with both dates', () => {
@@ -101,14 +101,14 @@ describe('DateTimeRange', () => {
 		const end = new DateTime('2020-01-04')
 		const range = new DateTimeRange(start, end)
 		expect(range.formatAsDateRange({ language: 'de' }).replace(/\s/g, '')).toBe('02.01.2010–04.01.2020')
-		expect(range.formatAsDateRange({ language: 'fa' }).replaceAll(/\s/g, '')).toBe('۲۰۱۰/۱/۲تا۲۰۲۰/۱/۴')
+		expect(range.formatAsDateRange({ language: 'fa' }).replace(/\s/g, '')).toBe('۲ژانویه۲۰۱۰تا۴ژانویه۲۰۲۰')
 	})
 
 	it('.format() should return a formatted start and end date with time for a range with both dates', () => {
 		const start = new DateTime('2010-01-02 12:00:00')
 		const end = new DateTime('2020-01-04 16:00:00')
 		const range = new DateTimeRange(start, end)
-		expect(range.format({ language: 'de' }).replace(/\s/g, '')).toBe('02.01.2010,12:00–04.01.2020,16:00')
-		expect(range.format({ language: 'fa' }).replaceAll(/\s/g, '')).toBe('۲۰۱۰/۰۱/۰۲,۱۲:۰۰تا۲۰۲۰/۰۱/۰۴,۱۶:۰۰')
+		expect(range.format({ language: 'de' }).replace(/\s/g, '')).toBe('02.01.2010,12:00:00–04.01.2020,16:00:00')
+		expect(range.format({ language: 'fa' }).replace(/\s/g, '')).toBe('۲ژانویه۲۰۱۰،۱۲:۰۰:۰۰تا۴ژانویه۲۰۲۰،۱۶:۰۰:۰۰')
 	})
 })

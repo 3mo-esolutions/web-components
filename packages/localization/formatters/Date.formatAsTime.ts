@@ -4,13 +4,7 @@ import type { FormatOptionsWithLanguage } from './OptionsWithLanguage.js'
 type DateFormatOptions = FormatOptionsWithLanguage<Intl.DateTimeFormatOptions>
 
 Date.prototype.formatAsTime = function (this: Date, ...options: DateFormatOptions) {
-	const [language, opt] = extractDateTimeFormatOptions(this.calendarId, this.timeZoneId, options, {
-		hour: '2-digit',
-		minute: '2-digit',
-		second: '2-digit',
-		hourCycle: 'h23',
-		timeZoneName: 'shortOffset'
-	})
+	const [language, opt] = extractDateTimeFormatOptions(this.calendarId, this.timeZoneId, options, { timeStyle: 'medium' })
 	return Intl.DateTimeFormat(language, opt).format(this)
 }
 
