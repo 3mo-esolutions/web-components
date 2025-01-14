@@ -23,7 +23,9 @@ export class Section extends Component {
 
 	static override get styles() {
 		return css`
-			:host { display: block; }
+			:host {
+				display: block;
+			}
 
 			section {
 				display: flex;
@@ -34,7 +36,7 @@ export class Section extends Component {
 			}
 
 			mo-grid {
-				height: max-content;
+				height: 100%;
 			}
 
 			slot[name=action], slot[name=heading], slot[name=heading]::slotted(*) {
