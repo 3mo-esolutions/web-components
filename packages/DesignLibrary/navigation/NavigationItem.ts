@@ -1,4 +1,4 @@
-import { bind, Component, component, css, html, property, repeat, style, type TemplateResult } from '@a11d/lit'
+import { bind, Component, component, css, html, ifDefined, property, repeat, style, type TemplateResult } from '@a11d/lit'
 import { type PageComponent, routerLink, type DialogComponent, type RouteMatchMode } from '@a11d/lit-application'
 import type { MaterialIcon } from '@3mo/icon'
 
@@ -23,11 +23,11 @@ export class NavigationItem extends Component {
 	override tabIndex = 0
 
 	private get menuContentTemplate() {
-		const getItemTemplate = (navigation: NavigationDefinition): TemplateResult => navigation.hidden ? html.nothing : html`
+		const getItemTemplate = (navigation: NavigationDefinition, subMenu: boolean): TemplateResult => navigation.hidden ? html.nothing : html`
 			${!navigation.hasSeparator ? html.nothing : html`<mo-line></mo-line>`}
 
 			${!navigation.children ? html`
-				<mo-navigation-menu-item ${!navigation.component ? html.nothing : routerLink({
+				<mo-navigation-menu-item slot=${ifDefined(subMenu ? 'submenu' : undefined)} ${!navigation.component ? html.nothing : routerLink({
 					component: navigation.component as PageComponent,
 					matchMode: navigation.matchMode,
 					invocationHandler: () => this.open = false,
@@ -35,17 +35,15 @@ export class NavigationItem extends Component {
 					${navigation.label} ${navigation.openInNewPage ? '...' : ''}
 				</mo-navigation-menu-item>
 			` : html`
-				<mo-nested-menu-item>
+				<mo-nested-menu-item slot=${ifDefined(subMenu ? 'submenu' : undefined)}>
 					${navigation.label}
-					<mo-menu slot='submenu'>
-						${repeat(navigation.children, c => c.key ?? c, child => getItemTemplate(child))}
-					</mo-menu>
+					${repeat(navigation.children, c => c.key ?? c, child => getItemTemplate(child, true))}
 				</mo-nested-menu-item>
 			`}
 		`
 
 		return !this.navigation.children || this.navigation.hidden ? html.nothing : html`
-			${repeat(this.navigation.children, c => c.key ?? c, child => getItemTemplate(child))}
+			${repeat(this.navigation.children, c => c.key ?? c, child => getItemTemplate(child, false))}
 		`
 	}
 

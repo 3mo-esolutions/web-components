@@ -92,7 +92,7 @@ export class Navigation extends Component {
 				color: color-mix(in srgb, var(--mo-color-accent), var(--mo-color-foreground) 25%);
 			}
 
-			mo-navigation-list-item[slot=details] {
+			mo-navigation-list-item[slot=details], mo-collapsible-list-item[slot=details] > mo-list-item {
 				padding-inline-start: 56px;
 				height: 40px;
 				font-size: 0.875rem;
