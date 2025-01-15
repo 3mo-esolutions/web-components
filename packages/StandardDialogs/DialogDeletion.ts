@@ -5,8 +5,8 @@ import { Localizer } from '@3mo/localization'
 import { getContentTemplate, type DialogContent, type DialogSize } from '@3mo/dialog'
 
 Localizer.dictionaries.add('de', {
-	'Confirm Deletion': 'Löschung bestätigen',
-	'Are you sure you want to delete ${label:string}?': 'Soll ${label} sicher gelöscht werden?',
+	'Confirm Deletion': 'Löschen bestätigen',
+	'Are you sure you want to delete ${label:string}?': '${label} sicher löschen?',
 	'Delete': 'Löschen',
 	'this': 'das',
 })
