@@ -31,24 +31,12 @@ function isDateTimePrecisionSmaller(precision: FieldDateTimePrecision, other: Fi
  * @attr precision - The precision of the date picker. Defaults to 'minute'
  */
 export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
-	@property({
-		type: Boolean,
-		reflect: true,
-		updated(this: FieldDateTimeBase<T>, open: boolean, wasOpen?: boolean) {
-			if (open === true && wasOpen === false) {
-				this.lastValue = this.value
-			} else if (open === false && wasOpen === true && this.lastValue !== this.value) {
-				this.change.dispatch(this.value)
-			}
-		}
-	}) open = false
+	@property({ type: Boolean, reflect: true }) open = false
 	@property({ type: Boolean }) pickerHidden = false
 	@property({ type: Object }) shortcutReferenceDate = new DateTime
 	@property() precision = FieldDateTimePrecision.Minute
 
 	@state() navigatingDate = new DateTime()
-
-	private lastValue?: T
 
 	protected readonly calendarIconButtonIcon: MaterialIcon = 'today'
 
@@ -186,7 +174,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 
 	protected get calendarIconButtonTemplate() {
 		return this.pickerHidden ? html.nothing : html`
-			<mo-icon tabindex='-1' dense slot='end'
+			<mo-icon tabindex='-1' slot='end'
 				icon=${this.calendarIconButtonIcon}
 				${style({ color: this.isActive ? 'var(--mo-color-accent)' : 'var(--mo-color-gray)', fontSize: '22px', marginTop: '2px', cursor: 'pointer', userSelect: 'none' })}
 			></mo-icon>
@@ -293,6 +281,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	protected handleSelectedDateChange(date: DateTime, precision: FieldDateTimePrecision) {
 		date
 		precision
+		this.change.dispatch(this.value)
 		this.requestUpdate()
 	}
 }

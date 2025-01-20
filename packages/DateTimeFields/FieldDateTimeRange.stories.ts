@@ -8,7 +8,7 @@ export default {
 	title: 'Field Date Time Range',
 	component: 'mo-field-date-time-range',
 	args: {
-		precision: FieldDateTimePrecision.Second,
+		precision: FieldDateTimePrecision.Minute,
 		label: 'Label',
 		required: false,
 		dense: false,
