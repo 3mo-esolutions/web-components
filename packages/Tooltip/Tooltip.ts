@@ -15,6 +15,8 @@ function targetAnchor(this: Tooltip) {
  * @attr anchor - The element id that the tooltip is anchored to.
  *
  * @slot - Default slot for tooltip content
+ *
+ * @cssprop --mo-tooltip-tip-size - The size of the tip. Defaults to 1rem.
  */
 @component('mo-tooltip')
 export class Tooltip extends Component {
@@ -96,15 +98,16 @@ export class Tooltip extends Component {
 			}
 
 			:host([rich]) mo-popover {
-				--_tooltip-default-background: var(--mo-color-surface);
+				--_tooltip-default-background: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-foreground) 6%);
 			}
 
 			#tip {
 				transform: rotate(45deg);
 				position: absolute;
 				background: var(--mo-tooltip-surface-color, var(--_tooltip-default-background));
-				width: 6px;
-				height: 6px;
+				z-index: -1;
+				width: var(--mo-tooltip-tip-size, 1rem);
+				height: var(--mo-tooltip-tip-size, 1rem);
 			}
 		`
 	}
