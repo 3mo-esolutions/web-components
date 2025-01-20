@@ -20,13 +20,7 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 	@property({ type: Object }) column!: DataGridColumn<TData, TValue>
 	@property({ type: Object }) row!: DataGridRow<TData, TDetailsElement>
 
-	@state({
-		updated(this: DataGridCell<TValue, TData, TDetailsElement>) {
-			if (this.isEditing) {
-				this.renderRoot.querySelector<HTMLElement>('[autofocus]')?.focus()
-			}
-		}
-	}) private editing = false
+	@state() private editing = false
 
 	get dataGrid() { return this.row.dataGrid }
 	get data() { return this.row.data }
@@ -50,14 +44,14 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 
 	handlePointerDown(event: PointerEvent) {
 		if (this.isEditing && event.composedPath().includes(this) === false) {
-			this.editing = false
+			this.setEditing(false)
 		}
 	}
 
 	handleDoubleClick(event: MouseEvent) {
 		if (this.dataGrid.editability === DataGridEditability.Cell) {
 			event.preventDefault()
-			this.editing = true
+			this.setEditing(true)
 		}
 	}
 
@@ -67,7 +61,7 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 				event.preventDefault()
 				event.stopPropagation()
 				if (this.isEditable) {
-					this.editing = true
+					this.setEditing(true)
 				} else {
 					this.click()
 				}
@@ -75,7 +69,7 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 			case 'Escape':
 				event.preventDefault()
 				event.stopPropagation()
-				this.editing = false
+				this.setEditing(false)
 				await this.updateComplete
 				this.focusCell(event, this)
 				break
@@ -104,11 +98,22 @@ export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDe
 		}
 	}
 
+	private async setEditing(value: boolean) {
+		if (this.editing === value) {
+			return
+		}
+		this.editing = value
+		await this.updateComplete
+		if (value) {
+			this.renderRoot.querySelector<HTMLElement>('[autofocus]')?.focus()
+		}
+	}
+
 	private focusCell(event: KeyboardEvent, cell?: DataGridCell<any, TData, TDetailsElement>) {
 		if (cell && this.isEditing === false) {
 			event.preventDefault()
 			cell.focus()
-			this.editing = false
+			this.setEditing(false)
 			if (this.dataGrid.selectionCheckboxesHidden) {
 				this.dataGrid.select([...(event.shiftKey ? this.dataGrid.selectedData : []), cell.row.data])
 			}

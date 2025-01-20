@@ -367,6 +367,12 @@ describe('DataGrid', () => {
 			it('should be always editable', () => expectCellToBeEditable(fixture, true, true))
 
 			it('should apply the edited value when changed', () => shouldApplyTheEditedValueWhenChanged(fixture, true))
+
+			it('should not auto-focus on any cell', async () => {
+				const spy = spyOn(HTMLElement.prototype, 'focus')
+				await fixture.initialize()
+				expect(spy).not.toHaveBeenCalled()
+			})
 		})
 	})
 })
