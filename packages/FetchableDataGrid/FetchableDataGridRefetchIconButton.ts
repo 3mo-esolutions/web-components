@@ -62,7 +62,7 @@ export class FetchableDataGridRefetchIconButton extends Component {
 		].filter(Boolean).join(' - ')
 		return html`
 			<mo-grid ?data-fetching=${this.fetching}>
-				<mo-icon-button icon='refresh'
+				<mo-icon-button icon='sync'
 					${tooltip(tooltipText)}
 					?data-selected=${this.fetching}
 					@click=${() => this.requestFetch.dispatch()}
