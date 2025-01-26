@@ -1,4 +1,4 @@
-import { html } from '@a11d/lit'
+import { component, html } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { DataGrid, type DataGridRow, DataGridSelectionMode, DataGridColumn, DataRecord } from './index.js'
 
@@ -373,6 +373,60 @@ describe('DataGrid', () => {
 				await fixture.initialize()
 				expect(spy).not.toHaveBeenCalled()
 			})
+		})
+	})
+
+	describe('Toolbar', () => {
+		describe('without', () => {
+			const fixture = new ComponentTestFixture<TestDataGrid>(html`<test-data-grid></test-data-grid>`)
+			it('should not have toolbar by default', () => expect(fixture.component.hasToolbar).toBeFalse())
+		})
+
+		describe('with slotted toolbar content', () => {
+			const fixture = new ComponentTestFixture<TestDataGrid>(html`
+				<test-data-grid>
+					<div slot='toolbar'>Toolbar</div>
+				</test-data-grid>
+			`)
+			it('should have toolbar', () => expect(fixture.component.hasToolbar).toBeTrue())
+		})
+
+		describe('with toolbarDefaultTemplate', () => {
+			@component('test-data-grid-with-toolbar')
+			class DataGridWithToolbar extends TestDataGrid {
+				override get toolbarDefaultTemplate() { return html`<div>Toolbar</div>` }
+			}
+
+			const fixture = new ComponentTestFixture(() => new DataGridWithToolbar())
+
+			it('should have toolbar', () => expect(fixture.component.hasToolbar).toBeTrue())
+		})
+	})
+
+	describe('Filters', () => {
+		describe('without', () => {
+			const fixture = new ComponentTestFixture<TestDataGrid>(html`<test-data-grid></test-data-grid>`)
+			it('should not have filters by default', () => expect(fixture.component.hasFilters).toBeFalse())
+		})
+
+		describe('with slotted filter content', () => {
+			const fixture = new ComponentTestFixture<TestDataGrid>(html`
+				<test-data-grid>
+					<div slot='filter'>Filter</div>
+				</test-data-grid>
+			`)
+			it('should have filters', () => expect(fixture.component.hasFilters).toBeTrue())
+		})
+
+		describe('with filterDefaultTemplate', () => {
+			@component('test-data-grid-with-filter')
+			class DataGridWithFilters extends TestDataGrid {
+				override get filtersDefaultTemplate() { return html`<div>Filter</div>` }
+			}
+
+			const fixture = new ComponentTestFixture(() => new DataGridWithFilters())
+
+			it('should have filters', () => expect(fixture.component.hasFilters).toBeTrue())
 		})
 	})
 })

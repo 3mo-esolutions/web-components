@@ -292,19 +292,19 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}
 
 	get toolbarElements() {
-		return [...this.children].filter(c => c.slot === 'toolbar' && c.getAttribute('hidden') !== '')
-	}
-
-	get filterElements() {
-		return [...this.children].filter(c => c.slot === 'filter' && c.getAttribute('hidden') !== '')
+		return this.slotController.getAssignedElements('toolbar')
 	}
 
 	get hasToolbar() {
-		return this.toolbarElements.length > 0
+		return this.toolbarDefaultTemplate !== html.nothing || this.toolbarElements.length > 0
+	}
+
+	get filterElements() {
+		return this.slotController.getAssignedElements('filter')
 	}
 
 	get hasFilters() {
-		return this.filterElements.length > 0
+		return this.filtersDefaultTemplate !== html.nothing || this.filterElements.length > 0
 	}
 
 	get hasSums() {
