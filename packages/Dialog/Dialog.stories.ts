@@ -82,11 +82,15 @@ export const Scrollable: StoryObj = {
 export const Header: StoryObj = {
 	render: () => html`
 		<style>
+			mo-dialog::part(header) {
+				background: linear-gradient(90deg, color-mix(in srgb, var(--mo-color-red), var(--mo-color-surface)), color-mix(in srgb, var(--mo-color-blue), var(--mo-color-surface)));
+			}
+
 			span {
 				font-size: small;
 				color: gray;
-				background-color: rgba(255, 182, 193, 0.2);
-				color: rgba(255, 182, 193);
+				background: rgba(255, 182, 193, 0.5);
+				color: white;
 				padding-inline: 5px;
 				border-radius: 4px;
 				margin-top: 5px;

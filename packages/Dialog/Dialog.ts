@@ -271,7 +271,7 @@ export class Dialog extends Component implements IDialog {
 
 	protected override get template() {
 		return this.boundToWindow ? html`
-			<mo-page heading=${this.heading}>
+			<mo-page heading=${this.heading} exportparts='header,heading'>
 				<slot name='action' slot='action'></slot>
 				${this.contentTemplate}
 				${this.footerTemplate}
