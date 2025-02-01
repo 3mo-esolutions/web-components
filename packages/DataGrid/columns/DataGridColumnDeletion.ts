@@ -19,6 +19,7 @@ Localizer.dictionaries.add('de', {
 export class DataGridColumnDeletion<TData> extends DataGridColumnComponent<TData, never> {
 	@event() readonly delete!: EventDispatcher<TData>
 
+	@property() tooltipText?: string
 	@property() icon: MaterialIcon = 'delete'
 	@property({ type: Boolean }) prevent = false
 
@@ -27,7 +28,7 @@ export class DataGridColumnDeletion<TData> extends DataGridColumnComponent<TData
 
 	getContentTemplate = (_: never, data?: TData) => this.prevent ? html.nothing : html`
 		<mo-icon-button icon=${this.icon}
-			${tooltip(t('Delete position'))}
+			${tooltip(this.tooltipText ?? t('Delete position'))}
 			${style({ color: 'var(--mo-color-gray)', height: '40px', display: 'flex' })}
 			@click=${() => !data ? void 0 : this.delete.dispatch(data)}
 		></mo-icon-button>
