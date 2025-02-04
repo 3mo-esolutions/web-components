@@ -25,6 +25,25 @@ export abstract class EntityDialogComponent<
 		return super.dialogElement as EntityDialog<TEntity>
 	}
 
+	override async confirm(...parameters: Parameters<FetchableDialogComponent<TEntity, TParameters, TResult | undefined>['confirm']>) {
+		const result = await super.confirm(...parameters)
+		this.notifySuccess(result)
+		return result
+	}
+
+	protected notifySuccess(result?: TResult | undefined) {
+		const DialogConstructor = this.constructor as Constructor<EntityDialogComponent<TEntity>>
+		const id = result !== null && typeof result === 'object' && 'id' in result ? result.id : this.parameters.id
+		NotificationComponent.notifySuccess(this.successMessage, {
+			title: t('Open'),
+			handleClick: () => void new DialogConstructor({ id }).confirm(),
+		})
+	}
+
+	protected get successMessage() {
+		return t('${label:string} saved successfully.', { label: getEntityLabel(this.entity) })
+	}
+
 	protected override firstUpdated(props: PropertyValues<this>) {
 		super.firstUpdated(props)
 		this.dialogElement.save = () => this.save(this.entity)
@@ -50,22 +69,7 @@ export abstract class EntityDialogComponent<
 	}
 
 	protected override async primaryAction() {
-		const result = (await this.save(this.entity) || undefined) as TResult | undefined
-		this.notifySuccess(result)
-		return result
-	}
-
-	protected notifySuccess(result?: TResult | undefined) {
-		const DialogConstructor = this.constructor as Constructor<EntityDialogComponent<TEntity>>
-		const id = result !== null && typeof result === 'object' && 'id' in result ? result.id : this.parameters.id
-		NotificationComponent.notifySuccess(this.successMessage, {
-			title: t('Open'),
-			handleClick: () => void new DialogConstructor({ id }).confirm(),
-		})
-	}
-
-	protected get successMessage() {
-		return t('${label:string} saved successfully.', { label: getEntityLabel(this.entity) })
+		return (await this.save(this.entity) || undefined) as TResult | undefined
 	}
 
 	protected override async secondaryAction() {
