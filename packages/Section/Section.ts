@@ -89,7 +89,7 @@ export class Section extends Component {
 
 	protected get contentTemplate() {
 		return !this.slotController.hasAssignedContent('') ? html.nothing : html`
-			<mo-grid>
+			<mo-grid part='grid'>
 				<slot></slot>
 			</mo-grid>
 		`
