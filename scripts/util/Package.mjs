@@ -43,7 +43,7 @@ export class Package {
 			}
 		}
 		console.log(await run(`npm version --loglevel=error ${versionBumpType}`, this.relativePath))
-		console.log(await run('npm publish --loglevel=error --access public', this.relativePath))
+		console.log(await run('npm publish --loglevel=error --access public --tag=alpha', this.relativePath))
 		await run('npm run clean')
 	}
 }
