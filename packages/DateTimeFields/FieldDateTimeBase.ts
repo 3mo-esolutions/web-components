@@ -150,6 +150,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	protected override get endSlotTemplate() {
 		return html`
 			${super.endSlotTemplate}
+			${this.clearIconButtonTemplate}
 			${this.calendarIconButtonTemplate}
 		`
 	}
@@ -172,11 +173,25 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	protected abstract inputValueToValue(value: string): T | undefined
 	protected abstract override valueToInputValue(value: T | undefined): string
 
+	private get clearIconButtonTemplate() {
+		const clear = (e: PointerEvent) => {
+			e.stopPropagation()
+			this.handleInput(undefined)
+			this.handleChange(undefined)
+		}
+		return !this.value || !this.focusController.focused ? html.nothing : html`
+			<mo-icon-button tabindex='-1' dense slot='end' icon='cancel'
+				@click=${clear}
+				${style({ color: 'var(--mo-color-gray)', fontSize: '20px', cursor: 'pointer', userSelect: 'none', marginBlockStart: '2.75px', marginInlineEnd: '5px' })}
+			></mo-icon-button>
+		`
+	}
+
 	protected get calendarIconButtonTemplate() {
 		return this.pickerHidden ? html.nothing : html`
 			<mo-icon tabindex='-1' slot='end'
 				icon=${this.calendarIconButtonIcon}
-				${style({ color: this.isActive ? 'var(--mo-color-accent)' : 'var(--mo-color-gray)', fontSize: '22px', marginTop: '2px', cursor: 'pointer', userSelect: 'none' })}
+				${style({ color: this.isActive ? 'var(--mo-color-accent)' : 'var(--mo-color-gray)', fontSize: '22px', marginBlockStart: '2px', cursor: 'pointer', userSelect: 'none' })}
 			></mo-icon>
 		`
 	}
