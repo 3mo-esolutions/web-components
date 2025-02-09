@@ -7,6 +7,8 @@ type PopoverDirectiveParameters = [template: () => HTMLTemplateResult]
 class PopoverDirective extends AsyncDirective {
 	container?: HTMLElement
 	popover?: Popover
+	part?: ElementPart
+	template?: () => HTMLTemplateResult
 
 	constructor(partInfo: PartInfo) {
 		super(partInfo)
@@ -17,6 +19,8 @@ class PopoverDirective extends AsyncDirective {
 	}
 
 	override update(part: ElementPart, [template]: PopoverDirectiveParameters) {
+		this.part = part
+		this.template = template
 		if (this.isConnected) {
 			requestIdleCallback(() => {
 				render(template(), this.container ??= document.createElement('mo-popover-renderer'))
@@ -49,6 +53,9 @@ class PopoverDirective extends AsyncDirective {
 	// Override it to have public access to the method
 	override reconnected() {
 		super.reconnected()
+		if (this.part && this.template) {
+			this.update(this.part, [this.template])
+		}
 	}
 
 	override disconnected() {
