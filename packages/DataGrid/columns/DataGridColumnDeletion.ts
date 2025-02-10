@@ -12,6 +12,10 @@ Localizer.dictionaries.add('de', {
  * @element mo-data-grid-column-deletion
  *
  * @attr prevent - Prevents the deletion button from being displayed
+ * @attr icon - The icon to display. Defaults to 'delete'
+ * @attr tooltip - The tooltip to display. Defaults to 'Delete position'
+ *
+ * @i18n "Delete position"
  *
  * @fires delete
  */
@@ -19,9 +23,9 @@ Localizer.dictionaries.add('de', {
 export class DataGridColumnDeletion<TData> extends DataGridColumnComponent<TData, never> {
 	@event() readonly delete!: EventDispatcher<TData>
 
-	@property() tooltip?: string
-	@property() icon: MaterialIcon = 'delete'
 	@property({ type: Boolean }) prevent = false
+	@property() icon: MaterialIcon = 'delete'
+	@property() tooltip?: string
 
 	override nonSortable = true
 	override nonEditable = true
