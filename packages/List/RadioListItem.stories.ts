@@ -14,17 +14,17 @@ export const Radio: StoryObj = {
 		<mo-card heading='Notifications' style='--mo-card-body-padding: 0px'>
 			<mo-list>
 				<mo-radio-list-item>
-					<mo-icon style='opacity: 0.66' icon='notifications'></mo-icon>
+					<mo-icon slot='start' style='opacity: 0.66' icon='notifications'></mo-icon>
 					All
 				</mo-radio-list-item>
 
 				<mo-radio-list-item>
-					<mo-icon style='opacity: 0.66' icon='person'></mo-icon>
+					<mo-icon slot='start' style='opacity: 0.66' icon='person'></mo-icon>
 					Personalized
 				</mo-radio-list-item>
 
 				<mo-radio-list-item>
-					<mo-icon style='opacity: 0.66' icon='do_not_disturb'></mo-icon>
+					<mo-icon slot='start' style='opacity: 0.66' icon='do_not_disturb'></mo-icon>
 					None
 				</mo-radio-list-item>
 			</mo-list>
