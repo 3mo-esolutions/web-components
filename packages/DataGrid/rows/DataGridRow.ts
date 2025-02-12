@@ -315,7 +315,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	private async clickOnPrimaryContextMenuItemIfApplicable() {
 		if (this.dataGrid.hasContextMenu === true && this.dataGrid.primaryContextMenuItemOnDoubleClick === true) {
 			await this.openContextMenu()
-			ContextMenu.openInstance?.items.find(item => item instanceof DataGridPrimaryContextMenuItem)?.click()
+			ContextMenu.openInstance?.items.find(item => item instanceof DataGridPrimaryContextMenuItem && !item.disabled)?.click()
 			await this.closeContextMenu()
 		}
 	}
