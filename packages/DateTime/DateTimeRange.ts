@@ -84,6 +84,11 @@ export class DateTimeRange {
 		return this.format()
 	}
 
+	toJSON() {
+		return this.isInfinite ? undefined
+			: [this.start?.toJSON() ?? '', this.end?.toJSON() ?? ''].join('~')
+	}
+
 	formatAsDateRange(...options: Parameters<DateTime['formatAsDate']>) {
 		return this._format({
 			options,

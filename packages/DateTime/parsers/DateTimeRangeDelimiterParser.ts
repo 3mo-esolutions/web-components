@@ -18,12 +18,11 @@ export class DateTimeRangeDelimiterParser extends DateTimeRangeParser {
 
 	constructor(override readonly language = Localizer.languages.current) {
 		super(language)
-		const delimiters = [...new Set([...DateTimeRangeDelimiterParser.delimiters, DateTimeRangeDelimiterParser.getUntilDelimiter(language)])].join('')
-		this.regex = new RegExp(`^(?<start>.+?)(?<![${delimiters}])\\s*[${delimiters}]\\s*(?<![${delimiters}])(?<end>.+?)$`)
+		this.regex = new RegExp(`\s*(?:${[...new Set([...DateTimeRangeDelimiterParser.delimiters, DateTimeRangeDelimiterParser.getUntilDelimiter(language)])].join('|')})\s*`)
 	}
 
 	override parse(text: string, referenceDate?: DateTime) {
-		const { start, end } = this.regex.exec(text)?.groups ?? {}
+		const [start, end] = text.split(this.regex).map(date => date.trim())
 		return new DateTimeRange(
 			start ? DateTime.parseAsDateTime(start, referenceDate) : undefined,
 			end ? DateTime.parseAsDateTime(end, referenceDate) : undefined

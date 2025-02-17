@@ -55,14 +55,11 @@ describe('EntityDialogComponent', () => {
 			expect(deleteSpy).not.toHaveBeenCalled()
 		})
 
-		it('should automatically set the header according to the entity label', async () => {
+		it('should automatically set the header using entity\'s toString()', async () => {
 			await expectHeadingToBe('Create Entity')
 
-			spyOn(label, 'get').and.returnValue('Label')
-			await expectHeadingToBe('Create Label')
-
-			spyOn(entity as any, 'toString').and.returnValue('Name')
-			await expectHeadingToBe('Create Label "Name"')
+			spyOn(entity as any, 'toString').and.returnValue('Foo "Bar"')
+			await expectHeadingToBe('Create Foo "Bar"')
 		})
 	})
 
@@ -82,11 +79,8 @@ describe('EntityDialogComponent', () => {
 		it('should automatically set the header according to the entity label', async () => {
 			await expectHeadingToBe('Edit Entity')
 
-			spyOn(label, 'get').and.returnValue('Label')
-			await expectHeadingToBe('Edit Label')
-
-			spyOn(entity as any, 'toString').and.returnValue('Name')
-			await expectHeadingToBe('Edit Label "Name"')
+			spyOn(entity as any, 'toString').and.returnValue('Foo "Bar"')
+			await expectHeadingToBe('Edit Foo "Bar"')
 		})
 	})
 })
