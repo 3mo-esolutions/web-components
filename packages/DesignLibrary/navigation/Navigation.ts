@@ -77,7 +77,7 @@ export class Navigation extends Component {
 
 			mo-application-logo {
 				height: 30px;
-				margin: 0 0 0 var(--mo-thickness-xl);
+				margin: 0 0 0 0.875rem;
 			}
 
 			slot[name=heading] span {

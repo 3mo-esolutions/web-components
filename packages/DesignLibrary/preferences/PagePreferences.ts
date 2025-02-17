@@ -20,7 +20,7 @@ export class PagePreferences extends PageComponent {
 			<mo-page fullHeight heading='Benutzereinstellungen' headerHidden>
 				<mo-split-page-host>
 					<mo-card slot='sidebar' ${style({ height: '100%', '--mo-card-body-padding': '0px' })}>
-						<mo-flex ${style({ height: '100%' })} gap='var(--mo-thickness-xl)' justifyContent='space-between'>
+						<mo-flex ${style({ height: '100%' })} gap='0.875rem' justifyContent='space-between'>
 							<mo-list>
 								<mo-navigation-list-item icon='palette' ${routerLink(new PagePreferencesUserInterface)}>
 									Design & Aussehen
@@ -31,7 +31,7 @@ export class PagePreferences extends PageComponent {
 							</mo-list>
 
 							${!manifest ? html.nothing : html`
-								<mo-flex direction='horizontal' alignItems='center' justifyContent='center' ${style({ color: 'var(--mo-color-gray)', padding: 'var(--mo-thickness-l)' })}>
+								<mo-flex direction='horizontal' alignItems='center' justifyContent='center' ${style({ color: 'var(--mo-color-gray)', padding: '0.5rem' })}>
 									<mo-heading typography='heading6'>${manifest.name} v${manifest.version}</mo-heading>
 								</mo-flex>
 							`}

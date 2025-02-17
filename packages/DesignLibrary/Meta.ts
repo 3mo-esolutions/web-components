@@ -67,7 +67,7 @@ export class Meta extends Component {
 					position: absolute;
 					justify-content: center;
 					align-items: center;
-					inset-inline-end: var(--mo-thickness-xl);
+					inset-inline-end: 0.875rem;
 				}
 			</style>
 

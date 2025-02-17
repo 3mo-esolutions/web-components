@@ -100,7 +100,7 @@ export class PagePreferencesUserInterface extends PageSettings {
 					</mo-section>
 
 					<mo-section heading='Tabellen'>
-						<mo-flex gap='var(--mo-thickness-l)'>
+						<mo-flex gap='0.5rem'>
 							<mo-list-item>
 								Zeilen pro Seite
 								<mo-field-select-data-grid-page-size dense
@@ -157,13 +157,13 @@ export class PagePreferencesUserInterface extends PageSettings {
 			}
 		}
 		return html`
-			<mo-flex ${style({ flex: '1' })} gap='var(--mo-thickness-l)' alignItems='center'>
+			<mo-flex ${style({ flex: '1' })} gap='0.5rem' alignItems='center'>
 				<button class='themePreview'
 					data-background=${background}
 					?data-active=${Theme.background.value === background}
 					@click=${() => Theme.background.value = background}
 				>
-					<mo-flex gap='var(--mo-thickness-l)'>
+					<mo-flex gap='0.5rem'>
 						<div ${style({ position: 'relative', opacity: 1, background: 'var(--mo-color-accent)', height: '20px', width: '100%' })}>
 							<div ${style({ insetInlineStart: '30%', top: '8px', position: 'absolute', background: 'var(--mo-color-on-accent)', height: '4px', width: '40%', opacity: '1' })}></div>
 						</div>

@@ -86,7 +86,7 @@ export class BusinessSuiteAuthenticationDialog extends Component implements IDia
 					</div>
 					<mo-flex part='actions' ${style({ padding: '16px' })}
 						direction='horizontal-reversed'
-						gap='var(--mo-thickness-l)'
+						gap='0.5rem'
 						alignItems='center'
 						justifyContent='space-between'
 					>

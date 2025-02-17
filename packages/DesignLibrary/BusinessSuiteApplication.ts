@@ -39,11 +39,6 @@ export abstract class BusinessSuiteApplication extends Application {
 				font-family: var(--mo-font-family);
 				background-color: var(--mo-color-background);
 				color: var(--mo-color-foreground);
-				/* Thickness */
-				--mo-thickness-s: 4px;
-				--mo-thickness-m: 6px;
-				--mo-thickness-l: 8px;
-				--mo-thickness-xl: 14px;
 			}
 		`
 	}
@@ -87,7 +82,7 @@ export abstract class BusinessSuiteApplication extends Application {
 			<mo-user-avatar slot='navbar-end'
 				name=${ifDefined((BusinessSuiteAuthenticationDialogComponent.authenticatedUserStorage.value as User)?.name)}
 				email=${ifDefined((BusinessSuiteAuthenticationDialogComponent.authenticatedUserStorage.value as User)?.email)}
-				style='color: var(--mo-color-on-accent); margin-inline-end: var(--mo-thickness-xl)'
+				style='color: var(--mo-color-on-accent); margin-inline-end: 0.875rem'
 			>
 				${this.userAvatarMenuItemsTemplate}
 			</mo-user-avatar>

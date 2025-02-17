@@ -53,7 +53,7 @@ export class NavigationItem extends Component {
 				position: relative;
 				display: inline-block;
 				border-radius: var(--mo-border-radius);
-				padding: 0 var(--mo-thickness-l);
+				padding: 0 0.5rem;
 				color: var(--mo-color-on-accent);
 				cursor: pointer;
 				white-space: nowrap;

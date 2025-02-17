@@ -30,7 +30,7 @@ export class DialogPhoto extends FetchableDialogComponent<Photo> {
 					<mo-flex justifyContent='center'>
 						<img src=${this.photo.thumbnailUrl} alt=${this.photo.title}>
 					</mo-flex>
-					<mo-flex gap='var(--mo-thickness-xl)'>
+					<mo-flex gap='0.875rem'>
 						<mo-meta heading='Album'>${this.album?.title}</mo-meta>
 						<mo-meta heading='Photographer'>
 							${this.photographer?.name}
