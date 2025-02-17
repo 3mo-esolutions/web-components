@@ -14,17 +14,17 @@ export const Switch: StoryObj = {
 		<mo-card heading='Connectivity' style='--mo-card-body-padding: 0px'>
 			<mo-list>
 				<mo-switch-list-item>
-					<mo-icon style='opacity: 0.66' icon='wifi'></mo-icon>
+					<mo-icon slot='start' style='opacity: 0.66' icon='wifi'></mo-icon>
 					WiFi
 				</mo-switch-list-item>
 
 				<mo-switch-list-item>
-					<mo-icon style='opacity: 0.66' icon='bluetooth'></mo-icon>
+					<mo-icon slot='start' style='opacity: 0.66' icon='bluetooth'></mo-icon>
 					Bluetooth
 				</mo-switch-list-item>
 
 				<mo-switch-list-item>
-					<mo-icon style='opacity: 0.66' icon='nfc'></mo-icon>
+					<mo-icon slot='start' style='opacity: 0.66' icon='nfc'></mo-icon>
 					NFC
 				</mo-switch-list-item>
 			</mo-list>

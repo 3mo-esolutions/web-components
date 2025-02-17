@@ -10,7 +10,7 @@ export default {
 } as Meta
 
 const keyboardShortcut = (shortcut: string) => html`
-	<span style='font-size: 13px; color: darkgray; text-align: end'>${shortcut}</span>
+	<span slot='end' style='font-size: 13px; color: darkgray'>${shortcut}</span>
 `
 
 const separator = html`
@@ -19,13 +19,13 @@ const separator = html`
 
 const items = html`
 	<mo-list-item>
-		<mo-icon style='opacity: 0.66' icon='inbox'></mo-icon>
-		<span style='flex: 1'>Inbox</span>
+		<mo-icon slot='start' style='opacity: 0.66' icon='inbox'></mo-icon>
+		Inbox
 		${keyboardShortcut('Ctrl + I')}
 	</mo-list-item>
 	<mo-list-item>
-		<mo-icon style='opacity: 0.66' icon='drafts'></mo-icon>
-		<span style='flex: 1'>Drafts</span>
+		<mo-icon slot='start' style='opacity: 0.66' icon='drafts'></mo-icon>
+		Drafts
 		${keyboardShortcut('Ctrl + D')}
 	</mo-list-item>
 	${separator}
@@ -33,14 +33,14 @@ const items = html`
 	<mo-list-item><span class='first-column-padding' hidden></span>Spam</mo-list-item>
 	${separator}
 	<mo-list-item disabled style='opacity: 1'>
-		<mo-icon style='opacity: 0.33' icon='settings_suggest'></mo-icon>
+		<mo-icon slot='start' style='opacity: 0.33' icon='settings_suggest'></mo-icon>
 		<span>
 			<span style='opacity: 0.5'>Personalization -</span>
 			<mo-anchor style='pointer-events: auto;'>Upgrade to Pro!</mo-anchor>
 		</span>
 	</mo-list-item>
 	<mo-list-item>
-		<mo-icon style='opacity: 0.66' icon='logout'></mo-icon>
+		<mo-icon slot='start' style='opacity: 0.66' icon='logout'></mo-icon>
 		Logout
 	</mo-list-item>
 `
