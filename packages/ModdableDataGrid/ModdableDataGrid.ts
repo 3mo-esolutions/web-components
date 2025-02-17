@@ -150,7 +150,7 @@ export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataG
 			<mo-flex id='modebar' direction='horizontal'>
 				<mo-flex ${style({ flexGrow: '1' })} direction='horizontal' alignItems='center' gap='14px'>
 					<mo-scroller>
-						<mo-flex id='modes' direction='horizontal' alignItems='center' gap='var(--mo-thickness-l)'>
+						<mo-flex id='modes' direction='horizontal' alignItems='center' gap='0.5rem'>
 							${repeat(this.modesController.visibleModes, mode => mode.id, mode => html`
 								<mo-moddable-data-grid-chip ?data-temporary=${mode.archived} data-mode-id=${mode.id!}
 									.dataGrid=${this}
