@@ -18,6 +18,8 @@ import '@3mo/theme'
  * @slot - The field's content
  * @slot start - Content to be placed at the start of the field
  * @slot end - Content to be placed at the end of the field
+ *
+ * @cssprop --mo-field-background - The field's background color
  */
 @component('mo-field')
 export class Field extends Component {
@@ -50,7 +52,7 @@ export class Field extends Component {
 				border-start-start-radius: var(--mo-field-border-start-start-radius, var(--mo-border-radius));
 				border-start-end-radius: var(--mo-field-border-start-end-radius, var(--mo-border-radius));
 				box-sizing: border-box;
-				background: var(--mo-field-background-default);
+				background: var(--mo-field-background, var(--mo-field-background-default));
 				gap: 6px;
 				/* TODO: Better handling of height */
 				height: 40px;
