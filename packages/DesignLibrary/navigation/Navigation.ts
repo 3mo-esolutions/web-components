@@ -151,11 +151,15 @@ export class Navigation extends Component {
 
 	private getNavigationItemTemplate(navigation: NavigationDefinition) {
 		return navigation.hidden ? html.nothing : html`
-			<mo-navigation-item .navigation=${navigation} ${!navigation.component ? html.nothing : routerLink({
-			component: navigation.component as PageComponent,
-			matchMode: navigation.matchMode,
-			invocationHandler: () => this.drawerOpen = false
-		})}>${navigation.label}</mo-navigation-item>
+			<mo-navigation-item .navigation=${navigation}
+				${!navigation.component ? html.nothing : routerLink({
+					...navigation,
+					invocationHandler: () => {
+						this.drawerOpen = false
+						navigation.invocationHandler?.()
+					}
+				})}
+			>${navigation.label}</mo-navigation-item>
 		`
 	}
 

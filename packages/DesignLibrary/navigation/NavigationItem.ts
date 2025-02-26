@@ -1,19 +1,19 @@
 import { bind, Component, component, css, html, ifDefined, property, repeat, style, type TemplateResult } from '@a11d/lit'
-import { type PageComponent, routerLink, type DialogComponent, type RouteMatchMode } from '@a11d/lit-application'
+import { routerLink, type Routable, NavigationStrategy } from '@a11d/lit-application'
 import type { MaterialIcon } from '@3mo/icon'
+
+type RouterLinkParameters = Exclude<Parameters<typeof routerLink>[0], Routable>
 
 export type NavigationDefinition = {
 	key?: string
 	label: string | TemplateResult
 	icon?: MaterialIcon
 	hidden?: boolean
-	openInNewPage?: boolean
-	component?: PageComponent<any> | DialogComponent<any, any>
-	matchMode?: RouteMatchMode
-	children?: Array<NavigationDefinition>
-	/** If true, a separator will be rendered before this item. */
 	hasSeparator?: boolean
-}
+} & (
+	| RouterLinkParameters & { children?: never }
+	| ({ [_ in keyof RouterLinkParameters]?: never } & { children: NavigationDefinition[] })
+)
 
 @component('mo-navigation-item')
 export class NavigationItem extends Component {
@@ -27,12 +27,13 @@ export class NavigationItem extends Component {
 			${!navigation.hasSeparator ? html.nothing : html`<mo-line></mo-line>`}
 
 			${!navigation.children ? html`
-				<mo-navigation-menu-item slot=${ifDefined(subMenu ? 'submenu' : undefined)} ${!navigation.component ? html.nothing : routerLink({
-					component: navigation.component as PageComponent,
-					matchMode: navigation.matchMode,
-					invocationHandler: () => this.open = false,
-				})}>
-					${navigation.label} ${navigation.openInNewPage ? '...' : ''}
+				<mo-navigation-menu-item slot=${ifDefined(subMenu ? 'submenu' : undefined)}
+					${routerLink({ ...navigation, invocationHandler: () => {
+						this.open = false
+						navigation.invocationHandler?.()
+					} })}
+				>
+					${navigation.label} ${(navigation.navigationStrategy ?? NavigationStrategy.Page) === NavigationStrategy.Page ? '' : '...'}
 				</mo-navigation-menu-item>
 			` : html`
 				<mo-nested-menu-item slot=${ifDefined(subMenu ? 'submenu' : undefined)}>
