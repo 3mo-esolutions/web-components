@@ -30,10 +30,10 @@ export class FetchableDataGridFetcherController<TData> extends FetcherController
 	}
 
 	private _hasNextPage?: boolean
-	get hasNextPage() { return this._hasNextPage }
+	get hasNextPage() { return this._hasNextPage ?? false }
 
-	private _dataLength = 0
-	get dataLength() { return this.host.hasServerSidePagination ? this._dataLength : undefined }
+	private _dataLength?: number
+	get dataLength() { return this._dataLength }
 
 	private _silent = false
 	get silent() { return this._silent }
@@ -53,10 +53,13 @@ export class FetchableDataGridFetcherController<TData> extends FetcherController
 			&& !this.host.hasServerSideSort
 		)
 
+		this._hasNextPage = undefined
+		this._dataLength = undefined
+
 		const result = await super.fetch() || []
 
 		if (!(result instanceof Array)) {
-			this._dataLength = result.dataLength ?? 0
+			this._dataLength = result.dataLength
 			this._hasNextPage = result.hasNextPage ?? (this.host.page < Math.ceil(result.dataLength / this.host.pageSize))
 		}
 

@@ -74,11 +74,11 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 	readonly fetcherController = new FetchableDataGridFetcherController<TData>(this)
 
 	override get hasNextPage() {
-		return this.fetcherController.hasNextPage ?? super.hasNextPage
+		return !this.hasServerSidePagination ? super.hasNextPage : this.fetcherController.hasNextPage
 	}
 
 	override get dataLength() {
-		return this.fetcherController.dataLength ?? super.dataLength
+		return !this.hasServerSidePagination ? super.dataLength : this.fetcherController.dataLength
 	}
 
 	runPreventingFetch(...parameters: Parameters<typeof this.fetcherController.runPreventingFetch>) {

@@ -1,4 +1,4 @@
-import { component, property, Component, css, state, html, query, style, ifDefined } from '@a11d/lit'
+import { component, property, Component, css, state, html, query, style, ifDefined, join } from '@a11d/lit'
 import { type FieldNumber } from '@3mo/number-fields'
 import { DirectionsByLanguage, Localizer } from '@3mo/localization'
 import { TooltipPlacement, tooltip } from '@3mo/tooltip'
@@ -63,14 +63,11 @@ export class DataGridFooter<TData> extends Component {
 					user-select: none;
 					padding-block: 0.25em;
 					font-size: small;
+				}
 
-					&:first-of-type {
-						&::after {
-							content: ' / ';
-							color: var(--mo-color-gray);
-							padding-inline: 0.25em;
-						}
-					}
+				#separator {
+					color: var(--mo-color-gray);
+					padding-inline: 0.25em;
 				}
 
 				#selected-length {
@@ -173,7 +170,7 @@ export class DataGridFooter<TData> extends Component {
 
 	private get paginationTemplate() {
 		const isRtl = DirectionsByLanguage.get() === 'rtl'
-		const hasUnknownDataLength = this.dataGrid.maxPage === undefined
+		const hasUnknownDataLength = this.dataGrid.dataLength === undefined
 		const pageText = hasUnknownDataLength ? this.page : t('${page:number} of ${maxPage:number}', { page: this.page, maxPage: this.dataGrid.maxPage ?? 0 })
 		return !this.dataGrid.hasPagination ? html.nothing : html`
 			<mo-flex direction='horizontal' alignItems='center' gap='3vw'>
@@ -219,17 +216,16 @@ export class DataGridFooter<TData> extends Component {
 		const from = (this.page - 1) * this.dataGrid.pageSize + 1
 		const to = from + this.dataGrid.renderDataRecords.length - 1
 		const rangeText = `${(Math.min(from, to)).format()}-${to.format()}`
-		const dataLengthText = this.dataGrid.maxPage === undefined ? undefined : this.dataGrid.dataLength.format()
 		return html`
 			<mo-popover-container id='page-info' placement='block-start' fixed>
 				<mo-flex alignItems='center' gap='6px' direction='horizontal' style='cursor: pointer'>
 					<mo-flex direction='horizontal' alignItems='center'>
-						${this.dataGrid.selectedData.length ? html`
-							<span id='selected-length'>${this.dataGrid.selectedData.length.format()}</span>
-						` : html`
-							<span id='range' tabindex='0'>${rangeText}</span>
-						`}
-						<span id='length'>${dataLengthText}</span>
+						${join([
+							this.dataGrid.selectedData.length
+								? html`<span id='selected-length'>${this.dataGrid.selectedData.length.format()}</span>`
+								: html`<span id='range' tabindex='0'>${rangeText}</span>`,
+							this.dataGrid.dataLength === undefined ? undefined : html`<span id='length'>${this.dataGrid.dataLength.format()}</span>`
+						].filter(Boolean), html`<span id='separator'> / </span>`)}
 					</mo-flex>
 
 					<mo-icon icon='keyboard_arrow_up' style='font-size: 20px'></mo-icon>

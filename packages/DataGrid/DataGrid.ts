@@ -351,12 +351,12 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		return value
 	}
 
-	get dataLength() {
+	get dataLength(): number | undefined {
 		return this.dataRecords.length
 	}
 
 	get maxPage() {
-		return Math.max(Math.ceil(this.dataLength / this.pageSize), 1)
+		return this.dataLength === undefined ? undefined : Math.max(Math.ceil(this.dataLength / this.pageSize), 1)
 	}
 
 	get hasNextPage() {
@@ -405,7 +405,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}
 
 	private navigateToLastValidPageIfNeeded() {
-		if (this.page > this.maxPage) {
+		if (this.maxPage && this.page > this.maxPage) {
 			this.setPage(this.maxPage)
 		}
 	}

@@ -23,6 +23,9 @@ const generatePeople = (count: number) => {
 }
 
 const twentyPeople = generatePeople(20)
+const twoHundredPeople = generatePeople(200)
+
+const wait = (ms = 2000) => new Promise(r => setTimeout(r, ms))
 
 const columnsTemplate = html`
 	<mo-data-grid-column-number hidden nonEditable heading='ID' dataSelector='id'></mo-data-grid-column-number>
@@ -32,7 +35,7 @@ const columnsTemplate = html`
 `
 
 const fetchData = (data: Array<Person>) => async () => {
-	await new Promise(resolve => setTimeout(resolve, 2000))
+	await wait()
 	return data
 }
 
@@ -42,6 +45,44 @@ export const FetchableDataGrid: StoryObj = {
 			${columnsTemplate}
 		</mo-fetchable-data-grid>
 	`
+}
+
+export const FetchableDataGrid_DataLength: StoryObj = {
+	name: 'With Pagination via Fetching Data-length',
+	render: () => {
+		const fetch = async ({ page, pageSize }: { page: number, pageSize: number }) => {
+			await wait()
+			return {
+				data: twoHundredPeople.slice((page - 1) * pageSize, page * pageSize),
+				dataLength: twoHundredPeople.length
+			}
+		}
+		const paginationParameters = (p: { page: number, pageSize: number }) => p
+		return html`
+			<mo-fetchable-data-grid .parameters=${{}} .fetch=${fetch} .paginationParameters=${paginationParameters} style='height: 500px; flex: 1'>
+				${columnsTemplate}
+			</mo-fetchable-data-grid>
+		`
+	}
+}
+
+export const FetchableDataGrid_HasNextPage: StoryObj = {
+	name: 'With pagination via fetching hasNextPage',
+	render: () => {
+		const fetch = async ({ page, pageSize }: { page: number, pageSize: number }) => {
+			await wait()
+			return {
+				data: twoHundredPeople.slice((page - 1) * pageSize, page * pageSize),
+				hasNextPage: page < Math.ceil(twoHundredPeople.length / pageSize)
+			}
+		}
+		const paginationParameters = (p: { page: number, pageSize: number }) => p
+		return html`
+			<mo-fetchable-data-grid .parameters=${{}} .fetch=${fetch} .paginationParameters=${paginationParameters} style='height: 500px; flex: 1'>
+				${columnsTemplate}
+			</mo-fetchable-data-grid>
+		`
+	}
 }
 
 export const AutoRefetch: StoryObj = {
