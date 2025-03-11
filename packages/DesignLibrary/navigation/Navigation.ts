@@ -2,7 +2,7 @@ import { Component, bind, component, css, eventListener, html, ifDefined, proper
 import { Key, RouteMatchMode, routerLink, type PageComponent } from '@a11d/lit-application'
 import { observeResize } from '@3mo/resize-observer'
 import { observeMutation } from '@3mo/mutation-observer'
-import type { NavigationDefinition } from './NavigationItem.js'
+import { getNavigationLabel, type NavigationDefinition } from './NavigationItem.js'
 
 /**
  * @attr navigations - The navigations to display in the navigation-bar and the drawer.
@@ -159,7 +159,7 @@ export class Navigation extends Component {
 						navigation.invocationHandler?.()
 					}
 				})}
-			>${navigation.label}</mo-navigation-item>
+			>${getNavigationLabel(navigation)}</mo-navigation-item>
 		`
 	}
 
@@ -189,7 +189,7 @@ export class Navigation extends Component {
 
 		const contentTemplate = html`
 			${iconTemplate}
-			${navigation.label}
+			${getNavigationLabel(navigation)}
 		`
 
 		const separatorTemplate = !navigation.hasSeparator ? html.nothing : html`<mo-line slot=${ifDefined(detailsSlot ? 'details' : undefined)}></mo-line>`
