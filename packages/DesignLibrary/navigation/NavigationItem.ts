@@ -5,7 +5,6 @@ import type { MaterialIcon } from '@3mo/icon'
 type RouterLinkParameters = Exclude<Parameters<typeof routerLink>[0], Routable>
 
 export type NavigationDefinition = {
-	key?: string
 	label: string | TemplateResult
 	icon?: MaterialIcon
 	hidden?: boolean
@@ -38,13 +37,13 @@ export class NavigationItem extends Component {
 			` : html`
 				<mo-nested-menu-item slot=${ifDefined(subMenu ? 'submenu' : undefined)}>
 					${navigation.label}
-					${repeat(navigation.children, c => c.key ?? c, child => getItemTemplate(child, true))}
+					${repeat(navigation.children, c => c, child => getItemTemplate(child, true))}
 				</mo-nested-menu-item>
 			`}
 		`
 
 		return !this.navigation.children || this.navigation.hidden ? html.nothing : html`
-			${repeat(this.navigation.children, c => c.key ?? c, child => getItemTemplate(child, false))}
+			${repeat(this.navigation.children, c => c, child => getItemTemplate(child, false))}
 		`
 	}
 

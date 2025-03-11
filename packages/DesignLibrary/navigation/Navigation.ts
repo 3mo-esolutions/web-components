@@ -121,7 +121,7 @@ export class Navigation extends Component {
 					${observeResize(() => this.checkNavigationOverflow())}
 					${observeMutation(() => this.checkNavigationOverflow())}
 				>
-					${repeat(this.navigations, n => n.key ?? n, navigation => this.getNavigationItemTemplate(navigation))}
+					${repeat(this.navigations, n => n, navigation => this.getNavigationItemTemplate(navigation))}
 				</mo-flex>
 
 				<mo-flex direction='horizontal' alignItems='center' gap='8px'>
