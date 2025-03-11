@@ -14,17 +14,17 @@ export const Checkbox: StoryObj = {
 		<mo-card heading='Connectivity' style='--mo-card-body-padding: 0px'>
 			<mo-list>
 				<mo-checkbox-list-item>
-					<mo-icon style='opacity: 0.66' icon='wifi'></mo-icon>
+					<mo-icon slot='start' style='opacity: 0.66' icon='wifi'></mo-icon>
 					WiFi
 				</mo-checkbox-list-item>
 
 				<mo-checkbox-list-item>
-					<mo-icon style='opacity: 0.66' icon='bluetooth'></mo-icon>
+					<mo-icon slot='start' style='opacity: 0.66' icon='bluetooth'></mo-icon>
 					Bluetooth
 				</mo-checkbox-list-item>
 
 				<mo-checkbox-list-item>
-					<mo-icon style='opacity: 0.66' icon='nfc'></mo-icon>
+					<mo-icon slot='start' style='opacity: 0.66' icon='nfc'></mo-icon>
 					NFC
 				</mo-checkbox-list-item>
 			</mo-list>
