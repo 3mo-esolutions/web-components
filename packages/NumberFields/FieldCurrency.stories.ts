@@ -13,7 +13,7 @@ export default {
 		dense: false,
 		disabled: false,
 		readonly: false,
-		value: 'test@3mo.de',
+		value: 11.22,
 	},
 	package: p,
 } as Meta

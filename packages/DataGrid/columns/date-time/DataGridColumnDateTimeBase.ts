@@ -1,4 +1,4 @@
-import { property, type literal, html, staticHtml } from '@a11d/lit'
+import { property, html, staticHtml, type StaticValue } from '@a11d/lit'
 import { DataGridColumnComponent } from '../DataGridColumnComponent.js'
 
 /**
@@ -7,7 +7,7 @@ import { DataGridColumnComponent } from '../DataGridColumnComponent.js'
  */
 export abstract class DataGridColumnDateTimeBase<TData, TDate extends { format(...options: any[]): string }> extends DataGridColumnComponent<TData, TDate> {
 	static defaultFormatOptions?: Intl.DateTimeFormatOptions
-	abstract readonly fieldTag: ReturnType<typeof literal>
+	abstract readonly fieldTag: StaticValue
 
 	@property({ type: Object }) formatOptions?: Intl.DateTimeFormatOptions
 	@property({ type: Boolean }) pickerHidden = false

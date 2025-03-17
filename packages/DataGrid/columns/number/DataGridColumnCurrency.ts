@@ -34,6 +34,9 @@ export class DataGridColumnCurrency<TData> extends DataGridColumnNumberBase<TDat
 		return html`
 			<mo-field-currency dense autofocus selectOnFocus
 				.currency=${this.getCurrency(data)}
+				min=${ifDefined(this.getMin(data))}
+				max=${ifDefined(this.getMax(data))}
+				step=${ifDefined(this.getStep(data))}
 				value=${ifDefined(value)}
 				@change=${(e: CustomEvent<number>) => this.handleEdit(e.detail, data)}
 			></mo-field-currency>
