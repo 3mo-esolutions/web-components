@@ -49,12 +49,10 @@ export class FieldDateTimeRange extends FieldDateTimeBase<DateTimeRange | undefi
 				max-width: 200px;
 				place-self: center;
 				padding-block: 4px;
-			}
-
-			mo-tab {
-				--mdc-tab-height: 40px;
-				&:not([active]) {
-					opacity: 0.5;
+				mo-tab {
+					&:not([active]) {
+						opacity: 0.5;
+					}
 				}
 			}
 		`
@@ -70,6 +68,7 @@ export class FieldDateTimeRange extends FieldDateTimeBase<DateTimeRange | undefi
 	protected get calendarTemplate() {
 		return html`
 			<mo-selectable-range-calendar
+				data-selection=${this.selection}
 				.navigatingValue=${this.navigatingDate}
 				.dateRange=${this.value}
 				@change=${(e: CustomEvent<DateTime>) => this.handleSelectedDateChange(e.detail, FieldDateTimePrecision.Day)}

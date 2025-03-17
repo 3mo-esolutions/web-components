@@ -12,7 +12,12 @@ export class SelectableCalendar extends Calendar {
 	static override get styles() {
 		return css`
 			${super.styles}
+			${this.calendarStyles}
+		`
+	}
 
+	protected static get calendarStyles() {
+		return css`
 			.day.selected {
 				background: var(--mo-color-accent-transparent);
 				color: var(--mo-color-accent) !important;
@@ -28,7 +33,7 @@ export class SelectableCalendar extends Calendar {
 	protected override getDayElementClasses(day: DateTime) {
 		return {
 			...super.getDayElementClasses(day),
-			selected: !!this.value && day.year === this.value.year && day.month === this.value.month && day.day === this.value.day
+			selected: !!this.value && day.equals(this.value),
 		}
 	}
 }

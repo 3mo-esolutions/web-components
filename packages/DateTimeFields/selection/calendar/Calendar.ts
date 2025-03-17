@@ -51,9 +51,8 @@ export class Calendar extends Component {
 
 			.day {
 				text-align: center;
-				border-radius: 100px;
+				border-radius: var(--mo-border-radius);
 				cursor: pointer;
-				transition: 100ms;
 				font-weight: 500;
 				user-select: none;
 				font-size: medium;
@@ -67,16 +66,12 @@ export class Calendar extends Component {
 					background: var(--mo-color-transparent-gray-3);
 				}
 
-				&:not(.isInMonth) {
+				&.outsideMonth {
 					color: var(--mo-color-gray);
 				}
 
 				&.today {
 					outline: 2px dashed var(--mo-color-gray-transparent);
-				}
-
-				&.navigation {
-					background: var(--mo-color-transparent-gray-3);
 				}
 			}
 		`
@@ -129,13 +124,13 @@ export class Calendar extends Component {
 	}
 
 	@memoizeExpiring(60_000)
-	private get now() { return new DateTime }
+	private get today() { return new DateTime().dayStart }
 
 	protected getDayElementClasses(day: DateTime): ClassInfo {
 		return {
 			day: true,
-			today: this.now.year === day.year && this.now.month === day.month && this.now.day === day.day,
-			isInMonth: day.month === this.navigatingValue.month
+			today: this.today.equals(day.dayStart),
+			outsideMonth: day.month !== this.navigatingValue.month
 		}
 	}
 }
