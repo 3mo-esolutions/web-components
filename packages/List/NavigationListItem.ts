@@ -28,10 +28,9 @@ export class NavigationListItem extends ListItem {
 		`
 	}
 
-	protected override get template() {
-		return html`
-			${!this.icon ? html.nothing : html`<mo-icon part='icon' icon=${this.icon}></mo-icon>`}
-			${super.template}
+	protected override get startSlotDefaultContent() {
+		return !this.icon ? html.nothing : html`
+			<mo-icon part='icon' icon=${this.icon}></mo-icon>
 		`
 	}
 }

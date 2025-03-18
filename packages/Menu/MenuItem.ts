@@ -25,11 +25,8 @@ export class MenuItem extends ListItem {
 		`
 	}
 
-	protected override get template() {
-		return html`
-			${this.iconTemplate}
-			${super.template}
-		`
+	protected override get startSlotDefaultContent() {
+		return this.iconTemplate
 	}
 
 	protected get iconTemplate() {
