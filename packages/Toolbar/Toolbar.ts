@@ -25,10 +25,6 @@ export class Toolbar extends Component {
 
 	static override get styles() {
 		return css`
-			mo-toolbar-pane {
-				flex: 1 1;
-			}
-
 			:host([collapsed]) mo-toolbar-pane {
 				display: none
 			}
