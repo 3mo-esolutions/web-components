@@ -67,7 +67,7 @@ export class Option<T> extends SelectionListItem {
 			}
 
 			:host([data-search-no-match]) {
-				display: none;
+				display: none !important;
 				pointer-events: none;
 			}
 
@@ -78,11 +78,8 @@ export class Option<T> extends SelectionListItem {
 		`
 	}
 
-	protected override get template() {
-		return html`
-			${super.template}
-			${this.checkboxTemplate}
-		`
+	protected override get endSlotDefaultContent() {
+		return this.checkboxTemplate
 	}
 
 	protected get checkboxTemplate() {
