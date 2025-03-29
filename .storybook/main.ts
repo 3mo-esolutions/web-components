@@ -65,7 +65,9 @@ export default {
 		return config
 	},
 
-	docs: {}
+	docs: {
+		autodocs: true
+	}
 } as StorybookConfig
 
 function getAbsolutePath(value: string): any {
