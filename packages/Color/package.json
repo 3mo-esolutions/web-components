@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/color",
-	"version": "0.1.5",
+	"version": "0.1.6",
 	"description": "A color class.",
 	"repository": {
 		"type": "git",
@@ -21,7 +21,7 @@
 	],
 	"dependencies": {
 		"tslib": "x",
-		"color-string": "x",
-		"@types/color-string": "x"
+		"color-string": "1.x",
+		"@types/color-string": "1.x"
 	}
 }
