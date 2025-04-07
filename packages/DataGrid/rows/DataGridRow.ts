@@ -240,12 +240,12 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		`
 	}
 
-	protected getCellTemplate(column: DataGridColumn<TData, KeyPathValueOf<TData, KeyPathOf<TData>>>) {
+	protected getCellTemplate(column: DataGridColumn<TData, KeyPath.ValueOf<TData, KeyPath.Of<TData>>>) {
 		return column.hidden ? html.nothing : html`
 			<mo-data-grid-cell
 				.row=${this as any}
 				.column=${column}
-				.value=${getValueByKeyPath(this.data, column.dataSelector as any)}
+				.value=${KeyPath.get(this.data, column.dataSelector as any)}
 				@keydown=${this.delegateToCell('handleKeyDown')}
 				@dblclick=${this.delegateToCell('handleDoubleClick')}
 			></mo-data-grid-cell>

@@ -9,7 +9,7 @@ import { MediaQueryController } from '@3mo/media-query-observer'
 import { Localizer } from '@3mo/localization'
 import { type Scroller } from '@3mo/scroller'
 import { DataGridColumnsController } from './DataGridColumnsController.js'
-import { DataGridSelectionBehaviorOnDataChange, DataGridSelectionController, DataGridSelectionMode } from './DataGridSelectionController.js'
+import { DataGridSelectionBehaviorOnDataChange, DataGridSelectionController, type DataGridSelectionMode } from './DataGridSelectionController.js'
 import { DataGridSortingController, type DataGridRankedSortDefinition, type DataGridSorting } from './DataGridSortingController.js'
 import { DataGridDetailsController } from './DataGridDetailsController.js'
 import { DataGridCsvController, DataGridSidePanelTab, type DataGridColumn, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, type DataGridSidePanel, DataGridContextMenuController } from './index.js'
@@ -131,7 +131,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	@property({ type: Object }) getRowDetailsTemplate?: (data: TData) => HTMLTemplateResult
 	@property({ type: Boolean }) multipleDetails = false
-	@property() subDataGridDataSelector?: KeyPathOf<TData>
+	@property() subDataGridDataSelector?: KeyPath.Of<TData>
 	@property({ type: Object }) hasDataDetail?: (data: TData) => boolean
 	@property({ type: Boolean }) detailsOnClick = false
 
@@ -272,12 +272,12 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		return row?.getCell(column)
 	}
 
-	handleEdit(data: TData, column: DataGridColumn<TData, unknown>, value: KeyPathValueOf<TData, KeyPathOf<TData>> | undefined) {
+	handleEdit(data: TData, column: DataGridColumn<TData, unknown>, value: KeyPath.ValueOf<TData, KeyPath.Of<TData>> | undefined) {
 		const row = this.getRow(data)
 		const cell = row?.getCell(column)
 		if (row && cell && value !== undefined && column.dataSelector && cell.value !== value) {
 			row.requestUpdate()
-			setValueByKeyPath(row.data, column.dataSelector, value as any)
+			KeyPath.set(row.data, column.dataSelector, value as any)
 			this.cellEdit.dispatch(cell)
 		}
 	}
@@ -777,12 +777,12 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		}
 
 		const flatten = (data: TData, level = 0): Array<DataRecord<TData>> => {
-			const subData = getValueByKeyPath(data, this.subDataGridDataSelector!)
+			const subData = KeyPath.get(data, this.subDataGridDataSelector!)
 			const subDataRecords = !Array.isArray(subData)
 				? undefined
 				: this.sortingController
 					.toSortedBy(
-						subData.map(data => new DataRecord(this, { level, data })),
+						subData.map(data => new DataRecord<TData>(this, { level, data })),
 						({ data }) => data)
 					.flatMap(({ data }) => flatten(data, level + 1))
 			return [

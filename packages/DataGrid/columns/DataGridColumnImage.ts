@@ -9,7 +9,7 @@ import { tooltip } from '@3mo/tooltip'
  */
 @component('mo-data-grid-column-image')
 export class DataGridColumnImage<TData> extends DataGridColumnComponent<TData, string> {
-	@property() tooltipSelector?: KeyPathOf<TData> | ((data: TData) => string | undefined)
+	@property() tooltipSelector?: KeyPath.Of<TData> | ((data: TData) => string | undefined)
 
 	override nonSortable = true
 	override nonEditable = true
@@ -44,7 +44,7 @@ export class DataGridColumnImage<TData> extends DataGridColumnComponent<TData, s
 			? undefined
 			: typeof this.tooltipSelector === 'function'
 				? this.tooltipSelector(data)
-				: getValueByKeyPath(data, this.tooltipSelector) as string | undefined
+				: KeyPath.get(data, this.tooltipSelector) as string | undefined
 	}
 }
 

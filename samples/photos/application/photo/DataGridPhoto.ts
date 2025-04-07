@@ -14,10 +14,10 @@ export class DataGridPhoto extends ModdableDataGrid<Photo, FirstParameter<typeof
 
 	protected override get columnsTemplate() {
 		return html`
-			<mo-data-grid-column-number width='50px' heading='ID' title='Identifier' dataSelector=${getKeyPath<Photo>('id')}></mo-data-grid-column-number>
-			<mo-data-grid-column-number width='50px' heading='Album ID' dataSelector=${getKeyPath<Photo>('albumId')} sumHeading='Summe'></mo-data-grid-column-number>
-			<mo-data-grid-column-text heading='URL' title='Uniform Resource Locator' dataSelector=${getKeyPath<Photo>('url')}></mo-data-grid-column-text>
-			<mo-data-grid-column-text heading='Name' dataSelector=${getKeyPath<Photo>('title')}></mo-data-grid-column-text>
+			<mo-data-grid-column-number width='50px' heading='ID' title='Identifier' dataSelector=${KeyPath.of<Photo>('id')}></mo-data-grid-column-number>
+			<mo-data-grid-column-number width='50px' heading='Album ID' dataSelector=${KeyPath.of<Photo>('albumId')} sumHeading='Summe'></mo-data-grid-column-number>
+			<mo-data-grid-column-text heading='URL' title='Uniform Resource Locator' dataSelector=${KeyPath.of<Photo>('url')}></mo-data-grid-column-text>
+			<mo-data-grid-column-text heading='Name' dataSelector=${KeyPath.of<Photo>('title')}></mo-data-grid-column-text>
 		`
 	}
 

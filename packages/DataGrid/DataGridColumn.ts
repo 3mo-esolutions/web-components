@@ -9,7 +9,7 @@ export type DataGridColumnSticky = 'start' | 'both' | 'end'
 
 export class DataGridColumn<TData, TValue = unknown> {
 	dataGrid?: DataGrid<TData, any>
-	dataSelector!: KeyPathOf<TData>
+	dataSelector!: KeyPath.Of<TData>
 
 	heading!: string
 	description?: string
@@ -23,7 +23,7 @@ export class DataGridColumn<TData, TValue = unknown> {
 
 	sticky?: DataGridColumnSticky
 
-	private _sortDataSelector?: KeyPathOf<TData>
+	private _sortDataSelector?: KeyPath.Of<TData>
 	get sortDataSelector() { return this._sortDataSelector || this.dataSelector }
 	set sortDataSelector(value) { this._sortDataSelector = value }
 
@@ -46,7 +46,7 @@ export class DataGridColumn<TData, TValue = unknown> {
 	}
 
 	with(other: Partial<this>): DataGridColumn<TData, TValue> {
-		return new DataGridColumn({ ...this, ...other })
+		return new DataGridColumn<TData, TValue>({ ...this, ...other })
 	}
 
 	private _widthInPixels?: number
@@ -77,7 +77,7 @@ export class DataGridColumn<TData, TValue = unknown> {
 		const sumsData = this.dataGrid.selectedData.length ? this.dataGrid.selectedData : this.dataGrid.renderDataRecords.map(r => r.data)
 
 		const sum = sumsData
-			.map(data => parseFloat(getValueByKeyPath(data, this.dataSelector) as unknown as string))
+			.map(data => parseFloat(KeyPath.get(data, this.dataSelector) as unknown as string))
 			.filter(n => isNaN(n) === false)
 			.reduce(((a, b) => a + b), 0)
 			|| 0

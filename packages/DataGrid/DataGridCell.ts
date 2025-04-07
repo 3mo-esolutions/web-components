@@ -15,7 +15,7 @@ Localizer.dictionaries.add('de', {
  * @attr row
  */
 @component('mo-data-grid-cell')
-export class DataGridCell<TValue extends KeyPathValueOf<TData>, TData = any, TDetailsElement extends Element | undefined = undefined> extends Component {
+export class DataGridCell<TValue extends KeyPath.ValueOf<TData>, TData = any, TDetailsElement extends Element | undefined = undefined> extends Component {
 	@property({ type: Object }) value!: TValue
 	@property({ type: Object }) column!: DataGridColumn<TData, TValue>
 	@property({ type: Object }) row!: DataGridRow<TData, TDetailsElement>

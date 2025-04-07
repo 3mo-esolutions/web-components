@@ -23,8 +23,8 @@ export abstract class DataGridColumnComponent<TData, TValue> extends Component {
 	@property({ reflect: true }) heading = ''
 	@property({ reflect: true }) description?: string
 	@property({ reflect: true }) textAlign: DataGridColumnAlignment = 'start'
-	@property({ reflect: true }) dataSelector!: KeyPathOf<TData>
-	@property({ reflect: true }) sortDataSelector?: KeyPathOf<TData>
+	@property({ reflect: true }) dataSelector!: KeyPath.Of<TData>
+	@property({ reflect: true }) sortDataSelector?: KeyPath.Of<TData>
 	@property({ type: Boolean, reflect: true }) nonSortable = false
 	@property({
 		type: Boolean,

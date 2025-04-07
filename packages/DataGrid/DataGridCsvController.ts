@@ -80,7 +80,7 @@ export class DataGridCsvController<TData> {
 					const childrenPadding = Array.from({ length: maxLevel - d.level }).fill('')
 					const [first, ...rest] = this.host.visibleColumns
 						.flatMap(column => {
-							const value = getValueByKeyPath(d.data, column.dataSelector)
+							const value = KeyPath.get(d.data, column.dataSelector)
 							return [...column.generateCsvValue?.(value, d.data) ?? []].map(DataGridCsvController.sanitize)
 						})
 					return [
