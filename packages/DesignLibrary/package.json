@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/del",
-	"version": "0.1.90",
+	"version": "0.1.91",
 	"description": "3MO Design Library to build business-suite web applications",
 	"repository": {
 		"type": "git",
@@ -35,7 +35,7 @@
 		"@a11d/non-inertable-component": "x",
 		"@a11d/local-storage": "x",
 		"@a11d/array.prototype.group": "x",
-		"@a11d/key-path": "1.x",
+		"@a11d/key-path": "2.x",
 		"@3mo/theme": "x",
 		"@3mo/throttler": "x",
 		"@3mo/data-grid-card-integration": "x",
