@@ -69,7 +69,7 @@ export class Pdf extends Component {
 
 	protected get pdfTemplate() {
 		return this.supportsEmbed
-			? html`<embed data-pdf type='application/pdf' src=${this.pdfSource} @load=${() => this.loading = false} />`
+			? html`<embed data-pdf type='application/pdf' src=${this.pdfSource} @load=${() => this.loading = false}>`
 			: html`<iframe data-pdf type='application/pdf' src=${this.pdfSource} @load=${() => this.loading = false}></iframe>`
 	}
 }

@@ -3,6 +3,7 @@ import { ComponentTestFixture } from '@a11d/lit-testing'
 import type { Checkbox } from '@3mo/checkbox'
 import type { Flex } from '@3mo/flex'
 import type { CheckboxGroup } from '.'
+// eslint-disable-next-line no-duplicate-imports
 import '.'
 
 describe('CheckboxGroup', () => {

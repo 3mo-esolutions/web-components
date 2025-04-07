@@ -1,6 +1,7 @@
 import { html } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { PopoverAlignment, PopoverPlacement, type PopoverContainer } from '.'
+// eslint-disable-next-line no-duplicate-imports
 import '.'
 
 describe('PopoverContainer', () => {

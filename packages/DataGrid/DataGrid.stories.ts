@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/web-components'
 import { html, ifDefined, style } from '@a11d/lit'
 import p from './package.json'
-import './index.js'
 import { DataGridEditability, DataGridSelectionBehaviorOnDataChange, DataGridSelectionMode, DataGridSortingStrategy } from './index.js'
 import { DialogAlert } from '../StandardDialogs/index.js'
 
@@ -132,11 +131,11 @@ export const ContextMenu: StoryObj = {
 export const StickyColumns: StoryObj = {
 	render: () => html`
 		<mo-data-grid style='height: 500px' .data=${twentyPeople}
-		selectionMode='multiple'
-		.getRowContextMenuTemplate=${() => html`
-			<mo-context-menu-item>Item 1</mo-context-menu-item>
-			<mo-context-menu-item>Item 2</mo-context-menu-item>
-		`}>
+			selectionMode='multiple'
+			.getRowContextMenuTemplate=${() => html`
+				<mo-context-menu-item>Item 1</mo-context-menu-item>
+				<mo-context-menu-item>Item 2</mo-context-menu-item>
+			`}>
 			<mo-data-grid-column-text sticky='start' heading='Name' width='200px' dataSelector='name'></mo-data-grid-column-text>
 			<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
 			<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>

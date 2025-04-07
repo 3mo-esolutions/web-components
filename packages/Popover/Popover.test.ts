@@ -23,8 +23,8 @@ describe('Popover', () => {
 			protected override get template() {
 				return html`
 					<mo-popover .anchor=${this}>
-						<input />
-						<input ?autoFocus=${this.autoFocus} />
+						<input>
+						<input ?autoFocus=${this.autoFocus}>
 					</mo-popover>
 				`
 			}

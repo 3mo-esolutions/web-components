@@ -79,6 +79,8 @@ export class Anchor extends Component {
 		`
 	}
 
+	/* eslint-disable @html-eslint/use-baseline */
+
 	protected override get template() {
 		return html`
 			<a href=${this.href}
@@ -87,7 +89,9 @@ export class Anchor extends Component {
 				ping=${ifDefined(this.ping)}
 				referrerPolicy=${ifDefined(this.referrerPolicy)}
 				rel=${ifDefined(this.rel)}
-			><slot></slot></a>
+			>
+				<slot></slot>
+			</a>
 		`
 	}
 }

@@ -28,7 +28,7 @@ export class DataGridColumnImage<TData> extends DataGridColumnComponent<TData, s
 				src=${value}
 				onload='this.hidden = false'
 				onerror='this.hidden = true'
-			/>
+			>
 		`
 	}
 

@@ -1,7 +1,7 @@
 import { css, html, style, event, property, repeat, queryAll } from '@a11d/lit'
 import { tooltip } from '@3mo/tooltip'
 import { FetchableDataGrid, type FetchableDataGridParametersType } from '@3mo/fetchable-data-grid'
-import { DataGridColumn } from '@3mo/data-grid'
+import { type DataGridColumn } from '@3mo/data-grid'
 import { Localizer } from '@3mo/localization'
 import { ModdableDataGridMode } from './ModdableDataGridMode.js'
 import { DialogMode } from './DialogMode.js'
@@ -29,7 +29,7 @@ export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataG
 
 	@event() readonly modeChange!: EventDispatcher<ModdableDataGridMode<TData, TParameters> | void>
 
-	@property({ type: Object }) modesAdapter: ModdableDataGridModesAdapter<TData, TParameters> = new ModdableDataGrid.defaultAdapter()
+	@property({ type: Object }) modesAdapter = new ModdableDataGrid.defaultAdapter() as ModdableDataGridModesAdapter<TData, TParameters>
 
 	@queryAll('mo-moddable-data-grid-chip') readonly modeChips!: Array<ModdableDataGridChip<TData, TParameters>>
 

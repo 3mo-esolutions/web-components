@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
-import { Color } from '@3mo/color'
+import { type Color } from '@3mo/color'
 import p from './package.json'
 import '.'
 

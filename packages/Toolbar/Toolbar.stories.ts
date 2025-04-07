@@ -3,7 +3,6 @@ import { Component, html, property, range } from '@a11d/lit'
 import { type MaterialIcon } from '@3mo/icon'
 import { ToolbarController } from './index.js'
 import p from './package.json'
-import './index.js'
 
 export default {
 	title: 'Toolbar',

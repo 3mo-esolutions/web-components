@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/web-components'
 import { Component, css, html, property } from '@a11d/lit'
 import p from './package.json'
-import './index.js'
 import { PopoverAlignment, PopoverPlacement } from './index.js'
 
 export default {
@@ -24,8 +23,9 @@ export default {
 	package: p,
 } as Meta
 
+/* eslint-disable @html-eslint/use-baseline */
 const content = html`
-	<input autofocus />
+	<input autofocus>
 	<mo-card heading='Popover'>
 		Here some content
 	</mo-card>

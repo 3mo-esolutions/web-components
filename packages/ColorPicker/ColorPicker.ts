@@ -60,6 +60,7 @@ export class ColorPicker extends Component {
 		`
 	}
 
+	/* eslint-disable @html-eslint/use-baseline */
 	private get datalistTemplate() {
 		return !this.presetColors?.length ? html.nothing : html`
 			<datalist id='presetColors'>

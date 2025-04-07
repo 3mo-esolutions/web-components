@@ -4,7 +4,7 @@ import { tooltip } from '@3mo/tooltip'
 import { DialogAlert, GenericDialog } from '@3mo/standard-dialogs'
 import { Localizer } from '@3mo/localization'
 import { type Menu } from '@3mo/menu'
-import { ModdableDataGridMode } from './ModdableDataGridMode.js'
+import { type ModdableDataGridMode } from './ModdableDataGridMode.js'
 import { DialogMode } from './DialogMode.js'
 import { type ModdableDataGrid } from './ModdableDataGrid.js'
 

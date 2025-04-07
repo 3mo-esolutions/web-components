@@ -1,6 +1,6 @@
 import { query } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { MenuItem } from '@3mo/menu'
+import { type MenuItem } from '@3mo/menu'
 import { DataGrid, type DataGridFooter } from './index.js'
 
 type Person = { id: number, name: string, birthDate: DateTime, children?: Array<Person> }

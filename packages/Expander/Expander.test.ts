@@ -1,7 +1,6 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { type Expander } from './Expander.js'
-import './Expander.js'
-import '@3mo/expand-collapse-icon-button'
+import '.'
 
 describe('Expander', () => {
 	const fixture = new ComponentTestFixture<Expander>('mo-expander')

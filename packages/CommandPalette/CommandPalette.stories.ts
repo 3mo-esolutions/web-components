@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import p from './package.json'
-import './index.js'
 import { CommandPalette, CommandPaletteDataSource, type CommandPaletteData } from './index.js'
 import type { MaterialIcon } from '@3mo/icon/MaterialIcon.js'
 

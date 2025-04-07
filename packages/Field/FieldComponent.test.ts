@@ -11,7 +11,7 @@ class TestFieldComponent extends FieldComponent<string> {
 				.value=${live(this.inputValue || '')}
 				@input=${(e: CustomEvent<string>) => this.handleInput(e.detail, e)}
 				@change=${(e: CustomEvent<string>) => this.handleChange(e.detail, e)}
-			/>
+			>
 		`
 	}
 

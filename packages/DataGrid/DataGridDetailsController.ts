@@ -1,5 +1,5 @@
 import { html, type HTMLTemplateResult } from '@a11d/lit'
-import { DataRecord } from './index.js'
+import { type DataRecord } from './index.js'
 
 interface DetailedComponent<TData> {
 	readonly hasDefaultRowElements: boolean

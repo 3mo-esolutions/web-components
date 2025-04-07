@@ -1,6 +1,5 @@
 import { component, property, css, Component, html, event } from '@a11d/lit'
 import { disabledProperty } from '@3mo/disabled-property'
-import '@material/web/switch/switch.js'
 import '@3mo/theme'
 import { MdSwitch } from '@material/web/switch/switch.js'
 

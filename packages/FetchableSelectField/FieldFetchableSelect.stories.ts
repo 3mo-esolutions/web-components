@@ -30,7 +30,7 @@ export const FetchableSelect: StoryObj = {
 				.parameters=${fetchableSelectParameters}
 				.optionTemplate=${(country: any) => html`
 					<mo-option value=${country.code}>
-						<img width='25px' src=${`https://flagcdn.com/h40/${country.code.toLowerCase()}.png`} />
+						<img width='25px' src=${`https://flagcdn.com/h40/${country.code.toLowerCase()}.png`}>
 						${country.label}
 					</mo-option>
 				`}
