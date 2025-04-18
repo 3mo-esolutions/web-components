@@ -85,7 +85,7 @@ export const CatalogAbsolute: StoryObj = {
 export const CatalogFixed: StoryObj = {
 	render: () => {
 		return html`
-			<mo-flex alignItems='center' justifyContent='center'>
+			<mo-flex alignItems='center' justifyContent='center' style='margin: auto; height: 500px'>
 				<mo-story-popover-catalog fixed></mo-story-popover-catalog>
 			</mo-flex>
 		`
@@ -108,9 +108,16 @@ class StoryPopoverCatalog extends Component {
 
 	static override get styles() {
 		return css`
+			:host {
+				anchor-name: --anchor;
+			}
 			mo-button {
 				width: 600px;
 				height: 200px;
+			}
+
+			mo-popover {
+				position-anchor: --anchor;
 			}
 		`
 	}

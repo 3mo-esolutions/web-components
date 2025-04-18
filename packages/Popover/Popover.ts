@@ -1,6 +1,5 @@
 import { Component, component, css, event, eventListener, html, property, queryConnectedInstances } from '@a11d/lit'
 import { PopoverPlacement } from './PopoverPlacement.js'
-import { PopoverPositionController } from './PopoverPositionController.js'
 import { PopoverAlignment } from './PopoverAlignment.js'
 import { type PopoverCoordinates } from './PopoverCoordinates.js'
 import { type Middleware, type ComputePositionReturn } from '@floating-ui/dom'
@@ -41,7 +40,7 @@ export class Popover extends Component {
 
 	@property({ type: Boolean, reflect: true }) fixed = false
 	@property({ type: Array }) coordinates?: PopoverCoordinates
-	@property({ type: Object }) anchor?: HTMLElement
+	@property({ type: Object, updated(this: Popover) { this.anchorUpdated() } }) anchor?: HTMLElement
 	@property() target?: string
 	@property({ reflect: true }) placement = PopoverPlacement.BlockEnd
 	@property({ reflect: true }) alignment = PopoverAlignment.Start
@@ -53,8 +52,6 @@ export class Popover extends Component {
 	@property({ type: Array }) positionMiddleware?: Array<Middleware>
 	@property({ type: Object }) positionComputed?: (response: ComputePositionReturn) => void
 
-	protected readonly positionController = new PopoverPositionController(this)
-
 	setOpen(open: boolean) {
 		if (this.open !== open) {
 			this.open = open
@@ -65,6 +62,22 @@ export class Popover extends Component {
 				this.anchor?.focus()
 			}
 		}
+	}
+
+	anchorUpdated() {
+		if (!this.anchor) {
+			return
+		}
+		// @ts-expect-error positionAnchor not defined yet.
+		let anchorName = getComputedStyle(this.anchor).anchorName
+		if (anchorName === 'none') {
+			anchorName = this.anchor.id || `${this.anchor.tagName.toLowerCase()}_${Math.random().toString(36).substring(2, 15)}`
+			// @ts-expect-error positionAnchor not defined yet.
+			this.anchor!.style.anchorName = anchorName
+		}
+		console.log(anchorName)
+		// @ts-expect-error positionAnchor not defined yet.
+		this.style.positionAnchor = anchorName
 	}
 
 	@eventListener({ target: document, type: 'keydown', options: { capture: true } })
@@ -129,49 +142,11 @@ export class Popover extends Component {
 
 	static get translationStyles() {
 		return css`
-			:host(:not([fixed])[data-placement=block-start]) {
-				inset-block-end: 100%;
-			}
-			:host(:not([fixed])[data-placement=block-end]) {
-				inset-block-start: 100%;
-			}
-			:host(:not([fixed])[data-placement=inline-start]) {
-				inset-inline-end: 100%;
-			}
-			:host(:not([fixed])[data-placement=inline-end]) {
-				inset-inline-start: 100%;
-			}
-
-			:host(:not([fixed])[data-placement=block-start][data-alignment=start]),
-			:host(:not([fixed])[data-placement=block-end][data-alignment=start]) {
-				--mo-popover-translate-x: 0%;
-				inset-inline-start: 0;
-			}
-			:host(:not([fixed])[data-placement=block-start][data-alignment=center]),
-			:host(:not([fixed])[data-placement=block-end][data-alignment=center]) {
-				--mo-popover-translate-x: -50%;
-				left: 50%;
-			}
-			:host(:not([fixed])[data-placement=block-start][data-alignment=end]),
-			:host(:not([fixed])[data-placement=block-end][data-alignment=end]) {
-				--mo-popover-translate-x: 0%;
-				inset-inline-end: 0;
-			}
-
-			:host(:not([fixed])[data-placement=inline-start][data-alignment=start]),
-			:host(:not([fixed])[data-placement=inline-end][data-alignment=start]) {
-				--mo-popover-translate-y: 0%;
-				inset-block-start: 0;
-			}
-			:host(:not([fixed])[data-placement=inline-start][data-alignment=center]),
-			:host(:not([fixed])[data-placement=inline-end][data-alignment=center]) {
-				--mo-popover-translate-y: -50%;
-				top: 50%;
-			}
-			:host(:not([fixed])[data-placement=inline-start][data-alignment=end]),
-			:host(:not([fixed])[data-placement=inline-end][data-alignment=end]) {
-				--mo-popover-translate-y: 0%;
-				inset-block-end: 0;
+			:host {
+				/* inset: auto;
+				top: anchor(bottom); */
+				position-area: block-end inline-start;
+				position-try-fallbacks: flip-block;
 			}
 		`
 	}
