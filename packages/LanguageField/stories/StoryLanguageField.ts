@@ -8,8 +8,8 @@ export class StoryLanguageField extends LanguageField<string, Language> {
 
 	protected fetch() {
 		const languages: Array<Language> = [
-			{ id: 1, name: 'English', flagImageSource: 'https://flagsapi.com/GB/flat/64.png' },
-			{ id: 2, name: 'German', flagImageSource: 'https://flagsapi.com/DE/flat/64.png' },
+			{ name: 'English', flagImageSource: 'https://flagsapi.com/GB/flat/64.png' },
+			{ name: 'German', flagImageSource: 'https://flagsapi.com/DE/flat/64.png' },
 		]
 		return Promise.resolve(this.onlyOne ? languages.slice(0, 1) : languages)
 	}
