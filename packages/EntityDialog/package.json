@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/entity-dialog",
-	"version": "0.5.3",
+	"version": "0.5.4",
 	"description": "An extension of @3mo/fetchable-dialog that can be used to save and delete entities.",
 	"repository": {
 		"type": "git",

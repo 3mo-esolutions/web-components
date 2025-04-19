@@ -1,8 +1,9 @@
 import { type HTMLTemplateResult, component, html, ifDefined } from '@a11d/lit'
 import { type DialogAction, DialogComponent, type DialogErrorHandler } from '@a11d/lit-application'
-import { type BaseDialogParameters, getContentTemplate } from '@3mo/dialog'
+import { getContentTemplate } from '@3mo/dialog'
+import { type StandardDialogParameters } from './StandardDialogParameters.js'
 
-interface Parameters<TResult> extends BaseDialogParameters<GenericDialog<TResult>> {
+interface Parameters<TResult> extends StandardDialogParameters<GenericDialog<TResult>> {
 	readonly secondaryButtonText?: string
 	readonly primaryAction?: () => DialogAction<TResult>
 	readonly secondaryAction?: () => DialogAction<TResult>
