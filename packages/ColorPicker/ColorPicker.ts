@@ -1,3 +1,4 @@
+/* eslint-disable @html-eslint/use-baseline */
 import { component, html, event, ifDefined, property, css, Component, query } from '@a11d/lit'
 import { Color } from '@3mo/color'
 
