@@ -230,7 +230,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 			<mo-menu part='menu' exportparts='list'
 				fixed
 				target='field'
-				selectionMode=${this.multiple ? 'multiple' : 'single'}
+				selectability=${this.multiple ? 'multiple' : 'single'}
 				.anchor=${this}
 				alignment=${ifDefined(this.menuAlignment)}
 				placement=${ifDefined(this.menuPlacement)}

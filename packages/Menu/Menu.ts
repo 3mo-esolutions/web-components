@@ -20,7 +20,7 @@ export function isMenu(element: EventTarget): element is HTMLElement {
  * @attr target - The target of the menu.
  * @attr fixed - Whether the menu's position is fixed.
  * @attr manual - Whether the menu is opened manually. This won't affect the opening triggers via the keyboard.
- * @attr selectionMode - The selection mode of the menu.
+ * @attr selectability - The selectability of the menu.
  * @attr value - The value of the menu.
  * @attr disabled - Whether the menu is disabled.
  *
@@ -93,7 +93,7 @@ export class Menu extends Component {
 	@property({ type: Boolean }) fixed = false
 	@property({ type: Boolean }) manual = false
 	@property({ type: Boolean }) preventOpenOnAnchorEnter = false
-	@property() selectionMode?: SelectableList['selectionMode']
+	@property() selectability?: SelectableList['selectability']
 	@property({ type: Array, bindingDefault: true }) value?: SelectableList['value']
 	@disabledProperty() disabled = false
 
@@ -167,7 +167,7 @@ export class Menu extends Component {
 				.positionMiddleware=${this.positionMiddleware}
 			>
 				<mo-selectable-list part='list'
-					selectionMode=${ifDefined(this.selectionMode)}
+					selectability=${ifDefined(this.selectability)}
 					.value=${this.value ?? []}
 					@change=${this.handleChange.bind(this)}
 					@click=${this.handleMenuClick.bind(this)}

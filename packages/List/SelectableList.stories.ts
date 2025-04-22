@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import p from './package.json'
-import { SelectableListSelectionMode } from './index.js'
+import { SelectableListSelectability } from './index.js'
 
 export default {
 	title: 'Selectable List',
@@ -9,9 +9,9 @@ export default {
 	package: p,
 } as Meta
 
-const getTemplate = (selectionMode: SelectableListSelectionMode) => html`
+const getTemplate = (selectability: SelectableListSelectability) => html`
 	Check the console for the selected item.
-	<mo-selectable-list selectionMode=${selectionMode}>
+	<mo-selectable-list selectability=${selectability}>
 		<mo-selectable-list-item toggleable>Item 1</mo-selectable-list-item>
 		<mo-selectable-list-item toggleable>Item 2</mo-selectable-list-item>
 		<mo-checkbox-list-item disabled>Item 3</mo-checkbox-list-item>
@@ -25,9 +25,9 @@ const getTemplate = (selectionMode: SelectableListSelectionMode) => html`
 `
 
 export const Single: StoryObj = {
-	render: () => getTemplate(SelectableListSelectionMode.Single)
+	render: () => getTemplate(SelectableListSelectability.Single)
 }
 
 export const Multiple: StoryObj = {
-	render: () => getTemplate(SelectableListSelectionMode.Multiple)
+	render: () => getTemplate(SelectableListSelectability.Multiple)
 }
