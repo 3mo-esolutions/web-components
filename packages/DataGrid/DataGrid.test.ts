@@ -1,6 +1,6 @@
 import { component, html } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { DataGrid, type DataGridRow, DataGridSelectionMode, DataGridColumn, DataRecord } from './index.js'
+import { DataGrid, type DataGridRow, DataGridColumn, DataRecord, DataGridSelectability } from './index.js'
 
 type Person = { id: number, name: string, birthDate: DateTime, children?: Array<Person> }
 
@@ -190,7 +190,7 @@ describe('DataGrid', () => {
 				<test-data-grid></test-data-grid>
 			`)
 
-			it('should be the default', () => expect(fixture.component.selectionMode).toEqual(DataGridSelectionMode.None))
+			it('should be the default', () => expect(fixture.component.selectability).toEqual(DataGridSelectability.None))
 
 			it('should not render checkboxes', () => {
 				expect(fixture.component.headerSelectionCheckbox).not.toBeDefined()
@@ -202,7 +202,7 @@ describe('DataGrid', () => {
 
 		describe('Single', () => {
 			const fixture = new ComponentTestFixture<TestDataGrid>(html`
-				<test-data-grid selectionMode=${DataGridSelectionMode.Single} .getRowContextMenuTemplate=${getRowContextMenuTemplate}></test-data-grid>
+				<test-data-grid selectability=${DataGridSelectability.Single} .getRowContextMenuTemplate=${getRowContextMenuTemplate}></test-data-grid>
 			`)
 
 			it('should render checkboxes only for rows', () => {
@@ -222,7 +222,7 @@ describe('DataGrid', () => {
 
 		describe('Multiple', () => {
 			const fixture = new ComponentTestFixture<TestDataGrid>(html`
-				<test-data-grid selectionMode=${DataGridSelectionMode.Multiple} .getRowContextMenuTemplate=${getRowContextMenuTemplate}></test-data-grid>
+				<test-data-grid selectability=${DataGridSelectability.Multiple} .getRowContextMenuTemplate=${getRowContextMenuTemplate}></test-data-grid>
 			`)
 
 			it('should render checkboxes for header and rows', () => {

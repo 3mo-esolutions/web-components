@@ -4,7 +4,7 @@ import { DirectionsByLanguage } from '@3mo/localization'
 import { popover } from '@3mo/popover'
 import { ContextMenu } from '@3mo/context-menu'
 import { type DataGridColumn } from '../DataGridColumn.js'
-import { type DataGridCell, DataGridPrimaryContextMenuItem, DataGridSelectionMode, type DataRecord } from '../index.js'
+import { type DataGridCell, DataGridPrimaryContextMenuItem, DataGridSelectability, type DataRecord } from '../index.js'
 
 export abstract class DataGridRow<TData, TDetailsElement extends Element | undefined = undefined> extends Component {
 	@queryAll('mo-data-grid-cell') readonly cells!: Array<DataGridCell<any, TData, TDetailsElement>>
@@ -336,12 +336,12 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		this.toggleAttribute('data-context-menu-open', open)
 
 		if (this.dataRecord.isSelected === false) {
-			this.dataGrid.select(this.dataGrid.selectionMode !== DataGridSelectionMode.None ? [this.data] : [])
+			this.dataGrid.select(this.dataGrid.selectability !== DataGridSelectability.None ? [this.data] : [])
 		}
 	}
 
 	private get contextMenuData() {
-		return this.dataGrid.selectionMode === DataGridSelectionMode.None || this.dataGrid.selectedData.length === 0
+		return this.dataGrid.selectability === DataGridSelectability.None || this.dataGrid.selectedData.length === 0
 			? [this.data]
 			: this.dataGrid.selectedData
 	}

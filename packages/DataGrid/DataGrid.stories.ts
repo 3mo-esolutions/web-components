@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components'
 import { html, ifDefined, style } from '@a11d/lit'
 import p from './package.json'
-import { DataGridEditability, DataGridSelectionBehaviorOnDataChange, DataGridSelectionMode, DataGridSortingStrategy } from './index.js'
+import { DataGridEditability, DataGridSelectionBehaviorOnDataChange, DataGridSelectability, DataGridSortingStrategy } from './index.js'
 import { DialogAlert } from '../StandardDialogs/index.js'
 
 export default {
@@ -10,9 +10,9 @@ export default {
 	argTypes: {
 		headerHidden: { control: 'boolean' },
 		preventVerticalContentScroll: { control: 'boolean' },
-		selectionMode: {
+		selectability: {
 			control: 'select',
-			options: [DataGridSelectionMode.None, DataGridSelectionMode.Single, DataGridSelectionMode.Multiple]
+			options: [DataGridSelectability.None, DataGridSelectability.Single, DataGridSelectability.Multiple]
 		},
 		selectOnClick: { control: 'boolean', type: 'boolean' },
 		selectionCheckboxesHidden: { control: 'boolean' },
@@ -95,7 +95,7 @@ export const DataGrid: StoryObj = {
 
 export const Selection: StoryObj = {
 	args: {
-		selectionMode: 'single',
+		selectability: 'single',
 		selectOnClick: false,
 		selectionCheckboxesHidden: false,
 	},
@@ -106,8 +106,8 @@ export const Selection: StoryObj = {
 			},
 		}
 	},
-	render: ({ selectionMode, selectOnClick, selectionCheckboxesHidden }) => html`
-		<mo-data-grid .data=${fivePeople} style='height: 500px' selectionMode=${selectionMode as any}
+	render: ({ selectability, selectOnClick, selectionCheckboxesHidden }) => html`
+		<mo-data-grid .data=${fivePeople} style='height: 500px' selectability=${selectability as any}
 			?selectOnClick=${selectOnClick}
 			?selectionCheckboxesHidden=${selectionCheckboxesHidden}
 			.isDataSelectable=${(person: Person) => person.age >= 18}
@@ -131,7 +131,7 @@ export const ContextMenu: StoryObj = {
 export const StickyColumns: StoryObj = {
 	render: () => html`
 		<mo-data-grid style='height: 500px' .data=${twentyPeople}
-			selectionMode='multiple'
+			selectability='multiple'
 			.getRowContextMenuTemplate=${() => html`
 				<mo-context-menu-item>Item 1</mo-context-menu-item>
 				<mo-context-menu-item>Item 2</mo-context-menu-item>
@@ -158,7 +158,7 @@ export const Sums: StoryObj = {
 	render: () => html`
 		<mo-data-grid
 			.data=${generatePeople(50).map(x => ({ ...x, balance: Math.floor(Math.random() * 1000) }))}
-			selectionMode='multiple'
+			selectability='multiple'
 			style='height: 500px; --mo-data-grid-footer-background: var(--mo-color-transparent-gray-3)'
 			selectOnClick
 		>
@@ -174,7 +174,7 @@ export const Sums: StoryObj = {
 
 export const Sorting: StoryObj = {
 	render: () => html`
-		<mo-data-grid .data=${hundredPeople} pagination='auto' selectionMode='multiple' style='height: 500px' selectOnClick .sorting=${[{ selector: 'name', strategy: DataGridSortingStrategy.Ascending }, { selector: 'age', strategy: DataGridSortingStrategy.Descending }]}>
+		<mo-data-grid .data=${hundredPeople} pagination='auto' selectability='multiple' style='height: 500px' selectOnClick .sorting=${[{ selector: 'name', strategy: DataGridSortingStrategy.Ascending }, { selector: 'age', strategy: DataGridSortingStrategy.Descending }]}>
 			<mo-data-grid-column-number hidden nonEditable heading='ID' dataSelector='id'></mo-data-grid-column-number>
 			<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
 			<mo-data-grid-column-number heading='Age' dataSelector='age' sumHeading='Ages Total'></mo-data-grid-column-number>
@@ -189,7 +189,7 @@ export const WithDetails: StoryObj = {
 	render: ({ multipleDetails, detailsOnClick }) => html`
 		<mo-data-grid style='height: 500px'
 			.data=${fivePeople}
-			selectionMode='multiple'
+			selectability='multiple'
 			?multipleDetails=${multipleDetails}
 			?detailsOnClick=${detailsOnClick}
 			.hasDataDetail=${(p: Person) => p.age >= 18}
@@ -211,7 +211,7 @@ export const WithDetails_SubDataGrid: StoryObj = {
 	render: ({ multipleDetails, detailsOnClick }) => html`
 		<mo-data-grid style='height: 500px'
 			.data=${fivePeople}
-			selectionMode='multiple'
+			selectability='multiple'
 			?multipleDetails=${multipleDetails}
 			?detailsOnClick=${detailsOnClick}
 			.hasDataDetail=${(p: Person) => p.age >= 18}
@@ -234,7 +234,7 @@ export const WithDetails_SubRows: StoryObj = {
 	},
 	render: ({ multipleDetails, detailsOnClick }) => html`
 		<mo-data-grid style='height: 500px'
-			selectionMode='multiple'
+			selectability='multiple'
 			?multipleDetails=${multipleDetails}
 			?detailsOnClick=${detailsOnClick}
 			.data=${fivePeopleWithChildren}

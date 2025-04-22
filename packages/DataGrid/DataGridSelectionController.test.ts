@@ -1,5 +1,5 @@
 import { PureEventDispatcher } from '@a11d/lit'
-import { DataGridSelectionBehaviorOnDataChange, DataGridSelectionController, DataGridSelectionMode } from './DataGridSelectionController'
+import { DataGridSelectionBehaviorOnDataChange, DataGridSelectionController, DataGridSelectability } from './DataGridSelectionController'
 import type { DataRecord } from '.'
 
 type Data = { id: number }
@@ -22,18 +22,18 @@ describe('DataGridSelectionController', () => {
 	})
 
 	describe('hasSelection', () => {
-		for (const [mode, hasSelection] of [[DataGridSelectionMode.None, false], [DataGridSelectionMode.Single, true], [DataGridSelectionMode.Multiple, true]] as const) {
+		for (const [mode, hasSelection] of [[DataGridSelectability.None, false], [DataGridSelectability.Single, true], [DataGridSelectability.Multiple, true]] as const) {
 			it(`should return ${hasSelection} when mode is ${mode}`, () => {
-				controller.host.selectionMode = mode
+				controller.host.selectability = mode
 				expect(controller.hasSelection).toBe(hasSelection)
 			})
 		}
 	})
 
-	describe('selectionMode', () => {
+	describe('selectability', () => {
 		it('should default to "none" normally', () => {
 			controller.hasSelection
-			expect(controller.host.selectionMode).toBe(DataGridSelectionMode.None)
+			expect(controller.host.selectability).toBe(DataGridSelectability.None)
 		})
 
 		it('should default to "single" when has context menu', () => {
@@ -43,18 +43,18 @@ describe('DataGridSelectionController', () => {
 				selectedData: [],
 			})
 			controller.hasSelection
-			expect(controller.host.selectionMode).toBe(DataGridSelectionMode.Single)
+			expect(controller.host.selectability).toBe(DataGridSelectability.Single)
 		})
 
 		it('should not change when already defined', () => {
-			for (const selectionMode of [DataGridSelectionMode.None, DataGridSelectionMode.Multiple]) {
+			for (const selectability of [DataGridSelectability.None, DataGridSelectability.Multiple]) {
 				controller = new DataGridSelectionController<Data>({
-					selectionMode,
+					selectability,
 					hasContextMenu: true,
 					dataRecords: [],
 					selectedData: [],
 				})
-				expect(controller.host.selectionMode).toBe(selectionMode)
+				expect(controller.host.selectability).toBe(selectability)
 			}
 		})
 	})
@@ -74,7 +74,7 @@ describe('DataGridSelectionController', () => {
 
 	describe('isSelected', () => {
 		it('should return true when data is selected', () => {
-			controller.host.selectionMode = DataGridSelectionMode.Single
+			controller.host.selectability = DataGridSelectability.Single
 			controller.select([data[0]])
 
 			expect(controller.isSelected(data[0])).toBe(true)
@@ -88,9 +88,9 @@ describe('DataGridSelectionController', () => {
 	})
 
 	describe('selectAll', () => {
-		for (const [mode, selectedData] of [[DataGridSelectionMode.None, []], [DataGridSelectionMode.Single, []], [DataGridSelectionMode.Multiple, [...data]]] as const) {
+		for (const [mode, selectedData] of [[DataGridSelectability.None, []], [DataGridSelectability.Single, []], [DataGridSelectability.Multiple, [...data]]] as const) {
 			it(`should ${!data.length ? 'not' : ''} select data when mode is ${mode}`, () => {
-				controller.host.selectionMode = mode
+				controller.host.selectability = mode
 				Object.defineProperty(controller.host, 'flattenedData', { value: [...data] })
 
 				controller.selectAll()
@@ -102,7 +102,7 @@ describe('DataGridSelectionController', () => {
 
 	describe('deselectAll', () => {
 		it('should deselect all data', () => {
-			controller.host.selectionMode = DataGridSelectionMode.Multiple
+			controller.host.selectability = DataGridSelectability.Multiple
 			controller.host.selectedData = [...data]
 
 			controller.deselectAll()
@@ -113,7 +113,7 @@ describe('DataGridSelectionController', () => {
 
 	describe('select', () => {
 		it('should select only selectable data', () => {
-			controller.host.selectionMode = DataGridSelectionMode.Multiple
+			controller.host.selectability = DataGridSelectability.Multiple
 			controller.host.isDataSelectable = (x: Data) => x.id % 2 === 0
 
 			controller.select([...data])
@@ -122,7 +122,7 @@ describe('DataGridSelectionController', () => {
 		})
 
 		it('should dispatch selectionChange with selected data', () => {
-			controller.host.selectionMode = DataGridSelectionMode.Multiple
+			controller.host.selectability = DataGridSelectability.Multiple
 			spyOn(controller.host.selectionChange!, 'dispatch')
 
 			controller.select([...data])
@@ -133,7 +133,7 @@ describe('DataGridSelectionController', () => {
 
 	describe('setSelection', () => {
 		it('should not select unselectable data', () => {
-			controller.host.selectionMode = DataGridSelectionMode.Single
+			controller.host.selectability = DataGridSelectability.Single
 			controller.host.isDataSelectable = () => false
 
 			controller.setSelection(data[0], true)
@@ -142,7 +142,7 @@ describe('DataGridSelectionController', () => {
 		})
 
 		it('should select data when selected is true', () => {
-			controller.host.selectionMode = DataGridSelectionMode.Single
+			controller.host.selectability = DataGridSelectability.Single
 
 			controller.setSelection(data[0], true)
 
@@ -150,7 +150,7 @@ describe('DataGridSelectionController', () => {
 		})
 
 		it('should deselect data when selected is false', () => {
-			controller.host.selectionMode = DataGridSelectionMode.Single
+			controller.host.selectability = DataGridSelectability.Single
 			controller.host.selectedData = [data[0]]
 
 			controller.setSelection(data[0], false)
@@ -161,7 +161,7 @@ describe('DataGridSelectionController', () => {
 
 	describe('selectPreviouslySelectedData', () => {
 		it('should select previously selected data', () => {
-			controller.host.selectionMode = DataGridSelectionMode.Multiple
+			controller.host.selectability = DataGridSelectability.Multiple
 			controller.host.selectedData = [...data]
 			Object.defineProperty(controller.host, 'flattenedData', { value: [...data, { id: 4 }] })
 
@@ -179,7 +179,7 @@ describe('DataGridSelectionController', () => {
 			[DataGridSelectionBehaviorOnDataChange.Prevent, dataToSelect],
 		] as const) {
 			it(`should ${!data.length ? 'not' : ''} select data on data change when behavior is ${behavior}`, () => {
-				controller.host.selectionMode = DataGridSelectionMode.Multiple
+				controller.host.selectability = DataGridSelectability.Multiple
 				controller.host.selectedData = dataToSelect
 
 				controller.handleDataChange(behavior)

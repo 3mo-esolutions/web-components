@@ -70,7 +70,7 @@ export class PagePhotos extends PageComponent {
 
 	private get dataGridTemplate() {
 		return html`
-			<photos-data-grid-photo selectionMode='multiple' selectOnClick multipleDetails
+			<photos-data-grid-photo selectability='multiple' selectOnClick multipleDetails
 				.selectedData=${this.selectedPhotos}
 				@dataChange=${(event: CustomEvent<Array<Photo>>) => this.photos = event.detail}
 				@selectionChange=${(event: CustomEvent<Array<Photo>>) => this.selectedPhotos = event.detail}
