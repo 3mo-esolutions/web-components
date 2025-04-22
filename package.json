@@ -67,7 +67,7 @@
 		"terser-webpack-plugin": "x",
 		"ts-loader": "x",
 		"tsconfig-paths-webpack-plugin": "x",
-		"typescript": "5.x",
+		"typescript": "5.6.x",
 		"web-component-analyzer": "2.x"
 	},
 	"dependencies": {
