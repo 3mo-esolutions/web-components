@@ -1,4 +1,4 @@
-import { Component, component, css, html, property, style } from '@a11d/lit'
+import { Component, component, css, html, property } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
 import '@3mo/heading'
 import '@3mo/grid'
@@ -13,6 +13,7 @@ import '@3mo/grid'
  * @slot heading - The heading which has a default template rendering a mo-heading element
  * @slot action - Actions in the header
  *
+ * @csspart header
  * @csspart heading
  */
 @component('mo-section')
@@ -33,6 +34,16 @@ export class Section extends Component {
 				gap: 8px;
 				width: 100%;
 				height: 100%;
+			}
+
+			div[part=header] {
+				display: flex;
+				align-items: center;
+				min-height: 30px;
+			}
+
+			mo-heading[part=heading] {
+				flex: 1;
 			}
 
 			mo-grid {
@@ -64,7 +75,7 @@ export class Section extends Component {
 
 	protected get defaultHeaderTemplate() {
 		return html`
-			<div part='header' ${style({ display: 'flex', alignItems: 'center', minHeight: '30px' })}>
+			<div part='header'>
 				${this.headingTemplate}
 				${this.actionTemplate}
 			</div>
@@ -76,7 +87,7 @@ export class Section extends Component {
 	}
 
 	protected get defaultHeadingTemplate() {
-		return html`<mo-heading part='heading' typography='heading4' ${style({ flex: '1' })}>${this.heading}</mo-heading>`
+		return html`<mo-heading part='heading' typography='heading4'>${this.heading}</mo-heading>`
 	}
 
 	protected get actionTemplate() {
