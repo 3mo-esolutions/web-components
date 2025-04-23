@@ -62,8 +62,12 @@ export class Section extends Component {
 		`
 	}
 
+	protected get hasHeader() {
+		return this.heading || this.defaultActionTemplate !== html.nothing
+	}
+
 	protected get defaultHeaderTemplate() {
-		return html`
+		return !this.hasHeader ? html.nothing : html`
 			<div ${style({ display: 'flex', alignItems: 'center', minHeight: '30px' })}>
 				${this.headingTemplate}
 				${this.actionTemplate}
