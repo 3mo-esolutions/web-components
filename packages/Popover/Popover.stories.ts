@@ -85,7 +85,7 @@ export const CatalogAbsolute: StoryObj = {
 export const CatalogFixed: StoryObj = {
 	render: () => {
 		return html`
-			<mo-flex alignItems='center' justifyContent='center'>
+			<mo-flex alignItems='center' justifyContent='center' style='margin: auto; height: 500px'>
 				<mo-story-popover-catalog fixed></mo-story-popover-catalog>
 			</mo-flex>
 		`

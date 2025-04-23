@@ -127,55 +127,6 @@ export class Popover extends Component {
 		this.querySelector<HTMLElement>('[autofocus]')?.focus?.()
 	}
 
-	static get translationStyles() {
-		return css`
-			:host(:not([fixed])[data-placement=block-start]) {
-				inset-block-end: 100%;
-			}
-			:host(:not([fixed])[data-placement=block-end]) {
-				inset-block-start: 100%;
-			}
-			:host(:not([fixed])[data-placement=inline-start]) {
-				inset-inline-end: 100%;
-			}
-			:host(:not([fixed])[data-placement=inline-end]) {
-				inset-inline-start: 100%;
-			}
-
-			:host(:not([fixed])[data-placement=block-start][data-alignment=start]),
-			:host(:not([fixed])[data-placement=block-end][data-alignment=start]) {
-				--mo-popover-translate-x: 0%;
-				inset-inline-start: 0;
-			}
-			:host(:not([fixed])[data-placement=block-start][data-alignment=center]),
-			:host(:not([fixed])[data-placement=block-end][data-alignment=center]) {
-				--mo-popover-translate-x: -50%;
-				left: 50%;
-			}
-			:host(:not([fixed])[data-placement=block-start][data-alignment=end]),
-			:host(:not([fixed])[data-placement=block-end][data-alignment=end]) {
-				--mo-popover-translate-x: 0%;
-				inset-inline-end: 0;
-			}
-
-			:host(:not([fixed])[data-placement=inline-start][data-alignment=start]),
-			:host(:not([fixed])[data-placement=inline-end][data-alignment=start]) {
-				--mo-popover-translate-y: 0%;
-				inset-block-start: 0;
-			}
-			:host(:not([fixed])[data-placement=inline-start][data-alignment=center]),
-			:host(:not([fixed])[data-placement=inline-end][data-alignment=center]) {
-				--mo-popover-translate-y: -50%;
-				top: 50%;
-			}
-			:host(:not([fixed])[data-placement=inline-start][data-alignment=end]),
-			:host(:not([fixed])[data-placement=inline-end][data-alignment=end]) {
-				--mo-popover-translate-y: 0%;
-				inset-block-end: 0;
-			}
-		`
-	}
-
 	static override get styles() {
 		return css`
 			:host {
@@ -196,8 +147,6 @@ export class Popover extends Component {
 			:host([fixed]) {
 				position: fixed;
 			}
-
-			${Popover.translationStyles}
 		`
 	}
 
