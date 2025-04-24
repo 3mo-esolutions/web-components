@@ -22,15 +22,13 @@ describe('PopoverContainer', () => {
 		expect(popover.anchor).toBe(undefined)
 	})
 
-	it('should delegate fixed, placement, and alignment to the popover', async () => {
-		fixture.component.fixed = true
+	it('should delegate placement, and alignment to the popover', async () => {
 		fixture.component.placement = PopoverPlacement.BlockEnd
 		fixture.component.alignment = PopoverAlignment.Center
 
 		await fixture.updateComplete
 
 		const popover = fixture.component.querySelector('mo-popover')!
-		expect(popover.fixed).toBe(true)
 		expect(popover.placement).toBe(PopoverPlacement.BlockEnd)
 		expect(popover.alignment).toBe(PopoverAlignment.Center)
 	})

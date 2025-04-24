@@ -120,13 +120,13 @@ export class ModdableDataGridChip<TData, TParameters extends FetchableDataGridPa
 
 	private get contextMenuTemplate() {
 		return html`
-			<mo-popover-container fixed>
+			<mo-popover-container>
 				<mo-icon-button icon='more_vert' dense
 					?data-no-border=${!this.dataGrid.hasUnsavedChanges}
 					${tooltip(t('More options'))}
 				></mo-icon-button>
 
-				<mo-menu slot='popover' fixed>
+				<mo-menu slot='popover'>
 					${!this.dataGrid.hasUnsavedChanges ? html.nothing : html`
 						<mo-menu-item icon='undo' @click=${() => this.discard()}>
 							${t('Discard changes')}

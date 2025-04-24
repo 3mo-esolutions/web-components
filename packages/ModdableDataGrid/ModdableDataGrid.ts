@@ -169,7 +169,7 @@ export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataG
 				</mo-flex>
 
 				${!this.modesController.archivedModes.length ? html.nothing : html`
-					<mo-popover-container fixed alignment='end'>
+					<mo-popover-container alignment='end'>
 						<mo-icon-button icon='archive' data-test-id='archive'
 							${tooltip(t('Archive'))}
 							${style({ color: 'var(--mo-color-gray)', alignSelf: 'center' })}

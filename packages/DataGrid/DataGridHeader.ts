@@ -253,7 +253,7 @@ export class DataGridHeader<TData> extends Component {
 		if (this.dataGrid.hasContextMenu && this.dataGrid.selectedData.length > 1) {
 			return html`
 				<mo-flex class='context-menu' alignItems='end' justifyContent='center' ${this.getResizeObserver('actionsColumnWidthInPixels')}>
-					<mo-popover-container fixed>
+					<mo-popover-container>
 						<mo-icon-button dense icon='more_vert' title=${t('Actions for ${count:pluralityNumber} selected entries', { count: this.dataGrid.selectedData.length })}></mo-icon-button>
 
 						<mo-menu slot='popover'>

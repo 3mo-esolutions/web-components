@@ -36,6 +36,19 @@ const handleClick = (e: Event) => {
 	popover?.toggleAttribute('open')
 }
 
+export const Popover: StoryObj = {
+	render: ({ placement, alignment }) => {
+		placement
+		alignment
+		return html`
+			<mo-popover-container placement=${placement} alignment=${alignment}>
+				<mo-button type='outlined'>Click to open the popover</mo-button>
+				<mo-popover slot='popover'>${content}</mo-popover>
+			</mo-popover-container>
+		`
+	}
+}
+
 export const Manual: StoryObj = {
 	render: ({ placement, alignment }) => {
 		return html`
@@ -61,18 +74,7 @@ export const Target: StoryObj = {
 	}
 }
 
-export const Absolute: StoryObj = {
-	render: ({ placement, alignment }) => {
-		return html`
-			<mo-popover-container placement=${placement} alignment=${alignment}>
-				<mo-button type='outlined'>Click to open the popover</mo-button>
-				<mo-popover slot='popover'>${content}</mo-popover>
-			</mo-popover-container>
-		`
-	}
-}
-
-export const CatalogAbsolute: StoryObj = {
+export const Catalog: StoryObj = {
 	render: () => {
 		return html`
 			<mo-flex alignItems='center' justifyContent='center' style='margin: auto; height: 500px'>
@@ -82,30 +84,7 @@ export const CatalogAbsolute: StoryObj = {
 	}
 }
 
-export const CatalogFixed: StoryObj = {
-	render: () => {
-		return html`
-			<mo-flex alignItems='center' justifyContent='center' style='margin: auto; height: 500px'>
-				<mo-story-popover-catalog fixed></mo-story-popover-catalog>
-			</mo-flex>
-		`
-	}
-}
-
-export const Fixed: StoryObj = {
-	render: ({ placement, alignment }) => {
-		return html`
-			<mo-popover-container fixed placement=${placement} alignment=${alignment}>
-				<mo-button type='outlined'>Click to open the popover</mo-button>
-				<mo-popover slot='popover'>${content}</mo-popover>
-			</mo-popover-container>
-		`
-	}
-}
-
 class StoryPopoverCatalog extends Component {
-	@property({ type: Boolean }) fixed = false
-
 	static override get styles() {
 		return css`
 			mo-button {
@@ -135,7 +114,7 @@ class StoryPopoverCatalog extends Component {
 
 	protected getCardTemplate(alignment: PopoverAlignment, placement: PopoverPlacement) {
 		return html`
-			<mo-popover manual .anchor=${this} ?fixed=${this.fixed} open placement=${placement} alignment=${alignment}>
+			<mo-popover manual .anchor=${this} open placement=${placement} alignment=${alignment}>
 				<mo-card>
 					<code>${alignment} / ${placement}</code>
 				</mo-card>

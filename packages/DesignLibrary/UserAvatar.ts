@@ -53,7 +53,7 @@ export class UserAvatar extends Component {
 				${this.avatarContentTemplate}
 			</mo-avatar>
 
-			<mo-menu fixed target='avatar' .anchor=${this} ?open=${bind(this, 'open', { sourceUpdated: value => this.openChange.dispatch(value) })}>
+			<mo-menu target='avatar' .anchor=${this} ?open=${bind(this, 'open', { sourceUpdated: value => this.openChange.dispatch(value) })}>
 				${join([
 					this.avatarTemplate,
 					html`<slot></slot>`,

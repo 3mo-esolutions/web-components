@@ -8,7 +8,6 @@ import { type Middleware, type ComputePositionReturn } from '@floating-ui/dom'
 /**
  * @element mo-popover
  *
- * @attr fixed - Whether the popover is fixed.
  * @attr coordinates - The coordinates of the popover.
  * @attr anchor - The anchor element for the popover.
  * @attr target - The target element for the popover.
@@ -39,7 +38,6 @@ export class Popover extends Component {
 
 	@event() readonly openChange!: EventDispatcher<boolean>
 
-	@property({ type: Boolean, reflect: true }) fixed = false
 	@property({ type: Array }) coordinates?: PopoverCoordinates
 	@property({ type: Object }) anchor?: HTMLElement
 	@property() target?: string

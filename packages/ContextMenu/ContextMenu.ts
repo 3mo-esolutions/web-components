@@ -24,7 +24,6 @@ export class ContextMenu extends Menu {
 	}
 
 	override readonly manual = true
-	override readonly fixed = true
 
 	@eventListener({ target: document, type: 'click' })
 	protected handleClick(e: PointerEvent) {

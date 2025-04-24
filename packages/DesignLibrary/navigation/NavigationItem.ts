@@ -103,7 +103,7 @@ export class NavigationItem extends Component {
 					<mo-icon icon=${this.open ? 'keyboard_arrow_up' : 'keyboard_arrow_down'} ${style({ fontSize: 'large' })}></mo-icon>
 				`}
 			</mo-flex>
-			<mo-menu fixed target='button' .anchor=${this} ?open=${bind(this, 'open')}>
+			<mo-menu target='button' .anchor=${this} ?open=${bind(this, 'open')}>
 				${this.menuContentTemplate}
 			</mo-menu>
 		`
