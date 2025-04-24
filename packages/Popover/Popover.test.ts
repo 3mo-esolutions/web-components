@@ -59,7 +59,7 @@ describe('Popover', () => {
 			expect(getComputedStyle(generic.component.popoverElement).display).toBe('none')
 		})
 
-		it('should set open and dispatch openChange event when open is changed', async () => {
+		it('should toggle and dispatch openChange event when open changes', async () => {
 			const openChangeSpy = jasmine.createSpy()
 			generic.component.popoverElement.addEventListener<any>('openChange', (e: CustomEvent<boolean>) => openChangeSpy(e.detail))
 

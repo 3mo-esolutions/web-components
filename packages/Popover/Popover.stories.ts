@@ -38,8 +38,6 @@ const handleClick = (e: Event) => {
 
 export const Popover: StoryObj = {
 	render: ({ placement, alignment }) => {
-		placement
-		alignment
 		return html`
 			<mo-popover-container placement=${placement} alignment=${alignment}>
 				<mo-button type='outlined'>Click to open the popover</mo-button>

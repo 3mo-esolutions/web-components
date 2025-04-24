@@ -10,7 +10,7 @@ export default {
 	decorators: [story => html`<div style='height: 400px'>${story()}</div>`]
 } as Meta
 
-export const WithContainer: StoryObj = {
+export const Menu: StoryObj = {
 	render: () => {
 		return html`
 			<mo-popover-container placement='block-end' alignment='end'>
@@ -39,7 +39,7 @@ export const WithCustomTarget: StoryObj = {
 	}
 }
 
-export const Absolute: StoryObj = {
+export const WithCustomContainer: StoryObj = {
 	render: () => html`
 		<story-button-with-menu></story-button-with-menu>
 	`
