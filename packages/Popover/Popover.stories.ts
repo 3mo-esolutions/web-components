@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/web-components'
-import { Component, css, html, property } from '@a11d/lit'
+import { Component, css, html } from '@a11d/lit'
 import p from './package.json'
 import { PopoverAlignment, PopoverPlacement } from './index.js'
 
@@ -54,7 +54,7 @@ export const Manual: StoryObj = {
 		return html`
 			<mo-popover-container placement=${placement} alignment=${alignment} @click=${handleClick}>
 				<mo-button type='outlined'>Click to open the popover</mo-button>
-				<mo-popover manual slot='popover' @click=${(e: Event) => e.stopPropagation()}>${content}</mo-popover>
+				<mo-popover slot='popover' mode='manual' @click=${(e: Event) => e.stopPropagation()}>${content}</mo-popover>
 			</mo-popover-container>
 		`
 	}
@@ -74,17 +74,17 @@ export const Target: StoryObj = {
 	}
 }
 
-export const Catalog: StoryObj = {
+export const AnchorPositioning: StoryObj = {
 	render: () => {
 		return html`
 			<mo-flex alignItems='center' justifyContent='center' style='margin: auto; height: 500px'>
-				<mo-story-popover-catalog></mo-story-popover-catalog>
+				<mo-story-popover-anchor-positioning></mo-story-popover-anchor-positioning>
 			</mo-flex>
 		`
 	}
 }
 
-class StoryPopoverCatalog extends Component {
+class StoryPopoverAnchorPositioning extends Component {
 	static override get styles() {
 		return css`
 			mo-button {
@@ -114,7 +114,7 @@ class StoryPopoverCatalog extends Component {
 
 	protected getCardTemplate(alignment: PopoverAlignment, placement: PopoverPlacement) {
 		return html`
-			<mo-popover manual .anchor=${this} open placement=${placement} alignment=${alignment}>
+			<mo-popover mode='manual' .anchor=${this} open placement=${placement} alignment=${alignment}>
 				<mo-card>
 					<code>${alignment} / ${placement}</code>
 				</mo-card>
@@ -123,4 +123,4 @@ class StoryPopoverCatalog extends Component {
 	}
 }
 
-customElements.define('mo-story-popover-catalog', StoryPopoverCatalog)
+customElements.define('mo-story-popover-anchor-positioning', StoryPopoverAnchorPositioning)

@@ -5,6 +5,8 @@ import { PopoverAlignment } from './PopoverAlignment.js'
 import { type PopoverCoordinates } from './PopoverCoordinates.js'
 import { type Middleware, type ComputePositionReturn } from '@floating-ui/dom'
 
+export type PopoverMode = 'auto' | 'manual'
+
 /**
  * @element mo-popover
  *
@@ -15,9 +17,9 @@ import { type Middleware, type ComputePositionReturn } from '@floating-ui/dom'
  * @attr alignment - The alignment of the popover relative to the anchor.
  * @attr offset - The offset of the popover.
  * @attr open - Whether the popover is open.
- * @attr manual - Whether the popover is manually controlled:
- * 	- When true, the popover is only opened or closed when the open attribute is set.
- * 	- When true, the popover is not opened when the anchor is clicked and not closed when outside of the popover is clicked.
+ * @attr mode - Whether the popover is manually controlled:
+ * 	- `auto` (default): can be "light dismissed" — this means that you can hide the popover by clicking outside it or pressing the Esc key. Showing an auto popover will generally close other auto popovers that are already displayed, unless they are nested.
+ * 	- `manual`: cannot be "light dismissed" and are not automatically closed. Popovers must explicitly be opened via setting the `open` property. Multiple independent manual popovers can be shown simultaneously.
  *
  * @slot - Default slot for popover content
  *
@@ -38,14 +40,14 @@ export class Popover extends Component {
 
 	@event() readonly openChange!: EventDispatcher<boolean>
 
+	@property({ reflect: true, updated(this: Popover) { this.popover = this.mode } }) mode: PopoverMode = 'auto'
 	@property({ type: Array }) coordinates?: PopoverCoordinates
 	@property({ type: Object }) anchor?: HTMLElement
 	@property() target?: string
 	@property({ reflect: true }) placement = PopoverPlacement.BlockEnd
 	@property({ reflect: true }) alignment = PopoverAlignment.Start
 	@property({ type: Number }) offset?: number
-	@property({ type: Boolean, reflect: true }) open = false
-	@property({ type: Boolean }) manual = false
+	@property({ type: Boolean, reflect: true, updated(this: Popover) { if (this.isConnected) { this.togglePopover(this.open) } } }) open = false
 
 	@property({ type: Object }) shouldOpen?: (e: Event) => boolean
 	@property({ type: Array }) positionMiddleware?: Array<Middleware>
@@ -53,21 +55,20 @@ export class Popover extends Component {
 
 	protected readonly positionController = new PopoverPositionController(this)
 
-	setOpen(open: boolean) {
-		if (this.open !== open) {
-			this.open = open
-			this.openChange.dispatch(open)
-			if (open) {
-				this.updateComplete.then(() => this.focus())
-			} else {
-				this.anchor?.focus()
-			}
+	@eventListener('beforetoggle')
+	protected handleBeforeToggle(e: ToggleEvent) {
+		const open = e.newState === 'open'
+		this.openChange.dispatch(open)
+		if (open) {
+			this.updateComplete.then(() => this.focus())
+		} else {
+			this.anchor?.focus()
 		}
 	}
 
 	@eventListener({ target: document, type: 'keydown', options: { capture: true } })
 	protected handleDocumentKeyDown(e: KeyboardEvent) {
-		if (this.manual || this.open === false) {
+		if (this.mode === 'manual' || this.open === false) {
 			return
 		}
 
@@ -77,7 +78,7 @@ export class Popover extends Component {
 
 		if (e.key === 'Escape' || e.key === 'Esc') {
 			e.stopPropagation()
-			this.setOpen(false)
+			this.open = false
 		}
 	}
 
@@ -97,14 +98,14 @@ export class Popover extends Component {
 
 	@eventListener({ target: document, type: 'click' })
 	protected handleClick(e: Event, preventDefault = false) {
-		if (this.manual) {
+		if (this.mode === 'manual') {
 			return
 		}
 
 		const composedPath = e.composedPath()
 		if (this.open && composedPath.includes(this) === false) {
 			e.stopPropagation()
-			this.setOpen(false)
+			this.open = false
 			if (this.anchor && composedPath.includes(this.anchor)) {
 				return
 			}
@@ -116,7 +117,7 @@ export class Popover extends Component {
 			if (preventDefault) {
 				e.preventDefault()
 			}
-			this.setOpen(true)
+			this.open = true
 		}
 	}
 
@@ -128,22 +129,14 @@ export class Popover extends Component {
 	static override get styles() {
 		return css`
 			:host {
-				position: absolute;
 				box-shadow: var(--mo-shadow);
-				width: max-content;
-				z-index: 99;
-				/* Do not move these to default values as resetting these values are important to prevent inheriting them from other parent popovers */
-				--mo-popover-translate-x: 0%;
-				--mo-popover-translate-y: 0%;
-				transform: translate(var(--mo-popover-translate-x), var(--mo-popover-translate-y));
+				margin: 0;
+				padding: 0;
+				border: none;
 			}
 
 			:host(:not([open])) {
 				display: none !important;
-			}
-
-			:host([fixed]) {
-				position: fixed;
 			}
 		`
 	}

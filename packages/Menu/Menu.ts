@@ -153,7 +153,7 @@ export class Menu extends Component {
 		return html`
 			<mo-popover part='popover'
 				.anchor=${this.anchor}
-				?manual=${this.manual}
+				mode=${ifDefined(this.manual ? 'manual' : undefined)}
 				target=${ifDefined(this.target)}
 				placement=${ifDefined(this.placement)}
 				alignment=${ifDefined(this.alignment)}
