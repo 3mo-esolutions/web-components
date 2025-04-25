@@ -5,7 +5,7 @@ import { PopoverAlignment } from './PopoverAlignment.js'
 import { type PopoverCoordinates } from './PopoverCoordinates.js'
 import { type Middleware, type ComputePositionReturn } from '@floating-ui/dom'
 
-export type PopoverMode = 'auto' | 'manual'
+export type PopoverMode = 'auto' | 'manual' | 'hint'
 
 /**
  * @element mo-popover
@@ -59,10 +59,15 @@ export class Popover extends Component {
 	protected handleBeforeToggle(e: ToggleEvent) {
 		const open = e.newState === 'open'
 		this.openChange.dispatch(open)
-		if (open) {
-			this.updateComplete.then(() => this.focus())
-		} else {
-			this.anchor?.focus()
+		if (this.mode !== 'hint') {
+			if (open) {
+				this.updateComplete.then(() => this.focus())
+			} else {
+				const target = this.target ? this.anchor?.closest(`#${this.target}`) : this.anchor
+				if (target && target instanceof HTMLElement) {
+					target.focus()
+				}
+			}
 		}
 	}
 

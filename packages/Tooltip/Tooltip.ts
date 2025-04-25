@@ -120,7 +120,7 @@ export class Tooltip extends Component {
 
 	protected override get template() {
 		return html`
-			<mo-popover mode='manual'
+			<mo-popover mode='hint'
 				?open=${bind(this, 'open')}
 				.anchor=${this.anchor}
 				placement=${ifDefined(this.placement)}
