@@ -1,6 +1,5 @@
-import { component, html, property, style } from '@a11d/lit'
+import { component, html, ifDefined, property, style } from '@a11d/lit'
 import { DataGridColumnComponent } from './DataGridColumnComponent.js'
-import { tooltip } from '@3mo/tooltip'
 
 /**
  * @element mo-data-grid-column-image
@@ -23,7 +22,8 @@ export class DataGridColumnImage<TData> extends DataGridColumnComponent<TData, s
 
 		return !value ? html.nothing : html`
 			<img
-				${tooltipText ? tooltip(tooltipText) : html.nothing}
+				title=${ifDefined(tooltipText)}
+				alt=${ifDefined(tooltipText)}
 				${style({ verticalAlign: 'middle' })}
 				src=${value}
 				onload='this.hidden = false'
