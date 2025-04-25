@@ -21,7 +21,7 @@ export function closeWhenOutOfViewport(options?: { readonly padding?: number }):
 				overflow.left > width - padding ||
 				overflow.right > width - padding
 			) {
-				popover.setOpen(false)
+				popover.open = false
 			}
 			return {}
 		}

@@ -228,7 +228,6 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 	protected get menuTemplate() {
 		return html`
 			<mo-menu part='menu' exportparts='list'
-				fixed
 				target='field'
 				selectability=${this.multiple ? 'multiple' : 'single'}
 				.anchor=${this}

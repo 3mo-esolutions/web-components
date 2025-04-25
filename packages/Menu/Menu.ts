@@ -18,7 +18,6 @@ export function isMenu(element: EventTarget): element is HTMLElement {
  * @attr placement - The placement of the menu.
  * @attr open - Whether the menu is open.
  * @attr target - The target of the menu.
- * @attr fixed - Whether the menu's position is fixed.
  * @attr manual - Whether the menu is opened manually. This won't affect the opening triggers via the keyboard.
  * @attr selectability - The selectability of the menu.
  * @attr value - The value of the menu.
@@ -90,7 +89,6 @@ export class Menu extends Component {
 	@property() alignment?: MenuAlignment
 	@property({ type: Boolean, reflect: true, updated(this: Menu) { this.openUpdated() } }) open = false
 	@property() target?: string
-	@property({ type: Boolean }) fixed = false
 	@property({ type: Boolean }) manual = false
 	@property({ type: Boolean }) preventOpenOnAnchorEnter = false
 	@property() selectability?: SelectableList['selectability']
@@ -155,8 +153,7 @@ export class Menu extends Component {
 		return html`
 			<mo-popover part='popover'
 				.anchor=${this.anchor}
-				?fixed=${this.fixed}
-				?manual=${this.manual}
+				mode=${ifDefined(this.manual ? 'manual' : undefined)}
 				target=${ifDefined(this.target)}
 				placement=${ifDefined(this.placement)}
 				alignment=${ifDefined(this.alignment)}

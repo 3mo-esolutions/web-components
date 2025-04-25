@@ -59,11 +59,12 @@ describe('Popover', () => {
 			expect(getComputedStyle(generic.component.popoverElement).display).toBe('none')
 		})
 
-		it('should set open and dispatch openChange event when setOpen is called', () => {
+		it('should toggle and dispatch openChange event when open changes', async () => {
 			const openChangeSpy = jasmine.createSpy()
 			generic.component.popoverElement.addEventListener<any>('openChange', (e: CustomEvent<boolean>) => openChangeSpy(e.detail))
 
-			generic.component.popoverElement.setOpen(true)
+			generic.component.popoverElement.open = true
+			await generic.updateComplete
 
 			expect(generic.component.popoverElement.open).toBe(true)
 			expect(openChangeSpy).toHaveBeenCalledWith(true)
@@ -112,7 +113,7 @@ describe('Popover', () => {
 
 			await generic.updateComplete
 
-			generic.component.popoverElement.setOpen(false)
+			generic.component.popoverElement.open = false
 
 			await generic.updateComplete
 
@@ -126,7 +127,7 @@ describe('Popover', () => {
 			autoFocus.component.autoFocus = true
 			await autoFocus.updateComplete
 
-			autoFocus.component.popoverElement.setOpen(true)
+			autoFocus.component.popoverElement.open = true
 			await autoFocus.updateComplete
 			await new Promise(requestAnimationFrame)
 
@@ -169,8 +170,8 @@ describe('Popover', () => {
 			expect(fixture1.component.popoverElement.open).toBe(true)
 		})
 
-		it('should not close when "manual" is true', async () => {
-			fixture1.component.popoverElement.manual = true
+		it('should not close when mode is "manual"', async () => {
+			fixture1.component.popoverElement.mode = 'manual'
 			fixture1.component.popoverElement.open = true
 
 			await fixture1.updateComplete
@@ -208,8 +209,8 @@ describe('Popover', () => {
 			expect(fixture1.component.popoverElement.open).toBe(false)
 		})
 
-		it('should not close the popover when "Escape" is pressed and "manual" is true', async () => {
-			fixture1.component.popoverElement.manual = true
+		it('should not close the popover when "Escape" is pressed and mode is "manual"', async () => {
+			fixture1.component.popoverElement.mode = 'manual'
 			fixture1.component.popoverElement.open = true
 
 			await fixture1.updateComplete

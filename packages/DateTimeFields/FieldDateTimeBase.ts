@@ -198,7 +198,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 
 	protected get popoverTemplate() {
 		return this.pickerHidden ? html.nothing : html`
-			<mo-popover tabindex='-1' fixed .anchor=${this} ?open=${bind(this, 'open')}>
+			<mo-popover tabindex='-1' .anchor=${this} ?open=${bind(this, 'open')}>
 				${cache(!this.open ? html.nothing : this.popoverContentTemplate)}
 			</mo-popover>
 		`
