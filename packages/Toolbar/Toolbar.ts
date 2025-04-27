@@ -3,7 +3,6 @@ import { type MaterialIcon } from '@3mo/icon'
 import { ToolbarController } from './index.js'
 
 import '@3mo/popover'
-import '@3mo/flex'
 import '@3mo/menu'
 import '@3mo/icon-button'
 
