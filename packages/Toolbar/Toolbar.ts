@@ -2,6 +2,11 @@ import { Component, component, css, html, property, style } from '@a11d/lit'
 import { type MaterialIcon } from '@3mo/icon'
 import { ToolbarController } from './index.js'
 
+import '@3mo/popover'
+import '@3mo/flex'
+import '@3mo/menu'
+import '@3mo/icon-button'
+
 /**
  * @element mo-toolbar
  *
@@ -13,7 +18,6 @@ import { ToolbarController } from './index.js'
  * @csspart overflowIcon - The overflow icon
  *
  * @slot - The default slot containing toolbar pane items
- * @slot overflow - The overflow action element(s)
  */
 @component('mo-toolbar')
 export class Toolbar extends Component {
@@ -40,7 +44,7 @@ export class Toolbar extends Component {
 					alignment=${(this.collapsed || this.overflowPosition === 'start') ? 'start' : 'end'}
 					${style({ flex: '0 0', justifyContent: 'flex-end', order: this.overflowPosition === 'start' ? -1 : 'unset' })}
 				>
-					<slot name='overflow'>${this.defaultOverflowOpenerTemplate}</slot>
+					${this.defaultOverflowOpenerTemplate}
 					${this.menuTemplate}
 				</mo-popover-container>
 			</mo-flex>
