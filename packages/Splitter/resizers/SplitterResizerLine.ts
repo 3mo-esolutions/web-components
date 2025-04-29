@@ -17,12 +17,12 @@ export class SplitterResizerLine extends SplitterResizer {
 
 			:host([hostDirection=vertical]), :host([hostDirection=vertical-reversed]) {
 				width: 100%;
-				height: var(--mo-splitter-resizer-line-thickness, 2px);
+				height: var(--mo-splitter-resizer-line-thickness, 0.125rem);
 			}
 
 			:host([hostDirection=horizontal]), :host([hostDirection=horizontal-reversed]) {
 				height: 100%;
-				width: var(--mo-splitter-resizer-line-thickness, 2px);
+				width: var(--mo-splitter-resizer-line-thickness, 0.125rem);
 			}
 
 			:host([hostDirection=vertical][hostHover]), :host([hostDirection=vertical][hostResizing]), :host([hostDirection=vertical-reversed][hostHover]), :host([hostDirection=vertical-reversed][hostResizing]) {

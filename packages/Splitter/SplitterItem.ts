@@ -6,16 +6,15 @@ import { type Splitter } from './Splitter.js'
  *
  * @attr size
  * @attr min
- * @attr max
+ * @attr collapsed
  *
  * @slot
  */
 @component('mo-splitter-item')
 export class SplitterItem extends Component {
 	@property() size?: string
-	@property() min = '100px'
-	@property() max?: string
-	@property({ type: Boolean }) locked = false
+	@property() min?: string
+	@property({ type: Boolean }) collapsed = false
 
 	private get splitter() {
 		return this.parentElement as Splitter
