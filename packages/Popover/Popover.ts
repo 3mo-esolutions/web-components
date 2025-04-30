@@ -1,4 +1,4 @@
-import { Component, component, css, event, eventListener, html, property, query, queryConnectedInstances } from '@a11d/lit'
+import { Component, component, css, event, eventListener, html, property, query } from '@a11d/lit'
 import { PopoverPlacement } from './PopoverPlacement.js'
 import { PopoverPositionController } from './PopoverPositionController.js'
 import { PopoverAlignment } from './PopoverAlignment.js'
@@ -37,8 +37,6 @@ export class Popover extends Component {
 			&& (!this.target || e.composedPath().some(target => target instanceof Element && target.id === this.target))
 	}
 
-	@queryConnectedInstances() private static readonly instances: Set<Popover>
-
 	@event() readonly openChange!: EventDispatcher<boolean>
 
 	@property({ reflect: true, updated(this: Popover) { this.popover = this.mode } }) mode: PopoverMode = 'auto'
@@ -61,31 +59,11 @@ export class Popover extends Component {
 	protected handleBeforeToggle(e: ToggleEvent) {
 		const open = e.newState === 'open'
 		this.openChange.dispatch(open)
-		if (this.mode !== 'hint') {
-			if (open) {
-				this.updateComplete.then(() => this.focus())
-			} else {
-				const target = this.target ? this.anchor?.closest(`#${this.target}`) : this.anchor
-				if (target && target instanceof HTMLElement) {
-					target.focus()
-				}
+		if (this.mode !== 'hint' && !open) {
+			const target = this.target ? this.anchor?.closest(`#${this.target}`) : this.anchor
+			if (target && target instanceof HTMLElement) {
+				target.focus()
 			}
-		}
-	}
-
-	@eventListener({ target: document, type: 'keydown', options: { capture: true } })
-	protected handleDocumentKeyDown(e: KeyboardEvent) {
-		if (this.mode === 'manual' || this.open === false) {
-			return
-		}
-
-		if ([...Popover.instances].filter(i => i.open).at(-1) !== this) {
-			return
-		}
-
-		if (e.key === 'Escape' || e.key === 'Esc') {
-			e.stopPropagation()
-			this.open = false
 		}
 	}
 

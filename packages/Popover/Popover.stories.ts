@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components'
 import { Component, css, html } from '@a11d/lit'
 import p from './package.json'
-import { PopoverAlignment, PopoverPlacement } from './index.js'
+import { PopoverAlignment, PopoverPlacement, type PopoverContainer } from './index.js'
 
 export default {
 	title: 'Popover',
@@ -31,11 +31,6 @@ const content = html`
 	</mo-card>
 `
 
-const handleClick = (e: Event) => {
-	const popover = (e.target as HTMLElement).closest('mo-popover-container')?.querySelector('mo-popover')
-	popover?.toggleAttribute('open')
-}
-
 export const Popover: StoryObj = {
 	render: ({ placement, alignment }) => {
 		return html`
@@ -49,11 +44,19 @@ export const Popover: StoryObj = {
 
 export const Manual: StoryObj = {
 	render: ({ placement, alignment }) => {
+		const handleClick = (e: Event) => {
+			((e.target as HTMLElement).previousElementSibling as PopoverContainer)
+				?.popoverElement
+				?.toggleAttribute('open')
+		}
 		return html`
-			<mo-popover-container placement=${placement} alignment=${alignment} @click=${handleClick}>
-				<mo-button type='outlined'>Click to open the popover</mo-button>
-				<mo-popover slot='popover' mode='manual' @click=${(e: Event) => e.stopPropagation()}>${content}</mo-popover>
-			</mo-popover-container>
+			<mo-flex direction='horizontal' gap='1rem'>
+				<mo-popover-container placement=${placement} alignment=${alignment}>
+					<mo-button disabled type='outlined'>Anchor</mo-button>
+					<mo-popover slot='popover' mode='manual' @click=${(e: Event) => e.stopPropagation()}>${content}</mo-popover>
+				</mo-popover-container>
+				<mo-button type='outlined' @click=${handleClick}>Click here to toggle the popover instead!</mo-button>
+			</mo-flex>
 		`
 	}
 }

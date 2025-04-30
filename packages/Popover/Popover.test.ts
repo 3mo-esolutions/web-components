@@ -161,43 +161,4 @@ describe('Popover', () => {
 			expect(fixture2.component.popoverElement.open).toBe(false)
 		})
 	})
-
-	describe('accessible keyboard bindings', () => {
-		const fixture1 = new ComponentTestFixture(() => new GenericPopover)
-		const fixture2 = new ComponentTestFixture(() => new GenericPopover)
-
-		it('should close the popover when "Escape" is pressed', async () => {
-			fixture1.component.popoverElement.open = true
-
-			await fixture1.updateComplete
-
-			document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
-
-			expect(fixture1.component.popoverElement.open).toBe(false)
-		})
-
-		it('should not close the popover when "Escape" is pressed and mode is "manual"', async () => {
-			fixture1.component.popoverElement.mode = 'manual'
-			fixture1.component.popoverElement.open = true
-
-			await fixture1.updateComplete
-
-			document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
-
-			expect(fixture1.component.popoverElement.open).toBe(true)
-		})
-
-		it('should close only the last connected popover when "Escape" is pressed', async () => {
-			fixture1.component.popoverElement.open = true
-			fixture2.component.popoverElement.open = true
-
-			await fixture1.updateComplete
-			await fixture2.updateComplete
-
-			document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
-
-			expect(fixture1.component.popoverElement.open).toBe(true)
-			expect(fixture2.component.popoverElement.open).toBe(false)
-		})
-	})
 })
