@@ -1,6 +1,7 @@
 import { Component, component, css, html, event } from '@a11d/lit'
 import { observeResize } from '@3mo/resize-observer'
 import { SlotController } from '@3mo/slot-controller'
+import '@3mo/flex'
 
 /**
  * @fires fillerResize
@@ -18,11 +19,10 @@ export class ToolbarPane extends Component {
 	static override get styles() {
 		return css`
 			:host {
-				display: flex;
+				display: inline-block;
+				flex: 1 1 0;
+				width: 0;
 				overflow: clip;
-				flex-direction: row;
-				align-items: center;
-				align-content: center;
 			}
 
 			:host(:focus) {
@@ -30,7 +30,10 @@ export class ToolbarPane extends Component {
 			}
 
 			mo-flex {
-				flex-direction: inherit;
+				overflow: clip;
+				flex-direction: row;
+				align-items: center;
+				align-content: center;
 			}
 
 			::slotted(*) {
@@ -52,9 +55,11 @@ export class ToolbarPane extends Component {
 
 	protected override get template() {
 		return html`
-			<div id='pad'></div>
-			<slot @slotchange=${() => this.itemsChange.dispatch()}></slot>
-			<div id='filler' ${observeResize(elements => this.fillerResize.dispatch(elements))}></div>
+			<mo-flex part='pane'>
+				<div id='pad'></div>
+				<slot @slotchange=${() => this.itemsChange.dispatch()}></slot>
+				<div id='filler' ${observeResize(elements => this.fillerResize.dispatch(elements))}></div>
+			</mo-flex>
 		`
 	}
 }

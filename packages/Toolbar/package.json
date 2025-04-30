@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/toolbar",
-	"version": "0.0.7",
+	"version": "0.0.8",
 	"description": "A toolbar web-component with overflow menu.",
 	"repository": {
 		"type": "git",
@@ -27,8 +27,11 @@
 		"@a11d/lit": "x",
 		"tslib": "x",
 		"@3mo/theme": "x",
+		"@3mo/flex": "x",
 		"@3mo/popover": "x",
-		"@3mo/list": "x",
+		"@3mo/icon-button": "x",
+		"@3mo/menu": "x",
+		"@3mo/resize-observer": "x",
 		"@3mo/disabled-property": "x",
 		"@3mo/slot-controller": "x"
 	}
