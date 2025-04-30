@@ -1,6 +1,5 @@
 import { component, eventListener, queryConnectedInstances } from '@a11d/lit'
 import { Menu } from '@3mo/menu'
-import { shift } from '@floating-ui/core'
 
 /** @element mo-context-menu */
 @component('mo-context-menu')
@@ -13,14 +12,6 @@ export class ContextMenu extends Menu {
 
 	close() {
 		this.setOpen(false)
-	}
-
-	protected override initialized(): void {
-		super.initialized()
-		this.positionMiddleware = [shift({
-			crossAxis: true,
-			padding: 4,
-		})]
 	}
 
 	override readonly manual = true
