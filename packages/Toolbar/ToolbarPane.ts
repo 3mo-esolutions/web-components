@@ -1,6 +1,7 @@
 import { Component, component, css, html, event } from '@a11d/lit'
 import { observeResize } from '@3mo/resize-observer'
 import { SlotController } from '@3mo/slot-controller'
+import '@3mo/flex'
 
 /**
  * @fires fillerResize

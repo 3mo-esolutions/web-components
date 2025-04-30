@@ -1,7 +1,7 @@
 import { Component, component, css, html, property, style } from '@a11d/lit'
 import { type MaterialIcon } from '@3mo/icon'
 import { ToolbarController } from './index.js'
-
+import '@3mo/flex'
 import '@3mo/popover'
 import '@3mo/menu'
 import '@3mo/icon-button'
@@ -14,7 +14,7 @@ import '@3mo/icon-button'
  * @attr collapsed
  *
  * @csspart pane - The toolbar pane
- * @csspart overflowIcon - The overflow icon
+ * @csspart overflow-icon - The overflow icon
  *
  * @slot - The default slot containing toolbar pane items
  */
@@ -43,7 +43,7 @@ export class Toolbar extends Component {
 					alignment=${(this.collapsed || this.overflowPosition === 'start') ? 'start' : 'end'}
 					${style({ flex: '0 0', justifyContent: 'flex-end', order: this.overflowPosition === 'start' ? -1 : 'unset' })}
 				>
-					${this.defaultOverflowOpenerTemplate}
+					${this.anchorTemplate}
 					${this.menuTemplate}
 				</mo-popover-container>
 			</mo-flex>
@@ -58,9 +58,9 @@ export class Toolbar extends Component {
 		`
 	}
 
-	protected get defaultOverflowOpenerTemplate() {
+	protected get anchorTemplate() {
 		return html`
-			<mo-icon-button part='overflowIcon' icon=${this.overflowIcon}
+			<mo-icon-button part='overflow-icon' icon=${this.overflowIcon}
 				?disabled=${!this.toolbarController.slotController?.hasAssignedContent(this.toolbarController.overflowContentSlotName)}
 			></mo-icon-button>
 		`

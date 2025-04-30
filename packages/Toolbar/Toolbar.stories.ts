@@ -49,7 +49,7 @@ export const Default: StoryObj = {
 	`
 }
 
-export const Custom: StoryObj = {
+export const WithController: StoryObj = {
 	args: { itemCount: 4 },
 	render: ({ itemCount }) => {
 		return html`
