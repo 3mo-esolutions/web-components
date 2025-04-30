@@ -127,11 +127,6 @@ export class Popover extends Component {
 		}
 	}
 
-	override focus(options?: FocusOptions | undefined) {
-		super.focus(options)
-		this.querySelector<HTMLElement>('[autofocus]')?.focus?.()
-	}
-
 	static override get styles() {
 		return css`
 			:host {

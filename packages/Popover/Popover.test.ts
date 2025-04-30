@@ -1,4 +1,4 @@
-import { Component, component, html, property, query, queryAll } from '@a11d/lit'
+import { Component, component, html, property, query } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { type Popover } from './index.js'
 
@@ -13,23 +13,6 @@ describe('Popover', () => {
 	}
 
 	describe('open focus and state management', () => {
-		@component('test-focus-popover')
-		class FocusPopover extends Component {
-			@query('mo-popover') readonly popoverElement!: Popover
-			@queryAll('input') readonly inputs!: Array<HTMLInputElement>
-
-			@property({ type: Boolean }) autoFocus = false
-
-			protected override get template() {
-				return html`
-					<mo-popover .anchor=${this}>
-						<input>
-						<input ?autoFocus=${this.autoFocus}>
-					</mo-popover>
-				`
-			}
-		}
-
 		@component('test-custom-target-popover')
 		class CustomTargetPopover extends Component {
 			@query('mo-popover') readonly popoverElement!: Popover
@@ -48,7 +31,6 @@ describe('Popover', () => {
 		}
 
 		const generic = new ComponentTestFixture(() => new GenericPopover)
-		const autoFocus = new ComponentTestFixture(() => new FocusPopover)
 		const customTarget = new ComponentTestFixture(() => new CustomTargetPopover)
 
 		it('should ignore "display: flex" when not opened', () => {
@@ -118,21 +100,6 @@ describe('Popover', () => {
 			await generic.updateComplete
 
 			expect(generic.component.focus).toHaveBeenCalled()
-		})
-
-		it('should focus the first element with "autofocus" when available', async () => {
-			spyOn(autoFocus.component.inputs[0]!, 'focus')
-			spyOn(autoFocus.component.inputs[1]!, 'focus')
-
-			autoFocus.component.autoFocus = true
-			await autoFocus.updateComplete
-
-			autoFocus.component.popoverElement.open = true
-			await autoFocus.updateComplete
-			await new Promise(requestAnimationFrame)
-
-			expect(autoFocus.component.inputs[0]!.focus).not.toHaveBeenCalled()
-			expect(autoFocus.component.inputs[1]!.focus).toHaveBeenCalledOnceWith()
 		})
 	})
 
