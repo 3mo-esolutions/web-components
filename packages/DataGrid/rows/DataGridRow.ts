@@ -154,16 +154,16 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				& > * {
 					grid-column: data / -1;
 					box-sizing: border-box;
-					margin-inline: var(--mo-data-grid-cell-padding);
-					margin-block: 16px;
+					padding-inline: var(--mo-data-grid-cell-padding);
+					padding-block: 1rem;
 
 					&[mo-data-grid-row] {
 						grid-column: -1 / 1;
-						margin: 0;
+						padding: 0;
 					}
 
 					&[instanceof*=mo-data-grid] {
-						margin-inline: 0;
+						padding-inline: 0;
 						--mo-data-grid-header-background: color-mix(in srgb, var(--mo-color-foreground), transparent 96%);
 						--mo-data-grid-alternating-background: transparent;
 						--mo-data-grid-alternating-background-transparency: 0;

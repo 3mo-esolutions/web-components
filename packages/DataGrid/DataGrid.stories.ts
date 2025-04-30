@@ -194,7 +194,7 @@ export const WithDetails: StoryObj = {
 			?detailsOnClick=${detailsOnClick}
 			.hasDataDetail=${(p: Person) => p.age >= 18}
 			.getRowDetailsTemplate=${(p: Person) => html`
-				<div style='margin: 10px; opacity: 0.5'>${p.name} details</div>
+				<div style='opacity: 0.5'>${p.name} details</div>
 			`}
 		>
 			${columnsTemplate}
