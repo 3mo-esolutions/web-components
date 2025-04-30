@@ -12,7 +12,7 @@ customElements.tags = customElements.tags
 
 		for (const p of [...tag.attributes ?? [], tag.properties ?? []]) {
 			if ('type' in p && p.type?.startsWith('(object extends TData ? string : TData extends readonly any[] ? Extract<keyof TData')) {
-				p.type = 'KeyPathOf<TData>'
+				p.type = 'KeyPath.Of<TData>'
 			}
 		}
 

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/web-components'
-import { Component, css, html, property, query } from '@a11d/lit'
+import { Component, css, html, query } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 
@@ -10,7 +10,7 @@ export default {
 	decorators: [story => html`<div style='height: 400px'>${story()}</div>`]
 } as Meta
 
-export const WithContainer: StoryObj = {
+export const Menu: StoryObj = {
 	render: () => {
 		return html`
 			<mo-popover-container placement='block-end' alignment='end'>
@@ -23,23 +23,10 @@ export const WithContainer: StoryObj = {
 	}
 }
 
-export const WithContainerFixed: StoryObj = {
-	render: () => {
-		return html`
-			<mo-popover-container placement='block-end' alignment='end' fixed>
-				<mo-button type='outlined'>Click to open the menu</mo-button>
-				<mo-menu slot='popover'>
-					${items}
-				</mo-menu>
-			</mo-popover-container>
-		`
-	}
-}
-
 export const WithCustomTarget: StoryObj = {
 	render: () => {
 		return html`
-			<mo-popover-container placement='block-end' alignment='end' fixed>
+			<mo-popover-container placement='block-end' alignment='end'>
 				<mo-button type='outlined'>
 					Click on the icon-button to open the menu
 					<mo-icon-button id='icon-button' slot='end' icon='more_vert'></mo-icon-button>
@@ -52,15 +39,9 @@ export const WithCustomTarget: StoryObj = {
 	}
 }
 
-export const Absolute: StoryObj = {
+export const WithCustomContainer: StoryObj = {
 	render: () => html`
 		<story-button-with-menu></story-button-with-menu>
-	`
-}
-
-export const Fixed: StoryObj = {
-	render: () => html`
-		<story-button-with-menu fixed></story-button-with-menu>
 	`
 }
 
@@ -96,8 +77,6 @@ const items = html`
 `
 
 class ButtonWithMenuStory extends Component {
-	@property({ type: Boolean }) fixed = false
-
 	static override get styles() {
 		return css`
 			:host {
@@ -119,7 +98,7 @@ class ButtonWithMenuStory extends Component {
 	protected override get template() {
 		return html`
 			<mo-button id='button' type='outlined'>Click to open the menu</mo-button>
-			<mo-menu .anchor=${this} target='button' ?fixed=${this.fixed} placement='inline-end' alignment='start'>${items}</mo-menu>
+			<mo-menu .anchor=${this} target='button' placement='inline-end' alignment='start'>${items}</mo-menu>
 		`
 	}
 }

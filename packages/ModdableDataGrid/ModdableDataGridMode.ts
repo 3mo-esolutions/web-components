@@ -1,7 +1,7 @@
 import { type FetchableDataGridParametersType } from '@3mo/fetchable-data-grid'
 import { NotificationComponent } from '@a11d/lit-application'
 import { equals } from '@a11d/equals'
-import { DataGridColumn, DataGridSorting, DataGridPagination, type DataGridColumnSticky } from '@3mo/data-grid'
+import { type DataGridColumn, type DataGridSorting, type DataGridPagination, type DataGridColumnSticky } from '@3mo/data-grid'
 import { Localizer } from '@3mo/localization'
 import { type ModdableDataGrid } from './ModdableDataGrid.js'
 import type * as CSS from 'csstype'
@@ -26,7 +26,7 @@ export class ModdableDataGridModeColumn<T> {
 		})
 	}
 
-	dataSelector!: KeyPathOf<T>
+	dataSelector!: KeyPath.Of<T>
 	width?: CSS.DataType.TrackBreadth<(string & {}) | 0>
 	hidden?: boolean
 	sticky?: DataGridColumnSticky
@@ -81,7 +81,7 @@ export class ModdableDataGridMode<TData, TDataFetcherParameters extends Fetchabl
 	constructor(init?: Partial<ModdableDataGridMode<TData, TDataFetcherParameters>>) {
 		Object.assign(this, structuredClone(init))
 		if (this.columns) {
-			this.columns = init?.columns?.map(c => new ModdableDataGridModeColumn(c))
+			this.columns = init?.columns?.map(c => new ModdableDataGridModeColumn<TData>(c))
 		}
 		if (this.parameters) {
 			for (const [key, value] of Object.entries(this.parameters)) {

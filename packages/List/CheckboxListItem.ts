@@ -1,6 +1,5 @@
 import { component, eventListener, html, property } from '@a11d/lit'
 import { SelectionListItemWithControl } from './SelectionListItemWithControl.js'
-import '@3mo/checkbox'
 import { Checkbox } from '@3mo/checkbox'
 
 /**

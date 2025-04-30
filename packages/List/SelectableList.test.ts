@@ -1,13 +1,13 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { html } from '@a11d/lit'
-import { type SelectableList, SelectableListSelectionMode, type SelectableListItem } from './index.js'
+import { type SelectableList, SelectableListSelectability, type SelectableListItem } from './index.js'
 
 class SelectableListTestFixture extends ComponentTestFixture<SelectableList> {
 	dispatchedSelectedIndices?: Array<number>
 
-	constructor({ selectionMode }: { selectionMode: SelectableListSelectionMode }) {
+	constructor({ selectability }: { selectability: SelectableListSelectability }) {
 		super(html`
-			<mo-selectable-list selectionMode=${selectionMode}
+			<mo-selectable-list selectability=${selectability}
 				@change=${(e: CustomEvent<Array<number>>) => this.dispatchedSelectedIndices = e.detail}
 			>
 				<mo-selectable-list-item>Item 1</mo-selectable-list-item>
@@ -29,7 +29,7 @@ class SelectableListTestFixture extends ComponentTestFixture<SelectableList> {
 
 describe('List', () => {
 	describe('single selection', () => {
-		const fixture = new SelectableListTestFixture({ selectionMode: SelectableListSelectionMode.Single })
+		const fixture = new SelectableListTestFixture({ selectability: SelectableListSelectability.Single })
 
 		it('should select only one item', async () => {
 			for (const item of fixture.items) {
@@ -54,7 +54,7 @@ describe('List', () => {
 	})
 
 	describe('multiple selection', () => {
-		const fixture = new SelectableListTestFixture({ selectionMode: SelectableListSelectionMode.Multiple })
+		const fixture = new SelectableListTestFixture({ selectability: SelectableListSelectability.Multiple })
 
 		it('should select multiple items', async () => {
 			for (const item of fixture.items) {

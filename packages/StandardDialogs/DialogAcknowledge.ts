@@ -1,8 +1,9 @@
 import { type HTMLTemplateResult, component, html, ifDefined } from '@a11d/lit'
 import { DialogComponent } from '@a11d/lit-application'
-import { type BaseDialogParameters, getContentTemplate } from '@3mo/dialog'
+import { getContentTemplate } from '@3mo/dialog'
+import { type StandardDialogParameters } from './StandardDialogParameters.js'
 
-interface Parameters extends BaseDialogParameters<DialogAcknowledge> {
+interface Parameters extends StandardDialogParameters<DialogAcknowledge> {
 	readonly secondaryButtonText?: string
 }
 

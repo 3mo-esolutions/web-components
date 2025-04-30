@@ -15,7 +15,6 @@ import { type Popover, PopoverAlignment, PopoverPlacement } from './index.js'
 export class PopoverContainer extends Component {
 	static override shadowRootOptions: ShadowRootInit = { ...Component.shadowRootOptions, delegatesFocus: false }
 
-	@property({ type: Boolean, reflect: true, updated(this: PopoverContainer) { this.assignSlottedPopovers() } }) fixed = false
 	@property({ reflect: true, updated(this: PopoverContainer) { this.assignSlottedPopovers() } }) placement = PopoverPlacement.BlockEnd
 	@property({ reflect: true, updated(this: PopoverContainer) { this.assignSlottedPopovers() } }) alignment = PopoverAlignment.Start
 
@@ -31,7 +30,6 @@ export class PopoverContainer extends Component {
 
 	assignSlottedPopovers() {
 		this.popoverElement.anchor = this.anchorElement
-		this.popoverElement.fixed = this.fixed
 		this.popoverElement.placement = this.placement
 		this.popoverElement.alignment = this.alignment
 	}

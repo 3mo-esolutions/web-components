@@ -127,7 +127,6 @@ export class ListFocusController extends Controller {
 
 	private focusTraversal(index: number, direction: 'forward' | 'backward') {
 		let breakSafe = 0
-		// eslint-disable-next-line no-constant-condition
 		while (true) {
 			if (breakSafe >= this.itemsLength) {
 				break

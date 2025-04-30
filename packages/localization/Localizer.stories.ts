@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/web-components'
 import { bind, component, Component, html, state } from '@a11d/lit'
 import p from './package.json'
-import './index.js'
 import { Localizer, type LanguageCode } from './index.js'
 
 export default { title: 'Localization', package: p } as Meta

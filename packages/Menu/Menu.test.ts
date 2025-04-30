@@ -6,18 +6,19 @@ import { type MenuItem } from './MenuItem.js'
 describe('Menu', () => {
 	describe('auto-closing', () => {
 		const fixture = new ComponentTestFixture<Menu>(html`
-		<mo-menu>
-			<mo-menu-item>Item 1</mo-menu-item>
-			<mo-list-item>Item 2</mo-list-item>
-			<mo-nested-menu-item>Item 3
-				<mo-menu slot='submenu'>
-					<mo-menu-item>Item 3.1</mo-menu-item>
-					<mo-list-item>Item 3.2</mo-list-item>
-				</mo-menu>
-			</mo-nested-menu-item>
-			<mo-nested-menu-item>Item 4</mo-nested-menu-item>
-		</mo-menu>
-	`)
+			<mo-menu>
+				<mo-menu-item>Item 1</mo-menu-item>
+				<mo-list-item>Item 2</mo-list-item>
+				<mo-nested-menu-item>
+					Item 3
+					<mo-menu slot='submenu'>
+						<mo-menu-item>Item 3.1</mo-menu-item>
+						<mo-list-item>Item 3.2</mo-list-item>
+					</mo-menu>
+				</mo-nested-menu-item>
+				<mo-nested-menu-item>Item 4</mo-nested-menu-item>
+			</mo-menu>
+		`)
 
 		it('should close when a menu item is clicked', () => {
 			fixture.component.open = true

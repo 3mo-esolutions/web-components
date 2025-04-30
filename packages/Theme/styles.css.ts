@@ -1,5 +1,6 @@
 import { css } from '@a11d/lit'
 import { RootCssInjector } from '@a11d/root-css-injector'
+import { colorContrast } from './colorContrast.js'
 
 RootCssInjector.inject(css`
 	:root[data-theme=light] {
@@ -49,12 +50,7 @@ RootCssInjector.inject(css`
 		--mo-color-red: rgb(221, 61, 49);
 		--mo-color-blue: rgb(0, 119, 200);
 		--mo-color-accent-transparent: color-mix(in srgb, var(--mo-color-accent), transparent 75%);
-		--mo-color-on-accent: color(
-			from var(--mo-color-accent) srgb
-			calc(1 - min(1, max(0, (r * 299 + g * 587 + b * 114) / 1000 * 255 - 128)))
-			calc(1 - min(1, max(0, (r * 299 + g * 587 + b * 114) / 1000 * 255 - 128)))
-			calc(1 - min(1, max(0, (r * 299 + g * 587 + b * 114) / 1000 * 255 - 128)))
-		);
+		--mo-color-on-accent: ${colorContrast('var(--mo-color-accent)')};
 
 		/* Override Material Web Components variables */
 		--mdc-icon-font: Material Icons Sharp !important;

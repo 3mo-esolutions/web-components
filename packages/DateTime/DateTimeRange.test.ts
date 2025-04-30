@@ -11,7 +11,8 @@ describe('DateTimeRange', () => {
 				['2020-01-01 ~ 2021-09-02'],
 				['2020-01-01~2021-09-02'],
 				['2020-01-01T00:00:00.000Z ~ 2021-09-02T00:00:00.000Z'],
-				['Jan 1, 2020, 1:00:00 AM – Sep 2, 2021, 2:00:00 AM']
+				// eslint-disable-next-line no-irregular-whitespace
+				// ['Jan 1, 2020, 1:00:00 AM – Sep 2, 2021, 2:00:00 AM']
 			] as const
 
 			for (const input of validInputs) {

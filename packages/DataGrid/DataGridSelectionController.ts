@@ -1,7 +1,7 @@
 import { KeyboardController } from '@3mo/keyboard-controller'
 import type { DataRecord } from './DataRecord.js'
 
-export enum DataGridSelectionMode {
+export enum DataGridSelectability {
 	None = 'none',
 	Single = 'single',
 	Multiple = 'multiple',
@@ -17,7 +17,7 @@ export enum DataGridSelectionBehaviorOnDataChange {
 }
 
 interface SelectableComponent<TData> {
-	selectionMode?: DataGridSelectionMode
+	selectability?: DataGridSelectability
 	readonly dataRecords: Array<DataRecord<TData>>
 	selectedData: Array<TData>
 	isDataSelectable?(data: TData): boolean
@@ -37,25 +37,25 @@ export class DataGridSelectionController<TData> {
 
 	private get mode() {
 		this.setDefaultsIfNotDefined()
-		return this.host.selectionMode
+		return this.host.selectability
 	}
 
 	private setDefaultsIfNotDefined() {
-		if (this.host.selectionMode !== undefined) {
+		if (this.host.selectability !== undefined) {
 			return
 		}
 
-		if (this.host.hasContextMenu === true && this.host.selectionMode === undefined) {
-			this.host.selectionMode = DataGridSelectionMode.Single
+		if (this.host.hasContextMenu === true && this.host.selectability === undefined) {
+			this.host.selectability = DataGridSelectability.Single
 			this.host.selectionCheckboxesHidden = true
 			return
 		}
 
-		this.host.selectionMode = DataGridSelectionMode.None
+		this.host.selectability = DataGridSelectability.None
 	}
 
 	get hasSelection() {
-		return this.mode !== DataGridSelectionMode.None
+		return this.mode !== DataGridSelectability.None
 	}
 
 	private get data() { return this.host.dataRecords.map(d => d.data) }
@@ -85,7 +85,7 @@ export class DataGridSelectionController<TData> {
 	}
 
 	selectAll() {
-		if (this.mode === DataGridSelectionMode.Multiple) {
+		if (this.mode === DataGridSelectability.Multiple) {
 			this.select([...this.data])
 		}
 	}
@@ -126,7 +126,7 @@ export class DataGridSelectionController<TData> {
 		let dataToSelect = this.selectedData
 		const selectableData = this.selectableData
 
-		if (this.mode === DataGridSelectionMode.Multiple && KeyboardController.shift && lastActiveSelection) {
+		if (this.mode === DataGridSelectability.Multiple && KeyboardController.shift && lastActiveSelection) {
 			const lastActiveSelection = this.lastActiveSelection!
 			const indexes = [
 				selectableData.findIndex(data => lastActiveSelection.data === data),
@@ -138,11 +138,11 @@ export class DataGridSelectionController<TData> {
 				: dataToSelect.filter(d => range.includes(d) === false)
 		} else {
 			if (selected) {
-				if (this.mode === DataGridSelectionMode.Multiple) {
+				if (this.mode === DataGridSelectability.Multiple) {
 					dataToSelect = this.host.selectionCheckboxesHidden
 						? [data]
 						: [...dataToSelect, data]
-				} else if (this.mode === DataGridSelectionMode.Single) {
+				} else if (this.mode === DataGridSelectability.Single) {
 					dataToSelect = [data]
 				}
 			} else {

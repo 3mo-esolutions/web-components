@@ -2,7 +2,6 @@ import { css, html, property, Component, component } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
 import { DirectionsByLanguage } from '@3mo/localization'
 import { ThemeController } from '@3mo/theme'
-import '@3mo/theme'
 
 /**
  * @element mo-field

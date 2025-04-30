@@ -1,16 +1,15 @@
 {
-	"name": "@3mo/section",
-	"version": "0.2.0",
-	"description": "A section web-component based on Material Design.",
+	"name": "@3mo/data-grid-card-integration",
+	"version": "0.0.3",
+	"description": "Integration of @3mo/data-grid and @3mo/card packages.",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/3mo-esolutions/web-components"
 	},
 	"keywords": [
-		"lit",
-		"web-component",
-		"material",
-		"section"
+		"data-grid",
+		"card",
+		"integration"
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
@@ -23,10 +22,8 @@
 		"dist"
 	],
 	"dependencies": {
-		"@a11d/lit": "x",
 		"tslib": "x",
-		"@3mo/slot-controller": "x",
-		"@3mo/grid": "x",
-		"@3mo/heading": "x"
+		"@3mo/card": "x",
+		"@3mo/data-grid": "x"
 	}
 }

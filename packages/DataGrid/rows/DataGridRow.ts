@@ -4,7 +4,7 @@ import { DirectionsByLanguage } from '@3mo/localization'
 import { popover } from '@3mo/popover'
 import { ContextMenu } from '@3mo/context-menu'
 import { type DataGridColumn } from '../DataGridColumn.js'
-import { type DataGridCell, DataGridPrimaryContextMenuItem, DataGridSelectionMode, type DataRecord } from '../index.js'
+import { type DataGridCell, DataGridPrimaryContextMenuItem, DataGridSelectability, type DataRecord } from '../index.js'
 
 export abstract class DataGridRow<TData, TDetailsElement extends Element | undefined = undefined> extends Component {
 	@queryAll('mo-data-grid-cell') readonly cells!: Array<DataGridCell<any, TData, TDetailsElement>>
@@ -154,16 +154,16 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				& > * {
 					grid-column: data / -1;
 					box-sizing: border-box;
-					margin-inline: var(--mo-data-grid-cell-padding);
-					margin-block: 16px;
+					padding-inline: var(--mo-data-grid-cell-padding);
+					padding-block: 1rem;
 
 					&[mo-data-grid-row] {
 						grid-column: -1 / 1;
-						margin: 0;
+						padding: 0;
 					}
 
 					&[instanceof*=mo-data-grid] {
-						margin-inline: 0;
+						padding-inline: 0;
 						--mo-data-grid-header-background: color-mix(in srgb, var(--mo-color-foreground), transparent 96%);
 						--mo-data-grid-alternating-background: transparent;
 						--mo-data-grid-alternating-background-transparency: 0;
@@ -240,12 +240,12 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		`
 	}
 
-	protected getCellTemplate(column: DataGridColumn<TData, KeyPathValueOf<TData, KeyPathOf<TData>>>) {
+	protected getCellTemplate(column: DataGridColumn<TData, KeyPath.ValueOf<TData, KeyPath.Of<TData>>>) {
 		return column.hidden ? html.nothing : html`
 			<mo-data-grid-cell
 				.row=${this as any}
 				.column=${column}
-				.value=${getValueByKeyPath(this.data, column.dataSelector as any)}
+				.value=${KeyPath.get(this.data, column.dataSelector as any)}
 				@keydown=${this.delegateToCell('handleKeyDown')}
 				@dblclick=${this.delegateToCell('handleDoubleClick')}
 			></mo-data-grid-cell>
@@ -336,12 +336,12 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		this.toggleAttribute('data-context-menu-open', open)
 
 		if (this.dataRecord.isSelected === false) {
-			this.dataGrid.select(this.dataGrid.selectionMode !== DataGridSelectionMode.None ? [this.data] : [])
+			this.dataGrid.select(this.dataGrid.selectability !== DataGridSelectability.None ? [this.data] : [])
 		}
 	}
 
 	private get contextMenuData() {
-		return this.dataGrid.selectionMode === DataGridSelectionMode.None || this.dataGrid.selectedData.length === 0
+		return this.dataGrid.selectability === DataGridSelectability.None || this.dataGrid.selectedData.length === 0
 			? [this.data]
 			: this.dataGrid.selectedData
 	}

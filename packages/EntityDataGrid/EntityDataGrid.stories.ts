@@ -36,7 +36,7 @@ export const EntityDataGrid: StoryObj = {
 		<p>
 			In this demo the people below 7 years old are not editable and the people below 18 years old are not deletable.
 		</p>
-		<mo-entity-data-grid style='height: 500px' selectionMode='multiple'
+		<mo-entity-data-grid style='height: 500px' selectability='multiple'
 			.fetch=${fetch}
 			.parameters=${parameters}
 			.create=${() => alert('Create')}

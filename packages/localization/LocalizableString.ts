@@ -10,10 +10,10 @@ type ExtractKey<TProperty extends string> =
 
 type ExtractType<T extends string> =
 	T extends `${string}:${infer Type}:${string}`
-	? GetMatchedType<Type>
-	: T extends `${string}:${infer Type}`
-	? GetMatchedType<Type>
-	: GetMatchedType<''>
+		? GetMatchedType<Type>
+		: T extends `${string}:${infer Type}`
+			? GetMatchedType<Type>
+			: GetMatchedType<''>
 
 type GetMatchedType<T extends string> = T extends keyof LocalizationFormatterTypeMap
 	? LocalizationFormatterTypeMap[T]

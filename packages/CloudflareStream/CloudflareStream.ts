@@ -61,12 +61,14 @@ export class CloudflareStream extends Component {
 		this.stream = Stream(this.iframeElement)
 	}
 
+	/* eslint-disable @html-eslint/use-baseline */
+
 	protected override get template() {
 		return html`
 			<iframe src=${ifDefined(this.source)}
+				allowfullscreen
 				?hidden=${!this.source}
 				allow='accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;'
-				allowfullscreen
 			></iframe>
 		`
 	}

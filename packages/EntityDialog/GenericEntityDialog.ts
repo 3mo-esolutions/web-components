@@ -1,13 +1,9 @@
 import { component, html, state, ifDefined, type HTMLTemplateResult } from '@a11d/lit'
-import { type BaseDialogParameters, getContentTemplate } from '@3mo/dialog'
+import { getContentTemplate } from '@3mo/dialog'
+import { type GenericFetchableDialogParameters } from '@3mo/fetchable-dialog'
 import { EntityDialogComponent } from './EntityDialogComponent.js'
-import { type EntityId } from '@3mo/fetchable-dialog'
 
-interface GenericEntityDialogParameters<T extends object> extends BaseDialogParameters<GenericEntityDialog<T>> {
-	readonly secondaryButtonText?: string
-	readonly id?: EntityId
-	readonly entity: T
-	readonly fetch: EntityDialogComponent<T, GenericEntityDialogParameters<T>, T>['fetch']
+interface GenericEntityDialogParameters<T extends object> extends GenericFetchableDialogParameters<T, GenericEntityDialog<T>> {
 	readonly save: EntityDialogComponent<T, GenericEntityDialogParameters<T>, T>['save']
 	readonly delete?: EntityDialogComponent<T, GenericEntityDialogParameters<T>, T>['delete']
 }
@@ -23,7 +19,7 @@ export class GenericEntityDialog<T extends object> extends EntityDialogComponent
 		const { heading, primaryButtonText, secondaryButtonText, blocking, size, content } = this.parameters
 		return html`
 			<mo-entity-dialog
-				heading=${heading}
+				heading=${ifDefined(heading)}
 				primaryButtonText=${ifDefined(primaryButtonText)}
 				secondaryButtonText=${ifDefined(secondaryButtonText)}
 				?blocking=${blocking}

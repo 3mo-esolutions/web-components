@@ -39,3 +39,18 @@ export const Section: StoryObj = {
 		</mo-section>
 	`
 }
+
+export const WithCustomHeading: StoryObj = {
+	render: ({ heading, content }) => html`
+		<style>
+			mo-section::part(header) {
+				border-block-end: 1px solid var(--mo-color-gray-transparent);
+			}
+		</style>
+		<mo-section heading=${heading}>
+			<mo-icon-button slot='action' icon='share'></mo-icon-button>
+			<mo-icon-button slot='action' icon='more_vert'></mo-icon-button>
+			${content}
+		</mo-section>
+	`
+}

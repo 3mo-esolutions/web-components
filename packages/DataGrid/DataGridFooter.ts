@@ -217,7 +217,7 @@ export class DataGridFooter<TData> extends Component {
 		const to = from + this.dataGrid.renderDataRecords.length - 1
 		const rangeText = `${(Math.min(from, to)).format()}-${to.format()}`
 		return html`
-			<mo-popover-container id='page-info' placement='block-start' fixed>
+			<mo-popover-container id='page-info' placement='block-start'>
 				<mo-flex alignItems='center' gap='6px' direction='horizontal' style='cursor: pointer'>
 					<mo-flex direction='horizontal' alignItems='center'>
 						${join([

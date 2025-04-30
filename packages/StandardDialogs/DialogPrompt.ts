@@ -2,7 +2,8 @@ import { state, component, html, ifDefined, query, style, type HTMLTemplateResul
 import { type FieldText, type FieldTextArea } from '@3mo/text-fields'
 import { DialogComponent } from '@a11d/lit-application'
 import { Localizer } from '@3mo/localization'
-import { type BaseDialogParameters, getContentTemplate } from '@3mo/dialog'
+import { getContentTemplate } from '@3mo/dialog'
+import { type StandardDialogParameters } from './StandardDialogParameters.js'
 
 Localizer.dictionaries.add('de', {
 	'OK': 'OK',
@@ -18,7 +19,7 @@ Localizer.dictionaries.add('fa', {
 	'Input': 'ورودی'
 })
 
-type Parameters = BaseDialogParameters<DialogPrompt>
+type Parameters = StandardDialogParameters<DialogPrompt>
 	& { readonly inputLabel?: string, readonly value?: string }
 	& (
 		| { readonly isTextArea?: false, readonly rows?: never }

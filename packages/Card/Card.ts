@@ -140,7 +140,7 @@ export class Card extends Component {
 		const hasMedia = !!this.image || this.slotController.hasAssignedElements('media')
 		return !isServer && !hasMedia ? html.nothing : html`
 			<slot part='media' name='media'>
-				${!this.image ? html.nothing : html`<img part='media' src=${this.image} />`}
+				${!this.image ? html.nothing : html`<img part='media' src=${this.image}>`}
 			</slot>
 		`
 	}

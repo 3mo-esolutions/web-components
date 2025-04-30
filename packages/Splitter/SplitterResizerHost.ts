@@ -8,7 +8,7 @@ import { SplitterResizer } from './index.js'
  *
  * @attr direction
  * @attr resizing
- * @attr locked
+ * @attr collapsed
  *
  * @event resizeStart
  * @event resizeStop
@@ -20,7 +20,7 @@ export class SplitterResizerHost extends Component {
 
 	@property({ reflect: true, updated(this: SplitterResizerHost) { !this.resizerElement ? void 0 : this.resizerElement.hostDirection = this.direction } }) direction?: Flex['direction']
 	@property({ type: Boolean, reflect: true }) resizing = false
-	@property({ type: Boolean, reflect: true }) locked = false
+	@property({ type: Boolean, reflect: true }) collapsed = false
 
 	get resizerElement() {
 		return this.slotController.getAssignedElements('')
@@ -31,18 +31,24 @@ export class SplitterResizerHost extends Component {
 
 	@eventListener('mousedown')
 	@eventListener('touchstart')
-	protected startResize() {
+	protected startResize(e: PointerEvent) {
 		this.resizing = true
 		!this.resizerElement ? void 0 : this.resizerElement.hostResizing = true
 		this.resizeStart.dispatch()
+		if (e.pointerId) {
+			this.setPointerCapture(e.pointerId)
+		}
 	}
 
 	@eventListener({ target: window, type: 'mouseup' })
 	@eventListener({ target: window, type: 'touchend' })
-	protected endResize() {
+	protected endResize(e: PointerEvent) {
 		this.resizing = false
 		!this.resizerElement ? void 0 : this.resizerElement.hostResizing = false
 		this.resizeStop.dispatch()
+		if (e.pointerId) {
+			this.releasePointerCapture(e.pointerId)
+		}
 	}
 
 	@eventListener('pointerenter')
@@ -68,7 +74,7 @@ export class SplitterResizerHost extends Component {
 				transition: 250ms;
 			}
 
-			:host([locked]) {
+			:host([collapsed]) {
 				pointer-events: none;
 				visibility: collapse;
 			}

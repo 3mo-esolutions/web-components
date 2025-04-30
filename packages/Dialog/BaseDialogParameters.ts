@@ -5,7 +5,7 @@ import { type DialogComponent } from '@a11d/lit-application'
 export type DialogContent<Dialog extends DialogComponent<any, any>> = undefined | string | HTMLTemplateResult | ((this: Dialog) => string | HTMLTemplateResult)
 
 export interface BaseDialogParameters<Dialog extends DialogComponent<any, any>> {
-	readonly heading: string
+	readonly heading?: string
 	readonly content?: DialogContent<Dialog>
 	readonly primaryButtonText?: string
 	readonly blocking?: boolean

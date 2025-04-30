@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/web-components'
 import { html, ifDefined, property } from '@a11d/lit'
 import p from './package.json'
-import './index.js'
 import { type Language as LanguageBase, LanguageField as LanguageFieldBase, type LanguageFieldTemplateParameter } from './index.js'
 
 export default {

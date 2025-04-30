@@ -1,3 +1,4 @@
+/* eslint-disable @html-eslint/use-baseline */
 import { component, html, event, ifDefined, property, css, Component, query } from '@a11d/lit'
 import { Color } from '@3mo/color'
 
@@ -60,6 +61,7 @@ export class ColorPicker extends Component {
 		`
 	}
 
+	/* eslint-disable @html-eslint/use-baseline */
 	private get datalistTemplate() {
 		return !this.presetColors?.length ? html.nothing : html`
 			<datalist id='presetColors'>

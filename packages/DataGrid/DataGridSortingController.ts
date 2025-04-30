@@ -6,7 +6,7 @@ export enum DataGridSortingStrategy {
 }
 
 export type DataGridSortingDefinition<TData> = {
-	readonly selector: KeyPathOf<TData>
+	readonly selector: KeyPath.Of<TData>
 	readonly strategy: DataGridSortingStrategy
 }
 
@@ -52,7 +52,7 @@ export class DataGridSortingController<TData> {
 	 * @param selector - The key path of the data to sort by
 	 * @param strategy - The sorting strategy to use forcefully. If not provided, the strategy will be toggled between ascending, descending, and unsorted
 	 */
-	toggle(selector: KeyPathOf<TData>, strategy?: DataGridSortingStrategy) {
+	toggle(selector: KeyPath.Of<TData>, strategy?: DataGridSortingStrategy) {
 		const defaultSortingStrategy = DataGridSortingStrategy.Descending
 
 		const sortings = this.get()
@@ -112,8 +112,8 @@ export class DataGridSortingController<TData> {
 		return data.sort((a, b) => {
 			for (const definition of sorting) {
 				const { selector, strategy } = definition
-				const aValue = getValueByKeyPath(extractor(a), selector) ?? Infinity as any
-				const bValue = getValueByKeyPath(extractor(b), selector) ?? Infinity as any
+				const aValue = KeyPath.get(extractor(a), selector) ?? Infinity as any
+				const bValue = KeyPath.get(extractor(b), selector) ?? Infinity as any
 
 				if (aValue < bValue) {
 					return strategy === DataGridSortingStrategy.Ascending ? -1 : 1

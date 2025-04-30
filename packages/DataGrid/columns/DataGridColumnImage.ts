@@ -1,6 +1,5 @@
-import { component, html, property, style } from '@a11d/lit'
+import { component, html, ifDefined, property, style } from '@a11d/lit'
 import { DataGridColumnComponent } from './DataGridColumnComponent.js'
-import { tooltip } from '@3mo/tooltip'
 
 /**
  * @element mo-data-grid-column-image
@@ -9,7 +8,7 @@ import { tooltip } from '@3mo/tooltip'
  */
 @component('mo-data-grid-column-image')
 export class DataGridColumnImage<TData> extends DataGridColumnComponent<TData, string> {
-	@property() tooltipSelector?: KeyPathOf<TData> | ((data: TData) => string | undefined)
+	@property() tooltipSelector?: KeyPath.Of<TData> | ((data: TData) => string | undefined)
 
 	override nonSortable = true
 	override nonEditable = true
@@ -23,12 +22,13 @@ export class DataGridColumnImage<TData> extends DataGridColumnComponent<TData, s
 
 		return !value ? html.nothing : html`
 			<img
-				${tooltipText ? tooltip(tooltipText) : html.nothing}
+				title=${ifDefined(tooltipText)}
+				alt=${ifDefined(tooltipText)}
 				${style({ verticalAlign: 'middle' })}
 				src=${value}
 				onload='this.hidden = false'
 				onerror='this.hidden = true'
-			/>
+			>
 		`
 	}
 
@@ -44,7 +44,7 @@ export class DataGridColumnImage<TData> extends DataGridColumnComponent<TData, s
 			? undefined
 			: typeof this.tooltipSelector === 'function'
 				? this.tooltipSelector(data)
-				: getValueByKeyPath(data, this.tooltipSelector) as string | undefined
+				: KeyPath.get(data, this.tooltipSelector) as string | undefined
 	}
 }
 

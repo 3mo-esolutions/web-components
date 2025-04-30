@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import p from './package.json'
-import './index.js'
 import { EntityDialogComponent } from './index.js'
 import { type EntityId } from '../FetchableDialog/FetchableDialogComponent.js'
 

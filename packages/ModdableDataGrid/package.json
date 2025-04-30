@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/moddable-data-grid",
-	"version": "0.2.2",
+	"version": "0.3.0",
 	"description": "A moddable variant of @3mo/fetchable-data-grid",
 	"repository": {
 		"type": "git",
@@ -29,12 +29,13 @@
 		"tslib": "x",
 		"@a11d/lit": "x",
 		"@a11d/lit-application": "x",
+		"@a11d/key-path": "2.x",
 		"@a11d/equals": "x",
 		"@3mo/flex": "x",
 		"@3mo/card": "x",
 		"@3mo/icon-button": "x",
 		"@3mo/scroller": "x",
-		"@3mo/popover": "x",
+		"@3mo/popover": ">=0.8.x",
 		"@3mo/chip": "x",
 		"@3mo/data-grid": "x",
 		"@3mo/fetchable-data-grid": "x",

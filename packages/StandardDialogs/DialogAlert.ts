@@ -1,9 +1,10 @@
 import { type HTMLTemplateResult, component, html, ifDefined } from '@a11d/lit'
 import { DialogComponent } from '@a11d/lit-application'
-import { type BaseDialogParameters, getContentTemplate as getContentTemplate } from '@3mo/dialog'
+import { getContentTemplate as getContentTemplate } from '@3mo/dialog'
+import { type StandardDialogParameters } from './StandardDialogParameters.js'
 
 @component('mo-dialog-alert')
-export class DialogAlert extends DialogComponent<BaseDialogParameters<DialogAlert>> {
+export class DialogAlert extends DialogComponent<StandardDialogParameters<DialogAlert>> {
 	protected override get template(): HTMLTemplateResult {
 		const { heading, primaryButtonText, blocking, size, content } = this.parameters
 		return html`

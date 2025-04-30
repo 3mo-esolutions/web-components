@@ -4,7 +4,7 @@ import { tooltip } from '@3mo/tooltip'
 import { DialogAlert, GenericDialog } from '@3mo/standard-dialogs'
 import { Localizer } from '@3mo/localization'
 import { type Menu } from '@3mo/menu'
-import { ModdableDataGridMode } from './ModdableDataGridMode.js'
+import { type ModdableDataGridMode } from './ModdableDataGridMode.js'
 import { DialogMode } from './DialogMode.js'
 import { type ModdableDataGrid } from './ModdableDataGrid.js'
 
@@ -120,13 +120,13 @@ export class ModdableDataGridChip<TData, TParameters extends FetchableDataGridPa
 
 	private get contextMenuTemplate() {
 		return html`
-			<mo-popover-container fixed>
+			<mo-popover-container>
 				<mo-icon-button icon='more_vert' dense
 					?data-no-border=${!this.dataGrid.hasUnsavedChanges}
 					${tooltip(t('More options'))}
 				></mo-icon-button>
 
-				<mo-menu slot='popover' fixed>
+				<mo-menu slot='popover'>
 					${!this.dataGrid.hasUnsavedChanges ? html.nothing : html`
 						<mo-menu-item icon='undo' @click=${() => this.discard()}>
 							${t('Discard changes')}

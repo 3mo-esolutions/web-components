@@ -78,7 +78,7 @@ export class PopoverPositionController extends Controller {
 		}
 
 		const response = await computePosition(anchor, this.host, {
-			strategy: this.host.fixed ? 'fixed' : 'absolute',
+			strategy: 'fixed',
 			placement: this.floatingUiPlacement,
 			middleware: [
 				flip(),

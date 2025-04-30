@@ -58,7 +58,7 @@ export class SplitButton extends Component {
 
 	protected get menuTemplate() {
 		return html`
-			<mo-menu fixed .anchor=${this} target='more'
+			<mo-menu .anchor=${this} target='more'
 				preventOpenOnAnchorEnter
 				?open=${this.open}
 				@openChange=${this.handleOpenChange}

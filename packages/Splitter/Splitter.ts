@@ -1,15 +1,13 @@
-import { component, html, property, Component, css, styleMap, queryAll, ifDefined, eventListener, style, state } from '@a11d/lit'
+import { component, html, property, Component, css, styleMap, queryAll, eventListener, style, state } from '@a11d/lit'
 import { type Flex } from '@3mo/flex'
 import { MutationController } from '@3mo/mutation-observer'
 import { SplitterItem, type SplitterResizerHost } from './index.js'
-import type * as CSS from 'csstype'
 import '@3mo/theme'
 
 /**
  * @element mo-splitter
  *
  * @attr direction
- * @attr gap
  * @attr resizerTemplate
  *
  * @slot
@@ -19,7 +17,6 @@ export class Splitter extends Component {
 	private static readonly itemSlotPrefix = 'item-'
 
 	@property() direction: Flex['direction'] = 'vertical'
-	@property() gap?: CSS.Property.Gap<string>
 	@property({ type: Object }) resizerTemplate = html`<mo-splitter-resizer-knob></mo-splitter-resizer-knob>`
 
 	@property({ type: Boolean, reflect: true }) protected resizing = false
@@ -48,6 +45,7 @@ export class Splitter extends Component {
 
 			:host([resizing]) {
 				user-select: none;
+				pointer-events: none;
 			}
 
 			slot {
@@ -66,7 +64,6 @@ export class Splitter extends Component {
 	@eventListener({ target: window, type: 'touchmove', options: { passive: true } })
 	protected requestResize(e: TouchEvent | PointerEvent) {
 		if (this.resizing) {
-			e.preventDefault()
 			this.resizeRequestEvent = e
 			this.requestResizeKey++
 		}
@@ -78,7 +75,6 @@ export class Splitter extends Component {
 		if (!resizingItem) {
 			return
 		}
-		const oldTotalSize = this.totalSize
 		const e = this.resizeRequestEvent!
 		// Don't check for instanceof TouchEvent, as Safari doesn't understand it
 		const clientX = 'touches' in e ? e.touches[0]!.clientX : e.clientX
@@ -95,36 +91,33 @@ export class Splitter extends Component {
 					return clientY - top
 				case 'vertical-reversed':
 					return bottom - clientY
-				default:
-					throw new Error(`Invalid direction: ${this.direction}`)
 			}
 		}
-		resizingItem.size = `${getSize() / oldTotalSize * 100}%`
+
+		const totalSize = this.direction === 'horizontal' || this.direction === 'horizontal-reversed'
+			? this.getBoundingClientRect().width
+			: this.getBoundingClientRect().height
+
+		resizingItem.size = `${getSize() / totalSize * 100}%`
 	}
 
 	protected override get template() {
 		return html`
-			<mo-flex wrap='nowrap' direction=${this.direction} gap=${ifDefined(this.gap)} ${style({ height: '100%', width: '100%' })}>
+			<mo-flex wrap='nowrap' direction=${this.direction} ${style({ height: '100%', width: '100%' })}>
 				${this.items.map((item, index) => this.getItemTemplate(item, index))}
 			</mo-flex>
 		`
 	}
 
 	private getItemTemplate(item: SplitterItem, index: number) {
+		const sizeProp = this.direction === 'horizontal' || this.direction === 'horizontal-reversed' ? 'width' : 'height'
 		const styles = {
-			'flex': index === this.items.length - 1 || item.size === undefined ? '1' : undefined,
-			...(this.direction === 'horizontal' || this.direction === 'horizontal-reversed' ? {
-				'width': item.size,
-				'min-width': item.min,
-				'max-width': item.max,
-			} : {
-				'height': item.size,
-				'min-height': item.min,
-				'max-height': item.max,
-			})
+			'flex': item.collapsed ? undefined : index === this.items.length - 1 || item.size === undefined ? '1' : undefined,
+			[sizeProp]: item.collapsed ? '0' : (item.size ?? 'fit-content'),
+			[`min-${sizeProp}`]: item.collapsed ? 'min-content' : item.min ?? 'min-content',
 		}
 		return html`
-			<slot name='${Splitter.itemSlotPrefix}${index}' style=${styleMap(styles)}></slot>
+			<slot name=${`${Splitter.itemSlotPrefix}${index}`} style=${styleMap(styles)}></slot>
 			${this.getResizerHostTemplate(item, index)}
 		`
 	}
@@ -132,19 +125,12 @@ export class Splitter extends Component {
 	private getResizerHostTemplate(item: SplitterItem, index: number) {
 		return index === this.items.length - 1 ? html.nothing : html`
 			<mo-splitter-resizer-host part='resizer-host'
-				?locked=${item.locked}
+				?collapsed=${item.collapsed}
 				direction=${this.direction}
 				@resizeStart=${() => this.resizing = true}
 				@resizeStop=${() => this.resizing = false}
 			>${this.resizerTemplate}</mo-splitter-resizer-host>
 		`
-	}
-
-	private get totalSize() {
-		const clientRect = this.getBoundingClientRect()
-		return this.direction === 'horizontal' || this.direction === 'horizontal-reversed'
-			? clientRect.width
-			: clientRect.height
 	}
 }
 

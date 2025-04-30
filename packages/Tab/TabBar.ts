@@ -1,5 +1,4 @@
 import { component, property, event, Component, html, css, query } from '@a11d/lit'
-import '@material/web/tabs/tabs.js'
 import { type MdTabs } from '@material/web/tabs/tabs.js'
 import { Tab } from './Tab.js'
 

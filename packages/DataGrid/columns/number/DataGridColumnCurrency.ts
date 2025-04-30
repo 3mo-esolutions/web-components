@@ -18,10 +18,10 @@ export class DataGridColumnCurrency<TData> extends DataGridColumnNumberBase<TDat
 	static defaultCurrency?: Currency
 
 	@property({ type: Object, converter: FieldCurrency.currencyConverter }) currency?: Currency
-	@property() currencyDataSelector?: KeyPathOf<TData>
+	@property() currencyDataSelector?: KeyPath.Of<TData>
 
 	private getCurrency(data: TData) {
-		return (this.currencyDataSelector ? Currency[getValueByKeyPath(data, this.currencyDataSelector) as CurrencyCode] : undefined)
+		return (this.currencyDataSelector ? Currency[KeyPath.get(data, this.currencyDataSelector) as CurrencyCode] : undefined)
 			?? this.currency
 			?? DataGridColumnCurrency.defaultCurrency!
 	}

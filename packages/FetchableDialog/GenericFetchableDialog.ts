@@ -1,8 +1,9 @@
 import { component, html, state, ifDefined, type HTMLTemplateResult } from '@a11d/lit'
+import { type DialogComponent } from '@a11d/lit-application'
 import { type BaseDialogParameters, getContentTemplate } from '@3mo/dialog'
 import { type EntityId, FetchableDialogComponent } from './FetchableDialogComponent.js'
 
-interface GenericFetchableDialogParameters<T> extends BaseDialogParameters<GenericFetchableDialog<T>> {
+export interface GenericFetchableDialogParameters<T, Dialog extends DialogComponent<any, any> = GenericFetchableDialog<T>> extends BaseDialogParameters<Dialog> {
 	readonly secondaryButtonText?: string
 	readonly entity: T
 	readonly id?: EntityId
@@ -10,7 +11,7 @@ interface GenericFetchableDialogParameters<T> extends BaseDialogParameters<Gener
 }
 
 @component('mo-generic-fetchable-dialog')
-export class GenericFetchableDialog<T> extends FetchableDialogComponent<T, GenericFetchableDialogParameters<T>, T> {
+export class GenericFetchableDialog<T> extends FetchableDialogComponent<T, GenericFetchableDialogParameters<T, GenericFetchableDialog<T>>, T> {
 	@state() entity = this.parameters.entity
 	protected override fetch = this.parameters.fetch
 
@@ -18,7 +19,7 @@ export class GenericFetchableDialog<T> extends FetchableDialogComponent<T, Gener
 		const { heading, primaryButtonText, secondaryButtonText, blocking, size, content } = this.parameters
 		return html`
 			<mo-fetchable-dialog
-				heading=${heading}
+				heading=${ifDefined(heading)}
 				primaryButtonText=${ifDefined(primaryButtonText)}
 				secondaryButtonText=${ifDefined(secondaryButtonText)}
 				?blocking=${blocking}
