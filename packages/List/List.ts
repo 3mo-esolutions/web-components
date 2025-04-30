@@ -33,7 +33,7 @@ export class List extends Component {
 
 	readonly slotController = new SlotController(this, () => {
 		this.items = this.slotController.getAssignedElements('')
-			.flatMap(e => [e, ...e.querySelectorAll('*')])
+			.flatMap(e => [e, ...e.querySelectorAll('*:not([slot])')])
 			.filter(i => isListItem(i)) as Array<HTMLElement>
 	})
 

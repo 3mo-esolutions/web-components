@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/list",
-	"version": "0.6.0",
+	"version": "0.6.1",
 	"description": "Lists are continuous, vertical indexes of text and images.",
 	"repository": {
 		"type": "git",
