@@ -1,12 +1,19 @@
 import { Controller, EventListenerController } from '@a11d/lit'
 import { type Popover } from './Popover.js'
 import { DirectionsByLanguage } from '@3mo/localization'
-import { computePosition, flip, offset, shift } from '@floating-ui/dom'
+import { arrow, computePosition, flip, offset, shift } from '@floating-ui/dom'
 import { ResizeController } from '@3mo/resize-observer'
 import { PopoverPlacement } from './PopoverPlacement.js'
 import { PopoverAlignment } from './PopoverAlignment.js'
 
 export class PopoverPositionController extends Controller {
+	private static readonly arrowSideByPlacement = new Map([
+		['top', 'bottom'],
+		['right', 'left'],
+		['bottom', 'top'],
+		['left', 'right'],
+	])
+
 	constructor(protected override readonly host: Popover) {
 		super(host)
 	}
@@ -82,7 +89,8 @@ export class PopoverPositionController extends Controller {
 			placement: this.floatingUiPlacement,
 			middleware: [
 				flip(),
-				shift(),
+				shift({ crossAxis: true, padding: 4 }),
+				!this.host.arrowElement ? undefined : arrow({ element: this.host.arrowElement, padding: 4 }),
 				!this.host.offset ? undefined : offset(this.host.offset),
 				...this.host.positionMiddleware ?? [],
 			].filter(Boolean)
@@ -91,6 +99,14 @@ export class PopoverPositionController extends Controller {
 		this.host.style.left = `${response.x}px`
 		this.host.style.top = `${response.y}px`
 
-		this.host.positionComputed?.(response)
+		if (this.host.arrowElement) {
+			const { x: arrowX, y: arrowY } = response.middlewareData.arrow ?? { x: null, y: null }
+
+			this.host.arrowElement.style.left = arrowX !== null ? `${arrowX}px` : ''
+			this.host.arrowElement.style.top = arrowY !== null ? `${arrowY}px` : ''
+
+			const staticSide = PopoverPositionController.arrowSideByPlacement.get(response.placement!.split('-')[0] as any)
+			this.host.arrowElement.dataset.placement = staticSide
+		}
 	}
 }

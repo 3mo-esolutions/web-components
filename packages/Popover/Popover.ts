@@ -1,9 +1,9 @@
-import { Component, component, css, event, eventListener, html, property, queryConnectedInstances } from '@a11d/lit'
+import { Component, component, css, event, eventListener, html, property, query, queryConnectedInstances } from '@a11d/lit'
 import { PopoverPlacement } from './PopoverPlacement.js'
 import { PopoverPositionController } from './PopoverPositionController.js'
 import { PopoverAlignment } from './PopoverAlignment.js'
 import { type PopoverCoordinates } from './PopoverCoordinates.js'
-import { type Middleware, type ComputePositionReturn } from '@floating-ui/dom'
+import { type Middleware } from '@floating-ui/dom'
 
 export type PopoverMode = 'auto' | 'manual' | 'hint'
 
@@ -52,9 +52,10 @@ export class Popover extends Component {
 
 	@property({ type: Object }) shouldOpen?: (e: Event) => boolean
 	@property({ type: Array }) positionMiddleware?: Array<Middleware>
-	@property({ type: Object }) positionComputed?: (response: ComputePositionReturn) => void
 
 	protected readonly positionController = new PopoverPositionController(this)
+
+	@query('[part=arrow]') readonly arrowElement?: HTMLElement
 
 	@eventListener('beforetoggle')
 	protected handleBeforeToggle(e: ToggleEvent) {
@@ -134,16 +135,47 @@ export class Popover extends Component {
 				margin: 0;
 				padding: 0;
 				border: none;
+				overflow: unset;
 			}
 
 			:host(:not([open])) {
 				display: none !important;
 			}
+
+			[part=arrow] {
+				display: none;
+				position: absolute;
+				pointer-events: none;
+				clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+				background: inherit;
+				z-index: -1;
+				width: 1rem;
+				aspect-ratio: 1 / 1;
+				&[data-placement=top] {
+					transform: translateY(-50%);
+					top: 0;
+				}
+				&[data-placement=bottom] {
+					transform: translateY(50%);
+					bottom: 0;
+				}
+				&[data-placement=left] {
+					transform: translateX(-50%);
+					left: 0;
+				}
+				&[data-placement=right] {
+					transform: translateX(50%);
+					right: 0;
+				}
+			}
 		`
 	}
 
 	protected override get template() {
-		return html`<slot></slot>`
+		return html`
+			<div part='arrow'></div>
+			<slot></slot>
+		`
 	}
 }
 

@@ -1,8 +1,7 @@
-import { component, css, property, html, Component, state, bind, ifDefined, query, event } from '@a11d/lit'
-import { type TooltipPlacement } from './TooltipPlacement.js'
+import { component, css, property, html, Component, state, bind, ifDefined, event } from '@a11d/lit'
 import { type FocusMethod, FocusController } from '@3mo/focus-controller'
 import { PointerController } from '@3mo/pointer-controller'
-import { type ComputePositionReturn, arrow, type Middleware } from '@floating-ui/core'
+import { type TooltipPlacement } from './TooltipPlacement.js'
 
 function targetAnchor(this: Tooltip) {
 	return this.anchor || []
@@ -15,18 +14,9 @@ function targetAnchor(this: Tooltip) {
  * @attr anchor - The element id that the tooltip is anchored to.
  *
  * @slot - Default slot for tooltip content
- *
- * @cssprop --mo-tooltip-tip-size - The size of the tip. Defaults to 1rem.
  */
 @component('mo-tooltip')
 export class Tooltip extends Component {
-	private static readonly tipSideByPlacement = new Map([
-		['top', 'bottom'],
-		['right', 'left'],
-		['bottom', 'top'],
-		['left', 'right'],
-	])
-
 	@event({ bubbles: true }) readonly openChange!: EventDispatcher<boolean>
 
 	@property() placement?: TooltipPlacement
@@ -35,8 +25,6 @@ export class Tooltip extends Component {
 	@property({ type: Boolean, reflect: true }) rich = false
 
 	@state() open = false
-
-	@query('#tip') private readonly arrowElement!: HTMLDivElement
 
 	protected lastFocusMethod?: FocusMethod
 	protected readonly anchorFocusController = new FocusController(this, {
@@ -82,40 +70,32 @@ export class Tooltip extends Component {
 	static override get styles() {
 		return css`
 			mo-popover {
-				border-radius: var(--mo-toolbar-border-radius, calc(var(--mo-border-radius) - 0px));
+				border-radius: var(--mo-toolbar-border-radius, var(--mo-border-radius));
 				transition-duration: 175ms;
 				transition-property: opacity, transform;
-				padding: var(--mo-tooltip-spacing, 0.3125rem 0.5rem);
+				padding: 0.3125rem 0.5rem;
 				font-size: var(--mo-tooltip-font-size, 0.82rem);
-				background: var(--mo-tooltip-surface-color, var(--_tooltip-default-background));
+				background: var(--_tooltip-default-background);
 				transition-property: opacity, transform;
+
+				&::part(arrow) {
+					display: block;
+					width: var(--_tooltip-default-tip-size);
+				}
 			}
 
 			:host(:not([rich])) mo-popover {
 				pointer-events: none;
 				color: var(--mo-color-background);
 				--_tooltip-default-background: var(--mo-color-foreground);
+				--_tooltip-default-tip-size: 0.75rem;
 			}
 
 			:host([rich]) mo-popover {
 				--_tooltip-default-background: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-foreground) 6%);
-			}
-
-			#tip {
-				transform: rotate(45deg);
-				position: absolute;
-				background: var(--mo-tooltip-surface-color, var(--_tooltip-default-background));
-				z-index: -1;
-				width: var(--mo-tooltip-tip-size, 1rem);
-				height: var(--mo-tooltip-tip-size, 1rem);
+				--_tooltip-default-tip-size: 1rem;
 			}
 		`
-	}
-
-	@state() private positionMiddleware?: Array<Middleware>
-
-	protected override initialized() {
-		this.positionMiddleware = [arrow({ element: this.arrowElement })]
 	}
 
 	protected override get template() {
@@ -125,25 +105,10 @@ export class Tooltip extends Component {
 				.anchor=${this.anchor}
 				placement=${ifDefined(this.placement)}
 				alignment='center'
-				.positionMiddleware=${this.positionMiddleware}
-				.positionComputed=${this.positionComputed}
 			>
-				<div id='tip'></div>
 				<slot @slotchange=${this.handleSlotChange}></slot>
 			</mo-popover>
 		`
-	}
-
-	private readonly positionComputed = (response: ComputePositionReturn) => {
-		if (this.arrowElement) {
-			const { x: arrowX, y: arrowY } = response.middlewareData.arrow ?? { x: null, y: null }
-
-			this.arrowElement.style.left = arrowX !== null ? `${arrowX}px` : ''
-			this.arrowElement.style.top = arrowY !== null ? `${arrowY}px` : ''
-
-			const staticSide = Tooltip.tipSideByPlacement.get(response.placement!.split('-')[0] as any)
-			this.arrowElement.style[staticSide as any] = '-3px'
-		}
 	}
 
 	private readonly handleSlotChange = () => {

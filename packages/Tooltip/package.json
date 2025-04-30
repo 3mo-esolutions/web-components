@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/tooltip",
-	"version": "0.8.0",
+	"version": "0.8.2",
 	"description": "A tooltip web-component with Lit directives.",
 	"repository": {
 		"type": "git",
@@ -27,6 +27,6 @@
 		"@a11d/lit-application": "x",
 		"tslib": "x",
 		"@3mo/theme": "x",
-		"@3mo/popover": ">=0.8.x"
+		"@3mo/popover": ">=0.8.2"
 	}
 }
