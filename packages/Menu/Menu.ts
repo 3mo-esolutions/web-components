@@ -162,6 +162,7 @@ export class Menu extends Component {
 				.coordinates=${this.coordinates}
 				.shouldOpen=${this.shouldOpen}
 				.positionMiddleware=${this.positionMiddleware}
+				.cssRoot=${this}
 			>
 				<mo-selectable-list part='list'
 					selectability=${ifDefined(this.selectability)}

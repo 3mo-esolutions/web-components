@@ -112,6 +112,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 				display: flex;
 				flex-flow: column;
 				--_grid-column-full-span-in-case: 1 / -1;
+				anchor-name: --mo-field-select;
 			}
 
 			input {
@@ -130,14 +131,20 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 				color: var(--mo-color-accent);
 			}
 
-			mo-menu::part(popover) {
-				background: var(--mo-color-background);
-				max-height: 300px;
-				overflow-y: auto;
-				scrollbar-width: thin;
-				color: var(--mo-color-foreground);
-				min-width: var(--mo-field-width);
+			mo-menu {
+				position-anchor: --mo-field-select;
+
+				&::part(popover) {
+					position-visibility: anchors-visible;
+					background: var(--mo-color-background);
+					max-height: 300px;
+					overflow-y: auto;
+					scrollbar-width: thin;
+					color: var(--mo-color-foreground);
+					min-width: var(--mo-field-width);
+				}
 			}
+
 
 			mo-list-item {
 				min-height: 40px;

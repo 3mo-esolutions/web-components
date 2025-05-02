@@ -6,7 +6,7 @@ import { ResizeController } from '@3mo/resize-observer'
 import { PopoverPlacement } from './PopoverPlacement.js'
 import { PopoverAlignment } from './PopoverAlignment.js'
 
-export class PopoverPositionController extends Controller {
+export class PopoverFloatingUiPositionController extends Controller {
 	private static readonly arrowSideByPlacement = new Map([
 		['top', 'bottom'],
 		['right', 'left'],
@@ -105,7 +105,7 @@ export class PopoverPositionController extends Controller {
 			this.host.arrowElement.style.left = arrowX !== null ? `${arrowX}px` : ''
 			this.host.arrowElement.style.top = arrowY !== null ? `${arrowY}px` : ''
 
-			const staticSide = PopoverPositionController.arrowSideByPlacement.get(response.placement!.split('-')[0] as any)
+			const staticSide = PopoverFloatingUiPositionController.arrowSideByPlacement.get(response.placement!.split('-')[0] as any)
 			this.host.arrowElement.dataset.placement = staticSide
 		}
 	}

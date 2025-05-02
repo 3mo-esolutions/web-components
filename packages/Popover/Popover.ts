@@ -1,9 +1,10 @@
 import { Component, component, css, event, eventListener, html, property, query } from '@a11d/lit'
+import { type Middleware } from '@floating-ui/dom'
 import { PopoverPlacement } from './PopoverPlacement.js'
-import { PopoverPositionController } from './PopoverPositionController.js'
+import { PopoverFloatingUiPositionController } from './PopoverFloatingUiPositionController.js'
+import { PopoverCssAnchorPositionController } from './PopoverCssAnchorPositionController.js'
 import { PopoverAlignment } from './PopoverAlignment.js'
 import { type PopoverCoordinates } from './PopoverCoordinates.js'
-import { type Middleware } from '@floating-ui/dom'
 
 export type PopoverMode = 'auto' | 'manual' | 'hint'
 
@@ -47,11 +48,15 @@ export class Popover extends Component {
 	@property({ reflect: true }) alignment = PopoverAlignment.Start
 	@property({ type: Number }) offset?: number
 	@property({ type: Boolean, reflect: true, updated(this: Popover) { if (this.isConnected) { this.togglePopover(this.open) } } }) open = false
-
 	@property({ type: Object }) shouldOpen?: (e: Event) => boolean
+
 	@property({ type: Array }) positionMiddleware?: Array<Middleware>
 
-	protected readonly positionController = new PopoverPositionController(this)
+	@property({ type: Object }) cssRoot?: HTMLElement
+
+	protected readonly positionController = PopoverCssAnchorPositionController.supported
+		? new PopoverCssAnchorPositionController(this)
+		: new PopoverFloatingUiPositionController(this)
 
 	@query('[part=arrow]') readonly arrowElement?: HTMLElement
 
@@ -119,6 +124,8 @@ export class Popover extends Component {
 			:host(:not([open])) {
 				display: none !important;
 			}
+
+			${PopoverCssAnchorPositionController.styles}
 
 			[part=arrow] {
 				display: none;
