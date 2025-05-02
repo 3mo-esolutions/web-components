@@ -88,11 +88,14 @@ export const AnchorPositioning: StoryObj = {
 class StoryPopoverAnchorPositioning extends Component {
 	static override get styles() {
 		return css`
-			:host { anchor-name: --story-popover-catalog; }
-
 			mo-button {
+				anchor-name: --story-popover-catalog;
 				width: 600px;
 				height: 200px;
+			}
+
+			mo-popover {
+				position-anchor: --story-popover-catalog;
 			}
 		`
 	}
