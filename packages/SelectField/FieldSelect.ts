@@ -133,18 +133,17 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 
 			mo-menu {
 				position-anchor: --mo-field-select;
-
-				&::part(popover) {
-					position-visibility: anchors-visible;
-					background: var(--mo-color-background);
-					max-height: 300px;
-					overflow-y: auto;
-					scrollbar-width: thin;
-					color: var(--mo-color-foreground);
-					min-width: var(--mo-field-width);
-				}
 			}
 
+			mo-menu::part(popover) {
+				position-visibility: anchors-visible;
+				background: var(--mo-color-background);
+				max-height: 300px;
+				overflow-y: auto;
+				scrollbar-width: thin;
+				color: var(--mo-color-foreground);
+				min-width: var(--mo-field-width);
+			}
 
 			mo-list-item {
 				min-height: 40px;
