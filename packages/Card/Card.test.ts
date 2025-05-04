@@ -5,13 +5,16 @@ import { type Card } from './Card.js'
 describe('Card', () => {
 	const fixture = new ComponentTestFixture<Card>('mo-card')
 
-	function testSlotRendersIfContentAvailable(toBeRenderSlotName: string, contentSlotName: string) {
-		it(`should render slot "${toBeRenderSlotName}" if the content of slot "${contentSlotName}" is available`, async () => {
+	function testSlotHiddenIfNoContentAvailable(slot: string, contentSlotName: string) {
+		it(`should hide slot "${slot}" if no content of slot "${contentSlotName}" is available`, async () => {
+			const slotElement = fixture.component.renderRoot.querySelector(`slot[name=${slot}]`)
+			expect(getComputedStyle(slotElement!).getPropertyValue('display') === 'none').toBe(true)
+
 			render(html`<div slot=${contentSlotName}>Content</div>`, fixture.component)
 
 			await fixture.update()
 
-			expect(fixture.component.renderRoot.querySelector(`slot[part=${toBeRenderSlotName}]`)).not.toBeNull()
+			expect(getComputedStyle(slotElement!).getPropertyValue('display') === 'none').toBe(false)
 		})
 	}
 
@@ -31,7 +34,7 @@ describe('Card', () => {
 		}
 
 		for (const slotName of ['header', 'avatar', 'heading', 'subHeading', 'action'] as const) {
-			testSlotRendersIfContentAvailable('header', slotName)
+			testSlotHiddenIfNoContentAvailable('header', slotName)
 		}
 
 		for (const [propertyName, elementSelector] of [['avatar', 'div[part=avatar]'], ['heading', 'mo-heading[part=heading]'], ['subHeading', 'mo-heading[part=subHeading]']] as const) {
@@ -48,7 +51,7 @@ describe('Card', () => {
 	})
 
 	describe('Media', () => {
-		testSlotRendersIfContentAvailable('media', 'media')
+		testSlotHiddenIfNoContentAvailable('media', 'media')
 
 		testSlotRendersIfPropertyIsSet('media', 'image')
 
@@ -62,6 +65,6 @@ describe('Card', () => {
 	})
 
 	describe('Footer', () => {
-		testSlotRendersIfContentAvailable('footer', 'footer')
+		testSlotHiddenIfNoContentAvailable('footer', 'footer')
 	})
 })
