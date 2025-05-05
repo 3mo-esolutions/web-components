@@ -60,11 +60,11 @@ export class PopoverCssAnchorPositionController extends Controller {
 			}
 
 			:host([placement^=block]) {
-				position-try: normal flip-block;
+				position-try: normal flip-block, flip-inline, flip-block flip-inline;
 			}
 
 			:host([placement^=inline]) {
-				position-try: normal flip-inline;
+				position-try: normal flip-inline, flip-block, flip-block flip-inline;
 			}
 		`
 	}
