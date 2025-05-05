@@ -1,7 +1,7 @@
 {
 	"name": "@3mo/card",
-	"version": "0.2.11",
-	"description": "A card web-component based on Material Design.",
+	"version": "0.3.0",
+	"description": "Cards display content and actions about a single subject.",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/3mo-esolutions/web-components"
