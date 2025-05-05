@@ -69,7 +69,10 @@ export class Card extends Component {
 			}
 
 			slot[name=media] {
-				&[data-empty] { display: none; }
+				&[data-empty] {
+					display: none;
+				}
+
 				& > *:first-child, &::slotted(:first-child) {
 					border-radius: var(--mo-border-radius) var(--mo-border-radius) 0 0;
 					display: block;
@@ -82,14 +85,18 @@ export class Card extends Component {
 			}
 
 			slot[name=header] {
-				&[data-empty] { display: none; }
-				&:not([data-empty]) ~ slot:not([name]) {
-					padding: var(--mo-card-body-padding, 0px 16px 16px 16px);
+				&[data-empty] {
+					display: none;
 				}
+
+				&:not([data-empty]) ~ slot:not([name]) {
+					padding: var(--mo-card-body-padding, 0rem 1rem 1rem 1rem);
+				}
+
 				display: flex;
 				align-items: center;
-				gap: 6px;
-				padding: var(--mo-card-header-padding, 16px);
+				gap: 0.375rem;
+				padding: var(--mo-card-header-padding, 1rem);
 
 				slot[name=heading] {
 					display: block;
@@ -105,15 +112,19 @@ export class Card extends Component {
 					justify-content: center;
 					align-items: center;
 					border-radius: 50%;
-					font-size: 18px;
+					font-size: 1.125rem;
 					background: var(--mo-card-avatar-background, var(--mo-color-accent));
 					color: var(--mo-card-avatar-color, var(--mo-color-on-accent));
-					margin-inline-end: 6px;
+					margin-inline-end: 0.375rem;
 				}
 			}
 
 			slot:not([name]) {
-				&:not([data-empty]) { padding: var(--mo-card-body-padding, 16px); }
+				&[data-empty] {
+					display: none;
+				}
+
+				padding: var(--mo-card-body-padding, 1rem);
 				display: block;
 				flex: 1;
 			}
@@ -121,7 +132,7 @@ export class Card extends Component {
 			slot[name=footer] {
 				&[data-empty] { display: none; }
 				display: block;
-				padding: var(--mo-card-footer-padding, 8px);
+				padding: var(--mo-card-footer-padding, 0.5rem);
 			}
 		`
 	}

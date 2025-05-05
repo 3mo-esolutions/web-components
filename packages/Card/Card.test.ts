@@ -28,6 +28,20 @@ describe('Card', () => {
 		})
 	}
 
+	describe('Media', () => {
+		testSlotHiddenIfNoContentAvailable('media', 'media')
+
+		testSlotRendersIfPropertyIsSet('media', 'image')
+
+		it('should set the source of the image element when "image" property is set', async () => {
+			fixture.component.image = 'https://example.com/image.jpg'
+
+			await fixture.component.updateComplete
+
+			expect(fixture.component.renderRoot.querySelector('img')?.src).toBe(fixture.component.image)
+		})
+	})
+
 	describe('Header', () => {
 		for (const property of ['heading', 'avatar', 'subHeading'] as const) {
 			testSlotRendersIfPropertyIsSet('header', property)
@@ -50,17 +64,27 @@ describe('Card', () => {
 		}
 	})
 
-	describe('Media', () => {
-		testSlotHiddenIfNoContentAvailable('media', 'media')
+	describe('Body', () => {
+		it('should hide the body slot if no content is available', async () => {
+			const slotElement = fixture.component.renderRoot.querySelector('slot:not([name])')
+			expect(getComputedStyle(slotElement!).getPropertyValue('display') === 'none').toBe(true)
 
-		testSlotRendersIfPropertyIsSet('media', 'image')
+			fixture.component.textContent = 'Content'
+			await fixture.update()
 
-		it('should set the source of the image element when "image" property is set', async () => {
-			fixture.component.image = 'https://example.com/image.jpg'
+			expect(getComputedStyle(slotElement!).getPropertyValue('display') === 'none').toBe(false)
+		})
 
-			await fixture.component.updateComplete
+		it('should remove the block-start padding if header is available', async () => {
+			const slotElement = fixture.component.renderRoot.querySelector('slot:not([name])')
 
-			expect(fixture.component.renderRoot.querySelector('img')?.src).toBe(fixture.component.image)
+			fixture.component.textContent = 'Content'
+			await fixture.update()
+			expect(getComputedStyle(slotElement!).getPropertyValue('padding-block-start')).toBe('16px')
+
+			fixture.component.heading = 'Heading'
+			await fixture.update()
+			expect(getComputedStyle(slotElement!).getPropertyValue('padding-block-start')).toBe('0px')
 		})
 	})
 
