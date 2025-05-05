@@ -5,13 +5,16 @@ import { type Card } from './Card.js'
 describe('Card', () => {
 	const fixture = new ComponentTestFixture<Card>('mo-card')
 
-	function testSlotRendersIfContentAvailable(toBeRenderSlotName: string, contentSlotName: string) {
-		it(`should render slot "${toBeRenderSlotName}" if the content of slot "${contentSlotName}" is available`, async () => {
+	function testSlotHiddenIfNoContentAvailable(slot: string, contentSlotName: string) {
+		it(`should hide slot "${slot}" if no content of slot "${contentSlotName}" is available`, async () => {
+			const slotElement = fixture.component.renderRoot.querySelector(`slot[name=${slot}]`)
+			expect(getComputedStyle(slotElement!).getPropertyValue('display') === 'none').toBe(true)
+
 			render(html`<div slot=${contentSlotName}>Content</div>`, fixture.component)
 
 			await fixture.update()
 
-			expect(fixture.component.renderRoot.querySelector(`slot[part=${toBeRenderSlotName}]`)).not.toBeNull()
+			expect(getComputedStyle(slotElement!).getPropertyValue('display') === 'none').toBe(false)
 		})
 	}
 
@@ -25,13 +28,27 @@ describe('Card', () => {
 		})
 	}
 
+	describe('Media', () => {
+		testSlotHiddenIfNoContentAvailable('media', 'media')
+
+		testSlotRendersIfPropertyIsSet('media', 'image')
+
+		it('should set the source of the image element when "image" property is set', async () => {
+			fixture.component.image = 'https://example.com/image.jpg'
+
+			await fixture.component.updateComplete
+
+			expect(fixture.component.renderRoot.querySelector('img')?.src).toBe(fixture.component.image)
+		})
+	})
+
 	describe('Header', () => {
 		for (const property of ['heading', 'avatar', 'subHeading'] as const) {
 			testSlotRendersIfPropertyIsSet('header', property)
 		}
 
 		for (const slotName of ['header', 'avatar', 'heading', 'subHeading', 'action'] as const) {
-			testSlotRendersIfContentAvailable('header', slotName)
+			testSlotHiddenIfNoContentAvailable('header', slotName)
 		}
 
 		for (const [propertyName, elementSelector] of [['avatar', 'div[part=avatar]'], ['heading', 'mo-heading[part=heading]'], ['subHeading', 'mo-heading[part=subHeading]']] as const) {
@@ -47,21 +64,31 @@ describe('Card', () => {
 		}
 	})
 
-	describe('Media', () => {
-		testSlotRendersIfContentAvailable('media', 'media')
+	describe('Body', () => {
+		it('should hide the body slot if no content is available', async () => {
+			const slotElement = fixture.component.renderRoot.querySelector('slot:not([name])')
+			expect(getComputedStyle(slotElement!).getPropertyValue('display') === 'none').toBe(true)
 
-		testSlotRendersIfPropertyIsSet('media', 'image')
+			fixture.component.textContent = 'Content'
+			await fixture.update()
 
-		it('should set the source of the image element when "image" property is set', async () => {
-			fixture.component.image = 'https://example.com/image.jpg'
+			expect(getComputedStyle(slotElement!).getPropertyValue('display') === 'none').toBe(false)
+		})
 
-			await fixture.component.updateComplete
+		it('should remove the block-start padding if header is available', async () => {
+			const slotElement = fixture.component.renderRoot.querySelector('slot:not([name])')
 
-			expect(fixture.component.renderRoot.querySelector('img')?.src).toBe(fixture.component.image)
+			fixture.component.textContent = 'Content'
+			await fixture.update()
+			expect(getComputedStyle(slotElement!).getPropertyValue('padding-block-start')).toBe('16px')
+
+			fixture.component.heading = 'Heading'
+			await fixture.update()
+			expect(getComputedStyle(slotElement!).getPropertyValue('padding-block-start')).toBe('0px')
 		})
 	})
 
 	describe('Footer', () => {
-		testSlotRendersIfContentAvailable('footer', 'footer')
+		testSlotHiddenIfNoContentAvailable('footer', 'footer')
 	})
 })
