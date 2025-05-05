@@ -24,7 +24,6 @@
 	"dependencies": {
 		"tslib": "x",
 		"@a11d/lit": "x",
-		"@a11d/lit-application": "x",
 		"@3mo/menu": ">=0.9.x",
 		"@3mo/popover": "x"
 	}
