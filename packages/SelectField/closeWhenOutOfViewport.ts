@@ -1,14 +1,14 @@
 import { Popover } from '@3mo/popover'
-import { detectOverflow, type Middleware, type MiddlewareState } from '@floating-ui/dom'
 
 /**
  * A floating-ui middleware that closes the popover when it is out of the viewport.
  */
-export function closeWhenOutOfViewport(options?: { readonly padding?: number }): Middleware {
+export function closeWhenOutOfViewport(options?: { readonly padding?: number }): import('@floating-ui/dom').Middleware {
 	return {
 		name: 'closeWhenOutOfViewport',
 		options,
-		fn: async (state: MiddlewareState) => {
+		async fn(state) {
+			const { detectOverflow } = await import('@floating-ui/dom')
 			const overflow = await detectOverflow(state)
 			const { height, width } = state.rects.floating
 			const popover = state.elements.floating

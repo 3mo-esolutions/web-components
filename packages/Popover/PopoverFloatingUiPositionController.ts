@@ -1,7 +1,6 @@
 import { Controller, EventListenerController } from '@a11d/lit'
 import { type Popover } from './Popover.js'
 import { DirectionsByLanguage } from '@3mo/localization'
-import { arrow, computePosition, flip, offset, shift, type Middleware } from '@floating-ui/dom'
 import { ResizeController } from '@3mo/resize-observer'
 import { PopoverPlacement } from './PopoverPlacement.js'
 import { PopoverAlignment } from './PopoverAlignment.js'
@@ -76,9 +75,9 @@ export class PopoverFloatingUiPositionController extends Controller {
 	}
 
 
-	private readonly customMiddlewares = new Set<Middleware>()
+	private readonly customMiddlewares = new Set<import('@floating-ui/dom').Middleware>()
 
-	addMiddleware(middleware: Middleware) {
+	addMiddleware(middleware: import('@floating-ui/dom').Middleware) {
 		this.customMiddlewares.add(middleware)
 	}
 
@@ -90,6 +89,8 @@ export class PopoverFloatingUiPositionController extends Controller {
 		const anchor = !this.host.coordinates && this.host.anchor ? this.host.anchor : {
 			getBoundingClientRect: () => new DOMRect(...this.host.coordinates ?? [0, 0], 0, 0),
 		}
+
+		const { computePosition, flip, shift, arrow, offset } = await import('@floating-ui/dom')
 
 		const response = await computePosition(anchor, this.host, {
 			strategy: 'fixed',
