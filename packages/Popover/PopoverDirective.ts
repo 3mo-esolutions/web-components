@@ -5,13 +5,11 @@ import { PopoverHost } from './PopoverHost.js'
 type PopoverDirectiveParameters = [template: () => HTMLTemplateResult]
 
 class PopoverDirective extends AsyncDirective {
+	host?: HTMLElement
 	container?: HTMLElement
 	popover?: Popover
 	part?: ElementPart
 	template?: () => HTMLTemplateResult
-
-	private _host?: HTMLElement
-	get host() { return this._host ??= PopoverHost.get(this.part!.element as HTMLElement) }
 
 	constructor(partInfo: PartInfo) {
 		super(partInfo)
@@ -44,6 +42,7 @@ class PopoverDirective extends AsyncDirective {
 
 	handleEvent(event: CustomEvent<boolean>) {
 		if (this.popover && !this.popover.isConnected && event.detail === true) {
+			this.host ??= PopoverHost.get(this.part!.element as HTMLElement)
 			this.host.appendChild(this.popover)
 		}
 	}
