@@ -100,7 +100,7 @@ export class PopoverFloatingUiPositionController extends Controller {
 				shift({ crossAxis: true, padding: 4 }),
 				!this.host.arrowElement ? undefined : arrow({ element: this.host.arrowElement, padding: 4 }),
 				!this.host.offset ? undefined : offset(this.host.offset),
-				...this.customMiddlewares ?? [],
+				...this.customMiddlewares,
 			].filter(Boolean)
 		})
 
