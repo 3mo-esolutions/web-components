@@ -1,5 +1,6 @@
 import { directive, AsyncDirective, type ElementPart, type HTMLTemplateResult, type PartInfo, PartType, render, noChange } from '@a11d/lit'
 import { type Popover } from './Popover.js'
+import { PopoverHost } from './PopoverHost.js'
 
 type PopoverDirectiveParameters = [template: () => HTMLTemplateResult]
 
@@ -10,15 +11,7 @@ class PopoverDirective extends AsyncDirective {
 	template?: () => HTMLTemplateResult
 
 	private _host?: HTMLElement
-	get host(): HTMLElement {
-		if (this._host) {
-			return this._host
-		}
-		const tag = 'mo-popover-host'
-		const node = this.part!.element.getRootNode()
-		const root = node instanceof Document ? node.body : node as ShadowRoot
-		return this._host = root.querySelector(tag) ?? root.appendChild(document.createElement(tag))
-	}
+	get host() { return this._host ??= PopoverHost.get(this.part!.element as HTMLElement) }
 
 	constructor(partInfo: PartInfo) {
 		super(partInfo)
