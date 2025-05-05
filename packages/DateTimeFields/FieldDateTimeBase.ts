@@ -111,11 +111,11 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 			}
 
 			mo-field {
-				anchor-name: --field-date-time;
+				anchor-name: --mo-field-date-time;
 			}
 
 			mo-popover {
-				position-anchor: --field-date-time;
+				position-anchor: --mo-field-date-time;
 				position-visibility: anchors-visible;
 				background: var(--mo-color-background);
 				box-shadow: var(--mo-shadow);

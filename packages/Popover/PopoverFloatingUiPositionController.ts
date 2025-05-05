@@ -80,8 +80,8 @@ export class PopoverFloatingUiPositionController extends Controller {
 			return
 		}
 
-		const anchor = this.host.anchor ?? {
-			getBoundingClientRect: () => new DOMRect(0, 0, 0, 0),
+		const anchor = !this.host.coordinates && this.host.anchor ? this.host.anchor : {
+			getBoundingClientRect: () => new DOMRect(...this.host.coordinates ?? [0, 0], 0, 0),
 		}
 
 		const response = await computePosition(anchor, this.host, {

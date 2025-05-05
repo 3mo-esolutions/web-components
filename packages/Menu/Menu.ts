@@ -1,5 +1,5 @@
 import { Component, EventListenerController, component, css, event, html, ifDefined, property, query, state } from '@a11d/lit'
-import { Popover } from '@3mo/popover'
+import { Popover, type PopoverCoordinates } from '@3mo/popover'
 import { SlotController } from '@3mo/slot-controller'
 import { disabledProperty } from '@3mo/disabled-property'
 import type { Middleware } from '@floating-ui/dom'
@@ -95,39 +95,21 @@ export class Menu extends Component {
 	@property({ type: Array, bindingDefault: true }) value?: SelectableList['value']
 	@disabledProperty() disabled = false
 
+	@state() protected coordinates?: PopoverCoordinates
 	@state() protected positionMiddleware = new Array<Middleware>()
 
 	@query('mo-selectable-list') readonly list!: ListElement & SelectableList
 
 	get items() { return this.list.items as Array<ListItem & HTMLElement> }
 
-	private virtualAnchor?: HTMLDivElement
-
-	protected override connected(): void {
-		super.connected()
-		if (this.virtualAnchor) {
-			document.body.append(this.virtualAnchor)
+	openWith(e: MouseEvent | PopoverCoordinates) {
+		if (e instanceof MouseEvent) {
+			e.preventDefault()
+			e.stopImmediatePropagation()
+			this.coordinates = [e.clientX, e.clientY]
+		} else {
+			this.coordinates = e
 		}
-	}
-
-	protected override disconnected(): void {
-		super.disconnected()
-		this.virtualAnchor?.remove()
-		this.virtualAnchor = undefined
-	}
-
-	openWith(e: MouseEvent) {
-		e.preventDefault()
-		e.stopImmediatePropagation()
-		this.virtualAnchor ??= document.createElement('div')
-		this.virtualAnchor.style.position = 'fixed'
-		this.virtualAnchor.style.left = `${e.clientX}px`
-		this.virtualAnchor.style.top = `${e.clientY}px`
-		this.virtualAnchor.style.width = '0'
-		this.virtualAnchor.style.height = '0'
-		this.virtualAnchor.style.pointerEvents = 'none'
-		document.body.append(this.virtualAnchor)
-		this.anchor = this.virtualAnchor
 		this.setOpen(true)
 	}
 
@@ -177,6 +159,7 @@ export class Menu extends Component {
 				alignment=${ifDefined(this.alignment)}
 				?open=${this.open}
 				@openChange=${(e: CustomEvent<boolean>) => this.setOpen(e.detail)}
+				.coordinates=${this.coordinates}
 				.shouldOpen=${this.shouldOpen}
 				.positionMiddleware=${this.positionMiddleware}
 				.cssRoot=${this}

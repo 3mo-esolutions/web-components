@@ -2,11 +2,13 @@ import { Controller, css, unsafeCSS } from '@a11d/lit'
 import { type Popover } from './Popover.js'
 import { PopoverAlignment } from './PopoverAlignment.js'
 import { PopoverPlacement } from './PopoverPlacement.js'
+import { PopoverVirtualAnchor } from './PopoverVirtualAnchor.js'
+import { PopoverHost } from './PopoverHost.js'
 
 export class PopoverCssAnchorPositionController extends Controller {
 	static readonly supported = CSS.supports('anchor-name: --name')
 
-	static getCssRoot(element: HTMLElement): HTMLElement {
+	private static getCssRoot(element: HTMLElement): HTMLElement {
 		const key = 'cssRoot'
 		let root: HTMLElement | undefined = (element as any)
 		while (root && key in root) {
@@ -19,16 +21,6 @@ export class PopoverCssAnchorPositionController extends Controller {
 			root = newRoot
 		}
 		return root ?? element
-	}
-
-	static tether(popover: Popover, anchor: HTMLElement) {
-		const cssRoot = PopoverCssAnchorPositionController.getCssRoot(popover)
-		const positionAnchor = getComputedStyle(cssRoot).positionAnchor
-		if (this.supported && anchor && !(positionAnchor === 'auto' ? '' : positionAnchor)) {
-			cssRoot.style.positionAnchor
-				= anchor.style.anchorName
-				||= `--${anchor.id || `${anchor.tagName.toLowerCase()}--${Math.random().toString(36).substring(2, 15)}`}`
-		}
 	}
 
 	static get styles() {
@@ -83,7 +75,38 @@ export class PopoverCssAnchorPositionController extends Controller {
 
 	override hostUpdated() {
 		if (this.host.anchor) {
-			PopoverCssAnchorPositionController.tether(this.host, this.host.anchor)
+			this.host.coordinates
+				? this.tetherToCoordinates()
+				: this.tetherTo(this.host.anchor)
+		}
+	}
+
+	override hostDisconnected() {
+		if (this.virtualAnchor) {
+			this.virtualAnchor.remove()
+			this.virtualAnchor = undefined
+		}
+	}
+
+	private virtualAnchor?: PopoverVirtualAnchor
+	private tetherToCoordinates() {
+		const popover = this.host
+		const coordinates = popover.coordinates
+		this.virtualAnchor ??= new PopoverVirtualAnchor()
+		this.virtualAnchor.coordinates = coordinates
+		PopoverHost.get(popover.anchor!).appendChild(this.virtualAnchor)
+		console.log(this.virtualAnchor)
+		this.tetherTo(this.virtualAnchor)
+	}
+
+	private tetherTo(anchor = this.host.anchor) {
+		const popover = this.host
+		const cssRoot = PopoverCssAnchorPositionController.getCssRoot(popover)
+		const positionAnchor = getComputedStyle(cssRoot).positionAnchor
+		if (anchor && !(positionAnchor === 'auto' ? '' : positionAnchor)) {
+			cssRoot.style.positionAnchor
+				= anchor.style.anchorName
+				||= `--${anchor.id || `${anchor.tagName.toLowerCase()}--${Math.random().toString(36).substring(2, 15)}`}`
 		}
 	}
 }

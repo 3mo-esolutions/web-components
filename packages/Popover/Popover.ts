@@ -1,15 +1,17 @@
 import { Component, component, css, event, eventListener, html, property, query } from '@a11d/lit'
 import { type Middleware } from '@floating-ui/dom'
 import { PopoverPlacement } from './PopoverPlacement.js'
+import { type PopoverCoordinates } from './PopoverCoordinates.js'
+import { PopoverAlignment } from './PopoverAlignment.js'
 import { PopoverFloatingUiPositionController } from './PopoverFloatingUiPositionController.js'
 import { PopoverCssAnchorPositionController } from './PopoverCssAnchorPositionController.js'
-import { PopoverAlignment } from './PopoverAlignment.js'
 
 export type PopoverMode = 'auto' | 'manual' | 'hint'
 
 /**
  * @element mo-popover
  *
+ * @attr coordinates - The coordinates of the popover.
  * @attr anchor - The anchor element for the popover.
  * @attr target - The target element for the popover.
  * @attr placement - The placement of the popover relative to the anchor.
@@ -39,6 +41,7 @@ export class Popover extends Component {
 	@event() readonly openChange!: EventDispatcher<boolean>
 
 	@property({ reflect: true, updated(this: Popover) { this.popover = this.mode } }) mode: PopoverMode = 'auto'
+	@property({ type: Array }) coordinates?: PopoverCoordinates
 	@property({ type: Object }) anchor?: HTMLElement
 	@property() target?: string
 	@property({ reflect: true }) placement = PopoverPlacement.BlockEnd
