@@ -29,8 +29,7 @@
 		"@3mo/popover": ">=0.8.x",
 		"@3mo/list": "x",
 		"@3mo/disabled-property": "x",
-		"@3mo/slot-controller": "x",
-		"@floating-ui/dom": "1.x"
+		"@3mo/slot-controller": "x"
 	},
 	"devDependencies": {
 		"@a11d/lit-testing": "x"

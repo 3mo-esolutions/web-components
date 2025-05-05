@@ -3,8 +3,7 @@ import { FieldComponent } from '@3mo/field'
 import type { ListItem } from '@3mo/list'
 import type { Menu } from '@3mo/menu'
 import type { FocusMethod } from '@3mo/focus-controller'
-import type { PopoverAlignment, PopoverPlacement } from '@3mo/popover'
-import { type Middleware } from '@floating-ui/dom'
+import { PopoverFloatingUiPositionController, type PopoverAlignment, type PopoverPlacement } from '@3mo/popover'
 import { FieldSelectValueController, type Data, type Index, type Value } from './SelectValueController.js'
 import { Option } from './Option.js'
 import { closeWhenOutOfViewport } from './closeWhenOutOfViewport.js'
@@ -56,7 +55,6 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 	@property({ type: Object, updated(this: FieldSelect<T>) { this.valueController.data = this.data } }) data: Data<T>
 
 	@state() protected searchString?: string
-	@state() private positionMiddleware?: Array<Middleware>
 	@state({
 		updated(this: FieldSelect<T>, value: number, oldValue: number) {
 			if (value && value !== oldValue) {
@@ -99,9 +97,18 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 
 	protected override updated(props: PropertyValues) {
 		super.updated(props)
-		this.positionMiddleware ??= [closeWhenOutOfViewport()]
 		this.style.setProperty('--mo-field-width', this.offsetWidth + 'px')
 		this.toggleAttribute('data-show-no-options-hint', this.showNoOptionsHint)
+	}
+
+	protected override firstUpdated(props: PropertyValues) {
+		super.firstUpdated(props)
+		this.menu?.updateComplete.then(() => {
+			const popover = this.menu?.renderRoot.querySelector('mo-popover')
+			if (popover?.positionController instanceof PopoverFloatingUiPositionController) {
+				popover.positionController.addMiddleware(closeWhenOutOfViewport())
+			}
+		})
 	}
 
 	static override get styles() {
@@ -245,7 +252,6 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 				.value=${this.valueController.menuValue}
 				@change=${(e: CustomEvent<Array<number>>) => this.handleSelection(e.detail)}
 				@itemsChange=${() => this.handleItemsChange()}
-				.positionMiddleware=${this.positionMiddleware}
 			>
 				${this.noResultsOptionTemplate}
 				${this.defaultOptionTemplate}

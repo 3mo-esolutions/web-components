@@ -1,5 +1,4 @@
 import { Component, component, css, event, eventListener, html, property, query } from '@a11d/lit'
-import { type Middleware } from '@floating-ui/dom'
 import { PopoverPlacement } from './PopoverPlacement.js'
 import { type PopoverCoordinates } from './PopoverCoordinates.js'
 import { PopoverAlignment } from './PopoverAlignment.js'
@@ -49,12 +48,9 @@ export class Popover extends Component {
 	@property({ type: Number }) offset?: number
 	@property({ type: Boolean, reflect: true, updated(this: Popover) { if (this.isConnected) { this.togglePopover(this.open) } } }) open = false
 	@property({ type: Object }) shouldOpen?: (e: Event) => boolean
-
-	@property({ type: Array }) positionMiddleware?: Array<Middleware>
-
 	@property({ type: Object }) cssRoot?: HTMLElement
 
-	protected readonly positionController = PopoverCssAnchorPositionController.supported
+	readonly positionController = PopoverCssAnchorPositionController.supported
 		? new PopoverCssAnchorPositionController(this)
 		: new PopoverFloatingUiPositionController(this)
 

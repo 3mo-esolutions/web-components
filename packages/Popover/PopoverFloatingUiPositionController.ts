@@ -1,7 +1,7 @@
 import { Controller, EventListenerController } from '@a11d/lit'
 import { type Popover } from './Popover.js'
 import { DirectionsByLanguage } from '@3mo/localization'
-import { arrow, computePosition, flip, offset, shift } from '@floating-ui/dom'
+import { arrow, computePosition, flip, offset, shift, type Middleware } from '@floating-ui/dom'
 import { ResizeController } from '@3mo/resize-observer'
 import { PopoverPlacement } from './PopoverPlacement.js'
 import { PopoverAlignment } from './PopoverAlignment.js'
@@ -75,6 +75,13 @@ export class PopoverFloatingUiPositionController extends Controller {
 		this.updatePosition()
 	}
 
+
+	private readonly customMiddlewares = new Set<Middleware>()
+
+	addMiddleware(middleware: Middleware) {
+		this.customMiddlewares.add(middleware)
+	}
+
 	private async updatePosition() {
 		if (!this.host.open) {
 			return
@@ -92,7 +99,7 @@ export class PopoverFloatingUiPositionController extends Controller {
 				shift({ crossAxis: true, padding: 4 }),
 				!this.host.arrowElement ? undefined : arrow({ element: this.host.arrowElement, padding: 4 }),
 				!this.host.offset ? undefined : offset(this.host.offset),
-				...this.host.positionMiddleware ?? [],
+				...this.customMiddlewares ?? [],
 			].filter(Boolean)
 		})
 
