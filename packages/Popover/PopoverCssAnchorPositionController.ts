@@ -95,7 +95,6 @@ export class PopoverCssAnchorPositionController extends Controller {
 		this.virtualAnchor ??= new PopoverVirtualAnchor()
 		this.virtualAnchor.coordinates = coordinates
 		PopoverHost.get(popover.anchor!).appendChild(this.virtualAnchor)
-		console.log(this.virtualAnchor)
 		this.tetherTo(this.virtualAnchor)
 	}
 
