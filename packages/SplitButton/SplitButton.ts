@@ -21,9 +21,22 @@ export class SplitButton extends Component {
 
 	static override get styles() {
 		return css`
-			:host { display: inline-flex; }
-			:host([disabled]) { pointer-events: none; }
-			mo-button { --mo-button-horizontal-padding: 6px; }
+			:host {
+				display: inline-flex;
+				anchor-name: --mo-split-button;
+			}
+
+			:host([disabled]) {
+				pointer-events: none;
+			}
+
+			mo-button {
+				--mo-button-horizontal-padding: 6px;
+			}
+
+			mo-menu {
+				position-anchor: --mo-split-button;
+			}
 		`
 	}
 
@@ -58,7 +71,7 @@ export class SplitButton extends Component {
 
 	protected get menuTemplate() {
 		return html`
-			<mo-menu .anchor=${this} target='more'
+			<mo-menu .anchor=${this} target='more' placement='block-end' alignment='end'
 				preventOpenOnAnchorEnter
 				?open=${this.open}
 				@openChange=${this.handleOpenChange}

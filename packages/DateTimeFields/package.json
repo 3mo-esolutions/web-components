@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/date-time-fields",
-	"version": "0.9.1",
+	"version": "0.10.0",
 	"description": "Date time fields let people select dates, date-ranges, and times.",
 	"repository": {
 		"type": "git",
@@ -35,7 +35,7 @@
 		"@3mo/focus-controller": "x",
 		"@3mo/list": "x",
 		"@3mo/localization": "x",
-		"@3mo/popover": ">=0.8.x",
+		"@3mo/popover": ">=0.9.x",
 		"@3mo/scroller": "x",
 		"@3mo/tab": "x",
 		"@3mo/text-fields": "x",

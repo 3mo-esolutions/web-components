@@ -89,8 +89,13 @@ class StoryPopoverAnchorPositioning extends Component {
 	static override get styles() {
 		return css`
 			mo-button {
+				anchor-name: --story-popover-catalog;
 				width: 600px;
 				height: 200px;
+			}
+
+			mo-popover {
+				position-anchor: --story-popover-catalog;
 			}
 		`
 	}
@@ -98,26 +103,26 @@ class StoryPopoverAnchorPositioning extends Component {
 	protected override get template() {
 		return html`
 			<mo-button type='outlined'>Click to open the popover</mo-button>
-			${this.getCardTemplate(PopoverAlignment.Start, PopoverPlacement.BlockStart)}
-			${this.getCardTemplate(PopoverAlignment.Start, PopoverPlacement.BlockEnd)}
-			${this.getCardTemplate(PopoverAlignment.Start, PopoverPlacement.InlineStart)}
-			${this.getCardTemplate(PopoverAlignment.Start, PopoverPlacement.InlineEnd)}
-			${this.getCardTemplate(PopoverAlignment.Center, PopoverPlacement.BlockStart)}
-			${this.getCardTemplate(PopoverAlignment.Center, PopoverPlacement.BlockEnd)}
-			${this.getCardTemplate(PopoverAlignment.Center, PopoverPlacement.InlineStart)}
-			${this.getCardTemplate(PopoverAlignment.Center, PopoverPlacement.InlineEnd)}
-			${this.getCardTemplate(PopoverAlignment.End, PopoverPlacement.BlockStart)}
-			${this.getCardTemplate(PopoverAlignment.End, PopoverPlacement.BlockEnd)}
-			${this.getCardTemplate(PopoverAlignment.End, PopoverPlacement.InlineStart)}
-			${this.getCardTemplate(PopoverAlignment.End, PopoverPlacement.InlineEnd)}
+			${this.getCardTemplate(PopoverPlacement.InlineStart, PopoverAlignment.Start)}
+			${this.getCardTemplate(PopoverPlacement.InlineStart, PopoverAlignment.Center)}
+			${this.getCardTemplate(PopoverPlacement.InlineStart, PopoverAlignment.End)}
+			${this.getCardTemplate(PopoverPlacement.BlockStart, PopoverAlignment.Start)}
+			${this.getCardTemplate(PopoverPlacement.BlockStart, PopoverAlignment.Center)}
+			${this.getCardTemplate(PopoverPlacement.BlockStart, PopoverAlignment.End)}
+			${this.getCardTemplate(PopoverPlacement.InlineEnd, PopoverAlignment.Start)}
+			${this.getCardTemplate(PopoverPlacement.InlineEnd, PopoverAlignment.Center)}
+			${this.getCardTemplate(PopoverPlacement.InlineEnd, PopoverAlignment.End)}
+			${this.getCardTemplate(PopoverPlacement.BlockEnd, PopoverAlignment.Start)}
+			${this.getCardTemplate(PopoverPlacement.BlockEnd, PopoverAlignment.Center)}
+			${this.getCardTemplate(PopoverPlacement.BlockEnd, PopoverAlignment.End)}
 		`
 	}
 
-	protected getCardTemplate(alignment: PopoverAlignment, placement: PopoverPlacement) {
+	protected getCardTemplate(placement: PopoverPlacement, alignment: PopoverAlignment) {
 		return html`
 			<mo-popover mode='manual' .anchor=${this} open placement=${placement} alignment=${alignment}>
 				<mo-card>
-					<code>${alignment} / ${placement}</code>
+					<code>${placement} / ${alignment}</code>
 				</mo-card>
 			</mo-popover>
 		`

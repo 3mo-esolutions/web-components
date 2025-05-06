@@ -49,17 +49,19 @@ export class UserAvatar extends Component {
 
 	protected override get template() {
 		return html`
-			<mo-avatar id='avatar'>
-				${this.avatarContentTemplate}
-			</mo-avatar>
+			<mo-popover-container>
+				<mo-avatar id='avatar'>
+					${this.avatarContentTemplate}
+				</mo-avatar>
 
-			<mo-menu target='avatar' .anchor=${this} ?open=${bind(this, 'open', { sourceUpdated: value => this.openChange.dispatch(value) })}>
-				${join([
-					this.avatarTemplate,
-					html`<slot></slot>`,
-					this.signOutTemplate
-				].filter(t => !!t && t !== html.nothing), html`<mo-line></mo-line>`)}
-			</mo-menu>
+				<mo-menu slot='popover' ?open=${bind(this, 'open', { sourceUpdated: value => this.openChange.dispatch(value) })}>
+					${join([
+						this.avatarTemplate,
+						html`<slot></slot>`,
+						this.signOutTemplate
+					].filter(t => !!t && t !== html.nothing), html`<mo-line></mo-line>`)}
+				</mo-menu>
+			</mo-popover-container>
 		`
 	}
 

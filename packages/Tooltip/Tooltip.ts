@@ -77,6 +77,7 @@ export class Tooltip extends Component {
 				font-size: var(--mo-tooltip-font-size, 0.82rem);
 				background: var(--_tooltip-default-background);
 				transition-property: opacity, transform;
+				line-height: 1;
 
 				&::part(arrow) {
 					display: block;
@@ -105,6 +106,7 @@ export class Tooltip extends Component {
 				.anchor=${this.anchor}
 				placement=${ifDefined(this.placement)}
 				alignment='center'
+				.cssRoot=${this}
 			>
 				<slot @slotchange=${this.handleSlotChange}></slot>
 			</mo-popover>

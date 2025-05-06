@@ -1,12 +1,11 @@
 import { Controller, EventListenerController } from '@a11d/lit'
 import { type Popover } from './Popover.js'
 import { DirectionsByLanguage } from '@3mo/localization'
-import { arrow, computePosition, flip, offset, shift } from '@floating-ui/dom'
 import { ResizeController } from '@3mo/resize-observer'
 import { PopoverPlacement } from './PopoverPlacement.js'
 import { PopoverAlignment } from './PopoverAlignment.js'
 
-export class PopoverPositionController extends Controller {
+export class PopoverFloatingUiPositionController extends Controller {
 	private static readonly arrowSideByPlacement = new Map([
 		['top', 'bottom'],
 		['right', 'left'],
@@ -75,6 +74,13 @@ export class PopoverPositionController extends Controller {
 		this.updatePosition()
 	}
 
+
+	private readonly customMiddlewares = new Set<import('@floating-ui/dom').Middleware>()
+
+	addMiddleware(middleware: import('@floating-ui/dom').Middleware) {
+		this.customMiddlewares.add(middleware)
+	}
+
 	private async updatePosition() {
 		if (!this.host.open) {
 			return
@@ -84,6 +90,8 @@ export class PopoverPositionController extends Controller {
 			getBoundingClientRect: () => new DOMRect(...this.host.coordinates ?? [0, 0], 0, 0),
 		}
 
+		const { computePosition, flip, shift, arrow, offset } = await import('@floating-ui/dom')
+
 		const response = await computePosition(anchor, this.host, {
 			strategy: 'fixed',
 			placement: this.floatingUiPlacement,
@@ -92,7 +100,7 @@ export class PopoverPositionController extends Controller {
 				shift({ crossAxis: true, padding: 4 }),
 				!this.host.arrowElement ? undefined : arrow({ element: this.host.arrowElement, padding: 4 }),
 				!this.host.offset ? undefined : offset(this.host.offset),
-				...this.host.positionMiddleware ?? [],
+				...this.customMiddlewares,
 			].filter(Boolean)
 		})
 
@@ -105,7 +113,7 @@ export class PopoverPositionController extends Controller {
 			this.host.arrowElement.style.left = arrowX !== null ? `${arrowX}px` : ''
 			this.host.arrowElement.style.top = arrowY !== null ? `${arrowY}px` : ''
 
-			const staticSide = PopoverPositionController.arrowSideByPlacement.get(response.placement!.split('-')[0] as any)
+			const staticSide = PopoverFloatingUiPositionController.arrowSideByPlacement.get(response.placement!.split('-')[0] as any)
 			this.host.arrowElement.dataset.placement = staticSide
 		}
 	}

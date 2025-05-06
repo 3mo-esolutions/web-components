@@ -110,7 +110,13 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 				pointer-events: none;
 			}
 
+			mo-field {
+				anchor-name: --mo-field-date-time;
+			}
+
 			mo-popover {
+				position-anchor: --mo-field-date-time;
+				position-visibility: anchors-visible;
 				background: var(--mo-color-background);
 				box-shadow: var(--mo-shadow);
 				border-radius: var(--mo-border-radius);
@@ -198,7 +204,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 
 	protected get popoverTemplate() {
 		return this.pickerHidden ? html.nothing : html`
-			<mo-popover tabindex='-1' .anchor=${this} ?open=${bind(this, 'open')}>
+			<mo-popover tabindex='-1' .anchor=${this} target='field' ?open=${bind(this, 'open')}>
 				${cache(!this.open ? html.nothing : this.popoverContentTemplate)}
 			</mo-popover>
 		`

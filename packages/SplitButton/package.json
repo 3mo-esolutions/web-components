@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/split-button",
-	"version": "0.1.1",
+	"version": "0.2.0",
 	"description": "A split-button web-component based on Material Web Components.",
 	"repository": {
 		"type": "git",
@@ -29,6 +29,6 @@
 		"@3mo/icon": "x",
 		"@3mo/button": "x",
 		"@3mo/button-group": "x",
-		"@3mo/menu": ">=0.9.x"
+		"@3mo/menu": ">=0.10.x"
 	}
 }

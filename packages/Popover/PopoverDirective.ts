@@ -1,10 +1,11 @@
 import { directive, AsyncDirective, type ElementPart, type HTMLTemplateResult, type PartInfo, PartType, render, noChange } from '@a11d/lit'
 import { type Popover } from './Popover.js'
-import { Application } from '@a11d/lit-application'
+import { PopoverHost } from './PopoverHost.js'
 
 type PopoverDirectiveParameters = [template: () => HTMLTemplateResult]
 
 class PopoverDirective extends AsyncDirective {
+	host?: HTMLElement
 	container?: HTMLElement
 	popover?: Popover
 	part?: ElementPart
@@ -23,7 +24,7 @@ class PopoverDirective extends AsyncDirective {
 		this.template = template
 		if (this.isConnected) {
 			requestIdleCallback(() => {
-				render(template(), this.container ??= document.createElement('mo-popover-renderer'))
+				render(template(), this.container ??= document.createElement('span'))
 
 				if (!this.popover) {
 					this.popover = this.container.firstElementChild as Popover
@@ -40,8 +41,9 @@ class PopoverDirective extends AsyncDirective {
 	}
 
 	handleEvent(event: CustomEvent<boolean>) {
-		if (this.popover && this.container && !this.popover.isConnected && event.detail === true) {
-			Application.topLayer.appendChild(this.container!)
+		if (this.popover && !this.popover.isConnected && event.detail === true) {
+			this.host ??= PopoverHost.get(this.part!.element as HTMLElement)
+			this.host.appendChild(this.popover)
 		}
 	}
 
