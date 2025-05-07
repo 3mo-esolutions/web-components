@@ -63,6 +63,7 @@ export class NavigationItem extends Component {
 				cursor: pointer;
 				white-space: nowrap;
 				outline: none;
+				anchor-name: --mo-navigation-item;
 			}
 
 			:host([data-router-selected]) {
@@ -81,6 +82,7 @@ export class NavigationItem extends Component {
 
 			mo-menu {
 				color: var(--mo-color-foreground);
+				position-anchor: --mo-navigation-item;
 			}
 
 			mo-focus-ring {
