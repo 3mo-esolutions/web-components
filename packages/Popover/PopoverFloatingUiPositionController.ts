@@ -6,6 +6,8 @@ import { PopoverPlacement } from './PopoverPlacement.js'
 import { PopoverAlignment } from './PopoverAlignment.js'
 
 export class PopoverFloatingUiPositionController extends Controller {
+	private static floatingUi?: typeof import('@floating-ui/dom')
+
 	private static readonly arrowSideByPlacement = new Map([
 		['top', 'bottom'],
 		['right', 'left'],
@@ -90,7 +92,7 @@ export class PopoverFloatingUiPositionController extends Controller {
 			getBoundingClientRect: () => new DOMRect(...this.host.coordinates ?? [0, 0], 0, 0),
 		}
 
-		const { computePosition, flip, shift, arrow, offset } = await import('@floating-ui/dom')
+		const { computePosition, flip, shift, arrow, offset } = PopoverFloatingUiPositionController.floatingUi ??= await import('@floating-ui/dom')
 
 		const response = await computePosition(anchor, this.host, {
 			strategy: 'fixed',
