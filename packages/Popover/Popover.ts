@@ -113,7 +113,7 @@ export class Popover extends Component {
 				box-shadow: var(--mo-shadow);
 				margin: 0;
 				padding: 0;
-				border: none;
+				border: 1px solid var(--mo-color-transparent-gray-3);
 				overflow: unset;
 			}
 
