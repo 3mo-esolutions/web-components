@@ -79,7 +79,6 @@ export class DataGridColumnHeader extends Component {
 					transition: 0.1s;
 					font-size: 20px;
 					color: var(--mo-color-accent);
-					font-size: 20px;
 				}
 
 				span {

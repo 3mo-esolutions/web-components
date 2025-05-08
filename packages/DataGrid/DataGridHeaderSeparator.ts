@@ -43,7 +43,6 @@ export class DataGridHeaderSeparator extends Component {
 				height: 100%;
 				cursor: col-resize;
 				background-color: var(--mo-color-transparent-gray-3);
-				height: 100%;
 				transition: 0.1s;
 			}
 
