@@ -18,13 +18,11 @@ const separator = html`
 `
 
 const items = html`
-	<mo-list-item>
-		<mo-icon style='opacity: 0.66' icon='inbox'></mo-icon>
+	<mo-list-item icon='inbox'>
 		<span style='flex: 1'>Inbox</span>
 		${keyboardShortcut('Ctrl + I')}
 	</mo-list-item>
-	<mo-list-item>
-		<mo-icon style='opacity: 0.66' icon='drafts'></mo-icon>
+	<mo-list-item icon='drafts'>
 		<span style='flex: 1'>Drafts</span>
 		${keyboardShortcut('Ctrl + D')}
 	</mo-list-item>
@@ -32,15 +30,13 @@ const items = html`
 	<mo-list-item><span class='first-column-padding' hidden></span>Trash</mo-list-item>
 	<mo-list-item><span class='first-column-padding' hidden></span>Spam</mo-list-item>
 	${separator}
-	<mo-list-item disabled style='opacity: 1'>
-		<mo-icon style='opacity: 0.33' icon='settings_suggest'></mo-icon>
+	<mo-list-item disabled style='opacity: 1' icon='settings_suggest'>
 		<span>
 			<span style='opacity: 0.5'>Personalization -</span>
 			<mo-anchor style='pointer-events: auto;'>Upgrade to Pro!</mo-anchor>
 		</span>
 	</mo-list-item>
-	<mo-list-item>
-		<mo-icon style='opacity: 0.66' icon='logout'></mo-icon>
+	<mo-list-item icon='logout'>
 		Logout
 	</mo-list-item>
 `
