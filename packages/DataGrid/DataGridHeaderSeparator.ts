@@ -19,43 +19,40 @@ export class DataGridHeaderSeparator extends Component {
 		return css`
 			:host {
 				position: absolute;
-				inset-inline-end: -2px;
+				inset-inline-end: -3px;
+				height: 100%;
+				width: 6px;
+				user-select: none;
+			}
+
+			:host([disabled]) {
+				pointer-events: none;
 			}
 
 			:host([data-last]) {
 				inset-inline-end: 0px !important;
 			}
 
-			div.separator {
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				inset-inline-start: -6px;
-				width: 6px;
+			:host(:hover) {
+				cursor: col-resize;
+			}
+
+			.separator {
+				margin-inline: auto;
+				width: 1px;
 				height: 100%;
-				user-select: none;
-			}
-
-			.knob {
-				height: var(--mo-data-grid-header-separator-height);
-				width: var(--mo-data-grid-header-separator-width);
-				border-radius: 100px;
-				background-color: var(--mo-color-gray);
-				transition: 0.2s;
-			}
-
-			:host(:not([disabled])) div.separator {
 				cursor: col-resize;
+				background-color: var(--mo-color-transparent-gray-3);
+				height: 100%;
+				transition: 0.1s;
 			}
 
-			:host(:not([disabled])) .separator:hover .knob {
-				--mo-data-grid-header-separator-height: 30px;
-				--mo-data-grid-header-separator-width: 8px;
+			:host(:hover) .separator {
+				width: 100%;
 				background-color: var(--mo-color-accent);
-				cursor: col-resize;
 			}
 
-			:host(:not([disabled])) .resizerOverlay {
+			.resizer {
 				position: fixed;
 				pointer-events: none;
 				top: 0;
@@ -68,13 +65,8 @@ export class DataGridHeaderSeparator extends Component {
 
 	protected override get template() {
 		return html`
-			<div class='separator' @pointerdown=${this.handlePointerDown} @dblclick=${this.handleDoubleClick}>
-				<div class='knob'></div>
-			</div>
-
-			${this.isResizing === false ? html.nothing : html`
-				<div class='resizerOverlay' ${style({ insetInlineStart: `${this.pointerInlineStart}px` })}></div>
-			`}
+			<div class='separator' @pointerdown=${this.handlePointerDown} @dblclick=${this.handleDoubleClick}></div>
+			${!this.isResizing ? html.nothing : html`<div class='resizer' ${style({ insetInlineStart: `${this.pointerInlineStart}px` })}></div>`}
 		`
 	}
 

@@ -1,14 +1,16 @@
 import { html, style, type HTMLTemplateResult } from '@a11d/lit'
 import { equals } from '@a11d/equals'
-import type { DataGrid } from './index.js'
+import type { DataGrid, DataGridSortingStrategy } from './index.js'
 import type * as CSS from 'csstype'
 
 export type DataGridColumnAlignment = 'start' | 'center' | 'end'
 
 export type DataGridColumnSticky = 'start' | 'both' | 'end'
 
+export type DataGridColumnMenuItems = HTMLTemplateResult | Map<'sorting' | 'stickiness' | 'more', HTMLTemplateResult>
+
 export class DataGridColumn<TData, TValue = unknown> {
-	dataGrid?: DataGrid<TData, any>
+	dataGrid!: DataGrid<TData, any>
 	dataSelector!: KeyPath.Of<TData>
 
 	heading!: string
@@ -17,15 +19,44 @@ export class DataGridColumn<TData, TValue = unknown> {
 	width: CSS.DataType.TrackBreadth<(string & {}) | 0> = 'max-content'
 
 	alignment: DataGridColumnAlignment = 'start'
-	hidden = false
 
-	sortable = true
+	hidden = false
+	hide() {
+		this.hidden = true
+		this.dataGrid.requestUpdate()
+	}
 
 	sticky?: DataGridColumnSticky
+	toggleSticky(sticky: DataGridColumnSticky) {
+		this.sticky = this.sticky === sticky ? undefined : sticky
+		this.dataGrid.requestUpdate()
+	}
+
+	sortable = true
 
 	private _sortDataSelector?: KeyPath.Of<TData>
 	get sortDataSelector() { return this._sortDataSelector || this.dataSelector }
 	set sortDataSelector(value) { this._sortDataSelector = value }
+
+	toggleSort(strategy?: DataGridSortingStrategy | null) {
+		if (!this.sortable) {
+			return
+		}
+
+		if (!!strategy && this.sortingDefinition?.strategy === strategy) {
+			strategy = null
+		}
+
+		if (strategy === null) {
+			this.dataGrid.sortingController.reset()
+		} else {
+			this.dataGrid.sortingController.toggle(this.sortDataSelector, strategy)
+		}
+
+		this.dataGrid.requestUpdate()
+	}
+
+	getMenuItemsTemplate?(): DataGridColumnMenuItems
 
 	getContentTemplate?(value: TValue, data: TData): HTMLTemplateResult
 

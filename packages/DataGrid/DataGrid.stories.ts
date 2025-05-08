@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components'
-import { html, ifDefined, style } from '@a11d/lit'
+import { html, ifDefined, style, type HTMLTemplateResult } from '@a11d/lit'
 import p from './package.json'
-import { DataGridEditability, DataGridSelectionBehaviorOnDataChange, DataGridSelectability, DataGridSortingStrategy } from './index.js'
+import { DataGridEditability, DataGridSelectionBehaviorOnDataChange, DataGridSelectability, DataGridSortingStrategy, DataGridColumnText, type DataGridColumnMenuItems } from './index.js'
 import { DialogAlert } from '../StandardDialogs/index.js'
 
 export default {
@@ -252,7 +252,7 @@ export const Editability: StoryObj = {
 	parameters: {
 		docs: {
 			description: {
-				story: 'This example also demonstrated how some columns can be partially editable by disabling the editability of people older than 30.',
+				story: 'This example also demonstrates how some columns can be partially editable by disabling the editability of people older than 30.',
 			},
 		}
 	},
@@ -323,4 +323,41 @@ export const NoContent: StoryObj = {
 			${columnsTemplate}
 		</mo-data-grid>
 	`
+}
+
+
+export const WithCustomMenuItems: StoryObj = {
+	render: () => {
+		if (!customElements.get('mo-story-custom-address-column')) {
+			customElements.define('mo-story-custom-address-column', class CustomAddressColumn<TData> extends DataGridColumnText<TData> {
+				override getContentTemplate(value: string | undefined, data: TData): HTMLTemplateResult {
+					return html`
+						<span style='color: var(--mo-color-accent)'>
+							${super.getContentTemplate(value, data)}
+						</span>
+				`
+				}
+				override getMenuItemsTemplate(): DataGridColumnMenuItems {
+					return new Map([
+						['sorting', html`
+							<mo-selectable-menu-item icon='my_location' selected>Sort by Street</mo-selectable-menu-item>
+							<mo-selectable-menu-item icon='location_city'>Sort by Zip Code</mo-selectable-menu-item>
+						`],
+						['more', html`
+							<mo-menu-item icon='location_off'>Hide icon</mo-menu-item>
+						`]
+					])
+				}
+			})
+		}
+		return html`
+			<div style='margin-bottom: 10px'>
+				Open the context menu of the colored address column to see the custom menu items.
+			</div>
+			<mo-data-grid style='height: 500px' .data=${twentyPeople}>
+				<mo-story-custom-address-column heading='Custom Address' dataSelector='address'></mo-story-custom-address-column>
+				${columnsTemplate}
+			</mo-data-grid>
+		`
+	}
 }
