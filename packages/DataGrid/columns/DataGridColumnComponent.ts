@@ -1,6 +1,6 @@
 import { Component, property, type HTMLTemplateResult } from '@a11d/lit'
 import { DataGrid } from '../DataGrid.js'
-import { DataGridColumn, type DataGridColumnAlignment, type DataGridColumnSticky } from '../DataGridColumn.js'
+import { DataGridColumn, type DataGridColumnAlignment, type DataGridColumnMenuItems, type DataGridColumnSticky } from '../DataGridColumn.js'
 
 /**
  * @attr width - The width of the column
@@ -47,12 +47,15 @@ export abstract class DataGridColumnComponent<TData, TValue> extends Component {
 			width: this.width,
 			sortable: !this.nonSortable,
 			editable: this.getEditContentTemplate !== undefined && (typeof nonEditable !== 'function' ? !nonEditable : x => !nonEditable(x)),
+			getMenuItemsTemplate: this.getMenuItemsTemplate?.bind(this),
 			getContentTemplate: this.getContentTemplate.bind(this),
 			getEditContentTemplate: this.getEditContentTemplate?.bind(this),
 			generateCsvHeading: this.generateCsvHeading.bind(this),
 			generateCsvValue: this.generateCsvValue.bind(this),
 		})
 	}
+
+	protected getMenuItemsTemplate?(): DataGridColumnMenuItems
 
 	abstract getContentTemplate(value: TValue | undefined, data: TData): HTMLTemplateResult
 	abstract getEditContentTemplate?(value: TValue | undefined, data: TData): HTMLTemplateResult

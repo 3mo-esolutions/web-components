@@ -1,8 +1,7 @@
-import { component, Component, css, html, ifDefined, property, event, style, live } from '@a11d/lit'
-import { tooltip } from '@3mo/tooltip'
+import { component, Component, css, html, property, event, style, live, queryAll } from '@a11d/lit'
 import { observeResize } from '@3mo/resize-observer'
 import { Localizer } from '@3mo/localization'
-import { DataGridSelectability, DataGridSortingStrategy, type DataGridColumn, type DataGrid, DataGridSidePanelTab } from './index.js'
+import { DataGridSelectability, type DataGrid, DataGridSidePanelTab, type DataGridColumnHeader } from './index.js'
 import type { DataGridColumnsController } from './DataGridColumnsController.js'
 
 Localizer.dictionaries.add('en', {
@@ -27,6 +26,8 @@ export class DataGridHeader<TData> extends Component {
 	@property({ type: Object }) dataGrid!: DataGrid<TData, any>
 	@property({ type: Boolean, reflect: true }) overlayOpen = false
 
+	@queryAll('mo-data-grid-column-header') private readonly columnHeaders!: Array<DataGridColumnHeader>
+
 	protected override connected() {
 		this.dataGrid.dataChange.subscribe(this.handleDataGridDataChange)
 	}
@@ -37,6 +38,11 @@ export class DataGridHeader<TData> extends Component {
 
 	private readonly handleDataGridDataChange = () => {
 		this.requestUpdate()
+	}
+
+	protected override updated(...parameters: Parameters<Component['updated']>) {
+		super.updated(...parameters)
+		this.columnHeaders.forEach(h => h.requestUpdate())
 	}
 
 	static override get styles() {
@@ -54,53 +60,6 @@ export class DataGridHeader<TData> extends Component {
 				font-size: small;
 				border-block: var(--mo-data-grid-border);
 				height: var(--mo-data-grid-header-height);
-			}
-
-			.headerContent {
-				padding: 0 var(--mo-data-grid-cell-padding);
-				display: inline-block;
-				overflow: hidden !important;
-				color: var(--mo-color-foreground);
-				font-weight: 500;
-				line-height: var(--mo-data-grid-header-height);
-				white-space: nowrap;
-				text-overflow: ellipsis;
-				user-select: none;
-			}
-
-			.sort-rank {
-				background: var(--mo-color-transparent-gray-3);
-				color: var(--mo-color-foreground);
-				border: 1px solid var(--mo-color-gray-transparent);
-				border-radius: 50%;
-				width: fit-content;
-				user-select: none;
-				height: 20px;
-				aspect-ratio: 1 / 1;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-			}
-
-			.cell {
-				position: relative;
-			}
-
-			.cell[data-sticky] {
-				position: sticky;
-			}
-
-			.cell[data-sticky] /*[data-sticking]*/ {
-				z-index: 6;
-				background: var(--mo-data-grid-sticky-part-color);
-			}
-
-			mo-data-grid-header-separator {
-				z-index: 5;
-			}
-
-			.cell[data-sticky] /*[data-sticking]*/ mo-data-grid-header-separator {
-				z-index: 7;
 			}
 
 			.details, .selection, .actions, .context-menu {
@@ -202,46 +161,9 @@ export class DataGridHeader<TData> extends Component {
 
 	private get contentTemplate() {
 		return html`
-			${this.dataGrid.visibleColumns.map(this.getHeaderCellTemplate)}
-		`
-	}
-
-	private readonly getHeaderCellTemplate = (column: DataGridColumn<TData>, index: number, columns: Array<DataGridColumn<TData>>) => {
-		const sortingDefinition = column.sortingDefinition
-		const sortIcon = !sortingDefinition ? undefined : sortingDefinition.strategy === DataGridSortingStrategy.Ascending ? 'arrow_upward' : 'arrow_downward'
-		const sortingRank = !sortingDefinition || this.dataGrid.getSorting().length <= 1 ? undefined : sortingDefinition.rank
-		const observeResizeDeferred = (callback: ResizeObserverCallback) => observeResize((e, o) => {
-			// It is necessary to defer the callback to avoid
-			// this resize-observer triggering other resize-observers in a loop
-			requestIdleCallback(() => callback(e, o))
-		})
-		return html`
-			<mo-flex class='cell' alignItems='center' direction=${column.alignment === 'end' ? 'horizontal-reversed' : 'horizontal'}
-				data-sticky=${ifDefined(column.sticky)}
-				data-sticking=${column.intersecting === false}
-				${!column.sticky || column.intersecting ? html.nothing : style({ insetInline: column.stickyColumnInsetInline })}
-				${observeResizeDeferred(([entry]) => column.widthInPixels = entry?.contentRect.width ?? 0)}
-			>
-				<mo-flex direction=${column.alignment === 'end' ? 'horizontal-reversed' : 'horizontal'} alignItems='center'
-					${style({ overflow: 'hidden', cursor: 'pointer', flex: '1' })}
-					@click=${() => this.sort(column)}
-				>
-					<div class='headerContent'
-						${style({ width: '100%', textAlign: column.alignment })}
-						${!column.description ? html.nothing : tooltip(column.description)}
-					>${column.heading}</div>
-
-					${sortIcon === undefined ? html.nothing : html`
-						${!sortingRank ? html.nothing : html`<span class='sort-rank'>${sortingRank}</span>`}
-						<mo-icon ${style({ color: 'var(--mo-color-accent)', marginInline: '3px' })} icon=${ifDefined(sortIcon)}></mo-icon>
-					`}
-				</mo-flex>
-				<mo-data-grid-header-separator
-					?data-last=${columns.length - 1 === index}
-					.dataGrid=${this.dataGrid as any}
-					.column=${this.dataGrid.visibleColumns[index]}
-				></mo-data-grid-header-separator>
-			</mo-flex>
+			${this.dataGrid.visibleColumns.map(column => html`
+				<mo-data-grid-column-header .column=${column}></mo-data-grid-column-header>
+			`)}
 		`
 	}
 
@@ -280,13 +202,6 @@ export class DataGridHeader<TData> extends Component {
 	private getResizeObserver(property: keyof DataGridColumnsController<TData>) {
 		// @ts-expect-error Readonly property set here
 		return observeResize(([entry]) => this.dataGrid.columnsController[property] = entry?.contentRect.width ?? 0)
-	}
-
-	private sort(column: DataGridColumn<TData>) {
-		if (column.sortable) {
-			this.dataGrid.sortingController.toggle(column.sortDataSelector)
-			this.requestUpdate()
-		}
 	}
 
 	private toggleAllDetails() {
