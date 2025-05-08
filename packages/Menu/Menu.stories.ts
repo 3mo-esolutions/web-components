@@ -15,7 +15,7 @@ export const Menu: StoryObj = {
 		return html`
 			<mo-popover-container placement='block-end' alignment='end'>
 				<mo-button type='outlined'>Click to open the menu</mo-button>
-				<mo-menu slot='popover'>
+				<mo-menu slot='popover' selectability='single'>
 					${items}
 				</mo-menu>
 			</mo-popover-container>
@@ -31,7 +31,7 @@ export const WithCustomTarget: StoryObj = {
 					Click on the icon-button to open the menu
 					<mo-icon-button id='icon-button' slot='end' icon='more_vert'></mo-icon-button>
 				</mo-button>
-				<mo-menu slot='popover' target='icon-button'>
+				<mo-menu slot='popover' target='icon-button' selectability='single'>
 					${items}
 				</mo-menu>
 			</mo-popover-container>
@@ -60,8 +60,10 @@ const items = html`
 		<span style='flex: 1'>Paste</span>
 		${keyboardShortcut('Ctrl + V')}
 	</mo-menu-item>
-	<div role='separator' style='width: 100%; height: 1px; background: darkgray; opacity: 0.3'></div>
-	<mo-selectable-list-item>Dictionary</mo-selectable-list-item>
+
+	<mo-line></mo-line>
+
+	<mo-menu-item>Dictionary</mo-menu-item>
 	<mo-menu-item>Thesaurus</mo-menu-item>
 	<mo-nested-menu-item>(not) Sub-menu</mo-nested-menu-item>
 	<mo-nested-menu-item>
@@ -74,6 +76,13 @@ const items = html`
 			<mo-menu-item slot='submenu'>Report Issue</mo-menu-item>
 		</mo-nested-menu-item>
 	</mo-nested-menu-item>
+
+	<mo-line></mo-line>
+
+	<div style='opacity: 0.5; padding-inline: 1rem; padding-block: 0.75rem 0.25rem;'>Visibility</div>
+	<mo-selectable-menu-item icon='lock' selected>Private</mo-selectable-menu-item>
+	<mo-selectable-menu-item icon='groups'>Team</mo-selectable-menu-item>
+	<mo-selectable-menu-item icon='public'>Public</mo-selectable-menu-item>
 `
 
 class ButtonWithMenuStory extends Component {

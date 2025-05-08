@@ -1,11 +1,11 @@
 import { component, css } from '@a11d/lit'
-import { ListItem } from '@3mo/list'
+import { SelectableListItem } from '@3mo/list'
 
 /**
- * @element mo-menu-item
+ * @element mo-selectable-menu-item
  */
-@component('mo-menu-item')
-export class MenuItem extends ListItem {
+@component('mo-selectable-menu-item')
+export class SelectableMenuItem extends SelectableListItem {
 	override readonly role = 'menuitem'
 
 	static override get styles() {
@@ -18,6 +18,6 @@ export class MenuItem extends ListItem {
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'mo-menu-item': MenuItem
+		'mo-selectable-menu-item': SelectableMenuItem
 	}
 }

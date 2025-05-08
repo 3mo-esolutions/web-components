@@ -2,7 +2,7 @@ import { Component, EventListenerController, component, css, event, html, ifDefi
 import { Popover, type PopoverCoordinates } from '@3mo/popover'
 import { SlotController } from '@3mo/slot-controller'
 import { disabledProperty } from '@3mo/disabled-property'
-import { isListItem, type ListElement, type ListItem, type SelectableList } from '@3mo/list'
+import { isListItem, SelectableListSelectability, type ListElement, type ListItem, type SelectableList } from '@3mo/list'
 import type { MenuPlacement, MenuAlignment } from './index.js'
 
 export function isMenu(element: EventTarget): element is HTMLElement {
@@ -18,7 +18,8 @@ export function isMenu(element: EventTarget): element is HTMLElement {
  * @attr open - Whether the menu is open.
  * @attr target - The target of the menu.
  * @attr manual - Whether the menu is opened manually. This won't affect the opening triggers via the keyboard.
- * @attr selectability - The selectability of the menu.
+ * @attr preventOpenOnAnchorEnter - Whether the menu should not open when the Enter key is pressed on the anchor.
+ * @attr selectability - The selectability of the menu. Default is `multiple`.
  * @attr value - The value of the menu.
  * @attr disabled - Whether the menu is disabled.
  *
@@ -90,7 +91,7 @@ export class Menu extends Component {
 	@property() target?: string
 	@property({ type: Boolean }) manual = false
 	@property({ type: Boolean }) preventOpenOnAnchorEnter = false
-	@property() selectability?: SelectableList['selectability']
+	@property() selectability = SelectableListSelectability.Multiple
 	@property({ type: Array, bindingDefault: true }) value?: SelectableList['value']
 	@disabledProperty() disabled = false
 
