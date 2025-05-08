@@ -71,15 +71,15 @@ export class DataGridColumnHeader extends Component {
 			#sort {
 				position: relative;
 
+				&[data-preview] {
+					display: none;
+				}
+
 				mo-icon-button {
 					transition: 0.1s;
 					font-size: 20px;
 					color: var(--mo-color-accent);
 					font-size: 20px;
-					&[data-preview] {
-						width: 0;
-						opacity: 0;
-					}
 				}
 
 				span {
@@ -98,10 +98,12 @@ export class DataGridColumnHeader extends Component {
 				}
 			}
 
-			:host(:hover) #sort mo-icon-button[data-preview] {
-				width: auto;
-				color: var(--mo-color-gray);
-				opacity: 0.5;
+			:host(:hover) #sort[data-preview] {
+				display: flex;
+				mo-icon-button {
+					color: var(--mo-color-gray);
+					opacity: 0.5;
+				}
 			}
 
 			#menu-icon {
@@ -192,8 +194,8 @@ export class DataGridColumnHeader extends Component {
 		const sortIcon = sortingDefinition?.strategy === DataGridSortingStrategy.Ascending ? 'arrow_upward' : 'arrow_downward'
 		const sortingRank = !sortingDefinition || this.column.dataGrid.getSorting().length <= 1 ? undefined : sortingDefinition.rank
 		return !this.column.sortable ? html.nothing : html`
-			<mo-flex id='sort' direction='horizontal'>
-				<mo-icon-button dense icon=${sortIcon} ?data-preview=${!sortingDefinition?.strategy}></mo-icon-button>
+			<mo-flex id='sort' direction='horizontal' ?data-preview=${!sortingDefinition?.strategy}>
+				<mo-icon-button dense icon=${sortIcon}></mo-icon-button>
 				${!sortingRank ? html.nothing : html`<span>${sortingRank}</span>`}
 			</mo-flex>
 		`
