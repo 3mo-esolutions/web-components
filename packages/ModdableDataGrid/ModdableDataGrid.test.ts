@@ -127,6 +127,7 @@ class ModdableDataGridTestFixture extends ComponentTestFixture<ModdableDataGridS
 			dataGrid.modesAdapter.selectedModeId = options.selectedModeId
 			return dataGrid
 		})
+		beforeEach(() => spyOn(this.component.fetcherController, 'fetch').and.callThrough())
 	}
 
 	expectModeToBeSelected(modeId: 'default' | '1' | '2') {
@@ -168,6 +169,11 @@ describe('ModdableDataGrid', () => {
 	describe('No modes', () => {
 		const fixture = new ModdableDataGridTestFixture({ modes: [] })
 
+		it('should have requested fetch only once on initialization', async () => {
+			await new Promise<void>(r => setTimeout(r))
+			expect(fixture.component.fetcherController.fetch).toHaveBeenCalledTimes(1)
+		})
+
 		describe('Mode creation icon-button', () => {
 			it('should exist in the toolbar if there are no modes', () => {
 				expect(fixture.component['hasModebar']).toBeFalse()
@@ -187,6 +193,10 @@ describe('ModdableDataGrid', () => {
 
 		// It takes a bit for chips to be rendered due to the async nature of the component
 		beforeEach(() => new Promise<void>(r => setTimeout(r)))
+
+		it('should have requested fetch only once on initialization', () => {
+			expect(fixture.component.fetcherController.fetch).toHaveBeenCalledTimes(1)
+		})
 
 		it('should have a modebar if there is at least one mode', () => {
 			expect(fixture.component['hasModebar']).toBeTrue()
@@ -337,6 +347,10 @@ describe('ModdableDataGrid', () => {
 
 			// The columns are not extracted/applied immediately, so we need to wait for the next microtask
 			beforeEach(() => new Promise(r => setTimeout(r)))
+
+			it('should have requested fetch only once on initialization', () => {
+				expect(fixture.component.fetcherController.fetch).toHaveBeenCalledTimes(1)
+			})
 
 			it('should apply pre-selected mode on initialization', () => fixture.expectModeToBeSelected('2'))
 

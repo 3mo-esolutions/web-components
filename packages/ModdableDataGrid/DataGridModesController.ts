@@ -44,8 +44,13 @@ export class DataGridModesController<TData, TParameters extends FetchableDataGri
 		}
 	}
 
+	private _initialized = false
+	get initialized() { return this._initialized }
+
 	override async hostConnected() {
 		await this.fetch()
+		this._initialized = true
+		this.host.requestFetch()
 	}
 
 	private async fetch() {

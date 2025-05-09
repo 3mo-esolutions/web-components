@@ -42,6 +42,12 @@ export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataG
 		this.modeChips.forEach(chip => chip.requestUpdate())
 	}
 
+	override requestFetch(...parameters: Parameters<typeof this.fetcherController.fetch>) {
+		return !this.modesController.initialized
+			? Promise.resolve(undefined)
+			: super.requestFetch(...parameters)
+	}
+
 	override extractedColumnsUpdated(columns: Array<DataGridColumn<TData, unknown>>) {
 		if (!this.mode) {
 			return super.extractedColumnsUpdated(columns)
