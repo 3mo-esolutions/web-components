@@ -1,5 +1,5 @@
 import { css, html, ifDefined } from '@a11d/lit'
-import { Application, PwaHelper, RouteMatchMode, routerLink } from '@a11d/lit-application'
+import { Application, PwaHelper, routerLink } from '@a11d/lit-application'
 import { Localizer } from '@3mo/localization'
 import { Icon, IconVariant } from '@3mo/icon'
 import { Authentication, BusinessSuiteAuthenticationDialogComponent, PagePreferences, type NavigationDefinition, type User } from './index.js'
@@ -92,7 +92,7 @@ export abstract class BusinessSuiteApplication extends Application {
 	protected get userAvatarMenuItemsTemplate() {
 		return html`
 			<mo-navigation-menu-item icon='manage_accounts'
-				${routerLink({ component: new PagePreferences, matchMode: RouteMatchMode.IgnoreParameters })}
+				${routerLink({ component: new PagePreferences, matchMode: 'ignore-parameters' })}
 			>${t('User Settings')}</mo-navigation-menu-item>
 		`
 	}

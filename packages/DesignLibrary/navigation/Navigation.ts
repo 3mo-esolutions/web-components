@@ -1,5 +1,5 @@
 import { Component, bind, component, css, eventListener, html, ifDefined, property, query, queryAll, repeat, style, type HTMLTemplateResult } from '@a11d/lit'
-import { Key, RouteMatchMode, routerLink, type PageComponent } from '@a11d/lit-application'
+import { Key, routerLink, type PageComponent } from '@a11d/lit-application'
 import { observeResize } from '@3mo/resize-observer'
 import { observeMutation } from '@3mo/mutation-observer'
 import { getNavigationLabel, type NavigationDefinition } from './NavigationItem.js'
@@ -210,7 +210,7 @@ export class Navigation extends Component {
 			${separatorTemplate}
 			<mo-navigation-list-item
 				slot=${ifDefined(detailsSlot ? 'details' : undefined)}
-				${!navigation.component ? html.nothing : routerLink({ component: navigation.component as PageComponent, matchMode: RouteMatchMode.IgnoreParameters, invocationHandler: () => this.drawerOpen = false })}
+				${!navigation.component ? html.nothing : routerLink({ component: navigation.component as PageComponent, matchMode: 'ignore-parameters', invocationHandler: () => this.drawerOpen = false })}
 			>
 				${contentTemplate}
 			</mo-navigation-list-item>

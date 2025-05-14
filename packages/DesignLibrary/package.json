@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/del",
-	"version": "0.1.94",
+	"version": "0.1.95",
 	"description": "3MO Design Library to build business-suite web applications",
 	"repository": {
 		"type": "git",
@@ -29,7 +29,7 @@
 		"@a11d/equals": "x",
 		"@a11d/metadata": "x",
 		"@a11d/lit": "x",
-		"@a11d/lit-application": "x",
+		"@a11d/lit-application": ">=0.7.0",
 		"@a11d/lit-application-authentication": "x",
 		"@a11d/lit-application-authorization": "x",
 		"@a11d/non-inertable-component": "x",

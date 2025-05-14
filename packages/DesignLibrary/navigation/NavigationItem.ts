@@ -1,8 +1,8 @@
 import { bind, Component, component, css, html, ifDefined, property, repeat, style, type HTMLTemplateResult } from '@a11d/lit'
-import { routerLink, type Routable, NavigationStrategy } from '@a11d/lit-application'
+import { routerLink, type RoutableComponent, NavigationStrategy } from '@a11d/lit-application'
 import type { MaterialIcon } from '@3mo/icon'
 
-type RouterLinkParameters = Exclude<Parameters<typeof routerLink>[0], Routable>
+type RouterLinkParameters = Exclude<Parameters<typeof routerLink>[0], RoutableComponent>
 
 export function getNavigationLabel(navigation: NavigationDefinition): HTMLTemplateResult | string | undefined {
 	return navigation.label

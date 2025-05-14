@@ -1,5 +1,5 @@
 import { Component, component, css, eventListener, html, property, unsafeSVG } from '@a11d/lit'
-import { Router } from '@a11d/lit-application'
+import { RoutableComponent } from '@a11d/lit-application'
 
 @component('mo-application-logo')
 export class ApplicationLogo extends Component {
@@ -31,7 +31,7 @@ export class ApplicationLogo extends Component {
 
 	@eventListener('click')
 	protected handleClick() {
-		Router.path = Router.basePath.endsWith('/') ? Router.basePath : `${Router.basePath}/`
+		RoutableComponent.setUrl(new URL(`/${RoutableComponent.basePath}`, RoutableComponent.url))
 	}
 
 	protected override get template() {
