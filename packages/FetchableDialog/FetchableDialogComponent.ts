@@ -31,7 +31,7 @@ export abstract class FetchableDialogComponent<
 		return super.dialogElement as FetchableDialog<TEntity>
 	}
 
-	protected override firstUpdated(props: PropertyValues) {
+	protected override firstUpdated(props: PropertyValues<this>) {
 		super.firstUpdated(props)
 		this.dialogElement.fetch = () => !this.parameters.id ? this.entity : this.fetch(this.parameters.id)
 	}
