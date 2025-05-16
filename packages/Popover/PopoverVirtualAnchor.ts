@@ -6,8 +6,11 @@ export class PopoverVirtualAnchor extends Component {
 	@property({
 		type: Object,
 		updated(this: PopoverVirtualAnchor, [x, y]: PopoverCoordinates = [0, 0]) {
-			this.style.left = `${x}px`
-			this.style.top = `${y}px`
+			// Do not set "style.left" and "style.top" directly
+			// as it will cause the anchor positioning to disabled somehow
+			// but updating the CSS properties does not lead to this issue
+			this.style.setProperty('--x', `${x}px`)
+			this.style.setProperty('--y', `${y}px`)
 		}
 	}) coordinates?: PopoverCoordinates
 
@@ -18,6 +21,8 @@ export class PopoverVirtualAnchor extends Component {
 				pointer-events: none;
 				width: 0;
 				height: 0;
+				left: var(--x);
+				top: var(--y);
 			}
 		`
 	}
