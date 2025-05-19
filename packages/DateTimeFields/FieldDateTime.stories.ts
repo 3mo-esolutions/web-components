@@ -2,13 +2,13 @@ import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
-import { FieldDateTimePrecision } from './FieldDateTimeBase.js'
+import { FieldDateTimePrecision } from './FieldDateTimePrecision.js'
 
 export default {
 	title: 'Field Date Time',
 	component: 'mo-field-date-time',
 	args: {
-		precision: FieldDateTimePrecision.Minute,
+		precision: FieldDateTimePrecision.Minute.toString(),
 		label: 'Label',
 		required: false,
 		dense: false,
@@ -18,14 +18,7 @@ export default {
 	argTypes: {
 		precision: {
 			control: 'select',
-			options: [
-				FieldDateTimePrecision.Year,
-				FieldDateTimePrecision.Month,
-				FieldDateTimePrecision.Day,
-				FieldDateTimePrecision.Hour,
-				FieldDateTimePrecision.Minute,
-				FieldDateTimePrecision.Second,
-			]
+			options: FieldDateTimePrecision.all.map(p => p.toString()),
 		}
 	},
 	package: p,

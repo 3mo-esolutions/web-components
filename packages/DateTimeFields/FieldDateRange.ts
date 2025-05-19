@@ -1,12 +1,12 @@
 
-import { component, property } from '@a11d/lit'
-import { FieldDateTimePrecision } from './FieldDateTimeBase.js'
+import { component } from '@a11d/lit'
+import { FieldDateTimePrecision } from './FieldDateTimePrecision.js'
 import { FieldDateTimeRange } from './FieldDateTimeRange.js'
 
 /** @element mo-field-date */
 @component('mo-field-date-range')
 export class FieldDateRange extends FieldDateTimeRange {
-	@property() override precision = FieldDateTimePrecision.Day
+	override precision = FieldDateTimePrecision.Day
 }
 
 declare global {

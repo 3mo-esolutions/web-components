@@ -1,7 +1,7 @@
 import { bind, component, html } from '@a11d/lit'
-import { FieldDateTimeRange } from './FieldDateTimeRange.js'
-import { FieldDateTimePrecision } from './FieldDateTimeBase.js'
 import { Localizer } from '@3mo/localization'
+import { FieldDateTimeRange } from './FieldDateTimeRange.js'
+import { FieldDateTimePrecision } from './FieldDateTimePrecision.js'
 
 Localizer.dictionaries.add('de', {
 	'Include time': 'Zeitauswahl',

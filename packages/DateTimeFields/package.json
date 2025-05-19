@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/date-time-fields",
-	"version": "0.10.0",
+	"version": "0.10.1",
 	"description": "Date time fields let people select dates, date-ranges, and times.",
 	"repository": {
 		"type": "git",

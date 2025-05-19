@@ -1,8 +1,8 @@
 
-import { component, property } from '@a11d/lit'
+import { component } from '@a11d/lit'
 import { Localizer } from '@3mo/localization'
 import { FieldDateTime } from './FieldDateTime.js'
-import { FieldDateTimePrecision } from './FieldDateTimeBase.js'
+import { FieldDateTimePrecision } from './FieldDateTimePrecision.js'
 
 Localizer.dictionaries.add('de', {
 	'Date': 'Datum',
@@ -15,8 +15,8 @@ Localizer.dictionaries.add('de', {
  */
 @component('mo-field-date')
 export class FieldDate extends FieldDateTime {
-	@property() override precision = FieldDateTimePrecision.Day
-	@property() override label = t('Date')
+	override precision = FieldDateTimePrecision.Day
+	override label = t('Date')
 }
 
 declare global {

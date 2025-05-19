@@ -1,7 +1,8 @@
 
 import { component, html, property } from '@a11d/lit'
 import { Localizer } from '@3mo/localization'
-import { FieldDateTimeBase, FieldDateTimePrecision } from './FieldDateTimeBase.js'
+import { FieldDateTimeBase } from './FieldDateTimeBase.js'
+import { FieldDateTimePrecision } from './FieldDateTimePrecision.js'
 import { Memoize as memoize } from 'typescript-memoize'
 
 Localizer.dictionaries.add('de', {
@@ -40,7 +41,7 @@ export class FieldDateTime extends FieldDateTimeBase<Date | undefined> {
 	}
 
 	protected override handleSelectedDateChange(date: DateTime, precision: FieldDateTimePrecision) {
-		this.value = !date ? undefined : this.floorToPrecision(date)
+		this.value = !date ? undefined : this.precision.getRange(date).start
 		super.handleSelectedDateChange(date, precision)
 	}
 

@@ -2,27 +2,7 @@
 import { type HTMLTemplateResult, cache, css, html, live, property, style, bind, state } from '@a11d/lit'
 import { InputFieldComponent } from '@3mo/field'
 import { type MaterialIcon } from '@3mo/icon'
-
-export enum FieldDateTimePrecision {
-	Year = 'year',
-	Month = 'month',
-	Day = 'day',
-	Hour = 'hour',
-	Minute = 'minute',
-	Second = 'second',
-}
-
-function isDateTimePrecisionSmaller(precision: FieldDateTimePrecision, other: FieldDateTimePrecision) {
-	const precisions = [
-		FieldDateTimePrecision.Year,
-		FieldDateTimePrecision.Month,
-		FieldDateTimePrecision.Day,
-		FieldDateTimePrecision.Hour,
-		FieldDateTimePrecision.Minute,
-		FieldDateTimePrecision.Second,
-	]
-	return precisions.indexOf(precision) < precisions.indexOf(other)
-}
+import { FieldDateTimePrecision } from './FieldDateTimePrecision.js'
 
 /**
  * @attr open - Whether the date picker is open
@@ -34,7 +14,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	@property({ type: Boolean, reflect: true }) open = false
 	@property({ type: Boolean }) pickerHidden = false
 	@property({ type: Object }) shortcutReferenceDate = new DateTime
-	@property() precision = FieldDateTimePrecision.Minute
+	@property({ type: String, converter: value => FieldDateTimePrecision.parse(value || undefined) }) precision = FieldDateTimePrecision.Minute
 
 	@state() navigatingDate = new DateTime()
 
@@ -46,36 +26,8 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 		return {
 			calendar: this.selectedDate?.calendarId,
 			timeZone: this.selectedDate?.timeZoneId,
-			year: 'numeric',
-			month: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Month) ? undefined : '2-digit',
-			day: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Day) ? undefined : '2-digit',
-			hour: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Hour) ? undefined : '2-digit',
-			minute: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Minute) ? undefined : '2-digit',
-			second: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Second) ? undefined : '2-digit',
-			hourCycle: 'h23',
+			...this.precision.formatOptions,
 		}
-	}
-
-	protected floorToPrecision(date: DateTime) {
-		return date.with({
-			year: date.year,
-			month: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Month) ? 1 : date.month,
-			day: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Day) ? 1 : date.day,
-			hour: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Hour) ? 0 : date.hour,
-			minute: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Minute) ? 0 : date.minute,
-			second: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Second) ? 0 : date.second,
-		})
-	}
-
-	protected ceilToPrecision(date: DateTime) {
-		return date.with({
-			year: date.year,
-			minute: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Minute) ? 60 : date.minute,
-			second: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Second) ? 60 : date.second,
-		})
-			.with({ month: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Month) ? date.monthsInYear : date.month })
-			.with({ day: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Day) ? date.daysInMonth : date.day })
-			.with({ hour: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Hour) ? date.hoursInDay : date.hour })
 	}
 
 	protected override valueUpdated() {
@@ -238,7 +190,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	}
 
 	private get monthListTemplate() {
-		return [FieldDateTimePrecision.Year].includes(this.precision) ? html.nothing : html`
+		return this.precision < FieldDateTimePrecision.Month ? html.nothing : html`
 			<mo-month-list
 				.navigatingValue=${bind(this, 'navigatingDate')}
 				.value=${this.selectedDate}
@@ -248,13 +200,13 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	}
 
 	private get dayTemplate() {
-		return [FieldDateTimePrecision.Year, FieldDateTimePrecision.Month].includes(this.precision) ? html.nothing : this.calendarTemplate
+		return this.precision < FieldDateTimePrecision.Day ? html.nothing : this.calendarTemplate
 	}
 
 	protected abstract get calendarTemplate(): HTMLTemplateResult
 
 	private get timeTemplate() {
-		return [FieldDateTimePrecision.Year, FieldDateTimePrecision.Month, FieldDateTimePrecision.Day].includes(this.precision) ? html.nothing : html`
+		return this.precision <= FieldDateTimePrecision.Day ? html.nothing : html`
 			<mo-flex gap='6px'>
 				<div class='timezone'>
 					${this.navigatingDate?.formatToParts({ timeZoneName: 'long' }).find(x => x.type === 'timeZoneName')?.value}
@@ -270,7 +222,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	}
 
 	private get hourListTemplate() {
-		return html`
+		return this.precision < FieldDateTimePrecision.Hour ? html.nothing : html`
 			<mo-hour-list style='flex: 1'
 				.navigatingValue=${bind(this, 'navigatingDate')}
 				.value=${this.selectedDate}
@@ -280,7 +232,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	}
 
 	private get minuteListTemplate() {
-		return [FieldDateTimePrecision.Hour].includes(this.precision) ? html.nothing : html`
+		return this.precision < FieldDateTimePrecision.Minute ? html.nothing : html`
 			<mo-minute-list style='flex: 1'
 				.navigatingValue=${bind(this, 'navigatingDate')}
 				.value=${this.selectedDate}
@@ -290,7 +242,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	}
 
 	private get secondListTemplate() {
-		return [FieldDateTimePrecision.Hour, FieldDateTimePrecision.Minute].includes(this.precision) ? html.nothing : html`
+		return this.precision < FieldDateTimePrecision.Second ? html.nothing : html`
 			<mo-second-list style='flex: 1'
 				.navigatingValue=${bind(this, 'navigatingDate')}
 				.value=${this.selectedDate}
