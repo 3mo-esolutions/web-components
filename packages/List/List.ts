@@ -32,8 +32,15 @@ export class List extends Component {
 	readonly focusController = new ListFocusController(this)
 
 	readonly slotController = new SlotController(this, () => {
+		console.log(
+			this.slotController
+				.getAssignedElements('')
+				.flatMap(e => [e, ...e.querySelectorAll('*')])
+				.filter(i => isListItem(i))
+				.map(i => i.textContent)
+			)
 		this.items = this.slotController.getAssignedElements('')
-			.flatMap(e => [e, ...e.querySelectorAll('*:not([slot])')])
+			.flatMap(e => [e, ...e.querySelectorAll('*')])
 			.filter(i => isListItem(i)) as Array<HTMLElement>
 	})
 
