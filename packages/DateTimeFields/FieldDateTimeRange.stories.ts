@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
-import { FieldDateTimePrecision } from './FieldDateTimeBase.js'
+import { FieldDateTimePrecision } from './FieldDateTimePrecision.js'
 
 export default {
 	title: 'Field Date Time Range',
