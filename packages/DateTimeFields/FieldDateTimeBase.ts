@@ -190,7 +190,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	}
 
 	private get monthListTemplate() {
-		return [FieldDateTimePrecision.Year].includes(this.precision) ? html.nothing : html`
+		return this.precision < FieldDateTimePrecision.Month ? html.nothing : html`
 			<mo-month-list
 				.navigatingValue=${bind(this, 'navigatingDate')}
 				.value=${this.selectedDate}
@@ -200,13 +200,13 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	}
 
 	private get dayTemplate() {
-		return [FieldDateTimePrecision.Year, FieldDateTimePrecision.Month].includes(this.precision) ? html.nothing : this.calendarTemplate
+		return this.precision < FieldDateTimePrecision.Day ? html.nothing : this.calendarTemplate
 	}
 
 	protected abstract get calendarTemplate(): HTMLTemplateResult
 
 	private get timeTemplate() {
-		return [FieldDateTimePrecision.Year, FieldDateTimePrecision.Month, FieldDateTimePrecision.Day].includes(this.precision) ? html.nothing : html`
+		return this.precision <= FieldDateTimePrecision.Day ? html.nothing : html`
 			<mo-flex gap='6px'>
 				<div class='timezone'>
 					${this.navigatingDate?.formatToParts({ timeZoneName: 'long' }).find(x => x.type === 'timeZoneName')?.value}
@@ -222,7 +222,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	}
 
 	private get hourListTemplate() {
-		return html`
+		return this.precision < FieldDateTimePrecision.Hour ? html.nothing : html`
 			<mo-hour-list style='flex: 1'
 				.navigatingValue=${bind(this, 'navigatingDate')}
 				.value=${this.selectedDate}
@@ -232,7 +232,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	}
 
 	private get minuteListTemplate() {
-		return [FieldDateTimePrecision.Hour].includes(this.precision) ? html.nothing : html`
+		return this.precision < FieldDateTimePrecision.Minute ? html.nothing : html`
 			<mo-minute-list style='flex: 1'
 				.navigatingValue=${bind(this, 'navigatingDate')}
 				.value=${this.selectedDate}
@@ -242,7 +242,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	}
 
 	private get secondListTemplate() {
-		return [FieldDateTimePrecision.Hour, FieldDateTimePrecision.Minute].includes(this.precision) ? html.nothing : html`
+		return this.precision < FieldDateTimePrecision.Second ? html.nothing : html`
 			<mo-second-list style='flex: 1'
 				.navigatingValue=${bind(this, 'navigatingDate')}
 				.value=${this.selectedDate}
