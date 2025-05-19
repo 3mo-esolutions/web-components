@@ -2,13 +2,13 @@ import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
-import { FieldDateTimePrecision } from './FieldDateTimeBase.js'
+import { FieldDateTimePrecision } from './FieldDateTimePrecision.js'
 
 export default {
 	title: 'Field Date Range',
 	component: 'mo-field-date-range',
 	args: {
-		precision: FieldDateTimePrecision.Day,
+		precision: FieldDateTimePrecision.Day.toString(),
 		label: 'Label',
 		required: false,
 		dense: false,
@@ -18,11 +18,7 @@ export default {
 	argTypes: {
 		precision: {
 			control: 'select',
-			options: [
-				FieldDateTimePrecision.Year,
-				FieldDateTimePrecision.Month,
-				FieldDateTimePrecision.Day,
-			]
+			options: FieldDateTimePrecision.all.filter(p => p <= FieldDateTimePrecision.Day).map(p => p.toString())
 		}
 	},
 	package: p,
