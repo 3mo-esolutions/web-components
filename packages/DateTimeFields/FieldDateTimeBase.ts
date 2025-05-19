@@ -2,27 +2,7 @@
 import { type HTMLTemplateResult, cache, css, html, live, property, style, bind, state } from '@a11d/lit'
 import { InputFieldComponent } from '@3mo/field'
 import { type MaterialIcon } from '@3mo/icon'
-
-export enum FieldDateTimePrecision {
-	Year = 'year',
-	Month = 'month',
-	Day = 'day',
-	Hour = 'hour',
-	Minute = 'minute',
-	Second = 'second',
-}
-
-function isDateTimePrecisionSmaller(precision: FieldDateTimePrecision, other: FieldDateTimePrecision) {
-	const precisions = [
-		FieldDateTimePrecision.Year,
-		FieldDateTimePrecision.Month,
-		FieldDateTimePrecision.Day,
-		FieldDateTimePrecision.Hour,
-		FieldDateTimePrecision.Minute,
-		FieldDateTimePrecision.Second,
-	]
-	return precisions.indexOf(precision) < precisions.indexOf(other)
-}
+import { FieldDateTimePrecision } from './FieldDateTimePrecision.js'
 
 /**
  * @attr open - Whether the date picker is open
@@ -34,7 +14,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	@property({ type: Boolean, reflect: true }) open = false
 	@property({ type: Boolean }) pickerHidden = false
 	@property({ type: Object }) shortcutReferenceDate = new DateTime
-	@property() precision = FieldDateTimePrecision.Minute
+	@property({ type: String, converter: value => FieldDateTimePrecision.parse(value || undefined) }) precision = FieldDateTimePrecision.Minute
 
 	@state() navigatingDate = new DateTime()
 
@@ -46,36 +26,8 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 		return {
 			calendar: this.selectedDate?.calendarId,
 			timeZone: this.selectedDate?.timeZoneId,
-			year: 'numeric',
-			month: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Month) ? undefined : '2-digit',
-			day: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Day) ? undefined : '2-digit',
-			hour: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Hour) ? undefined : '2-digit',
-			minute: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Minute) ? undefined : '2-digit',
-			second: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Second) ? undefined : '2-digit',
-			hourCycle: 'h23',
+			...this.precision.formatOptions,
 		}
-	}
-
-	protected floorToPrecision(date: DateTime) {
-		return date.with({
-			year: date.year,
-			month: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Month) ? 1 : date.month,
-			day: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Day) ? 1 : date.day,
-			hour: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Hour) ? 0 : date.hour,
-			minute: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Minute) ? 0 : date.minute,
-			second: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Second) ? 0 : date.second,
-		})
-	}
-
-	protected ceilToPrecision(date: DateTime) {
-		return date.with({
-			year: date.year,
-			minute: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Minute) ? 60 : date.minute,
-			second: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Second) ? 60 : date.second,
-		})
-			.with({ month: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Month) ? date.monthsInYear : date.month })
-			.with({ day: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Day) ? date.daysInMonth : date.day })
-			.with({ hour: isDateTimePrecisionSmaller(this.precision, FieldDateTimePrecision.Hour) ? date.hoursInDay : date.hour })
 	}
 
 	protected override valueUpdated() {

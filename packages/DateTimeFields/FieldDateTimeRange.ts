@@ -1,10 +1,11 @@
 
 import { bind, component, css, html, property } from '@a11d/lit'
 import { type MaterialIcon } from '@3mo/icon'
-import { FieldDateTimeBase as FieldDateTimeBase, FieldDateTimePrecision } from './FieldDateTimeBase.js'
-import { DateRangeParser } from './DateRangeParser.js'
-import { Memoize as memoize } from 'typescript-memoize'
 import { Localizer } from '@3mo/localization'
+import { Memoize as memoize } from 'typescript-memoize'
+import { FieldDateTimeBase as FieldDateTimeBase } from './FieldDateTimeBase.js'
+import { FieldDateTimePrecision } from './FieldDateTimePrecision.js'
+import { DateRangeParser } from './DateRangeParser.js'
 
 Localizer.dictionaries.add('de', {
 	'Period': 'Zeitraum',
@@ -101,9 +102,10 @@ export class FieldDateTimeRange extends FieldDateTimeBase<DateTimeRange | undefi
 	}
 
 	override handleSelectedDateChange(date: DateTime, precision: FieldDateTimePrecision) {
+		const { start, end } = this.precision.getRange(date)
 		this.value = this.selection === FieldDateRangeSelection.Start
-			? new DateTimeRange(this.floorToPrecision(date), this.value?.end)
-			: new DateTimeRange(this.value?.start, this.ceilToPrecision(date))
+			? new DateTimeRange(start, this.value?.end)
+			: new DateTimeRange(this.value?.start, end)
 
 		if (this.precision === precision) {
 			this.selection = this.selection === FieldDateRangeSelection.Start
@@ -115,7 +117,7 @@ export class FieldDateTimeRange extends FieldDateTimeBase<DateTimeRange | undefi
 	}
 
 	protected valueToInputValue(value: DateTimeRange | undefined) {
-		return value ? value.format(this.formatOptions) ?? '' : ''
+		return value?.format(this.formatOptions) ?? ''
 	}
 
 	protected override inputValueToValue(value: string) {

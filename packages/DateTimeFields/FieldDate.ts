@@ -2,7 +2,7 @@
 import { component, property } from '@a11d/lit'
 import { Localizer } from '@3mo/localization'
 import { FieldDateTime } from './FieldDateTime.js'
-import { FieldDateTimePrecision } from './FieldDateTimeBase.js'
+import { FieldDateTimePrecision } from './FieldDateTimePrecision.js'
 
 Localizer.dictionaries.add('de', {
 	'Date': 'Datum',
