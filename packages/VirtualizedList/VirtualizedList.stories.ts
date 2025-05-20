@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default {
-	title: 'Virtualized List',
+	title: 'Data Display / Virtualized List',
 	component: 'mo-virtualized-list',
 	package: p,
 } as Meta

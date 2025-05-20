@@ -4,7 +4,7 @@ import p from './package.json'
 import { contextMenu } from './index.js'
 
 export default {
-	title: 'Context Menu',
+	title: 'Selection & Input / Context Menu',
 	component: 'mo-field-context-menu',
 	package: p,
 } as Meta

@@ -14,7 +14,7 @@ const icons = new Array<MaterialIcon>(
 const variants = [IconVariant.Sharp, IconVariant.Outlined, IconVariant.Rounded, IconVariant.Filled]
 
 export default {
-	title: 'Icon',
+	title: 'Data Display / Icon',
 	component: 'mo-icon',
 	argTypes: {
 		icon: { control: 'select', options: icons },

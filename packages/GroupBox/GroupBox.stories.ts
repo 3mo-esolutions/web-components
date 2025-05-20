@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default {
-	title: 'Group Box',
+	title: 'Layout & Containment / Group Box',
 	component: 'mo-group-box',
 	args: {
 		heading: 'Satoshi Nakamoto',

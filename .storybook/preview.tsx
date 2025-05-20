@@ -74,7 +74,7 @@ export const parameters = {
 					`}</style>
 					<mo-flex direction='horizontal' justifyContent='space-between' alignItems='center' gap='6px'>
 						<mo-flex>
-							<mo-heading typography='heading1' style={{ color: 'white' }}>{title}</mo-heading>
+							<mo-heading typography='heading1' style={{ color: 'white' }}>{title.split('/').reverse()[0].trim()}</mo-heading>
 							<mo-heading typography='heading5' style={{ color: 'rgb(165, 165, 165)' }}>{_package.description}</mo-heading>
 						</mo-flex>
 						<mo-flex direction='horizontal' gap='4px' style={{ flexShrink: '0' }}>

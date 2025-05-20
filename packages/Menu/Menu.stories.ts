@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default {
-	title: 'Menu',
+	title: 'Selection & Input / Menu',
 	component: 'mo-menu',
 	package: p,
 	decorators: [story => html`<div style='height: 400px'>${story()}</div>`]

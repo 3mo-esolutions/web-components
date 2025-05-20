@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default {
-	title: 'Empty State',
+	title: 'Communication / Empty State',
 	component: 'mo-empty-state',
 	package: p,
 } as Meta

@@ -4,7 +4,7 @@ import p from './package.json'
 import '.'
 
 export default {
-	title: 'Field Number',
+	title: 'Selection & Input / Number Fields / Field Number',
 	component: 'mo-field-number',
 	args: {
 		label: 'Label',

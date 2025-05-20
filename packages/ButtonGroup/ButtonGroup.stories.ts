@@ -5,7 +5,7 @@ import p from './package.json'
 import './index.js'
 
 export default {
-	title: 'Button Group',
+	title: 'Buttons & Actions / Button Group',
 	component: 'mo-button-group',
 	args: {
 		type: ButtonType.Outlined,

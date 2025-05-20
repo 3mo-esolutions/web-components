@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default {
-	title: 'Timeline',
+	title: 'Data Display / Timeline',
 	component: 'mo-timeline',
 	package: p,
 } as Meta

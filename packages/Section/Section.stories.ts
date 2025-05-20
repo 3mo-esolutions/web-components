@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default {
-	title: 'Section',
+	title: 'Layout & Containment / Section',
 	component: 'mo-section',
 	args: {
 		heading: 'Satoshi Nakamoto',

@@ -4,7 +4,7 @@ import p from './package.json'
 import { PopoverAlignment, PopoverPlacement, type PopoverContainer } from './index.js'
 
 export default {
-	title: 'Popover',
+	title: 'Layout & Containment / Popover',
 	component: 'mo-popover',
 	args: {
 		placement: 'block-start',

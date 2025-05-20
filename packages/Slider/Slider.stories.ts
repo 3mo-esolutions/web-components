@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default {
-	title: 'Slider',
+	title: 'Selection & Input / Slider',
 	component: 'mo-slider',
 	args: {
 		disabled: false,

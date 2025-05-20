@@ -5,7 +5,7 @@ import { EntityDialogComponent } from './index.js'
 import { type EntityId } from '../FetchableDialog/FetchableDialogComponent.js'
 
 export default {
-	title: 'Entity Dialog',
+	title: 'Data Display / Entity Dialog',
 	component: 'mo-entity-dialog',
 	package: p,
 } as Meta

@@ -4,7 +4,7 @@ import p from './package.json'
 import '.'
 
 export default {
-	title: 'Cloudflare Stream',
+	title: 'Data Display / Cloudflare Stream',
 	component: 'mo-cloudflare-stream',
 	package: p,
 } as Meta

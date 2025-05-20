@@ -4,7 +4,7 @@ import p from './package.json'
 import { FocusController as FocusC } from './FocusController.js'
 
 export default {
-	title: 'Focus Controller',
+	title: 'Utilities / Focus Controller',
 	package: p,
 } as Meta
 

@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default {
-	title: 'Scroller',
+	title: 'Layout & Containment / Scroller',
 	component: 'mo-scroller',
 	package: p,
 } as Meta

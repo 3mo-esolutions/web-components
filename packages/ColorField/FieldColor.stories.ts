@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default {
-	title: 'Color Field',
+	title: 'Selection & Input / Color Field',
 	component: 'mo-field-color',
 	args: {
 		label: 'Label',

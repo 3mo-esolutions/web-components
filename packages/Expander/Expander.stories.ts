@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default {
-	title: 'Expander',
+	title: 'Layout & Containment / Expander',
 	component: 'mo-expander',
 	package: p,
 } as Meta

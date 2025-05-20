@@ -5,7 +5,7 @@ import { ButtonType } from './Button.js'
 import '.'
 
 export default {
-	title: 'Button',
+	title: 'Buttons & Actions / Button',
 	component: 'mo-button',
 	args: {
 		type: 'outlined',

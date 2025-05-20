@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default {
-	title: 'Dialog',
+	title: 'Layout & Containment / Dialog',
 	component: 'mo-dialog',
 	package: p,
 } as Meta

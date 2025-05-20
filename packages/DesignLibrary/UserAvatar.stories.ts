@@ -4,7 +4,7 @@ import p from './package.json'
 import '.'
 
 export default {
-	title: 'User Avatar',
+	title: 'Unreleased / User Avatar',
 	component: 'mo-user-avatar',
 	package: p,
 } as Meta

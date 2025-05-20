@@ -4,7 +4,7 @@ import p from './package.json'
 import '.'
 
 export default {
-	title: 'Circular Progress',
+	title: 'Communication / Circular Progress',
 	component: 'mo-circular-progress',
 	package: p,
 } as Meta

@@ -4,7 +4,7 @@ import p from './package.json'
 import { type Language as LanguageBase, LanguageField as LanguageFieldBase, type LanguageFieldTemplateParameter } from './index.js'
 
 export default {
-	title: 'Language Field',
+	title: 'Selection & Input / Language Field',
 	component: 'mo-language-field',
 	package: p,
 } as Meta

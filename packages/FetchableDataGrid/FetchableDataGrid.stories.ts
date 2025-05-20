@@ -4,7 +4,7 @@ import p from './package.json'
 import './FetchableDataGrid.js'
 
 export default {
-	title: 'Fetchable Data Grid',
+	title: 'Data Display / Fetchable Data Grid',
 	component: 'mo-fetchable-data-grid',
 	package: p,
 } as Meta

@@ -4,7 +4,7 @@ import p from './package.json'
 import '.'
 
 export default {
-	title: 'Radio',
+	title: 'Selection & Input / Radio',
 	component: 'mo-radio',
 	args: {
 		disabled: false,

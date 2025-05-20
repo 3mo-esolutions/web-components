@@ -4,7 +4,7 @@ import p from './package.json'
 import '.'
 
 export default {
-	title: 'Checkbox',
+	title: 'Selection & Input / Checkbox',
 	component: 'mo-checkbox',
 	tags: ['autodocs'],
 	args: {

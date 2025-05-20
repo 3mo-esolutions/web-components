@@ -5,7 +5,7 @@ import './index.js'
 import '@material/web/tabs/primary-tab.js'
 
 export default {
-	title: 'Tab',
+	title: 'Layout & Containment / Tab',
 	component: 'mo-tab',
 	args: { value: 'overview' },
 	argTypes: {

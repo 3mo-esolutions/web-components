@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default {
-	title: 'Virtualized Scroller',
+	title: 'Layout & Containment / Virtualized Scroller',
 	component: 'mo-virtualized-scroller',
 	package: p,
 } as Meta

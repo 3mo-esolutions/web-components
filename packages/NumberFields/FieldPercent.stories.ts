@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default {
-	title: 'Field Percent',
+	title: 'Selection & Input / Number Fields / Field Percent',
 	component: 'mo-field-percent',
 	args: {
 		label: 'Label',

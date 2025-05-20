@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default {
-	title: 'Focus Ring',
+	title: 'Utilities / Focus Ring',
 	component: 'mo-focus-ring',
 	package: p,
 	decorators: [story => html`

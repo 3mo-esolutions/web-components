@@ -5,7 +5,7 @@ import './index.js'
 import { FieldDateTimePrecision } from './FieldDateTimePrecision.js'
 
 export default {
-	title: 'Field Date',
+	title: 'Selection & Input / Date Time Fields / Field Date',
 	component: 'mo-field-date',
 	args: {
 		precision: FieldDateTimePrecision.Day.toString(),

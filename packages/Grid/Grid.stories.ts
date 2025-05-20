@@ -4,7 +4,7 @@ import p from './package.json'
 import '.'
 
 export default {
-	title: 'Grid',
+	title: 'Layout & Containment / Grid',
 	component: 'mo-grid',
 	argTypes: {
 		columns: { description: 'Tunnels `grid-template-columns` CSS property which defines the layout of columns. Additionally it supports Asterix syntax for grid fraction (e.g. `2*` equals to `2fr`)' },

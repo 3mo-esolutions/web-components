@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default {
-	title: 'Chip',
+	title: 'Buttons & Actions / Chip',
 	component: 'mo-chip',
 	package: p,
 } as Meta

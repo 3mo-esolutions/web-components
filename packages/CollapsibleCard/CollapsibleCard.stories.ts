@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default {
-	title: 'Collapsible Card',
+	title: 'Layout & Containment / Collapsible Card',
 	component: 'mo-collapsible-card',
 	args: {
 		type: 'filled',

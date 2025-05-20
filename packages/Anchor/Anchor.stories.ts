@@ -4,7 +4,7 @@ import p from './package.json'
 import '.'
 
 export default {
-	title: 'Anchor',
+	title: 'Buttons & Actions / Anchor',
 	component: 'mo-anchor',
 	package: p,
 	args: {

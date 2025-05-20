@@ -4,7 +4,7 @@ import p from './package.json'
 import '.'
 
 export default {
-	title: 'File Upload Drop Area',
+	title: 'Selection & Input / File Upload Drop Area',
 	component: 'mo-file-upload-drop-area',
 	package: p,
 } as Meta

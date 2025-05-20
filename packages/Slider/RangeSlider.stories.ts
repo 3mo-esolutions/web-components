@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default {
-	title: 'Range Slider',
+	title: 'Selection & Input / Range Slider',
 	component: 'mo-range-slider',
 	args: {
 		disabled: false,

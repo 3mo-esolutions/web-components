@@ -4,7 +4,7 @@ import p from './package.json'
 import { GenericDialog } from './index.js'
 
 export default {
-	title: 'Generic Dialog',
+	title: 'Communication / Standard Dialogs / Generic Dialog',
 	component: 'mo-generic-dialog',
 	package: p,
 } as Meta

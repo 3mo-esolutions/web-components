@@ -5,7 +5,7 @@ import { DataGridEditability, DataGridSelectionBehaviorOnDataChange, DataGridSel
 import { DialogAlert } from '../StandardDialogs/index.js'
 
 export default {
-	title: 'Data Grid',
+	title: 'Data Display / Data Grid',
 	component: 'mo-data-grid',
 	argTypes: {
 		headerHidden: { control: 'boolean' },

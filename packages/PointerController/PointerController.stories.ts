@@ -4,7 +4,7 @@ import p from './package.json'
 import { PointerController as PointerC } from './PointerController.js'
 
 export default {
-	title: 'Pointer Controller',
+	title: 'Utilities / Pointer Controller',
 	package: p,
 } as Meta
 

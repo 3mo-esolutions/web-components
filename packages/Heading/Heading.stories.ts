@@ -4,7 +4,7 @@ import p from './package.json'
 import '.'
 
 export default {
-	title: 'Heading',
+	title: 'Data Display / Heading',
 	component: 'mo-heading',
 	args: {
 		typography: 'heading1',

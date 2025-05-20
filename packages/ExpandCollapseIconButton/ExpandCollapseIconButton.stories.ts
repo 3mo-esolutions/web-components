@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default {
-	title: 'Expand Collapse Icon Button',
+	title: 'Buttons & Actions / Expand Collapse Icon Button',
 	component: 'mo-expand-collapse-icon-button',
 	args: {
 		disabled: false,

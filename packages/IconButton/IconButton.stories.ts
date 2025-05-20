@@ -12,7 +12,7 @@ const icons = new Array<MaterialIcon>(
 )
 
 export default {
-	title: 'Icon Button',
+	title: 'Buttons & Actions / Icon Button',
 	component: 'mo-icon-button',
 	argTypes: {
 		icon: { control: 'select', options: icons },

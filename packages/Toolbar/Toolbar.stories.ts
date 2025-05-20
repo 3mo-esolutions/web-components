@@ -5,7 +5,7 @@ import { ToolbarController } from './index.js'
 import p from './package.json'
 
 export default {
-	title: 'Toolbar',
+	title: 'Utilities / Toolbar',
 	component: 'mo-toolbar',
 	package: p,
 } as Meta

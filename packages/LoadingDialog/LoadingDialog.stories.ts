@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default {
-	title: 'Loading Dialog',
+	title: 'Communication / Loading Dialog',
 	component: 'mo-loading-dialog',
 	args: { loading: true, loadingHeading: 'Loading' },
 	argTypes: {

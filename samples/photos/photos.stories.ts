@@ -4,12 +4,10 @@ import p from './package.json'
 import './index.js'
 
 export default {
-	title: 'Samples/Photos',
+	title: 'Demo / Photos',
 	package: p,
 } as Meta
 
 export const Photos: StoryObj = {
-	render: () => html`
-		<photos-application></photos-application>
-	`
+	render: () => html`<photos-application></photos-application>`
 }

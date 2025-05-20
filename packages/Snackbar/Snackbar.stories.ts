@@ -5,7 +5,7 @@ import './index.js'
 import { Snackbar } from './Snackbar.js'
 
 export default {
-	title: 'Snackbar',
+	title: 'Communication / Snackbar',
 	component: 'mo-snackbar',
 	package: p,
 } as Meta

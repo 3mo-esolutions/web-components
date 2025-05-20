@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default {
-	title: 'Pdf',
+	title: 'Data Display / Pdf',
 	component: 'mo-pdf',
 	package: p,
 } as Meta

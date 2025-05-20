@@ -5,7 +5,7 @@ import p from './package.json'
 import './index.js'
 
 export default {
-	title: 'Splitter',
+	title: 'Layout & Containment / Splitter',
 	component: 'mo-splitter',
 	args: {
 		gap: '0px',

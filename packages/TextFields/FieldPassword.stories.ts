@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default {
-	title: 'Field Password',
+	title: 'Selection & Input / Text Fields / Field Password',
 	component: 'mo-field-password',
 	args: {
 		label: 'Label',

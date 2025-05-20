@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default {
-	title: 'Switch',
+	title: 'Selection & Input / Switch',
 	component: 'mo-switch',
 	args: {
 		disabled: false,

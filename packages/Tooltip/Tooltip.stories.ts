@@ -4,7 +4,7 @@ import p from './package.json'
 import { tooltip } from './index.js'
 
 export default {
-	title: 'Tooltip',
+	title: 'Communication / Tooltip',
 	component: 'mo-tooltip',
 	package: p,
 } as Meta

@@ -16,7 +16,7 @@ const contentsOptions = [
 ]
 
 export default {
-	title: 'Flex',
+	title: 'Layout & Containment / Flex',
 	component: 'mo-flex',
 	args: {
 		direction: 'vertical',

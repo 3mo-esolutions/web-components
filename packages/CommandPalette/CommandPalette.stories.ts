@@ -5,7 +5,7 @@ import { CommandPalette, CommandPaletteDataSource, type CommandPaletteData } fro
 import type { MaterialIcon } from '@3mo/icon/MaterialIcon.js'
 
 export default {
-	title: 'Command Palette',
+	title: 'Selection & Input / Command Palette',
 	component: 'mo-command-palette',
 	package: p,
 } as Meta

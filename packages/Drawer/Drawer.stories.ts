@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default {
-	title: 'Drawer',
+	title: 'Layout & Containment / Drawer',
 	component: 'mo-drawer',
 	package: p,
 } as Meta

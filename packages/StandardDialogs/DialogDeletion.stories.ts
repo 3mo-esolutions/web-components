@@ -4,7 +4,7 @@ import p from './package.json'
 import { DialogDeletion } from './index.js'
 
 export default {
-	title: 'Deletion Dialog',
+	title: 'Communication / Standard Dialogs / Deletion Dialog',
 	component: 'mo-dialog-deletion',
 	package: p,
 } as Meta

@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default {
-	title: 'Alert',
+	title: 'Communication / Alert',
 	component: 'mo-alert',
 	package: p,
 } as Meta

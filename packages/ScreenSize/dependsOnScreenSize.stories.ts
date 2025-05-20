@@ -4,7 +4,7 @@ import p from './package.json'
 import { dependsOnScreenSize, hideOnScreenSize } from './index.js'
 
 export default {
-	title: 'Depends On Screen Size',
+	title: 'Utilities / Depends On Screen Size',
 	package: p,
 } as Meta
 

@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default {
-	title: 'Field Select',
+	title: 'Selection & Input / Field Select',
 	component: 'mo-field-select',
 	args: {
 		defaultText: 'No selection',

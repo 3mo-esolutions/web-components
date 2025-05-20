@@ -5,7 +5,7 @@ import p from './package.json'
 import './index.js'
 
 export default {
-	title: 'Field Currency',
+	title: 'Selection & Input / Number Fields / Field Currency',
 	component: 'mo-field-currency',
 	args: {
 		label: 'Label',

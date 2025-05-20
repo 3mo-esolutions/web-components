@@ -5,7 +5,7 @@ import p from './package.json'
 import '.'
 
 export default {
-	title: 'Loading Button',
+	title: 'Buttons & Actions / Loading Button',
 	component: 'mo-loading-button',
 	args: {
 		type: ButtonType.Outlined,

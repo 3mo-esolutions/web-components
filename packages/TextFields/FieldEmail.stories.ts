@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default {
-	title: 'Field Email',
+	title: 'Selection & Input / Text Fields / Field Email',
 	component: 'mo-field-email',
 	args: {
 		label: 'Label',

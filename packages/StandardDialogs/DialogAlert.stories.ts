@@ -4,7 +4,7 @@ import p from './package.json'
 import { DialogAlert } from './index.js'
 
 export default {
-	title: 'Alert Dialog',
+	title: 'Communication / Standard Dialogs / Alert Dialog',
 	component: 'mo-dialog-alert',
 	package: p,
 } as Meta

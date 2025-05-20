@@ -4,7 +4,7 @@ import p from './package.json'
 import '.'
 
 export default {
-	title: 'Line',
+	title: 'Data Display / Line',
 	component: 'mo-line',
 	package: p,
 } as Meta

@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default {
-	title: 'Entity Data Grid',
+	title: 'Data Display / Entity Data Grid',
 	component: 'mo-entity-data-grid',
 	package: p,
 } as Meta

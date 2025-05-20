@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default {
-	title: 'Field Search',
+	title: 'Selection & Input / Text Fields / Field Search',
 	component: 'mo-field-search',
 	args: {
 		label: 'Label',

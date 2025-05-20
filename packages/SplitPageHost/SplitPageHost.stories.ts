@@ -4,7 +4,7 @@ import p from './package.json'
 import './index.js'
 
 export default {
-	title: 'Split Page Host',
+	title: 'Layout & Containment / Split Page Host',
 	component: 'mo-split-page-host',
 	package: p,
 } as Meta

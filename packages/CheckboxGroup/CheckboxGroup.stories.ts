@@ -4,7 +4,7 @@ import p from './package.json'
 import '.'
 
 export default {
-	title: 'Checkbox Group',
+	title: 'Selection & Input / Checkbox Group',
 	component: 'mo-checkbox-group',
 	args: {
 		label: 'Label',
