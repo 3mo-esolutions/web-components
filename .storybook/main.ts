@@ -1,16 +1,16 @@
 import { dirname, join } from 'path'
 import ResolveTypeScriptPlugin from 'resolve-typescript-plugin'
-import type { StorybookConfig } from '@storybook/web-components-webpack5'
+import type { StorybookConfig } from '@storybook/web-components-vite'
 
 export default {
-	stories: [
+    stories: [
 		'../packages/**/*.stories.ts',
 		'../samples/**/*.stories.ts',
 	],
 
-	staticDirs: ['./public'],
+    staticDirs: ['./public'],
 
-	addons: [
+    addons: [
 		getPackageAbsolutePath('@storybook/addon-links'),
 		{
 			name: getPackageAbsolutePath('@storybook/addon-essentials'),
@@ -19,17 +19,17 @@ export default {
 				actions: false,
 			}
 		},
-		getPackageAbsolutePath('@storybook/addon-webpack5-compiler-babel'),
+		// getPackageAbsolutePath('@storybook/addon-vite-compiler-babel'),
 		getPackageAbsolutePath('@storybook/addon-storysource'),
 		getPackageAbsolutePath('storybook-dark-mode'),
 	],
 
-	framework: {
-		name: getPackageAbsolutePath('@storybook/web-components-webpack5'),
+    framework: {
+		name: getPackageAbsolutePath('@storybook/web-components-vite'),
 		options: {}
 	},
 
-	webpackFinal: (config: any) => {
+    webpackFinal: (config: any) => {
 		config.mode = 'development'
 
 		config.entry.push(getAbsolutePath('../packages/DesignLibrary/index.ts'))
@@ -63,10 +63,6 @@ export default {
 		]
 
 		return config
-	},
-
-	docs: {
-		autodocs: true
 	}
 } as StorybookConfig
 

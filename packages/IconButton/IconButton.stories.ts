@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/web-components'
+import type { Meta, StoryObj } from '@storybook/web-components-vite'
 import { html, style } from '@a11d/lit'
 import { type MaterialIcon } from '@3mo/icon'
 import p from './package.json'

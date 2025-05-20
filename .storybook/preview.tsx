@@ -1,11 +1,11 @@
 // @ts-nocheck
 import React, { useContext } from 'react'
-import { INITIAL_VIEWPORTS } from '@storybook/addon-viewport'
-import { addons } from '@storybook/preview-api'
+import { INITIAL_VIEWPORTS } from 'storybook/viewport'
+import { addons } from 'storybook/preview-api'
 import { theme } from './manager'
-import { setCustomElementsManifest } from '@storybook/web-components'
+import { setCustomElementsManifest } from '@storybook/web-components-vite'
 import { withThemeByDataAttribute } from '@storybook/addon-themes'
-import { Primary, Controls, Stories, DocsContext, Markdown } from '@storybook/blocks'
+import { Primary, Controls, Stories, DocsContext, Markdown } from '@storybook/addon-docs/blocks'
 import customElements from '../custom-elements.json'
 import { DARK_MODE_EVENT_NAME } from 'storybook-dark-mode'
 
