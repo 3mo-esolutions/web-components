@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/menu",
-	"version": "0.11.0",
+	"version": "0.12.0",
 	"description": "Menus display a list of choices on a temporary surface.",
 	"repository": {
 		"type": "git",
@@ -27,7 +27,7 @@
 		"tslib": "x",
 		"@3mo/theme": "x",
 		"@3mo/popover": ">=0.9.x",
-		"@3mo/list": ">=0.7.0",
+		"@3mo/list": ">=0.8.0",
 		"@3mo/disabled-property": "x",
 		"@3mo/slot-controller": "x"
 	},

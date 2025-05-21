@@ -1,6 +1,6 @@
 import { component, html, property, query } from '@a11d/lit'
 import { type GetItemTemplate, type VirtualizedScroller } from '@3mo/virtualized-scroller'
-import { List, isListItem } from '@3mo/list'
+import { List, listItem } from '@3mo/list'
 
 /**
  * @element mo-virtualized-list
@@ -18,7 +18,7 @@ export class VirtualizedList<T = unknown> extends List {
 	@query('mo-virtualized-scroller') protected readonly virtualizedScroller!: VirtualizedScroller
 
 	override get items() {
-		return (this.virtualizedScroller?.renderedItems ?? []).filter(e => isListItem(e)) as Array<HTMLElement>
+		return (this.virtualizedScroller?.renderedItems ?? []).filter(e => !!e[listItem]) as Array<HTMLElement>
 	}
 
 	get itemsLength() {

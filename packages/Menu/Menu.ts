@@ -2,7 +2,7 @@ import { Component, EventListenerController, component, css, event, html, ifDefi
 import { Popover, type PopoverCoordinates } from '@3mo/popover'
 import { SlotController } from '@3mo/slot-controller'
 import { disabledProperty } from '@3mo/disabled-property'
-import { isListItem, SelectableListSelectability, type ListElement, type ListItem, type SelectableList } from '@3mo/list'
+import { listItem, SelectableListSelectability, type ListElement, type ListItem, type SelectableList } from '@3mo/list'
 import type { MenuPlacement, MenuAlignment } from './index.js'
 
 export function isMenu(element: EventTarget): element is HTMLElement {
@@ -188,7 +188,7 @@ export class Menu extends Component {
 
 	protected handleMenuClick(e: PointerEvent & { [Menu.preventClose]?: boolean }) {
 		if (e[Menu.preventClose] !== true &&
-			e.composedPath().some(element => isListItem(element as Element))
+			e.composedPath().some(element => !!(element as Element)[listItem])
 		) {
 			this.setOpen(false)
 		}

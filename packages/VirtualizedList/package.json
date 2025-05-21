@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/virtualized-list",
-	"version": "0.0.5",
+	"version": "0.1.0",
 	"description": "A virtualized list web-component based on Lit Virtualizer",
 	"repository": {
 		"type": "git",
@@ -25,7 +25,7 @@
 	],
 	"dependencies": {
 		"@3mo/virtualized-scroller": "x",
-		"@3mo/list": "x",
+		"@3mo/list": ">=0.8.x",
 		"tslib": "x"
 	}
 }

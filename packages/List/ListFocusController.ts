@@ -1,6 +1,6 @@
 import { EventListenerController, Controller, type ReactiveControllerHost, type ReactiveElement } from '@a11d/lit'
 import { FocusController } from '@3mo/focus-controller'
-import { isListItem } from './List.js'
+import { listItem } from './extensions.js'
 
 export interface VirtualizedListItem {
 	scrollIntoView(options?: ScrollIntoViewOptions): void
@@ -77,7 +77,12 @@ export class ListFocusController extends Controller {
 	}
 
 	private isFocusable(item: ListItem | VirtualizedListItem) {
-		return !(item instanceof Element) || !item.hasAttribute('disabled')
+		const isVirtualizedListItem = item instanceof Element === false && 'scrollIntoView' in item
+		return isVirtualizedListItem || (
+			item instanceof Element
+			&& !item.hasAttribute('disabled')
+			&& item.getAttribute('aria-hidden') !== 'true'
+		)
 	}
 
 	override hostConnected() {
@@ -178,8 +183,8 @@ export class ListFocusController extends Controller {
 		target: () => this.host,
 		type: 'pointerdown',
 		listener: (event: PointerEvent) => {
-			const listItem = event.composedPath().find(item => isListItem(item as HTMLElement))
-			this.focusedItemIndex = this.getRenderedItemIndex(listItem as ListItem)
+			const item = event.composedPath().find(item => !!(item as Element)[listItem])
+			this.focusedItemIndex = this.getRenderedItemIndex(item as ListItem)
 		}
 	})
 

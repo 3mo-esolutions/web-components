@@ -1,8 +1,8 @@
 import { component, css, html, property, eventListener, Component, query } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
 import { MutationController } from '@3mo/mutation-observer'
-import { isListItem } from './List.js'
 import '@3mo/expand-collapse-icon-button'
+import { listItem, listItems } from './extensions.js'
 
 /**
  * @element mo-collapsible-list-item
@@ -26,26 +26,27 @@ export class CollapsibleListItem extends Component {
 	protected readonly mutationObserver = new MutationController(this, {
 		config: { subtree: true, attributes: true, attributeFilter: ['selected', 'data-router-selected'] },
 		callback: () => {
-			if (this.detailItems.some(d => 'selected' in d && d.selected === true)) {
+			if (this[listItems].some(d => 'selected' in d && d.selected === true)) {
 				this.open = true
 			}
 		}
 	})
 
-	get item() {
-		return this.slotController.getAssignedElements('').find(e => isListItem(e))
+	override get [listItem](): Element {
+		return this.slotController.getAssignedElements('').find(e => !!e[listItem])!
 	}
 
-	private get hasDetails() {
-		return this.slotController.hasAssignedElements('details')
-	}
-
-	get detailItems() {
-		return this.slotController.getAssignedElements('details').filter(e => isListItem(e, { includeHidden: true }))
+	override get [listItems](): Array<Element> {
+		return [
+			this[listItem]!,
+			...this.slotController.getAssignedElements('details').flatMap(e => e[listItems]!)
+		]
 	}
 
 	private openUpdated() {
-		this.detailItems.forEach(item => item.setAttribute('aria-hidden', String(!this.open)))
+		this.slotController.getAssignedElements('details')
+			.map(item => item[listItem])
+			.forEach(item => item?.setAttribute('aria-hidden', String(!this.open)))
 	}
 
 	static override get styles() {
@@ -81,7 +82,7 @@ export class CollapsibleListItem extends Component {
 	}
 
 	protected override get template() {
-		return !this.hasDetails ? super.template : html`
+		return !this[listItems]?.length ? super.template : html`
 			<details ?open=${this.open} @toggle=${() => { this.open = this.detailsElement.open }}>
 				<summary tabindex='-1' part='summary'>
 					<slot></slot>
@@ -97,7 +98,7 @@ export class CollapsibleListItem extends Component {
 
 	@eventListener({ target: window, type: 'keydown' })
 	handleItemKeyDown(event: KeyboardEvent) {
-		if (!this.item?.hasAttribute('focused')) {
+		if (!this[listItem]?.hasAttribute('focused')) {
 			return
 		}
 
