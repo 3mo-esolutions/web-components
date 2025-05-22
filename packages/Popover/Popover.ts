@@ -115,9 +115,16 @@ export class Popover extends Component {
 				padding: 0;
 				border: 1px solid var(--mo-color-transparent-gray-3);
 				overflow: unset;
+				transition: opacity 125ms, transform 125ms, display 0ms allow-discrete;
+			}
+
+			:host([open]) {
+				opacity: 1;
+				@starting-style { opacity: 0; }
 			}
 
 			:host(:not([open])) {
+				opacity: 0;
 				display: none !important;
 			}
 

@@ -143,7 +143,6 @@ export class Menu extends Component {
 				border-radius: var(--mo-toolbar-border-radius, var(--mo-border-radius));
 				background: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-gray) 8%);
 				border-radius: var(--mo-border-radius);
-				transition: opacity 100ms;
 			}
 		`
 	}
