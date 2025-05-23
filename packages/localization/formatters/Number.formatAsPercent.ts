@@ -4,13 +4,13 @@ type FormatAsPercentOptions = FormatOptionsWithLanguage<Omit<Intl.NumberFormatOp
 
 Number.prototype.formatAsPercent = function (this: number, ...options: FormatAsPercentOptions) {
 	const [language, explicitOptions] = extractFormatOptions(options)
-	return Intl.NumberFormat(language, {
-		style: 'percent',
+	return (this / 100).format(language, {
 		useGrouping: false,
 		minimumFractionDigits: 0,
 		maximumFractionDigits: 2,
 		...explicitOptions,
-	}).format(this / 100 || 0)
+		style: 'percent',
+	})
 }
 
 declare global {

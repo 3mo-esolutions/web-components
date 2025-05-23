@@ -24,7 +24,10 @@ export class Currency {
 
 	get symbol() {
 		try {
-			return Intl.NumberFormat('de-DE', { style: 'currency', currency: this.code, maximumFractionDigits: 0 }).formatToParts(0).find(part => part.type === 'currency')?.value ?? this.code
+			return Intl.NumberFormat('de-DE', { style: 'currency', currency: this.code, maximumFractionDigits: 0 })
+				.formatToParts(0)
+				.find(part => part.type === 'currency')
+				?.value ?? this.code
 		} catch {
 			return this.code
 		}

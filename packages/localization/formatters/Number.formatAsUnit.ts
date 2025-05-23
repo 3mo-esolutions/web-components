@@ -4,11 +4,12 @@ type FormatAsUnitOptions = FormatOptionsWithLanguage<Omit<Intl.NumberFormatOptio
 
 Number.prototype.formatAsUnit = function (this: number, unit: Unit, ...options: FormatAsUnitOptions) {
 	const [language, explicitOptions] = extractFormatOptions(options)
-	return Intl.NumberFormat(language, {
-		style: 'unit',
-		unit,
+	return this.format(language, {
+		useGrouping: true,
 		...explicitOptions,
-	}).format(this || 0)
+		style: 'unit',
+		unit
+	})
 }
 
 type SingleUnit =

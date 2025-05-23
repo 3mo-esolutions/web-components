@@ -1,6 +1,10 @@
+import memoizeFormatConstructor from 'intl-format-cache'
 import { extractFormatOptions, type FormatOptionsWithLanguage } from './OptionsWithLanguage.js'
 
 type DateFormatOptions = FormatOptionsWithLanguage<Intl.DateTimeFormatOptions>
+
+// @ts-ignore The default export is the function itself
+const getFormatter = memoizeFormatConstructor(Intl.DateTimeFormat)
 
 export function extractDateTimeFormatOptions(calendarId?: string, timeZoneId?: string, explicitOptions?: DateFormatOptions, defaultOptions?: Intl.DateTimeFormatOptions) {
 	const [language, otherExplicitOptions] = extractFormatOptions(explicitOptions)
@@ -18,12 +22,12 @@ const defaultOptions: Intl.DateTimeFormatOptions = {
 
 Date.prototype.format = function (this: Date, ...options: DateFormatOptions) {
 	const [language, opt] = extractDateTimeFormatOptions(this.calendarId, this.timeZoneId, options, defaultOptions)
-	return Intl.DateTimeFormat(language, opt).format(this)
+	return getFormatter(language, opt).format(this)
 }
 
 Date.prototype.formatToParts = function (this: Date, ...options: DateFormatOptions) {
 	const [language, opt] = extractDateTimeFormatOptions(this.calendarId, this.timeZoneId, options, defaultOptions)
-	return Intl.DateTimeFormat(language, opt).formatToParts(this)
+	return getFormatter(language, opt).formatToParts(this)
 }
 
 declare global {

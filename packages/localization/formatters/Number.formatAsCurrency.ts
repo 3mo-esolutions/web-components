@@ -9,14 +9,14 @@ Number.prototype.formatAsCurrency = function (this: number, ...[currencyOrCode, 
 ) {
 	const currency = !currencyOrCode ? undefined : currencyOrCode instanceof Currency ? currencyOrCode : new Currency(currencyOrCode as CurrencyCode)
 	const [language, explicitOptions] = extractFormatOptions(options)
-	return Intl.NumberFormat(language, {
-		style: currency ? 'currency' : 'decimal',
-		currency: currency?.code,
+	return this.format(language, {
 		useGrouping: true,
 		minimumFractionDigits: 2,
 		maximumFractionDigits: 2,
 		...explicitOptions,
-	}).format(this || 0)
+		style: currency ? 'currency' : 'decimal',
+		currency: currency?.code,
+	})
 }
 
 declare global {

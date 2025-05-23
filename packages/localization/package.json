@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/localization",
-	"version": "0.8.1",
+	"version": "0.8.2",
 	"description": "A set of tools for localization.",
 	"repository": {
 		"type": "git",
@@ -24,6 +24,7 @@
 	],
 	"dependencies": {
 		"tslib": "x",
-		"@a11d/local-storage": "x"
+		"@a11d/local-storage": "x",
+		"intl-format-cache": "4.x"
 	}
 }
