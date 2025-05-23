@@ -1,4 +1,4 @@
-import { css, property, Component, html, query, queryAll, style, type HTMLTemplateResult, LitElement, live } from '@a11d/lit'
+import { css, property, Component, html, query, queryAll, type HTMLTemplateResult, LitElement, live } from '@a11d/lit'
 import { equals } from '@a11d/equals'
 import { DirectionsByLanguage } from '@3mo/localization'
 import { popover } from '@3mo/popover'
@@ -11,14 +11,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	@queryAll('[mo-data-grid-row]') readonly subRows!: Array<DataGridRow<TData, TDetailsElement>>
 	@query('#contentContainer') readonly content!: HTMLElement
 
-	@property({
-		type: Boolean,
-		updated(this: DataGridRow<TData, TDetailsElement>) {
-			if (this.isIntersecting) {
-				this.dataGrid.rowIntersectionObserver?.unobserve?.(this)
-			}
-		}
-	}) isIntersecting = false
+	@property({ type: Boolean }) isIntersecting = true
 
 	@property({ type: Object }) dataRecord!: DataRecord<TData>
 	get dataGrid() { return this.dataRecord.dataGrid }
@@ -44,9 +37,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 
 	protected override initialized() {
 		this.toggleAttribute('mo-data-grid-row', true)
-		if (this.isIntersecting === false) {
-			this.dataGrid.rowIntersectionObserver?.observe(this)
-		}
+		this.dataGrid.rowIntersectionObserver?.observe(this)
 	}
 
 	protected override disconnected() {
@@ -73,6 +64,25 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				position: relative;
 				height: auto;
 				width: 100%;
+			}
+
+			#detailsExpanderContainer {
+				position: sticky;
+				z-index: 2;
+				inset-inline-start: 0px;
+				background: var(--mo-data-grid-sticky-expander-part-color, var(--mo-data-grid-sticky-part-color));
+			}
+
+			#selectionContainer {
+				width: var(--mo-data-grid-column-selection-width);
+				position: sticky;
+				z-index: 2;
+				inset-inline-start: 0px;
+				height: 100%;
+				background: var(--mo-data-grid-sticky-part-color);
+				&[data-has-details] {
+					inset-inline-start: 20px;
+				}
 			}
 
 			:host(:hover) {
@@ -106,6 +116,15 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			#contentContainer {
 				grid-column: -1 / 1;
 				cursor: pointer;
+			}
+
+			#contextMenuIconButtonContainer {
+				height: 100%;
+				place-self: end;
+				position: sticky;
+				inset-inline-end: 0px;
+				z-index: 3;
+				background: var(--mo-data-grid-sticky-part-color);
 			}
 
 			#contextMenuIconButton {
@@ -207,8 +226,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 
 	protected get detailsExpanderTemplate() {
 		return this.dataGrid.hasDetails === false ? html.nothing : html`
-			<mo-flex justifyContent='center' alignItems='center'
-				${style({ position: 'sticky', zIndex: '2', insetInlineStart: '0px', background: 'var(--mo-data-grid-sticky-expander-part-color, var(--mo-data-grid-sticky-part-color))' })}
+			<mo-flex id='detailsExpanderContainer' justifyContent='center' alignItems='center'
 				@click=${(e: Event) => e.stopPropagation()}
 				@dblclick=${(e: Event) => e.stopPropagation()}
 			>
@@ -226,7 +244,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	protected get selectionTemplate() {
 		return this.dataGrid.hasSelection === false || this.dataGrid.selectionCheckboxesHidden ? html.nothing : html`
 			<mo-flex id='selectionContainer' justifyContent='center' alignItems='center'
-				${style({ width: 'var(--mo-data-grid-column-selection-width)', position: 'sticky', zIndex: '2', insetInlineStart: this.dataGrid.hasDetails ? '20px' : '0px', height: '100%', background: 'var(--mo-data-grid-sticky-part-color)' })}
+				?data-has-details=${this.dataGrid.hasDetails}
 				@click=${(e: Event) => e.stopPropagation()}
 				@dblclick=${(e: Event) => e.stopPropagation()}
 			>
@@ -263,7 +281,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 
 	protected get contextMenuIconButtonTemplate() {
 		return this.dataGrid.hasContextMenu === false ? html.nothing : html`
-			<mo-flex justifyContent='center' ${style({ height: '100%', placeSelf: 'end', position: 'sticky', insetInlineEnd: '0px', zIndex: '3', background: 'var(--mo-data-grid-sticky-part-color)' })}>
+			<mo-flex id='contextMenuIconButtonContainer' justifyContent='center'>
 				<mo-icon-button id='contextMenuIconButton' icon='more_vert' dense
 					@click=${this.openContextMenu}
 					@dblclick=${(e: Event) => e.stopPropagation()}

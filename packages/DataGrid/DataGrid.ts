@@ -391,15 +391,9 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		// @ts-expect-error rowIntersectionObserver is initialized once here
 		this.rowIntersectionObserver ??= new IntersectionObserver(entries => {
 			entries.forEach(({ target, isIntersecting }) => {
-				const row = target as DataGridRow<TData>
-				if (row.isIntersecting === false && isIntersecting === true) {
-					row.isIntersecting = true
-				}
+				(target as DataGridRow<TData>).isIntersecting = isIntersecting
 			})
-		}, {
-			root: this.scroller,
-			rootMargin: '100% 0px',
-		})
+		}, { root: this.scroller, rootMargin: '400px 0px' })
 		this.navigateToLastValidPageIfNeeded()
 		return super.updated(...parameters)
 	}

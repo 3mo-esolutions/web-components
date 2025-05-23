@@ -6,7 +6,7 @@ import { DataGridColumnDateTimeBase } from './DataGridColumnDateTimeBase.js'
 export class DataGridColumnDate<TData> extends DataGridColumnDateTimeBase<TData, Date> {
 	getContentTemplate(value: Date | undefined, data: TData) {
 		data
-		return html`${value ? value.formatAsDate(this.formatOptionsValue) ?? '' : ''}`
+		return html`${value?.formatAsDate(this.formatOptionsValue) ?? ''}`
 	}
 
 	override readonly fieldTag = literal`mo-field-date`

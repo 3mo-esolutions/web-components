@@ -39,42 +39,53 @@ export default {
 	package: p,
 } as Meta
 
-type Person = { id: number, name: string, age: number, birthDate: DateTime, address: string }
+class Person {
+	private static get people() {
+		return [
+			new Person({ id: 1, name: 'Octavia Blake', birthDate: new DateTime('2007-06-17'), address: '112 Rue de Elm, 1265 Paris, France' }),
+			new Person({ id: 2, name: 'Charmaine Diyoza', birthDate: new DateTime('2001-06-30'), address: '1234 Elm Street, Springfield, IL 62701, USA' }),
+			new Person({ id: 3, name: 'Clarke Griffin', birthDate: new DateTime('2008-10-13'), address: '7234 Elmstraße, 21001 Berlin, Deutschland' }),
+			new Person({ id: 4, name: 'Elliot Alderson', birthDate: new DateTime('1986-09-17'), address: '9692 Elm Street, Springfield, NSW 62701, Australia' }),
+			new Person({ id: 5, name: 'Arya Stark', birthDate: new DateTime('2002-03-29'), address: '7792 Elm Street, London, England' }),
+			new Person({ id: 6, name: 'Darlene Alderson', birthDate: new DateTime('1990-11-05'), address: '1232 Elm Street, "P-432"' }),
+			new Person({ id: 7, name: 'Max Caufield', birthDate: new DateTime('1995-09-21'), address: '1232 Elm Street, "P-432"' }),
+		]
+	}
 
-const generatePeople = (count: number) => {
-	const names = ['Octavia Blake', 'Charmaine Diyoza', 'Clarke Griffin', 'Elliot Alderson', 'Arya Stark', 'Darlene Alderson', 'Max Caufield']
-	const addresses = [
-		'112 Rue de Elm, 1265 Paris, France',
-		'1234 Elm Street, Springfield, IL 62701, USA',
-		'7234 Elmstraße, 21001 Berlin, Deutschland',
-		'9692 Elm Street, Springfield, NSW 62701, Australia',
-		'7792 Elm Street, London, England',
-		'1232 Elm Street, "P-432"'
-	]
+	static generate(count: number) {
+		return new Array(count)
+			.fill(0)
+			.map((_, i) => this.people[i % this.people.length])
+	}
 
-	return new Array(count).fill(0).map((_, i) => {
-		const birthDate = new DateTime().add({ days: -Math.floor(Math.random() * 365 * 80) })
-		return {
-			id: i + 1,
-			name: names[Math.floor(Math.random() * names.length)],
-			birthDate,
-			age: Math.floor((new DateTime().since(birthDate).years)),
-			address: addresses[Math.floor(Math.random() * addresses.length)],
-		}
-	})
+	readonly id!: number
+	readonly name!: string
+	readonly birthDate!: DateTime
+	readonly address!: string
+	readonly children?: Array<Person>
+
+
+	constructor(init?: Partial<Person>) {
+		Object.assign(this, init)
+	}
+
+	get age() {
+		return Math.floor((new DateTime().since(this.birthDate).years))
+	}
 }
 
-const fivePeople = generatePeople(5)
-const twentyPeople = generatePeople(20)
-const hundredPeople = generatePeople(100)
-const thousandPeople = generatePeople(1000)
 
-const fivePeopleWithChildren = fivePeople.map(p => ({
+const fivePeople = Person.generate(5)
+const twentyPeople = Person.generate(20)
+const hundredPeople = Person.generate(100)
+const thousandPeople = Person.generate(1000)
+
+const fivePeopleWithChildren = fivePeople.map(p => new Person({
 	...p,
-	children: generatePeople(Math.floor(Math.random() * 10) + 1).map(c => ({
+	children: Person.generate(Math.floor(Math.random() * 10) + 1).map(c => new Person({
 		...c,
-		children: generatePeople(Math.floor(Math.random() * 5) + 1)
-	}))
+		children: Person.generate(Math.floor(Math.random() * 5) + 1) as any,
+	}))!
 }))
 
 const columnsTemplate = html`
@@ -157,7 +168,7 @@ export const StickyColumns: StoryObj = {
 export const Sums: StoryObj = {
 	render: () => html`
 		<mo-data-grid
-			.data=${generatePeople(50).map(x => ({ ...x, balance: Math.floor(Math.random() * 1000) }))}
+			.data=${Person.generate(50).map(x => ({ ...x, balance: Math.floor(Math.random() * 1000) }))}
 			selectability='multiple'
 			style='height: 500px; --mo-data-grid-footer-background: var(--mo-color-transparent-gray-3)'
 			selectOnClick
@@ -216,7 +227,7 @@ export const WithDetails_SubDataGrid: StoryObj = {
 			?detailsOnClick=${detailsOnClick}
 			.hasDataDetail=${(p: Person) => p.age >= 18}
 			.getRowDetailsTemplate=${() => html`
-				<mo-data-grid .data=${generatePeople(5)}>
+				<mo-data-grid .data=${Person.generate(5)}>
 					${columnsTemplate}
 				</mo-data-grid>
 			`}
@@ -278,7 +289,7 @@ export const WithFiltersWithoutToolbar: StoryObj = {
 export const Virtualization: StoryObj = {
 	render: () => html`
 		<mo-flex gap='10px'>
-			<mo-data-grid .data=${thousandPeople} style='height: 500px'>
+			<mo-data-grid exportable .data=${thousandPeople} selectability='multiple' style='height: 500px' pagination='100000'>
 				${columnsTemplate}
 			</mo-data-grid>
 		</mo-flex>

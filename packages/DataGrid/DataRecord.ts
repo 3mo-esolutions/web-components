@@ -3,10 +3,7 @@ import { type DataGrid } from './DataGrid.js'
 export class DataRecord<TData> {
 	constructor(readonly dataGrid: DataGrid<TData, any>, init: Partial<DataRecord<TData>>) {
 		Object.assign(this, init)
-		if (!this.subDataRecords?.length) {
-			// @ts-expect-error This is the constructor!
-			delete this.subDataRecords
-		}
+		this.subDataRecords = !this.subDataRecords?.length ? undefined : this.subDataRecords
 	}
 
 	readonly data!: TData
