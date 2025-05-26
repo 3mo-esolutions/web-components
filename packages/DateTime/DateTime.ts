@@ -183,12 +183,6 @@ export class DateTime extends Date {
 	with(...parameters: Parameters<Temporal.ZonedDateTime['with']>) {
 		return DateTime.from(this.zonedDateTime.with(...parameters))
 	}
-
-	@memoize() get weekDayNames() {
-		return new Array<DateTime>(this.daysInWeek)
-			.fill(this.weekStart)
-			.map((d, i) => d.add({ days: i }).format({ weekday: 'long' }))
-	}
 }
 
 globalThis.DateTime = DateTime

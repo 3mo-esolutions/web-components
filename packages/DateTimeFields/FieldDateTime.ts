@@ -16,7 +16,15 @@ Localizer.dictionaries.add('de', {
  */
 @component('mo-field-date-time')
 export class FieldDateTime extends FieldDateTimeBase<Date | undefined> {
-	protected get selectedDate() { return this.value ? new DateTime(this.value) : undefined }
+	protected get selectedDate() {
+		if (!this.value) {
+			return undefined
+		}
+		if (this.value instanceof Date) {
+			return new DateTime(this.value)
+		}
+		return this.value
+	}
 
 	@property() override label = t('Date & Time')
 	@property({ type: Object }) value?: Date
@@ -34,8 +42,8 @@ export class FieldDateTime extends FieldDateTimeBase<Date | undefined> {
 		return html`
 			<mo-selectable-calendar
 				.navigatingValue=${this.navigatingDate}
-				.value=${this.selectedDate}
-				@change=${(e: CustomEvent<DateTime>) => this.handleSelectedDateChange(e.detail, FieldDateTimePrecision.Day)}
+				.value=${new DateTimeRange(this.selectedDate, this.selectedDate)}
+				@dayClick=${(e: CustomEvent<DateTime>) => this.handleSelectedDateChange(e.detail, FieldDateTimePrecision.Day)}
 			></mo-selectable-calendar>
 		`
 	}
