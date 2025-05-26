@@ -16,7 +16,7 @@ export class Calendar extends Component {
 		}
 	}
 
-	@property({ type: Boolean, reflect: true }) includeWeekNumbers = false
+	@property({ type: Boolean, reflect: true }) includeWeek = false
 	@property({
 		type: Object,
 		updated(this: Calendar) {
@@ -92,7 +92,7 @@ export class Calendar extends Component {
 	private get columns() {
 		const daysInWeek = this.days[0]?.daysInWeek ?? 7
 		return [
-			!this.includeWeekNumbers ? undefined : '[week] var(--mo-calendar-week-number-width)',
+			!this.includeWeek ? undefined : '[week] var(--mo-calendar-week-number-width)',
 			...this.days.slice(0, daysInWeek).map(day => `[${this.getColumnName(day)}] var(--mo-calendar-day-size)`),
 		].join(' ')
 	}
@@ -113,7 +113,7 @@ export class Calendar extends Component {
 				</div>
 
 				<mo-grid class='header' columns='subgrid' style='grid-column: 1 / -1'>
-					${this.includeWeekNumbers === false ? html.nothing : html`<div></div>`}
+					${this.includeWeek === false ? html.nothing : html`<div></div>`}
 					${this.days.slice(0, this.days[0]?.daysInWeek).map(day => html`
 						<span style='grid-column: ${this.getColumnName(day)}' title=${day.format({ weekday: 'long' })}>
 							${day.format({ weekday: 'narrow' })}
@@ -122,7 +122,7 @@ export class Calendar extends Component {
 				</mo-grid>
 
 				${this.days.map(day => html`
-					${this.includeWeekNumbers === false || day.dayOfWeek !== 1 ? html.nothing : html`
+					${this.includeWeek === false || day.dayOfWeek !== 1 ? html.nothing : html`
 						<div class='week' style='grid-column: week'>${day.weekOfYear}</div>
 					`}
 					<mo-flex tabindex='0'
