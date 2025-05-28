@@ -139,7 +139,7 @@ export class DateTime extends Date {
 	@memoize() get monthEnd() { return this.with({ day: this.daysInMonth }) }
 	@memoize() get monthRange() { return new DateTimeRange(this.monthStart, this.monthEnd) }
 
-	@memoize() get yearStart() { return this.dayStart.with({ month: 1, day: 1 }) }
+	@memoize() get yearStart() { return this.with({ month: 1, day: 1 }) }
 	@memoize() get yearEnd() { return this.add({ years: 1 }).yearStart.add({ days: -1 }) }
 	@memoize() get yearRange() { return new DateTimeRange(this.yearStart, this.yearEnd) }
 
