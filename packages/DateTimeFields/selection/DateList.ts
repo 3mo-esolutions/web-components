@@ -22,7 +22,7 @@ export abstract class DateList extends Component {
 			}
 
 			mo-scroller {
-				min-width: 70px;
+				min-width: 50px;
 				scrollbar-width: none;
 			}
 

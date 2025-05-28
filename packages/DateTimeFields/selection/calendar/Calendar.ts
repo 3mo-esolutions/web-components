@@ -7,9 +7,9 @@ class CalendarDaysController extends Controller {
 	@memoizeExpiring(60_000)
 	static get today() { return new DateTime().dayStart }
 
-	private static *generate(start: DateTime, count: number) {
+	private static *generate(start: DateTime, count: number, step = 'days') {
 		for (let i = 0; i < count; i++) {
-			yield start.add({ days: i })
+			yield start.add({ [step]: i })
 		}
 	}
 
@@ -43,7 +43,12 @@ class CalendarDaysController extends Controller {
 	get navigationDate() { return this._navigationDate }
 	set navigationDate(value) {
 		if (value.year !== this.median?.year) {
-			this._days = [...CalendarDaysController.generate(value.yearStart.add({ years: -2 }), value.daysInYear * 5)]
+			const step = this.host.view === 'day' ? 'days' : 'months'
+			this._days = [...CalendarDaysController.generate(
+				value.yearStart.add({ years: -2 }),
+				value.daysInYear * 5,
+				step
+			)]
 			this.host.requestUpdate()
 		}
 
