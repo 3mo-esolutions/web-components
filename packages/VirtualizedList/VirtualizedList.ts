@@ -35,7 +35,7 @@ export class VirtualizedList<T = unknown> extends List {
 
 	protected override get template() {
 		return html`
-			<mo-virtualized-scroller
+			<mo-virtualized-scroller exportparts='container'
 				.items=${this.data}
 				.getItemTemplate=${this.getItemTemplate}
 			></mo-virtualized-scroller>

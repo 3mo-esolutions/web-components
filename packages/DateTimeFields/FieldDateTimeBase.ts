@@ -1,8 +1,9 @@
 
-import { type HTMLTemplateResult, cache, css, html, live, property, style, bind, state } from '@a11d/lit'
+import { type HTMLTemplateResult, cache, css, html, live, property, style, bind, state, query } from '@a11d/lit'
 import { InputFieldComponent } from '@3mo/field'
 import { type MaterialIcon } from '@3mo/icon'
 import { FieldDateTimePrecision } from './FieldDateTimePrecision.js'
+import type { Calendar } from './selection/index.js'
 
 /**
  * @attr open - Whether the date picker is open
@@ -17,6 +18,8 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	@property({ type: String, converter: value => FieldDateTimePrecision.parse(value || undefined) }) precision = FieldDateTimePrecision.Minute
 
 	@state() navigatingDate = new DateTime()
+
+	@query('mo-selectable-calendar') protected readonly calendar?: Calendar
 
 	protected readonly calendarIconButtonIcon: MaterialIcon = 'today'
 
@@ -156,7 +159,10 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 
 	protected get popoverTemplate() {
 		return this.pickerHidden ? html.nothing : html`
-			<mo-popover tabindex='-1' .anchor=${this} target='field' ?open=${bind(this, 'open')}>
+			<mo-popover tabindex='-1'
+				.anchor=${this} target='field'
+				?open=${bind(this, 'open', { sourceUpdated: () => setTimeout(() => this.calendar?.scrollToNavigatingItem()) })}
+			>
 				${cache(!this.open ? html.nothing : this.popoverContentTemplate)}
 			</mo-popover>
 		`
@@ -172,35 +178,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	}
 
 	protected get dateTemplate() {
-		return html`
-			${this.yearListTemplate}
-			${this.monthListTemplate}
-			${this.dayTemplate}
-		`
-	}
-
-	private get yearListTemplate() {
-		return html`
-			<mo-year-list
-				.navigatingValue=${bind(this, 'navigatingDate')}
-				.value=${this.selectedDate}
-				@change=${(e: CustomEvent<DateTime>) => this.handleSelectedDateChange(e.detail, FieldDateTimePrecision.Year)}
-			></mo-year-list>
-		`
-	}
-
-	private get monthListTemplate() {
-		return this.precision < FieldDateTimePrecision.Month ? html.nothing : html`
-			<mo-month-list
-				.navigatingValue=${bind(this, 'navigatingDate')}
-				.value=${this.selectedDate}
-				@change=${(e: CustomEvent<DateTime>) => this.handleSelectedDateChange(e.detail, FieldDateTimePrecision.Month)}
-			></mo-month-list>
-		`
-	}
-
-	private get dayTemplate() {
-		return this.precision < FieldDateTimePrecision.Day ? html.nothing : this.calendarTemplate
+		return this.calendarTemplate
 	}
 
 	protected abstract get calendarTemplate(): HTMLTemplateResult
