@@ -41,7 +41,6 @@ export class FieldDateTime extends FieldDateTimeBase<Date | undefined> {
 	protected get calendarTemplate() {
 		return html`
 			<mo-selectable-calendar
-				.navigatingValue=${this.navigatingDate}
 				.value=${new DateTimeRange(this.selectedDate, this.selectedDate)}
 				@dayClick=${(e: CustomEvent<DateTime>) => this.handleSelectedDateChange(e.detail, FieldDateTimePrecision.Day)}
 			></mo-selectable-calendar>
@@ -49,6 +48,8 @@ export class FieldDateTime extends FieldDateTimeBase<Date | undefined> {
 	}
 
 	protected override handleSelectedDateChange(date: DateTime, precision: FieldDateTimePrecision) {
+		const { hour, minute, second } = this.navigatingDate
+		date = date.with({ hour, minute, second })
 		this.value = !date ? undefined : this.precision.getRange(date).start
 		super.handleSelectedDateChange(date, precision)
 	}
