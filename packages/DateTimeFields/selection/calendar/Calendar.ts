@@ -1,7 +1,6 @@
 import { Component, css, component, html, property, classMap, type ClassInfo, event, Controller, repeat } from '@a11d/lit'
 import '@a11d/array.prototype.group'
 import { observeIntersection } from '@3mo/intersection-observer'
-import '@3mo/virtualized-list'
 import { MemoizeExpiring as memoizeExpiring } from 'typescript-memoize'
 
 class CalendarDaysController extends Controller {
@@ -33,34 +32,22 @@ class CalendarDaysController extends Controller {
 		this.navigationDate = CalendarDaysController.today
 	}
 
-	private days = new Array<DateTime>()
+	private _days = new Array<DateTime>()
+	get days() { return this._days as ReadonlyArray<DateTime> }
 
 	private get median() {
-		const index = Math.floor(this.days.length / 2)
-		return this.days[index]!
+		return this.days[Math.floor(this._days.length / 2)]
 	}
 
 	private _navigationDate!: DateTime
 	get navigationDate() { return this._navigationDate }
 	set navigationDate(value) {
 		if (value.year !== this.median?.year) {
-			this.days = [...CalendarDaysController.generate(value.yearStart.add({ years: -2 }), value.daysInYear * 5)]
-			this._navigationRange = [...this.days]
+			this._days = [...CalendarDaysController.generate(value.yearStart.add({ years: -2 }), value.daysInYear * 5)]
 			this.host.requestUpdate()
 		}
 
 		this._navigationDate = value.dayStart
-	}
-
-	private _navigationRange = new Array<DateTime>()
-	get navigationRange() { return this._navigationRange as ReadonlyArray<DateTime> }
-
-	filter(...parameters: Parameters<Array<DateTime>['filter']>) {
-		return this.days.filter(...parameters)
-	}
-
-	[Symbol.iterator]() {
-		return this.navigationRange[Symbol.iterator]()
 	}
 }
 
@@ -82,7 +69,7 @@ export class Calendar extends Component {
 	async setNavigatingValue(date: DateTime, behavior: 'instant' | 'smooth' = 'instant') {
 		this.daysController.navigationDate = date
 		await this.updateComplete
-		await new Promise(resolve => setTimeout(resolve, 200))
+		await new Promise(r => setTimeout(r, 0))
 		this.scrollToNavigatingItem(behavior)
 	}
 
@@ -106,6 +93,7 @@ export class Calendar extends Component {
 
 			mo-scroller {
 				height: min(450px, 100vh);
+				--_gap: 0.5rem;
 
 				&::part(container) {
 					display: grid;
@@ -116,8 +104,8 @@ export class Calendar extends Component {
 				}
 
 				&[data-view=day]::part(container) {
-					grid-template-columns: repeat(2, 1fr);
-					gap: 0.5rem;
+					grid-template-columns: 1fr;
+					gap: var(--_gap);
 				}
 
 				&[data-view=month]::part(container) {
@@ -127,12 +115,16 @@ export class Calendar extends Component {
 
 			.year {
 				&[data-view=month], &[data-view=year] {
-					border-block-start: 1px solid var(--mo-color-transparent-gray-3);
 					font-weight: 500;
 					font-size: 1.1rem;
-					justify-content: center;
 				}
-				min-height: auto;
+				&[data-view=day] {
+					display: none;
+				}
+				height: 2.5rem;
+				border-block-start: 1px solid var(--mo-color-transparent-gray-3);
+				text-align: center;
+				user-select: none;
 				grid-column: 1 / -1;
 				font-size: large;
 				padding-inline: 0.5rem;
@@ -141,22 +133,44 @@ export class Calendar extends Component {
 
 			.month-container {
 				width: 100%;
+				position: relative;
+				&[data-view=day] {
+					&::before {
+						content: ' ';
+						position: absolute;
+						display: inline-block;
+						width: 1px;
+						height: calc(100% + var(--_gap));
+						inset-inline-start: calc(var(--_gap) * -0.5);
+						inset-block: 0;
+						background: var(--mo-color-transparent-gray-3);
+					}
+					&::after {
+						content: ' ';
+						position: absolute;
+						display: inline-block;
+						height: 1px;
+						width: calc(100% + var(--_gap));
+						inset-block-start: calc(var(--_gap) * -0.5);
+						inset-inline: 0;
+						background: var(--mo-color-transparent-gray-3);
+					}
+				}
 			}
 
 			.month {
 				&[data-view=day] {
-					border-block-start: 1px solid var(--mo-color-transparent-gray-3);
 					padding-block: 0.75rem;
 					font-weight: 500;
 					font-size: 1.125rem;
-					justify-content: center;
 					grid-column: 1 / -1;
 				}
+				user-select: none;
+				text-align: center;
 				padding: 0.5rem;
+				height: 2rem;
 				background: var(--mo-color-background);
 				place-items: center;
-				min-height: auto;
-				justify-content: center;
 			}
 
 			.weekdays {
@@ -166,17 +180,17 @@ export class Calendar extends Component {
 			}
 
 			.week {
-				color: var(--mo-color-gray);
+				opacity: 0.5;
 			}
 
 			.day {
 				display: flex;
 				text-align: center;
-				min-height: auto;
 				border-radius: var(--mo-border-radius);
 				cursor: pointer;
 				font-weight: 500;
 				user-select: none;
+				opacity: 0.9;
 				font-size: 0.94rem;
 				width: var(--mo-calendar-day-size);
 				-webkit-user-select: none;
@@ -209,7 +223,7 @@ export class Calendar extends Component {
 	protected override get template() {
 		return html`
 			<mo-scroller data-view=${this.view}>
-				${repeat(this.daysController.navigationRange, d => d.toString(), d => html`
+				${repeat(this.daysController.days, d => d.toString(), d => html`
 					${this.getYearTemplate(d)}
 					${this.getMonthTemplate(d)}
 				`)}
@@ -219,23 +233,29 @@ export class Calendar extends Component {
 
 	private getYearTemplate(date: DateTime) {
 		return date.dayOfYear !== 1 ? html.nothing : html`
-			<mo-list-item class='year' data-view=${this.view}>
+			<div class='year' role='button' data-view=${this.view}>
 				${date.format({ year: 'numeric' })}
-			</mo-list-item>
+			</div>
 		`
 	}
 
 	private getMonthTemplate(date: DateTime) {
+		const handleNavigation = (date: DateTime, data: Array<IntersectionObserverEntry>) => {
+			if (this.view === 'day' && data.some(entry => entry.isIntersecting)) {
+				this.daysController.navigationDate = date
+			}
+		}
+
 		return date.day !== 1 ? html.nothing : html`
-			<mo-grid class='month-container' columns=${this.view === 'day' ? this.columns : 'auto'}>
-				<mo-list-item class='month'
+			<mo-grid class='month-container' data-view=${this.view} columns=${this.view === 'day' ? this.columns : 'auto'}>
+				<div class='month' role='button'
 					?data-navigating=${this.navigationDate.year === date.year && this.navigationDate.month === date.month}
 					data-view=${this.view}
-					${observeIntersection(data => this.handleNavigation(date, data))}
+					${observeIntersection(data => handleNavigation(date, data))}
 					@click=${() => this.toggleView(date)}
 				>
 					${this.view === 'day' ? date.format({ year: 'numeric', month: 'long' }) : date.format({ month: 'long' })}
-				</mo-list-item>
+				</div>
 
 				${this.view !== 'day' ? html.nothing : html`
 					<mo-grid class='weekdays' columns='subgrid'>
@@ -248,17 +268,9 @@ export class Calendar extends Component {
 					</mo-grid>
 				`}
 
-				${this.daysController.filter(d => d.year === date.year && d.month === date.month).map(day => this.getDayTemplate(day))}
+				${this.daysController.days.filter(d => d.year === date.year && d.month === date.month).map(day => this.getDayTemplate(day))}
 			</mo-grid>
 		`
-	}
-
-	private handleNavigation(date: DateTime, data: Array<IntersectionObserverEntry>) {
-		if (data.some(entry => entry.isIntersecting)) {
-			date
-			this.daysController.navigationDate = date
-			// this.updateComplete.then(() => this.scrollToNavigatingItem())
-		}
 	}
 
 	private getDayTemplate(day: DateTime) {

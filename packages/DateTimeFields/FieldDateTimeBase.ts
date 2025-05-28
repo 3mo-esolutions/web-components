@@ -1,5 +1,5 @@
 
-import { type HTMLTemplateResult, cache, css, html, live, property, style, bind, state, query } from '@a11d/lit'
+import { type HTMLTemplateResult, cache, css, html, live, property, style, bind, state, query, ifDefined } from '@a11d/lit'
 import { InputFieldComponent } from '@3mo/field'
 import { type MaterialIcon } from '@3mo/icon'
 import { FieldDateTimePrecision } from './FieldDateTimePrecision.js'
@@ -84,9 +84,9 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 			}
 
 			.timezone {
-				padding: 3px;
+				padding: 0.4rem;
 				font-size: small;
-				text-align: end;
+				text-align: center;
 				font-weight: 500;
 				color: var(--mo-color-gray);
 			}
@@ -185,16 +185,15 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 
 	private get timeTemplate() {
 		return this.precision <= FieldDateTimePrecision.Day ? html.nothing : html`
-			<mo-flex gap='6px'>
-				<div class='timezone'>
-					${this.navigatingDate?.formatToParts({ timeZoneName: 'long' }).find(x => x.type === 'timeZoneName')?.value}
-					(${this.navigatingDate?.formatToParts({ timeZoneName: 'shortOffset' }).find(x => x.type === 'timeZoneName')?.value})
-				</div>
+			<mo-flex gap='0.5rem'>
 				<mo-flex direction='horizontal' style='flex: 1'>
 					${this.hourListTemplate}
 					${this.minuteListTemplate}
 					${this.secondListTemplate}
 				</mo-flex>
+				<div class='timezone' title=${ifDefined(this.navigatingDate?.formatToParts({ timeZoneName: 'long' }).find(x => x.type === 'timeZoneName')?.value)}>
+					${this.navigatingDate?.formatToParts({ timeZoneName: 'shortOffset' }).find(x => x.type === 'timeZoneName')?.value}
+				</div>
 			</mo-flex>
 		`
 	}

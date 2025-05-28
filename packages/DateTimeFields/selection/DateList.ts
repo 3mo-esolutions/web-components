@@ -23,6 +23,7 @@ export abstract class DateList extends Component {
 
 			mo-scroller {
 				min-width: 70px;
+				scrollbar-width: none;
 			}
 
 			.selector {
@@ -36,14 +37,13 @@ export abstract class DateList extends Component {
 			}
 
 			.pad {
-				height: 130px;
+				height: 200px;
 			}
 
 			mo-selectable-list-item {
 				min-height: 32px;
 				padding-block: 8px;
 				scroll-snap-align: center;
-				scroll-snap-stop: always;
 			}
 		`
 	}
@@ -57,6 +57,7 @@ export abstract class DateList extends Component {
 			<div class='selector'></div>
 			<mo-scroller snapType='y mandatory'
 				@scroll=${this.handleScroll}
+				@scrollend=${this.handleScroll}
 				@mouseenter=${() => this.navigateOnScroll = true}
 				@mouseleave=${() => this.navigateOnScroll = false}
 				@touchstart=${() => this.navigateOnScroll = true}
@@ -89,7 +90,10 @@ export abstract class DateList extends Component {
 
 
 	@eventOptions({ passive: true })
-	protected handleScroll() {
+	protected handleScroll(e: Event) {
+		if (e.type === 'scroll' && 'onscrollend' in HTMLElement.prototype) {
+			return
+		}
 		if (!this.navigateOnScroll) {
 			return
 		}
