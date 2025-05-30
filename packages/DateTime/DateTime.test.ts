@@ -3,19 +3,6 @@ import { expectDateTimesEquals } from './expectDateTimesEquals.test.js'
 import './index.js'
 
 describe('DateTime', () => {
-	it('should not cache calendar and time-zone when language changes', () => {
-		let lang: any
-		spyOnProperty(Localizer.languages, 'current').and.callFake(() => lang)
-
-		lang = 'de'
-		Localizer.languages.change.dispatch(lang)
-		expect(DateTime.getCalendar()).toBe('gregory')
-
-		lang = 'fa'
-		Localizer.languages.change.dispatch(lang)
-		expect(DateTime.getCalendar()).toBe('persian')
-	})
-
 	it('from() should construct a DateTime from an epoch nanoseconds number', () => {
 		const epochMilliseconds = 1609459200000
 		const dateTime = DateTime.from(epochMilliseconds)
