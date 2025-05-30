@@ -3,7 +3,7 @@ import { ComponentTestFixture } from '@a11d/lit-testing'
 import type { FieldDateTimeRange } from './FieldDateTimeRange'
 
 describe('FieldDateTimeRange', () => {
-	const fixture = new ComponentTestFixture<FieldDateTimeRange>(html`<mo-field-date-time-range open></mo-field-date-time-range>`)
+	const fixture = new ComponentTestFixture<FieldDateTimeRange>(html`<mo-field-date-time-range open precision='day'></mo-field-date-time-range>`)
 
 	it('should dispatch change event when a given date is selected in the calendar', () => {
 		spyOn(fixture.component.change, 'dispatch')
