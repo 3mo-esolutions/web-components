@@ -1,5 +1,4 @@
-import { Component, css, component, html, property, classMap, type ClassInfo, event, repeat } from '@a11d/lit'
-import '@a11d/array.prototype.group'
+import { Component, css, component, html, property, classMap, type ClassInfo, event, repeat, state } from '@a11d/lit'
 import { CalendarDatesController } from './CalendarDatesController.js'
 
 export type CalendarView = 'year' | 'month' | 'day'
@@ -11,9 +10,10 @@ export type CalendarView = 'year' | 'month' | 'day'
 export class Calendar extends Component {
 	@event() readonly dayClick!: EventDispatcher<DateTime>
 
+	@property({ type: Object }) value?: DateTimeRange
 	@property({ type: Boolean, reflect: true }) includeWeek = false
 
-	@property() view: CalendarView = 'day'
+	@state() view: CalendarView = 'day'
 
 	private readonly datesController = new CalendarDatesController(this)
 
@@ -167,6 +167,16 @@ export class Calendar extends Component {
 			.day {
 				width: var(--mo-calendar-item-size);
 				height: var(--mo-calendar-item-size);
+
+				&.start, &.end {
+					background: var(--mo-color-accent-transparent);
+					opacity: 1;
+					color: color-mix(in srgb, var(--mo-color-accent), var(--mo-color-foreground)) !important;
+				}
+
+				&.inRange {
+					background: color-mix(in srgb, var(--mo-color-accent), transparent 92%);
+				}
 			}
 		`
 	}
@@ -260,9 +270,16 @@ export class Calendar extends Component {
 	}
 
 	protected getDayElementClasses(day: DateTime): ClassInfo {
+		const value = day.valueOf()
+		const start = value === this.value?.start?.dayStart.valueOf()
+		const end = value === this.value?.end?.dayStart.valueOf()
+		const inRange = value > (this.value?.start?.dayStart.valueOf() ?? Infinity) && value < (this.value?.end?.dayStart.valueOf() ?? 0)
 		return {
 			day: true,
 			today: CalendarDatesController.today.year === day.year && CalendarDatesController.today.month === day.month && CalendarDatesController.today.day === day.day,
+			start,
+			end,
+			inRange,
 		}
 	}
 }

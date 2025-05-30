@@ -19,7 +19,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 
 	@state() navigatingDate = new DateTime()
 
-	@query('mo-selectable-calendar') protected readonly calendar?: Calendar
+	@query('mo-calendar') protected readonly calendar?: Calendar
 
 	protected readonly calendarIconButtonIcon: MaterialIcon = 'today'
 

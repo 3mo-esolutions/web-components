@@ -68,11 +68,11 @@ export class FieldDateTimeRange extends FieldDateTimeBase<DateTimeRange | undefi
 
 	protected get calendarTemplate() {
 		return html`
-			<mo-selectable-calendar
+			<mo-calendar
 				data-selection=${this.selection}
 				.value=${this.value}
 				@dayClick=${(e: CustomEvent<DateTime>) => this.handleSelectedDateChange(e.detail, FieldDateTimePrecision.Day)}
-			></mo-selectable-calendar>
+			></mo-calendar>
 		`
 	}
 

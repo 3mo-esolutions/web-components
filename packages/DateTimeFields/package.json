@@ -40,7 +40,6 @@
 		"@3mo/scroller": "x",
 		"@3mo/tab": "x",
 		"@3mo/text-fields": "x",
-		"@a11d/array.prototype.group": "x",
 		"@a11d/lit": "x",
 		"tslib": "x",
 		"typescript-memoize": "1.x"

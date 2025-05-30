@@ -40,10 +40,10 @@ export class FieldDateTime extends FieldDateTimeBase<Date | undefined> {
 
 	protected get calendarTemplate() {
 		return html`
-			<mo-selectable-calendar
+			<mo-calendar
 				.value=${new DateTimeRange(this.selectedDate, this.selectedDate)}
 				@dayClick=${(e: CustomEvent<DateTime>) => this.handleSelectedDateChange(e.detail, FieldDateTimePrecision.Day)}
-			></mo-selectable-calendar>
+			></mo-calendar>
 		`
 	}
 

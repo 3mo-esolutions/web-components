@@ -12,7 +12,7 @@ describe('FieldDateTime', () => {
 
 	it('should dispatch change event when a given date is selected in the calendar', () => {
 		spyOn(fixture.component.change, 'dispatch')
-		const calendar = fixture.component.renderRoot.querySelector('mo-selectable-calendar')!
+		const calendar = fixture.component.renderRoot.querySelector('mo-calendar')!
 		const date = new DateTime('2025-01-01')
 
 		calendar.dispatchEvent(new CustomEvent('dayClick', { detail: date }))
