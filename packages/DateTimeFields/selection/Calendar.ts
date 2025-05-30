@@ -74,7 +74,6 @@ export class Calendar extends Component {
 				text-align: center;
 
 				user-select: none;
-				-webkit-user-select: none;
 
 				font-weight: 500;
 
@@ -149,6 +148,7 @@ export class Calendar extends Component {
 				font-size: 0.75rem;
 				font-weight: 500;
 				grid-column: -1 / 1;
+				user-select: none;
 				span {
 					display: flex;
 					align-items: center;
