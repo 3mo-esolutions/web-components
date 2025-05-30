@@ -3,7 +3,7 @@ import '@a11d/array.prototype.group'
 import { observeIntersection } from '@3mo/intersection-observer'
 import { MemoizeExpiring as memoizeExpiring } from 'typescript-memoize'
 
-class CalendarDaysController extends Controller {
+class CalendarDatesController extends Controller {
 	@memoizeExpiring(60_000)
 	static get today() { return new DateTime().dayStart }
 
@@ -17,54 +17,80 @@ class CalendarDaysController extends Controller {
 	static get sampleWeek() { return this._sampleWeek as ReadonlyArray<DateTime> }
 
 	private static generateWeek() {
-		const sample = [...CalendarDaysController.generate(CalendarDaysController.today, CalendarDaysController.today.daysInWeek * 2)]
+		const sample = [...CalendarDatesController.generate(CalendarDatesController.today, CalendarDatesController.today.daysInWeek * 2)]
 		const indexOfFirstWeekStart = sample.findIndex(d => d.dayOfWeek === 1)
 		const daysInWeek = sample[0]!.daysInWeek
-		CalendarDaysController._sampleWeek = sample.slice(indexOfFirstWeekStart, indexOfFirstWeekStart + daysInWeek).map(d => d.dayStart)
+		CalendarDatesController._sampleWeek = sample.slice(indexOfFirstWeekStart, indexOfFirstWeekStart + daysInWeek).map(d => d.dayStart)
 	}
 
 	static {
-		CalendarDaysController.generateWeek()
+		CalendarDatesController.generateWeek()
 	}
 
 	constructor(override readonly host: Calendar) {
 		super(host)
-		this.navigationDate = CalendarDaysController.today
+		this.navigationDate = CalendarDatesController.today
 	}
 
 	private _days = new Array<DateTime>()
 	private _months = new Array<DateTime>()
+	private _years = new Array<DateTime>()
 
 	get data() {
-		return this.host.view === 'day' ? this._days : this._months
+		switch (this.host.view) {
+			case 'month':
+				return this._months
+			case 'year':
+				return this._years
+			default:
+				return this._days
+		}
 	}
 
 	private _navigationDate!: DateTime
 	get navigationDate() { return this._navigationDate }
 	set navigationDate(value) {
+		let changed = false
+
 		const daysOffset = 80
 		if (this.host.view === 'day' && (!this._days.length || value.isBefore(this._days.at(daysOffset)!) || value.isAfter(this._days.at(-daysOffset)!))) {
-			this._days = [...CalendarDaysController.generate(
+			this._days = [...CalendarDatesController.generate(
 				value.yearStart.add({ years: -1 }),
 				value.daysInYear * 3,
 				'days',
 			)]
-			this.host.requestUpdate()
+			changed = true
 		}
 
 		const monthsOffset = 25
 		if (this.host.view === 'month' && (!this._months.length || value.isBefore(this._months.at(monthsOffset)!) || value.isAfter(this._months.at(-monthsOffset)!))) {
-			this._months = [...CalendarDaysController.generate(
+			this._months = [...CalendarDatesController.generate(
 				value.yearStart.add({ years: -10 }),
 				value.monthsInYear * 20,
 				'months',
 			)]
+			changed = true
+		}
+
+		const yearsOffset = 10
+		if (this.host.view === 'year' && (!this._years.length || value.isBefore(this._years.at(yearsOffset)!) || value.isAfter(this._years.at(-yearsOffset)!))) {
+			this._years = [...CalendarDatesController.generate(
+				value.yearStart.add({ years: -100 }),
+				200,
+				'years',
+			)]
+			changed = true
+		}
+
+		if (changed) {
 			this.host.requestUpdate()
 		}
 
 		this._navigationDate = value.dayStart
 	}
 }
+
+type CalendarView = 'year' | 'month' | 'day'
 
 /**
  * @fires dayClick - Dispatched when a day is clicked, with the clicked date as detail.
@@ -75,9 +101,9 @@ export class Calendar extends Component {
 
 	@property({ type: Boolean, reflect: true }) includeWeek = false
 
-	@property() view: 'month' | 'day' = 'day'
+	@property() view: CalendarView = 'day'
 
-	private readonly daysController = new CalendarDaysController(this)
+	private readonly daysController = new CalendarDatesController(this)
 
 	get navigationDate() { return this.daysController.navigationDate }
 
@@ -94,8 +120,8 @@ export class Calendar extends Component {
 			?.scrollIntoView({ block: 'center', behavior })
 	}
 
-	toggleView(navigatingDate: DateTime) {
-		this.view = this.view === 'month' ? 'day' : 'month'
+	setView(navigatingDate: DateTime, view: CalendarView) {
+		this.view = view
 		this.setNavigatingValue(navigatingDate)
 	}
 
@@ -122,6 +148,10 @@ export class Calendar extends Component {
 
 				&[data-view=month]::part(container) {
 					grid-template-columns: repeat(3, 1fr);
+				}
+
+				&[data-view=year]::part(container) {
+					grid-template-columns: repeat(5, 1fr);
 				}
 			}
 
@@ -163,7 +193,9 @@ export class Calendar extends Component {
 				&[data-view=day] {
 					display: none;
 				}
-				grid-column: -1 / 1;
+				&:not([data-view=year]) {
+					grid-column: -1 / 1;
+				}
 				border-block-start: 1px solid var(--mo-color-transparent-gray-3);
 				padding-inline: 0.5rem;
 			}
@@ -230,7 +262,7 @@ export class Calendar extends Component {
 	private get columns() {
 		return [
 			!this.includeWeek ? undefined : '[week] var(--mo-calendar-item-size)',
-			...CalendarDaysController.sampleWeek.map(day => `[${this.getColumnName(day)}] var(--mo-calendar-item-size)`),
+			...CalendarDatesController.sampleWeek.map(day => `[${this.getColumnName(day)}] var(--mo-calendar-item-size)`),
 		].join(' ')
 	}
 
@@ -249,8 +281,8 @@ export class Calendar extends Component {
 		`
 	}
 
-	private observerIntersectionNavigation(view: 'month' | 'day', date: DateTime) {
-		return this.view !== view ? html.nothing : observeIntersection(data => {
+	private observerIntersectionNavigation(date: DateTime, ...views: CalendarView[]) {
+		return !views.includes(this.view) ? html.nothing : observeIntersection(data => {
 			if (data.some(entry => entry.isIntersecting)) {
 				this.daysController.navigationDate = date
 			}
@@ -259,7 +291,11 @@ export class Calendar extends Component {
 
 	private getYearTemplate(date: DateTime) {
 		return date.dayOfYear !== 1 ? html.nothing : html`
-			<div class='year' role='button' data-view=${this.view} ${this.observerIntersectionNavigation('month', date)}>
+			<div class='year' role='button'
+				data-view=${this.view}
+				${this.observerIntersectionNavigation(date, 'month', 'year')}
+				@click=${() => this.setView(date, this.view === 'year' ? 'month' : 'year')}
+			>
 				${date.format({ year: 'numeric' })}
 			</div>
 		`
@@ -268,7 +304,7 @@ export class Calendar extends Component {
 	private static get weekDaysTemplate() {
 		return html`
 			<mo-grid class='weekdays' columns='subgrid'>
-				${CalendarDaysController.sampleWeek.map((day, index) => {
+				${CalendarDatesController.sampleWeek.map((day, index) => {
 					const { narrow, short, long } = {
 						narrow: day.format({ weekday: 'narrow' }),
 						short: day.format({ weekday: 'short' }),
@@ -285,13 +321,13 @@ export class Calendar extends Component {
 	}
 
 	private getMonthTemplate(date: DateTime) {
-		return date.day !== 1 ? html.nothing : html`
+		return this.view === 'year' || date.day !== 1 ? html.nothing : html`
 			<mo-flex class='month-container' data-view=${this.view}>
 				<div class='month' role='button'
 					?data-navigating=${this.navigationDate.year === date.year && this.navigationDate.month === date.month}
 					data-view=${this.view}
-					${this.observerIntersectionNavigation('day', date)}
-					@click=${() => this.toggleView(date)}
+					${this.observerIntersectionNavigation(date, 'day')}
+					@click=${() => this.setView(date, this.view === 'day' ? 'month' : 'day')}
 				>
 					${this.view === 'day' ? date.format({ year: 'numeric', month: 'long' }) : date.format({ month: 'long' })}
 				</div>
@@ -322,7 +358,7 @@ export class Calendar extends Component {
 	protected getDayElementClasses(day: DateTime): ClassInfo {
 		return {
 			day: true,
-			today: CalendarDaysController.today.year === day.year && CalendarDaysController.today.month === day.month && CalendarDaysController.today.day === day.day,
+			today: CalendarDatesController.today.year === day.year && CalendarDatesController.today.month === day.month && CalendarDatesController.today.day === day.day,
 		}
 	}
 }
