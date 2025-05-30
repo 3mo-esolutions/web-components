@@ -1,7 +1,7 @@
 import { Controller, html, type DirectiveResult } from '@a11d/lit'
 import { observeIntersection } from '@3mo/intersection-observer'
 import { MemoizeExpiring as memoizeExpiring } from 'typescript-memoize'
-import type { Calendar, CalendarView } from './Calendar.js'
+import type { Calendar, DatePrecision } from './Calendar.js'
 
 export class CalendarDatesController extends Controller {
 	@memoizeExpiring(60_000)
@@ -27,7 +27,7 @@ export class CalendarDatesController extends Controller {
 		CalendarDatesController.generateWeek()
 	}
 
-	observerIntersectionNavigation(date: DateTime, ...views: CalendarView[]) {
+	observerIntersectionNavigation(date: DateTime, ...views: Array<DatePrecision>) {
 		return !views.includes(this.host.view) ? html.nothing : observeIntersection(data => {
 			if (data.some(entry => entry.isIntersecting)) {
 				this.navigationDate = date

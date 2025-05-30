@@ -4,7 +4,7 @@ import { type MaterialIcon } from '@3mo/icon'
 import { Localizer } from '@3mo/localization'
 import { Memoize as memoize } from 'typescript-memoize'
 import { FieldDateTimeBase as FieldDateTimeBase } from './FieldDateTimeBase.js'
-import { FieldDateTimePrecision } from './FieldDateTimePrecision.js'
+import { type FieldDateTimePrecision } from './FieldDateTimePrecision.js'
 import { DateRangeParser } from './DateRangeParser.js'
 
 Localizer.dictionaries.add('de', {
@@ -69,9 +69,9 @@ export class FieldDateTimeRange extends FieldDateTimeBase<DateTimeRange | undefi
 	protected get calendarTemplate() {
 		return html`
 			<mo-calendar
-				data-selection=${this.selection}
+				precision=${this.precision.key}
 				.value=${this.value}
-				@dayClick=${(e: CustomEvent<DateTime>) => this.handleSelectedDateChange(e.detail, FieldDateTimePrecision.Day)}
+				@dayClick=${(e: CustomEvent<DateTime>) => this.handleSelectedDateChange(e.detail, this.precision)}
 			></mo-calendar>
 		`
 	}

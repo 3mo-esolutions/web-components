@@ -2,7 +2,7 @@
 import { component, html, property } from '@a11d/lit'
 import { Localizer } from '@3mo/localization'
 import { FieldDateTimeBase } from './FieldDateTimeBase.js'
-import { FieldDateTimePrecision } from './FieldDateTimePrecision.js'
+import { type FieldDateTimePrecision } from './FieldDateTimePrecision.js'
 import { Memoize as memoize } from 'typescript-memoize'
 
 Localizer.dictionaries.add('de', {
@@ -41,8 +41,9 @@ export class FieldDateTime extends FieldDateTimeBase<Date | undefined> {
 	protected get calendarTemplate() {
 		return html`
 			<mo-calendar
+				precision=${this.precision.key}
 				.value=${new DateTimeRange(this.selectedDate, this.selectedDate)}
-				@dayClick=${(e: CustomEvent<DateTime>) => this.handleSelectedDateChange(e.detail, FieldDateTimePrecision.Day)}
+				@dayClick=${(e: CustomEvent<DateTime>) => this.handleSelectedDateChange(e.detail, this.precision)}
 			></mo-calendar>
 		`
 	}

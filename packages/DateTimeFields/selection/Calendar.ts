@@ -1,7 +1,8 @@
-import { Component, css, component, html, property, classMap, type ClassInfo, event, repeat, state } from '@a11d/lit'
+import { Component, css, component, html, property, event, repeat, state } from '@a11d/lit'
 import { CalendarDatesController } from './CalendarDatesController.js'
+import type { FieldDateTimePrecisionKey } from '../FieldDateTimePrecision.js'
 
-export type CalendarView = 'year' | 'month' | 'day'
+export type DatePrecision = Exclude<FieldDateTimePrecisionKey, 'hour' | 'minute' | 'second'>
 
 /**
  * @fires dayClick - Dispatched when a day is clicked, with the clicked date as detail.
@@ -11,9 +12,10 @@ export class Calendar extends Component {
 	@event() readonly dayClick!: EventDispatcher<DateTime>
 
 	@property({ type: Object }) value?: DateTimeRange
+	@property({ updated(this: Calendar) { this.setView(this.precision) } }) precision!: DatePrecision
 	@property({ type: Boolean, reflect: true }) includeWeek = false
 
-	@state() view: CalendarView = 'day'
+	@state() view: DatePrecision = 'day'
 
 	private readonly datesController = new CalendarDatesController(this)
 
@@ -22,7 +24,6 @@ export class Calendar extends Component {
 	async setNavigatingValue(date: DateTime, behavior: 'instant' | 'smooth' = 'instant') {
 		this.datesController.navigationDate = date
 		await this.updateComplete
-		await new Promise(r => setTimeout(r, 0))
 		this.scrollToNavigatingItem(behavior)
 	}
 
@@ -32,7 +33,7 @@ export class Calendar extends Component {
 			?.scrollIntoView({ block: 'center', behavior })
 	}
 
-	setView(navigatingDate: DateTime, view: CalendarView) {
+	setView(view: DatePrecision, navigatingDate = this.datesController.navigationDate) {
 		this.view = view
 		this.setNavigatingValue(navigatingDate)
 	}
@@ -81,6 +82,20 @@ export class Calendar extends Component {
 
 				&:hover {
 					background: var(--mo-color-transparent-gray-3);
+				}
+
+				&[data-now] {
+					outline: 2px dashed var(--mo-color-gray-transparent);
+				}
+
+				&[data-start], &[data-end] {
+					background: var(--mo-color-accent-transparent);
+					opacity: 1;
+					color: color-mix(in srgb, var(--mo-color-accent), var(--mo-color-foreground)) !important;
+				}
+
+				&[data-in-range] {
+					background: color-mix(in srgb, var(--mo-color-accent), transparent 92%);
 				}
 			}
 
@@ -167,16 +182,6 @@ export class Calendar extends Component {
 			.day {
 				width: var(--mo-calendar-item-size);
 				height: var(--mo-calendar-item-size);
-
-				&.start, &.end {
-					background: var(--mo-color-accent-transparent);
-					opacity: 1;
-					color: color-mix(in srgb, var(--mo-color-accent), var(--mo-color-foreground)) !important;
-				}
-
-				&.inRange {
-					background: color-mix(in srgb, var(--mo-color-accent), transparent 92%);
-				}
 			}
 		`
 	}
@@ -207,8 +212,13 @@ export class Calendar extends Component {
 		return date.dayOfYear !== 1 ? html.nothing : html`
 			<div class='year' role='button'
 				data-view=${this.view}
+				?data-navigating=${this.isNavigating(date, 'year')}
+				?data-now=${this.isNow(date, 'year')}
+				?data-start=${this.isStart(date, 'year')}
+				?data-end=${this.isEnd(date, 'year')}
+				?data-in-range=${this.isInRange(date, 'year')}
+				@click=${this.handleItemClick(date, 'year')}
 				${this.datesController.observerIntersectionNavigation(date, 'month', 'year')}
-				@click=${() => this.setView(date, this.view === 'year' ? 'month' : 'year')}
 			>
 				${date.format({ year: 'numeric' })}
 			</div>
@@ -238,10 +248,14 @@ export class Calendar extends Component {
 		return this.view === 'year' || date.day !== 1 ? html.nothing : html`
 			<mo-flex class='month-container' data-view=${this.view}>
 				<div class='month' role='button'
-					?data-navigating=${this.navigationDate.year === date.year && this.navigationDate.month === date.month}
 					data-view=${this.view}
+					?data-navigating=${this.isNavigating(date, 'month')}
+					?data-now=${this.isNow(date, 'month')}
+					?data-start=${this.isStart(date, 'month')}
+					?data-end=${this.isEnd(date, 'month')}
+					?data-in-range=${this.isInRange(date, 'month')}
+					@click=${this.handleItemClick(date, 'month')}
 					${this.datesController.observerIntersectionNavigation(date, 'day')}
-					@click=${() => this.setView(date, this.view === 'day' ? 'month' : 'day')}
 				>
 					${this.view === 'day' ? date.format({ year: 'numeric', month: 'long' }) : date.format({ month: 'long' })}
 				</div>
@@ -258,29 +272,73 @@ export class Calendar extends Component {
 			${this.includeWeek === false || day.dayOfWeek !== 1 ? html.nothing : html`
 				<div class='week' style='grid-column: week'>${day.weekOfYear}</div>
 			`}
-			<div tabindex='0' role='button'
+			<div tabindex='0' role='button' class='day'
 				style='grid-column: ${this.getColumnName(day)}'
-				?data-navigating=${this.navigationDate.year === day.year && this.navigationDate.month === day.month && this.navigationDate.day === day.day}
-				class=${classMap(this.getDayElementClasses(day))}
-				@click=${() => { this.dayClick.dispatch(day); this.setNavigatingValue(day, 'smooth') }}
+				?data-navigating=${this.isNavigating(day, 'day')}
+				?data-now=${this.isNow(day, 'day')}
+				?data-start=${this.isStart(day, 'day')}
+				?data-end=${this.isEnd(day, 'day')}
+				?data-in-range=${this.isInRange(day, 'day')}
+				@click=${this.handleItemClick(day, 'day')}
 			>
 				${day.format({ day: 'numeric' })}
 			</div>
 		`
 	}
 
-	protected getDayElementClasses(day: DateTime): ClassInfo {
-		const value = day.valueOf()
-		const start = value === this.value?.start?.dayStart.valueOf()
-		const end = value === this.value?.end?.dayStart.valueOf()
-		const inRange = value > (this.value?.start?.dayStart.valueOf() ?? Infinity) && value < (this.value?.end?.dayStart.valueOf() ?? 0)
-		return {
-			day: true,
-			today: CalendarDatesController.today.year === day.year && CalendarDatesController.today.month === day.month && CalendarDatesController.today.day === day.day,
-			start,
-			end,
-			inRange,
+	private handleItemClick = (date: DateTime, precision: DatePrecision) => {
+		return () => {
+			if (this.precision === precision) {
+				this.dayClick.dispatch(date)
+				this.setNavigatingValue(date, 'smooth')
+			} else {
+				const nextView = this.view !== precision
+					? precision
+					: this.view === 'year'
+						? 'month'
+						: this.view === 'month'
+							? 'day'
+							: this.view
+				this.setView(nextView, date)
+			}
 		}
+	}
+
+	private isNavigating(date: DateTime, precision: DatePrecision) {
+		return this.view === precision
+			&& this.navigationDate.year === date.year
+			&& (precision === 'year' || this.navigationDate.month === date.month)
+			&& (precision !== 'day' || this.navigationDate.day === date.day)
+	}
+
+	private isEqual(precision: DatePrecision, left: DateTime, right: DateTime) {
+		return left.year === right.year
+			&& (precision === 'year' || left.month === right.month)
+			&& (precision !== 'day' || left.day === right.day)
+	}
+
+	private isLower(precision: DatePrecision, left: DateTime, right: DateTime) {
+		return left.year < right.year
+			|| (precision !== 'year' && left.year === right.year && left.month < right.month)
+			|| (precision === 'day' && left.year === right.year && left.month === right.month && left.day < right.day)
+	}
+
+	private isNow(date: DateTime, precision: DatePrecision) {
+		return this.view === precision && this.isEqual(precision, date, CalendarDatesController.today)
+	}
+
+	private isStart(date: DateTime, precision: DatePrecision) {
+		return precision === this.precision && !!this.value?.start && this.isEqual(precision, date, this.value?.start)
+	}
+
+	private isEnd(date: DateTime, precision: DatePrecision) {
+		return precision === this.precision && !!this.value?.end && this.isEqual(precision, date, this.value?.end)
+	}
+
+	private isInRange(date: DateTime, precision: DatePrecision) {
+		return precision === this.precision && !!this.value?.start && !!this.value?.end
+			&& this.isLower(precision, this.value.start, date)
+			&& this.isLower(precision, date, this.value.end)
 	}
 }
 
