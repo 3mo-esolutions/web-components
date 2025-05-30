@@ -14,6 +14,7 @@ export class SelectableCalendar extends Calendar {
 			.day {
 				&.start, &.end {
 					background: var(--mo-color-accent-transparent);
+					opacity: 1;
 					color: color-mix(in srgb, var(--mo-color-accent), var(--mo-color-foreground)) !important;
 				}
 

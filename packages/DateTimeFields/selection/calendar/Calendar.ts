@@ -102,13 +102,11 @@ export class Calendar extends Component {
 	static override get styles() {
 		return css`
 			:host {
-				--mo-calendar-day-size: 36px;
-				--mo-calendar-week-number-width: var(--mo-calendar-day-size);
+				--mo-calendar-item-size: 2.25rem;
 			}
 
 			mo-scroller {
 				height: min(450px, 100vh);
-				--_gap: 0.5rem;
 
 				&::part(container) {
 					display: grid;
@@ -119,8 +117,7 @@ export class Calendar extends Component {
 				}
 
 				&[data-view=day]::part(container) {
-					grid-template-columns: 1fr;
-					gap: var(--_gap);
+					grid-template-columns: repeat(1, 1fr);
 				}
 
 				&[data-view=month]::part(container) {
@@ -128,29 +125,47 @@ export class Calendar extends Component {
 				}
 			}
 
-			.year {
-				&[data-view=month], &[data-view=year] {
-					font-weight: 500;
-					font-size: 1.1rem;
-				}
-				&[data-view=day] {
-					display: none;
-				}
+			.year, .month, .day {
 				display: flex;
 				align-items: center;
 				justify-content: center;
-				height: 2.5rem;
-				border-block-start: 1px solid var(--mo-color-transparent-gray-3);
 				text-align: center;
+
 				user-select: none;
-				grid-column: 1 / -1;
-				font-size: large;
-				padding-inline: 0.5rem;
-				background: var(--mo-color-background);
+				-webkit-user-select: none;
+
+				font-weight: 500;
+
 				border-radius: var(--mo-border-radius);
+
 				&:hover {
 					background: var(--mo-color-transparent-gray-3);
 				}
+			}
+
+			/* Headings */
+			.year[data-view=month], .month[data-view=day] {
+				font-size: 1.125rem;
+				font-weight: 500;
+				height: 2rem;
+				padding: 0.5rem;
+			}
+
+			/* Selection */
+			.year[data-view=year], .month[data-view=month], .day {
+				opacity: 0.875;
+				font-size: 0.94rem;
+				cursor: pointer;
+				height: var(--mo-calendar-item-size);
+			}
+
+			.year {
+				&[data-view=day] {
+					display: none;
+				}
+				grid-column: -1 / 1;
+				border-block-start: 1px solid var(--mo-color-transparent-gray-3);
+				padding-inline: 0.5rem;
 			}
 
 			.month-container {
@@ -162,8 +177,7 @@ export class Calendar extends Component {
 						position: absolute;
 						display: inline-block;
 						width: 1px;
-						height: calc(100% + var(--_gap));
-						inset-inline-start: calc(var(--_gap) * -0.5);
+						height: 100%;
 						inset-block: 0;
 						background: var(--mo-color-transparent-gray-3);
 					}
@@ -172,40 +186,34 @@ export class Calendar extends Component {
 						position: absolute;
 						display: inline-block;
 						height: 1px;
-						width: calc(100% + var(--_gap));
-						inset-block-start: calc(var(--_gap) * -0.5);
+						width: 100%;
 						inset-inline: 0;
 						background: var(--mo-color-transparent-gray-3);
 					}
 				}
-			}
 
-			.month {
-				&[data-view=day] {
-					padding-block: 0.75rem;
-					font-weight: 500;
-					font-size: 1.125rem;
-					grid-column: 1 / -1;
-				}
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				user-select: none;
-				text-align: center;
-				padding: 0.5rem;
-				height: 2rem;
-				background: var(--mo-color-background);
-				place-items: center;
-				border-radius: var(--mo-border-radius);
-				&:hover {
-					background: var(--mo-color-transparent-gray-3);
+				& > mo-grid {
+					padding-inline: 0.5rem;
+					padding-block-end: 0.5rem;
+					margin-block-start: -0.375rem;
 				}
 			}
 
 			.weekdays {
 				text-align: center;
-				color: var(--mo-color-gray);
-				grid-column: 1 / -1;
+				opacity: 0.5;
+				font-size: 0.75rem;
+				font-weight: 500;
+				grid-column: -1 / 1;
+				span {
+					display: flex;
+					align-items: center;
+					justify-content: center;
+				}
+			}
+
+			.month {
+				padding-inline: 0.5rem;
 			}
 
 			.week {
@@ -213,35 +221,16 @@ export class Calendar extends Component {
 			}
 
 			.day {
-				display: flex;
-				text-align: center;
-				border-radius: var(--mo-border-radius);
-				cursor: pointer;
-				font-weight: 500;
-				user-select: none;
-				opacity: 0.9;
-				font-size: 0.94rem;
-				width: var(--mo-calendar-day-size);
-				-webkit-user-select: none;
-				align-items: center;
-				justify-content: center;
-				height: var(--mo-calendar-day-size);
-
-				&:hover {
-					background: var(--mo-color-transparent-gray-3);
-				}
-
-				&.today {
-					outline: 2px dashed var(--mo-color-gray-transparent);
-				}
+				width: var(--mo-calendar-item-size);
+				height: var(--mo-calendar-item-size);
 			}
 		`
 	}
 
 	private get columns() {
 		return [
-			!this.includeWeek ? undefined : '[week] var(--mo-calendar-week-number-width)',
-			...CalendarDaysController.sampleWeek.map(day => `[${this.getColumnName(day)}] var(--mo-calendar-day-size)`),
+			!this.includeWeek ? undefined : '[week] var(--mo-calendar-item-size)',
+			...CalendarDaysController.sampleWeek.map(day => `[${this.getColumnName(day)}] var(--mo-calendar-item-size)`),
 		].join(' ')
 	}
 
@@ -276,9 +265,28 @@ export class Calendar extends Component {
 		`
 	}
 
+	private static get weekDaysTemplate() {
+		return html`
+			<mo-grid class='weekdays' columns='subgrid'>
+				${CalendarDaysController.sampleWeek.map((day, index) => {
+					const { narrow, short, long } = {
+						narrow: day.format({ weekday: 'narrow' }),
+						short: day.format({ weekday: 'short' }),
+						long: day.format({ weekday: 'long' }),
+					}
+					return html`
+						<span style='grid-column: day-${index + 1}' title=${long}>
+							${long === short ? narrow : short}
+						</span>
+					`
+				})}
+			</mo-grid>
+		`
+	}
+
 	private getMonthTemplate(date: DateTime) {
 		return date.day !== 1 ? html.nothing : html`
-			<mo-grid class='month-container' data-view=${this.view} columns=${this.view === 'day' ? this.columns : 'auto'}>
+			<mo-flex class='month-container' data-view=${this.view}>
 				<div class='month' role='button'
 					?data-navigating=${this.navigationDate.year === date.year && this.navigationDate.month === date.month}
 					data-view=${this.view}
@@ -287,20 +295,11 @@ export class Calendar extends Component {
 				>
 					${this.view === 'day' ? date.format({ year: 'numeric', month: 'long' }) : date.format({ month: 'long' })}
 				</div>
-
-				${this.view !== 'day' ? html.nothing : html`
-					<mo-grid class='weekdays' columns='subgrid'>
-						${this.includeWeek === false ? html.nothing : html`<div></div>`}
-						${CalendarDaysController.sampleWeek.map((day, index) => html`
-							<span style='grid-column: day-${index + 1}' title=${day.format({ weekday: 'long' })}>
-								${day.format({ weekday: 'narrow' })}
-							</span>
-						`)}
-					</mo-grid>
-				`}
-
-				${this.daysController.data.filter(d => d.year === date.year && d.month === date.month).map(day => this.getDayTemplate(day))}
-			</mo-grid>
+				<mo-grid autoRows='var(--mo-calendar-item-size)' columns=${this.view === 'day' ? this.columns : 'auto'}>
+					${this.view !== 'day' ? html.nothing : Calendar.weekDaysTemplate}
+					${this.daysController.data.filter(d => d.year === date.year && d.month === date.month).map(day => this.getDayTemplate(day))}
+				</mo-grid>
+			</mo-flex>
 		`
 	}
 
