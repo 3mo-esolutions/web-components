@@ -33,21 +33,31 @@ class CalendarDaysController extends Controller {
 	}
 
 	private _days = new Array<DateTime>()
-	get days() { return this._days as ReadonlyArray<DateTime> }
+	private _months = new Array<DateTime>()
 
-	private get median() {
-		return this.days[Math.floor(this._days.length / 2)]
+	get data() {
+		return this.host.view === 'day' ? this._days : this._months
 	}
 
 	private _navigationDate!: DateTime
 	get navigationDate() { return this._navigationDate }
 	set navigationDate(value) {
-		if (value.year !== this.median?.year) {
-			const step = this.host.view === 'day' ? 'days' : 'months'
+		const daysOffset = 80
+		if (this.host.view === 'day' && (!this._days.length || value.isBefore(this._days.at(daysOffset)!) || value.isAfter(this._days.at(-daysOffset)!))) {
 			this._days = [...CalendarDaysController.generate(
-				value.yearStart.add({ years: -2 }),
-				value.daysInYear * 5,
-				step
+				value.yearStart.add({ years: -1 }),
+				value.daysInYear * 3,
+				'days',
+			)]
+			this.host.requestUpdate()
+		}
+
+		const monthsOffset = 25
+		if (this.host.view === 'month' && (!this._months.length || value.isBefore(this._months.at(monthsOffset)!) || value.isAfter(this._months.at(-monthsOffset)!))) {
+			this._months = [...CalendarDaysController.generate(
+				value.yearStart.add({ years: -10 }),
+				value.monthsInYear * 20,
+				'months',
 			)]
 			this.host.requestUpdate()
 		}
@@ -126,6 +136,9 @@ export class Calendar extends Component {
 				&[data-view=day] {
 					display: none;
 				}
+				display: flex;
+				align-items: center;
+				justify-content: center;
 				height: 2.5rem;
 				border-block-start: 1px solid var(--mo-color-transparent-gray-3);
 				text-align: center;
@@ -134,6 +147,10 @@ export class Calendar extends Component {
 				font-size: large;
 				padding-inline: 0.5rem;
 				background: var(--mo-color-background);
+				border-radius: var(--mo-border-radius);
+				&:hover {
+					background: var(--mo-color-transparent-gray-3);
+				}
 			}
 
 			.month-container {
@@ -170,12 +187,19 @@ export class Calendar extends Component {
 					font-size: 1.125rem;
 					grid-column: 1 / -1;
 				}
+				display: flex;
+				align-items: center;
+				justify-content: center;
 				user-select: none;
 				text-align: center;
 				padding: 0.5rem;
 				height: 2rem;
 				background: var(--mo-color-background);
 				place-items: center;
+				border-radius: var(--mo-border-radius);
+				&:hover {
+					background: var(--mo-color-transparent-gray-3);
+				}
 			}
 
 			.weekdays {
@@ -228,7 +252,7 @@ export class Calendar extends Component {
 	protected override get template() {
 		return html`
 			<mo-scroller data-view=${this.view}>
-				${repeat(this.daysController.days, d => d.toString(), d => html`
+				${repeat(this.daysController.data, d => d.toString(), d => html`
 					${this.getYearTemplate(d)}
 					${this.getMonthTemplate(d)}
 				`)}
@@ -236,27 +260,29 @@ export class Calendar extends Component {
 		`
 	}
 
+	private observerIntersectionNavigation(view: 'month' | 'day', date: DateTime) {
+		return this.view !== view ? html.nothing : observeIntersection(data => {
+			if (data.some(entry => entry.isIntersecting)) {
+				this.daysController.navigationDate = date
+			}
+		})
+	}
+
 	private getYearTemplate(date: DateTime) {
 		return date.dayOfYear !== 1 ? html.nothing : html`
-			<div class='year' role='button' data-view=${this.view}>
+			<div class='year' role='button' data-view=${this.view} ${this.observerIntersectionNavigation('month', date)}>
 				${date.format({ year: 'numeric' })}
 			</div>
 		`
 	}
 
 	private getMonthTemplate(date: DateTime) {
-		const handleNavigation = (date: DateTime, data: Array<IntersectionObserverEntry>) => {
-			if (this.view === 'day' && data.some(entry => entry.isIntersecting)) {
-				this.daysController.navigationDate = date
-			}
-		}
-
 		return date.day !== 1 ? html.nothing : html`
 			<mo-grid class='month-container' data-view=${this.view} columns=${this.view === 'day' ? this.columns : 'auto'}>
 				<div class='month' role='button'
 					?data-navigating=${this.navigationDate.year === date.year && this.navigationDate.month === date.month}
 					data-view=${this.view}
-					${observeIntersection(data => handleNavigation(date, data))}
+					${this.observerIntersectionNavigation('day', date)}
 					@click=${() => this.toggleView(date)}
 				>
 					${this.view === 'day' ? date.format({ year: 'numeric', month: 'long' }) : date.format({ month: 'long' })}
@@ -273,7 +299,7 @@ export class Calendar extends Component {
 					</mo-grid>
 				`}
 
-				${this.daysController.days.filter(d => d.year === date.year && d.month === date.month).map(day => this.getDayTemplate(day))}
+				${this.daysController.data.filter(d => d.year === date.year && d.month === date.month).map(day => this.getDayTemplate(day))}
 			</mo-grid>
 		`
 	}
