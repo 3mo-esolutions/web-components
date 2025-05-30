@@ -1,16 +1,18 @@
-import { Temporal, Intl } from 'temporal-polyfill'
 import { Localizer } from '@3mo/localization'
+import './Temporal.js'
 import { TimeSpan } from './TimeSpan.js'
 import { type DateTimeParser, DateTimeLocalParser, DateTimeShortcutParser, DateTimeOperationParser, DateTimeNativeParser, DateTimeZeroParser } from './parsers/index.js'
-import { Memoize as memoize } from 'typescript-memoize'
+import { Memoize as memoize, clear } from 'typescript-memoize'
 import { type ParsingParameters, extractParsingParameters } from './extractParsingParameters.js'
 
 type DateTimeFromParameters =
-	| [epochMilliseconds?: number, calendar?: Temporal.CalendarLike, timeZone?: Temporal.TimeZoneLike]
+	| [epochMilliseconds?: number, calendar?: string, timeZone?: string]
 	| [zonedDateTime: Temporal.ZonedDateTime]
 
 export class DateTime extends Date {
 	static readonly isoRegularExpression = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*))(?:Z|(\+|-)([\d|:]*))?$/
+
+	private static readonly cacheKey = 'Localizer'
 
 	private static readonly customParsers = new Array<Constructor<DateTimeParser>>()
 
@@ -18,22 +20,26 @@ export class DateTime extends Date {
 		DateTime.customParsers.push(parser)
 	}
 
-	@memoize()
+	static {
+		Localizer.languages.change.subscribe(() => clear([DateTime.cacheKey]))
+	}
+
+	@memoize({ tags: [DateTime.cacheKey] })
 	static getResolvedOptions(language = Localizer.languages.current) {
 		return Intl.DateTimeFormat(language).resolvedOptions()
 	}
 
-	@memoize()
+	@memoize({ tags: [DateTime.cacheKey] })
 	static getCalendar(language = Localizer.languages.current) {
 		return DateTime.getResolvedOptions(language).calendar
 	}
 
-	@memoize()
+	@memoize({ tags: [DateTime.cacheKey] })
 	static getTimeZone(language = Localizer.languages.current) {
 		return DateTime.getResolvedOptions(language).timeZone
 	}
 
-	@memoize()
+	@memoize({ tags: [DateTime.cacheKey] })
 	static getDateSeparator(language = Localizer.languages.current) {
 		return Intl.DateTimeFormat(language)
 			.formatToParts(new DateTime)
@@ -41,7 +47,7 @@ export class DateTime extends Date {
 			?.value as string
 	}
 
-	@memoize()
+	@memoize({ tags: [DateTime.cacheKey] })
 	static getTimeSeparator(language = Localizer.languages.current) {
 		return Intl.DateTimeFormat(language, { timeStyle: 'short' })
 			.formatToParts(new DateTime)
@@ -78,23 +84,23 @@ export class DateTime extends Date {
 	static from(...parameters: DateTimeFromParameters): DateTime {
 		if (parameters.length === 1 && parameters[0] instanceof Temporal.ZonedDateTime) {
 			const zonedDateTime = parameters[0]
-			return DateTime.from(zonedDateTime.epochMilliseconds, zonedDateTime.getCalendar(), zonedDateTime.getTimeZone())
+			return DateTime.from(zonedDateTime.epochMilliseconds, zonedDateTime.calendarId, zonedDateTime.timeZoneId)
 		}
 		const [epochMilliseconds, calendar, timeZone] = parameters
 		const dateTime = typeof epochMilliseconds === 'number' ? new DateTime(epochMilliseconds) : new DateTime
 		// @ts-expect-error Setting readonly property while initialization
-		!calendar ? void 0 : dateTime.calendar = Temporal.Calendar.from(calendar)
+		dateTime.calendar = calendar
 		// @ts-expect-error Setting readonly property while initialization
-		!timeZone ? void 0 : dateTime.timeZone = Temporal.TimeZone.from(timeZone)
+		dateTime.timeZone = timeZone
 		return dateTime
 	}
 
-	readonly calendar = Temporal.Calendar.from(DateTime.getCalendar())
-	readonly timeZone = Temporal.TimeZone.from(DateTime.getTimeZone())
+	readonly calendar = DateTime.getCalendar()
+	readonly timeZone = DateTime.getTimeZone()
 
 	@memoize() get temporalInstant() { return Temporal.Instant.fromEpochMilliseconds(this.valueOf()) }
 
-	@memoize() get zonedDateTime() { return this.temporalInstant.toZonedDateTime({ calendar: this.calendar, timeZone: this.timeZone }) }
+	@memoize() get zonedDateTime() { return new Temporal.ZonedDateTime(this.temporalInstant.epochNanoseconds, this.timeZone, this.calendar) }
 
 	@memoize() get era() { return this.zonedDateTime.era }
 	@memoize() get eraYear() { return this.zonedDateTime.eraYear }
