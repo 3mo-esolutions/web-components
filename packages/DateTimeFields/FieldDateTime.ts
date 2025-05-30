@@ -2,7 +2,7 @@
 import { component, html, property } from '@a11d/lit'
 import { Localizer } from '@3mo/localization'
 import { FieldDateTimeBase } from './FieldDateTimeBase.js'
-import { FieldDateTimePrecision } from './FieldDateTimePrecision.js'
+import { type FieldDateTimePrecision } from './FieldDateTimePrecision.js'
 import { Memoize as memoize } from 'typescript-memoize'
 
 Localizer.dictionaries.add('de', {
@@ -40,15 +40,17 @@ export class FieldDateTime extends FieldDateTimeBase<Date | undefined> {
 
 	protected get calendarTemplate() {
 		return html`
-			<mo-selectable-calendar
-				.navigatingValue=${this.navigatingDate}
+			<mo-calendar
+				precision=${this.precision.key}
 				.value=${new DateTimeRange(this.selectedDate, this.selectedDate)}
-				@dayClick=${(e: CustomEvent<DateTime>) => this.handleSelectedDateChange(e.detail, FieldDateTimePrecision.Day)}
-			></mo-selectable-calendar>
+				@dateClick=${(e: CustomEvent<DateTime>) => this.handleSelectedDateChange(e.detail, this.precision)}
+			></mo-calendar>
 		`
 	}
 
 	protected override handleSelectedDateChange(date: DateTime, precision: FieldDateTimePrecision) {
+		const { hour, minute, second } = this.navigatingDate
+		date = date.with({ hour, minute, second })
 		this.value = !date ? undefined : this.precision.getRange(date).start
 		super.handleSelectedDateChange(date, precision)
 	}

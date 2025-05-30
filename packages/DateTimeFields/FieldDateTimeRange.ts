@@ -4,7 +4,7 @@ import { type MaterialIcon } from '@3mo/icon'
 import { Localizer } from '@3mo/localization'
 import { Memoize as memoize } from 'typescript-memoize'
 import { FieldDateTimeBase as FieldDateTimeBase } from './FieldDateTimeBase.js'
-import { FieldDateTimePrecision } from './FieldDateTimePrecision.js'
+import { type FieldDateTimePrecision } from './FieldDateTimePrecision.js'
 import { DateRangeParser } from './DateRangeParser.js'
 
 Localizer.dictionaries.add('de', {
@@ -68,12 +68,11 @@ export class FieldDateTimeRange extends FieldDateTimeBase<DateTimeRange | undefi
 
 	protected get calendarTemplate() {
 		return html`
-			<mo-selectable-calendar
-				data-selection=${this.selection}
-				.navigatingValue=${this.navigatingDate}
+			<mo-calendar
+				precision=${this.precision.key}
 				.value=${this.value}
-				@dayClick=${(e: CustomEvent<DateTime>) => this.handleSelectedDateChange(e.detail, FieldDateTimePrecision.Day)}
-			></mo-selectable-calendar>
+				@dateClick=${(e: CustomEvent<DateTime>) => this.handleSelectedDateChange(e.detail, this.precision)}
+			></mo-calendar>
 		`
 	}
 
@@ -102,6 +101,8 @@ export class FieldDateTimeRange extends FieldDateTimeBase<DateTimeRange | undefi
 	}
 
 	override handleSelectedDateChange(date: DateTime, precision: FieldDateTimePrecision) {
+		const { hour, minute, second } = this.navigatingDate
+		date = date.with({ hour, minute, second })
 		const { start, end } = this.precision.getRange(date)
 		this.value = this.selection === FieldDateRangeSelection.Start
 			? new DateTimeRange(start, this.value?.end)
