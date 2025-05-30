@@ -5,11 +5,11 @@ import type { FieldDateTimePrecisionKey } from '../FieldDateTimePrecision.js'
 export type DatePrecision = Exclude<FieldDateTimePrecisionKey, 'hour' | 'minute' | 'second'>
 
 /**
- * @fires dayClick - Dispatched when a day is clicked, with the clicked date as detail.
+ * @fires dateClick - Dispatched when a date is clicked, with the clicked date as detail.
  */
 @component('mo-calendar')
 export class Calendar extends Component {
-	@event() readonly dayClick!: EventDispatcher<DateTime>
+	@event() readonly dateClick!: EventDispatcher<DateTime>
 
 	@property({ type: Object }) value?: DateTimeRange
 	@property({ updated(this: Calendar) { this.setView(this.precision) } }) precision!: DatePrecision
@@ -155,6 +155,12 @@ export class Calendar extends Component {
 					padding-block-end: 0.5rem;
 					margin-block-start: -0.375rem;
 				}
+
+				&[data-view=month] {
+					& > mo-grid {
+						display: none;
+					}
+				}
 			}
 
 			.weekdays {
@@ -289,7 +295,7 @@ export class Calendar extends Component {
 	private handleItemClick = (date: DateTime, precision: DatePrecision) => {
 		return () => {
 			if (this.precision === precision) {
-				this.dayClick.dispatch(date)
+				this.dateClick.dispatch(date)
 				this.setNavigatingValue(date, 'smooth')
 			} else {
 				const nextView = this.view !== precision

@@ -11,7 +11,7 @@ describe('FieldDateTimeRange', () => {
 		const date = new DateTime('2025-01-01')
 		const dateRange = new DateTimeRange(date, undefined)
 
-		calendar.dispatchEvent(new CustomEvent('dayClick', { detail: date }))
+		calendar.dispatchEvent(new CustomEvent('dateClick', { detail: date }))
 
 		expect(fixture.component.value).toEqual(dateRange)
 		expect(fixture.component.change.dispatch).toHaveBeenCalledWith(dateRange)

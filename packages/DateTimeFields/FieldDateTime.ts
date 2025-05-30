@@ -43,7 +43,7 @@ export class FieldDateTime extends FieldDateTimeBase<Date | undefined> {
 			<mo-calendar
 				precision=${this.precision.key}
 				.value=${new DateTimeRange(this.selectedDate, this.selectedDate)}
-				@dayClick=${(e: CustomEvent<DateTime>) => this.handleSelectedDateChange(e.detail, this.precision)}
+				@dateClick=${(e: CustomEvent<DateTime>) => this.handleSelectedDateChange(e.detail, this.precision)}
 			></mo-calendar>
 		`
 	}

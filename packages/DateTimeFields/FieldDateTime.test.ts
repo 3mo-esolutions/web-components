@@ -15,7 +15,7 @@ describe('FieldDateTime', () => {
 		const calendar = fixture.component.renderRoot.querySelector('mo-calendar')!
 		const date = new DateTime('2025-01-01')
 
-		calendar.dispatchEvent(new CustomEvent('dayClick', { detail: date }))
+		calendar.dispatchEvent(new CustomEvent('dateClick', { detail: date }))
 
 		expect(fixture.component.value).toEqual(date)
 		expect(fixture.component.change.dispatch).toHaveBeenCalledWith(date)
