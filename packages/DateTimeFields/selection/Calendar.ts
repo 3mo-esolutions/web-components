@@ -73,6 +73,7 @@ export class Calendar extends Component {
 				align-items: center;
 				justify-content: center;
 				text-align: center;
+				transition: 0.2s;
 
 				user-select: none;
 
