@@ -46,10 +46,10 @@ export class CalendarDatesController extends Controller {
 
 	get data() {
 		switch (this.host.view) {
-			case 'month':
-				return this.months
 			case 'year':
 				return this.years
+			case 'month':
+				return this.months
 			default:
 				return this.days
 		}
@@ -60,7 +60,7 @@ export class CalendarDatesController extends Controller {
 	set navigationDate(value) {
 		let changed = false
 
-		const daysOffset = 80
+		const daysOffset = 75
 		if (this.host.view === 'day' && (!this.days.length || value.isBefore(this.days.at(daysOffset)!) || value.isAfter(this.days.at(-daysOffset)!))) {
 			this.days = [...CalendarDatesController.generate(
 				value.yearStart.add({ years: -1 }),
@@ -80,7 +80,7 @@ export class CalendarDatesController extends Controller {
 			changed = true
 		}
 
-		const yearsOffset = 10
+		const yearsOffset = 15
 		if (this.host.view === 'year' && (!this.years.length || value.isBefore(this.years.at(yearsOffset)!) || value.isAfter(this.years.at(-yearsOffset)!))) {
 			this.years = [...CalendarDatesController.generate(
 				value.yearStart.add({ years: -100 }),

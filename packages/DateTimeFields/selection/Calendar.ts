@@ -107,8 +107,8 @@ export class Calendar extends Component {
 				}
 				&:not([data-view=year]) {
 					grid-column: -1 / 1;
+					border-block-start: 1px solid var(--mo-color-transparent-gray-3);
 				}
-				border-block-start: 1px solid var(--mo-color-transparent-gray-3);
 				padding-inline: 0.5rem;
 			}
 
