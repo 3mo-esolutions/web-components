@@ -89,9 +89,9 @@ export class DateTime extends Date {
 		const [epochMilliseconds, calendar, timeZone] = parameters
 		const dateTime = typeof epochMilliseconds === 'number' ? new DateTime(epochMilliseconds) : new DateTime
 		// @ts-expect-error Setting readonly property while initialization
-		dateTime.calendar = calendar
+		!calendar ? void 0 : dateTime.calendar = calendar
 		// @ts-expect-error Setting readonly property while initialization
-		dateTime.timeZone = timeZone
+		!timeZone ? void 0 : dateTime.timeZone = timeZone
 		return dateTime
 	}
 
