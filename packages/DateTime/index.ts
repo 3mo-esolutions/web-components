@@ -1,3 +1,4 @@
+import './Temporal.js'
 export * from './parsers/index.js'
 export * from './DateTime.js'
 export * from './String.toDateTime.js'
