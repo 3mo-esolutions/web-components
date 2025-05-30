@@ -21,6 +21,18 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 
 	@query('mo-calendar') protected readonly calendar?: Calendar
 
+	protected override connected() {
+		Localizer.languages.change.subscribe(this.handleLanguageChange)
+	}
+
+	protected override disconnected() {
+		Localizer.languages.change.unsubscribe(this.handleLanguageChange)
+	}
+
+	private handleLanguageChange = () => {
+		this.navigatingDate = new DateTime(this.navigatingDate)
+	}
+
 	protected readonly calendarIconButtonIcon: MaterialIcon = 'today'
 
 	protected abstract get selectedDate(): DateTime | undefined

@@ -57,5 +57,5 @@ globalThis.Localizer = Localizer
 
 declare global {
 	// eslint-disable-next-line no-var
-	var Localizer: import('./Localizer.js').Localizer
+	var Localizer: typeof import('./Localizer.js').Localizer
 }
