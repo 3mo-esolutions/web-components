@@ -1,6 +1,6 @@
-import { Component, css, component, html, property, event, repeat, state } from '@a11d/lit'
+import { Component, css, component, html, property, event, repeat, state, unsafeCSS } from '@a11d/lit'
 import { CalendarDatesController } from './CalendarDatesController.js'
-import type { FieldDateTimePrecisionKey } from '../FieldDateTimePrecision.js'
+import { FieldDateTimePrecision, type FieldDateTimePrecisionKey } from '../FieldDateTimePrecision.js'
 
 export type DatePrecision = Exclude<FieldDateTimePrecisionKey, 'hour' | 'minute' | 'second'>
 
@@ -12,10 +12,10 @@ export class Calendar extends Component {
 	@event() readonly dateClick!: EventDispatcher<DateTime>
 
 	@property({ type: Object }) value?: DateTimeRange
-	@property({ updated(this: Calendar) { this.setView(this.precision) } }) precision!: DatePrecision
+	@property({ type: Object, updated(this: Calendar) { this.setView(this.precision) } }) precision!: FieldDateTimePrecision
 	@property({ type: Boolean, reflect: true }) includeWeek = false
 
-	@state() view: DatePrecision = 'day'
+	@state() view = FieldDateTimePrecision.Day
 
 	private readonly datesController = new CalendarDatesController(this)
 
@@ -33,12 +33,15 @@ export class Calendar extends Component {
 			?.scrollIntoView({ block: 'center', behavior })
 	}
 
-	setView(view: DatePrecision, navigatingDate = this.datesController.navigationDate) {
+	setView(view: FieldDateTimePrecision, navigatingDate = this.datesController.navigationDate) {
 		this.view = view
 		this.setNavigatingValue(navigatingDate)
 	}
 
 	static override get styles() {
+		const year = unsafeCSS(FieldDateTimePrecision.Year.key)
+		const month = unsafeCSS(FieldDateTimePrecision.Month.key)
+		const day = unsafeCSS(FieldDateTimePrecision.Day.key)
 		return css`
 			:host {
 				--mo-calendar-item-size: 2.25rem;
@@ -55,15 +58,15 @@ export class Calendar extends Component {
 					scroll-behavior: smooth;
 				}
 
-				&[data-view=day]::part(container) {
+				&[data-view=${day}]::part(container) {
 					grid-template-columns: repeat(1, 1fr);
 				}
 
-				&[data-view=month]::part(container) {
+				&[data-view=${month}]::part(container) {
 					grid-template-columns: repeat(3, 1fr);
 				}
 
-				&[data-view=year]::part(container) {
+				&[data-view=${year}]::part(container) {
 					grid-template-columns: repeat(5, 1fr);
 				}
 			}
@@ -101,7 +104,7 @@ export class Calendar extends Component {
 			}
 
 			/* Headings */
-			.year[data-view=month], .month[data-view=day] {
+			.year[data-view=${month}], .month[data-view=${day}] {
 				font-size: 1.125rem;
 				font-weight: 500;
 				height: 2rem;
@@ -109,7 +112,7 @@ export class Calendar extends Component {
 			}
 
 			/* Selection */
-			.year[data-view=year], .month[data-view=month], .day {
+			.year[data-view=${year}], .month[data-view=${month}], .day {
 				opacity: 0.875;
 				font-size: 0.94rem;
 				cursor: pointer;
@@ -117,10 +120,10 @@ export class Calendar extends Component {
 			}
 
 			.year {
-				&[data-view=day] {
+				&[data-view=${day}] {
 					display: none;
 				}
-				&:not([data-view=year]) {
+				&:not([data-view=${year}]) {
 					grid-column: -1 / 1;
 					border-block-start: 1px solid var(--mo-color-transparent-gray-3);
 				}
@@ -130,7 +133,7 @@ export class Calendar extends Component {
 			.month-container {
 				width: 100%;
 				position: relative;
-				&[data-view=day] {
+				&[data-view=${day}] {
 					&::before {
 						content: ' ';
 						position: absolute;
@@ -157,7 +160,7 @@ export class Calendar extends Component {
 					margin-block-start: -0.375rem;
 				}
 
-				&[data-view=month] {
+				&[data-view=${month}] {
 					& > mo-grid {
 						display: none;
 					}
@@ -206,7 +209,7 @@ export class Calendar extends Component {
 
 	protected override get template() {
 		return html`
-			<mo-scroller data-view=${this.view}>
+			<mo-scroller data-view=${this.view.key}>
 				${repeat(this.datesController.data, d => d.toString(), d => html`
 					${this.getYearTemplate(d)}
 					${this.getMonthTemplate(d)}
@@ -218,14 +221,14 @@ export class Calendar extends Component {
 	private getYearTemplate(date: DateTime) {
 		return date.dayOfYear !== 1 ? html.nothing : html`
 			<div class='year' role='button'
-				data-view=${this.view}
-				?data-navigating=${this.isNavigating(date, 'year')}
-				?data-now=${this.isNow(date, 'year')}
-				?data-start=${this.isStart(date, 'year')}
-				?data-end=${this.isEnd(date, 'year')}
-				?data-in-range=${this.isInRange(date, 'year')}
-				@click=${this.handleItemClick(date, 'year')}
-				${this.datesController.observerIntersectionNavigation(date, 'month', 'year')}
+				data-view=${this.view.key}
+				?data-navigating=${this.isNavigating(date, FieldDateTimePrecision.Year)}
+				?data-now=${this.isNow(date, FieldDateTimePrecision.Year)}
+				?data-start=${this.isStart(date, FieldDateTimePrecision.Year)}
+				?data-end=${this.isEnd(date, FieldDateTimePrecision.Year)}
+				?data-in-range=${this.isInRange(date, FieldDateTimePrecision.Year)}
+				@click=${this.handleItemClick(date, FieldDateTimePrecision.Year)}
+				${this.datesController.observerIntersectionNavigation(date, FieldDateTimePrecision.Month, FieldDateTimePrecision.Year)}
 			>
 				${date.format({ year: 'numeric' })}
 			</div>
@@ -252,22 +255,22 @@ export class Calendar extends Component {
 	}
 
 	private getMonthTemplate(date: DateTime) {
-		return this.view === 'year' || date.day !== 1 ? html.nothing : html`
-			<mo-flex class='month-container' data-view=${this.view}>
+		return this.view === FieldDateTimePrecision.Year || date.day !== 1 ? html.nothing : html`
+			<mo-flex class='month-container' data-view=${this.view.key}>
 				<div class='month' role='button'
-					data-view=${this.view}
-					?data-navigating=${this.isNavigating(date, 'month')}
-					?data-now=${this.isNow(date, 'month')}
-					?data-start=${this.isStart(date, 'month')}
-					?data-end=${this.isEnd(date, 'month')}
-					?data-in-range=${this.isInRange(date, 'month')}
-					@click=${this.handleItemClick(date, 'month')}
-					${this.datesController.observerIntersectionNavigation(date, 'day')}
+					data-view=${this.view.key}
+					?data-navigating=${this.isNavigating(date, FieldDateTimePrecision.Month)}
+					?data-now=${this.isNow(date, FieldDateTimePrecision.Month)}
+					?data-start=${this.isStart(date, FieldDateTimePrecision.Month)}
+					?data-end=${this.isEnd(date, FieldDateTimePrecision.Month)}
+					?data-in-range=${this.isInRange(date, FieldDateTimePrecision.Month)}
+					@click=${this.handleItemClick(date, FieldDateTimePrecision.Month)}
+					${this.datesController.observerIntersectionNavigation(date, FieldDateTimePrecision.Day)}
 				>
-					${this.view === 'day' ? date.format({ year: 'numeric', month: 'long' }) : date.format({ month: 'long' })}
+					${this.view === FieldDateTimePrecision.Day ? date.format({ year: 'numeric', month: 'long' }) : date.format({ month: 'long' })}
 				</div>
-				<mo-grid autoRows='var(--mo-calendar-item-size)' columns=${this.view === 'day' ? this.columns : 'auto'}>
-					${this.view !== 'day' ? html.nothing : Calendar.weekDaysTemplate}
+				<mo-grid autoRows='var(--mo-calendar-item-size)' columns=${this.view === FieldDateTimePrecision.Day ? this.columns : 'auto'}>
+					${this.view !== FieldDateTimePrecision.Day ? html.nothing : Calendar.weekDaysTemplate}
 					${this.datesController.data.filter(d => d.year === date.year && d.month === date.month).map(day => this.getDayTemplate(day))}
 				</mo-grid>
 			</mo-flex>
@@ -275,25 +278,25 @@ export class Calendar extends Component {
 	}
 
 	private getDayTemplate(day: DateTime) {
-		return this.view === 'month' ? html.nothing : html`
+		return this.view === FieldDateTimePrecision.Month ? html.nothing : html`
 			${this.includeWeek === false || day.dayOfWeek !== 1 ? html.nothing : html`
 				<div class='week' style='grid-column: week'>${day.weekOfYear}</div>
 			`}
 			<div tabindex='0' role='button' class='day'
 				style='grid-column: ${this.getColumnName(day)}'
-				?data-navigating=${this.isNavigating(day, 'day')}
-				?data-now=${this.isNow(day, 'day')}
-				?data-start=${this.isStart(day, 'day')}
-				?data-end=${this.isEnd(day, 'day')}
-				?data-in-range=${this.isInRange(day, 'day')}
-				@click=${this.handleItemClick(day, 'day')}
+				?data-navigating=${this.isNavigating(day, FieldDateTimePrecision.Day)}
+				?data-now=${this.isNow(day, FieldDateTimePrecision.Day)}
+				?data-start=${this.isStart(day, FieldDateTimePrecision.Day)}
+				?data-end=${this.isEnd(day, FieldDateTimePrecision.Day)}
+				?data-in-range=${this.isInRange(day, FieldDateTimePrecision.Day)}
+				@click=${this.handleItemClick(day, FieldDateTimePrecision.Day)}
 			>
 				${day.format({ day: 'numeric' })}
 			</div>
 		`
 	}
 
-	private handleItemClick = (date: DateTime, precision: DatePrecision) => {
+	private handleItemClick = (date: DateTime, precision: FieldDateTimePrecision) => {
 		return () => {
 			if (this.precision === precision) {
 				this.dateClick.dispatch(date)
@@ -301,48 +304,48 @@ export class Calendar extends Component {
 			} else {
 				const nextView = this.view !== precision
 					? precision
-					: this.view === 'year'
-						? 'month'
-						: this.view === 'month'
-							? 'day'
+					: this.view === FieldDateTimePrecision.Year
+						? FieldDateTimePrecision.Month
+						: this.view === FieldDateTimePrecision.Month
+							? FieldDateTimePrecision.Day
 							: this.view
 				this.setView(nextView, date)
 			}
 		}
 	}
 
-	private isNavigating(date: DateTime, precision: DatePrecision) {
+	private isNavigating(date: DateTime, precision: FieldDateTimePrecision) {
 		return this.view === precision
 			&& this.navigationDate.year === date.year
-			&& (precision === 'year' || this.navigationDate.month === date.month)
-			&& (precision !== 'day' || this.navigationDate.day === date.day)
+			&& (precision === FieldDateTimePrecision.Year || this.navigationDate.month === date.month)
+			&& (precision !== FieldDateTimePrecision.Day || this.navigationDate.day === date.day)
 	}
 
-	private isEqual(precision: DatePrecision, left: DateTime, right: DateTime) {
+	private isEqual(precision: FieldDateTimePrecision, left: DateTime, right: DateTime) {
 		return left.year === right.year
-			&& (precision === 'year' || left.month === right.month)
-			&& (precision !== 'day' || left.day === right.day)
+			&& (precision === FieldDateTimePrecision.Year || left.month === right.month)
+			&& (precision !== FieldDateTimePrecision.Day || left.day === right.day)
 	}
 
-	private isLower(precision: DatePrecision, left: DateTime, right: DateTime) {
+	private isLower(precision: FieldDateTimePrecision, left: DateTime, right: DateTime) {
 		return left.year < right.year
-			|| (precision !== 'year' && left.year === right.year && left.month < right.month)
-			|| (precision === 'day' && left.year === right.year && left.month === right.month && left.day < right.day)
+			|| (precision !== FieldDateTimePrecision.Year && left.year === right.year && left.month < right.month)
+			|| (precision === FieldDateTimePrecision.Day && left.year === right.year && left.month === right.month && left.day < right.day)
 	}
 
-	private isNow(date: DateTime, precision: DatePrecision) {
+	private isNow(date: DateTime, precision: FieldDateTimePrecision) {
 		return this.view === precision && this.isEqual(precision, date, CalendarDatesController.today)
 	}
 
-	private isStart(date: DateTime, precision: DatePrecision) {
+	private isStart(date: DateTime, precision: FieldDateTimePrecision) {
 		return precision === this.precision && !!this.value?.start && this.isEqual(precision, date, this.value?.start)
 	}
 
-	private isEnd(date: DateTime, precision: DatePrecision) {
+	private isEnd(date: DateTime, precision: FieldDateTimePrecision) {
 		return precision === this.precision && !!this.value?.end && this.isEqual(precision, date, this.value?.end)
 	}
 
-	private isInRange(date: DateTime, precision: DatePrecision) {
+	private isInRange(date: DateTime, precision: FieldDateTimePrecision) {
 		return precision === this.precision && !!this.value?.start && !!this.value?.end
 			&& this.isLower(precision, this.value.start, date)
 			&& this.isLower(precision, date, this.value.end)

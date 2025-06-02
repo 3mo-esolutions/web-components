@@ -1,7 +1,8 @@
 import { Controller, html, type DirectiveResult } from '@a11d/lit'
 import { observeIntersection } from '@3mo/intersection-observer'
 import { MemoizeExpiring as memoizeExpiring } from 'typescript-memoize'
-import type { Calendar, DatePrecision } from './Calendar.js'
+import type { Calendar } from './Calendar.js'
+import { FieldDateTimePrecision } from '../FieldDateTimePrecision.js'
 
 export class CalendarDatesController extends Controller {
 	@memoizeExpiring(60_000)
@@ -27,7 +28,7 @@ export class CalendarDatesController extends Controller {
 		CalendarDatesController.generateWeek()
 	}
 
-	observerIntersectionNavigation(date: DateTime, ...views: Array<DatePrecision>) {
+	observerIntersectionNavigation(date: DateTime, ...views: Array<FieldDateTimePrecision>) {
 		return !views.includes(this.host.view) ? html.nothing : observeIntersection(data => {
 			if (data.some(entry => entry.isIntersecting)) {
 				this.navigationDate = date
@@ -46,9 +47,9 @@ export class CalendarDatesController extends Controller {
 
 	get data() {
 		switch (this.host.view) {
-			case 'year':
+			case FieldDateTimePrecision.Year:
 				return this.years
-			case 'month':
+			case FieldDateTimePrecision.Month:
 				return this.months
 			default:
 				return this.days
@@ -61,7 +62,7 @@ export class CalendarDatesController extends Controller {
 		let changed = false
 
 		const daysOffset = 75
-		if (this.host.view === 'day' && (!this.days.length || value.isBefore(this.days.at(daysOffset)!) || value.isAfter(this.days.at(-daysOffset)!))) {
+		if (this.host.view === FieldDateTimePrecision.Day && (!this.days.length || value.isBefore(this.days.at(daysOffset)!) || value.isAfter(this.days.at(-daysOffset)!))) {
 			this.days = [...CalendarDatesController.generate(
 				value.yearStart.add({ years: -1 }),
 				value.daysInYear * 3,
@@ -71,7 +72,7 @@ export class CalendarDatesController extends Controller {
 		}
 
 		const monthsOffset = 25
-		if (this.host.view === 'month' && (!this.months.length || value.isBefore(this.months.at(monthsOffset)!) || value.isAfter(this.months.at(-monthsOffset)!))) {
+		if (this.host.view === FieldDateTimePrecision.Month && (!this.months.length || value.isBefore(this.months.at(monthsOffset)!) || value.isAfter(this.months.at(-monthsOffset)!))) {
 			this.months = [...CalendarDatesController.generate(
 				value.yearStart.add({ years: -10 }),
 				value.monthsInYear * 20,
@@ -81,7 +82,7 @@ export class CalendarDatesController extends Controller {
 		}
 
 		const yearsOffset = 15
-		if (this.host.view === 'year' && (!this.years.length || value.isBefore(this.years.at(yearsOffset)!) || value.isAfter(this.years.at(-yearsOffset)!))) {
+		if (this.host.view === FieldDateTimePrecision.Year && (!this.years.length || value.isBefore(this.years.at(yearsOffset)!) || value.isAfter(this.years.at(-yearsOffset)!))) {
 			this.years = [...CalendarDatesController.generate(
 				value.yearStart.add({ years: -100 }),
 				200,

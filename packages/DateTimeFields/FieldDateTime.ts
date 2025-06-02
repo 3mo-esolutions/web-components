@@ -41,7 +41,7 @@ export class FieldDateTime extends FieldDateTimeBase<Date | undefined> {
 	protected get calendarTemplate() {
 		return html`
 			<mo-calendar
-				precision=${this.precision.key}
+				.precision=${this.precision}
 				.value=${new DateTimeRange(this.selectedDate, this.selectedDate)}
 				@dateClick=${(e: CustomEvent<DateTime>) => this.handleSelectedDateChange(e.detail, this.precision)}
 			></mo-calendar>
