@@ -3,7 +3,8 @@ import { AsyncDirective, directive, type ElementPart, type PartInfo, PartType } 
 class IntersectionDirective extends AsyncDirective {
 	observer?: IntersectionObserver
 	protected readonly element: Element
-	protected callback?: IntersectionObserverCallback
+	protected callback!: IntersectionObserverCallback
+	protected options?: IntersectionObserverInit
 
 	constructor(partInfo: PartInfo) {
 		super(partInfo)
@@ -18,12 +19,26 @@ class IntersectionDirective extends AsyncDirective {
 
 	render(callback: IntersectionObserverCallback, options?: IntersectionObserverInit) {
 		this.callback = callback
-		this.observer ??= new IntersectionObserver(callback, options)
-		this.observer.observe(this.element)
+		this.options = options
+		this.observe()
 	}
 
 	protected override disconnected() {
+		this.unobserve()
+	}
+
+	protected override reconnected() {
+		this.observe()
+	}
+
+	observe() {
+		this.observer ??= new IntersectionObserver(this.callback, this.options)
+		this.observer.observe(this.element)
+	}
+
+	unobserve() {
 		this.observer?.disconnect()
+		this.observer = undefined
 	}
 }
 
