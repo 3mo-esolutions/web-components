@@ -182,6 +182,13 @@ export class Calendar extends Component {
 
 			.week {
 				opacity: 0.5;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+
+			.week-container {
+				grid-column: 1 / -1;
 			}
 
 			.day {
@@ -205,28 +212,29 @@ export class Calendar extends Component {
 	protected override get template() {
 		return html`
 			<div class='scroller' data-view=${this.view.key}>
-				${repeat(this.datesController.data, d => d.toString(), d => html`
-					${this.getYearTemplate(d)}
-					${this.getMonthTemplate(d)}
-				`)}
+				${repeat(this.datesController.data, d => d.toString(), d => this.getYearTemplate(d))}
 			</div>
 		`
 	}
 
 	private getYearTemplate(date: DateTime) {
-		return date.dayOfYear !== 1 ? html.nothing : html`
-			<div class='year' role='button'
-				data-view=${this.view.key}
-				?data-navigating=${this.isNavigating(date, FieldDateTimePrecision.Year)}
-				?data-now=${this.isNow(date, FieldDateTimePrecision.Year)}
-				?data-start=${this.isStart(date, FieldDateTimePrecision.Year)}
-				?data-end=${this.isEnd(date, FieldDateTimePrecision.Year)}
-				?data-in-range=${this.isInRange(date, FieldDateTimePrecision.Year)}
-				@click=${this.handleItemClick(date, FieldDateTimePrecision.Year)}
-				${this.datesController.observerIntersectionNavigation(date, FieldDateTimePrecision.Month, FieldDateTimePrecision.Year)}
-			>
-				${date.format({ year: 'numeric' })}
-			</div>
+		return html`
+			${date.dayOfYear !== 1 ? html.nothing : html`
+				<div class='year' role='button'
+					data-view=${this.view.key}
+					?data-navigating=${this.isNavigating(date, FieldDateTimePrecision.Year)}
+					?data-now=${this.isNow(date, FieldDateTimePrecision.Year)}
+					?data-start=${this.isStart(date, FieldDateTimePrecision.Year)}
+					?data-end=${this.isEnd(date, FieldDateTimePrecision.Year)}
+					?data-in-range=${this.isInRange(date, FieldDateTimePrecision.Year)}
+					@click=${this.handleItemClick(date, FieldDateTimePrecision.Year)}
+					${this.datesController.observerIntersectionNavigation(date, FieldDateTimePrecision.Month, FieldDateTimePrecision.Year)}
+				>
+					${date.format({ year: 'numeric' })}
+				</div>
+			`}
+
+			${this.view < FieldDateTimePrecision.Month || date.day !== 1 ? html.nothing : this.getMonthTemplate(date)}
 		`
 	}
 
@@ -250,7 +258,7 @@ export class Calendar extends Component {
 	}
 
 	private getMonthTemplate(date: DateTime) {
-		return this.view === FieldDateTimePrecision.Year || date.day !== 1 ? html.nothing : html`
+		return html`
 			<mo-flex class='month-container' data-view=${this.view.key}>
 				<div class='month' role='button'
 					data-view=${this.view.key}
@@ -262,18 +270,36 @@ export class Calendar extends Component {
 					@click=${this.handleItemClick(date, FieldDateTimePrecision.Month)}
 					${this.datesController.observerIntersectionNavigation(date, FieldDateTimePrecision.Day)}
 				>
-					${this.view === FieldDateTimePrecision.Day ? date.format({ year: 'numeric', month: 'long' }) : date.format({ month: 'long' })}
+					${date.format(this.view > FieldDateTimePrecision.Month ? { year: 'numeric', month: 'long' } : { month: 'long' })}
 				</div>
-				<mo-grid justifyContent='center' autoRows='var(--mo-calendar-item-size)' columns=${this.view === FieldDateTimePrecision.Day ? this.columns : 'auto'}>
-					${this.view !== FieldDateTimePrecision.Day ? html.nothing : Calendar.weekDaysTemplate}
-					${this.datesController.data.filter(d => d.year === date.year && d.month === date.month).map(day => this.getDayTemplate(day))}
-				</mo-grid>
+				${this.view < FieldDateTimePrecision.Day ? html.nothing : html`
+					<mo-grid justifyContent='center' autoRows='var(--mo-calendar-item-size)' columns=${this.view > FieldDateTimePrecision.Month ? this.columns : 'auto'}>
+						${Calendar.weekDaysTemplate}
+						${this.datesController.data.filter(d => d.year === date.year && d.month === date.month).map((day, _, month) => this.getWeekTemplate(day, month))}
+					</mo-grid>
+				`}
 			</mo-flex>
 		`
 	}
 
+	protected getWeekTemplate(date: DateTime, month: ReadonlyArray<DateTime>) {
+		if (date.yearOfWeek === undefined || date.weekOfYear === undefined) {
+			return this.getDayTemplate(date)
+		}
+
+		if (date !== month.find(d => d.weekOfYear === date.weekOfYear && d.yearOfWeek === date.yearOfWeek)) {
+			return html.nothing
+		}
+
+		return html`
+			<mo-grid class='week-container' columns='subgrid' data-view=${this.view.key}>
+				${month.filter(d => d.weekOfYear === date.weekOfYear && d.yearOfWeek === date.yearOfWeek).map(day => this.getDayTemplate(day))}
+			</mo-grid>
+		`
+	}
+
 	private getDayTemplate(day: DateTime) {
-		return this.view === FieldDateTimePrecision.Month ? html.nothing : html`
+		return html`
 			${this.includeWeek === false || day.dayOfWeek !== 1 ? html.nothing : html`
 				<div class='week' style='grid-column: week'>${day.weekOfYear}</div>
 			`}
@@ -312,38 +338,26 @@ export class Calendar extends Component {
 	private isNavigating(date: DateTime, precision: FieldDateTimePrecision) {
 		return this.view === precision
 			&& this.navigationDate.year === date.year
-			&& (precision === FieldDateTimePrecision.Year || this.navigationDate.month === date.month)
-			&& (precision !== FieldDateTimePrecision.Day || this.navigationDate.day === date.day)
-	}
-
-	private isEqual(precision: FieldDateTimePrecision, left: DateTime, right: DateTime) {
-		return left.year === right.year
-			&& (precision === FieldDateTimePrecision.Year || left.month === right.month)
-			&& (precision !== FieldDateTimePrecision.Day || left.day === right.day)
-	}
-
-	private isLower(precision: FieldDateTimePrecision, left: DateTime, right: DateTime) {
-		return left.year < right.year
-			|| (precision !== FieldDateTimePrecision.Year && left.year === right.year && left.month < right.month)
-			|| (precision === FieldDateTimePrecision.Day && left.year === right.year && left.month === right.month && left.day < right.day)
+			&& (precision < FieldDateTimePrecision.Month || this.navigationDate.month === date.month)
+			&& (precision < FieldDateTimePrecision.Day || this.navigationDate.day === date.day)
 	}
 
 	private isNow(date: DateTime, precision: FieldDateTimePrecision) {
-		return this.view === precision && this.isEqual(precision, date, CalendarDatesController.today)
+		return this.view === precision && precision.equals(date, CalendarDatesController.today)
 	}
 
 	private isStart(date: DateTime, precision: FieldDateTimePrecision) {
-		return precision === this.precision && !!this.value?.start && this.isEqual(precision, date, this.value?.start)
+		return precision === this.precision && !!this.value?.start && precision.equals(date, this.value?.start)
 	}
 
 	private isEnd(date: DateTime, precision: FieldDateTimePrecision) {
-		return precision === this.precision && !!this.value?.end && this.isEqual(precision, date, this.value?.end)
+		return precision === this.precision && !!this.value?.end && precision.equals(date, this.value?.end)
 	}
 
 	private isInRange(date: DateTime, precision: FieldDateTimePrecision) {
 		return precision === this.precision && !!this.value?.start && !!this.value?.end
-			&& this.isLower(precision, this.value.start, date)
-			&& this.isLower(precision, date, this.value.end)
+			&& precision.isSmallerThan(this.value.start, date)
+			&& precision.isSmallerThan(date, this.value.end)
 	}
 }
 

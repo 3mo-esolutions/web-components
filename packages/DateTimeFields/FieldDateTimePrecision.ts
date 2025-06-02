@@ -9,8 +9,8 @@ export class FieldDateTimePrecision {
 	}
 
 	static readonly Year = new FieldDateTimePrecision(1, 'year')
-	// static readonly Week = new FieldDateTimePrecision(2, 'week')
-	static readonly Month = new FieldDateTimePrecision(3, 'month')
+	static readonly Month = new FieldDateTimePrecision(2, 'month')
+	// static readonly Week = new FieldDateTimePrecision(3, 'week')
 	static readonly Day = new FieldDateTimePrecision(4, 'day')
 	static readonly Hour = new FieldDateTimePrecision(5, 'hour')
 	static readonly Minute = new FieldDateTimePrecision(6, 'minute')
@@ -42,6 +42,24 @@ export class FieldDateTimePrecision {
 			second: this < FieldDateTimePrecision.Second ? 0 : date.second,
 		})
 		return new DateTimeRange(start, start.add({ [`${this.key}s`]: 1 }).subtract({ seconds: 1 }))
+	}
+
+	equals(left: DateTime, right: DateTime): boolean {
+		return left.year === right.year
+			&& (this < FieldDateTimePrecision.Month || left.month === right.month)
+			&& (this < FieldDateTimePrecision.Day || left.day === right.day)
+			&& (this < FieldDateTimePrecision.Hour || left.hour === right.hour)
+			&& (this < FieldDateTimePrecision.Minute || left.minute === right.minute)
+			&& (this < FieldDateTimePrecision.Second || left.second === right.second)
+	}
+
+	isSmallerThan(left: DateTime, right: DateTime): boolean {
+		return left.year < right.year
+			|| (this >= FieldDateTimePrecision.Month && left.year === right.year && left.month < right.month)
+			|| (this >= FieldDateTimePrecision.Day && left.year === right.year && left.month === right.month && left.day < right.day)
+			|| (this >= FieldDateTimePrecision.Hour && left.year === right.year && left.month === right.month && left.day === right.day && left.hour < right.hour)
+			|| (this >= FieldDateTimePrecision.Minute && left.year === right.year && left.month === right.month && left.day === right.day && left.hour === right.hour && left.minute < right.minute)
+			|| (this >= FieldDateTimePrecision.Second && left.year === right.year && left.month === right.month && left.day === right.day && left.hour === right.hour && left.minute === right.minute && left.second < right.second)
 	}
 
 	valueOf() {

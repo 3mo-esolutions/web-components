@@ -50,7 +50,7 @@ export class FieldDateTime extends FieldDateTimeBase<Date | undefined> {
 	}
 
 	protected valueToInputValue(value: Date | undefined) {
-		return value ? value.format(this.formatOptions) ?? '' : ''
+		return value?.format(this.formatOptions) ?? ''
 	}
 
 	protected inputValueToValue(value: string) {
