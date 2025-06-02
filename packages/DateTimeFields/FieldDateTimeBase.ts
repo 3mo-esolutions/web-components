@@ -1,5 +1,5 @@
 
-import { type HTMLTemplateResult, cache, css, html, live, property, style, bind, state, query, ifDefined } from '@a11d/lit'
+import { cache, css, html, live, property, style, bind, state, query, ifDefined } from '@a11d/lit'
 import { InputFieldComponent } from '@3mo/field'
 import { type MaterialIcon } from '@3mo/icon'
 import { FieldDateTimePrecision } from './FieldDateTimePrecision.js'
@@ -193,7 +193,17 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 		return this.calendarTemplate
 	}
 
-	protected abstract get calendarTemplate(): HTMLTemplateResult
+	protected get calendarTemplate() {
+		return html`
+			<mo-calendar
+				.precision=${this.precision}
+				.value=${this.calendarValue}
+				@dateClick=${(e: CustomEvent<DateTime>) => this.handleSelectedDateChange(e.detail, this.precision)}
+			></mo-calendar>
+		`
+	}
+
+	protected abstract get calendarValue(): DateTimeRange | undefined
 
 	private get timeTemplate() {
 		return this.precision <= FieldDateTimePrecision.Day ? html.nothing : html`

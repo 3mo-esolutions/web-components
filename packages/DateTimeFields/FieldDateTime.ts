@@ -1,5 +1,5 @@
 
-import { component, html, property } from '@a11d/lit'
+import { component, property } from '@a11d/lit'
 import { Localizer } from '@3mo/localization'
 import { FieldDateTimeBase } from './FieldDateTimeBase.js'
 import { type FieldDateTimePrecision } from './FieldDateTimePrecision.js'
@@ -38,14 +38,8 @@ export class FieldDateTime extends FieldDateTimeBase<Date | undefined> {
 		this.navigationDate = this.selectedDate ?? new DateTime()
 	}
 
-	protected get calendarTemplate() {
-		return html`
-			<mo-calendar
-				.precision=${this.precision}
-				.value=${new DateTimeRange(this.selectedDate, this.selectedDate)}
-				@dateClick=${(e: CustomEvent<DateTime>) => this.handleSelectedDateChange(e.detail, this.precision)}
-			></mo-calendar>
-		`
+	protected get calendarValue() {
+		return new DateTimeRange(this.selectedDate, this.selectedDate)
 	}
 
 	protected override handleSelectedDateChange(date: DateTime, precision: FieldDateTimePrecision) {

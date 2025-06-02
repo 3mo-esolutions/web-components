@@ -66,14 +66,8 @@ export class FieldDateTimeRange extends FieldDateTimeBase<DateTimeRange | undefi
 		return new DateTimeRange(new DateTime().subtract({ years: 1 }), new DateTime()).format(this.formatOptions)
 	}
 
-	protected get calendarTemplate() {
-		return html`
-			<mo-calendar
-				.precision=${this.precision}
-				.value=${this.value}
-				@dateClick=${(e: CustomEvent<DateTime>) => this.handleSelectedDateChange(e.detail, this.precision)}
-			></mo-calendar>
-		`
+	protected get calendarValue() {
+		return this.value
 	}
 
 	protected override get popoverContentTemplate() {

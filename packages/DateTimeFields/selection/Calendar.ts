@@ -41,6 +41,7 @@ export class Calendar extends Component {
 		return css`
 			:host {
 				--mo-calendar-item-size: 2.25rem;
+				flex: 1;
 			}
 
 			.scroller {
@@ -263,7 +264,7 @@ export class Calendar extends Component {
 				>
 					${this.view === FieldDateTimePrecision.Day ? date.format({ year: 'numeric', month: 'long' }) : date.format({ month: 'long' })}
 				</div>
-				<mo-grid autoRows='var(--mo-calendar-item-size)' columns=${this.view === FieldDateTimePrecision.Day ? this.columns : 'auto'}>
+				<mo-grid justifyContent='center' autoRows='var(--mo-calendar-item-size)' columns=${this.view === FieldDateTimePrecision.Day ? this.columns : 'auto'}>
 					${this.view !== FieldDateTimePrecision.Day ? html.nothing : Calendar.weekDaysTemplate}
 					${this.datesController.data.filter(d => d.year === date.year && d.month === date.month).map(day => this.getDayTemplate(day))}
 				</mo-grid>
