@@ -19,11 +19,14 @@ export class Calendar extends Component {
 
 	get navigationDate() { return this.datesController.navigationDate }
 	async setNavigatingValue(date: DateTime, behavior: 'instant' | 'smooth' = 'instant') {
+		this.datesController.disableObservers = true
 		this.datesController.navigationDate = date
 		await this.updateComplete
 		await new Promise(r => setTimeout(r, 10))
 		this.renderRoot.querySelector<HTMLElement>(`.${this.view}[data-navigating]`)
 			?.scrollIntoView({ block: 'center', behavior })
+		await new Promise(r => setTimeout(r, behavior === 'instant' ? 10 : 100))
+		this.datesController.disableObservers = false
 	}
 
 	setView(view: FieldDateTimePrecision, navigationDate = this.datesController.navigationDate) {

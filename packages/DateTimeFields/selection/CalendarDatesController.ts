@@ -28,9 +28,11 @@ export class CalendarDatesController extends Controller {
 		CalendarDatesController.generateWeek()
 	}
 
+	disableObservers = false
+
 	observerIntersectionNavigation(date: DateTime, ...views: Array<FieldDateTimePrecision>) {
 		return !views.includes(this.host.view) ? html.nothing : observeIntersection(data => {
-			if (data.some(entry => entry.isIntersecting)) {
+			if (!this.disableObservers && data.some(entry => entry.isIntersecting)) {
 				this.navigationDate = date
 			}
 		}) as DirectiveResult<any>
