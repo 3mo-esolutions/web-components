@@ -6,11 +6,11 @@ import { type SelectionListItemChangeEvent } from '@3mo/list'
 export class HourList extends DateList {
 	protected override get listItemsTemplate() {
 		return html`
-			${[...range(0, this.navigatingValue.hoursInDay)].map(hour => html`
+			${[...range(0, this.navigationDate.hoursInDay)].map(hour => html`
 				<mo-selectable-list-item
 					?selected=${this.value?.hour === hour}
-					?data-navigating=${this.navigatingValue.hour === hour}
-					@navigate=${() => this.navigate.dispatch(this.navigatingValue.with({ hour }))}
+					?data-navigating=${this.navigationDate.hour === hour}
+					@navigate=${() => this.navigate.dispatch(this.navigationDate.with({ hour }))}
 					@change=${(e: SelectionListItemChangeEvent<void>) => !e.selected ? void 0 : this.change.dispatch((this.value ?? new DateTime).with({ hour }))}
 				>${hour.format().padStart(2, this.zero.format())}</mo-selectable-list-item>
 			`)}

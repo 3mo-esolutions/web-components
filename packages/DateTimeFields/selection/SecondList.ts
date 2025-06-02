@@ -9,8 +9,8 @@ export class SecondList extends DateList {
 			${[...range(0, 60)].map(second => html`
 				<mo-selectable-list-item
 					?selected=${this.value?.second === second}
-					?data-navigating=${this.navigatingValue.second === second}
-					@navigate=${() => this.navigate.dispatch(this.navigatingValue.with({ second }))}
+					?data-navigating=${this.navigationDate.second === second}
+					@navigate=${() => this.navigate.dispatch(this.navigationDate.with({ second }))}
 					@change=${(e: SelectionListItemChangeEvent<void>) => !e.selected ? void 0 : this.change.dispatch((this.value ?? new DateTime).with({ second }))}
 				>${second.format().padStart(2, this.zero.format())}</mo-selectable-list-item>
 			`)}

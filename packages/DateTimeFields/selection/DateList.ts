@@ -5,7 +5,7 @@ export abstract class DateList extends Component {
 	@event() readonly change!: EventDispatcher<DateTime>
 	@event() readonly navigate!: EventDispatcher<DateTime>
 
-	@property({ type: Object, event: 'navigate' }) navigatingValue!: DateTime
+	@property({ type: Object, event: 'navigate' }) navigationDate!: DateTime
 	@property({ type: Object }) value?: DateTime
 
 	@query('.selector') private readonly selector!: HTMLElement
@@ -22,7 +22,8 @@ export abstract class DateList extends Component {
 			}
 
 			mo-scroller {
-				min-width: 70px;
+				min-width: 50px;
+				scrollbar-width: none;
 			}
 
 			.selector {
@@ -36,14 +37,13 @@ export abstract class DateList extends Component {
 			}
 
 			.pad {
-				height: 130px;
+				height: 200px;
 			}
 
 			mo-selectable-list-item {
 				min-height: 32px;
 				padding-block: 8px;
 				scroll-snap-align: center;
-				scroll-snap-stop: always;
 			}
 		`
 	}
@@ -53,10 +53,11 @@ export abstract class DateList extends Component {
 	}
 
 	protected override get template() {
-		return this.navigatingValue === undefined ? html.nothing : html`
+		return this.navigationDate === undefined ? html.nothing : html`
 			<div class='selector'></div>
 			<mo-scroller snapType='y mandatory'
 				@scroll=${this.handleScroll}
+				@scrollend=${this.handleScroll}
 				@mouseenter=${() => this.navigateOnScroll = true}
 				@mouseleave=${() => this.navigateOnScroll = false}
 				@touchstart=${() => this.navigateOnScroll = true}
@@ -89,7 +90,10 @@ export abstract class DateList extends Component {
 
 
 	@eventOptions({ passive: true })
-	protected handleScroll() {
+	protected handleScroll(e: Event) {
+		if (e.type === 'scroll' && 'onscrollend' in HTMLElement.prototype) {
+			return
+		}
 		if (!this.navigateOnScroll) {
 			return
 		}

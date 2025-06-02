@@ -4,7 +4,7 @@ import { type MaterialIcon } from '@3mo/icon'
 import { Localizer } from '@3mo/localization'
 import { Memoize as memoize } from 'typescript-memoize'
 import { FieldDateTimeBase as FieldDateTimeBase } from './FieldDateTimeBase.js'
-import { FieldDateTimePrecision } from './FieldDateTimePrecision.js'
+import { type FieldDateTimePrecision } from './FieldDateTimePrecision.js'
 import { DateRangeParser } from './DateRangeParser.js'
 
 Localizer.dictionaries.add('de', {
@@ -36,10 +36,10 @@ export class FieldDateTimeRange extends FieldDateTimeBase<DateTimeRange | undefi
 	@property() selection = FieldDateRangeSelection.Start
 	@property({ type: Object }) value?: DateTimeRange
 
-	protected resetNavigatingDate() {
-		this.navigatingDate = this.selection === FieldDateRangeSelection.Start
-			? this.value?.start ?? this.navigatingDate
-			: this.value?.end ?? this.navigatingDate
+	protected resetNavigationDate() {
+		this.navigationDate = this.selection === FieldDateRangeSelection.Start
+			? this.value?.start ?? this.navigationDate
+			: this.value?.end ?? this.navigationDate
 	}
 
 	static override get styles() {
@@ -66,15 +66,8 @@ export class FieldDateTimeRange extends FieldDateTimeBase<DateTimeRange | undefi
 		return new DateTimeRange(new DateTime().subtract({ years: 1 }), new DateTime()).format(this.formatOptions)
 	}
 
-	protected get calendarTemplate() {
-		return html`
-			<mo-selectable-calendar
-				data-selection=${this.selection}
-				.navigatingValue=${this.navigatingDate}
-				.value=${this.value}
-				@dayClick=${(e: CustomEvent<DateTime>) => this.handleSelectedDateChange(e.detail, FieldDateTimePrecision.Day)}
-			></mo-selectable-calendar>
-		`
+	protected get calendarValue() {
+		return this.value
 	}
 
 	protected override get popoverContentTemplate() {
@@ -93,7 +86,7 @@ export class FieldDateTimeRange extends FieldDateTimeBase<DateTimeRange | undefi
 	private get startEndTabBarTemplate() {
 		return html`
 			<mo-flex>
-				<mo-tab-bar ${bind(this, 'selection', { sourceUpdated: () => this.resetNavigatingDate() })}>
+				<mo-tab-bar ${bind(this, 'selection', { sourceUpdated: () => this.resetNavigationDate() })}>
 					<mo-tab value=${FieldDateRangeSelection.Start}>${t('Start')}</mo-tab>
 					<mo-tab value=${FieldDateRangeSelection.End}>${t('End')}</mo-tab>
 				</mo-tab-bar>
@@ -102,6 +95,8 @@ export class FieldDateTimeRange extends FieldDateTimeBase<DateTimeRange | undefi
 	}
 
 	override handleSelectedDateChange(date: DateTime, precision: FieldDateTimePrecision) {
+		const { hour, minute, second } = this.navigationDate
+		date = date.with({ hour, minute, second })
 		const { start, end } = this.precision.getRange(date)
 		this.value = this.selection === FieldDateRangeSelection.Start
 			? new DateTimeRange(start, this.value?.end)

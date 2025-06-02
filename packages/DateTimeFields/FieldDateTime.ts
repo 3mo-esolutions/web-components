@@ -1,8 +1,8 @@
 
-import { component, html, property } from '@a11d/lit'
+import { component, property } from '@a11d/lit'
 import { Localizer } from '@3mo/localization'
 import { FieldDateTimeBase } from './FieldDateTimeBase.js'
-import { FieldDateTimePrecision } from './FieldDateTimePrecision.js'
+import { type FieldDateTimePrecision } from './FieldDateTimePrecision.js'
 import { Memoize as memoize } from 'typescript-memoize'
 
 Localizer.dictionaries.add('de', {
@@ -34,27 +34,23 @@ export class FieldDateTime extends FieldDateTimeBase<Date | undefined> {
 		return new DateTime().format(this.formatOptions)
 	}
 
-	protected resetNavigatingDate() {
-		this.navigatingDate = this.selectedDate ?? new DateTime()
+	protected resetNavigationDate() {
+		this.navigationDate = this.selectedDate ?? new DateTime()
 	}
 
-	protected get calendarTemplate() {
-		return html`
-			<mo-selectable-calendar
-				.navigatingValue=${this.navigatingDate}
-				.value=${new DateTimeRange(this.selectedDate, this.selectedDate)}
-				@dayClick=${(e: CustomEvent<DateTime>) => this.handleSelectedDateChange(e.detail, FieldDateTimePrecision.Day)}
-			></mo-selectable-calendar>
-		`
+	protected get calendarValue() {
+		return new DateTimeRange(this.selectedDate, this.selectedDate)
 	}
 
 	protected override handleSelectedDateChange(date: DateTime, precision: FieldDateTimePrecision) {
+		const { hour, minute, second } = this.navigationDate
+		date = date.with({ hour, minute, second })
 		this.value = !date ? undefined : this.precision.getRange(date).start
 		super.handleSelectedDateChange(date, precision)
 	}
 
 	protected valueToInputValue(value: Date | undefined) {
-		return value ? value.format(this.formatOptions) ?? '' : ''
+		return value?.format(this.formatOptions) ?? ''
 	}
 
 	protected inputValueToValue(value: string) {
