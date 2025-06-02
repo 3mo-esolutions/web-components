@@ -8,7 +8,7 @@ export class CalendarDatesController extends Controller {
 	@memoizeExpiring(60_000)
 	static get today() { return new DateTime().dayStart }
 
-	private static *generate(start: DateTime, count: number, step = 'days') {
+	private static *generate(start: DateTime, count: number, step: 'days' | 'months' | 'years') {
 		for (let i = 0; i < count; i++) {
 			yield start.add({ [step]: i })
 		}
@@ -18,7 +18,7 @@ export class CalendarDatesController extends Controller {
 	static get sampleWeek() { return this._sampleWeek as ReadonlyArray<DateTime> }
 
 	private static generateWeek() {
-		const sample = [...CalendarDatesController.generate(CalendarDatesController.today, CalendarDatesController.today.daysInWeek * 2)]
+		const sample = [...CalendarDatesController.generate(CalendarDatesController.today, CalendarDatesController.today.daysInWeek * 2, 'days')]
 		const indexOfFirstWeekStart = sample.findIndex(d => d.dayOfWeek === 1)
 		const daysInWeek = sample[0]!.daysInWeek
 		CalendarDatesController._sampleWeek = sample.slice(indexOfFirstWeekStart, indexOfFirstWeekStart + daysInWeek).map(d => d.dayStart)
