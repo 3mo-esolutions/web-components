@@ -196,7 +196,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	protected get calendarTemplate() {
 		return html`
 			<mo-calendar
-				.precision=${this.precision}
+				.precision=${this.precision > FieldDateTimePrecision.Day ? FieldDateTimePrecision.Day : this.precision}
 				.value=${this.calendarValue}
 				@dateClick=${(e: CustomEvent<DateTime>) => this.handleSelectedDateChange(e.detail, this.precision)}
 			></mo-calendar>
