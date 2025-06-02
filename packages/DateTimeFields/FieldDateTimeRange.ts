@@ -36,10 +36,10 @@ export class FieldDateTimeRange extends FieldDateTimeBase<DateTimeRange | undefi
 	@property() selection = FieldDateRangeSelection.Start
 	@property({ type: Object }) value?: DateTimeRange
 
-	protected resetNavigatingDate() {
-		this.navigatingDate = this.selection === FieldDateRangeSelection.Start
-			? this.value?.start ?? this.navigatingDate
-			: this.value?.end ?? this.navigatingDate
+	protected resetNavigationDate() {
+		this.navigationDate = this.selection === FieldDateRangeSelection.Start
+			? this.value?.start ?? this.navigationDate
+			: this.value?.end ?? this.navigationDate
 	}
 
 	static override get styles() {
@@ -92,7 +92,7 @@ export class FieldDateTimeRange extends FieldDateTimeBase<DateTimeRange | undefi
 	private get startEndTabBarTemplate() {
 		return html`
 			<mo-flex>
-				<mo-tab-bar ${bind(this, 'selection', { sourceUpdated: () => this.resetNavigatingDate() })}>
+				<mo-tab-bar ${bind(this, 'selection', { sourceUpdated: () => this.resetNavigationDate() })}>
 					<mo-tab value=${FieldDateRangeSelection.Start}>${t('Start')}</mo-tab>
 					<mo-tab value=${FieldDateRangeSelection.End}>${t('End')}</mo-tab>
 				</mo-tab-bar>
@@ -101,7 +101,7 @@ export class FieldDateTimeRange extends FieldDateTimeBase<DateTimeRange | undefi
 	}
 
 	override handleSelectedDateChange(date: DateTime, precision: FieldDateTimePrecision) {
-		const { hour, minute, second } = this.navigatingDate
+		const { hour, minute, second } = this.navigationDate
 		date = date.with({ hour, minute, second })
 		const { start, end } = this.precision.getRange(date)
 		this.value = this.selection === FieldDateRangeSelection.Start

@@ -1,8 +1,6 @@
 import { Component, css, component, html, property, event, repeat, state, unsafeCSS } from '@a11d/lit'
 import { CalendarDatesController } from './CalendarDatesController.js'
-import { FieldDateTimePrecision, type FieldDateTimePrecisionKey } from '../FieldDateTimePrecision.js'
-
-export type DatePrecision = Exclude<FieldDateTimePrecisionKey, 'hour' | 'minute' | 'second'>
+import { FieldDateTimePrecision } from '../FieldDateTimePrecision.js'
 
 /**
  * @fires dateClick - Dispatched when a date is clicked, with the clicked date as detail.
@@ -20,22 +18,17 @@ export class Calendar extends Component {
 	private readonly datesController = new CalendarDatesController(this)
 
 	get navigationDate() { return this.datesController.navigationDate }
-
 	async setNavigatingValue(date: DateTime, behavior: 'instant' | 'smooth' = 'instant') {
 		this.datesController.navigationDate = date
 		await this.updateComplete
-		this.scrollToNavigatingItem(behavior)
-	}
-
-	scrollToNavigatingItem(behavior: 'instant' | 'smooth' = 'instant') {
-		this.renderRoot
-			.querySelector<HTMLElement>(`.${this.view}[data-navigating]`)
+		await new Promise(r => setTimeout(r, 10))
+		this.renderRoot.querySelector<HTMLElement>(`.${this.view}[data-navigating]`)
 			?.scrollIntoView({ block: 'center', behavior })
 	}
 
-	setView(view: FieldDateTimePrecision, navigatingDate = this.datesController.navigationDate) {
+	setView(view: FieldDateTimePrecision, navigationDate = this.datesController.navigationDate) {
 		this.view = view
-		this.setNavigatingValue(navigatingDate)
+		this.setNavigatingValue(navigationDate)
 	}
 
 	static override get styles() {
@@ -47,26 +40,24 @@ export class Calendar extends Component {
 				--mo-calendar-item-size: 2.25rem;
 			}
 
-			mo-scroller {
+			.scroller {
 				height: min(450px, 100vh);
 
-				&::part(container) {
-					display: grid;
-					position: relative;
-					scrollbar-width: none;
-					overflow-x: hidden;
-					scroll-behavior: smooth;
-				}
+				display: grid;
+				position: relative;
+				scrollbar-width: none;
+				overflow-x: hidden;
+				scroll-behavior: smooth;
 
-				&[data-view=${day}]::part(container) {
+				&[data-view=${day}] {
 					grid-template-columns: repeat(1, 1fr);
 				}
 
-				&[data-view=${month}]::part(container) {
+				&[data-view=${month}] {
 					grid-template-columns: repeat(3, 1fr);
 				}
 
-				&[data-view=${year}]::part(container) {
+				&[data-view=${year}] {
 					grid-template-columns: repeat(5, 1fr);
 				}
 			}
@@ -209,12 +200,12 @@ export class Calendar extends Component {
 
 	protected override get template() {
 		return html`
-			<mo-scroller data-view=${this.view.key}>
+			<div class='scroller' data-view=${this.view.key}>
 				${repeat(this.datesController.data, d => d.toString(), d => html`
 					${this.getYearTemplate(d)}
 					${this.getMonthTemplate(d)}
 				`)}
-			</mo-scroller>
+			</div>
 		`
 	}
 

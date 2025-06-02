@@ -17,7 +17,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	@property({ type: Object }) shortcutReferenceDate = new DateTime
 	@property({ type: String, converter: value => FieldDateTimePrecision.parse(value || undefined) }) precision = FieldDateTimePrecision.Minute
 
-	@state() navigatingDate = new DateTime()
+	@state() navigationDate = new DateTime()
 
 	@query('mo-calendar') protected readonly calendar?: Calendar
 
@@ -30,7 +30,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	}
 
 	private handleLanguageChange = () => {
-		this.navigatingDate = new DateTime(this.navigatingDate)
+		this.navigationDate = new DateTime(this.navigationDate)
 	}
 
 	protected readonly calendarIconButtonIcon: MaterialIcon = 'today'
@@ -47,10 +47,10 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 
 	protected override valueUpdated() {
 		super.valueUpdated()
-		this.resetNavigatingDate()
+		this.resetNavigationDate()
 	}
 
-	protected abstract resetNavigatingDate(): void
+	protected abstract resetNavigationDate(): void
 
 	protected override handleChange(value?: T, e?: Event) {
 		super.handleChange(value, e)
@@ -173,7 +173,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 		return this.pickerHidden ? html.nothing : html`
 			<mo-popover tabindex='-1'
 				.anchor=${this} target='field'
-				?open=${bind(this, 'open', { sourceUpdated: () => setTimeout(() => this.calendar?.scrollToNavigatingItem()) })}
+				?open=${bind(this, 'open', { sourceUpdated: () => setTimeout(() => this.calendar?.setNavigatingValue(this.navigationDate)) })}
 			>
 				${cache(!this.open ? html.nothing : this.popoverContentTemplate)}
 			</mo-popover>
@@ -203,8 +203,8 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 					${this.minuteListTemplate}
 					${this.secondListTemplate}
 				</mo-flex>
-				<div class='timezone' title=${ifDefined(this.navigatingDate?.formatToParts({ timeZoneName: 'long' }).find(x => x.type === 'timeZoneName')?.value)}>
-					${this.navigatingDate?.formatToParts({ timeZoneName: 'shortOffset' }).find(x => x.type === 'timeZoneName')?.value}
+				<div class='timezone' title=${ifDefined(this.navigationDate?.formatToParts({ timeZoneName: 'long' }).find(x => x.type === 'timeZoneName')?.value)}>
+					${this.navigationDate?.formatToParts({ timeZoneName: 'shortOffset' }).find(x => x.type === 'timeZoneName')?.value}
 				</div>
 			</mo-flex>
 		`
@@ -213,7 +213,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	private get hourListTemplate() {
 		return this.precision < FieldDateTimePrecision.Hour ? html.nothing : html`
 			<mo-hour-list style='flex: 1'
-				.navigatingValue=${bind(this, 'navigatingDate')}
+				.navigationDate=${bind(this, 'navigationDate')}
 				.value=${this.selectedDate}
 				@change=${(e: CustomEvent<DateTime>) => this.handleSelectedDateChange(e.detail, FieldDateTimePrecision.Hour)}
 			></mo-hour-list>
@@ -223,7 +223,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	private get minuteListTemplate() {
 		return this.precision < FieldDateTimePrecision.Minute ? html.nothing : html`
 			<mo-minute-list style='flex: 1'
-				.navigatingValue=${bind(this, 'navigatingDate')}
+				.navigationDate=${bind(this, 'navigationDate')}
 				.value=${this.selectedDate}
 				@change=${(e: CustomEvent<DateTime>) => this.handleSelectedDateChange(e.detail, FieldDateTimePrecision.Minute)}
 			></mo-minute-list>
@@ -233,7 +233,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	private get secondListTemplate() {
 		return this.precision < FieldDateTimePrecision.Second ? html.nothing : html`
 			<mo-second-list style='flex: 1'
-				.navigatingValue=${bind(this, 'navigatingDate')}
+				.navigationDate=${bind(this, 'navigationDate')}
 				.value=${this.selectedDate}
 				@change=${(e: CustomEvent<DateTime>) => this.handleSelectedDateChange(e.detail, FieldDateTimePrecision.Second)}
 			></mo-second-list>

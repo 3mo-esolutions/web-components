@@ -34,8 +34,8 @@ export class FieldDateTime extends FieldDateTimeBase<Date | undefined> {
 		return new DateTime().format(this.formatOptions)
 	}
 
-	protected resetNavigatingDate() {
-		this.navigatingDate = this.selectedDate ?? new DateTime()
+	protected resetNavigationDate() {
+		this.navigationDate = this.selectedDate ?? new DateTime()
 	}
 
 	protected get calendarTemplate() {
@@ -49,7 +49,7 @@ export class FieldDateTime extends FieldDateTimeBase<Date | undefined> {
 	}
 
 	protected override handleSelectedDateChange(date: DateTime, precision: FieldDateTimePrecision) {
-		const { hour, minute, second } = this.navigatingDate
+		const { hour, minute, second } = this.navigationDate
 		date = date.with({ hour, minute, second })
 		this.value = !date ? undefined : this.precision.getRange(date).start
 		super.handleSelectedDateChange(date, precision)

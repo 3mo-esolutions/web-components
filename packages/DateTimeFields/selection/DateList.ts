@@ -5,7 +5,7 @@ export abstract class DateList extends Component {
 	@event() readonly change!: EventDispatcher<DateTime>
 	@event() readonly navigate!: EventDispatcher<DateTime>
 
-	@property({ type: Object, event: 'navigate' }) navigatingValue!: DateTime
+	@property({ type: Object, event: 'navigate' }) navigationDate!: DateTime
 	@property({ type: Object }) value?: DateTime
 
 	@query('.selector') private readonly selector!: HTMLElement
@@ -53,7 +53,7 @@ export abstract class DateList extends Component {
 	}
 
 	protected override get template() {
-		return this.navigatingValue === undefined ? html.nothing : html`
+		return this.navigationDate === undefined ? html.nothing : html`
 			<div class='selector'></div>
 			<mo-scroller snapType='y mandatory'
 				@scroll=${this.handleScroll}

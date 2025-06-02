@@ -23,7 +23,7 @@ class IntersectionDirective extends AsyncDirective {
 	}
 
 	protected override disconnected() {
-		this.observer?.disconnect()
+		this.observer?.unobserve(this.element)
 	}
 }
 
