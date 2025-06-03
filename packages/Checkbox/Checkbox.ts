@@ -36,7 +36,6 @@ export class Checkbox extends Component {
 		return css`
 			:host {
 				display: inline-flex;
-				height: 32px;
 				align-items: center;
 			}
 
@@ -46,6 +45,8 @@ export class Checkbox extends Component {
 
 			md-checkbox {
 				flex-shrink: 0;
+				margin-block-start: max(0px, calc(calc(1lh - 18px) / 2));
+				--md-checkbox-selected-disabled-container-opacity: 1;
 				--md-checkbox-container-shape: var(--mo-border-radius);
 
 				--md-checkbox-selected-disabled-container-color: var(--mo-checkbox-disabled-color, var(--mo-color-gray));
@@ -64,18 +65,12 @@ export class Checkbox extends Component {
 			}
 
 			label {
+				padding-block: 7px;
 				display: flex;
-				align-items: center;
-				gap: 8px;
-				color: var(--mo-color-foreground);
+				gap: 0.5rem;
 				font-size: 0.875rem;
-				line-height: 1.25rem;
 				-webkit-font-smoothing: antialiased;
 				user-select: none;
-			}
-
-			label > md-checkbox {
-				--md-checkbox-selected-disabled-container-opacity: 1;
 			}
 
 			:host([disabled]) label {

@@ -27,6 +27,14 @@ class CheckboxTestFixture extends ComponentTestFixture<Checkbox> {
 }
 
 describe('Checkbox', () => {
+	describe('styles', () => {
+		const fixture = new CheckboxTestFixture(html`<mo-checkbox label="Label"></mo-checkbox>`)
+
+		it('should have a height of 32px when one-line', () => {
+			expect(getComputedStyle(fixture.component).height).toBe('32px')
+		})
+	})
+
 	describe('disabled', () => {
 		const fixture = new CheckboxTestFixture(html`<mo-checkbox disabled></mo-checkbox>`)
 
