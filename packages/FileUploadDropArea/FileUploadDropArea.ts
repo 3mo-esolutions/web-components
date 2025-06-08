@@ -1,10 +1,11 @@
-import { html, eventListener, css, component, query, Component, property, event, literal, staticHtml } from '@a11d/lit'
+import { html, eventListener, css, component, query, Component, property, event, literal, staticHtml, ifDefined } from '@a11d/lit'
 import { type FileUpload } from '@3mo/file-upload'
 
 /**
  * @element mo-file-upload-drop-area UploadDropArea is a component that allows the user to upload a file by dragging it into the component.
  *
  * @attr upload - The mandatory upload function that is called when the user selects a file.
+ * @attr accept - The file types that are accepted for upload, specified as a string containing a comma-separated list of MIME types or file extensions.
  *
  * @fires change - Dispatched when the uploading process results in success or failure. The event detail is the result of the upload, either the result of the upload function or undefined if the upload failed.
  * @fires uploadingChange - Dispatched when the uploading process starts or ends. The event detail is true if the uploading process has started, false otherwise.
@@ -17,6 +18,7 @@ export class FileUploadDropArea<TResult> extends Component {
 	@event() readonly fileChange!: EventDispatcher<File | undefined>
 
 	@property({ type: Object }) upload!: (file: File) => Promise<TResult>
+	@property() accept?: string
 
 	@query('mo-file-upload') protected readonly uploadElement!: FileUpload<TResult>
 
@@ -62,6 +64,7 @@ export class FileUploadDropArea<TResult> extends Component {
 		return staticHtml`
 			<${this.fileUploadElementTag} uploadOnSelection
 				.upload=${this.upload}
+				accept=${ifDefined(this.accept)}
 				@change=${(e: CustomEvent<TResult | undefined>) => this.change.dispatch(e.detail)}
 				@uploadingChange=${(e: CustomEvent<boolean>) => this.uploadingChange.dispatch(e.detail)}
 				@fileChange=${(e: CustomEvent<File | undefined>) => this.fileChange.dispatch(e.detail)}

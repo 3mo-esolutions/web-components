@@ -1,4 +1,4 @@
-import { Component, component, event, html, property, query, state } from '@a11d/lit'
+import { Component, component, event, html, ifDefined, property, query, state } from '@a11d/lit'
 import { NotificationComponent } from '@a11d/lit-application'
 import '@3mo/localization'
 
@@ -7,6 +7,7 @@ import '@3mo/localization'
  *
  * @attr upload - The mandatory upload function that is called when the user selects a file.
  * @attr uploadOnSelection
+ * @attr accept - The file types that are accepted for upload, specified as a string containing a comma-separated list of MIME types or file extensions.
  *
  * @i18n "Upload has failed. Try again."
  *
@@ -22,6 +23,7 @@ export class FileUpload<TResult> extends Component {
 
 	@property({ type: Object }) upload!: (file: File) => Promise<TResult>
 	@property({ type: Boolean }) uploadOnSelection = false
+	@property({ type: String }) accept?: string
 
 	@state() protected isUploading = false
 
@@ -69,7 +71,7 @@ export class FileUpload<TResult> extends Component {
 
 	protected override get template() {
 		return html`
-			<input type='file' style='display: none' @change=${this.handleChange}>
+			<input type='file' style='display: none' accept=${ifDefined(this.accept)} @change=${this.handleChange}>
 		`
 	}
 
