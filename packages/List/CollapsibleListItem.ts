@@ -39,7 +39,7 @@ export class CollapsibleListItem extends Component {
 	override get [listItems](): Array<Element> {
 		return [
 			this[listItem]!,
-			...this.slotController.getAssignedElements('details').flatMap(e => e[listItems]!)
+			...this.slotController.getAssignedElements('details').flatMap(e => e[listItems] ?? [])
 		]
 	}
 
