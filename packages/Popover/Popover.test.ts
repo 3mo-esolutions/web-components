@@ -47,6 +47,7 @@ describe('Popover', () => {
 
 			generic.component.popoverElement.open = true
 			await generic.updateComplete
+			await new Promise(r => setTimeout(r))
 
 			expect(generic.component.popoverElement.open).toBe(true)
 			expect(openChangeSpy).toHaveBeenCalledWith(true)
@@ -94,10 +95,12 @@ describe('Popover', () => {
 			generic.component.popoverElement.open = true
 
 			await generic.updateComplete
+			await new Promise(r => setTimeout(r))
 
 			generic.component.popoverElement.open = false
 
 			await generic.updateComplete
+			await new Promise(r => setTimeout(r))
 
 			expect(generic.component.focus).toHaveBeenCalled()
 		})

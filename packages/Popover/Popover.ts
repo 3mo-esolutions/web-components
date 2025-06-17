@@ -56,8 +56,8 @@ export class Popover extends Component {
 
 	@query('[part=arrow]') readonly arrowElement?: HTMLElement
 
-	@eventListener('beforetoggle')
-	protected handleBeforeToggle(e: ToggleEvent) {
+	@eventListener('toggle')
+	protected handleToggle(e: ToggleEvent) {
 		const open = e.newState === 'open'
 		this.openChange.dispatch(open)
 		if (this.mode !== 'hint' && !open) {

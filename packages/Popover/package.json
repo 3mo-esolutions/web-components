@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/popover",
-	"version": "0.9.9",
+	"version": "0.9.10",
 	"description": "A set of tools to help with creating popovers.",
 	"repository": {
 		"type": "git",
