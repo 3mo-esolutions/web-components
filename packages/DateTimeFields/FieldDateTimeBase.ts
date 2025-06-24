@@ -1,5 +1,5 @@
 
-import { cache, css, html, live, property, style, bind, state, query, ifDefined } from '@a11d/lit'
+import { cache, css, html, live, property, style, bind, state, query, ifDefined, type HTMLTemplateResult } from '@a11d/lit'
 import { InputFieldComponent } from '@3mo/field'
 import { type MaterialIcon } from '@3mo/icon'
 import { FieldDateTimePrecision } from './FieldDateTimePrecision.js'
@@ -110,6 +110,15 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 			mo-field[active]:not([dense]) input::placeholder {
 				color: var(--mo-color-gray);
 			}
+
+			#presets {
+				background-color: var(--mo-color-transparent-gray-1);
+				mo-list-item {
+					padding-block: 0.5rem;
+					min-height: auto;
+					opacity: 0.9;
+				}
+			}
 		`
 	}
 
@@ -175,19 +184,40 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 				.anchor=${this} target='field'
 				?open=${bind(this, 'open', { sourceUpdated: () => setTimeout(() => this.calendar?.setNavigatingValue(this.navigationDate)) })}
 			>
-				${cache(!this.open ? html.nothing : this.popoverContentTemplate)}
+				${cache(!this.open ? html.nothing : html`
+					<mo-flex direction='horizontal'>
+						${this.presetsTemplate === html.nothing ? html.nothing : html`
+							<mo-flex id='presets'>
+								${this.presetsTemplate}
+							</mo-flex>
+						`}
+						${this.popoverSelectionTemplate}
+					</mo-flex>
+				`)}
 			</mo-popover>
 		`
 	}
 
-	protected get popoverContentTemplate() {
+	protected get popoverSelectionTemplate() {
 		return html`
-			<mo-flex id='selector' direction='horizontal' style='height: 100%'>
+			<mo-flex id='selector' direction='horizontal' style='height: 100%; flex: 1'>
 				${this.dateTemplate}
 				${this.timeTemplate}
 			</mo-flex>
 		`
 	}
+
+	protected abstract get presetsTemplate(): HTMLTemplateResult
+
+	protected getPresetTemplate(label: string, value: () => T) {
+		const handlePresetClick = () => {
+			const v = value()
+			this.handleChange(v)
+			this.calendar?.setNavigatingValue(v instanceof DateTimeRange ? v.start! : v instanceof DateTime ? v : undefined!, 'smooth')
+		}
+		return html`<mo-list-item @click=${handlePresetClick}>${label}</mo-list-item>`
+	}
+
 
 	protected get dateTemplate() {
 		return this.calendarTemplate
@@ -207,7 +237,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 
 	private get timeTemplate() {
 		return this.precision <= FieldDateTimePrecision.Day ? html.nothing : html`
-			<mo-flex gap='0.5rem'>
+			<mo-flex gap='0.5rem' style='border-inline-start: 1px solid var(--mo-color-transparent-gray-3)'>
 				<mo-flex direction='horizontal' style='flex: 1'>
 					${this.hourListTemplate}
 					${this.minuteListTemplate}

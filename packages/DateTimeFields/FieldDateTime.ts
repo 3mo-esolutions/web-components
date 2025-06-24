@@ -1,18 +1,36 @@
 
-import { component, property } from '@a11d/lit'
+import { component, html, join, property, type HTMLTemplateResult } from '@a11d/lit'
 import { Localizer } from '@3mo/localization'
 import { FieldDateTimeBase } from './FieldDateTimeBase.js'
-import { type FieldDateTimePrecision } from './FieldDateTimePrecision.js'
+import { FieldDateTimePrecision } from './FieldDateTimePrecision.js'
 import { Memoize as memoize } from 'typescript-memoize'
 
 Localizer.dictionaries.add('de', {
 	'Date & Time': 'Datum & Uhrzeit',
+	'Today': 'Heute',
+	'Yesterday': 'Gestern',
+	'Tomorrow': 'Morgen',
+	'Week start': 'Wochenstart',
+	'Week end': 'Wochenende',
+	'Month start': 'Monatsanfang',
+	'Month end': 'Monatsende',
+	'Year start': 'Jahresanfang',
+	'Year end': 'Jahresende',
 })
 
 /**
  * @element mo-field-date-time
  *
  * @i18n "Date & Time"
+ * @i18n "Today"
+ * @i18n "Yesterday"
+ * @i18n "Tomorrow"
+ * @i18n "Week start"
+ * @i18n "Week end"
+ * @i18n "Month start"
+ * @i18n "Month end"
+ * @i18n "Year start"
+ * @i18n "Year end"
  */
 @component('mo-field-date-time')
 export class FieldDateTime extends FieldDateTimeBase<Date | undefined> {
@@ -40,6 +58,23 @@ export class FieldDateTime extends FieldDateTimeBase<Date | undefined> {
 
 	protected get calendarValue() {
 		return new DateTimeRange(this.selectedDate, this.selectedDate)
+	}
+
+	protected override get presetsTemplate() {
+		return join([this.precision < FieldDateTimePrecision.Day ? undefined : html`
+			${this.getPresetTemplate(t('Today'), () => new DateTime().dayStart)}
+			${this.getPresetTemplate(t('Yesterday'), () => new DateTime().subtract({ days: 1 }).dayStart)}
+			${this.getPresetTemplate(t('Tomorrow'), () => new DateTime().add({ days: 1 }).dayStart)}
+			<mo-line></mo-line>
+			${this.getPresetTemplate(t('Week start'), () => new DateTime().weekStart.dayStart)}
+			${this.getPresetTemplate(t('Week end'), () => new DateTime().weekEnd.dayEnd)}
+			<mo-line></mo-line>
+			${this.getPresetTemplate(t('Month start'), () => new DateTime().monthStart.dayStart)}
+			${this.getPresetTemplate(t('Month end'), () => new DateTime().monthEnd.dayEnd)}
+			<mo-line></mo-line>
+			${this.getPresetTemplate(t('Year start'), () => new DateTime().yearStart.dayStart)}
+			${this.getPresetTemplate(t('Year end'), () => new DateTime().yearEnd.dayEnd)}
+		`].filter(Boolean), html`<mo-line></mo-line>`) as any as HTMLTemplateResult
 	}
 
 	protected override handleSelectedDateChange(date: DateTime, precision: FieldDateTimePrecision) {
