@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/data-grid-card-integration",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"description": "Integration of @3mo/data-grid and @3mo/card packages.",
 	"repository": {
 		"type": "git",

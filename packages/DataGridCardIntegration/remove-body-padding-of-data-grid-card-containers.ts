@@ -28,7 +28,7 @@ ReactiveElement.addInitializer(async instance => {
 
 		const handle = (e: CustomEvent<DataGrid<any>>) => {
 			e.stopPropagation()
-			const hasTop = e.detail.hasToolbar && !card.hasAttribute('hasHeader')
+			const hasTop = e.detail.hasToolbar && !!card.renderRoot.querySelector('slot[name=header][data-empty]')
 			const hasBottom = card['slotController'].getAssignedElements('').length > 1
 			const hasPadding = !!getComputedStyle(card).getPropertyValue('--mo-card-body-padding')
 			if (!hasPadding) {
