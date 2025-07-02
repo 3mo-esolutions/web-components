@@ -55,7 +55,7 @@ export class Option<T> extends SelectionListItem {
 			:host {
 				cursor: pointer;
 				min-height: 36px;
-				min-width: var(--mo-field-width);
+				width: 100%;
 			}
 
 			:host([focused]) {

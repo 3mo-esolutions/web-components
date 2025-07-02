@@ -6,7 +6,6 @@ import type { FocusMethod } from '@3mo/focus-controller'
 import { PopoverFloatingUiPositionController, type PopoverAlignment, type PopoverPlacement } from '@3mo/popover'
 import { FieldSelectValueController, type Data, type Index, type Value } from './SelectValueController.js'
 import { Option } from './Option.js'
-import { closeWhenOutOfViewport } from './closeWhenOutOfViewport.js'
 
 /**
  * @element mo-field-select
@@ -97,16 +96,16 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 
 	protected override updated(props: PropertyValues) {
 		super.updated(props)
-		this.style.setProperty('--mo-field-width', this.offsetWidth + 'px')
 		this.toggleAttribute('data-show-no-options-hint', this.showNoOptionsHint)
 	}
 
 	protected override firstUpdated(props: PropertyValues) {
 		super.firstUpdated(props)
-		this.menu?.updateComplete.then(() => {
+		this.menu?.updateComplete.then(async () => {
 			const popover = this.menu?.renderRoot.querySelector('mo-popover')
 			if (popover?.positionController instanceof PopoverFloatingUiPositionController) {
-				popover.positionController.addMiddleware(closeWhenOutOfViewport())
+				popover.positionController.addMiddleware((await import('./closeWhenOutOfViewport.js')).closeWhenOutOfViewport())
+				popover.positionController.addMiddleware((await import('./sameInlineSize.js')).sameInlineSize())
 			}
 		})
 	}
@@ -149,7 +148,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 				overflow-y: auto;
 				scrollbar-width: thin;
 				color: var(--mo-color-foreground);
-				min-width: var(--mo-field-width);
+				min-width: anchor-size(inline);
 			}
 
 			mo-list-item {
