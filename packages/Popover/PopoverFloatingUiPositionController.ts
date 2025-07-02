@@ -92,14 +92,13 @@ export class PopoverFloatingUiPositionController extends Controller {
 			getBoundingClientRect: () => new DOMRect(...this.host.coordinates ?? [0, 0], 0, 0),
 		}
 
-		const { computePosition, flip, shift, arrow, offset } = PopoverFloatingUiPositionController.floatingUi ??= await import('@floating-ui/dom')
+		const { computePosition, flip, arrow, offset } = PopoverFloatingUiPositionController.floatingUi ??= await import('@floating-ui/dom')
 
 		const response = await computePosition(anchor, this.host, {
 			strategy: 'fixed',
 			placement: this.floatingUiPlacement,
 			middleware: [
 				flip(),
-				shift({ crossAxis: true, padding: 4 }),
 				!this.host.arrowElement ? undefined : arrow({ element: this.host.arrowElement, padding: 4 }),
 				!this.host.offset ? undefined : offset(this.host.offset),
 				...this.customMiddlewares,

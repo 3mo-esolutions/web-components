@@ -1,4 +1,5 @@
-import { component, eventListener, queryConnectedInstances } from '@a11d/lit'
+import { component, eventListener, queryConnectedInstances, type PropertyValues } from '@a11d/lit'
+import { PopoverFloatingUiPositionController } from '@3mo/popover'
 import { Menu } from '@3mo/menu'
 
 /** @element mo-context-menu */
@@ -15,6 +16,17 @@ export class ContextMenu extends Menu {
 	}
 
 	override readonly manual = true
+
+	protected override firstUpdated(props: PropertyValues) {
+		super.firstUpdated(props)
+		this.updateComplete.then(async () => {
+			const popover = this.renderRoot.querySelector('mo-popover')
+			const { shift } = await import('@floating-ui/dom')
+			if (popover?.positionController instanceof PopoverFloatingUiPositionController) {
+				popover.positionController.addMiddleware(shift({ crossAxis: true, padding: 4 }))
+			}
+		})
+	}
 
 	@eventListener({ target: document, type: 'click' })
 	protected handleClick(e: PointerEvent) {
