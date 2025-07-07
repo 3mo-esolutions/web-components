@@ -90,7 +90,7 @@ const fivePeopleWithChildren = fivePeople.map(p => new Person({
 
 const columnsTemplate = html`
 	<mo-data-grid-column-number hidden nonEditable heading='ID' dataSelector='id'></mo-data-grid-column-number>
-	<mo-data-grid-column-text heading='Name' width='200px' dataSelector='name'></mo-data-grid-column-text>
+	<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
 	<mo-data-grid-column-number .nonEditable=${(person: Person) => person.age > 30} heading='Age' dataSelector='age'></mo-data-grid-column-number>
 	<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
 	<mo-data-grid-column-date heading='Birth Date' dataSelector='birthDate'></mo-data-grid-column-date>

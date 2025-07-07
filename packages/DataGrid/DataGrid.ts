@@ -658,10 +658,66 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}
 
 	private get rowsTemplate() {
-		// Do not use the record itself as a key as can change
-		// Also, do not use the data itself as it leads to UI flickering
+		// Do not use the data-record or data as the key as it leads to UI flickering
 		return html`
+			${this.hiddenSizeAnchorRowTemplate}
 			${repeat(this.renderDataRecords, record => record.index, (record, index) => this.getRowTemplate(record, index))}
+		`
+	}
+
+	/**
+	 * The hidden size anchor row renders the longest content of each column in a hidden row.
+	 * This is used to mitigate the issue of using values with fluctuating lengths
+	 * with a automatic column width e.g. "max-content" or "fit-content" in combination with
+	 * row virtualization, which could lead to a lot of column resizing during scrolling.
+	 */
+	private get hiddenSizeAnchorRowTemplate() {
+		const getLength = (template: HTMLTemplateResult) => [...template.values ?? [], ...template.strings ?? []]
+			.map(v => {
+				try {
+					return `${v}`
+				} catch {
+					return ''
+				}
+			})
+			.reduce((acc, v) => acc + v.length, 0)
+
+		const getLongestContent = (column: DataGridColumn<TData, unknown>) => {
+			return this.dataRecords
+				.map(dr => column.getContentTemplate?.(KeyPath.get(dr.data, column.dataSelector), dr.data) ?? html.nothing)
+				.reduce((longest, current) => (getLength(current) > getLength(longest)) || false ? current : longest, html.nothing)
+		}
+
+		return html`
+			<style>
+				#size-anchor {
+					display: grid;
+					grid-template-columns: subgrid;
+					grid-column: -1 / 1;
+					font-size: var(--mo-data-grid-cell-font-size);
+					height: 0;
+					visibility: hidden;
+					opacity: 0;
+
+					div {
+						user-select: none;
+						white-space: nowrap;
+						overflow: hidden;
+						text-overflow: ellipsis;
+						padding-inline: var(--mo-data-grid-cell-padding);
+						margin-inline-start: calc(var(--_max-level, 0) * var(--mo-data-grid-column-sub-row-indentation, 20px))
+					}
+				}
+			</style>
+			<div id='size-anchor'>
+				${!this.hasDetails ? html.nothing : html`<span></span>`}
+				${!this.hasSelection || this.selectionCheckboxesHidden ? html.nothing : html`<span></span>`}
+				${this.visibleColumns.map(column => html`
+					<div style='--_max-level: ${Math.max(...this.dataRecords.map(dr => dr.level))}'>
+						${getLongestContent(column)}
+					</div>
+				`)}
+			</div>
 		`
 	}
 
