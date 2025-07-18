@@ -131,6 +131,8 @@ describe('DataGrid', () => {
 		}
 
 		const expectCellFocusLeadsToRowSelectionWhenSelectOnClick = async (fixture: ComponentTestFixture<TestDataGrid>) => {
+			const shouldPreservePreviousSelection = fixture.component.selectability === DataGridSelectability.Multiple && fixture.component.selectOnClick
+
 			fixture.component.selectOnClick = true
 			await fixture.updateComplete
 
@@ -144,8 +146,7 @@ describe('DataGrid', () => {
 				.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', shiftKey: true }))
 			await fixture.updateComplete
 
-			const shouldHaveAddedSelection = fixture.component.selectability === DataGridSelectability.Multiple && fixture.component.selectOnClick
-			expect(fixture.component.isRowSelected(fixture.component.rows.at(1)!)).toBe(shouldHaveAddedSelection)
+			expect(fixture.component.isRowSelected(fixture.component.rows.at(1)!)).toBe(shouldPreservePreviousSelection)
 			expect(fixture.component.isRowSelected(fixture.component.rows.at(2)!)).toBe(true)
 		}
 
