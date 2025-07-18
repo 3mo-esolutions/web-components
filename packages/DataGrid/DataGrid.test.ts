@@ -131,7 +131,7 @@ describe('DataGrid', () => {
 		}
 
 		const expectCellFocusLeadsToRowSelectionWhenSelectOnClick = async (fixture: ComponentTestFixture<TestDataGrid>) => {
-			const shouldPreservePreviousSelection = fixture.component.selectability === DataGridSelectability.Multiple && fixture.component.selectOnClick
+			const shouldPreservePreviousSelection = fixture.component.selectability === DataGridSelectability.Multiple
 
 			fixture.component.selectOnClick = true
 			await fixture.updateComplete
