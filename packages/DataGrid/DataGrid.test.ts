@@ -130,11 +130,23 @@ describe('DataGrid', () => {
 			expect(fixture.component.isRowSelected(row)).toBe(true)
 		}
 
-		const shouldNotRenderCheckboxesWhenSelectionCheckboxesHidden = async (fixture: ComponentTestFixture<TestDataGrid>) => {
-			fixture.component.selectionCheckboxesHidden = true
+		const expectCellFocusLeadsToRowSelectionWhenSelectOnClick = async (fixture: ComponentTestFixture<TestDataGrid>) => {
+			fixture.component.selectOnClick = true
 			await fixture.updateComplete
-			expect(fixture.component.headerSelectionCheckbox).not.toBeDefined()
-			expect(fixture.component.rowsSelectionCheckboxes.length).toBe(0)
+
+			fixture.component.rows.at(0)!.cells.at(0)!
+				.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', shiftKey: false }))
+			await fixture.updateComplete
+
+			expect(fixture.component.isRowSelected(fixture.component.rows.at(1)!)).toBe(true)
+
+			fixture.component.rows.at(1)!.cells.at(0)!
+				.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', shiftKey: true }))
+			await fixture.updateComplete
+
+			const shouldHaveAddedSelection = fixture.component.selectability === DataGridSelectability.Multiple && fixture.component.selectOnClick
+			expect(fixture.component.isRowSelected(fixture.component.rows.at(1)!)).toBe(shouldHaveAddedSelection)
+			expect(fixture.component.isRowSelected(fixture.component.rows.at(2)!)).toBe(true)
 		}
 
 		const expectClickingTheRowLeadsToSelection = async (fixture: ComponentTestFixture<TestDataGrid>, selection = true, skipCheckboxCheck = false) => {
@@ -148,12 +160,6 @@ describe('DataGrid', () => {
 			fixture.component.selectOnClick = true
 			await fixture.updateComplete
 			await expectClickingTheRowLeadsToSelection(fixture)
-		}
-
-		const shouldSelectTheRowWhenSelectionCheckboxesHidden = async (fixture: ComponentTestFixture<TestDataGrid>) => {
-			fixture.component.selectionCheckboxesHidden = true
-			await fixture.updateComplete
-			await expectClickingTheRowLeadsToSelection(fixture, true, true)
 		}
 
 		const shouldNotSelectTheRowWhenIsDataSelectableReturnsFalse = async (fixture: ComponentTestFixture<TestDataGrid>) => {
@@ -173,7 +179,7 @@ describe('DataGrid', () => {
 
 			for (const person of peopleToClick) {
 				const row = fixture.component.rows.find(row => row.data === person) as DataGridRow<Person>
-				row.renderRoot.querySelector('#contentContainer')?.dispatchEvent(new MouseEvent('click'))
+				row.renderRoot.querySelector('mo-checkbox')?.change.dispatch(true)
 				await fixture.updateComplete
 			}
 
@@ -190,7 +196,7 @@ describe('DataGrid', () => {
 				<test-data-grid></test-data-grid>
 			`)
 
-			it('should be the default', () => expect(fixture.component.selectability).toEqual(DataGridSelectability.None))
+			it('should be the default', () => expect(fixture.component.selectability).toEqual(undefined))
 
 			it('should not render checkboxes', () => {
 				expect(fixture.component.headerSelectionCheckbox).not.toBeDefined()
@@ -211,12 +217,11 @@ describe('DataGrid', () => {
 			})
 
 			it('should auto-select the right-clicked row', () => shouldAutoSelectTheRightClickedRow(fixture))
-			it('should not render checkboxes when selectionCheckboxesHidden is true', () => shouldNotRenderCheckboxesWhenSelectionCheckboxesHidden(fixture))
 
 			it('should not select the row when clicked', () => expectClickingTheRowLeadsToSelection(fixture, false))
 			it('should not select the row when isDataSelectable returns false', () => shouldNotSelectTheRowWhenIsDataSelectableReturnsFalse(fixture))
 			it('should select the row when clicked and selectOnClick is true', () => shouldSelectTheRowWhenSelectOnClick(fixture))
-			it('should select the row when clicked and selectionCheckboxesHidden is true', () => shouldSelectTheRowWhenSelectionCheckboxesHidden(fixture))
+			it('should select the row when focused with the keyboard', () => expectCellFocusLeadsToRowSelectionWhenSelectOnClick(fixture))
 			it('should dispatch the "selectionChange" event when a row is clicked', () => shouldDispatchSelectionChange(fixture, [fixture.component.data[0]], true))
 		})
 
@@ -231,12 +236,11 @@ describe('DataGrid', () => {
 			})
 
 			it('should auto-select the right-clicked row', () => shouldAutoSelectTheRightClickedRow(fixture))
-			it('should not render checkboxes when selectionCheckboxesHidden is true', () => shouldNotRenderCheckboxesWhenSelectionCheckboxesHidden(fixture))
 
 			it('should not select the row when clicked', () => expectClickingTheRowLeadsToSelection(fixture, false))
 			it('should not select the row when isDataSelectable returns false', () => shouldNotSelectTheRowWhenIsDataSelectableReturnsFalse(fixture))
 			it('should select the row when clicked and selectOnClick is true', () => shouldSelectTheRowWhenSelectOnClick(fixture))
-			it('should select the row when clicked and selectionCheckboxesHidden is true', () => shouldSelectTheRowWhenSelectionCheckboxesHidden(fixture))
+			it('should select the row when focused with the keyboard', () => expectCellFocusLeadsToRowSelectionWhenSelectOnClick(fixture))
 			it('should dispatch the "selectionChange" event when a row is clicked', () => shouldDispatchSelectionChange(fixture, fixture.component.data, true))
 		})
 	})

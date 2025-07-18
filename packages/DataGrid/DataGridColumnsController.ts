@@ -70,7 +70,7 @@ export class DataGridColumnsController<TData> extends Controller {
 	}
 
 	private get selectionColumnWidth() {
-		return !this.host.hasSelection || this.host.selectionCheckboxesHidden ? undefined : window.getComputedStyle(this.host).getPropertyValue('--mo-data-grid-column-selection-width')
+		return !this.host.hasSelection ? undefined : window.getComputedStyle(this.host).getPropertyValue('--mo-data-grid-column-selection-width')
 	}
 
 	private get dataColumnsWidths() {

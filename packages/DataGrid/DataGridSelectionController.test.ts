@@ -22,7 +22,7 @@ describe('DataGridSelectionController', () => {
 	})
 
 	describe('hasSelection', () => {
-		for (const [mode, hasSelection] of [[DataGridSelectability.None, false], [DataGridSelectability.Single, true], [DataGridSelectability.Multiple, true]] as const) {
+		for (const [mode, hasSelection] of [[undefined, false], [DataGridSelectability.Single, true], [DataGridSelectability.Multiple, true]] as const) {
 			it(`should return ${hasSelection} when mode is ${mode}`, () => {
 				controller.host.selectability = mode
 				expect(controller.hasSelection).toBe(hasSelection)
@@ -31,11 +31,10 @@ describe('DataGridSelectionController', () => {
 	})
 
 	describe('selectability', () => {
-		it('should default to "none" normally', () => {
+		it('should default to "undefined" normally', () => {
 			controller.hasSelection
-			expect(controller.host.selectability).toBe(DataGridSelectability.None)
+			expect(controller.host.selectability).toBe(undefined)
 		})
-
 		it('should default to "single" when has context menu', () => {
 			controller = new DataGridSelectionController<Data>({
 				hasContextMenu: true,
@@ -47,7 +46,7 @@ describe('DataGridSelectionController', () => {
 		})
 
 		it('should not change when already defined', () => {
-			for (const selectability of [DataGridSelectability.None, DataGridSelectability.Multiple]) {
+			for (const selectability of [undefined, DataGridSelectability.Multiple]) {
 				controller = new DataGridSelectionController<Data>({
 					selectability,
 					hasContextMenu: true,
@@ -88,7 +87,7 @@ describe('DataGridSelectionController', () => {
 	})
 
 	describe('selectAll', () => {
-		for (const [mode, selectedData] of [[DataGridSelectability.None, []], [DataGridSelectability.Single, []], [DataGridSelectability.Multiple, [...data]]] as const) {
+		for (const [mode, selectedData] of [[undefined, []], [DataGridSelectability.Single, []], [DataGridSelectability.Multiple, [...data]]] as const) {
 			it(`should ${!data.length ? 'not' : ''} select data when mode is ${mode}`, () => {
 				controller.host.selectability = mode
 				Object.defineProperty(controller.host, 'flattenedData', { value: [...data] })

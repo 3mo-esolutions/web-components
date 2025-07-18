@@ -38,11 +38,10 @@ export enum DataGridEditability {
  * @attr page - The current page.
  * @attr pagination - The pagination mode. It can be either `auto` or a number.
  * @attr sorting - The sorting mode. It is an object with `selector` and `strategy` properties.
- * @attr selectability - The selection mode. Default to 'single' with @see DataGrid.selectionCheckboxesHidden set to true if context menus available, 'none' otherwise.
+ * @attr selectability - The selection mode. Default to 'single' if context menus available, 'undefined' otherwise.
  * @attr isDataSelectable - Whether data of a given row is selectable.
  * @attr selectedData - The selected data.
  * @attr selectOnClick - Whether the row should be selected on click.
- * @attr selectionCheckboxesHidden - Whether the selection checkboxes should be hidden. This activates selection on row click ignoring the `selectOnClick` attribute.
  * @attr selectionBehaviorOnDataChange - The behavior of the selection when the data changes.
  * @attr multipleDetails - Whether multiple details can be opened at the same time.
  * @attr subDataGridDataSelector - The key path of the sub data grid data.
@@ -126,7 +125,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	@property({ type: Object }) isDataSelectable?: (data: TData) => boolean
 	@property({ type: Array, event: 'selectionChange' }) selectedData = new Array<TData>()
 	@property({ type: Boolean }) selectOnClick = false
-	@property({ type: Boolean }) selectionCheckboxesHidden = false
 	@property() selectionBehaviorOnDataChange = DataGridSelectionBehaviorOnDataChange.Reset
 
 	@property({ type: Object }) getRowDetailsTemplate?: (data: TData) => HTMLTemplateResult
@@ -422,7 +420,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				--mo-data-grid-toolbar-padding: 0px 14px 14px 14px;
 				--mo-data-grid-border: 1px solid var(--mo-color-transparent-gray-3);
 
-				--mo-data-grid-row-tree-line-width: 8px;
 				--mo-details-data-grid-start-margin: 26px;
 
 				--mo-data-grid-sticky-part-color: var(--mo-color-surface);
@@ -456,14 +453,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				&::part(container) {
 					position: relative;
 				}
-			}
-
-			:host(:not([selectability="none"])) {
-				--mo-data-grid-row-tree-line-width: 18px;
-			}
-
-			:host([hasDetails]) {
-				--mo-data-grid-row-tree-line-width: 18px;
 			}
 
 			#content {
@@ -711,7 +700,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			</style>
 			<div id='size-anchor'>
 				${!this.hasDetails ? html.nothing : html`<span></span>`}
-				${!this.hasSelection || this.selectionCheckboxesHidden ? html.nothing : html`<span></span>`}
+				${!this.hasSelection ? html.nothing : html`<span></span>`}
 				${this.visibleColumns.map(column => html`
 					<div style='--_max-level: ${Math.max(...this.dataRecords.map(dr => dr.level))}'>
 						${getLongestContent(column)}
@@ -733,7 +722,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	protected get footerTemplate() {
 		return html`
 			<mo-flex ${style({ position: 'relative' })}>
-				<mo-flex id='fab' direction='vertical-reversed' gap='8px'>
+				<mo-flex id='fab' direction='vertical-reversed' gap='0.5rem'>
 					${this.fabTemplate}
 				</mo-flex>
 				${this.hasFooter === false ? html.nothing : html`

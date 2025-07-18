@@ -4,7 +4,7 @@ import { DirectionsByLanguage } from '@3mo/localization'
 import { popover } from '@3mo/popover'
 import { ContextMenu } from '@3mo/context-menu'
 import { type DataGridColumn } from '../DataGridColumn.js'
-import { type DataGridCell, DataGridPrimaryContextMenuItem, DataGridSelectability, type DataRecord } from '../index.js'
+import { type DataGridCell, DataGridPrimaryContextMenuItem, type DataRecord } from '../index.js'
 
 export abstract class DataGridRow<TData, TDetailsElement extends Element | undefined = undefined> extends Component {
 	@queryAll('mo-data-grid-cell') readonly cells!: Array<DataGridCell<any, TData, TDetailsElement>>
@@ -242,7 +242,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	}
 
 	protected get selectionTemplate() {
-		return this.dataGrid.hasSelection === false || this.dataGrid.selectionCheckboxesHidden ? html.nothing : html`
+		return !this.dataGrid.hasSelection ? html.nothing : html`
 			<mo-flex id='selectionContainer' justifyContent='center' alignItems='center'
 				?data-has-details=${this.dataGrid.hasDetails}
 				@click=${(e: Event) => e.stopPropagation()}
@@ -252,7 +252,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 					tabindex='-1'
 					?disabled=${this.dataRecord.isSelectable === false}
 					.selected=${live(this.selected)}
-					@change=${(e: CustomEvent<boolean>) => this.setSelection(e.detail)}
+					@change=${(e: CustomEvent<boolean>) => this.dataGrid.selectionController.setSelection(this.data, e.detail, true)}
 				></mo-checkbox>
 			</mo-flex>
 		`
@@ -304,13 +304,9 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		`
 	}
 
-	private setSelection(selected: boolean) {
-		this.dataGrid.selectionController.setSelection(this.data, selected)
-	}
-
 	protected handleContentClick() {
-		if (this.dataGrid.selectOnClick || this.dataGrid.selectionCheckboxesHidden) {
-			this.setSelection(this.dataGrid.selectionCheckboxesHidden || !this.selected)
+		if (this.dataGrid.selectOnClick) {
+			this.dataGrid.selectionController.setSelection(this.data, true)
 		}
 
 		if (this.dataGrid.detailsOnClick && this.dataGrid.hasDetails) {
@@ -354,18 +350,16 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		this.toggleAttribute('data-context-menu-open', open)
 
 		if (this.dataRecord.isSelected === false) {
-			this.dataGrid.select(this.dataGrid.selectability !== DataGridSelectability.None ? [this.data] : [])
+			this.dataGrid.select([this.data])
 		}
 	}
 
-	private get contextMenuData() {
-		return this.dataGrid.selectability === DataGridSelectability.None || this.dataGrid.selectedData.length === 0
-			? [this.data]
-			: this.dataGrid.selectedData
-	}
-
 	private get contextMenuTemplate() {
-		return this.dataGrid.contextMenuController.getMenuContentTemplate(this.contextMenuData)
+		return this.dataGrid.contextMenuController.getMenuContentTemplate(
+			!this.dataGrid.selectability || !this.dataGrid.selectedData.length
+				? [this.data]
+				: this.dataGrid.selectedData
+		)
 	}
 
 	async closeContextMenu() {

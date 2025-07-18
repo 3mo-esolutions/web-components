@@ -126,7 +126,7 @@ export class DataGridHeader<TData> extends Component {
 	}
 
 	private get selectionTemplate() {
-		return this.dataGrid.hasSelection === false || this.dataGrid.selectionCheckboxesHidden ? html.nothing : html`
+		return !this.dataGrid.hasSelection ? html.nothing : html`
 			<mo-flex class='selection' justifyContent='center' alignItems='center'
 				${style({ insetInlineStart: this.dataGrid.hasDetails ? '20px' : '0px' })}
 				${this.getResizeObserver('selectionColumnWidthInPixels')}
