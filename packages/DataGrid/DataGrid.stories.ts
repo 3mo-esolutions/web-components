@@ -12,10 +12,9 @@ export default {
 		preventVerticalContentScroll: { control: 'boolean' },
 		selectability: {
 			control: 'select',
-			options: [DataGridSelectability.None, DataGridSelectability.Single, DataGridSelectability.Multiple]
+			options: [undefined, DataGridSelectability.Single, DataGridSelectability.Multiple]
 		},
 		selectOnClick: { control: 'boolean', type: 'boolean' },
-		selectionCheckboxesHidden: { control: 'boolean' },
 		selectionBehaviorOnDataChange: {
 			control: 'select',
 			options: [DataGridSelectionBehaviorOnDataChange.Reset, DataGridSelectionBehaviorOnDataChange.Maintain, DataGridSelectionBehaviorOnDataChange.Prevent]
@@ -108,7 +107,6 @@ export const Selection: StoryObj = {
 	args: {
 		selectability: 'single',
 		selectOnClick: false,
-		selectionCheckboxesHidden: false,
 	},
 	parameters: {
 		docs: {
@@ -117,10 +115,9 @@ export const Selection: StoryObj = {
 			},
 		}
 	},
-	render: ({ selectability, selectOnClick, selectionCheckboxesHidden }) => html`
+	render: ({ selectability, selectOnClick }) => html`
 		<mo-data-grid .data=${fivePeople} style='height: 500px' selectability=${selectability as any}
 			?selectOnClick=${selectOnClick}
-			?selectionCheckboxesHidden=${selectionCheckboxesHidden}
 			.isDataSelectable=${(person: Person) => person.age >= 18}
 		>
 			${columnsTemplate}

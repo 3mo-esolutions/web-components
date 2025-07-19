@@ -114,8 +114,8 @@ export class DataGridCell<TValue extends KeyPath.ValueOf<TData>, TData = any, TD
 			event.preventDefault()
 			cell.focus()
 			this.setEditing(false)
-			if (this.dataGrid.selectionCheckboxesHidden) {
-				this.dataGrid.select([...(event.shiftKey ? this.dataGrid.selectedData : []), cell.row.data])
+			if (this.dataGrid.selectOnClick) {
+				this.dataGrid.selectionController.setSelection(cell.row.data, true, event.shiftKey)
 			}
 		}
 	}

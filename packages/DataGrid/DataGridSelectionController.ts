@@ -2,7 +2,6 @@ import { KeyboardController } from '@3mo/keyboard-controller'
 import type { DataRecord } from './DataRecord.js'
 
 export enum DataGridSelectability {
-	None = 'none',
 	Single = 'single',
 	Multiple = 'multiple',
 }
@@ -21,7 +20,6 @@ interface SelectableComponent<TData> {
 	readonly dataRecords: Array<DataRecord<TData>>
 	selectedData: Array<TData>
 	isDataSelectable?(data: TData): boolean
-	selectionCheckboxesHidden?: boolean
 	readonly selectionChange?: EventDispatcher<Array<TData>>
 	readonly selectionBehaviorOnDataChange?: DataGridSelectionBehaviorOnDataChange
 	readonly hasContextMenu?: boolean
@@ -35,27 +33,15 @@ export class DataGridSelectionController<TData> {
 
 	constructor(readonly host: SelectableComponent<TData>) { }
 
-	private get mode() {
-		this.setDefaultsIfNotDefined()
+	private get selectability() {
+		if (this.host.hasContextMenu === true && this.host.selectability === undefined) {
+			this.host.selectability = DataGridSelectability.Single
+		}
 		return this.host.selectability
 	}
 
-	private setDefaultsIfNotDefined() {
-		if (this.host.selectability !== undefined) {
-			return
-		}
-
-		if (this.host.hasContextMenu === true && this.host.selectability === undefined) {
-			this.host.selectability = DataGridSelectability.Single
-			this.host.selectionCheckboxesHidden = true
-			return
-		}
-
-		this.host.selectability = DataGridSelectability.None
-	}
-
 	get hasSelection() {
-		return this.mode !== DataGridSelectability.None
+		return !!this.selectability
 	}
 
 	private get data() { return this.host.dataRecords.map(d => d.data) }
@@ -84,24 +70,6 @@ export class DataGridSelectionController<TData> {
 		return this.selectedData.includes(data)
 	}
 
-	selectAll() {
-		if (this.mode === DataGridSelectability.Multiple) {
-			this.select([...this.data])
-		}
-	}
-
-	deselectAll() {
-		this.select([])
-	}
-
-	select(data: Array<TData>) {
-		if (this.hasSelection) {
-			const selectableData = data.filter(d => this.isSelectable(d))
-			this.selectedData = selectableData
-			this.host.selectionChange?.dispatch(selectableData)
-		}
-	}
-
 	handleDataChange(behavior: DataGridSelectionBehaviorOnDataChange) {
 		switch (behavior) {
 			case DataGridSelectionBehaviorOnDataChange.Reset:
@@ -117,41 +85,51 @@ export class DataGridSelectionController<TData> {
 		this.select(this.previouslySelectedData)
 	}
 
-	setSelection(data: TData, selected: boolean) {
+	setSelection(data: TData, selected: boolean, preservePreviousSelections = false) {
 		if (!this.hasSelection || !this.isSelectable(data)) {
 			return
 		}
 
-		const lastActiveSelection = this.lastActiveSelection
-		let dataToSelect = this.selectedData
-		const selectableData = this.selectableData
-
-		if (this.mode === DataGridSelectability.Multiple && KeyboardController.shift && lastActiveSelection) {
-			const lastActiveSelection = this.lastActiveSelection!
-			const indexes = [
-				selectableData.findIndex(data => lastActiveSelection.data === data),
-				selectableData.findIndex(d => d === data)
-			].sort((a, b) => a - b)
-			const range = selectableData.slice(indexes[0]!, indexes[1]! + 1)
-			dataToSelect = lastActiveSelection.selected
-				? [...dataToSelect, ...range]
-				: dataToSelect.filter(d => range.includes(d) === false)
-		} else {
-			if (selected) {
-				if (this.mode === DataGridSelectability.Multiple) {
-					dataToSelect = this.host.selectionCheckboxesHidden
-						? [data]
-						: [...dataToSelect, data]
-				} else if (this.mode === DataGridSelectability.Single) {
-					dataToSelect = [data]
-				}
-			} else {
-				dataToSelect = dataToSelect.filter(d => d !== data)
+		const dataToSelect = [...new Set((() => {
+			switch (true) {
+				case this.selectability === DataGridSelectability.Multiple && KeyboardController.shift && !!this.lastActiveSelection:
+					const lastActiveSelection = this.lastActiveSelection
+					const indexes = [
+						this.selectableData.findIndex(data => lastActiveSelection.data === data),
+						this.selectableData.findIndex(d => d === data)
+					].sort((a, b) => a - b)
+					const range = this.selectableData.slice(indexes[0]!, indexes[1]! + 1)
+					return lastActiveSelection.selected
+						? [...this.selectedData, ...range]
+						: this.selectedData.filter(d => range.includes(d) === false)
+				case preservePreviousSelections && selected && this.selectability === DataGridSelectability.Multiple:
+					return [...this.selectedData, data]
+				case selected:
+					return [data]
+				default:
+					return this.selectedData.filter(d => d !== data)
 			}
-		}
+		})())]
 
 		this.lastActiveSelection = { data, selected }
-		const deduplicatedDataToSelect = [...new Set(dataToSelect)]
-		this.select(deduplicatedDataToSelect)
+		this.select(dataToSelect)
+	}
+
+	selectAll() {
+		if (this.selectability === DataGridSelectability.Multiple) {
+			this.select([...this.data])
+		}
+	}
+
+	deselectAll() {
+		this.select([])
+	}
+
+	select(data: Array<TData>) {
+		if (this.hasSelection) {
+			const selectableData = data.filter(d => this.isSelectable(d))
+			this.selectedData = selectableData
+			this.host.selectionChange?.dispatch(selectableData)
+		}
 	}
 }
