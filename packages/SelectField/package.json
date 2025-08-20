@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/select-field",
-	"version": "0.9.1",
+	"version": "0.9.2",
 	"description": "A select field web component",
 	"repository": {
 		"type": "git",

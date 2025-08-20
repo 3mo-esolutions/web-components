@@ -77,6 +77,23 @@ describe('FieldSelect', () => {
 		})
 	})
 
+	describe('searchable', () => {
+		const fixture = new ComponentTestFixture<FieldSelect<Person>>(html`
+			<mo-field-select label='Select' searchable>
+				${people.map(p => html`<mo-option value=${p.id} .data=${p}>${p.name}</mo-option>`)}
+			</mo-field-select>
+		`)
+
+		it('should render only when searchable and focused', async () => {
+			expect(fixture.component.searchInputElement).toBeUndefined()
+
+			fixture.component['focusController'].focusIn()
+			await fixture.updateComplete
+
+			expect(fixture.component.searchInputElement).toBeDefined()
+		})
+	})
+
 	describe('freeInput', () => {
 		const fixture = new ComponentTestFixture<FieldSelect<Person>>(html`
 			<mo-field-select label='Select' freeInput>

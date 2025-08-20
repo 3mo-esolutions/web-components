@@ -181,7 +181,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 	}
 
 	protected override get inputTemplate() {
-		return this.freeInput || this.searchable
+		return this.freeInput || (this.searchable && this.focusController.focused)
 			? this.searchInputTemplate
 			: this.valueInputTemplate
 	}
