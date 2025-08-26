@@ -42,11 +42,7 @@ export class PopoverContainer extends Component {
 			}
 
 			slot:not([name])::slotted(*) {
-				anchor-name: --mo-popover-container !important;
-			}
-
-			slot[name=popover]::slotted(*) {
-				position-anchor: --mo-popover-container !important;
+				anchor-name: --mo-popover-container;
 			}
 		`
 	}
