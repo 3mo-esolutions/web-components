@@ -1,56 +1,13 @@
-import { bind, Component, component, css, html, ifDefined, property, repeat, style, type HTMLTemplateResult } from '@a11d/lit'
-import { routerLink, type RoutableComponent, NavigationStrategy } from '@a11d/lit-application'
-import type { MaterialIcon } from '@3mo/icon'
+import { bind, Component, component, css, html, property, repeat } from '@a11d/lit'
+import { NavigationGroup, type INavigation } from './INavigation.js'
 
-type RouterLinkParameters = Exclude<Parameters<typeof routerLink>[0], RoutableComponent>
-
-export function getNavigationLabel(navigation: NavigationDefinition): HTMLTemplateResult | string | undefined {
-	return navigation.label
-		?? (!navigation.component ? undefined : label.get(navigation.component.constructor as any))
-}
-
-export type NavigationDefinition = {
-	label?: string | HTMLTemplateResult
-	icon?: MaterialIcon
-	hidden?: boolean
-	hasSeparator?: boolean
-} & (
-	| RouterLinkParameters & { children?: never }
-	| ({ [_ in keyof RouterLinkParameters]?: never } & { children: NavigationDefinition[] })
-)
 
 @component('mo-navigation-item')
 export class NavigationItem extends Component {
-	@property({ type: Object }) navigation!: NavigationDefinition
+	@property({ type: Object }) navigation!: INavigation
 	@property({ type: Boolean }) open = false
 
 	override tabIndex = 0
-
-	private get menuContentTemplate() {
-		const getItemTemplate = (navigation: NavigationDefinition, subMenu: boolean): HTMLTemplateResult => navigation.hidden ? html.nothing : html`
-			${!navigation.hasSeparator ? html.nothing : html`<mo-line></mo-line>`}
-
-			${!navigation.children ? html`
-				<mo-navigation-menu-item slot=${ifDefined(subMenu ? 'submenu' : undefined)}
-					${routerLink({ ...navigation, invocationHandler: () => {
-						this.open = false
-						navigation.invocationHandler?.()
-					} })}
-				>
-					${getNavigationLabel(navigation)} ${(navigation.navigationStrategy ?? NavigationStrategy.Page) === NavigationStrategy.Page ? '' : '...'}
-				</mo-navigation-menu-item>
-			` : html`
-				<mo-nested-menu-item slot=${ifDefined(subMenu ? 'submenu' : undefined)}>
-					${getNavigationLabel(navigation)}
-					${repeat(navigation.children, c => c, child => getItemTemplate(child, true))}
-				</mo-nested-menu-item>
-			`}
-		`
-
-		return !this.navigation.children || this.navigation.hidden ? html.nothing : html`
-			${repeat(this.navigation.children, c => c, child => getItemTemplate(child, false))}
-		`
-	}
 
 	static override get styles() {
 		return css`
@@ -100,13 +57,14 @@ export class NavigationItem extends Component {
 		return html`
 			<mo-focus-ring .control=${this} inward></mo-focus-ring>
 			<mo-flex id='button' direction='horizontal' alignItems='center' justifyContent='center' gap='2px'>
-				<span>${getNavigationLabel(this.navigation)}</span>
-				${!this.navigation.children ? html.nothing : html`
-					<mo-icon icon=${this.open ? 'keyboard_arrow_up' : 'keyboard_arrow_down'} ${style({ fontSize: 'large' })}></mo-icon>
-				`}
+				${this.navigation.getItemContentTemplate(this.open)}
 			</mo-flex>
 			<mo-menu target='button' .anchor=${this} ?open=${bind(this, 'open')}>
-				${this.menuContentTemplate}
+				${!(this.navigation instanceof NavigationGroup) ? html.nothing : repeat(
+					this.navigation.children,
+					c => c,
+					child => child.getMenuItemTemplate({ navigationInvocationHandler: () => this.open = false })
+				)}
 			</mo-menu>
 		`
 	}

@@ -1,8 +1,8 @@
-import { Component, bind, component, css, eventListener, html, ifDefined, property, query, queryAll, repeat, style, type HTMLTemplateResult } from '@a11d/lit'
-import { Key, routerLink, type PageComponent } from '@a11d/lit-application'
+import { Component, bind, component, css, eventListener, html, property, query, queryAll, repeat, style } from '@a11d/lit'
+import { Key } from '@a11d/lit-application'
 import { observeResize } from '@3mo/resize-observer'
 import { observeMutation } from '@3mo/mutation-observer'
-import { getNavigationLabel, type NavigationDefinition } from './NavigationItem.js'
+import type { INavigation } from './INavigation.js'
 
 /**
  * @attr navigations - The navigations to display in the navigation-bar and the drawer.
@@ -13,7 +13,7 @@ import { getNavigationLabel, type NavigationDefinition } from './NavigationItem.
  */
 @component('mo-navigation')
 export class Navigation extends Component {
-	@property({ type: Array }) navigations = new Array<NavigationDefinition>()
+	@property({ type: Array }) navigations = new Array<INavigation>()
 
 	@property({
 		type: Boolean,
@@ -121,7 +121,7 @@ export class Navigation extends Component {
 					${observeResize(() => this.checkNavigationOverflow())}
 					${observeMutation(() => this.checkNavigationOverflow())}
 				>
-					${repeat(this.navigations, n => n, navigation => this.getNavigationItemTemplate(navigation))}
+					${repeat(this.navigations, n => n, navigation => navigation.getItemTemplate({ navigationInvocationHandler: () => this.drawerOpen = false }))}
 				</mo-flex>
 
 				<mo-flex direction='horizontal' alignItems='center' gap='8px'>
@@ -133,7 +133,7 @@ export class Navigation extends Component {
 
 	private async checkNavigationOverflow() {
 		// As the items render using a "repeat" directive, they are not immediately available in the DOM sometimes.
-		await new Promise(resolve => setTimeout(resolve))
+		await new Promise(r => setTimeout(r))
 
 		const lastNavigationItem = this.navigationsContainer.style.flexDirection === 'row-reverse'
 			? this.navigationsContainer.firstElementChild
@@ -149,20 +149,6 @@ export class Navigation extends Component {
 		this.navigationsContainer.style.opacity = '1'
 	}
 
-	private getNavigationItemTemplate(navigation: NavigationDefinition) {
-		return navigation.hidden ? html.nothing : html`
-			<mo-navigation-item .navigation=${navigation}
-				${!navigation.component ? html.nothing : routerLink({
-					...navigation,
-					invocationHandler: () => {
-						this.drawerOpen = false
-						navigation.invocationHandler?.()
-					}
-				})}
-			>${getNavigationLabel(navigation)}</mo-navigation-item>
-		`
-	}
-
 	private get drawerTemplate() {
 		return html`
 			<mo-drawer ?open=${bind(this, 'drawerOpen')}>
@@ -171,49 +157,10 @@ export class Navigation extends Component {
 						<slot name='drawer-heading'>${manifest?.short_name}</slot>
 					</mo-flex>
 					<mo-list ${style({ flex: '1' })}>
-						${this.navigations.map(navigation => this.getNavigationListItemTemplate(navigation))}
+						${this.navigations.map(navigation => navigation.getListItemTemplate({ navigationInvocationHandler: () => this.drawerOpen = false }))}
 					</mo-list>
 				</mo-flex>
 			</mo-drawer>
-		`
-	}
-
-	private getNavigationListItemTemplate(navigation: NavigationDefinition, detailsSlot = false): HTMLTemplateResult {
-		if (navigation.hidden) {
-			return html.nothing
-		}
-
-		const iconTemplate = !navigation.icon ? html.nothing : html`
-			<mo-icon icon=${navigation.icon} style='opacity: 0.75; font-size: 24px'></mo-icon>
-		`
-
-		const contentTemplate = html`
-			${iconTemplate}
-			${getNavigationLabel(navigation)}
-		`
-
-		const separatorTemplate = !navigation.hasSeparator ? html.nothing : html`<mo-line slot=${ifDefined(detailsSlot ? 'details' : undefined)}></mo-line>`
-
-		if (navigation.children?.length) {
-			return html`
-				${separatorTemplate}
-				<mo-collapsible-list-item slot=${ifDefined(detailsSlot ? 'details' : undefined)}>
-					<mo-list-item>
-						${contentTemplate}
-					</mo-list-item>
-					${navigation.children?.map(child => this.getNavigationListItemTemplate(child, true))}
-				</mo-collapsible-list-item>
-			`
-		}
-
-		return html`
-			${separatorTemplate}
-			<mo-navigation-list-item
-				slot=${ifDefined(detailsSlot ? 'details' : undefined)}
-				${!navigation.component ? html.nothing : routerLink({ component: navigation.component as PageComponent, matchMode: 'ignore-parameters', invocationHandler: () => this.drawerOpen = false })}
-			>
-				${contentTemplate}
-			</mo-navigation-list-item>
 		`
 	}
 }

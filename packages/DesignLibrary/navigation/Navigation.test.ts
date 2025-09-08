@@ -1,13 +1,14 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { Key } from '@a11d/lit-application'
 import { Navigation } from './Navigation.js'
+import { NavigationLink } from './INavigation.js'
 
 describe('Navigation', () => {
 	describe('Alt key activation', () => {
 		const fixture = new ComponentTestFixture(() => {
 			const navigation = new Navigation()
 			navigation.navigations = [
-				{ label: 'Home', component: undefined! },
+				new NavigationLink({ label: 'Home', component: undefined! }),
 			]
 			return navigation
 		})

@@ -2,7 +2,7 @@ import { css, html, ifDefined } from '@a11d/lit'
 import { Application, PwaHelper, routerLink } from '@a11d/lit-application'
 import { Localizer } from '@3mo/localization'
 import { Icon, IconVariant } from '@3mo/icon'
-import { Authentication, BusinessSuiteAuthenticationDialogComponent, PagePreferences, type NavigationDefinition, type User } from './index.js'
+import { Authentication, BusinessSuiteAuthenticationDialogComponent, PagePreferences, type INavigation, type User } from './index.js'
 
 Icon.defaultVariant = IconVariant.Sharp
 
@@ -17,7 +17,7 @@ Localizer.dictionaries.add('de', {
 })
 
 export abstract class BusinessSuiteApplication extends Application {
-	protected abstract get navigations(): Array<NavigationDefinition>
+	protected abstract get navigations(): Array<INavigation>
 
 	constructor() {
 		super()
@@ -63,7 +63,7 @@ export abstract class BusinessSuiteApplication extends Application {
 		`
 	}
 
-	private get navigationTemplate() {
+	protected get navigationTemplate() {
 		return !window.locationbar.visible ? html.nothing : html`
 			<mo-navigation .navigations=${this.navigations}>
 				${this.navigationContentTemplate}
