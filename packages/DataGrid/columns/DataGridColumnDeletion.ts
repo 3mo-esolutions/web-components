@@ -30,15 +30,13 @@ export class DataGridColumnDeletion<TData> extends DataGridColumnComponent<TData
 	override nonSortable = true
 	override nonEditable = true
 
-	getContentTemplate = (_: never, data?: TData) => this.prevent ? html.nothing : html`
+	override getContentTemplate = (_: never, data?: TData) => this.prevent ? html.nothing : html`
 		<mo-icon-button icon=${this.icon}
 			${tooltip(this.tooltip ?? t('Delete position'))}
 			${style({ color: 'var(--mo-color-gray)', height: '40px', display: 'flex' })}
 			@click=${() => !data ? void 0 : this.delete.dispatch(data)}
 		></mo-icon-button>
 	`
-
-	getEditContentTemplate = undefined
 }
 
 declare global {

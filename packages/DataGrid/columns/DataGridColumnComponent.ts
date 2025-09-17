@@ -1,4 +1,4 @@
-import { Component, property, type HTMLTemplateResult } from '@a11d/lit'
+import { component, Component, property, type HTMLTemplateResult } from '@a11d/lit'
 import { DataGrid } from '../DataGrid.js'
 import { DataGridColumn, type DataGridColumnAlignment, type DataGridColumnMenuItems, type DataGridColumnSticky } from '../DataGridColumn.js'
 
@@ -13,8 +13,11 @@ import { DataGridColumn, type DataGridColumnAlignment, type DataGridColumnMenuIt
  * @attr nonSortable - Whether the column is sortable
  * @attr nonEditable - Whether the column is editable
  * @attr sticky - The sticky position of the column, either 'start', 'end', or 'both'
+ * @attr getContentTemplate - The content template of the column.
+ * @attr getEditContentTemplate - The edit content template of the column.
  */
-export abstract class DataGridColumnComponent<TData, TValue> extends Component {
+@component('mo-data-grid-column')
+export class DataGridColumnComponent<TData, TValue> extends Component {
 	@property({ type: Object }) dataGrid?: DataGrid<TData, any> | undefined
 
 	@property() width = 'max-content'
@@ -48,7 +51,7 @@ export abstract class DataGridColumnComponent<TData, TValue> extends Component {
 			sortable: !this.nonSortable,
 			editable: this.getEditContentTemplate !== undefined && (typeof nonEditable !== 'function' ? !nonEditable : x => !nonEditable(x)),
 			getMenuItemsTemplate: this.getMenuItemsTemplate?.bind(this),
-			getContentTemplate: this.getContentTemplate.bind(this),
+			getContentTemplate: this.getContentTemplate?.bind(this),
 			getEditContentTemplate: this.getEditContentTemplate?.bind(this),
 			generateCsvHeading: this.generateCsvHeading.bind(this),
 			generateCsvValue: this.generateCsvValue.bind(this),
@@ -57,8 +60,9 @@ export abstract class DataGridColumnComponent<TData, TValue> extends Component {
 
 	protected getMenuItemsTemplate?(): DataGridColumnMenuItems
 
-	abstract getContentTemplate(value: TValue | undefined, data: TData): HTMLTemplateResult
-	abstract getEditContentTemplate?(value: TValue | undefined, data: TData): HTMLTemplateResult
+	getContentTemplate?(value: TValue | undefined, data: TData): HTMLTemplateResult
+
+	getEditContentTemplate?(value: TValue | undefined, data: TData): HTMLTemplateResult
 
 	protected handleEdit(value: TValue | undefined, data: TData) {
 		this.dataGrid?.handleEdit(data, this.column, value as any)
@@ -83,5 +87,11 @@ export abstract class DataGridColumnComponent<TData, TValue> extends Component {
 	*generateCsvValue(value: any, data: TData): Generator<string> {
 		data
 		yield value?.toString() ?? ''
+	}
+}
+
+declare global {
+	interface HTMLElementTagNameMap {
+		'mo-data-grid-column': DataGridColumnComponent<unknown, unknown>
 	}
 }

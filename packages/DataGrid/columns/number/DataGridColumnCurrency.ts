@@ -26,11 +26,11 @@ export class DataGridColumnCurrency<TData> extends DataGridColumnNumberBase<TDat
 			?? DataGridColumnCurrency.defaultCurrency!
 	}
 
-	getContentTemplate(value: number | undefined, data: TData) {
+	override getContentTemplate(value: number | undefined, data: TData) {
 		return html`${this.getNumber(value)?.formatAsCurrency(this.getCurrency(data)) ?? html.nothing}`
 	}
 
-	getEditContentTemplate(value: number | undefined, data: TData) {
+	override getEditContentTemplate(value: number | undefined, data: TData) {
 		return html`
 			<mo-field-currency dense autofocus selectOnFocus
 				.currency=${this.getCurrency(data)}

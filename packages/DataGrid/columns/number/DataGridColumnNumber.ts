@@ -4,12 +4,12 @@ import { DataGridColumnNumberBase } from './DataGridColumnNumberBase.js'
 /** @element mo-data-grid-column-number */
 @component('mo-data-grid-column-number')
 export class DataGridColumnNumber<TData> extends DataGridColumnNumberBase<TData> {
-	getContentTemplate(value: number | undefined, data: TData) {
+	override getContentTemplate(value: number | undefined, data: TData) {
 		data
 		return html`${this.getNumber(value)?.format() ?? html.nothing}`
 	}
 
-	getEditContentTemplate(value: number | undefined, data: TData) {
+	override getEditContentTemplate(value: number | undefined, data: TData) {
 		return html`
 			<mo-field-number dense autofocus selectOnFocus
 				min=${ifDefined(this.getMin(data))}

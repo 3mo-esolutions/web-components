@@ -13,7 +13,7 @@ export class DataGridColumnImage<TData> extends DataGridColumnComponent<TData, s
 	override nonSortable = true
 	override nonEditable = true
 
-	getContentTemplate(value: string | undefined, data: TData) {
+	override getContentTemplate(value: string | undefined, data: TData) {
 		if (!value) {
 			return html.nothing
 		}
@@ -31,8 +31,6 @@ export class DataGridColumnImage<TData> extends DataGridColumnComponent<TData, s
 			>
 		`
 	}
-
-	override getEditContentTemplate = undefined
 
 	override *generateCsvValue(value: string, data: TData) {
 		value

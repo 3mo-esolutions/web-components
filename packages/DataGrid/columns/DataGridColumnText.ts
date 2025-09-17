@@ -4,12 +4,12 @@ import { DataGridColumnComponent } from './DataGridColumnComponent.js'
 /** @element mo-data-grid-column-text */
 @component('mo-data-grid-column-text')
 export class DataGridColumnText<TData> extends DataGridColumnComponent<TData, string> {
-	getContentTemplate(value: string | undefined, data: TData) {
+	override getContentTemplate(value: string | undefined, data: TData) {
 		data
 		return html`${value ?? ''}`
 	}
 
-	getEditContentTemplate(value: string | undefined, data: TData) {
+	override getEditContentTemplate(value: string | undefined, data: TData) {
 		return html`
 			<mo-field-text dense autofocus selectOnFocus
 				value=${ifDefined(value)}

@@ -4,7 +4,7 @@ import { DataGridColumnDateTimeBase } from './DataGridColumnDateTimeBase.js'
 /** @element mo-data-grid-column-date-time-range */
 @component('mo-data-grid-column-date-time-range')
 export class DataGridColumnDateTimeRange<TData> extends DataGridColumnDateTimeBase<TData, DateTimeRange> {
-	getContentTemplate(value: DateTimeRange | undefined, data: TData) {
+	override getContentTemplate(value: DateTimeRange | undefined, data: TData) {
 		data
 		return html`${value ? value.format(this.formatOptionsValue) ?? '' : ''}`
 	}

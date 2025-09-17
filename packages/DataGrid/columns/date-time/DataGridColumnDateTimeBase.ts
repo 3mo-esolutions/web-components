@@ -16,7 +16,7 @@ export abstract class DataGridColumnDateTimeBase<TData, TDate extends { format(.
 		return this.formatOptions ?? (this.constructor as typeof DataGridColumnDateTimeBase).defaultFormatOptions
 	}
 
-	getEditContentTemplate(value: TDate | undefined, data: TData) {
+	override getEditContentTemplate(value: TDate | undefined, data: TData) {
 		return html`
 			${staticHtml`
 				<${this.fieldTag} dense autofocus selectOnFocus
