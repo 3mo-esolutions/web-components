@@ -8,7 +8,7 @@ describe('Navigation', () => {
 		const fixture = new ComponentTestFixture(() => {
 			const navigation = new Navigation()
 			navigation.navigations = [
-				new NavigationLink({ label: 'Home', component: undefined! }),
+				new NavigationLink({ label: 'Home', component: { urlMatches: () => false } } as any)
 			]
 			return navigation
 		})
