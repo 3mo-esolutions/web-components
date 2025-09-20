@@ -1,4 +1,5 @@
 import { component, Component, property, type HTMLTemplateResult } from '@a11d/lit'
+import { hasChanged } from '@a11d/equals'
 import { DataGrid } from '../DataGrid.js'
 import { DataGridColumn, type DataGridColumnAlignment, type DataGridColumnMenuItems, type DataGridColumnSticky } from '../DataGridColumn.js'
 
@@ -29,13 +30,7 @@ export class DataGridColumnComponent<TData, TValue> extends Component {
 	@property({ reflect: true }) dataSelector!: KeyPath.Of<TData>
 	@property({ reflect: true }) sortDataSelector?: KeyPath.Of<TData>
 	@property({ type: Boolean, reflect: true }) nonSortable = false
-	@property({
-		type: Boolean,
-		reflect: true,
-		hasChanged(value: boolean | Predicate<TData>, oldValue: boolean | Predicate<TData>) {
-			return String(value) !== String(oldValue)
-		}
-	}) nonEditable: boolean | Predicate<TData> = false
+	@property({ type: Boolean, reflect: true, hasChanged }) nonEditable: boolean | Predicate<TData> = false
 
 	get column(): DataGridColumn<TData, TValue> {
 		const nonEditable = this.nonEditable
