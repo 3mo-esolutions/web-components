@@ -1,21 +1,20 @@
-import { run, Package } from './util/index.mjs'
+import { run, Package } from './util/index.ts'
 import FileSystem from 'fs'
 import Path from 'path'
 
 class Release {
-	/** @readonly @type {Package} */ package
-	/** @readonly @type {string} */ version
-	/** @readonly @type {string} */ oldVersion
-	/** @readonly @type {Date} */ date
-	/** @readonly @type {Commit[]} */ commits = []
+	readonly package!: Package
+	readonly version!: string
+	readonly oldVersion!: string
+	readonly date!: Date
+	readonly commits = new Array<Commit>()
 
 	get dateString() { return this.date.toISOString().split('T')[0] }
 
-	/** @param {Partial<Release>} init */
-	constructor(init) { Object.assign(this, init) }
+	constructor(init: Partial<Release>) { Object.assign(this, init) }
 
 	sortCommits() {
-		this.commits.sort((a, b) => a - b)
+		this.commits.sort((a, b) => a.valueOf() - b.valueOf())
 	}
 
 	toString(forGlobalChangelog = false) {
@@ -28,7 +27,7 @@ class Release {
 class Commit {
 	static regex = /(?<body>.+)?\((?<hash>\w+)\)\s?\((?<date>.+)\)/s
 
-	static fromMessage(/** @type string */ message, /** @type Package */ pkg) {
+	static fromMessage(message: string, pkg: Package) {
 		const match = message.match(Commit.regex)?.groups
 		if (!match) {
 			throw new Error(`Invalid commit message: ${message}`)
@@ -42,8 +41,7 @@ class Commit {
 		})
 	}
 
-	/** @param {Partial<Commit>} init */
-	constructor(init) {
+	constructor(init: Omit<Partial<Commit>, 'valueOf'>) {
 		Object.assign(this, init)
 		this.changeSets.forEach(cs => cs.commit = this)
 	}
@@ -52,10 +50,10 @@ class Commit {
 		return this.changeSets.map(cs => cs.valueOf()).reduce((a, b) => a + b, 0)
 	}
 
-	/** @readonly @type {Package} */ package
-	/** @readonly @type {string} */ hash
-	/** @readonly @type {Date} */ date
-	/** @readonly @type {ChangeSet[]} */ changeSets
+	readonly package!: Package
+	readonly hash!: string
+	readonly date!: Date
+	readonly changeSets = new Array<ChangeSet>()
 
 	toString() {
 		return [...new Set(this.changeSets.map(cs => cs.toString())).values()].join('\n')
@@ -65,7 +63,7 @@ class Commit {
 class ChangeSet {
 	static regex = /(?<type>\w+)(\((?<scope>\w+)\))?(?<breakingChangeMarker>!?): (?<message>.+)/
 
-	static fromMessage(/** @type string */ message) {
+	static fromMessage(message: string) {
 		const match = message.match(ChangeSet.regex)?.groups
 		if (!match) {
 			return new ChangeSet({ message })
@@ -85,8 +83,7 @@ class ChangeSet {
 		['perf', { emoji: '⚡️', name: 'Performance Improvement' }],
 	])
 
-	/** @param {Partial<ChangeSet>} init */
-	constructor(init) {
+	constructor(init: Omit<Partial<ChangeSet>, 'valueOf'>) {
 		Object.assign(this, init)
 		this.type ||= 'chore'
 		this.message = this.message?.charAt(0).toUpperCase() + this.message?.slice(1)
@@ -94,11 +91,11 @@ class ChangeSet {
 	get typeName() { return ChangeSet.typeInfo.get(this.type)?.name ?? 'Chore' }
 	get emoji() { return ChangeSet.typeInfo.get(this.type)?.emoji ?? '🧹' }
 
-	/** @readonly @type {string} */ type
-	/** @readonly @type {string} */ scope
-	/** @readonly @type {string} */ message
-	/** @readonly @type {Commit} */ commit
-	/** @readonly @type {boolean} */ breakingChange
+	readonly type!: string
+	readonly scope!: string
+	readonly message!: string
+	readonly breakingChange!: boolean
+	commit!: Commit
 
 	valueOf() {
 		return ChangeSet.order.indexOf(this.type)
@@ -110,26 +107,23 @@ class ChangeSet {
 }
 
 export class ChangeLog {
-	/* @readonly */ static versionRegex = /"version": \[-"(?<oldVersion>.+)",-]{\+"(?<version>.+)",\+}/
+	static readonly versionRegex = /"version": \[-"(?<oldVersion>.+)",-]{\+"(?<version>.+)",\+}/
 
 	static async generate() {
 		const releases = (await Promise.all(Package.all.map(p => this.generateForPackage(p)))).flat()
-		const releaseNotes = Object.entries(Object.groupBy(releases, release => release.dateString))
+		const groupBy = (Object as any).groupBy as <K extends PropertyKey, T>(items: Iterable<T>, keySelector: (item: T, index: number) => K) => Partial<Record<K, T[]>>
+		const releaseNotes = Object.entries(groupBy(releases, (release: Release) => release.dateString))
 			.sort(([a], [b]) => new Date(b).valueOf() - new Date(a).valueOf())
-			.map(([dateString, releases]) => `# ${dateString}\n\n${releases.map(r => r.toString(true)).join('\n\n')}`)
+			.map(([dateString, releases]) => `# ${dateString}\n\n${releases?.map(r => r.toString(true)).join('\n\n')}`) as Array<string>
 
 		FileSystem.writeFileSync(Path.resolve('CHANGELOG.md'), releaseNotes.join('\n\n'))
 	}
 
-	/**
-	 * @param {Package} p
-	 * @returns {Promise<Release[]>}
-	 */
-	static async generateForPackage(p) {
+	static async generateForPackage(p: Package) {
 		const commits = (await run('git log --first-parent origin/main --pretty=format:"%B (%H) (%ad);;;" --date=format:"%Y-%m-%d" ./package.json', p.relativePath)).split(';;;')
 
-		/** @type {Release[]} */ const releases = []
-		/** @type {Release} */ let lastRelease
+		const releases = new Array<Release>()
+		let lastRelease: Release | undefined
 		for (const [index, commit] of commits.entries()) {
 			const { hash, date } = commit.match(Commit.regex)?.groups ?? {}
 			if (!hash || !date) {
@@ -139,9 +133,10 @@ export class ChangeLog {
 			if (!output || !output.includes('version')) {
 				continue
 			}
+			// eslint-disable-next-line prefer-const
 			let { version, oldVersion } = output.match(ChangeLog.versionRegex)?.groups ?? {}
 			if (index === commits.length - 1) {
-				version ||= releases.filter(l => !!l.oldVersion).at(-1)?.oldVersion
+				version ||= releases.filter(l => !!l.oldVersion).at(-1)?.oldVersion || version
 			}
 			const release = !version ? lastRelease : (lastRelease = new Release({ package: p, version, oldVersion, date: new Date(date) }))
 			release?.commits.push(Commit.fromMessage(commit, p))

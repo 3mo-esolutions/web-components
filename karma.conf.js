@@ -1,5 +1,4 @@
-/* eslint-disable */
-module.exports = config => config.set({
+export default config => config.set({
 	basePath: '.',
 	frameworks: ['jasmine'],
 	plugins: ['karma-*'],

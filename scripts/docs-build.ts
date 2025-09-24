@@ -1,4 +1,4 @@
-import { run } from './util/index.mjs'
+import { run } from './util/index.ts'
 
 await Promise.all([
 	run('npm run analyze', undefined, true),

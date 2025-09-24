@@ -1,10 +1,10 @@
 // @ts-check
 import { promises as FileSystem } from 'fs'
-import { Package, run } from './util/index.mjs'
+import { Package, run } from './util/index.ts'
 
 const packageNames = Package.all.map(p => p.name)
 
-const getPackageReadmeElements = (/** @type {string} */ packageName) => {
+const getPackageReadmeElements = (packageName: string) => {
 	const style = 'for-the-badge'
 	const p = Package.all.find(p => p.name === packageName)
 	const packageNameEncoded = encodeURIComponent(packageName)
@@ -18,14 +18,10 @@ const getPackageReadmeElements = (/** @type {string} */ packageName) => {
 	return { packageFolderLink, packageBadge, packageVersionBadge, packageDownloadsBadge }
 }
 
-const cell = (/** @type {string} */ value) => value || ''
-const codeCell = (/** @type {string} */ value) => value ? `<code>${value.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code>` : ''
+const cell = (value?: string) => value || ''
+const codeCell = (value?: string) => value ? `<code>${value.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code>` : ''
 
-/**
- * @param {import('../custom-elements.json')} manifest
- * @param {Package} pack
- */
-async function generatePackageReadme(manifest, pack) {
+async function generatePackageReadme(manifest: typeof import('../custom-elements.json'), pack: Package) {
 	const elements = manifest.tags.filter(tag => tag.path.includes(pack.relativePath.replace('/', '\\') + '\\'))
 	const readmeElements = getPackageReadmeElements(pack.name)
 	await FileSystem.writeFile(`${pack.path}/README.md`, `
@@ -66,7 +62,7 @@ async function generatePackageReadme(manifest, pack) {
 						<tr>
 							<td>${cell(prop.name)}</td>
 							<td>${codeCell(prop.type)}</td>
-							<td>${cell(prop.description)}</td>
+							<td>${cell((prop as any).description)}</td>
 						</tr>
 					`).join('\n')}
 				`}
@@ -79,7 +75,7 @@ async function generatePackageReadme(manifest, pack) {
 						<tr>
 							<td>${cell(event.name)}</td>
 							<td>${codeCell(event.type)}</td>
-							<td>${cell(event.description)}</td>
+							<td>${cell((event as any).description)}</td>
 						</tr>
 					`).join('\n')}
 				`}
@@ -92,7 +88,7 @@ async function generatePackageReadme(manifest, pack) {
 						<tr>
 							<td>${cell(prop.name)}</td>
 							<td></td>
-							<td>${cell(prop.description)}</td>
+							<td>${cell((prop as any).description)}</td>
 						</tr>
 					`).join('\n')}
 				`}
@@ -105,7 +101,7 @@ async function generatePackageReadme(manifest, pack) {
 						<tr>
 							<td>${cell(part.name)}</td>
 							<td></td>
-							<td>${cell(part.description)}</td>
+							<td>${cell((part as any).description)}</td>
 						</tr>
 					`).join('\n')}
 				`}

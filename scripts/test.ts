@@ -1,12 +1,9 @@
-/* eslint-disable no-console */
-// @ts-check
 import FileSystem from 'fs'
 import Path from 'path'
 import esbuild from 'esbuild'
 
-function getTestFiles(directory) {
+function getTestFiles(directory: string): Array<string> {
 	const files = FileSystem.readdirSync(directory)
-	// @ts-ignore - filter returns string[] | string[][]
 	return files.flatMap(file => {
 		const fullPath = Path.resolve(directory, file)
 		if (FileSystem.statSync(fullPath)?.isDirectory()) {
@@ -16,7 +13,7 @@ function getTestFiles(directory) {
 		if (fullPath.endsWith('.test.ts') && !fullPath.includes('node_modules')) {
 			return fullPath
 		}
-	}).filter(Boolean)
+	}).filter(Boolean) as Array<string>
 }
 
 FileSystem.mkdirSync('./dist', { recursive: true })

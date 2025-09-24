@@ -1,25 +1,27 @@
 /* eslint-disable no-console */
-// @ts-check
 import * as FileSystem from 'fs'
 import process from 'process'
 import Path from 'path'
-import { run } from './run.mjs'
+import { run } from './run.ts'
 
 export class Package {
-	/** @readonly */
-	static directory = './packages'
+	static readonly directory = './packages'
 
-	/** @type {Package[]} @readonly */ static all = getPackagePathsByDirectory(Package.directory).map(path => new Package(path))
+	static readonly all = getPackagePathsByDirectory(Package.directory).map(path => new Package(path))
 
-	/** @readonly @type string */ path
-	/** @readonly @type string */ relativePath
-	/** @readonly @type string */ directoryName
-	/** @readonly @type string */ packageJsonPath
-	/** @readonly @type object */ packageJson
-	/** @readonly @type string */ name
+	readonly path!: string
+	readonly relativePath!: string
+	readonly directoryName!: string
+	readonly packageJsonPath!: string
+	readonly name!: string
+	readonly packageJson!: {
+		readonly name: string
+		readonly description: string
+		readonly repository: { readonly url: string }
+		changelog?: string
+	}
 
-	/** @param {string} path */
-	constructor(path) {
+	constructor(path: string) {
 		this.path = path
 		this.relativePath = Path.relative(process.cwd(), path).replace(/\\/g, '/')
 		this.directoryName = Path.basename(path)
@@ -28,11 +30,7 @@ export class Package {
 		this.name = this.packageJson.name
 	}
 
-	/**
-	 * Releases the package
-	 * @param {string} versionBumpType
-	 */
-	async release(versionBumpType) {
+	async release(versionBumpType: string) {
 		await run('npm run clean')
 		console.log(await run('tsc', this.relativePath) || 'TypeScript compiled successfully')
 		await run('npm run analyze', undefined, true)
@@ -50,14 +48,9 @@ export class Package {
 	}
 }
 
-/**
- * Recursively searches a directory for package.json files
- * @param {string} directory - The directory to search for package.json files
- * @returns {string[]} - An array of paths to package.json files
- */
-function getPackagePathsByDirectory(directory) {
+/** Recursively searches a directory for package.json files */
+function getPackagePathsByDirectory(directory: string): Array<string> {
 	const files = FileSystem.readdirSync(directory)
-	// @ts-ignore - filter returns string[] | string[][]
 	return files.flatMap(file => {
 		const fullPath = Path.resolve(directory, file)
 		if (FileSystem.statSync(fullPath)?.isDirectory()) {
@@ -68,5 +61,5 @@ function getPackagePathsByDirectory(directory) {
 			// remove the package.json file name from the path:
 			return Path.dirname(fullPath)
 		}
-	}).filter(Boolean)
+	}).filter(Boolean) as Array<string>
 }

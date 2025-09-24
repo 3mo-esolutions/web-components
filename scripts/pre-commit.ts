@@ -1,4 +1,4 @@
-import { run } from './util/index.mjs'
+import { run } from './util/index.ts'
 
 const branch = (await run('git branch --show-current')).trim()
 

@@ -1,5 +1,4 @@
-// @ts-check
-import { Package } from './util/index.mjs'
+import { Package } from './util/index.ts'
 
 const versionBumpType = 'patch'
 

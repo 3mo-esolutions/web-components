@@ -1,19 +1,20 @@
 {
+	"type": "module",
 	"scripts": {
 		"start": "npm run clean && npm install --loglevel=error && npm run analyze && storybook dev -p 3000",
-		"dev": "node ./scripts/test.mjs",
+		"dev": "node ./scripts/test.ts",
 		"watch": "npm-watch",
-		"test": "node ./scripts/test.mjs && karma start --single-run",
+		"test": "node ./scripts/test.ts && karma start --single-run",
 		"lint": "eslint **/*.ts",
-		"docs:build": "node ./scripts/docs-build.mjs",
-		"clean": "node ./scripts/clean.mjs",
+		"docs:build": "node ./scripts/docs-build.ts",
+		"clean": "node ./scripts/clean.ts",
 		"typescript": "tsc --build --noEmit",
-		"release": "node ./scripts/release.mjs",
-		"release:all": "node ./scripts/release-all.mjs",
+		"release": "node ./scripts/release.ts",
+		"release:all": "node ./scripts/release-all.ts",
 		"build": "npm run clean && tsc --build && npm run clean",
-		"analyze": "node ./scripts/analyze.mjs",
-		"readme": "node ./scripts/readme.mjs",
-		"pre-commit": "node ./scripts/pre-commit.mjs"
+		"analyze": "node ./scripts/analyze.ts",
+		"readme": "node ./scripts/readme.ts",
+		"pre-commit": "node ./scripts/pre-commit.ts"
 	},
 	"pre-commit": "pre-commit",
 	"watch": {

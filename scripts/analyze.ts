@@ -1,5 +1,4 @@
-// @ts-check
-import { Package, run } from './util/index.mjs'
+import { Package, run } from './util/index.ts'
 import { promises as FileSystem, existsSync } from 'fs'
 
 await run('wca analyze --outFiles ./custom-elements.json --visibility public ./packages/**/*.ts')
