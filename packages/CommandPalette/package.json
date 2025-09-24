@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/command-palette",
-	"version": "0.0.3",
+	"version": "0.1.0",
 	"description": "Command-palettes are a common way to provide users with a list of actions they can perform in a given context.",
 	"repository": {
 		"type": "git",
@@ -28,7 +28,7 @@
 		"tslib": "x",
 		"detect-browser": "x",
 		"typescript-memoize": "1.x",
-		"@3mo/fetcher-controller": "x",
+		"@3mo/fetcher-controller": "0.2.x",
 		"@3mo/flex": "x",
 		"@3mo/icon": "x",
 		"@3mo/field": "x",

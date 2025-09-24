@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/fetchable-data-grid",
-	"version": "0.4.2",
+	"version": "0.5.0",
 	"description": "A fetchable variant of @3mo/data-grid",
 	"repository": {
 		"type": "git",
@@ -27,11 +27,12 @@
 	"dependencies": {
 		"tslib": "x",
 		"@a11d/lit": "x",
+		"@a11d/equals": "x",
 		"@3mo/icon-button": "x",
 		"@3mo/circular-progress": "x",
 		"@3mo/empty-state": "x",
 		"@3mo/data-grid": "x",
-		"@3mo/fetcher-controller": "x",
+		"@3mo/fetcher-controller": "0.2.x",
 		"@3mo/tooltip": "x"
 	}
 }

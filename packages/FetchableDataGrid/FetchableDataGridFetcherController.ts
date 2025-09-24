@@ -2,32 +2,24 @@ import { FetcherController } from '@3mo/fetcher-controller'
 import { DataGridSelectionBehaviorOnDataChange } from '@3mo/data-grid'
 import { type FetchableDataGrid, type FetchableDataGridResult } from './FetchableDataGrid.js'
 
-type FetchOptions = {
-	readonly silent?: boolean
-}
+type FetchOptions = { readonly silent?: boolean }
 
-export class FetchableDataGridFetcherController<TData> extends FetcherController<FetchableDataGridResult<TData> | undefined> {
+type Arguments<T> = [parameters: FetchableDataGrid<T>['parameters']]
+
+export class FetchableDataGridFetcherController<TData> extends FetcherController<FetchableDataGridResult<TData> | undefined, Arguments<TData>> {
 	constructor(override readonly host: FetchableDataGrid<TData, any, any>) {
 		super(host, {
 			throttle: 500,
-			fetch: async () => {
-				if (!this.host.parameters) {
-					return undefined
-				}
-
-				const paginationParameters = this.host.paginationParameters?.({ page: this.host.page, pageSize: this.host.pageSize }) ?? {}
-				const sortParameters = this.host.sortParameters?.() ?? {}
-				const data = await this.host.fetch({
-					...this.host.parameters,
-					...paginationParameters,
-					...sortParameters,
-				}) ?? []
-				this.host.dataFetch.dispatch(data)
-
-				return data
-			},
+			fetch: ([parameters]) => !parameters ? Promise.resolve(undefined) : this.host.fetch(parameters),
+			args: () => [{
+				...this.host.parameters ?? {},
+				...this.host.paginationParameters?.({ page: this.host.page, pageSize: this.host.pageSize }) ?? {},
+				...this.host.sortParameters?.() ?? {},
+			}]
 		})
 	}
+
+	disabled = false
 
 	private _hasNextPage?: boolean
 	get hasNextPage() { return this._hasNextPage ?? false }
@@ -42,22 +34,24 @@ export class FetchableDataGridFetcherController<TData> extends FetcherController
 		this.host.requestUpdate()
 	}
 
-	override async fetch(options?: FetchOptions): Promise<FetchableDataGridResult<TData> | undefined> {
-		if (this._preventFetch) {
-			return
-		}
-
+	fetch(options?: FetchOptions) {
 		this.silent = options?.silent ?? (this.host.silentFetch
 			&& this.host.data.length > 0
 			&& !this.host.hasServerSidePagination
 			&& !this.host.hasServerSideSort
 		)
 
-		this._hasNextPage = undefined
-		this._dataLength = undefined
+		return this.run()
+	}
 
-		const result = await super.fetch() || []
+	override async run(args?: Arguments<TData>) {
+		if (this.disabled) {
+			return
+		}
 
+		await super.run(args)
+
+		const result = this.value || []
 		if (!(result instanceof Array)) {
 			this._dataLength = result.dataLength
 			this._hasNextPage = result.hasNextPage ?? (this.host.page < Math.ceil(result.dataLength / this.host.pageSize))
@@ -68,37 +62,18 @@ export class FetchableDataGridFetcherController<TData> extends FetcherController
 			this.silent ? DataGridSelectionBehaviorOnDataChange.Maintain : this.host.selectionBehaviorOnDataChange,
 		)
 
-		return result
-	}
-
-	private _preventFetch = false
-	async runPreventingFetch(action: () => void | PromiseLike<void>) {
-		this._preventFetch = true
-		const result = action()
-		if (result instanceof Promise) {
-			await result
-		}
-		this._preventFetch = false
-	}
-
-	private _autoRefetch?: number
-	get autoRefetch() { return this._autoRefetch }
-	set autoRefetch(value: number | undefined) {
-		this._autoRefetch = value
-		this.host.requestUpdate()
-		this.updateTimer()
+		this.host.dataFetch.dispatch(result)
 	}
 
 	private timerId?: number
-	private updateTimer() {
+	updateTimer() {
 		window.clearInterval(this.timerId)
-		this.timerId = undefined
-		if (this.autoRefetch) {
+		if (this.host.autoRefetch) {
 			this.timerId = window.setInterval(() => {
-				if (!this.isFetching) {
+				if (!this.pending) {
 					this.fetch({ silent: true })
 				}
-			}, this.autoRefetch * 1000)
+			}, this.host.autoRefetch * 1000)
 		}
 	}
 }

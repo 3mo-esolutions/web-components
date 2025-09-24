@@ -19,12 +19,14 @@ export const _CommandPalette: StoryObj = {
 			name = 'Numbers'
 			icon: MaterialIcon = 'pin'
 
-			fetch() {
-				return Promise.resolve(DataSource.items)
+			async fetch() {
+				await new Promise(r => setTimeout(r, 1000))
+				return DataSource.items
 			}
 
-			search(keyword: string) {
-				return Promise.resolve(DataSource.items.filter(i => i.toString().includes(keyword)))
+			async search(keyword: string) {
+				await new Promise(r => setTimeout(r, 1000))
+				return DataSource.items.filter(i => i.toString().includes(keyword))
 			}
 
 			getItem(item: number): CommandPaletteData {

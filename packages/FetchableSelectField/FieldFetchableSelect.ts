@@ -1,4 +1,5 @@
-import { component, css, property, event, html, type HTMLTemplateResult, type PropertyValues } from '@a11d/lit'
+import { component, css, property, event, html, type HTMLTemplateResult } from '@a11d/lit'
+import { hasChanged } from '@a11d/equals'
 import { FetcherController } from '@3mo/fetcher-controller'
 import { FieldSelect } from '@3mo/select-field'
 
@@ -25,20 +26,25 @@ export class FieldFetchableSelect<T, TDataFetcherParameters extends FieldFetchab
 	@property({ type: Number }) optionsRenderLimit = FieldFetchableSelect.fetchedOptionsRenderLimit
 	@property({ type: Object }) optionTemplate?: (data: T, index: number, array: Array<T>) => HTMLTemplateResult
 
-	@property({ type: Object, updated(this: FieldFetchableSelect<T>) { this.requestFetch() } }) parameters?: TDataFetcherParameters
-	@property({ type: Object }) searchParameters?: (keyword: string) => Partial<TDataFetcherParameters>
+	@property({ type: Object, hasChanged }) parameters?: TDataFetcherParameters
+	@property({ type: Object, hasChanged }) searchParameters?: (keyword: string) => Partial<TDataFetcherParameters>
 
-	@property({ type: Object }) fetch?: (parameters: TDataFetcherParameters | undefined) => Promise<Array<T>>
+	@property({ type: Object, hasChanged }) fetch?: (parameters: TDataFetcherParameters | undefined) => Promise<Array<T>>
 
 	readonly fetcherController = new FetcherController(this, {
-		throttle: 500,
-		fetch: async () => {
-			const searchParameters = this.searchParameters?.(this.searchKeyword) ?? {}
-			const parameters = { ...this.parameters, ...searchParameters } as TDataFetcherParameters
+		fetch: async ([parameters]) => {
 			const data = await this.fetch?.(parameters) || []
 			this.dataFetch.dispatch(data)
 			return data
 		},
+		args: () => [this.parameters]
+	})
+
+	private readonly searchFetcherController = new FetcherController(this, {
+		throttle: 500,
+		autoRun: false,
+		fetch: ([parameters]) => !this.hasSearchInput ? Promise.resolve([]) : this.fetch?.(parameters) || Promise.resolve([]),
+		args: () => [{ ...this.parameters, ...this.searchParameters?.(this.searchKeyword) ?? {} } as TDataFetcherParameters] as const
 	})
 
 	static override get styles() {
@@ -68,31 +74,20 @@ export class FieldFetchableSelect<T, TDataFetcherParameters extends FieldFetchab
 	}
 
 	protected override get template() {
-		this.toggleAttribute('fetching', this.fetcherController.isFetching)
+		this.toggleAttribute('fetching', this.fetcherController.pending || this.searchFetcherController.pending)
 		return super.template
 	}
 
-	protected override firstUpdated(props: PropertyValues<this>) {
-		super.firstUpdated(props)
-		if (!this.parameters) {
-			this.requestFetch()
-		}
-	}
-
-	protected override async search() {
-		if (!this.searchParameters) {
-			return super.search()
-		} else {
-			await this.requestFetch()
-		}
+	protected override search() {
+		return !this.searchParameters ? super.search() : this.searchFetcherController.run()
 	}
 
 	requestFetch() {
-		return this.fetcherController.fetch()
+		return this.fetcherController.run()
 	}
 
 	protected override get showNoOptionsHint() {
-		return super.showNoOptionsHint && !this.fetcherController.isFetching
+		return super.showNoOptionsHint && !this.searchFetcherController.pending && !this.fetcherController.pending
 	}
 
 	protected override get optionsTemplate() {
@@ -104,8 +99,8 @@ export class FieldFetchableSelect<T, TDataFetcherParameters extends FieldFetchab
 
 	protected get fetchedOptionsTemplate() {
 		return html`
-			${this.fetcherController.data?.slice(0, this.optionsRenderLimit)?.map((data, index, array) => this.optionTemplate?.(data, index, array) ?? html`
-				<mo-option .data=${data} value=${index} fetched>${data}</mo-option>
+			${(this.hasSearchInput && !!this.searchParameters ? this.searchFetcherController.value : this.fetcherController.value)?.slice(0, this.optionsRenderLimit)?.map((value, index, data) => this.optionTemplate?.(value, index, data) ?? html`
+				<mo-option .data=${value} value=${index}>${value}</mo-option>
 			`)}
 		`
 	}

@@ -1,45 +1,36 @@
-import { Controller, event, type ReactiveControllerHost } from '@a11d/lit'
+import { type ReactiveControllerHost } from '@a11d/lit'
+import { equals } from '@a11d/equals'
+import { Task, TaskStatus as TaskStaus, type TaskConfig } from '@lit/task'
 import { Throttler } from '@3mo/throttler'
 import { Enqueuer } from './index.js'
 
-type Options<T> = {
-	readonly fetch: () => T | PromiseLike<T>
-	throttle?: number
-}
-
-export class FetcherController<T> extends Controller {
-	@event() readonly fetched!: EventDispatcher<T>
-
+export class FetcherController<T = unknown, A extends ReadonlyArray<unknown> = readonly unknown[]> extends Task<A, T> {
 	protected readonly fetchEnqueuer = new Enqueuer()
 	protected readonly throttler = new Throttler(this.options?.throttle ?? 0)
 
-	constructor(protected override readonly host: ReactiveControllerHost, protected readonly options: Options<T>) {
-		super(host)
+	constructor(
+		protected readonly host: ReactiveControllerHost,
+		protected readonly options: {
+			readonly fetch: TaskConfig<A, T>['task']
+			readonly args?: TaskConfig<A, T>['args']
+			readonly autoRun?: TaskConfig<A, T>['autoRun']
+			readonly throttle?: number
+		}
+	) {
+		super(host, {
+			task: options.fetch,
+			args: options.args,
+			autoRun: options.autoRun,
+			argsEqual: (a, b) => Object[equals](a, b),
+		})
 	}
 
-	protected _isFetching = false
-	get isFetching() { return this._isFetching }
-	protected set isFetching(value) {
-		this._isFetching = value
-		this.host.requestUpdate()
+	get pending() {
+		return super.status === TaskStaus.PENDING
 	}
 
-	protected _data?: T
-	get data() { return this._data }
-	protected set data(value) {
-		this._data = value
-		this.host.requestUpdate()
-	}
-
-	async fetch() {
-		this.isFetching = true
+	override async run(args?: A) {
 		await this.throttler.throttle()
-		const fetchPromiseOrResult = this.options.fetch()
-		this.data = fetchPromiseOrResult instanceof Promise
-			? await this.fetchEnqueuer.enqueue<T>(fetchPromiseOrResult)
-			: await fetchPromiseOrResult
-		this.isFetching = false
-		this.fetched.dispatch(this.data)
-		return this.data
+		await this.fetchEnqueuer.enqueue(super.run(args))
 	}
 }

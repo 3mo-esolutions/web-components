@@ -36,6 +36,7 @@ export class DataGridModesController<TData, TParameters extends FetchableDataGri
 
 	constructor(override readonly host: ModdableDataGrid<TData, TParameters, any>) {
 		super(host)
+		this.host.fetcherController.disabled = true
 	}
 
 	override hostUpdated() {
@@ -44,12 +45,9 @@ export class DataGridModesController<TData, TParameters extends FetchableDataGri
 		}
 	}
 
-	private _initialized = false
-	get initialized() { return this._initialized }
-
 	override async hostConnected() {
 		await this.fetch()
-		this._initialized = true
+		this.host.fetcherController.disabled = false
 		this.host.requestFetch()
 	}
 
@@ -71,9 +69,8 @@ export class DataGridModesController<TData, TParameters extends FetchableDataGri
 	async set(mode: ModdableDataGridMode<TData, TParameters> | undefined) {
 		await this.adapter.setSelectedId(this.dataGridKey, mode?.id)
 		this._selectedMode = mode
-		this.host.modeChange.dispatch(mode)
-		this.host.runPreventingFetch(() => (this.selectedMode ?? this.defaultMode)?.apply(this.host))
-		this.host.requestFetch()
+		this.host.modeChange.dispatch(mode);
+		(this.selectedMode ?? this.defaultMode)?.apply(this.host)
 	}
 
 	async save(mode: ModdableDataGridMode<TData, TParameters>) {

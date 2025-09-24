@@ -33,7 +33,7 @@ describe('EntityDialogComponent', () => {
 	})
 
 	const expectHeadingToBe = async (heading: string) => {
-		await fixture.component.fetcherController.fetch()
+		await fixture.component.fetcherController.taskComplete
 		expect(fixture.component.dialogElement['dialogHeading'].toString()).toBe(heading)
 	}
 

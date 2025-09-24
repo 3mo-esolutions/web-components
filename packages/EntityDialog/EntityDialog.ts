@@ -28,7 +28,7 @@ export class EntityDialog<TEntity extends object> extends FetchableDialog<TEntit
 
 	protected override get primaryActionDefaultTemplate() {
 		return this.primaryButtonText === '' ? html.nothing : html`
-			<mo-loading-button type='elevated' ?disabled=${this.fetcherController.isFetching}>
+			<mo-loading-button type='elevated' ?disabled=${this.fetcherController.pending}>
 				${this.primaryButtonText || t('Save')}
 			</mo-loading-button>
 		`
@@ -36,7 +36,7 @@ export class EntityDialog<TEntity extends object> extends FetchableDialog<TEntit
 
 	protected override get secondaryActionDefaultTemplate() {
 		return !this.delete || this.secondaryButtonText === '' ? super.secondaryActionDefaultTemplate : html`
-			<mo-loading-button type='outlined' style='--mo-button-accent-color: var(--mo-color-red)' ?disabled=${this.fetcherController.isFetching}>
+			<mo-loading-button type='outlined' style='--mo-button-accent-color: var(--mo-color-red)' ?disabled=${this.fetcherController.pending}>
 				${this.secondaryButtonText || t('Delete')}
 			</mo-loading-button>
 		`

@@ -36,7 +36,7 @@ export class CommandPalette extends Component {
 
 	override popover = 'auto'
 
-	@state({ updated(this: CommandPalette) { this.fetcherController.fetch() } }) keyword = ''
+	@state() keyword = ''
 	@state() filteredDataSourceId?: string
 
 	readonly dataSources = [...CommandPalette.dataSources].sort((a, b) => a.order - b.order)
@@ -87,7 +87,8 @@ export class CommandPalette extends Component {
 
 	private readonly fetcherController = new FetcherController(this, {
 		throttle: 500,
-		fetch: () => this.keyword ? this.getKeywordDataTemplate() : this.getInitialDataTemplate(),
+		fetch: ([keyword]) => keyword ? this.getKeywordDataTemplate() : this.getInitialDataTemplate(),
+		args: () => [this.keyword]
 	})
 
 	private async getInitialDataTemplate() {
@@ -239,10 +240,11 @@ export class CommandPalette extends Component {
 			this.searchField.focus()
 			this.list?.focusController.focusIn()
 		}
+		const fetching = this.fetcherController.pending
 		return html`
-			<mo-card type='outlined' ?data-fetching=${this.fetcherController.isFetching} @click=${(e: PointerEvent) => e.stopPropagation()}>
+			<mo-card type='outlined' ?data-fetching=${fetching} @click=${(e: PointerEvent) => e.stopPropagation()}>
 				<mo-flex style='height: 100%'>
-					<mo-command-palette-search-field ?fetching=${this.fetcherController.isFetching} ${bind(this, 'keyword')}></mo-command-palette-search-field>
+					<mo-command-palette-search-field ?fetching=${fetching} ${bind(this, 'keyword')}></mo-command-palette-search-field>
 					<mo-tab-bar ${bind(this, 'filteredDataSourceId', { sourceUpdated: () => refocusSearch() })}>
 						<mo-tab>${t('All')}</mo-tab>
 						${this.dataSources.map(ds => html`
@@ -266,13 +268,13 @@ export class CommandPalette extends Component {
 
 	private get listTemplate() {
 		const selectedDataSource = this.dataSources.find(ds => ds.id === this.filteredDataSourceId)
-		const data = (this.fetcherController.data ?? [])
-			.filter(i => !this.filteredDataSourceId || i.source.id === this.filteredDataSourceId)
-			.flatMap(i => i.data) ?? []
-		return !data.length && !this.fetcherController.isFetching ? html`
+		const data = this.fetcherController.value
+			?.filter(i => !this.filteredDataSourceId || i.source.id === this.filteredDataSourceId)
+			?.flatMap(i => i.data) ?? []
+		return !data.length && !this.fetcherController.pending ? html`
 			<mo-empty-state icon=${selectedDataSource?.icon ?? 'search'}>${t('No results')}</mo-empty-state>
 		` : html`
-			<mo-list ?data-fetching=${this.fetcherController.isFetching}>
+			<mo-list ?data-fetching=${this.fetcherController.pending}>
 				${data.map(item => html`
 					<mo-list-item @click=${() => this.executeCommand(item.command)}>
 						<mo-icon icon=${item.icon}></mo-icon>

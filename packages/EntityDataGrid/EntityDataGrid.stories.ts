@@ -29,8 +29,6 @@ const fetch = async (parameters: Parameters) => {
 	return generatePeople(parameters.count)
 }
 
-const parameters = { count: 50 }
-
 export const EntityDataGrid: StoryObj = {
 	render: () => html`
 		<p>
@@ -38,7 +36,7 @@ export const EntityDataGrid: StoryObj = {
 		</p>
 		<mo-entity-data-grid style='height: 500px' selectability='multiple'
 			.fetch=${fetch}
-			.parameters=${parameters}
+			.parameters=${{ count: 50 }}
 			.create=${() => alert('Create')}
 			.edit=${(person: Person) => alert(`Edit ${person.name}`)}
 			.isEntityEditable=${(person: Person) => person.age > 7}

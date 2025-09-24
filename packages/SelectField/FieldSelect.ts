@@ -180,10 +180,16 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 		`
 	}
 
-	protected override get inputTemplate() {
+	protected get searching() {
 		return this.freeInput || (this.searchable && this.focusController.focused)
-			? this.searchInputTemplate
-			: this.valueInputTemplate
+	}
+
+	protected get hasSearchInput() {
+		return !!this.searchString?.trim() && this.valueToInputValue(this.value) !== this.searchString
+	}
+
+	protected override get inputTemplate() {
+		return this.searching ? this.searchInputTemplate : this.valueInputTemplate
 	}
 
 	private get valueInputTemplate() {
@@ -228,9 +234,8 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 			this.searchInputElement?.focus()
 			this.searchInputElement?.select()
 		}
-
-		return !this.searchable || !this.focusController.focused || !this.searchString || this.freeInput || this.valueToInputValue(this.value) === this.searchString ? html.nothing : html`
-			<mo-icon-button tabIndex='-1' dense slot='end' icon='cancel'
+		return !this.searching || !this.hasSearchInput ? html.nothing : html`
+			<mo-icon-button tabindex='-1' dense slot='end' icon='cancel'
 				style='color: var(--mo-color-gray)'
 				@click=${() => clear()}
 			></mo-icon-button>

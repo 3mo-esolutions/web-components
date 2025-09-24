@@ -1,4 +1,5 @@
 import { Binder, component, css, event, html, property, bind } from '@a11d/lit'
+import { hasChanged } from '@a11d/equals'
 import { Localizer } from '@3mo/localization'
 import { DataGrid } from '@3mo/data-grid'
 import { FetchableDataGridFetcherController } from './FetchableDataGridFetcherController.js'
@@ -42,34 +43,14 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 	@event() readonly parametersChange!: EventDispatcher<TDataFetcherParameters | undefined>
 	@event() readonly dataFetch!: EventDispatcher<FetchableDataGridResult<TData>>
 
-	@property({ type: Object }) fetch: (parameters: TDataFetcherParameters) => Promise<FetchableDataGridResult<TData>> = () => Promise.resolve([])
+	@property({ type: Object, hasChanged }) fetch: (parameters: TDataFetcherParameters) => Promise<FetchableDataGridResult<TData>> = () => Promise.resolve([])
 	@property({ type: Boolean }) silentFetch = false
 
-	@property({
-		type: Object,
-		updated(this: FetchableDataGrid<TData, TDataFetcherParameters>, value?: TDataFetcherParameters) {
-			// Ignore if the data is being set directly
-			if (!value && this.data.length > 0) {
-				return
-			}
+	@property({ type: Object, hasChanged }) parameters?: TDataFetcherParameters
+	@property({ type: Object, hasChanged }) paginationParameters?: (parameters: { readonly page: number, readonly pageSize: number }) => Partial<TDataFetcherParameters>
+	@property({ type: Object, hasChanged }) sortParameters?: () => Partial<TDataFetcherParameters>
 
-			// "CustomEvent"s convert undefined values to null on event handling
-			for (const key in value) {
-				if (value[key] === null) {
-					delete value[key]
-				}
-			}
-
-			this.resetPageAndRequestFetch()
-		}
-	}) parameters?: TDataFetcherParameters
-	@property({ type: Object }) paginationParameters?: (parameters: { readonly page: number, readonly pageSize: number }) => Partial<TDataFetcherParameters>
-	@property({ type: Object }) sortParameters?: () => Partial<TDataFetcherParameters>
-	// protected filterParameters?: () => TDataFetcherParameters
-
-	@property({ type: Number })
-	get autoRefetch() { return this.fetcherController.autoRefetch }
-	set autoRefetch(value) { this.fetcherController.autoRefetch = value }
+	@property({ type: Number, updated(this: FetchableDataGrid<TData, TDataFetcherParameters, TDetailsElement>) { this.fetcherController.updateTimer() } }) autoRefetch?: number
 
 	readonly fetcherController = new FetchableDataGridFetcherController<TData>(this)
 
@@ -79,10 +60,6 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 
 	override get dataLength() {
 		return !this.hasServerSidePagination ? super.dataLength : this.fetcherController.dataLength
-	}
-
-	runPreventingFetch(...parameters: Parameters<typeof this.fetcherController.runPreventingFetch>) {
-		return this.fetcherController.runPreventingFetch(...parameters)
 	}
 
 	requestFetch(...parameters: Parameters<typeof this.fetcherController.fetch>) {
@@ -117,34 +94,6 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 	setParameters(parameters: TDataFetcherParameters) {
 		this.parameters = parameters
 		this.parametersChange.dispatch(this.parameters)
-	}
-
-	override setPage(...args: Parameters<DataGrid<TData, TDetailsElement>['setPage']>) {
-		const changed = this.page !== args[0]
-		super.setPage(...args)
-		if (this.hasServerSidePagination && changed) {
-			this.requestFetch()
-		}
-	}
-
-	override setPagination(...args: Parameters<DataGrid<TData, TDetailsElement>['setPagination']>) {
-		const changed = this.pagination !== args[0]
-		super.setPagination(...args)
-		if (this.hasServerSidePagination && changed) {
-			this.resetPageAndRequestFetch()
-		}
-	}
-
-	override sort(...args: Parameters<DataGrid<TData, TDetailsElement>['sort']>) {
-		super.sort(...args)
-		if (this.hasServerSideSort) {
-			this.resetPageAndRequestFetch()
-		}
-	}
-
-	private resetPageAndRequestFetch() {
-		this.setPage(1)
-		this.requestFetch()
 	}
 
 	protected override get dataSkip() {
@@ -201,7 +150,7 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 	protected override get toolbarActionsTemplate() {
 		return html`
 			<mo-fetchable-data-grid-refetch-icon-button
-				?fetching=${this.fetcherController.isFetching}
+				?fetching=${this.fetcherController.pending}
 				autoRefetch=${bind(this, 'autoRefetch')}
 				@requestFetch=${() => this.requestFetch()}
 			></mo-fetchable-data-grid-refetch-icon-button>
@@ -210,9 +159,9 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 	}
 
 	protected override get contentTemplate() {
-		this.toggleAttribute('fetching', this.fetcherController.isFetching)
+		this.toggleAttribute('fetching', this.fetcherController.pending)
 		switch (true) {
-			case this.fetcherController.isFetching && this.fetcherController.silent === false:
+			case this.fetcherController.pending && this.fetcherController.silent === false:
 				return this.fetchingTemplate
 			case this.data.length === 0 && this.parameters === undefined:
 				return this.noSelectionTemplate

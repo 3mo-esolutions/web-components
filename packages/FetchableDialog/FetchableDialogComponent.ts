@@ -15,7 +15,7 @@ export abstract class FetchableDialogComponent<
 	}
 
 	protected abstract entity: TEntity
-	protected abstract fetch(id: EntityId): TEntity | PromiseLike<TEntity>
+	protected abstract fetch(id: EntityId): TEntity | Promise<TEntity>
 
 	get fetcherController() { return this.dialogElement.fetcherController }
 
@@ -38,13 +38,8 @@ export abstract class FetchableDialogComponent<
 
 	override async connectedCallback() {
 		await super.connectedCallback()
-		this.dialogElement.fetcherController.fetched.subscribe(this.handleFetched)
+		await new Promise(requestAnimationFrame)
+		await this.dialogElement.fetcherController.taskComplete
+		this.entity = this.dialogElement.fetcherController.value!
 	}
-
-	override disconnectedCallback() {
-		super.disconnectedCallback()
-		this.dialogElement.fetcherController.fetched.unsubscribe(this.handleFetched)
-	}
-
-	private readonly handleFetched = (entity: TEntity) => this.entity = entity
 }

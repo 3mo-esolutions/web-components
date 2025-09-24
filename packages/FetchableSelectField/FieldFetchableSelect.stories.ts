@@ -15,6 +15,7 @@ export default {
 } as Meta
 
 const fetch = async (parameters?: { keyword?: string }) => {
+	console.log('fetch ', JSON.stringify(parameters))
 	await new Promise(resolve => setTimeout(resolve, 1000))
 	const keyword = parameters?.keyword
 	return Promise.resolve(!keyword ? countries : countries.filter(country => country.label.toLowerCase().includes(keyword.toLowerCase())))
