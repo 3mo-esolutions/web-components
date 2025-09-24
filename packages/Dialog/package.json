@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/dialog",
-	"version": "0.5.2",
+	"version": "0.6.0",
 	"description": "A dialog component based on Material Web Components.",
 	"repository": {
 		"type": "git",
@@ -25,7 +25,7 @@
 	"dependencies": {
 		"tslib": "x",
 		"@a11d/lit": "x",
-		"@a11d/lit-application": "x",
+		"@a11d/lit-application": ">=0.8.x",
 		"@material/web": "1.x",
 		"@3mo/slot-controller": "x",
 		"@3mo/theme": "x",

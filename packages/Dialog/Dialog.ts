@@ -33,8 +33,6 @@ const queryActionElement = (slotName: string) => {
  * @attr manualClose
  * @attr primaryButtonText
  * @attr secondaryButtonText
- * @attr poppable
- * @attr boundToWindow
  *
  * @slot - Content of the dialog
  * @slot primaryAction - Primary action of the dialog
@@ -85,8 +83,8 @@ export class Dialog extends Component implements IDialog {
 	@property({ type: Boolean }) manualClose = false
 	@property() primaryButtonText?: string
 	@property() secondaryButtonText?: string
-	@property({ type: Boolean }) poppable = false
-	@property({ type: Boolean, reflect: true }) boundToWindow = false
+	@state() poppable = false
+	@state() boundToWindow = false
 
 	@state({
 		updated(this: Dialog) {
@@ -123,104 +121,96 @@ export class Dialog extends Component implements IDialog {
 				background: var(--mo-color-surface);
 			}
 
-			:host([size=small]) {
-				--mo-dialog-width: 480px;
-				--mo-dialog-height: min-content;
-			}
-
-			:host([size=medium]) {
-				--mo-dialog-width: 1024px;
-				--mo-dialog-height: 768px;
-			}
-
-			:host([size=large]) {
-				--mo-dialog-width: 1680px;
-				--mo-dialog-height: 100vh;
-				--mo-dialog-height: 100dvh;
-			}
-
-			:host([boundToWindow]) {
-				--mo-dialog-default-scrim-color: var(--mo-color-background);
-				--_margin-alteration: calc(-1 * max(min(1rem, 1vw), min(1rem, 1vh)));
-			}
-
-			:host([boundToWindow]) md-dialog::part(dialog) {
-				max-height: 100vh !important;
-				max-height: 100dvh !important;
-				max-width: 100vw !important;
-			}
-
-			:host([boundToWindow]) mo-page {
-				--mo-page-gap: 0;
-			}
-
-			:host([boundToWindow]) #content {
-				margin-inline: var(--_margin-alteration);
-			}
-
-			:host([boundToWindow]) #footer {
-				position: sticky;
-				inset-block-end: 0;
-				inset-inline: 0;
-				background: var(--mo-color-background);
-				border-block-start: 1px solid var(--mo-color-transparent-gray-3);
-				margin-inline: var(--_margin-alteration);
-				margin-block-end: var(--_margin-alteration);
-				z-index: 10;
-			}
-
-			:host([boundToWindow][size=large]) md-dialog {
-				--mo-dialog-default-width: 100vw;
-				--mo-dialog-default-height: 100vh;
-				--mo-dialog-default-height: 100dvh;
-			}
-
-			:host([size=large]) md-dialog::part(content) {
-				padding-top: 8px;
-				padding-bottom: 8px;
-			}
-
 			md-dialog {
 				--md-dialog-scroll-divider-color: var(--mo-dialog-divider-color, var(--mo-color-transparent-gray-3));
 				--md-sys-color-surface-container-high: var(--mo-color-surface);
 				border-radius: var(--mo-border-radius);
-			}
 
-			:host([size=large]) md-dialog::part(divider) {
-				display: inline-flex !important;
-			}
+				&:not([open]) {
+					display: none;
+				}
 
-			md-dialog::part(scrim) {
-				background-color: var(--mo-dialog-scrim-color, var(--mo-dialog-default-scrim-color, rgba(0, 0, 0, 0.5)));
-			}
+				&::part(scrim) {
+					background-color: var(--mo-dialog-scrim-color, var(--mo-dialog-default-scrim-color, rgba(0, 0, 0, 0.5)));
+				}
 
-			md-dialog:not([open]) {
-				display: none;
+				&[data-size=small] {
+					--mo-dialog-width: 480px;
+				}
+
+				&[data-size=medium] {
+					--mo-dialog-width: 1024px;
+				}
+
+				&[data-size=large] {
+					--mo-dialog-width: 1680px;
+					--mo-dialog-height: 100vh;
+					--mo-dialog-height: 100dvh;
+
+					&::part(content) {
+						padding-top: 8px;
+						padding-bottom: 8px;
+					}
+
+					&::part(divider) {
+						display: inline-flex !important;
+					}
+				}
+
+				&::part(dialog) {
+					height: var(--mo-dialog-height, fit-content);
+					max-height: calc(100vh - 32px);
+					max-height: calc(100dvh - 32px);
+
+					width: var(--mo-dialog-width);
+					max-width: calc(100vw - 32px);
+
+					justify-content: center;
+
+					box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.2), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 9px 46px 8px rgba(0, 0, 0, 0.12);
+
+					@media (max-width: 1024px), (max-height: 768px) {
+						max-height: 100vh !important;
+						max-height: 100dvh !important;
+						max-width: 100vw !important;
+					}
+				}
+
+				&[data-bound-to-window] {
+					--mo-dialog-default-scrim-color: var(--mo-color-background);
+					--_margin-alteration: calc(-1 * max(min(1rem, 1vw), min(1rem, 1vh)));
+					&::part(dialog) {
+						max-height: 100vh !important;
+						max-height: 100dvh !important;
+						max-width: 100vw !important;
+					}
+				}
 			}
 
 			#header {
 				padding-block: 14px 10px;
 				padding-inline: 24px 12px;
+
+				&[data-size=large] {
+					padding-block-end: 15px;
+				}
+
+				mo-heading {
+					margin-block-start: 4px;
+					-webkit-font-smoothing: antialiased;
+					font-size: 1.25rem;
+					line-height: var(--mo-dialog-heading-line-height, 2rem);
+					font-weight: 500;
+					text-decoration: inherit;
+					text-transform: inherit;
+					color: var(--mo-dialog-heading-color, var(--mo-color-foreground));
+				}
 			}
 
-			:host([size=large]) #header {
-				padding-bottom: 15px;
-			}
-
-			mo-heading {
-				margin-block-start: 4px;
-				-webkit-font-smoothing: antialiased;
-				font-size: 1.25rem;
-				line-height: var(--mo-dialog-heading-line-height, 2rem);
-				font-weight: 500;
-				text-decoration: inherit;
-				text-transform: inherit;
-				color: var(--mo-dialog-heading-color, var(--mo-color-foreground));
-			}
-
-			#footer {
-				padding: 16px;
-				gap: 8px;
+			mo-page {
+				&[data-bound-to-window] {
+					--mo-page-gap: 0;
+				}
 			}
 
 			#content {
@@ -233,33 +223,31 @@ export class Dialog extends Component implements IDialog {
 				text-decoration: inherit;
 				text-transform: inherit;
 				color: var(--mo-dialog-content-color, var(--mo-color-foreground));
+				&[data-bound-to-window] {
+					margin-inline: var(--_margin-alteration);
+				}
 			}
 
-			slot[name=footer] {
-				display: flex;
-				flex: 1;
-				align-items: center;
+			#footer {
+				padding: 16px;
 				gap: 8px;
-			}
 
-			md-dialog::part(dialog) {
-				height: var(--mo-dialog-height);
-				max-height: calc(100vh - 32px);
-				max-height: calc(100dvh - 32px);
+				&[data-bound-to-window] {
+					position: sticky;
+					inset-block-end: 0;
+					inset-inline: 0;
+					background: var(--mo-color-background);
+					border-block-start: 1px solid var(--mo-color-transparent-gray-3);
+					margin-inline: var(--_margin-alteration);
+					margin-block-end: var(--_margin-alteration);
+					z-index: 10;
+				}
 
-				width: var(--mo-dialog-width);
-				max-width: calc(100vw - 32px);
-
-				justify-content: center;
-
-				box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.2), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 9px 46px 8px rgba(0, 0, 0, 0.12);
-			}
-
-			@media (max-width: 1024px), (max-height: 768px) {
-				md-dialog::part(dialog) {
-					max-height: 100vh !important;
-					max-height: 100dvh !important;
-					max-width: 100vw !important;
+				slot[name=footer] {
+					display: flex;
+					flex: 1;
+					align-items: center;
+					gap: 8px;
 				}
 			}
 		`
@@ -271,13 +259,16 @@ export class Dialog extends Component implements IDialog {
 
 	protected override get template() {
 		return this.boundToWindow ? html`
-			<mo-page heading=${this.heading} exportparts='header,heading'>
+			<mo-page heading=${this.heading} exportparts='header,heading' ?data-bound-to-window=${this.boundToWindow}>
 				<slot name='action' slot='action'></slot>
 				${this.contentTemplate}
 				${this.footerTemplate}
 			</mo-page>
 		` : html`
-			<md-dialog exportparts='scrim' ?open=${this.open} quick
+			<md-dialog exportparts='scrim' quick
+				?open=${this.open}
+				?data-bound-to-window=${this.boundToWindow}
+				data-size=${this.size}
 				@scroll=${(e: Event) => this.dispatchEvent(new Event('scroll', e))}
 				@cancel=${(e: Event) => e.preventDefault()}
 				@open=${() => this.showTopLayer = true}
@@ -293,7 +284,7 @@ export class Dialog extends Component implements IDialog {
 
 	protected get headerTemplate() {
 		return html`
-			<mo-flex id='header' slot=${this.boundToWindow ? '' : 'headline'} part='header' direction='horizontal'>
+			<mo-flex id='header' ?data-size=${this.size} slot=${this.boundToWindow ? '' : 'headline'} part='header' direction='horizontal'>
 				${this.headingTemplate}
 				<mo-flex direction='horizontal-reversed' alignItems='center' gap='4px' style='flex: 1'>
 					${this.actionsTemplate}
@@ -314,7 +305,7 @@ export class Dialog extends Component implements IDialog {
 			${this.boundToWindow || this.blocking ? html.nothing : html`
 				<mo-icon-button icon='close' ${tooltip(t('Close'))} @click=${() => this.handleAction(DialogActionKey.Cancellation)}></mo-icon-button>
 			`}
-			${this.boundToWindow || !this.poppable ? html.nothing : html`
+			${!this.poppable ? html.nothing : html`
 				<mo-icon-button icon='launch' ${tooltip(t('Open as Tab'))} @click=${() => this.requestPopup.dispatch()}></mo-icon-button>
 			`}
 		`
@@ -322,7 +313,7 @@ export class Dialog extends Component implements IDialog {
 
 	protected get contentTemplate() {
 		return html`
-			<form id='content' slot=${this.boundToWindow ? '' : 'content'} part='content' method='dialog'>
+			<form id='content' ?data-bound-to-window=${this.boundToWindow} slot=${this.boundToWindow ? '' : 'content'} part='content' method='dialog'>
 				<slot>${this.contentDefaultTemplate}</slot>
 			</form>
 		`
@@ -350,7 +341,7 @@ export class Dialog extends Component implements IDialog {
 
 	protected get footerTemplate() {
 		return this.shallHideFooter ? html.nothing : html`
-			<mo-flex id='footer' slot=${this.boundToWindow ? '' : 'actions'} part='footer' direction='horizontal-reversed'>
+			<mo-flex id='footer' ?data-bound-to-window=${this.boundToWindow} slot=${this.boundToWindow ? '' : 'actions'} part='footer' direction='horizontal-reversed'>
 				${this.primaryActionSlotTemplate}
 				${this.secondaryActionSlotTemplate}
 				${this.footerSlotTemplate}

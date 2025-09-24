@@ -158,7 +158,7 @@ export const SizeLarge: StoryObj = {
 
 export const BoundToWindow: StoryObj = {
 	render: () => html`
-		<mo-dialog heading='Heading' size='large' boundToWindow open>
+		<mo-dialog heading='Heading' size='large' .boundToWindow=${true} open>
 			Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius quidem eaque earum obcaecati qui? Nihil quaerat,
 			repudiandae error delectus labore quasi inventore fugit corporis maxime eos aspernatur aliquid temporibus vitae.
 		</mo-dialog>
