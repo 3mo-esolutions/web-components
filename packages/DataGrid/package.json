@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/data-grid",
-	"version": "0.19.1",
+	"version": "0.19.3",
 	"description": "A data grid web component",
 	"repository": {
 		"type": "git",
@@ -36,7 +36,6 @@
 		"@3mo/slot-controller": "x",
 		"@3mo/instanceof-attribute-controller": "x",
 		"@3mo/media-query-observer": "x",
-		"@3mo/mutation-observer": "x",
 		"@3mo/resize-observer": "x",
 		"@3mo/localization": "x",
 		"@3mo/popover": ">=0.8.x",

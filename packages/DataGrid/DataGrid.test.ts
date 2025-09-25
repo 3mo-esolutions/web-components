@@ -1,4 +1,4 @@
-import { component, html } from '@a11d/lit'
+import { component, html, state } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { DataGrid, type DataGridRow, DataGridColumn, DataRecord, DataGridSelectability } from './index.js'
 
@@ -82,44 +82,131 @@ describe('DataGrid', () => {
 	})
 
 	describe('Columns', () => {
-		const fixture = new ComponentTestFixture<TestDataGrid>(html`<test-data-grid></test-data-grid>`)
+		describe('auto-generated', () => {
+			const fixture = new ComponentTestFixture<TestDataGrid>(html`<test-data-grid></test-data-grid>`)
 
-		it('should auto-generate columns', () => {
-			const [firstColumn, secondColumn, thirdColumn] = fixture.component.columns
+			it('should auto-generate columns', () => {
+				const [firstColumn, secondColumn, thirdColumn] = fixture.component.columns
 
-			// expect(firstColumn?.dataSelector as any).toEqual('id')
-			expect(firstColumn).toBeInstanceOf(DataGridColumn)
-			expect(firstColumn?.dataGrid).toBe(fixture.component)
-			expect(firstColumn?.heading).toEqual('Id')
-			expect(firstColumn?.width).toEqual('max-content')
-			expect(firstColumn?.hidden).toEqual(false)
+				expect(firstColumn?.dataSelector).toEqual('id')
+				expect(firstColumn).toBeInstanceOf(DataGridColumn)
+				expect(firstColumn?.heading).toEqual('Id')
+				expect(firstColumn?.width).toEqual('max-content')
+				expect(firstColumn?.hidden).toEqual(false)
 
-			// expect(secondColumn?.dataSelector as any).toEqual('name')
-			expect(secondColumn).toBeInstanceOf(DataGridColumn)
-			expect(secondColumn?.dataGrid).toBe(fixture.component)
-			expect(secondColumn?.heading).toEqual('Name')
-			expect(secondColumn?.width).toEqual('max-content')
-			expect(secondColumn?.hidden).toEqual(false)
+				expect(secondColumn?.dataSelector).toEqual('name')
+				expect(secondColumn).toBeInstanceOf(DataGridColumn)
+				expect(secondColumn?.heading).toEqual('Name')
+				expect(secondColumn?.width).toEqual('max-content')
+				expect(secondColumn?.hidden).toEqual(false)
 
-			// expect(thirdColumn?.dataSelector as any).toEqual('birthDate')
-			expect(thirdColumn).toBeInstanceOf(DataGridColumn)
-			expect(thirdColumn?.dataGrid).toBe(fixture.component)
-			expect(thirdColumn?.heading).toEqual('Birth Date')
-			expect(thirdColumn?.width).toEqual('max-content')
-			expect(thirdColumn?.hidden).toEqual(false)
+				expect(thirdColumn?.dataSelector).toEqual('birthDate')
+				expect(thirdColumn).toBeInstanceOf(DataGridColumn)
+				expect(thirdColumn?.heading).toEqual('Birth Date')
+				expect(thirdColumn?.width).toEqual('max-content')
+				expect(thirdColumn?.hidden).toEqual(false)
+			})
+
+			it('should automatically set dataGrid property of columns', () => {
+				const [firstColumn, secondColumn] = fixture.component.columns
+				expect(firstColumn?.dataGrid).toBe(fixture.component)
+				expect(secondColumn?.dataGrid).toBe(fixture.component)
+			})
 		})
 
-		it('should automatically set dataGrid property of columns', async () => {
-			fixture.component.columns = [
-				new DataGridColumn({ heading: 'Id', dataSelector: 'id' }),
-				new DataGridColumn({ heading: 'Name', dataSelector: 'name' }),
-			]
+		describe('explicit', () => {
+			const fixture = new ComponentTestFixture<TestDataGrid>(html`<test-data-grid></test-data-grid>`)
 
-			await fixture.updateComplete
+			it('should automatically set dataGrid property of columns', async () => {
+				fixture.component.columns = [
+					new DataGridColumn({ heading: 'Id', dataSelector: 'id' }),
+					new DataGridColumn({ heading: 'Name', dataSelector: 'name' }),
+				]
 
-			const [firstColumn, secondColumn] = fixture.component.columns
-			expect(firstColumn?.dataGrid).toBe(fixture.component)
-			expect(secondColumn?.dataGrid).toBe(fixture.component)
+				await fixture.updateComplete
+
+				const [firstColumn, secondColumn] = fixture.component.columns
+				expect(firstColumn?.dataGrid).toBe(fixture.component)
+				expect(secondColumn?.dataGrid).toBe(fixture.component)
+			})
+		})
+
+		describe('extracted from slotted elements', () => {
+			const fixture = new ComponentTestFixture<TestDataGrid>(html`
+				<test-data-grid>
+					<mo-data-grid-column-number heading='Id' dataSelector='id'></mo-data-grid-column-number>
+					<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
+				</test-data-grid>
+			`)
+
+			it('should extract columns from elements', () => {
+				const [firstColumn, secondColumn] = fixture.component.columns
+
+				expect(firstColumn?.dataSelector).toEqual('id')
+				expect(firstColumn?.heading).toEqual('Id')
+
+				expect(secondColumn?.dataSelector).toEqual('name')
+				expect(secondColumn?.heading).toEqual('Name')
+			})
+
+			it('should set dataGrid property of columns', () => {
+				const [firstColumn, secondColumn] = fixture.component.columns
+				expect(firstColumn?.dataGrid).toBe(fixture.component)
+				expect(secondColumn?.dataGrid).toBe(fixture.component)
+			})
+
+			it('should update columns when columns change', async () => {
+				fixture.component.querySelector('mo-data-grid-column-number')!.heading = 'Identifier'
+				await fixture.updateComplete
+				expect(fixture.component.columns[0]?.heading).toEqual('Identifier')
+			})
+
+			it('should update columns when columns connect or disconnect', async () => {
+				const column = fixture.component.querySelector('mo-data-grid-column-number')
+				column?.remove()
+				await fixture.updateComplete
+				expect(fixture.component.columns.map(c => c.dataSelector)).toEqual(['name'])
+
+				fixture.component.innerHTML += '<mo-data-grid-column-number heading="Id" dataSelector="id"></mo-data-grid-column-number>'
+				await fixture.updateComplete
+				expect(fixture.component.columns.map(c => c.dataSelector)).toEqual(['name', 'id'])
+			})
+		})
+
+		describe('extracted from non-slotted elements', () => {
+			@component('test-data-grid-with-columns')
+			class TestDataGridWithColumns extends TestDataGrid {
+				@state() disconnectId = false
+				protected override get columnsTemplate() {
+					return html`
+						${this.disconnectId ? html.nothing : html`
+							<mo-data-grid-column-number heading='Id' dataSelector='id'></mo-data-grid-column-number>
+						`}
+						<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
+					`
+				}
+			}
+			const fixture = new ComponentTestFixture(() => new TestDataGridWithColumns())
+
+			it('should extract columns from elements', () => {
+				const [firstColumn, secondColumn] = fixture.component.columns
+
+				expect(firstColumn?.dataSelector).toEqual('id')
+				expect(firstColumn?.heading).toEqual('Id')
+
+				expect(secondColumn?.dataSelector).toEqual('name')
+				expect(secondColumn?.heading).toEqual('Name')
+			})
+
+			it('should update columns when the template changes', async () => {
+				fixture.component.disconnectId = true
+				await fixture.updateComplete
+				expect(fixture.component.columns.map(c => c.dataSelector)).toEqual(['name'])
+
+				fixture.component.disconnectId = false
+				await fixture.updateComplete
+				expect(fixture.component.columns.map(c => c.dataSelector)).toEqual(['id', 'name'])
+			})
 		})
 	})
 

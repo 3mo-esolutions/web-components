@@ -1,4 +1,4 @@
-import { component, Component, property, type HTMLTemplateResult } from '@a11d/lit'
+import { component, Component, event, property, type HTMLTemplateResult, type PropertyValues } from '@a11d/lit'
 import { hasChanged } from '@a11d/equals'
 import { DataGrid } from '../DataGrid.js'
 import { DataGridColumn, type DataGridColumnAlignment, type DataGridColumnMenuItems, type DataGridColumnSticky } from '../DataGridColumn.js'
@@ -19,6 +19,8 @@ import { DataGridColumn, type DataGridColumnAlignment, type DataGridColumnMenuIt
  */
 @component('mo-data-grid-column')
 export class DataGridColumnComponent<TData, TValue> extends Component {
+	@event({ bubbles: true, cancelable: true, composed: true }) readonly change!: EventDispatcher<DataGridColumnComponent<TData, TValue>>
+
 	@property({ type: Object }) dataGrid?: DataGrid<TData, any> | undefined
 
 	@property() width = 'max-content'
@@ -70,9 +72,14 @@ export class DataGridColumnComponent<TData, TValue> extends Component {
 		super.connectedCallback()
 	}
 
-	protected override updated() {
+	override disconnectedCallback() {
+		super.disconnectedCallback()
 		this.dataGrid?.extractColumns()
-		this.dataGrid?.requestUpdate()
+	}
+
+	protected override updated(props: PropertyValues<this>) {
+		super.updated(props)
+		this.change.dispatch(this)
 	}
 
 	*generateCsvHeading(): Generator<string> {

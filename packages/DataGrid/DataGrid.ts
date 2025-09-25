@@ -4,7 +4,6 @@ import { InstanceofAttributeController } from '@3mo/instanceof-attribute-control
 import { SlotController } from '@3mo/slot-controller'
 import { tooltip } from '@3mo/tooltip'
 import { ThemeController } from '@3mo/theme'
-import { observeMutation } from '@3mo/mutation-observer'
 import { MediaQueryController } from '@3mo/media-query-observer'
 import { Localizer } from '@3mo/localization'
 import { type Scroller } from '@3mo/scroller'
@@ -12,7 +11,7 @@ import { DataGridColumnsController } from './DataGridColumnsController.js'
 import { DataGridSelectionBehaviorOnDataChange, DataGridSelectionController, type DataGridSelectability } from './DataGridSelectionController.js'
 import { DataGridSortingController, type DataGridRankedSortDefinition, type DataGridSorting } from './DataGridSortingController.js'
 import { DataGridDetailsController } from './DataGridDetailsController.js'
-import { DataGridCsvController, DataGridSidePanelTab, type DataGridColumn, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, type DataGridSidePanel, DataGridContextMenuController } from './index.js'
+import { DataGridCsvController, DataGridSidePanelTab, type DataGridColumn, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, type DataGridSidePanel, DataGridContextMenuController, DataGridColumnComponent } from './index.js'
 import { DataRecord } from './DataRecord.js'
 
 Localizer.dictionaries.add('de', {
@@ -237,6 +236,10 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		return this.sortingController.reset(...parameters)
 	}
 
+	generateCsv(...parameters: Parameters<typeof this.csvController.generateCsv>) {
+		return this.csvController.generateCsv(...parameters)
+	}
+
 	setColumns(...parameters: Parameters<typeof this.columnsController.setColumns>) {
 		return this.columnsController.setColumns(...parameters)
 	}
@@ -245,8 +248,12 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		return this.columnsController.extractColumns(...parameters)
 	}
 
-	generateCsv(...parameters: Parameters<typeof this.csvController.generateCsv>) {
-		return this.csvController.generateCsv(...parameters)
+	@eventListener('change')
+	protected handleColumnChange(e: CustomEvent) {
+		if (e.detail instanceof DataGridColumnComponent) {
+			e.stopPropagation()
+			this.columnsController.extractColumns()
+		}
 	}
 
 	get extractedColumns() {
@@ -534,7 +541,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	protected override get template() {
 		return html`
-			<slot name='column' hidden ${observeMutation(() => this.requestUpdate())}>${this.columnsTemplate}</slot>
+			<slot name='column' hidden>${this.columnsTemplate}</slot>
 			${this.toolbarTemplate}
 			${this.smallScreenObserverController.matches ? this.overlayModeTemplate : this.splitterModeTemplate}
 		`

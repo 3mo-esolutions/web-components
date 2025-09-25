@@ -265,6 +265,10 @@ export class DataGridColumnHeader extends Component {
 	}
 
 	private get separatorTemplate() {
+		if (!this.column.dataGrid) {
+			return html.nothing
+		}
+
 		const index = this.column.dataGrid.visibleColumns.indexOf(this.column)
 		return html`
 			<mo-data-grid-header-separator
