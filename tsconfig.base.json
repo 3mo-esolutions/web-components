@@ -1,7 +1,6 @@
 {
 	"compileOnSave": true,
 	"compilerOptions": {
-		"baseUrl": ".",
 		"incremental": true,
 		"declaration": true,
 		"declarationMap": true,

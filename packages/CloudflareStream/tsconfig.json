@@ -7,7 +7,6 @@
 		"*.test.ts"
 	],
 	"compilerOptions": {
-		"baseUrl": ".",
 		"outDir": "./dist",
 		"allowJs": true
 	}
