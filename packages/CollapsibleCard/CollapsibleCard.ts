@@ -36,6 +36,12 @@ export class CollapsibleCard extends Card {
 				flex: unset !important;
 				height: unset !important;
 			}
+
+			:host([collapsed]) slot:not([name]) {
+				padding-block: 0 !important;
+				height: 0;
+				opacity: 0;
+			}
 		`
 	}
 
@@ -54,10 +60,6 @@ export class CollapsibleCard extends Card {
 				@click=${() => this.toggleCollapse()}
 			></mo-expand-collapse-icon-button>
 		`
-	}
-
-	protected override get bodyTemplate() {
-		return this.collapsed ? html.nothing : super.bodyTemplate
 	}
 
 	protected toggleCollapse() {

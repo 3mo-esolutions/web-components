@@ -3,6 +3,7 @@ import { SlotController } from '@3mo/slot-controller'
 import '@3mo/theme'
 import '@3mo/heading'
 import '@3mo/flex'
+import '@3mo/grid'
 
 export enum CardType {
 	Filled = 'filled',
@@ -68,7 +69,14 @@ export class Card extends Component {
 				border: 1px solid var(--mo-color-transparent-gray-3);
 			}
 
+			mo-grid {
+				grid-template-rows: auto auto 1fr auto;
+				grid-template-areas: 'media' 'header' 'content' 'footer';
+			}
+
 			slot[name=media] {
+				grid-area: media;
+
 				&[data-empty] {
 					display: none;
 				}
@@ -85,6 +93,8 @@ export class Card extends Component {
 			}
 
 			slot[name=header] {
+				grid-area: header;
+
 				&[data-empty] {
 					display: none;
 				}
@@ -120,16 +130,23 @@ export class Card extends Component {
 			}
 
 			slot:not([name]) {
+				grid-area: content;
+
+				interpolate-size: allow-keywords;
+				transition: height 0.25s ease, opacity 0.25s ease;
+
 				&[data-empty] {
 					display: none;
 				}
 
+				overflow: hidden;
 				padding: var(--mo-card-body-padding, 1rem);
 				display: block;
-				flex: 1;
 			}
 
 			slot[name=footer] {
+				grid-area: footer;
+
 				&[data-empty] { display: none; }
 				display: block;
 				padding: var(--mo-card-footer-padding, 0.5rem);
@@ -139,12 +156,12 @@ export class Card extends Component {
 
 	protected override get template() {
 		return html`
-			<mo-flex ${style({ width: '100%', height: '100%' })}>
+			<mo-grid ${style({ width: '100%', height: '100%' })}>
 				${this.mediaTemplate}
 				${this.headerTemplate}
 				${this.bodyTemplate}
 				${this.footerTemplate}
-			</mo-flex>
+			</mo-grid>
 		`
 	}
 
