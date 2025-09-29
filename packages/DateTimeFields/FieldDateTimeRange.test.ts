@@ -9,6 +9,8 @@ describe('FieldDateTimeRange', () => {
 		spyOn(fixture.component.change, 'dispatch')
 		const calendar = fixture.component.renderRoot.querySelector('mo-calendar')!
 		const date = new DateTime('2025-01-01')
+		// @ts-expect-error Using UTC to avoid timezone issues in tests
+		date.timeZone = 'UTC'
 		const dateRange = new DateTimeRange(date, undefined)
 
 		calendar.dispatchEvent(new CustomEvent('dateClick', { detail: date }))

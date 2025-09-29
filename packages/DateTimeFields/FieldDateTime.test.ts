@@ -2,6 +2,7 @@ import { html } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import type { FieldDateTime } from './FieldDateTime'
 import { FieldDateTimePrecision } from './FieldDateTimePrecision.js'
+import '@3mo/date-time'
 
 describe('FieldDateTime', () => {
 	const fixture = new ComponentTestFixture<FieldDateTime>(html`<mo-field-date-time open precision='day'></mo-field-date-time>`)
@@ -14,6 +15,8 @@ describe('FieldDateTime', () => {
 		spyOn(fixture.component.change, 'dispatch')
 		const calendar = fixture.component.renderRoot.querySelector('mo-calendar')!
 		const date = new DateTime('2025-01-01')
+		// @ts-expect-error Using UTC to avoid timezone issues in tests
+		date.timeZone = 'UTC'
 
 		calendar.dispatchEvent(new CustomEvent('dateClick', { detail: date }))
 
