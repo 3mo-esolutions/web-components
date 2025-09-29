@@ -81,16 +81,16 @@ describe('Alert', () => {
 	})
 
 	describe('Default slot', () => {
-		const getSlot = () => fixture.component.renderRoot.querySelector('slot:not([name])')
+		const getSlotHeight = () => getComputedStyle(fixture.component.renderRoot.querySelector('slot:not([name])')!).height
 
-		it('should not get rendered when there are no assigned content', () => expect(getSlot()).toBeNull())
+		it('should set height to 0 when there are no assigned content', () => expect(getSlotHeight()).toBe('0px'))
 
-		it('should get render when there is assigned content', async () => {
+		it('should set height to auto when there are assigned content', async () => {
 			fixture.component.textContent = 'Test content'
 
 			await fixture.update()
 
-			expect(getSlot()).not.toBeNull()
+			expect(getSlotHeight()).not.toBe('auto')
 		})
 	})
 })

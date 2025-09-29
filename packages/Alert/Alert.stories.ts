@@ -49,8 +49,8 @@ export const WithCustomColorAndHeading: StoryObj = {
 				Have something very important?
 			</mo-alert>
 
-			<mo-alert type='info' heading='Not Important' style='--mo-alert-color: var(--mo-color-gray)'>
-				Or not that important?
+			<mo-alert type='info' heading='Not Important' style='--mo-alert-color: var(--mo-color-gray)' collapsible>
+				Lorem ipsum dolor, sit amet consectetur adipisicing elit. Corporis quos labore qui placeat vel illum est dignissimos provident consectetur amet natus iure quo earum at, quidem veritatis optio quaerat excepturi!
 			</mo-alert>
 		</mo-flex>
 	`

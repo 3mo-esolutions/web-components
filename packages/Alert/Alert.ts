@@ -1,4 +1,4 @@
-import { component, css, Component, html, property, ifDefined, event, isServer } from '@a11d/lit'
+import { component, css, Component, html, property, ifDefined, event } from '@a11d/lit'
 import { type MaterialIcon } from '@3mo/icon'
 import { SlotController } from '@3mo/slot-controller'
 
@@ -64,51 +64,60 @@ export class Alert extends Component {
 				--mo-alert-color: var(--mo-color-blue);
 			}
 
-			mo-flex[role=alert] {
+			mo-grid {
 				position: relative;
 				border-radius: inherit;
 				padding: 8px;
 				background: color-mix(in srgb, var(--mo-alert-color), transparent 75%);
-			}
-
-			mo-icon, mo-heading, mo-expand-collapse-icon-button {
-				color: color-mix(in srgb,var(--mo-alert-color),var(--mo-color-foreground) 25%);
-			}
-
-			slot {
-				grid-column: 2 / -1;
-				color: color-mix(in srgb, currentColor, transparent 10%);
-				display: block;
-			}
-
-			:host([collapsible][heading]:not([open])) slot {
-				display: none;
-			}
-
-			mo-grid {
 				align-items: center;
-				gap: 4px 12px;
-				grid-template-columns: auto 1fr;
-			}
-
-			:host([collapsible]) mo-grid {
+				column-gap: 12px;
 				grid-template-columns: auto 1fr auto;
-			}
+				grid-template-areas:
+					'icon content content'
+					'xxx content content';
+				&[data-has-heading] {
+					grid-template-areas:
+						'icon heading heading'
+						'xxx content content';
 
-			mo-heading {
-				flex: 1;
-			}
-
-			mo-icon-button {
-				align-self: center;
+					&[data-collapsible] {
+						grid-template-areas:
+						'icon heading expand-icon'
+						'xxx content content';
+					}
+				}
 			}
 
 			mo-icon {
-				align-self: start
+				grid-area: icon;
 			}
 
-			:host([collapsible]) mo-icon {
-				align-self: center;
+			mo-heading {
+				grid-area: heading;
+			}
+
+			mo-expand-collapse-icon-button {
+				grid-area: expand-icon;
+			}
+
+			mo-icon, mo-heading, mo-expand-collapse-icon-button {
+				color: color-mix(in srgb, var(--mo-alert-color), var(--mo-color-foreground) 25%);
+			}
+
+			slot {
+				display: block;
+				grid-area: content;
+				color: color-mix(in srgb, currentColor, transparent 10%);
+				interpolate-size: allow-keywords;
+				transition: height 0.25s ease, opacity 0.25s ease, margin 0.25s ease;
+				overflow: hidden;
+				&[data-has-heading] {
+					margin-block-start: 8px;
+				}
+				&[data-collapsed], &[data-empty] {
+					height: 0;
+					margin-block-start: 0;
+				}
 			}
 		`
 	}
@@ -117,14 +126,12 @@ export class Alert extends Component {
 
 	protected override get template() {
 		return html`
-			<mo-flex role='alert'>
-				<mo-grid>
-					${this.iconTemplate}
-					${this.headingTemplate}
-					${this.expandIconTemplate}
-					${this.slotTemplate}
-				</mo-grid>
-			</mo-flex>
+			<mo-grid role='alert' ?data-has-heading=${!!this.heading} ?data-collapsible=${!!this.heading && this.collapsible}>
+				${this.iconTemplate}
+				${this.headingTemplate}
+				${this.expandIconTemplate}
+				${this.slotTemplate}
+			</mo-grid>
 		`
 	}
 
@@ -153,7 +160,13 @@ export class Alert extends Component {
 	}
 
 	protected get slotTemplate() {
-		return !isServer && !this.slotController.hasAssignedContent('') ? html.nothing : html`<slot></slot>`
+		return html`
+			<slot
+				?data-has-heading=${!!this.heading}
+				?data-collapsed=${!!this.heading && this.collapsible && !this.open}
+				?data-empty=${!this.slotController.hasAssignedContent('')}
+			></slot>
+		`
 	}
 }
 
