@@ -41,3 +41,17 @@ export const CollapsibleCard: StoryObj = {
 		</mo-collapsible-card>
 	`
 }
+
+
+
+export const WithFixedHeight: StoryObj = {
+	render: ({ type }) => html`
+		<mo-collapsible-card ${style({ height: '1000px' })} type=${type} heading='With fixed height' subHeading='Fixed height is useful when the card is being used as a container.'>
+			<mo-data-grid .data=${[
+				{ name: 'Satoshi Nakamoto', age: 48, country: 'Japan' },
+				{ name: 'Vitalik Buterin', age: 29, country: 'Canada' },
+				{ name: 'Gavin Wood', age: 39, country: 'UK' },
+			]}></mo-data-grid>
+		</mo-collapsible-card>
+	`
+}
