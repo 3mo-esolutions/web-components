@@ -31,13 +31,28 @@ export class Expander extends Component {
 				display: block;
 			}
 
-			summary {
-				color: var(--mo-color-accent);
-				user-select: none;
-				list-style: none;
+			details {
+				interpolate-size: allow-keywords;
 
-				&::marker, &::-webkit-details-marker {
-					display: none;
+				&::details-content {
+					height: 0;
+					overflow: hidden;
+					transition: height 200ms, content-visibility 200ms;
+					transition-behavior: allow-discrete;
+				}
+
+				&:open::details-content {
+					height: auto;
+				}
+
+				summary {
+					color: var(--mo-color-accent);
+					user-select: none;
+					list-style: none;
+
+					&::marker, &::-webkit-details-marker {
+						display: none;
+					}
 				}
 			}
 		`
