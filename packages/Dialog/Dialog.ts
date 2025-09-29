@@ -62,6 +62,7 @@ const queryActionElement = (slotName: string) => {
 @component('mo-dialog')
 @DialogComponent.dialogElement()
 export class Dialog extends Component implements IDialog {
+	static disablePoppability = false
 	static readonly executingActionAdaptersByComponent = new Map<Constructor<HTMLElement>, (actionElement: HTMLElement, isExecuting: boolean) => void>()
 
 	@event({ bubbles: true, cancelable: true, composed: true }) readonly pageHeadingChange!: EventDispatcher<string>
@@ -305,7 +306,7 @@ export class Dialog extends Component implements IDialog {
 			${this.boundToWindow || this.blocking ? html.nothing : html`
 				<mo-icon-button icon='close' ${tooltip(t('Close'))} @click=${() => this.handleAction(DialogActionKey.Cancellation)}></mo-icon-button>
 			`}
-			${!this.poppable ? html.nothing : html`
+			${Dialog.disablePoppability || !this.poppable ? html.nothing : html`
 				<mo-icon-button icon='launch' ${tooltip(t('Open as Tab'))} @click=${() => this.requestPopup.dispatch()}></mo-icon-button>
 			`}
 		`
