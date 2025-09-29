@@ -1,2 +1,2 @@
-export * from './Change.js'
-export * from './Commit.js'
+export * from './Change.ts'
+export * from './Commit.ts'

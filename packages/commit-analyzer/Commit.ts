@@ -1,5 +1,5 @@
-import { Change } from './Change.js'
-import { Trailer } from './Trailer.js'
+import { Change } from './Change.ts'
+import { Trailer } from './Trailer.ts'
 
 export class Commit {
 	static readonly regex = /commit (?<hash>\w+)(?:\s\((?<branch>.+)\))?[\s\S]+?Author: (?<authorName>.+?) <(?<authorEmail>.+?)>[\s\S]+?Date:\s*(?<date>.+?)\n\n\s*(?<body>[\s\S]+)/
