@@ -1,5 +1,12 @@
 import { addons } from '@storybook/manager-api'
 import { themes } from '@storybook/theming'
+import '@3mo/icon'
+import '@3mo/theme'
+import '@3mo/flex'
+import '@3mo/heading'
+import '@3mo/card'
+import '@3mo/collapsible-card'
+import '@3mo/tab'
 
 export const theme = {
 	...themes.dark,
