@@ -165,9 +165,17 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				display: grid;
 				grid-template-columns: subgrid;
 				grid-column: -1 / 1;
+				interpolate-size: allow-keywords;
+				transition: height 0.25s ease-in-out, opacity 0.25s ease-in-out, margin 0.25s ease-in-out;
+				overflow: hidden;
 
 				&:empty {
 					display: none;
+				}
+
+				&[data-collapsed] {
+					pointer-events: none;
+					height: 0;
 				}
 
 				& > * {
@@ -218,7 +226,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			>
 				${this.rowTemplate}
 			</mo-grid>
-			<slot id='detailsContainer'>${this.detailsOpen ? this.detailsTemplate : html.nothing}</slot>
+			<slot id='detailsContainer' ?data-collapsed=${!this.detailsOpen}>${this.detailsTemplate}</slot>
 		`
 	}
 
