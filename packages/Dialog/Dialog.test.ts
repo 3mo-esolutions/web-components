@@ -6,7 +6,7 @@ import { type Dialog } from './Dialog.js'
 @NotificationComponent.defaultComponent()
 @component('test-fake-notification')
 export class FakeNotification extends NotificationComponent {
-	notification: Notification
+	notification!: Notification
 	show(): Promise<void> {
 		return Promise.resolve()
 	}

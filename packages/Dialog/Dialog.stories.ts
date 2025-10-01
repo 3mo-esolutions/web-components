@@ -2,6 +2,8 @@ import type { Meta, StoryObj } from '@storybook/web-components'
 import { html } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
+import '@3mo/text-fields'
+import '@3mo/select-field'
 
 export default {
 	title: 'Layout & Containment / Dialog',
@@ -149,7 +151,7 @@ export const SizeMedium: StoryObj = {
 
 export const SizeLarge: StoryObj = {
 	render: () => html`
-		<mo-dialog heading='Heading' open primaryButtonText='Save' size='large'>
+		<mo-dialog heading='Heading' open primaryButtonText='Save' size='large' style='height: 100vh'>
 			Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius quidem eaque earum obcaecati qui? Nihil quaerat,
 			repudiandae error delectus labore quasi inventore fugit corporis maxime eos aspernatur aliquid temporibus vitae.
 		</mo-dialog>

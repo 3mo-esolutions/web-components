@@ -1,4 +1,4 @@
-import { component, property, query, html, css, event, state, Component } from '@a11d/lit'
+import { component, property, query, html, css, event, state, Component, ifDefined } from '@a11d/lit'
 import { type ApplicationTopLayer, DialogActionKey, DialogComponent, type Dialog as IDialog } from '@a11d/lit-application'
 import { MdDialog } from '@material/web/dialog/dialog.js'
 import { tooltip } from '@3mo/tooltip'
@@ -49,8 +49,6 @@ const queryActionElement = (slotName: string) => {
  * @cssprop --mo-dialog-content-color - Color of the dialog content
  * @cssprop --mo-dialog-scrim-color - Color of the dialog scrim
  * @cssprop --mo-dialog-divider-color - Color of the dialog divider
- * @cssprop --mo-dialog-height - Height of the dialog
- * @cssprop --mo-dialog-width - Width of the dialog
  * @cssprop --mo-dialog-heading-line-height - Line height of the dialog heading
  *
  * @i18n "Close"
@@ -78,7 +76,7 @@ export class Dialog extends Component implements IDialog {
 		}
 	}) open = false
 	@property({ updated(this: Dialog) { this.pageHeadingChange.dispatch(this.heading) } }) heading = ''
-	@property({ reflect: true }) size = DialogSize.Small
+	@property({ reflect: true }) size?: DialogSize
 	@property({ type: Boolean }) blocking = false
 	@property({ type: Boolean }) primaryOnEnter = false
 	@property({ type: Boolean }) manualClose = false
@@ -120,9 +118,27 @@ export class Dialog extends Component implements IDialog {
 		return css`
 			:host {
 				background: var(--mo-color-surface);
+				height: fit-content;
+				width: fit-content;
+			}
+
+			:host([size=small]) {
+				width: 480px;
+			}
+
+			:host([size=medium]) {
+				width: 1024px;
+			}
+
+			:host([size=large]) {
+				width: 1680px;
+				height: 100vh;
+				height: 100dvh;
 			}
 
 			md-dialog {
+				height: inherit;
+				width: inherit;
 				--md-dialog-scroll-divider-color: var(--mo-dialog-divider-color, var(--mo-color-transparent-gray-3));
 				--md-sys-color-surface-container-high: var(--mo-color-surface);
 				border-radius: var(--mo-border-radius);
@@ -135,19 +151,7 @@ export class Dialog extends Component implements IDialog {
 					background-color: var(--mo-dialog-scrim-color, var(--mo-dialog-default-scrim-color, rgba(0, 0, 0, 0.5)));
 				}
 
-				&[data-size=small] {
-					--mo-dialog-width: 480px;
-				}
-
-				&[data-size=medium] {
-					--mo-dialog-width: 1024px;
-				}
-
 				&[data-size=large] {
-					--mo-dialog-width: 1680px;
-					--mo-dialog-height: 100vh;
-					--mo-dialog-height: 100dvh;
-
 					&::part(content) {
 						padding-top: 8px;
 						padding-bottom: 8px;
@@ -159,11 +163,11 @@ export class Dialog extends Component implements IDialog {
 				}
 
 				&::part(dialog) {
-					height: var(--mo-dialog-height, fit-content);
+					height: inherit;
 					max-height: calc(100vh - 32px);
 					max-height: calc(100dvh - 32px);
 
-					width: var(--mo-dialog-width);
+					width: inherit;
 					max-width: calc(100vw - 32px);
 
 					justify-content: center;
@@ -269,7 +273,7 @@ export class Dialog extends Component implements IDialog {
 			<md-dialog exportparts='scrim' quick
 				?open=${this.open}
 				?data-bound-to-window=${this.boundToWindow}
-				data-size=${this.size}
+				data-size=${ifDefined(this.size)}
 				@scroll=${(e: Event) => this.dispatchEvent(new Event('scroll', e))}
 				@cancel=${(e: Event) => e.preventDefault()}
 				@open=${() => this.showTopLayer = true}
