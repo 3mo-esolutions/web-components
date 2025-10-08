@@ -152,4 +152,34 @@ describe('DateTimeRange', () => {
 			expect(range.toJSON()).toBe('2010-01-02T00:00:00.000Z~2020-01-04T00:00:00.000Z')
 		})
 	})
+
+	describe('Week formatting', () => {
+		const start = new DateTime('2025-01-05')
+		const end = new DateTime('2025-10-05')
+
+		it('should reject invalid week options', () => {
+			expect(() => new DateTimeRange(start, end).format({ week: 'long' } as any))
+				.toThrowError('The week option only supports "short" and "medium" values.')
+		})
+
+		it('should format week range with "short" style', () => {
+			expect(new DateTimeRange(start, undefined).format({ week: 'short', language: 'en' })).toBe('2025 W01–')
+			expect(new DateTimeRange(undefined, end).format({ week: 'short', language: 'en' })).toBe('–2025 W40')
+			expect(new DateTimeRange(start, end).format({ week: 'short', language: 'en' })).toBe('2025 W01 – 2025 W40')
+
+			expect(new DateTimeRange(start, undefined).format({ week: 'short', language: 'de' })).toBe('2025 KW01–')
+			expect(new DateTimeRange(undefined, end).format({ week: 'short', language: 'de' })).toBe('–2025 KW40')
+			expect(new DateTimeRange(start, end).format({ week: 'short', language: 'de' })).toBe('2025 KW01 – 2025 KW40')
+		})
+
+		it('should format week range with "medium" style', () => {
+			expect(new DateTimeRange(start, undefined).format({ week: 'medium', language: 'en' })).toBe('Week 01, 2025–')
+			expect(new DateTimeRange(undefined, end).format({ week: 'medium', language: 'en' })).toBe('–Week 40, 2025')
+			expect(new DateTimeRange(start, end).format({ week: 'medium', language: 'en' })).toBe('Week 01, 2025 – Week 40, 2025')
+
+			expect(new DateTimeRange(start, undefined).format({ week: 'medium', language: 'de' })).toBe('KW 01, 2025–')
+			expect(new DateTimeRange(undefined, end).format({ week: 'medium', language: 'de' })).toBe('–KW 40, 2025')
+			expect(new DateTimeRange(start, end).format({ week: 'medium', language: 'de' })).toBe('KW 01, 2025 – KW 40, 2025')
+		})
+	})
 })

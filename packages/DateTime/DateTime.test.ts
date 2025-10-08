@@ -117,4 +117,22 @@ describe('DateTime', () => {
 		expectDateTimesEquals(DateTime.parseAsDateTime('2023-09-01', 'de'), new DateTime('2023-09-01'))
 		expectDateTimesEquals('2023-09-01'.toDateTime('de'), new DateTime('2023-09-01'))
 	})
+
+	describe('Week formatting', () => {
+		const dt = new DateTime('2025-01-05')
+
+		it('should reject invalid week options', () => {
+			expect(() => dt.format({ week: 'long' } as any)).toThrowError('The week option only supports "short" and "medium" values.')
+		})
+
+		it('should format week with "short" style', () => {
+			expect(dt.format({ week: 'short', language: 'en' })).toBe('2025 W01')
+			expect(dt.format({ week: 'short', language: 'de' })).toBe('2025 KW01')
+		})
+
+		it('should format week with "medium" style', () => {
+			expect(dt.format({ week: 'medium', language: 'en' })).toBe('Week 01, 2025')
+			expect(dt.format({ week: 'medium', language: 'de' })).toBe('KW 01, 2025')
+		})
+	})
 })

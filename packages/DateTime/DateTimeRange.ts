@@ -127,6 +127,10 @@ export class DateTimeRange {
 			return delimiter?.trimStart() + formatter(this.end as DateTime, ...options)
 		}
 
+		if ('week' in explicitOptions && explicitOptions.week) {
+			return formatter(this.start as DateTime, ...options) + ' – ' + formatter(this.end as DateTime, ...options)
+		}
+
 		return Intl.DateTimeFormat(language, explicitOptions).formatRange(this.start, this.end)
 	}
 }

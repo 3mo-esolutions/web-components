@@ -1,9 +1,12 @@
-import { Localizer } from '@3mo/localization'
+import { extractDateTimeFormatOptions, LocalizableString, Localizer, type FormatOptionsWithLanguage } from '@3mo/localization'
 import './Temporal.js'
 import { TimeSpan } from './TimeSpan.js'
 import { type DateTimeParser, DateTimeLocalParser, DateTimeShortcutParser, DateTimeOperationParser, DateTimeNativeParser, DateTimeZeroParser } from './parsers/index.js'
 import { Memoize as memoize, clear } from 'typescript-memoize'
 import { type ParsingParameters, extractParsingParameters } from './extractParsingParameters.js'
+
+Localizer.dictionaries.add('en', { '✂Week': 'W' })
+Localizer.dictionaries.add('de', { 'Week': 'KW', '✂Week': 'KW' })
 
 type DateTimeFromParameters =
 	| [epochMilliseconds?: number, calendar?: string, timeZone?: string]
@@ -101,6 +104,7 @@ export class DateTime extends Date {
 	@memoize() get temporalInstant() { return Temporal.Instant.fromEpochMilliseconds(this.valueOf()) }
 
 	@memoize() get zonedDateTime() { return new Temporal.ZonedDateTime(this.temporalInstant.epochNanoseconds, this.timeZone, this.calendar) }
+	@memoize() private get iso8601() { return new Temporal.ZonedDateTime(this.temporalInstant.epochNanoseconds, this.timeZone, 'iso8601') }
 
 	@memoize() get era() { return this.zonedDateTime.era }
 	@memoize() get eraYear() { return this.zonedDateTime.eraYear }
@@ -118,8 +122,8 @@ export class DateTime extends Date {
 	@memoize() override get calendarId() { return this.zonedDateTime.calendarId }
 	@memoize() get dayOfWeek() { return this.zonedDateTime.dayOfWeek }
 	@memoize() get dayOfYear() { return this.zonedDateTime.dayOfYear }
-	@memoize() get weekOfYear() { return this.zonedDateTime.weekOfYear }
-	@memoize() get yearOfWeek() { return this.zonedDateTime.yearOfWeek }
+	@memoize() get weekOfYear() { return this.zonedDateTime.weekOfYear ?? this.iso8601.weekOfYear }
+	@memoize() get yearOfWeek() { return this.zonedDateTime.yearOfWeek ?? this.iso8601.yearOfWeek }
 	@memoize() get hoursInDay() { return this.zonedDateTime.hoursInDay }
 	@memoize() get daysInWeek() { return this.zonedDateTime.daysInWeek }
 	@memoize() get daysInMonth() { return this.zonedDateTime.daysInMonth }
@@ -188,6 +192,26 @@ export class DateTime extends Date {
 
 	with(...parameters: Parameters<Temporal.ZonedDateTime['with']>) {
 		return DateTime.from(this.zonedDateTime.with(...parameters))
+	}
+
+	override format(...options: FormatOptionsWithLanguage<Intl.DateTimeFormatOptions & { readonly week?: 'short' | 'medium' }>) {
+		const [language, opt] = extractDateTimeFormatOptions(this.calendarId, this.timeZoneId, options)
+		if ('week' in opt) {
+			if (this.yearOfWeek === undefined || this.weekOfYear === undefined) {
+				return ''
+			}
+			const year = this.yearOfWeek.format(language)
+			const week = this.weekOfYear.format(language).padStart(2, 0.0.format(language))
+			switch (opt.week) {
+				case 'short':
+					return `${year} ${LocalizableString.get('✂Week').localize(language)}${week}`
+				case 'medium':
+					return `${LocalizableString.get('Week').localize(language)} ${week}, ${year}`
+				default:
+					throw new Error('The week option only supports "short" and "medium" values.')
+			}
+		}
+		return super.format(...options)
 	}
 }
 
