@@ -1,4 +1,5 @@
 import { component, html, literal } from '@a11d/lit'
+import { FieldDateTimePrecision } from '@3mo/date-time-fields'
 import { DataGridColumnDateTimeBase } from './DataGridColumnDateTimeBase.js'
 
 /** @element mo-data-grid-column-date-time */
@@ -6,7 +7,7 @@ import { DataGridColumnDateTimeBase } from './DataGridColumnDateTimeBase.js'
 export class DataGridColumnDateTime<TData> extends DataGridColumnDateTimeBase<TData, Date> {
 	override getContentTemplate(value: Date | undefined, data: TData) {
 		data
-		return html`${value ? value.format(this.formatOptionsValue) ?? '' : ''}`
+		return html`${value?.format(this.getFormatOptions(FieldDateTimePrecision.Minute)) || ''}`
 	}
 
 	override readonly fieldTag = literal`mo-field-date-time`
