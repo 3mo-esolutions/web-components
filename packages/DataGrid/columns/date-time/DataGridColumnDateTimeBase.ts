@@ -1,4 +1,5 @@
 import { property, html, staticHtml, type StaticValue } from '@a11d/lit'
+import { hasChanged } from '@a11d/equals'
 import { DataGridColumnComponent } from '../DataGridColumnComponent.js'
 
 /**
@@ -9,7 +10,7 @@ export abstract class DataGridColumnDateTimeBase<TData, TDate extends { format(.
 	static defaultFormatOptions?: Intl.DateTimeFormatOptions
 	abstract readonly fieldTag: StaticValue
 
-	@property({ type: Object }) formatOptions?: Intl.DateTimeFormatOptions
+	@property({ type: Object, hasChanged }) formatOptions?: Intl.DateTimeFormatOptions
 	@property({ type: Boolean }) pickerHidden = false
 
 	protected get formatOptionsValue() {
