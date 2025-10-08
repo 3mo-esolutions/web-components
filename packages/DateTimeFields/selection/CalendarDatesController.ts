@@ -64,7 +64,7 @@ export class CalendarDatesController extends Controller {
 		let changed = false
 
 		const daysOffset = 75
-		if (this.host.view === FieldDateTimePrecision.Day && (!this.days.length || value.isBefore(this.days.at(daysOffset)!) || value.isAfter(this.days.at(-daysOffset)!))) {
+		if ([FieldDateTimePrecision.Day, FieldDateTimePrecision.Week].includes(this.host.view) && (!this.days.length || value.isBefore(this.days.at(daysOffset)!) || value.isAfter(this.days.at(-daysOffset)!))) {
 			this.days = [...CalendarDatesController.generate(
 				value.yearStart.add({ years: -1 }),
 				value.daysInYear * 3,

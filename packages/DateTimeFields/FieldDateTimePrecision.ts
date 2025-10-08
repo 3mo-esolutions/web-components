@@ -1,4 +1,4 @@
-export type FieldDateTimePrecisionKey = 'year' | 'month' | 'day' | 'hour' | 'minute' | 'second'
+export type FieldDateTimePrecisionKey = 'year' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second'
 
 export class FieldDateTimePrecision {
 	private static readonly _all = new Array<FieldDateTimePrecision>()
@@ -10,7 +10,7 @@ export class FieldDateTimePrecision {
 
 	static readonly Year = new FieldDateTimePrecision(1, 'year')
 	static readonly Month = new FieldDateTimePrecision(2, 'month')
-	// static readonly Week = new FieldDateTimePrecision(3, 'week')
+	static readonly Week = new FieldDateTimePrecision(3, 'week')
 	static readonly Day = new FieldDateTimePrecision(4, 'day')
 	static readonly Hour = new FieldDateTimePrecision(5, 'hour')
 	static readonly Minute = new FieldDateTimePrecision(6, 'minute')
@@ -21,7 +21,7 @@ export class FieldDateTimePrecision {
 	}
 
 	get formatOptions(): Intl.DateTimeFormatOptions {
-		return {
+		return this === FieldDateTimePrecision.Week ? { week: 'medium' } as any : {
 			year: 'numeric',
 			month: this < FieldDateTimePrecision.Month ? undefined : '2-digit',
 			day: this < FieldDateTimePrecision.Day ? undefined : '2-digit',
@@ -33,6 +33,9 @@ export class FieldDateTimePrecision {
 	}
 
 	getRange(date: DateTime) {
+		if (this === FieldDateTimePrecision.Week) {
+			return date.weekRange
+		}
 		const start = date.with({
 			year: date.year,
 			month: this < FieldDateTimePrecision.Month ? 1 : date.month,
@@ -45,6 +48,10 @@ export class FieldDateTimePrecision {
 	}
 
 	equals(left: DateTime, right: DateTime): boolean {
+		if (this === FieldDateTimePrecision.Week) {
+			return left.yearOfWeek === right.yearOfWeek && left.weekOfYear === right.weekOfYear
+		}
+
 		return left.year === right.year
 			&& (this < FieldDateTimePrecision.Month || left.month === right.month)
 			&& (this < FieldDateTimePrecision.Day || left.day === right.day)
@@ -54,6 +61,11 @@ export class FieldDateTimePrecision {
 	}
 
 	isSmallerThan(left: DateTime, right: DateTime): boolean {
+		if (this === FieldDateTimePrecision.Week) {
+			return (left.yearOfWeek ?? 0) < (right.yearOfWeek ?? 0)
+				|| (left.yearOfWeek === right.yearOfWeek && (left.weekOfYear ?? 0) < (right.weekOfYear ?? 0))
+		}
+
 		return left.year < right.year
 			|| (this >= FieldDateTimePrecision.Month && left.year === right.year && left.month < right.month)
 			|| (this >= FieldDateTimePrecision.Day && left.year === right.year && left.month === right.month && left.day < right.day)
