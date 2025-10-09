@@ -13,21 +13,14 @@ export default {
 	staticDirs: ['./public'],
 
 	addons: [
-		getPackageAbsolutePath('@storybook/addon-links'),
-		{
-			name: getPackageAbsolutePath('@storybook/addon-essentials'),
-			options: {
-				backgrounds: false,
-				actions: false,
-			}
-		},
-		// getPackageAbsolutePath('@storybook/addon-webpack5-compiler-babel'),
-		getPackageAbsolutePath('@storybook/addon-storysource'),
-		getPackageAbsolutePath('storybook-dark-mode'),
+		'@storybook/addon-docs',
+		'@storybook/addon-links',
+		'@storybook/addon-storysource',
+		'@vueless/storybook-dark-mode',
 	],
 
 	framework: {
-		name: getPackageAbsolutePath('@storybook/web-components-vite'),
+		name: '@storybook/web-components-vite',
 		options: {}
 	},
 
@@ -57,13 +50,5 @@ export default {
 				alias: packageAliases,
 			}
 		})
-	},
-
-	docs: {
-		autodocs: true
 	}
 } as StorybookConfig
-
-function getPackageAbsolutePath(value: string): any {
-	return dirname(require.resolve(join(value, 'package.json')))
-}

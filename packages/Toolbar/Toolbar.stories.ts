@@ -1,4 +1,4 @@
-import { type Meta, type StoryObj } from '@storybook/web-components'
+import { type Meta, type StoryObj } from '@storybook/web-components-vite'
 import { Component, html, property, range } from '@a11d/lit'
 import { type MaterialIcon } from '@3mo/icon'
 import { ToolbarController } from './index.js'

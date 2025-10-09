@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/web-components'
+import type { Meta, StoryObj } from '@storybook/web-components-vite'
 import { bind, component, Component, html, state } from '@a11d/lit'
 import p from './package.json'
 import { Localizer, type LanguageCode } from './index.js'

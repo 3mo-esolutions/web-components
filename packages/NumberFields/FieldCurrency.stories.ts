@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/web-components'
+import type { Meta, StoryObj } from '@storybook/web-components-vite'
 import { html } from '@a11d/lit'
 import { Currency as LCurrency } from '@3mo/localization'
 import p from './package.json'
