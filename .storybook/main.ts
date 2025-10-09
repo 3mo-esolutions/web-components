@@ -13,17 +13,9 @@ export default {
 	staticDirs: ['./public'],
 
 	addons: [
+		'@storybook/addon-docs',
 		getPackageAbsolutePath('@storybook/addon-links'),
-		{
-			name: getPackageAbsolutePath('@storybook/addon-essentials'),
-			options: {
-				backgrounds: false,
-				actions: false,
-			}
-		},
-		// getPackageAbsolutePath('@storybook/addon-webpack5-compiler-babel'),
-		getPackageAbsolutePath('@storybook/addon-storysource'),
-		getPackageAbsolutePath('storybook-dark-mode'),
+		getPackageAbsolutePath('@vueless/storybook-dark-mode'),
 	],
 
 	framework: {
@@ -57,10 +49,6 @@ export default {
 				alias: packageAliases,
 			}
 		})
-	},
-
-	docs: {
-		autodocs: true
 	}
 } as StorybookConfig
 
