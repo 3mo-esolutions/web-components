@@ -19,7 +19,7 @@ export abstract class FetchableDialogComponent<
 
 	get fetcherController() { return this.dialogElement.fetcherController }
 
-	readonly entityBinder = new Binder<TEntity>(this, 'entity')
+	readonly entityBinder: Binder<TEntity> = new Binder<TEntity>(this, 'entity')
 
 	// @ts-expect-error Property stays readonly
 	override get dialogElement() {

@@ -8,7 +8,7 @@
 		"lint": "eslint **/*.ts",
 		"docs:build": "node ./scripts/docs-build.ts",
 		"clean": "node ./scripts/clean.ts",
-		"typescript": "tsc --build --noEmit",
+		"typescript": "tsgo --build --noEmit",
 		"release": "node ./scripts/release.ts",
 		"release:all": "node ./scripts/release-all.ts",
 		"build": "npm run clean && tsc --build && npm run clean",
@@ -60,6 +60,7 @@
 		"react-router": "x",
 		"storybook": "9.x",
 		"typescript": "5.x",
+		"@typescript/native-preview": "latest",
 		"vite": "6.x",
 		"web-component-analyzer": "2.x"
 	},
