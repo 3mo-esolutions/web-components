@@ -72,6 +72,22 @@ export const Sizes: Story = {
 	},
 }
 
+/** A heading too long for a `small` dialog wraps onto further lines. */
+export const LongHeading: Story = {
+	render: () => {
+		const [open, setOpen] = useState(false)
+		return html`
+			<mo-button type='outlined' @click=${() => setOpen(true)}>Cancel order</mo-button>
+			<mo-dialog heading='Cancel order 10482 and refund the payment for both items to Nordwind GmbH?' primaryButtonText='Cancel order' secondaryButtonText='Keep order' size='small'
+				?open=${open}
+				@openChange=${(event: CustomEvent<boolean>) => setOpen(event.detail)}
+			>
+				The customer is notified by email, and both items return to stock.
+			</mo-dialog>
+		`
+	},
+}
+
 /** Content taller than the window scrolls between the header and the footer, and a select field's options still open over it. */
 export const Scrollable: Story = {
 	render: () => {
@@ -204,7 +220,7 @@ export const BoundToWindow: Story = {
 	`,
 }
 
-/** The host's `background` colors the surface, and custom properties color the heading, the content and the backdrop. */
+/** The host's `background` colors the surface, its `color` the content, and `--mo-dialog-backdrop` the backdrop. */
 export const CustomProperties: Story = {
 	render: () => {
 		const [open, setOpen] = useState(false)
@@ -213,8 +229,7 @@ export const CustomProperties: Story = {
 			<mo-dialog heading='Welcome back' primaryButtonText='Continue'
 				style='
 					background: linear-gradient(90deg, color-mix(in srgb, var(--mo-color-red), var(--mo-color-surface)), color-mix(in srgb, var(--mo-color-blue), var(--mo-color-surface)));
-					--mo-dialog-heading-color: white;
-					--mo-dialog-content-color: white;
+					color: white;
 					--mo-dialog-backdrop: linear-gradient(135deg, rgb(0 119 200 / 0.6), rgb(0 0 0 / 0.85));
 				'
 				?open=${open}

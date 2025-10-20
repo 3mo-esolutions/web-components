@@ -31,6 +31,7 @@ import '@3mo/dialog'
 ## Examples
 
 - [Sizes](https://3mo-esolutions.github.io/web-components/?path=/story/layout-dialog--sizes) — `small`, `medium` and `large` set the width, and `large` also fills the height; without a size the dialog fits its content.
+- [Long Heading](https://3mo-esolutions.github.io/web-components/?path=/story/layout-dialog--long-heading) — A heading too long for a `small` dialog wraps onto further lines.
 - [Scrollable](https://3mo-esolutions.github.io/web-components/?path=/story/layout-dialog--scrollable) — Content taller than the window scrolls between the header and the footer, and a select field's options still open over it.
 - [Action Slots](https://3mo-esolutions.github.io/web-components/?path=/story/layout-dialog--action-slots) — The `primaryAction` and `secondaryAction` slots take buttons of your own in place of the button texts.
 - [Header Actions](https://3mo-esolutions.github.io/web-components/?path=/story/layout-dialog--header-actions) — The `action` slot adds to the header, before the close button.
@@ -38,7 +39,7 @@ import '@3mo/dialog'
 - [Blocking](https://3mo-esolutions.github.io/web-components/?path=/story/layout-dialog--blocking) — A `blocking` dialog has no close button and ignores Escape and the backdrop, so only one of its actions closes it.
 - [Auto Focus](https://3mo-esolutions.github.io/web-components/?path=/story/layout-dialog--auto-focus) — The field marked `autofocus` takes the focus as the dialog opens.
 - [Bound To Window](https://3mo-esolutions.github.io/web-components/?path=/story/layout-dialog--bound-to-window) — Opened in a tab of its own, as "Open as Tab" in the header does, a dialog is laid out as a page filling the window.
-- [Custom Properties](https://3mo-esolutions.github.io/web-components/?path=/story/layout-dialog--custom-properties) — The host's `background` colors the surface, and custom properties color the heading, the content and the backdrop.
+- [Custom Properties](https://3mo-esolutions.github.io/web-components/?path=/story/layout-dialog--custom-properties) — The host's `background` colors the surface, its `color` the content, and `--mo-dialog-backdrop` the backdrop.
 - [Parts](https://3mo-esolutions.github.io/web-components/?path=/story/layout-dialog--parts) — The `header`, `heading`, `content` and `footer` parts can be styled from outside.
 - [Dialog Component](https://3mo-esolutions.github.io/web-components/?path=/story/layout-dialog--dialog-component) — An application writes a dialog as a component whose template holds the `mo-dialog`, and `confirm()` opens it.
 - [Fetchable Dialog](https://3mo-esolutions.github.io/web-components/?path=/story/layout-dialog--fetchable-dialog) — A `mo-fetchable-dialog` in a `FetchableDialogComponent` stays loading until the entity of the given `id` is fetched.
@@ -95,11 +96,8 @@ its `heading`, rendered as an `h2`, and the element with `autofocus` inside take
 
 | Name | Description |
 | --- | --- |
-| `--mo-dialog-heading-color` | Color of the dialog heading |
-| `--mo-dialog-content-color` | Color of the dialog content |
 | `--mo-dialog-backdrop` | Background of the dialog backdrop |
 | `--mo-dialog-divider-color` | Color of the dialog divider |
-| `--mo-dialog-heading-line-height` | Line height of the dialog heading |
 
 #### CSS parts
 

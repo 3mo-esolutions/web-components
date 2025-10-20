@@ -72,11 +72,8 @@ import '@3mo/entity-dialog'
 
 | Name | Description |
 | --- | --- |
-| `--mo-dialog-heading-color` | Color of the dialog heading |
-| `--mo-dialog-content-color` | Color of the dialog content |
 | `--mo-dialog-backdrop` | Background of the dialog backdrop |
 | `--mo-dialog-divider-color` | Color of the dialog divider |
-| `--mo-dialog-heading-line-height` | Line height of the dialog heading |
 
 #### CSS parts
 
