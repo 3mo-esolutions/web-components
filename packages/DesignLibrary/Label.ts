@@ -1,21 +1,21 @@
-import { Component, component, html } from '@a11d/lit'
+import { Component, component, css, html } from '@a11d/lit'
 
 @component('mo-label')
 export class Label extends Component {
-	protected override get template() {
-		return html`
-			<style>
-				:host {
-					padding: 2px 6px;
-					border-radius: var(--mo-border-radius);
-					margin: 0 4px;
-					color: var(--mo-color-accent);
-					font-weight: 500;
-					background: var(--mo-color-accent-transparent);
-				}
-			</style>
-			<slot></slot>
+	static override get styles() {
+		return css`
+			:host {
+				padding: 0.125rem 0.375rem;
+				border-radius: var(--mo-border-radius);
+				color: var(--mo-color-accent);
+				font-weight: 500;
+				background: color-mix(in srgb, currentColor, transparent 75%);
+			}
 		`
+	}
+
+	protected override get template() {
+		return html`<slot></slot>`
 	}
 }
 
