@@ -140,6 +140,15 @@ export const SecondaryAction: StoryObj = {
 	`
 }
 
+export const SizeSmall: StoryObj = {
+	render: () => html`
+		<mo-dialog heading='Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius quidem eaque earum obcaecati qui? Nihil quaerat,' open primaryButtonText='Save' size='small'>
+			Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius quidem eaque earum obcaecati qui? Nihil quaerat,
+			repudiandae error delectus labore quasi inventore fugit corporis maxime eos aspernatur aliquid temporibus vitae.
+		</mo-dialog>
+	`
+}
+
 export const SizeMedium: StoryObj = {
 	render: () => html`
 		<mo-dialog heading='Heading' open primaryButtonText='Save' size='medium'>
