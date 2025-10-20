@@ -41,7 +41,7 @@ export class DialogDeletion extends DialogComponent<Parameters> {
 	static override get styles() {
 		return css`
 			mo-dialog {
-				--mo-dialog-content-color: color-mix(in srgb, currentColor, transparent 16%);
+				color: color-mix(in srgb, currentColor, transparent 16%);
 			}
 
 			mo-loading-button {
