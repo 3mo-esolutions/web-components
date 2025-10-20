@@ -45,11 +45,8 @@ const queryActionElement = (slotName: string) => {
  * @csspart content - Dialog content
  * @csspart footer - Dialog footer
  *
- * @cssprop --mo-dialog-heading-color - Color of the dialog heading
- * @cssprop --mo-dialog-content-color - Color of the dialog content
  * @cssprop --mo-dialog-scrim-color - Color of the dialog scrim
  * @cssprop --mo-dialog-divider-color - Color of the dialog divider
- * @cssprop --mo-dialog-heading-line-height - Line height of the dialog heading
  *
  * @i18n "Close"
  * @i18n "Open as Tab"
@@ -117,7 +114,8 @@ export class Dialog extends Component implements IDialog {
 	static override get styles() {
 		return css`
 			:host {
-				background: var(--mo-color-surface);
+				background: var(--mo-color-background);
+				color: currentColor;
 				height: fit-content;
 				width: fit-content;
 			}
@@ -139,6 +137,7 @@ export class Dialog extends Component implements IDialog {
 			md-dialog {
 				height: inherit;
 				width: inherit;
+				color: inherit;
 				--md-dialog-scroll-divider-color: var(--mo-dialog-divider-color, var(--mo-color-transparent-gray-3));
 				--md-sys-color-surface-container-high: var(--mo-color-surface);
 				border-radius: var(--mo-border-radius);
@@ -204,11 +203,13 @@ export class Dialog extends Component implements IDialog {
 					margin-block-start: 4px;
 					-webkit-font-smoothing: antialiased;
 					font-size: 1.25rem;
-					line-height: var(--mo-dialog-heading-line-height, 2rem);
 					font-weight: 500;
 					text-decoration: inherit;
 					text-transform: inherit;
-					color: var(--mo-dialog-heading-color, var(--mo-color-foreground));
+				}
+
+				slot[name=action] {
+					font-size: 1rem;
 				}
 			}
 
@@ -222,12 +223,10 @@ export class Dialog extends Component implements IDialog {
 				flex: 1;
 				padding: 20px 24px;
 				-webkit-font-smoothing: antialiased;
-				font-size: 1rem;
-				line-height: 1.5rem;
-				font-weight: 400;
+				line-height: initial;
 				text-decoration: inherit;
 				text-transform: inherit;
-				color: var(--mo-dialog-content-color, var(--mo-color-foreground));
+				color: inherit;
 				&[data-bound-to-window] {
 					margin-inline: var(--_margin-alteration);
 				}
@@ -293,7 +292,7 @@ export class Dialog extends Component implements IDialog {
 				${this.headingTemplate}
 				<mo-flex direction='horizontal-reversed' alignItems='center' gap='4px' style='flex: 1'>
 					${this.actionsTemplate}
-					<slot name='action' style='font-size: 1rem; line-height: initial;'></slot>
+					<slot name='action'></slot>
 				</mo-flex>
 			</mo-flex>
 		`
@@ -404,6 +403,7 @@ MdDialog.elementStyles.push(css`
 
 	dialog {
 		background: inherit;
+		color: inherit;
 	}
 
 	.container::before {
@@ -414,6 +414,7 @@ MdDialog.elementStyles.push(css`
 		display: flex;
 		flex-direction: column;
 		min-height: 100%;
+		color: inherit;
 	}
 
 	.scroller {
@@ -443,6 +444,7 @@ MdDialog.elementStyles.push(css`
 	}
 
 	.headline {
+		line-height: initial;
 		/* .content has a default z-index of 1 in Material */
 		z-index: 2;
 	}
