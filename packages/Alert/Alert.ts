@@ -45,6 +45,7 @@ export class Alert extends Component {
 		return css`
 			:host {
 				width: 100%;
+				height: fit-content;
 				border-radius: var(--mo-border-radius);
 			}
 
@@ -66,12 +67,14 @@ export class Alert extends Component {
 
 			mo-grid {
 				position: relative;
+				height: 100%;
 				border-radius: inherit;
-				padding: 8px;
+				box-sizing: border-box;
+				padding: 0.5rem;
 				background: color-mix(in srgb, var(--mo-alert-color), transparent 75%);
-				align-items: center;
-				column-gap: 12px;
+				column-gap: 0.75rem;
 				grid-template-columns: auto 1fr auto;
+				grid-template-rows: auto 1fr;
 				grid-template-areas:
 					'icon content content'
 					'xxx content content';
@@ -90,14 +93,17 @@ export class Alert extends Component {
 
 			mo-icon {
 				grid-area: icon;
+				align-self: center;
 			}
 
 			mo-heading {
 				grid-area: heading;
+				align-self: center;
 			}
 
 			mo-expand-collapse-icon-button {
 				grid-area: expand-icon;
+				align-self: center;
 			}
 
 			mo-icon, mo-heading, mo-expand-collapse-icon-button {

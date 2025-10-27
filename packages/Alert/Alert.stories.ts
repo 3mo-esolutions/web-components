@@ -55,3 +55,18 @@ export const WithCustomColorAndHeading: StoryObj = {
 		</mo-flex>
 	`
 }
+
+export const WithForcedHeight: StoryObj = {
+	render: () => html`
+		<mo-grid gap='0.5rem' columns='repeat(auto-fit, minmax(300px, 1fr))'>
+			<mo-alert type='info' heading='Alert 1' style='height: 100%'>
+				Some information
+			</mo-alert>
+
+			<mo-alert type='info' heading='Alert 2'>
+				Some longer information that makes this alert taller than the first one.
+				But the first alert should still take the full height of this container.
+			</mo-alert>
+		</mo-grid>
+	`
+}
