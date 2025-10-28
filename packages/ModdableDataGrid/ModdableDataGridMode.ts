@@ -85,14 +85,27 @@ export class ModdableDataGridMode<TData, TDataFetcherParameters extends Fetchabl
 		}
 		if (this.parameters) {
 			for (const [key, value] of Object.entries(this.parameters)) {
-				if (value && typeof value === 'string' && DateTime.isoRegularExpression.test(value)) {
-					(this.parameters as any)[key] = new Date(value)
+				if (!value) {
+					continue
 				}
-				if (value && typeof value === 'object' && ('start' in value || 'end' in value)) {
-					(this.parameters as any)[key] = new DateTimeRange((value as any).start, (value as any).end)
-				}
+
 				if (value instanceof DateTimeRange) {
 					(this.parameters as any)[key] = new DateTimeRange(value.start, value.end)
+				}
+
+				if (typeof value === 'object' && ('start' in value || 'end' in value)) {
+					(this.parameters as any)[key] = new DateTimeRange((value as any).start, (value as any).end)
+				}
+
+				if (typeof value === 'string' && DateTime.isoRegularExpression.test(value)) {
+					(this.parameters as any)[key] = new DateTime(value)
+				}
+
+				if (typeof value === 'string'
+					&& value.includes('~')
+					&& value.split('~').map(p => p.trim()).filter(Boolean).every(p => DateTime.isoRegularExpression.test(p))
+				) {
+					(this.parameters as any)[key] = value.toDateTimeRange()
 				}
 			}
 		}

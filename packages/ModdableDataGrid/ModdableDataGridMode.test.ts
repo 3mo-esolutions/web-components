@@ -79,11 +79,11 @@ describe('ModdableDataGridMode', () => {
 				parameters: { date: '2021-01-01T00:00:00.000Z' },
 			})
 
-			expect(mode.parameters!.date).toBeInstanceOf(Date)
-			expect(mode.parameters!.date).toEqual(new Date('2021-01-01T00:00:00.000Z') as any)
+			expect(mode.parameters!.date).toBeInstanceOf(DateTime)
+			expect(mode.parameters!.date).toEqual(new DateTime('2021-01-01T00:00:00.000Z') as any)
 		})
 
-		it('should convert date range objects to DateTimeRange objects', () => {
+		it('should convert date-range objects to DateTimeRange', () => {
 			const mode = new ModdableDataGridMode({
 				name: 'Test',
 				parameters: { dateRange: { start: '2021-01-01T00:00:00.000Z', end: '2021-01-02T00:00:00.000Z' } },
@@ -93,6 +93,18 @@ describe('ModdableDataGridMode', () => {
 			expect((mode.parameters!.dateRange as unknown as DateTimeRange)!.start).toBeInstanceOf(Date)
 			expect((mode.parameters!.dateRange as unknown as DateTimeRange)!.end).toBeInstanceOf(Date)
 			expect(mode.parameters!.dateRange).toEqual(new DateTimeRange(new Date('2021-01-01T00:00:00.000Z'), new Date('2021-01-02T00:00:00.000Z')) as any)
+		})
+
+		it('should convert json date-ranges to DateTimeRange', () => {
+			const mode = new ModdableDataGridMode({
+				name: 'Test',
+				parameters: { dateRange: '2021-01-01T00:00:00.000Z~2021-01-02T00:00:00.000Z' },
+			})
+
+			expect(mode.parameters!.dateRange).toBeInstanceOf(DateTimeRange)
+			expect((mode.parameters!.dateRange as unknown as DateTimeRange)!.start).toBeInstanceOf(Date)
+			expect((mode.parameters!.dateRange as unknown as DateTimeRange)!.end).toBeInstanceOf(Date)
+			expect(mode.parameters!.dateRange).toEqual(new DateTimeRange(new DateTime('2021-01-01T00:00:00.000Z'), new DateTime('2021-01-02T00:00:00.000Z')) as any)
 		})
 	})
 
