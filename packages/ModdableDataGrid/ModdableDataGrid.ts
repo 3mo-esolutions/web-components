@@ -11,7 +11,7 @@ import { DataGridModesController } from './DataGridModesController.js'
 
 Localizer.dictionaries.add({
 	de: {
-		'Add new view': 'Neue Ansicht erstellen',
+		'Create new view': 'Neue Ansicht erstellen',
 		'Archive': 'Archiv',
 		'Edit view': 'Ansicht bearbeiten',
 		'Delete view': 'Ansicht löschen',
@@ -72,24 +72,30 @@ export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataG
 
 			#modebar {
 				border-radius: var(--mo-border-radius) var(--mo-border-radius) 0 0;
-				background-color: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-accent) 8%);
-				min-height: 40px;
-				padding: 6px 12px;
-
+				--_background: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-accent) 8%);
+				height: calc(52px + 0.5rem);
+				background-color: var(--_background);
 				white-space: nowrap;
 
 				mo-scroller {
-					overflow: auto hidden;
-					max-width: calc(100% - 40px);
+					overflow-y: hidden;
 
-					&::part(container) {
-						display: flex;
-						align-items: center;
+					#modes {
+						padding: 0.5rem 0 0.5rem 1rem;
+					}
+
+					#actions {
+						position: sticky;
+						inset-inline-end: 0.5rem;
+						height: 100%;
+
+						z-index: 5;
+						background: var(--_background);
 					}
 				}
 			}
 
-			.archived {
+			mo-menu-item.archived {
 				min-width: 320px;
 				font-size: 0.8rem;
 
@@ -147,38 +153,38 @@ export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataG
 
 	protected get modebarTemplate() {
 		return !this.hasModebar ? html.nothing : html`
-			<mo-flex id='modebar' direction='horizontal'>
-				<mo-flex ${style({ flexGrow: '1' })} direction='horizontal' alignItems='center' gap='14px'>
-					<mo-scroller>
-						<mo-flex id='modes' direction='horizontal' alignItems='center' gap='0.5rem'>
-							${repeat(this.modesController.visibleModes, mode => mode.id, mode => html`
-								<mo-moddable-data-grid-chip ?data-temporary=${mode.archived} data-mode-id=${mode.id!}
-									.dataGrid=${this}
-									.mode=${mode}
-									?selected=${this.mode?.id === mode.id}
-								></mo-moddable-data-grid-chip>
-							`)}
+			<mo-flex id='modebar' direction='horizontal' alignItems='center' gap='14px'>
+				<mo-scroller>
+					<mo-flex id='modes' direction='horizontal' alignItems='center' gap='0.5rem'>
+						${repeat(this.modesController.visibleModes, mode => mode.id, mode => html`
+							<mo-moddable-data-grid-chip ?data-temporary=${mode.archived} data-mode-id=${mode.id!}
+								.dataGrid=${this}
+								.mode=${mode}
+								?selected=${this.mode?.id === mode.id}
+							></mo-moddable-data-grid-chip>
+						`)}
+						<mo-flex id='actions' direction='horizontal'>
+							<mo-icon-button icon='add'
+								${style({ color: 'var(--mo-color-gray)' })}
+								${tooltip(t('Create new view'))}
+								@click=${() => this.createOrEditMode()}
+							></mo-icon-button>
+
+
+							${!this.modesController.archivedModes.length ? html.nothing : html`
+								<mo-popover-container alignment='end'>
+									<mo-icon-button icon='more_vert' data-test-id='archive'
+										${style({ color: 'var(--mo-color-gray)' })}
+										${tooltip(t('Archive'))}
+									></mo-icon-button>
+									<mo-menu slot='popover'>
+										${this.archiveMenuTemplate}
+									</mo-menu>
+								</mo-popover-container>
+							`}
 						</mo-flex>
-					</mo-scroller>
-
-					<mo-icon-button icon='add'
-						${style({ color: 'var(--mo-color-gray)' })}
-						${tooltip(t('Add new view'))}
-						@click=${() => this.createOrEditMode()}
-					></mo-icon-button>
-				</mo-flex>
-
-				${!this.modesController.archivedModes.length ? html.nothing : html`
-					<mo-popover-container alignment='end'>
-						<mo-icon-button icon='archive' data-test-id='archive'
-							${tooltip(t('Archive'))}
-							${style({ color: 'var(--mo-color-gray)', alignSelf: 'center' })}
-						></mo-icon-button>
-						<mo-menu slot='popover'>
-							${this.archiveMenuTemplate}
-						</mo-menu>
-					</mo-popover-container>
-				`}
+					</mo-flex>
+				</mo-scroller>
 			</mo-flex>
 		`
 	}
@@ -188,7 +194,7 @@ export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataG
 			${this.hasModebar ? html.nothing : html`
 				<mo-icon-button icon='playlist_add' data-test-id='add-mode'
 					@click=${() => this.createOrEditMode()}
-					${tooltip(t('Add new view'))}
+					${tooltip(t('Create new view'))}
 				></mo-icon-button>
 			`}
 			${super.toolbarActionsTemplate}
