@@ -10,7 +10,7 @@ import { DataGridModesController } from './DataGridModesController.js'
 
 Localizer.dictionaries.add({
 	de: {
-		'Add new view': 'Neue Ansicht erstellen',
+		'Create new view': 'Neue Ansicht erstellen',
 		'Archive': 'Archiv',
 		'Edit view': 'Ansicht bearbeiten',
 		'Delete view': 'Ansicht löschen',
@@ -65,14 +65,13 @@ export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataG
 
 			#modebar {
 				border-radius: var(--mo-border-radius) var(--mo-border-radius) 0 0;
-				background-color: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-accent) 8%);
-				min-height: 40px;
-				padding: 6px 12px;
-
+				--_background: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-accent) 8%);
+				height: calc(52px + 0.5rem);
+				background-color: var(--_background);
 				white-space: nowrap;
 			}
 
-			.archived {
+			mo-menu-item.archived {
 				min-width: 320px;
 				font-size: 0.8rem;
 
@@ -189,7 +188,7 @@ export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataG
 			${this.hasModebar ? html.nothing : html`
 				<mo-icon-button icon='playlist_add' data-test-id='add-mode'
 					@click=${() => this.createOrEditMode()}
-					${tooltip(t('Add new view'))}
+					${tooltip(t('Create new view'))}
 				></mo-icon-button>
 			`}
 		`

@@ -98,35 +98,33 @@ export class ModdableDataGridChip<TData, TParameters extends FetchableDataGridPa
 	}
 
 	protected override get template() {
-		return html`
-			<mo-chip>
-				<span id='title'>
-					${this.mode.archived ? `[${this.mode.name}]` : this.mode.name}
-				</span>
-
-				${!this.selected ? html.nothing : html`
-					<mo-flex slot='end' direction='horizontal' ${style({ margin: '0 -4px 0 4px' })}>
-						${!this.dataGrid.hasUnsavedChanges ? this.contextMenuTemplate : html`
-							<span id='changed'>*</span>
-							<mo-icon-button dense icon='undo' ${tooltip(t('Discard changes'))} @click=${() => this.discard()}></mo-icon-button>
-							<mo-icon-button dense icon='done' ${tooltip(t('Save changes'))} @click=${() => this.saveChanges()}></mo-icon-button>
-							${this.contextMenuTemplate}
-						`}
-					</mo-flex>
-				`}
-			</mo-chip>
+		const contextMenuTemplate = html`
+			<mo-icon-button icon='more_vert' dense id='icon-button'
+				?data-no-border=${!this.dataGrid.hasUnsavedChanges}
+				${tooltip(t('More options'))}
+			></mo-icon-button>
 		`
-	}
 
-	private get contextMenuTemplate() {
 		return html`
-			<mo-popover-container>
-				<mo-icon-button icon='more_vert' dense
-					?data-no-border=${!this.dataGrid.hasUnsavedChanges}
-					${tooltip(t('More options'))}
-				></mo-icon-button>
+			<mo-popover-container alignment='end'>
+				<mo-chip>
+					<span id='title'>
+						${this.mode.archived ? `[${this.mode.name}]` : this.mode.name}
+					</span>
 
-				<mo-menu slot='popover'>
+					${!this.selected ? html.nothing : html`
+						<mo-flex slot='end' direction='horizontal' ${style({ margin: '0 -4px 0 4px' })}>
+							${!this.dataGrid.hasUnsavedChanges ? contextMenuTemplate : html`
+								<span id='changed'>*</span>
+								<mo-icon-button dense icon='undo' ${tooltip(t('Discard changes'))} @click=${() => this.discard()}></mo-icon-button>
+								<mo-icon-button dense icon='done' ${tooltip(t('Save changes'))} @click=${() => this.saveChanges()}></mo-icon-button>
+								${contextMenuTemplate}
+							`}
+						</mo-flex>
+					`}
+				</mo-chip>
+
+				<mo-menu slot='popover' target='icon-button'>
 					${!this.dataGrid.hasUnsavedChanges ? html.nothing : html`
 						<mo-menu-item icon='undo' @click=${() => this.discard()}>
 							${t('Discard changes')}
