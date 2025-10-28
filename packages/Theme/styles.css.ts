@@ -21,8 +21,8 @@ RootCssInjector.inject(css`
 		--mo-color-background: color-mix(in srgb, rgb(12, 13, 17), var(--mo-color-accent) var(--mo-color-background-leak-percent, 4%));
 		--mo-color-gray: rgb(165, 165, 165);
 		--mo-color-surface: color-mix(in srgb, rgb(27, 28, 32), var(--mo-color-accent) var(--mo-color-surface-leak-percent, 8%));
-		--mo-color-surface-container-lowest: color-mix(in srgb, var(--mo-color-surface) 100%, black 64%);
-		--mo-color-surface-container-low: color-mix(in srgb, var(--mo-color-surface) 100%, black 32%);
+		--mo-color-surface-container-lowest: color-mix(in srgb, var(--mo-color-surface), black 64%);
+		--mo-color-surface-container-low: color-mix(in srgb, var(--mo-color-surface), black 32%);
 		--mo-color-surface-container: var(--mo-color-surface);
 		--mo-shadow-base: 0, 1, 3;
 	}

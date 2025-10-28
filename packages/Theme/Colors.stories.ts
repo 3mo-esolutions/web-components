@@ -1,6 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite'
 import { html } from '@a11d/lit'
 import { type Color } from '@3mo/color'
+import '@3mo/color-field'
+import '@3mo/flex'
+import '@3mo/grid'
 import p from './package.json'
 import '.'
 
@@ -11,47 +14,31 @@ export default {
 
 export const Colors: StoryObj = {
 	render: () => {
-		const colors = html`
-			<div style='background: var(--mo-color-background); color: var(--mo-color-foreground)'>Background / Foreground</div>
-			<div style='background: var(--mo-color-surface); color: var(--mo-color-on-surface)'>Surface</div>
-			<div style='background: var(--mo-color-surface-container-lowest); color: var(--mo-color-on-surface)'>Surface Container Lowest</div>
-			<div style='background: var(--mo-color-surface-container-low); color: var(--mo-color-on-surface)'>Surface Container Low</div>
-			<div style='background: var(--mo-color-surface-container); color: var(--mo-color-on-surface)'>Surface Container</div>
-			<div style='background: var(--mo-color-surface-container-high); color: var(--mo-color-on-surface)'>Surface Container High</div>
-			<div style='background: var(--mo-color-surface-container-highest); color: var(--mo-color-on-surface)'>Surface Container Highest</div>
-			<div style='background: var(--mo-color-red)'>Red</div>
-			<div style='background: var(--mo-color-green)'>Green</div>
-			<div style='background: var(--mo-color-yellow)'>Yellow</div>
-			<div style='background: var(--mo-color-blue)'>Blue</div>
-			<div style='background: var(--mo-color-gray); color: black;'>Gray</div>
-			<div style='background: var(--mo-color-gray-transparent)'>Gray Transparent</div>
-			<div style='background: var(--mo-color-accent); color: var(--mo-color-on-accent)'>Accent / On Accent</div>
-		`
 		return html`
 			<style>
-				mo-grid div {
-					display: flex;
-					align-items: center;
-					justify-content: center;
-					width: min-content;
-					min-width: 100px;
-					height: 100px;
-					padding: 6px;
-					box-sizing: border-box;
-					text-align: center;
-					border-radius: var(--mo-border-radius);
-				}
-
 				mo-grid {
 					padding: 10px;
-					gap: 10px;
-					grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-					border: 1px solid var(--mo-color-transparent-gray-3);
+					gap: 1rem;
+					mo-flex {
+						gap: 1rem;
+					}
+					div {
+						display: flex;
+						width: 100px;
+						height: 100px;
+						padding: 6px;
+						align-items: center;
+						justify-content: center;
+						box-sizing: border-box;
+						text-align: center;
+					}
 				}
 
-				mo-grid span {
-					grid-column: 1 / -1;
+				mo-collapsible-card div {
+					margin-top: 1rem;
+					padding: 1rem;
 				}
+
 			</style>
 			<mo-flex gap='10px'>
 				<mo-field-color label='Accent'
@@ -62,13 +49,42 @@ export const Colors: StoryObj = {
 				</mo-field-color>
 
 				<mo-grid>
-					<span>Background</span>
-					${colors}
+					<mo-flex direction='horizontal'>
+						<div style='background: var(--mo-color-accent); color: var(--mo-color-on-accent)'>Accent / On Accent</div>
+						<div style='background: var(--mo-color-red)'>Red</div>
+						<div style='background: var(--mo-color-green)'>Green</div>
+						<div style='background: var(--mo-color-yellow)'>Yellow</div>
+						<div style='background: var(--mo-color-blue)'>Blue</div>
+						<div style='background: var(--mo-color-gray); color: black;'>Gray</div>
+						<div style='background: var(--mo-color-gray-transparent)'>Gray Transparent</div>
+					</mo-flex>
+					<mo-flex direction='horizontal'>
+						<div style='background: var(--mo-color-background); color: var(--mo-color-foreground)'>Background / Foreground</div>
+						<div style='background: var(--mo-color-surface-container-lowest); color: var(--mo-color-on-surface)'>Surface Container Lowest</div>
+						<div style='background: var(--mo-color-surface-container-low); color: var(--mo-color-on-surface)'>Surface Container Low</div>
+						<div style='background: var(--mo-color-surface-container); color: var(--mo-color-on-surface)'>Surface Container i.e. Surface</div>
+						<div style='background: var(--mo-color-surface-container-high); color: var(--mo-color-on-surface)'>Surface Container High</div>
+						<div style='background: var(--mo-color-surface-container-highest); color: var(--mo-color-on-surface)'>Surface Container Highest</div>
+					</mo-flex>
 				</mo-grid>
-				<mo-grid style='background: var(--mo-color-surface)'>
-					<span>Surface</span>
-					${colors}
-				</mo-grid>
+
+				<mo-collapsible-card type='outlined' heading='Nested Surface Container Colors' open>
+					<div style='background: var(--mo-color-surface-container-lowest)'>
+						Lowest
+						<div style='background: var(--mo-color-surface-container-low)'>
+							Low
+							<div style='background: var(--mo-color-surface-container)'>
+								Surface
+								<div style='background: var(--mo-color-surface-container-high)'>
+									High
+									<div style='background: var(--mo-color-surface-container-highest)'>
+										Highest
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</mo-collapsible-card>
 			</mo-flex>
 		`
 	}
