@@ -1,4 +1,4 @@
-import { component, Component, css, html, property, event, style, live, queryAll, repeat, bind } from '@a11d/lit'
+import { component, Component, css, html, property, event, style, live, queryAll, repeat } from '@a11d/lit'
 import { observeResize } from '@3mo/resize-observer'
 import { Localizer } from '@3mo/localization'
 import { ReorderabilityController } from '@3mo/reorderability'
@@ -30,6 +30,33 @@ export class DataGridHeader<TData> extends Component {
 
 	@property({ type: Object }) dataGrid!: DataGrid<TData, any>
 	@property({ type: Boolean, reflect: true }) overlayOpen = false
+
+	get density() {
+		const [fontSize, rowHeight] = [this.dataGrid.cellFontSize, this.dataGrid.rowHeight]
+		switch (true) {
+			case fontSize === 0.8 && rowHeight === 2:
+				return 'compact'
+			case fontSize === 1 && rowHeight === 2.5:
+				return 'comfortable'
+			case fontSize === 1.2 && rowHeight === 3:
+				return 'spacious'
+			default:
+				return undefined
+		}
+	}
+	set density(value: 'compact' | 'comfortable' | 'spacious' | undefined) {
+		switch (value) {
+			case 'compact':
+				[this.dataGrid.cellFontSize, this.dataGrid.rowHeight] = [0.8, 2]
+				break
+			case 'comfortable':
+				[this.dataGrid.cellFontSize, this.dataGrid.rowHeight] = [1, 2.5]
+				break
+			case 'spacious':
+				[this.dataGrid.cellFontSize, this.dataGrid.rowHeight] = [1.2, 3]
+				break
+		}
+	}
 
 	override readonly role = 'row'
 
@@ -115,6 +142,19 @@ export class DataGridHeader<TData> extends Component {
 					&::part(heading) {
 						font-size: min(1em, 14px);
 						letter-spacing: 0.15px;
+					}
+				}
+
+				mo-button-group {
+					display: flex;
+					justify-content: center;
+					padding: 1rem;
+					mo-button:not([selected]) {
+						--mo-color-accent: var(--mo-color-gray);
+					}
+					mo-icon {
+						margin-top: 3px;
+						font-size: 18px;
 					}
 				}
 			}
@@ -247,22 +287,26 @@ export class DataGridHeader<TData> extends Component {
 					<mo-popover slot='popover'>
 						<mo-scroller style='max-height: 45vh; min-width: 15rem; overflow-y: auto; overflow-x: hidden;'>
 							<mo-flex>
-								<mo-section heading=${t('Design')}>
-									<mo-flex gap='1rem'>
-										<mo-field-select label=${t('Font Size')} ${bind(this, 'dataGrid', { keyPath: 'cellFontSize' as any })}>
-											${Array.from({ length: 5 }).map((_, i) => {
-												const value = 0.8 + i * 0.1
-												return html`<mo-option value=${value}>${(value * 100).formatAsPercent()}</mo-option>`
-											})}
-										</mo-field-select>
-										<mo-field-select label=${t('Row Height')} ${bind(this, 'dataGrid', { keyPath: 'rowHeight' as any })}>
-											${Array.from({ length: 7 }).map((_, i) => {
-												const value = 30 + i * 5
-												return html`<mo-option value=${value}>${value.format()}px</mo-option>`
-											})}
-										</mo-field-select>
-									</mo-flex>
-								</mo-section>
+								<mo-button-group type='outlined'>
+									<mo-button ?selected=${this.density === 'compact'} @click=${() => this.density = 'compact'}>
+										<mo-flex>
+											<mo-icon icon='density_small'></mo-icon>
+											<span>${t('Compact')}</span>
+										</mo-flex>
+									</mo-button>
+									<mo-button ?selected=${this.density === 'comfortable'} @click=${() => this.density = 'comfortable'}>
+										<mo-flex>
+											<mo-icon icon='density_medium'></mo-icon>
+											<span>${t('Comfortable')}</span>
+										</mo-flex>
+									</mo-button>
+									<mo-button ?selected=${this.density === 'spacious'} @click=${() => this.density = 'spacious'}>
+										<mo-flex>
+											<mo-icon icon='density_large'></mo-icon>
+											<span>${t('Spacious')}</span>
+										</mo-flex>
+									</mo-button>
+								</mo-button-group>
 
 								<mo-section .heading=${html`
 									${t('Columns')}
