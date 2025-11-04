@@ -1,4 +1,6 @@
 import 'requestidlecallback-polyfill'
+import '@3mo/button'
+import '@3mo/button-group'
 import '@3mo/theme'
 import '@3mo/flex'
 import '@3mo/grid'

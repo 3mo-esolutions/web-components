@@ -52,8 +52,8 @@ Localizer.dictionaries.add('de', {
  * @attr getRowContextMenuTemplate - A function which returns a template for the context menu of a given row.
  * @attr filtersOpen - Whether the elements of the `filter` slot are shown. The filter button of the toolbar toggles it.
  * @attr hasAlternatingBackground - Whether the rows should have alternating background.
- * @attr cellFontSize - The font size of the cells in rem, between 0.8 and 1.2. Defaults to `DataGrid.cellRelativeFontSize`, 0.8.
- * @attr rowHeight - The height of the rows in pixels, between 30 and 60. Defaults to `DataGrid.rowHeight`, 35.
+ * @attr cellFontSize - The font size of the cells in rem, between 0.8 and 1.2. Defaults to 0.8.
+ * @attr rowHeight - The height of the rows in rem, between 2 and 4. Defaults to 2.
  * @attr exportable - Whether the DataGrid is exportable. This will show an export button in the footer.
  *
  * @slot column - The column elements, which assign themselves to it when placed in the grid. It is hidden.
@@ -107,8 +107,6 @@ Localizer.dictionaries.add('de', {
  */
 @component('mo-data-grid')
 export class DataGrid<TData, TDetailsElement extends Element | undefined = undefined> extends Component {
-	static readonly rowHeight = new LocalStorage<number>('DataGrid.RowHeight', 35)
-	static readonly cellRelativeFontSize = new LocalStorage<number>('DataGrid.CellRelativeFontSize', 0.8)
 	static readonly pageSize = new LocalStorage<number>('DataGrid.PageSize', 25)
 	static readonly hasAlternatingBackground = new LocalStorage('DataGrid.HasAlternatingBackground', false)
 	protected static readonly defaultRowElementTag = literal`mo-data-grid-default-row`
@@ -178,18 +176,16 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	@property({
 		type: Number,
 		updated(this: DataGrid<TData, TDetailsElement>) {
-			const fontSize = Math.max(0.8, Math.min(1.2, this.cellFontSize))
-			this.style.setProperty('--mo-data-grid-cell-font-size', `${fontSize}rem`)
+			this.style.setProperty('--mo-data-grid-cell-font-size', `${Math.max(0.8, Math.min(1.2, this.cellFontSize))}rem`)
 		}
-	}) cellFontSize = DataGrid.cellRelativeFontSize.value
+	}) cellFontSize = 0.8
 
 	@property({
 		type: Number,
 		updated(this: DataGrid<TData, TDetailsElement>) {
-			const rowHeight = Math.max(30, Math.min(60, this.rowHeight))
-			this.style.setProperty('--mo-data-grid-row-height', `${rowHeight}px`)
+			this.style.setProperty('--mo-data-grid-row-height', `${Math.max(2, Math.min(4, this.rowHeight))}rem`)
 		}
-	}) rowHeight = DataGrid.rowHeight.value
+	}) rowHeight = 2
 
 	@query('mo-data-grid-header') private readonly header?: DataGridHeader<TData>
 	@query('mo-scroller#scroller') protected readonly scroller?: Scroller
