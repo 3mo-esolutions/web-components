@@ -29,9 +29,9 @@ export class NavigationLink implements INavigation {
 	constructor(readonly options: NavigationOptions & RouterLinkParameters) { }
 
 	get label() {
-		const value = this.options.label ?? label.get(this.options.component.constructor as Constructor<any>)
-		const appendedEllipsis = (this.options.navigationStrategy ?? NavigationStrategy.Page) === NavigationStrategy.Page ? '' : '...'
-		return [value, appendedEllipsis].filter(Boolean).join(' ')
+		const value: HTMLTemplateResult | string = this.options.label ?? label.get(this.options.component.constructor as Constructor<any>)
+		const appendedEllipsis = (this.options.navigationStrategy ?? NavigationStrategy.Page) === NavigationStrategy.Page ? '' : ' ...'
+		return html`${value}${appendedEllipsis}`
 	}
 
 	get icon() { return this.options.icon }
