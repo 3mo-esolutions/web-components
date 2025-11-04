@@ -89,8 +89,6 @@ export enum DataGridEditability {
  */
 @component('mo-data-grid')
 export class DataGrid<TData, TDetailsElement extends Element | undefined = undefined> extends Component {
-	static readonly rowHeight = new LocalStorage<number>('DataGrid.RowHeight', 35)
-	static readonly cellRelativeFontSize = new LocalStorage<number>('DataGrid.CellRelativeFontSize', 0.8)
 	static readonly pageSize = new LocalStorage<Exclude<DataGridPagination, 'auto'>>('DataGrid.PageSize', 25)
 	static readonly hasAlternatingBackground = new LocalStorage('DataGrid.HasAlternatingBackground', true)
 	protected static readonly defaultRowElementTag = literal`mo-data-grid-default-row`
@@ -149,18 +147,16 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	@property({
 		type: Number,
 		updated(this: DataGrid<TData, TDetailsElement>) {
-			const fontSize = Math.max(0.8, Math.min(1.2, this.cellFontSize))
-			this.style.setProperty('--mo-data-grid-cell-font-size', `${fontSize}rem`)
+			this.style.setProperty('--mo-data-grid-cell-font-size', `${Math.max(0.8, Math.min(1.2, this.cellFontSize))}rem`)
 		}
-	}) cellFontSize = DataGrid.cellRelativeFontSize.value
+	}) cellFontSize = 0.8
 
 	@property({
 		type: Number,
 		updated(this: DataGrid<TData, TDetailsElement>) {
-			const rowHeight = Math.max(30, Math.min(60, this.rowHeight))
-			this.style.setProperty('--mo-data-grid-row-height', `${rowHeight}px`)
+			this.style.setProperty('--mo-data-grid-row-height', `${Math.max(2, Math.min(4, this.rowHeight))}rem`)
 		}
-	}) rowHeight = DataGrid.rowHeight.value
+	}) rowHeight = 2
 
 	@query('mo-data-grid-header') private readonly header?: DataGridHeader<TData>
 	@query('mo-scroller') private readonly scroller?: Scroller
