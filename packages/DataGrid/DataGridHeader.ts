@@ -89,11 +89,17 @@ export class DataGridHeader<TData> extends Component {
 			}
 
 			.context-menu {
-				background-color: var(--mo-color-accent);
-
+				background-color: var(--mo-color-surface);
+				&[data-multiple-selected] {
+					background-color: var(--mo-color-accent);
+				}
 				mo-icon-button {
 					color: var(--mo-color-on-accent);
 					font-size: 20px;
+					&:not([data-multiple-selected]) {
+						opacity: 0;
+						pointer-events: none;
+					}
 				}
 			}
 		`
@@ -172,11 +178,12 @@ export class DataGridHeader<TData> extends Component {
 	}
 
 	private get actionsTemplate() {
-		if (this.dataGrid.hasContextMenu && this.dataGrid.selectedData.length > 1) {
+		if (this.dataGrid.hasContextMenu) {
+			const multipleSelected = this.dataGrid.selectedData.length > 1
 			return html`
-				<mo-flex class='context-menu' alignItems='end' justifyContent='center' ${this.getResizeObserver('actionsColumnWidthInPixels')}>
+				<mo-flex ?data-multiple-selected=${multipleSelected} class='context-menu' alignItems='end' justifyContent='center' ${this.getResizeObserver('actionsColumnWidthInPixels')}>
 					<mo-popover-container>
-						<mo-icon-button dense icon='more_vert' title=${t('Actions for ${count:pluralityNumber} selected entries', { count: this.dataGrid.selectedData.length })}></mo-icon-button>
+						<mo-icon-button ?data-multiple-selected=${multipleSelected} dense icon='more_vert' title=${t('Actions for ${count:pluralityNumber} selected entries', { count: this.dataGrid.selectedData.length })}></mo-icon-button>
 
 						<mo-menu slot='popover'>
 							${this.dataGrid.contextMenuController.getMenuContentTemplate()}

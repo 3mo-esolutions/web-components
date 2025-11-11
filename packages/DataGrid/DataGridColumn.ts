@@ -123,7 +123,7 @@ export class DataGridColumn<TData, TValue = unknown> {
 	get stickyColumnInsetInline() {
 		const dataGrid = this.dataGrid
 
-		if (!dataGrid) {
+		if (!dataGrid || !this.sticky) {
 			return ''
 		}
 

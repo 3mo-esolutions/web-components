@@ -36,7 +36,7 @@ export class DataGridContextMenuController<TData> extends Controller {
 	}
 
 	getMenuContentTemplate(data = this.host.selectedData) {
-		return !this.hasContextMenu ? html.nothing : html`
+		return !this.hasContextMenu || !data.length ? html.nothing : html`
 			${data.length === 1 ? html.nothing : html`
 				<div ${style(DataGridContextMenuController.infoStyle)}>
 					<span ${style(DataGridContextMenuController.infoCountStyle)}>${data.length.format()}</span>

@@ -141,12 +141,7 @@ export class DataGridColumnHeader extends Component {
 	}
 
 	readonly resizeController = new ResizeController(this, {
-		callback: async ([entry]) => {
-			// It is necessary to defer the callback to avoid
-			// this resize-observer triggering other resize-observers in a loop
-			await new Promise(r => requestIdleCallback(r))
-			this.column.widthInPixels = entry?.contentRect.width ?? 0
-		}
+		callback: () => requestIdleCallback(() => this.column.widthInPixels = this.getBoundingClientRect().width)
 	})
 
 	override get template() {
