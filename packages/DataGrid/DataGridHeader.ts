@@ -1,7 +1,7 @@
-import { component, Component, css, html, property, event, style, live, queryAll } from '@a11d/lit'
+import { component, Component, css, html, property, event, style, live, queryAll, repeat } from '@a11d/lit'
 import { observeResize } from '@3mo/resize-observer'
 import { Localizer } from '@3mo/localization'
-import { DataGridSelectability, type DataGrid, DataGridSidePanelTab, type DataGridColumnHeader } from './index.js'
+import { DataGridSelectability, type DataGrid, DataGridSidePanelTab, type DataGridColumnHeader, ReorderabilityController } from './index.js'
 import type { DataGridColumnsController } from './DataGridColumnsController.js'
 
 Localizer.dictionaries.add('en', {
@@ -27,6 +27,15 @@ export class DataGridHeader<TData> extends Component {
 	@property({ type: Boolean, reflect: true }) overlayOpen = false
 
 	@queryAll('mo-data-grid-column-header') private readonly columnHeaders!: Array<DataGridColumnHeader>
+
+	readonly reorderabilityController = new ReorderabilityController(this, {
+		element: () => this.renderRoot.querySelector<HTMLElement>('#content')!,
+		draggable: 'mo-data-grid-column-header[data-reorderable]',
+		setData: dt => dt.setDragImage(new Image(), 0, 0),
+		onMove: () => {
+			this.dataGrid.setColumns([...this.renderRoot.querySelectorAll('mo-data-grid-column-header')].map(h => h.column) as any)
+		}
+	})
 
 	protected override connected() {
 		this.dataGrid.dataChange.subscribe(this.handleDataGridDataChange)
@@ -107,11 +116,13 @@ export class DataGridHeader<TData> extends Component {
 
 	protected override get template() {
 		return html`
-			${this.detailsExpanderTemplate}
-			${this.selectionTemplate}
-			${this.contentTemplate}
-			${this.fillerTemplate}
-			${this.actionsTemplate}
+			<div id='content' style='display: contents'>
+				${this.detailsExpanderTemplate}
+				${this.selectionTemplate}
+				${this.contentTemplate}
+				${this.fillerTemplate}
+				${this.actionsTemplate}
+			</div>
 		`
 	}
 
@@ -167,8 +178,8 @@ export class DataGridHeader<TData> extends Component {
 
 	private get contentTemplate() {
 		return html`
-			${this.dataGrid.visibleColumns.map(column => html`
-				<mo-data-grid-column-header .column=${column}></mo-data-grid-column-header>
+			${repeat(this.dataGrid.visibleColumns, c => c.dataSelector, column => html`
+				<mo-data-grid-column-header ?data-reorderable=${!column.sticky} .column=${column}></mo-data-grid-column-header>
 			`)}
 		`
 	}

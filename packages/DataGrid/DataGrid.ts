@@ -11,7 +11,7 @@ import { DataGridColumnsController } from './DataGridColumnsController.js'
 import { DataGridSelectionBehaviorOnDataChange, DataGridSelectionController, type DataGridSelectability } from './DataGridSelectionController.js'
 import { DataGridSortingController, type DataGridRankedSortDefinition, type DataGridSorting } from './DataGridSortingController.js'
 import { DataGridDetailsController } from './DataGridDetailsController.js'
-import { DataGridCsvController, DataGridSidePanelTab, type DataGridColumn, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, type DataGridSidePanel, DataGridContextMenuController, DataGridColumnComponent } from './index.js'
+import { DataGridCsvController, DataGridSidePanelTab, type DataGridColumn, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, type DataGridSidePanel, DataGridContextMenuController, DataGridColumnComponent, ReorderabilityController } from './index.js'
 import { DataRecord } from './DataRecord.js'
 
 Localizer.dictionaries.add('de', {
@@ -385,6 +385,11 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	readonly contextMenuController = new DataGridContextMenuController(this)
 	readonly detailsController = new DataGridDetailsController(this)
 	readonly csvController = new DataGridCsvController<TData>(this)
+	readonly reorderabilityController = new ReorderabilityController(this, {
+		element: () => this.renderRoot.querySelector<HTMLElement>('#content')!,
+		animation: 150,
+		handle: '[mo-data-grid-row]'
+	})
 
 	readonly rowIntersectionObserver?: IntersectionObserver
 

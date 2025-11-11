@@ -125,6 +125,18 @@ export class DataGridColumnHeader extends Component {
 				}
 			}
 
+			:host(.sortable-chosen) {
+				outline: 1px solid var(--mo-color-accent);
+				background: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-accent) 20%);
+				cursor: grab !important;
+				#container {
+					margin-inline-end: 0px;
+				}
+				mo-data-grid-header-separator, #menu-icon, #sort {
+					display: none;
+				}
+			}
+
 			mo-menu {
 				position-anchor: --mo-data-grid-column-header;
 

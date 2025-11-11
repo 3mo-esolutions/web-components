@@ -54,6 +54,10 @@
 		"@3mo/downloader": "x",
 		"@3mo/line": "x",
 		"@3mo/keyboard-controller": "x",
-		"requestidlecallback-polyfill": "x"
+		"requestidlecallback-polyfill": "x",
+		"sortablejs": "1.x"
+	},
+	"devDependencies": {
+		"@types/sortablejs": "1.x"
 	}
 }
