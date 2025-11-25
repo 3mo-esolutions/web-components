@@ -1,7 +1,7 @@
 import { css, html, style, event, property, repeat, queryAll } from '@a11d/lit'
 import { tooltip } from '@3mo/tooltip'
 import { FetchableDataGrid, type FetchableDataGridParametersType } from '@3mo/fetchable-data-grid'
-import { type DataGridColumn } from '@3mo/data-grid'
+import { ReorderabilityController, type DataGridColumn } from '@3mo/data-grid'
 import { Localizer } from '@3mo/localization'
 import { ModdableDataGridMode } from './ModdableDataGridMode.js'
 import { DialogMode } from './DialogMode.js'
@@ -145,14 +145,19 @@ export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataG
 		`
 	}
 
+	private readonly modesReorderabilityController = new ReorderabilityController(this, {
+		handleReorder: this.modesController.reorder.bind(this.modesController),
+	})
+
 	protected get modebarTemplate() {
 		return !this.hasModebar ? html.nothing : html`
 			<mo-flex id='modebar' direction='horizontal'>
 				<mo-flex ${style({ flexGrow: '1' })} direction='horizontal' alignItems='center' gap='14px'>
 					<mo-scroller>
 						<mo-flex id='modes' direction='horizontal' alignItems='center' gap='0.5rem'>
-							${repeat(this.modesController.visibleModes, mode => mode.id, mode => html`
+							${repeat(this.modesController.visibleModes, mode => mode.id, (mode, index) => html`
 								<mo-moddable-data-grid-chip ?data-temporary=${mode.archived} data-mode-id=${mode.id!}
+									${this.modesReorderabilityController.item({ index })}
 									.dataGrid=${this}
 									.mode=${mode}
 									?selected=${this.mode?.id === mode.id}

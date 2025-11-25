@@ -1,4 +1,5 @@
-import { css, html, style, Component, component, property, query, eventListener } from '@a11d/lit'
+import { css, html, style, Component, component, property, query, eventListener, unsafeCSS } from '@a11d/lit'
+import { ReorderabilityState } from '@3mo/data-grid'
 import { type FetchableDataGridParametersType } from '@3mo/fetchable-data-grid'
 import { tooltip } from '@3mo/tooltip'
 import { DialogAlert, GenericDialog } from '@3mo/standard-dialogs'
@@ -47,6 +48,18 @@ export class ModdableDataGridChip<TData, TParameters extends FetchableDataGridPa
 			:host {
 				display: inline-block;
 				z-index: 5;
+			}
+
+			:host([data-reorderability=${unsafeCSS(ReorderabilityState.Dragging)}]) {
+				opacity: 0.5;
+			}
+
+			:host([data-reorderability=${unsafeCSS(ReorderabilityState.DropBefore)}]) {
+				border-inline-start: 2px solid var(--mo-color-accent);
+			}
+
+			:host([data-reorderability=${unsafeCSS(ReorderabilityState.DropAfter)}]) {
+				border-inline-end: 2px solid var(--mo-color-accent);
 			}
 
 			mo-chip {

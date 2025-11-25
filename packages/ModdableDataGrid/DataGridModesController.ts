@@ -90,4 +90,10 @@ export class DataGridModesController<TData, TParameters extends FetchableDataGri
 			},
 		}).confirm()
 	}
+
+	reorder(fromIndex: number, toIndex: number) {
+		const mode = this._modes.splice(fromIndex, 1)[0]!
+		this._modes.splice(toIndex, 0, mode)
+		this.host.requestUpdate()
+	}
 }
