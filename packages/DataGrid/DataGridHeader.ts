@@ -1,7 +1,7 @@
-import { component, Component, css, html, property, event, style, live, queryAll } from '@a11d/lit'
+import { component, Component, css, html, property, event, style, live, queryAll, repeat } from '@a11d/lit'
 import { observeResize } from '@3mo/resize-observer'
 import { Localizer } from '@3mo/localization'
-import { DataGridSelectability, type DataGrid, DataGridSidePanelTab, type DataGridColumnHeader } from './index.js'
+import { DataGridSelectability, type DataGrid, DataGridSidePanelTab, type DataGridColumnHeader, ReorderabilityController } from './index.js'
 import type { DataGridColumnsController } from './DataGridColumnsController.js'
 
 Localizer.dictionaries.add('en', {
@@ -27,6 +27,18 @@ export class DataGridHeader<TData> extends Component {
 	@property({ type: Boolean, reflect: true }) overlayOpen = false
 
 	@queryAll('mo-data-grid-column-header') private readonly columnHeaders!: Array<DataGridColumnHeader>
+
+	readonly reorderabilityController = new ReorderabilityController(this, {
+		handleReorder: (source, destination) => {
+			const sourceColumn = this.dataGrid.visibleColumns[source]!
+			const destinationColumn = this.dataGrid.visibleColumns[destination]!
+			const sourceIndex = this.dataGrid.columns.indexOf(sourceColumn)
+			const destinationIndex = this.dataGrid.columns.indexOf(destinationColumn)
+			this.dataGrid.columns.splice(sourceIndex, 1)
+			this.dataGrid.columns.splice(destinationIndex, 0, sourceColumn)
+			this.dataGrid.setColumns(this.dataGrid.columns)
+		}
+	})
 
 	protected override connected() {
 		this.dataGrid.dataChange.subscribe(this.handleDataGridDataChange)
@@ -62,18 +74,10 @@ export class DataGridHeader<TData> extends Component {
 				height: var(--mo-data-grid-header-height);
 			}
 
-			.details, .selection, .actions, .context-menu {
+			.reorder, .details, .selection, .actions, .context-menu {
 				position: sticky;
 				background: var(--mo-data-grid-sticky-part-color);
 				z-index: 5;
-			}
-
-			.details {
-				inset-inline-start: 0px;
-			}
-
-			.selection {
-				inset-inline-start: 0px;
 			}
 
 			.actions, .context-menu {
@@ -106,6 +110,7 @@ export class DataGridHeader<TData> extends Component {
 
 	protected override get template() {
 		return html`
+			${this.reorderabilityTemplate}
 			${this.detailsExpanderTemplate}
 			${this.selectionTemplate}
 			${this.contentTemplate}
@@ -114,10 +119,19 @@ export class DataGridHeader<TData> extends Component {
 		`
 	}
 
+	private get reorderabilityTemplate() {
+		return !this.dataGrid.reorderabilityController.enabled ? html.nothing : html`
+			<mo-flex class='reorder'
+				${style({ insetInlineStart: this.dataGrid.columnsController.getStickyColumnInsetInline('reordering') })}
+				${this.getResizeObserver('reordering')}
+			></mo-flex>
+		`
+	}
+
 	private get detailsExpanderTemplate() {
 		return this.dataGrid.hasDetails === false ? html.nothing : html`
 			<mo-flex class='details' justifyContent='center' alignItems='center'
-				${style({ insetInlineStart: '0px' })}
+				${style({ insetInlineStart: this.dataGrid.columnsController.getStickyColumnInsetInline('details') })}
 				${this.getResizeObserver('details')}
 			>
 				${!this.dataGrid.hasDetails || !this.dataGrid.multipleDetails ? html.nothing : html`
@@ -133,7 +147,7 @@ export class DataGridHeader<TData> extends Component {
 	private get selectionTemplate() {
 		return !this.dataGrid.hasSelection ? html.nothing : html`
 			<mo-flex class='selection' justifyContent='center' alignItems='center'
-				${style({ insetInlineStart: this.dataGrid.hasDetails ? '20px' : '0px' })}
+				${style({ insetInlineStart: this.dataGrid.columnsController.getStickyColumnInsetInline('selection') })}
 				${this.getResizeObserver('selection')}
 			>
 				${this.dataGrid.selectability !== DataGridSelectability.Multiple ? html.nothing : html`
@@ -166,8 +180,8 @@ export class DataGridHeader<TData> extends Component {
 
 	private get contentTemplate() {
 		return html`
-			${this.dataGrid.visibleColumns.map(column => html`
-				<mo-data-grid-column-header .column=${column}></mo-data-grid-column-header>
+			${repeat(this.dataGrid.visibleColumns, c => c.dataSelector, (column, index) => html`
+				<mo-data-grid-column-header ${this.reorderabilityController.item({ index, disabled: !!column.sticky })} .column=${column}></mo-data-grid-column-header>
 			`)}
 		`
 	}

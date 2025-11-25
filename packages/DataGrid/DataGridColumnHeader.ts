@@ -1,9 +1,10 @@
-import { bind, Component, component, css, html, join, property, style, type HTMLTemplateResult } from '@a11d/lit'
+import { bind, Component, component, css, html, join, property, style, unsafeCSS, type HTMLTemplateResult } from '@a11d/lit'
 import { tooltip } from '@3mo/tooltip'
 import { Localizer } from '@3mo/localization'
 import { ResizeController } from '@3mo/resize-observer'
 import type { DataGridColumn } from './DataGridColumn.js'
 import { DataGridSortingStrategy } from './DataGridSortingController.js'
+import { ReorderabilityState } from './DataGridReorderabilityController.js'
 
 Localizer.dictionaries.add('de', {
 	'Sorting': 'Sortierung',
@@ -29,6 +30,18 @@ export class DataGridColumnHeader extends Component {
 				padding: 0 var(--mo-data-grid-cell-padding);
 				transition: background 0.1s;
 				anchor-name: --mo-data-grid-column-header;
+			}
+
+			:host([data-reorderability=${unsafeCSS(ReorderabilityState.Dragging)}]) {
+				opacity: 0.5;
+			}
+
+			:host([data-reorderability=${unsafeCSS(ReorderabilityState.DropBefore)}]) {
+				border-inline-start: 3px solid var(--mo-color-accent);
+			}
+
+			:host([data-reorderability=${unsafeCSS(ReorderabilityState.DropAfter)}]) {
+				border-inline-end: 3px solid var(--mo-color-accent);
 			}
 
 			:host(:hover) {

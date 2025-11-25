@@ -2,7 +2,7 @@ import { Controller } from '@a11d/lit'
 import { DataGridColumnComponent, type DataGrid, type DataGridColumn } from './index.js'
 
 export class DataGridColumnsController<TData> extends Controller {
-	private readonly columnWidths = { details: 0, selection: 0, actions: 0 }
+	private readonly columnWidths = { reordering: 0, details: 0, selection: 0, actions: 0 }
 	private _extractedColumns = new Array<DataGridColumn<TData>>()
 	private initialized = false
 
@@ -54,12 +54,17 @@ export class DataGridColumnsController<TData> extends Controller {
 
 	private get columns() {
 		return [
+			{ name: 'order', width: this.orderColumnWidth },
 			{ name: 'details', width: this.detailsColumnWidth },
 			{ name: 'selection', width: this.selectionColumnWidth },
 			...this.dataColumnsWidths.map(width => ({ name: 'data', width })),
 			{ name: 'padding', width: '1fr' },
 			{ name: 'actions', width: this.actionsColumnWidth }
 		].filter(c => c.width !== undefined) as Array<{ readonly name: string, readonly width: string }>
+	}
+
+	private get orderColumnWidth() {
+		return !this.host.reorderabilityController.enabled ? undefined : window.getComputedStyle(this.host).getPropertyValue('--mo-data-grid-column-reorder-width')
 	}
 
 	private get detailsColumnWidth() {
@@ -133,7 +138,20 @@ export class DataGridColumnsController<TData> extends Controller {
 		this.columnWidths[column] = widthInPixels
 	}
 
-	getStickyColumnInsetInline(column: DataGridColumn<TData>) {
+	getStickyColumnInsetInline(column: DataGridColumn<TData> | keyof typeof this.columnWidths) {
+		if (typeof column !== 'object') {
+			switch (column) {
+				case 'reordering':
+					return '0px'
+				case 'details':
+					return `${this.columnWidths.reordering}px`
+				case 'selection':
+					return `${this.columnWidths.reordering + this.columnWidths.details}px`
+				case 'actions':
+					return 'auto'
+			}
+		}
+
 		if (!column.sticky) {
 			return ''
 		}
@@ -145,8 +163,8 @@ export class DataGridColumnsController<TData> extends Controller {
 			.filter(x => x !== undefined)
 			.reduce((a, b) => a! + b!, 0)!
 
-		const { selection, details, actions } = this.columnWidths
-		const start = `${selection + details + calculate('start')}px`
+		const { reordering, selection, details, actions } = this.columnWidths
+		const start = `${reordering + selection + details + calculate('start')}px`
 		const end = `${calculate('end') + actions}px`
 
 		switch (column.sticky) {

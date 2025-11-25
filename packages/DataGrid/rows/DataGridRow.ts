@@ -1,10 +1,10 @@
-import { css, property, Component, html, query, queryAll, type HTMLTemplateResult, LitElement, live } from '@a11d/lit'
+import { css, property, Component, html, query, queryAll, type HTMLTemplateResult, LitElement, live, style, unsafeCSS } from '@a11d/lit'
 import { equals } from '@a11d/equals'
 import { DirectionsByLanguage } from '@3mo/localization'
 import { popover } from '@3mo/popover'
 import { ContextMenu } from '@3mo/context-menu'
 import { type DataGridColumn } from '../DataGridColumn.js'
-import { type DataGridCell, DataGridPrimaryContextMenuItem, type DataRecord } from '../index.js'
+import { type DataGridCell, DataGridPrimaryContextMenuItem, type DataRecord, ReorderabilityState } from '../index.js'
 
 export abstract class DataGridRow<TData, TDetailsElement extends Element | undefined = undefined> extends Component {
 	@queryAll('mo-data-grid-cell') readonly cells!: Array<DataGridCell<any, TData, TDetailsElement>>
@@ -66,6 +66,31 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				width: 100%;
 			}
 
+			:host([data-reorderability=${unsafeCSS(ReorderabilityState.Dragging)}]) {
+				opacity: 0.5;
+			}
+
+			:host([data-reorderability=${unsafeCSS(ReorderabilityState.DropBefore)}]) {
+				border-top: 2px solid var(--mo-color-accent);
+			}
+
+			:host([data-reorderability=${unsafeCSS(ReorderabilityState.DropAfter)}]) {
+				border-bottom: 2px solid var(--mo-color-accent);
+			}
+
+			#reorderability {
+				position: sticky;
+				z-index: 2;
+				width: var(--mo-data-grid-column-reorder-width);
+				height: 100%;
+				background: var(--mo-data-grid-sticky-part-color);
+
+				mo-icon-button {
+					cursor: grab;
+					opacity: 0.5;
+				}
+			}
+
 			#detailsExpanderContainer {
 				position: sticky;
 				z-index: 2;
@@ -77,12 +102,8 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				width: var(--mo-data-grid-column-selection-width);
 				position: sticky;
 				z-index: 2;
-				inset-inline-start: 0px;
 				height: 100%;
 				background: var(--mo-data-grid-sticky-part-color);
-				&[data-has-details] {
-					inset-inline-start: 20px;
-				}
 			}
 
 			:host(:hover) {
@@ -98,7 +119,6 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 						width: 2px;
 						height: 100%;
 						top: 0;
-						inset-inline-start: 0;
 						position: absolute;
 						background-color: var(--mo-color-accent);
 						z-index: 2;
@@ -223,9 +243,18 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 
 	protected abstract get rowTemplate(): HTMLTemplateResult
 
+	protected get reorderabilityTemplate() {
+		return !this.dataGrid.reorderabilityController.enabled ? html.nothing : html`
+			<mo-flex id='reorderability' justifyContent='center' alignItems='center' ${style({ insetInlineStart: this.dataGrid.columnsController.getStickyColumnInsetInline('reordering') })}>
+				<mo-icon-button icon='drag_handle'></mo-icon-button>
+			</mo-flex>
+		`
+	}
+
 	protected get detailsExpanderTemplate() {
 		return this.dataGrid.hasDetails === false ? html.nothing : html`
 			<mo-flex id='detailsExpanderContainer' justifyContent='center' alignItems='center'
+				${style({ insetInlineStart: this.dataGrid.columnsController.getStickyColumnInsetInline('details') })}
 				@click=${(e: Event) => e.stopPropagation()}
 				@dblclick=${(e: Event) => e.stopPropagation()}
 			>
@@ -244,6 +273,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		return !this.dataGrid.hasSelection ? html.nothing : html`
 			<mo-flex id='selectionContainer' justifyContent='center' alignItems='center'
 				?data-has-details=${this.dataGrid.hasDetails}
+				${style({ insetInlineStart: this.dataGrid.columnsController.getStickyColumnInsetInline('selection') })}
 				@click=${(e: Event) => e.stopPropagation()}
 				@dblclick=${(e: Event) => e.stopPropagation()}
 			>

@@ -192,8 +192,19 @@ export const Sorting: StoryObj = {
 	`
 }
 
+export const Reorderability: StoryObj = {
+	render: () => html`
+		<mo-data-grid .data=${hundredPeople} pagination='auto' style='height: 500px' reorderability>
+			<mo-data-grid-column-number sticky='start' nonEditable heading='ID' dataSelector='id'></mo-data-grid-column-number>
+			<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
+			<mo-data-grid-column-number heading='Age' dataSelector='age' sumHeading='Ages Total'></mo-data-grid-column-number>
+			<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
+			<mo-data-grid-column-currency heading='Balance' dataSelector='balance' sumHeading='Balances Total'></mo-data-grid-column-currency>
+		</mo-data-grid>
+	`
+}
+
 export const WithDetails: StoryObj = {
-	name: 'With Details',
 	render: ({ multipleDetails, detailsOnClick }) => html`
 		<mo-data-grid style='height: 500px'
 			.data=${fivePeople}
