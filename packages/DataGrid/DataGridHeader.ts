@@ -118,7 +118,7 @@ export class DataGridHeader<TData> extends Component {
 		return this.dataGrid.hasDetails === false ? html.nothing : html`
 			<mo-flex class='details' justifyContent='center' alignItems='center'
 				${style({ insetInlineStart: '0px' })}
-				${this.getResizeObserver('detailsColumnWidthInPixels')}
+				${this.getResizeObserver('details')}
 			>
 				${!this.dataGrid.hasDetails || !this.dataGrid.multipleDetails ? html.nothing : html`
 					<mo-icon-button dense
@@ -134,7 +134,7 @@ export class DataGridHeader<TData> extends Component {
 		return !this.dataGrid.hasSelection ? html.nothing : html`
 			<mo-flex class='selection' justifyContent='center' alignItems='center'
 				${style({ insetInlineStart: this.dataGrid.hasDetails ? '20px' : '0px' })}
-				${this.getResizeObserver('selectionColumnWidthInPixels')}
+				${this.getResizeObserver('selection')}
 			>
 				${this.dataGrid.selectability !== DataGridSelectability.Multiple ? html.nothing : html`
 					<mo-checkbox .selected=${live(this.selection)} @change=${this.handleSelectionChange}></mo-checkbox>
@@ -180,7 +180,7 @@ export class DataGridHeader<TData> extends Component {
 		if (this.dataGrid.hasContextMenu) {
 			const multipleSelected = this.dataGrid.selectedData.length > 1
 			return html`
-				<mo-flex ?data-multiple-selected=${multipleSelected} class='context-menu' alignItems='end' justifyContent='center' ${this.getResizeObserver('actionsColumnWidthInPixels')}>
+				<mo-flex ?data-multiple-selected=${multipleSelected} class='context-menu' alignItems='end' justifyContent='center' ${this.getResizeObserver('actions')}>
 					<mo-popover-container>
 						<mo-icon-button ?data-multiple-selected=${multipleSelected} dense icon='more_vert' title=${t('Actions for ${count:pluralityNumber} selected entries', { count: this.dataGrid.selectedData.length })}></mo-icon-button>
 
@@ -194,7 +194,7 @@ export class DataGridHeader<TData> extends Component {
 
 		if (!this.dataGrid.hasToolbar && !this.dataGrid.sidePanelHidden) {
 			return html`
-				<mo-flex class='actions' alignItems='end' justifyContent='center' ${this.getResizeObserver('actionsColumnWidthInPixels')}>
+				<mo-flex class='actions' alignItems='end' justifyContent='center' ${this.getResizeObserver('actions')}>
 					<mo-icon-button dense icon='settings'
 						@click=${() => this.dataGrid.navigateToSidePanelTab(this.dataGrid.sidePanelTab ? undefined : DataGridSidePanelTab.Settings)}
 					></mo-icon-button>
@@ -205,9 +205,8 @@ export class DataGridHeader<TData> extends Component {
 		return html.nothing
 	}
 
-	private getResizeObserver(property: keyof DataGridColumnsController<TData>) {
-		// @ts-expect-error Readonly property set here
-		return observeResize(([entry]) => this.dataGrid.columnsController[property] = entry?.contentRect.width ?? 0)
+	private getResizeObserver(column: Parameters<DataGridColumnsController<TData>['setColumnWidth']>[0]) {
+		return observeResize(([entry]) => this.dataGrid.columnsController.setColumnWidth(column, entry?.contentRect.width ?? 0))
 	}
 
 	private toggleAllDetails() {

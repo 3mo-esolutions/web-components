@@ -26,6 +26,10 @@ interface SortableComponent<TData> {
 export class DataGridSortingController<TData> {
 	constructor(readonly host: SortableComponent<TData>) { }
 
+	get enabled() {
+		return !!this.host.sorting
+	}
+
 	get() {
 		return this.toNormalizedRanked(this.host.sorting ?? [])
 	}

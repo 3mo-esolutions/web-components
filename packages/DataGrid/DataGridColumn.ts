@@ -121,32 +121,7 @@ export class DataGridColumn<TData, TValue = unknown> {
 	}
 
 	get stickyColumnInsetInline() {
-		const dataGrid = this.dataGrid
-
-		if (!dataGrid || !this.sticky) {
-			return ''
-		}
-
-		const columnIndex = dataGrid.visibleColumns.indexOf(this)
-		const calculate = (type: 'start' | 'end') => dataGrid.visibleColumns
-			.filter((c, i) => c.sticky === type && (type === 'start' ? i < columnIndex : i > columnIndex))
-			.map(c => c.widthInPixels)
-			.filter(x => x !== undefined)
-			.reduce((a, b) => a! + b!, 0)!
-
-		const start = `${dataGrid.columnsController.selectionColumnWidthInPixels + dataGrid.columnsController.detailsColumnWidthInPixels + calculate('start')}px`
-		const end = `${calculate('end') + dataGrid.columnsController.actionsColumnWidthInPixels}px`
-
-		switch (this.sticky) {
-			case 'start':
-				return `${start} auto`
-			case 'end':
-				return `auto ${end}`
-			case 'both':
-				return `${start} ${end}`
-			default:
-				return ''
-		}
+		return this.dataGrid?.columnsController.getStickyColumnInsetInline(this) ?? ''
 	}
 
 	generateCsvHeading?(): Generator<string>

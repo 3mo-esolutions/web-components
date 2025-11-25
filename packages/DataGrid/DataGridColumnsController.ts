@@ -2,10 +2,7 @@ import { Controller } from '@a11d/lit'
 import { DataGridColumnComponent, type DataGrid, type DataGridColumn } from './index.js'
 
 export class DataGridColumnsController<TData> extends Controller {
-	readonly detailsColumnWidthInPixels = 0
-	readonly selectionColumnWidthInPixels = 0
-	readonly actionsColumnWidthInPixels = 0
-
+	private readonly columnWidths = { details: 0, selection: 0, actions: 0 }
 	private _extractedColumns = new Array<DataGridColumn<TData>>()
 	private initialized = false
 
@@ -130,5 +127,37 @@ export class DataGridColumnsController<TData> extends Controller {
 				columnElement.remove()
 				return column
 			}) as Array<DataGridColumn<TData>>
+	}
+
+	setColumnWidth(column: keyof typeof this.columnWidths, widthInPixels: number) {
+		this.columnWidths[column] = widthInPixels
+	}
+
+	getStickyColumnInsetInline(column: DataGridColumn<TData>) {
+		if (!column.sticky) {
+			return ''
+		}
+
+		const columnIndex = this.visibleColumns.indexOf(column)
+		const calculate = (type: 'start' | 'end') => this.visibleColumns
+			.filter((c, i) => c.sticky === type && (type === 'start' ? i < columnIndex : i > columnIndex))
+			.map(c => c.widthInPixels)
+			.filter(x => x !== undefined)
+			.reduce((a, b) => a! + b!, 0)!
+
+		const { selection, details, actions } = this.columnWidths
+		const start = `${selection + details + calculate('start')}px`
+		const end = `${calculate('end') + actions}px`
+
+		switch (column.sticky) {
+			case 'start':
+				return `${start} auto`
+			case 'end':
+				return `auto ${end}`
+			case 'both':
+				return `${start} ${end}`
+			default:
+				return ''
+		}
 	}
 }

@@ -19,6 +19,17 @@ describe('DataGridSortingController', () => {
 		{ id: 5, name: 'Harry' },
 	]
 
+	describe('enabled', () => {
+		it('should be true when no sorting is defined', () => {
+			expect(controller.enabled).toBeFalse()
+		})
+
+		it('should be false when sorting is defined', () => {
+			controller.set({ selector: 'id', strategy: DataGridSortingStrategy.Descending })
+			expect(controller.enabled).toBeTrue()
+		})
+	})
+
 	describe('get', () => {
 		it('should initialize with no sorting', () => {
 			expect(controller.get()).toEqual([])
