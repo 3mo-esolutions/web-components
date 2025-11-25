@@ -115,7 +115,6 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 
 			#contentContainer {
 				grid-column: -1 / 1;
-				cursor: pointer;
 			}
 
 			#contextMenuIconButtonContainer {

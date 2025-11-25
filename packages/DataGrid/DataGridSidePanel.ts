@@ -98,7 +98,7 @@ export class DataGridSidePanel<TData> extends Component {
 						<mo-heading typography='heading6' ${style({ flex: '1', color: 'var(--mo-color-on-surface)' })}>${t(this.dataGrid.sidePanelTab === DataGridSidePanelTab.Filters ? 'Extended Filters' : 'Settings')}</mo-heading>
 						<mo-icon-button icon='close' dense
 							${tooltip(t('Close'))}
-							${style({ cursor: 'pointer', color: 'var(--mo-color-gray)' })}
+							${style({ color: 'var(--mo-color-gray)' })}
 							@click=${() => this.dataGrid.navigateToSidePanelTab(undefined)}
 						></mo-icon-button>
 					</mo-flex>

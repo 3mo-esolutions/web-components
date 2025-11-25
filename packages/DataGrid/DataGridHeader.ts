@@ -77,7 +77,6 @@ export class DataGridHeader<TData> extends Component {
 			}
 
 			.actions, .context-menu {
-				cursor: pointer;
 				inset-inline-end: 0px;
 			}
 

@@ -185,7 +185,7 @@ export class DataGridFooter<TData> extends Component {
 						@click=${() => this.setPage(this.page - 1)}
 					></mo-icon-button>
 
-					<div ${style({ cursor: 'pointer', width: hasUnknownDataLength ? '40px' : '75px', textAlign: 'center' })}>
+					<div ${style({ width: hasUnknownDataLength ? '40px' : '75px', textAlign: 'center' })}>
 						${this.manualPagination ? html`
 							<mo-field-number dense
 								value=${this.page}
@@ -218,7 +218,7 @@ export class DataGridFooter<TData> extends Component {
 		const rangeText = `${(Math.min(from, to)).format()}-${to.format()}`
 		return html`
 			<mo-popover-container id='page-info' placement='block-start'>
-				<mo-flex alignItems='center' gap='6px' direction='horizontal' style='cursor: pointer'>
+				<mo-flex alignItems='center' gap='6px' direction='horizontal'>
 					<mo-flex direction='horizontal' alignItems='center'>
 						${join([
 							this.dataGrid.selectedData.length

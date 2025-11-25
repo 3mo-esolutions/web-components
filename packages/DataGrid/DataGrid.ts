@@ -689,7 +689,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				#size-anchor {
 					display: grid;
 					grid-template-columns: subgrid;
-					grid-column: -1 / 1;
+					grid-column: data / end;
 					font-size: var(--mo-data-grid-cell-font-size);
 					height: 0;
 					visibility: hidden;
@@ -706,8 +706,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				}
 			</style>
 			<div id='size-anchor'>
-				${!this.hasDetails ? html.nothing : html`<span></span>`}
-				${!this.hasSelection ? html.nothing : html`<span></span>`}
 				${this.visibleColumns.map(column => html`
 					<div style='--_max-level: ${Math.max(...this.dataRecords.map(dr => dr.level))}'>
 						${getLongestContent(column)}

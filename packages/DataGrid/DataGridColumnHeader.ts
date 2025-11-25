@@ -109,7 +109,6 @@ export class DataGridColumnHeader extends Component {
 				position: absolute;
 				inset-inline-end: calc(var(--mo-data-grid-cell-padding) - 6px);
 				inset-block-start: 2px;
-				cursor: pointer;
 				opacity: 0;
 				font-size: 20px;
 				transition: 0.1s;
@@ -164,7 +163,7 @@ export class DataGridColumnHeader extends Component {
 				direction=${direction}
 				@click=${() => this.column.toggleSort()}
 				@contextmenu=${(e: Event) => { e.preventDefault(); this.menuOpen = true }}
-				${style({ flex: '1', overflow: 'hidden', cursor: 'pointer' })}
+				${style({ flex: '1', overflow: 'hidden' })}
 			>
 				${this.contentTemplate}
 				${this.sortingTemplate}
