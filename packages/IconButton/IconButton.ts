@@ -31,6 +31,7 @@ export class IconButton extends Component {
 			:host {
 				display: inline-block;
 				font-size: 20px;
+				cursor: pointer;
 			}
 
 			:host([disabled]) {
@@ -48,6 +49,8 @@ export class IconButton extends Component {
 				--md-icon-button-focus-state-layer-color: currentColor;
 				--md-icon-button-pressed-state-layer-color: currentColor;
 				--md-focus-ring-color: currentColor;
+
+				cursor: inherit;
 			}
 
 			md-icon-button::part(button) {
@@ -93,6 +96,7 @@ MdIconButton.elementStyles.push(css`
 		width: unset !important;
 		height: unset !important;
 		font-size: inherit !important;
+		cursor: inherit !important;
 	}
 
 	::slotted(*) {

@@ -41,6 +41,15 @@ describe('IconButton', () => {
 		expect(getMdIconButton()?.disabled).toBe(true)
 	})
 
+	it('should reflect "cursor" onto the md-icon-button element defaulting to "pointer"', async () => {
+		expect(getComputedStyle(fixture.component).cursor).toBe('pointer')
+		fixture.component.style.cursor = 'not-allowed'
+		await fixture.update()
+		expect(getComputedStyle(fixture.component).cursor).toBe('not-allowed')
+		expect(getComputedStyle(getMdIconButton()!).cursor).toBe('not-allowed')
+		expect(getComputedStyle(getButton()!).cursor).toBe('not-allowed')
+	})
+
 	it('should set pointer-events to "none" when disabled', async () => {
 		fixture.component.disabled = true
 		await fixture.updateComplete
