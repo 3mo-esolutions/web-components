@@ -164,11 +164,11 @@ export class ReorderabilityController extends Controller {
 	}
 }
 
-export type DataGridReorder<T> = Array<{
+export type DataGridReorderChange<T> = {
+	readonly type: 'move' | 'shift'
 	readonly record: DataRecord<T>
 	readonly oldIndex: number
-	readonly type: 'move' | 'shift'
-}>
+}
 
 export class DataGridReorderabilityController<T> extends ReorderabilityController {
 	constructor(override readonly host: DataGrid<T>) {
@@ -187,9 +187,31 @@ export class DataGridReorderabilityController<T> extends ReorderabilityControlle
 	}
 
 	protected override handleReorder(source: number, destination: number) {
+		if (source === destination) {
+			return
+		}
+
 		const d = [...this.host.data]
 		const [movedItem] = d.splice(source, 1)
 		d.splice(destination, 0, movedItem!)
+
 		this.host.data = d
+
+		const isMovingDown = source < destination
+		this.host.reorder.dispatch([
+			{
+				record: this.host.dataRecords[destination]!,
+				oldIndex: source,
+				type: 'move',
+			},
+			...Array.from({ length: Math.abs(destination - source) })
+				.fill(0)
+				.map((_, i) => isMovingDown ? source + i : destination + i + 1)
+				.map(i => ({
+					record: this.host.dataRecords[i]!,
+					oldIndex: isMovingDown ? i + 1 : i - 1,
+					type: 'shift',
+				} as const))
+		])
 	}
 }

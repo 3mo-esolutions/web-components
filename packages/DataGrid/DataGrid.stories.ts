@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite'
 import { html, ifDefined, style, type HTMLTemplateResult } from '@a11d/lit'
 import p from './package.json'
-import { DataGridEditability, DataGridSelectionBehaviorOnDataChange, DataGridSelectability, DataGridSortingStrategy, DataGridColumnText, type DataGridColumnMenuItems } from './index.js'
+import { DataGridEditability, DataGridSelectionBehaviorOnDataChange, DataGridSelectability, DataGridSortingStrategy, DataGridColumnText, type DataGridColumnMenuItems, type DataGridReorderChange } from './index.js'
 import { DialogAlert } from '../StandardDialogs/index.js'
 
 export default {
@@ -194,7 +194,8 @@ export const Sorting: StoryObj = {
 
 export const Reorderability: StoryObj = {
 	render: () => html`
-		<mo-data-grid .data=${hundredPeople} pagination='auto' style='height: 500px' reorderability>
+		<mo-data-grid .data=${hundredPeople} pagination='auto' style='height: 500px' reorderability
+			@reorder=${(e: CustomEvent<Array<DataGridReorderChange<Person>>>) => alert(e.detail.map(x => `${x.record.data.name}: [${x.type}] ${x.oldIndex} -> ${x.record.index}`).join('\n'))}>
 			<mo-data-grid-column-number sticky='start' nonEditable heading='ID' dataSelector='id'></mo-data-grid-column-number>
 			<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
 			<mo-data-grid-column-number heading='Age' dataSelector='age' sumHeading='Ages Total'></mo-data-grid-column-number>

@@ -11,7 +11,7 @@ import { DataGridColumnsController } from './DataGridColumnsController.js'
 import { DataGridSelectionBehaviorOnDataChange, DataGridSelectionController, type DataGridSelectability } from './DataGridSelectionController.js'
 import { DataGridSortingController, type DataGridRankedSortDefinition, type DataGridSorting } from './DataGridSortingController.js'
 import { DataGridDetailsController } from './DataGridDetailsController.js'
-import { DataGridCsvController, DataGridSidePanelTab, type DataGridColumn, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, type DataGridSidePanel, DataGridContextMenuController, DataGridColumnComponent, DataGridReorderabilityController, type DataGridReorder } from './index.js'
+import { DataGridCsvController, DataGridSidePanelTab, type DataGridColumn, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, type DataGridSidePanel, DataGridContextMenuController, DataGridColumnComponent, DataGridReorderabilityController, type DataGridReorderChange } from './index.js'
 import { DataRecord } from './DataRecord.js'
 
 Localizer.dictionaries.add('de', {
@@ -105,7 +105,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	@event() readonly sidePanelOpen!: EventDispatcher<DataGridSidePanelTab>
 	@event() readonly sidePanelClose!: EventDispatcher
 	@event() readonly sortingChange!: EventDispatcher<Array<DataGridRankedSortDefinition<TData>>>
-	@event() readonly reorder!: EventDispatcher<DataGridReorder<TData>>
+	@event() readonly reorder!: EventDispatcher<Array<DataGridReorderChange<TData>>>
 	@event() readonly rowDetailsOpen!: EventDispatcher<DataGridRow<TData, TDetailsElement>>
 	@event() readonly rowDetailsClose!: EventDispatcher<DataGridRow<TData, TDetailsElement>>
 	@event() readonly rowClick!: EventDispatcher<DataGridRow<TData, TDetailsElement>>
