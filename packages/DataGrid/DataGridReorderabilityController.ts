@@ -171,7 +171,7 @@ export type DataGridReorderChange<T> = {
 }
 
 export class DataGridReorderabilityController<T> extends ReorderabilityController {
-	constructor(override readonly host: DataGrid<T>) {
+	constructor(override readonly host: DataGrid<T, any>) {
 		super(host, {})
 	}
 
