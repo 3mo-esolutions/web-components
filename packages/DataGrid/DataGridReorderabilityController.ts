@@ -205,7 +205,6 @@ export class DataGridReorderabilityController<T> extends ReorderabilityControlle
 				type: 'move',
 			},
 			...Array.from({ length: Math.abs(destination - source) })
-				.fill(0)
 				.map((_, i) => isMovingDown ? source + i : destination + i + 1)
 				.map(i => ({
 					record: this.host.dataRecords[i]!,
