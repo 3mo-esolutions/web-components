@@ -33,7 +33,7 @@ export class DataGridSelectionController<TData> {
 
 	constructor(readonly host: SelectableComponent<TData>) { }
 
-	private get selectability() {
+	get selectability() {
 		if (this.host.hasContextMenu === true && this.host.selectability === undefined) {
 			this.host.selectability = DataGridSelectability.Single
 		}

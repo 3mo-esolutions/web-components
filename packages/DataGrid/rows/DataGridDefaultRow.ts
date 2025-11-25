@@ -37,6 +37,7 @@ export class DataGridDefaultRow<TData, TDetailsElement extends Element | undefin
 
 	protected override get rowTemplate() {
 		return html`
+			${this.reorderabilityTemplate}
 			${this.detailsExpanderTemplate}
 			${this.selectionTemplate}
 			${this.dataGrid.columns.map(column => this.getCellTemplate(column))}

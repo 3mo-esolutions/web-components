@@ -11,7 +11,7 @@ import { DataGridColumnsController } from './DataGridColumnsController.js'
 import { DataGridSelectionBehaviorOnDataChange, DataGridSelectionController, type DataGridSelectability } from './DataGridSelectionController.js'
 import { DataGridSortingController, type DataGridRankedSortDefinition, type DataGridSorting } from './DataGridSortingController.js'
 import { DataGridDetailsController } from './DataGridDetailsController.js'
-import { DataGridCsvController, DataGridSidePanelTab, type DataGridColumn, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, type DataGridSidePanel, DataGridContextMenuController, DataGridColumnComponent } from './index.js'
+import { DataGridCsvController, DataGridSidePanelTab, type DataGridColumn, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, type DataGridSidePanel, DataGridContextMenuController, DataGridColumnComponent, DataGridReorderabilityController, type DataGridReorderChange } from './index.js'
 import { DataRecord } from './DataRecord.js'
 
 Localizer.dictionaries.add('de', {
@@ -42,6 +42,7 @@ export enum DataGridEditability {
  * @attr selectedData - The selected data.
  * @attr selectOnClick - Whether the row should be selected on click.
  * @attr selectionBehaviorOnDataChange - The behavior of the selection when the data changes.
+ * @attr reorderability - Whether the rows can be reordered. Can only be enabled if sorting is not active, selectability is not 'multiple', and no details are present.
  * @attr multipleDetails - Whether multiple details can be opened at the same time.
  * @attr subDataGridDataSelector - The key path of the sub data grid data.
  * @attr hasDataDetail - Whether the data has a detail.
@@ -80,6 +81,7 @@ export enum DataGridEditability {
  * @fires sidePanelOpen
  * @fires sidePanelClose
  * @fires sortingChange
+ * @fires reorder
  * @fires rowDetailsOpen
  * @fires rowDetailsClose
  * @fires rowClick
@@ -103,6 +105,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	@event() readonly sidePanelOpen!: EventDispatcher<DataGridSidePanelTab>
 	@event() readonly sidePanelClose!: EventDispatcher
 	@event() readonly sortingChange!: EventDispatcher<Array<DataGridRankedSortDefinition<TData>>>
+	@event() readonly reorder!: EventDispatcher<Array<DataGridReorderChange<TData>>>
 	@event() readonly rowDetailsOpen!: EventDispatcher<DataGridRow<TData, TDetailsElement>>
 	@event() readonly rowDetailsClose!: EventDispatcher<DataGridRow<TData, TDetailsElement>>
 	@event() readonly rowClick!: EventDispatcher<DataGridRow<TData, TDetailsElement>>
@@ -125,6 +128,8 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	@property({ type: Array, event: 'selectionChange' }) selectedData = new Array<TData>()
 	@property({ type: Boolean }) selectOnClick = false
 	@property() selectionBehaviorOnDataChange = DataGridSelectionBehaviorOnDataChange.Reset
+
+	@property({ type: Boolean }) reorderability?: boolean
 
 	@property({ type: Object }) getRowDetailsTemplate?: (data: TData) => HTMLTemplateResult
 	@property({ type: Boolean }) multipleDetails = false
@@ -385,6 +390,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	readonly contextMenuController = new DataGridContextMenuController(this)
 	readonly detailsController = new DataGridDetailsController(this)
 	readonly csvController = new DataGridCsvController<TData>(this)
+	readonly reorderabilityController = new DataGridReorderabilityController(this)
 
 	readonly rowIntersectionObserver?: IntersectionObserver
 
@@ -418,6 +424,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	static override get styles() {
 		return css`
 			:host {
+				--mo-data-grid-column-reorder-width: 20px;
 				--mo-data-grid-column-details-width: 20px;
 				--mo-data-grid-column-selection-width: 40px;
 				--mo-data-grid-column-actions-width: 28px;
@@ -718,6 +725,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	getRowTemplate(dataRecord: DataRecord<TData>, index = 0) {
 		return staticHtml`
 			<${this.rowElementTag} part='row'
+				${this.reorderabilityController.item({ index: dataRecord.index, disabled: !this.reorderabilityController.enabled })}
 				.dataRecord=${dataRecord}
 				?data-has-alternating-background=${this.hasAlternatingBackground && index % 2 === 1}
 			></${this.rowElementTag}>
