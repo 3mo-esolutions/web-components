@@ -32,7 +32,6 @@ export class ReorderabilityController extends Controller {
 		const controller = this
 		return directive(class extends AsyncDirective {
 			host?: HTMLElement
-			container?: HTMLElement
 			part?: ElementPart
 			options?: ReorderabilityControllerItemDirectiveOptions
 

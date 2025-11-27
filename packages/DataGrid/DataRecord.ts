@@ -3,7 +3,6 @@ import { type DataGrid } from './DataGrid.js'
 export class DataRecord<TData> {
 	constructor(readonly dataGrid: DataGrid<TData, any>, init: Partial<DataRecord<TData>>) {
 		Object.assign(this, init)
-		this.subDataRecords = !this.subDataRecords?.length ? undefined : this.subDataRecords
 	}
 
 	readonly data!: TData
@@ -22,7 +21,32 @@ export class DataRecord<TData> {
 		return this.dataGrid.detailsController.isOpen(this)
 	}
 
-	readonly subDataRecords?: Array<DataRecord<TData>>
+	private _subDataRecords?: Array<DataRecord<TData>>
+	get subDataRecords() {
+		if (!this.dataGrid.subDataGridDataSelector) {
+			return undefined
+		}
+
+		if (this._subDataRecords !== undefined) {
+			return this._subDataRecords
+		}
+
+		const subData = KeyPath.get(this.data, this.dataGrid.subDataGridDataSelector)
+		if (!Array.isArray(subData) || !subData.length) {
+			return undefined
+		}
+
+		return this._subDataRecords = this.dataGrid.sortingController
+			.toSortedBy<TData>(subData, d => d)
+			.map(data => new DataRecord(this.dataGrid, { data, level: this.level + 1 }))
+	}
+
+	get flattenedRecords(): Array<DataRecord<TData>> {
+		return [
+			this,
+			...(this.subDataRecords?.flatMap(r => r.flattenedRecords) ?? [])
+		]
+	}
 
 	getSubDataByLevel(level: number) {
 		return this.subDataRecords?.filter(r => r.level === level)

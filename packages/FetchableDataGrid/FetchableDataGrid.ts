@@ -136,7 +136,7 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 			}
 		}
 
-		return [...this.getFlattenedData(data)]
+		return this.getFlattenedData(data)
 	}
 
 	override get hasPagination() {
