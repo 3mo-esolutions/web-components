@@ -819,10 +819,14 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		this.rows.forEach(row => row.cells.forEach(cell => cell.handlePointerDown(event)))
 	}
 
-	get dataRecords(): Array<DataRecord<TData>> {
+	protected getFlattenedData(values = this.data) {
 		return this.sortingController
-			.toSortedBy(this.data.map(data => new DataRecord(this, { data, level: 0 })), ({ data }) => data)
+			.toSortedBy(values.map(data => new DataRecord(this, { data, level: 0 })), ({ data }) => data)
 			.flatMap(r => r.flattenedRecords)
+	}
+
+	get dataRecords(): Array<DataRecord<TData>> {
+		return this.getFlattenedData()
 			.map((record, index) => {
 				// @ts-expect-error index is initialized here
 				record.index = index
