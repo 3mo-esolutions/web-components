@@ -31,7 +31,7 @@ export class DataRecord<TData> {
 			return this._subDataRecords
 		}
 
-		const subData = KeyPath.get(this.data, this.dataGrid.subDataGridDataSelector!)
+		const subData = KeyPath.get(this.data, this.dataGrid.subDataGridDataSelector)
 		if (!Array.isArray(subData) || !subData.length) {
 			return undefined
 		}
