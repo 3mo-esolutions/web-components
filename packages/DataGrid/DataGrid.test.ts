@@ -66,18 +66,23 @@ describe('DataGrid', () => {
 
 			await fixture.updateComplete
 
-			expect(fixture.component.dataRecords).toEqual([
-				new DataRecord(fixture.component, {
-					index: 0,
-					level: 0,
-					data: firstWithChildren,
-					subDataRecords: [
-						new DataRecord(fixture.component, { index: 1, level: 1, data: third }),
-					]
-				}),
-				new DataRecord(fixture.component, { index: 1, level: 1, data: third }),
-				new DataRecord(fixture.component, { index: 2, level: 0, data: second }),
-			])
+			const [firstRecord, secondRecord, thirdRecord] = fixture.component.dataRecords
+
+			expect(firstRecord.index).toBe(0)
+			expect(firstRecord.level).toBe(0)
+			expect(firstRecord.data).toBe(firstWithChildren)
+			expect(firstRecord.subDataRecords?.length).toBe(1)
+			expect(firstRecord.subDataRecords?.[0].index).toBe(1)
+			expect(firstRecord.subDataRecords?.[0].level).toBe(1)
+			expect(firstRecord.subDataRecords?.[0].data).toBe(third)
+
+			expect(secondRecord.index).toBe(1)
+			expect(secondRecord.level).toBe(1)
+			expect(secondRecord.data).toBe(third)
+
+			expect(thirdRecord.index).toBe(2)
+			expect(thirdRecord.level).toBe(0)
+			expect(thirdRecord.data).toBe(second)
 		})
 	})
 
