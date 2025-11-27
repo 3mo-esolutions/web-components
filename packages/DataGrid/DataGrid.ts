@@ -819,39 +819,10 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		this.rows.forEach(row => row.cells.forEach(cell => cell.handlePointerDown(event)))
 	}
 
-	protected *getFlattenedData(values = this.data): Generator<DataRecord<TData>, void, undefined> {
-		if (!this.subDataGridDataSelector) {
-			yield* this.sortingController.toSortedBy(
-				values.map((data, index) => new DataRecord(this, { level: 0, index, data })),
-				({ data }) => data,
-			)
-			return
-		}
-
-		const flatten = (data: TData, level = 0): Array<DataRecord<TData>> => {
-			const subData = KeyPath.get(data, this.subDataGridDataSelector!)
-			const subDataRecords = !Array.isArray(subData)
-				? undefined
-				: this.sortingController
-					.toSortedBy(
-						subData.map(data => new DataRecord<TData>(this, { level, data })),
-						({ data }) => data)
-					.flatMap(({ data }) => flatten(data, level + 1))
-			return [
-				new DataRecord(this, { data, level, subDataRecords }),
-				...(subDataRecords ?? [])
-			]
-		}
-
-		for (const data of this.sortingController.toSorted(values)) {
-			yield* flatten(data)
-		}
-
-		return
-	}
-
 	get dataRecords(): Array<DataRecord<TData>> {
-		return [...this.getFlattenedData()]
+		return this.sortingController
+			.toSortedBy(this.data.map(data => new DataRecord(this, { data, level: 0 })), ({ data }) => data)
+			.flatMap(r => r.flattenedRecords)
 			.map((record, index) => {
 				// @ts-expect-error index is initialized here
 				record.index = index
