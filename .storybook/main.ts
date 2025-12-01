@@ -1,7 +1,11 @@
-import { dirname, join, resolve } from 'path'
+import { fileURLToPath } from 'node:url'
+import { dirname, resolve } from 'path'
 import { readFileSync, readdirSync, existsSync } from 'fs'
 import { mergeConfig } from 'vite'
 import type { StorybookConfig } from '@storybook/web-components-vite'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 
 
 export default {
@@ -13,14 +17,13 @@ export default {
 	staticDirs: ['./public'],
 
 	addons: [
-		'@storybook/addon-docs',
-		'@storybook/addon-links',
-		'@storybook/addon-storysource',
-		'@vueless/storybook-dark-mode',
+		getAbsolutePath('@storybook/addon-docs'),
+		getAbsolutePath('@storybook/addon-links'),
+		getAbsolutePath('@vueless/storybook-dark-mode')
 	],
 
 	framework: {
-		name: '@storybook/web-components-vite',
+		name: getAbsolutePath('@storybook/web-components-vite'),
 		options: {}
 	},
 
@@ -52,3 +55,7 @@ export default {
 		})
 	}
 } as StorybookConfig
+
+function getAbsolutePath(value: string): any {
+	return dirname(fileURLToPath(import.meta.resolve(`${value}/package.json`)))
+}
