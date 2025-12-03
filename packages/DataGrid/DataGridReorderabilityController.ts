@@ -1,7 +1,6 @@
 import { AsyncDirective, Controller, directive, noChange, PartType, type ElementPart, type PartInfo, type ReactiveElement } from '@a11d/lit'
 import type { DataGrid } from './DataGrid.js'
 import type { DataRecord } from './DataRecord.js'
-import { DataGridSelectability } from './DataGridSelectionController.js'
 
 class DragGhostImage extends Image {
 	static readonly instance = new DragGhostImage()
@@ -177,7 +176,6 @@ export class DataGridReorderabilityController<T> extends ReorderabilityControlle
 	get enabled() {
 		return this.host.reorderability
 			&& this.host.sortingController.enabled === false
-			&& this.host.selectionController.selectability !== DataGridSelectability.Multiple
 			&& this.host.detailsController.hasDetails === false
 	}
 
