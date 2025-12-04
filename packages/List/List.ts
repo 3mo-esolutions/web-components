@@ -1,4 +1,4 @@
-import { Component, component, css, event, html } from '@a11d/lit'
+import { Component, component, css, event, html, unsafeCSS } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
 import { ListFocusController } from './ListFocusController.js'
 import { listItems } from './extensions.js'
@@ -29,11 +29,22 @@ export class List extends Component {
 	static override get styles() {
 		return css`
 			:host {
-				display: block;
+				display: grid;
+				grid-template-columns: auto 1fr auto;
+				column-gap: 16px;
 			}
 
 			:host(:focus) {
 				outline: none;
+			}
+
+			::slotted(*) {
+				grid-column: -1 / 1;
+			}
+
+			${unsafeCSS(List.itemRoles.map(role => `::slotted([role='${role}'])`).join(','))} {
+				grid-template-columns: subgrid;
+				display: grid;
 			}
 		`
 	}
