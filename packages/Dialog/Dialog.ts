@@ -47,7 +47,7 @@ const queryActionElement = (slotName: string) => {
  *
  * @cssprop --mo-dialog-heading-color - Color of the dialog heading
  * @cssprop --mo-dialog-content-color - Color of the dialog content
- * @cssprop --mo-dialog-scrim-color - Color of the dialog scrim
+ * @cssprop --mo-dialog-backdrop - Background of the dialog backdrop
  * @cssprop --mo-dialog-divider-color - Color of the dialog divider
  * @cssprop --mo-dialog-heading-line-height - Line height of the dialog heading
  *
@@ -147,8 +147,8 @@ export class Dialog extends Component implements IDialog {
 					display: none;
 				}
 
-				&::part(scrim) {
-					background-color: var(--mo-dialog-scrim-color, var(--mo-dialog-default-scrim-color, rgba(0, 0, 0, 0.5)));
+				&::part(dialog)::backdrop {
+					background: var(--mo-dialog-backdrop, var(--_default-backdrop, rgba(0, 0, 0, 0.5)));
 				}
 
 				&[data-size=large] {
@@ -182,7 +182,7 @@ export class Dialog extends Component implements IDialog {
 				}
 
 				&[data-bound-to-window] {
-					--mo-dialog-default-scrim-color: var(--mo-color-background);
+					--_default-backdrop: var(--mo-color-background);
 					--_margin-alteration: calc(-1 * max(min(1rem, 1vw), min(1rem, 1vh)));
 					&::part(dialog) {
 						max-height: 100vh !important;
@@ -270,7 +270,7 @@ export class Dialog extends Component implements IDialog {
 				${this.footerTemplate}
 			</mo-page>
 		` : html`
-			<md-dialog exportparts='scrim' quick
+			<md-dialog exportparts='dialog' quick
 				?open=${this.open}
 				?data-bound-to-window=${this.boundToWindow}
 				data-size=${ifDefined(this.size)}
@@ -439,7 +439,7 @@ MdDialog.elementStyles.push(css`
 	}
 
 	.scrim {
-		opacity: 1;
+		display: none;
 	}
 
 	.headline {
@@ -475,7 +475,6 @@ MdDialog.addInitializer(element => {
 
 		hostUpdated() {
 			element.renderRoot.querySelector('dialog')?.part.add('dialog')
-			element.renderRoot.querySelector('.scrim')?.part.add('scrim')
 			element.renderRoot.querySelectorAll('md-divider')?.forEach(divider => divider.part.add('divider'))
 			this.renderTopLayerSlot()
 		}

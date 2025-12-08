@@ -180,7 +180,7 @@ export const AutoFocus: StoryObj = {
 
 export const Background: StoryObj = {
 	render: () => html`
-		<mo-dialog id='scrim' heading='Heading' open
+		<mo-dialog heading='Heading' open
 			style='background: linear-gradient(90deg, color-mix(in srgb, var(--mo-color-red), var(--mo-color-surface)), color-mix(in srgb, var(--mo-color-blue), var(--mo-color-surface)));'
 		>
 			Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius quidem eaque earum obcaecati qui? Nihil quaerat,
@@ -189,17 +189,16 @@ export const Background: StoryObj = {
 	`
 }
 
-export const Scrim: StoryObj = {
-	render: () => html`
-		<style>
-			#scrim::part(scrim) {
-				background: url("https://www.wallpaperhub.app/_next/image?url=https%3A%2F%2Fcdn.wallpaperhub.app%2Fcloudcache%2F1%2Fe%2Fd%2Fb%2Fc%2Fc%2F1edbcc1b1f9d3afd76da8168fc7e927215af9695.jpg&w=3240&h=2160&q=100");
-				background-size: cover;
-			}
-		</style>
-		<mo-dialog id='scrim' heading='Heading' open>
-			Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius quidem eaque earum obcaecati qui? Nihil quaerat,
-			repudiandae error delectus labore quasi inventore fugit corporis maxime eos aspernatur aliquid temporibus vitae.
-		</mo-dialog>
-	`
+export const Backdrop: StoryObj = {
+	render: () => {
+		const imageUrl = 'https://www.wallpaperhub.app/_next/image?url=https%3A%2F%2Fcdn.wallpaperhub.app%2Fcloudcache%2F1%2Fe%2Fd%2Fb%2Fc%2Fc%2F1edbcc1b1f9d3afd76da8168fc7e927215af9695.jpg&w=3240&h=2160&q=100'
+		return html`
+			<mo-dialog id='backdrop' heading='Heading' open
+				style='--mo-dialog-backdrop: url("${imageUrl}") no-repeat center center / cover'
+			>
+				Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius quidem eaque earum obcaecati qui? Nihil quaerat,
+				repudiandae error delectus labore quasi inventore fugit corporis maxime eos aspernatur aliquid temporibus vitae.
+			</mo-dialog>
+		`
+	}
 }
