@@ -1,12 +1,6 @@
 import React from 'react'
 import { Title, Subtitle, Primary, ArgTypes, Stories, useOf, Markdown } from '@storybook/addon-docs/blocks'
-import '@3mo/icon'
-import '@3mo/theme'
-import '@3mo/flex'
-import '@3mo/heading'
-import '@3mo/card'
-import '@3mo/collapsible-card'
-import '@3mo/tab'
+import '@3mo/del'
 
 
 export const CustomDocsPage = () => {
@@ -41,10 +35,11 @@ export const CustomDocsPage = () => {
 						rgb(16, 17, 20) 60%
 					) !important;
 				}
-				.docs-story { background: var(--mo-color-background) !important; }
-				.docblock-argstable {
-					background: var(--mo-color-background) !important;
-					color: var(--mo-color-foreground) !important;
+				:root[data-theme=dark] .docs-story {
+					background: rgb(16, 17, 20) !important;
+				}
+				:root[data-theme=light] .docs-story {
+					background: white !important;
 				}
 			`}</style>
 			<mo-flex direction='horizontal' justifyContent='space-between' alignItems='center' gap='6px'>
