@@ -34,7 +34,7 @@ export abstract class BusinessSuiteAuthenticationDialogComponent extends DialogA
 
 	protected override get template() {
 		return html`
-			<mo-business-suite-authentication-dialog ${style({ '--mdc-dialog-scrim-color': 'var(--mo-color-background)' })}>
+			<mo-business-suite-authentication-dialog>
 				<mo-anchor slot='footer' ${style({ fontSize: 'small' })} @click=${() => this.resetPassword()}>${t('Reset Password')}</mo-anchor>
 				<mo-loading-button slot='primaryAction' type='elevated'>${this.primaryButtonText}</mo-loading-button>
 				${this.additionalTemplate}
