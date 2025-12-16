@@ -3,7 +3,7 @@ import { DataGridColumnComponent, type DataGrid, type DataGridColumn } from './i
 
 export class DataGridColumnsController<TData> extends Controller {
 	private readonly columnWidths = { reordering: 0, details: 0, selection: 0, actions: 0 }
-	private _extractedColumns = new Array<DataGridColumn<TData>>()
+	private _extractedColumns = new Array<DataGridColumn<TData, KeyPath.ValueOf<TData>>>()
 	private initialized = false
 
 	constructor(override readonly host: DataGrid<TData, any>) {
@@ -26,7 +26,7 @@ export class DataGridColumnsController<TData> extends Controller {
 		return this.host.columns.filter(c => c.hidden === false)
 	}
 
-	setColumns(columns: Array<DataGridColumn<TData>>) {
+	setColumns(columns: Array<DataGridColumn<TData, any>>) {
 		this.host.columns = columns
 		this.host.columnsChange.dispatch(columns)
 		this.host.requestUpdate()

@@ -45,8 +45,8 @@ describe('DataGrid', () => {
 
 		it('should update records when data changes', async () => {
 			fixture.component.data = [
-				{ id: 4, name: 'John', birthDate: new DateTime(2000, 0, 0) },
-				{ id: 5, name: 'Jane', birthDate: new DateTime(2000, 0, 0) },
+				{ id: 4, name: 'John', birthDate: new DateTime(2000, 0, 0), balance: 200 },
+				{ id: 5, name: 'Jane', birthDate: new DateTime(2000, 0, 0), balance: -100 },
 			]
 			await fixture.updateComplete
 
@@ -584,15 +584,14 @@ describe('DataGrid', () => {
 			})
 
 			it('should have access to data object in contentStyle function', async () => {
-				fixture.balanceColumn.contentStyle = (_, person) => person.name === 'John' ? 'font-weight: bold' : ''
+				fixture.balanceColumn.contentStyle = (_, person) => person.balance > 0 ? 'font-weight: bold' : 'font-weight: normal'
 				await fixture.updateCompleted
 
-				const johnCell = fixture.getBalanceCell(0)
-				const janeCell = fixture.getBalanceCell(1)
-				await fixture.updateCompleted
+				const johnCell = fixture.getBalanceCell(0) // balance: 100
+				const janeCell = fixture.getBalanceCell(1) // balance: -50
 
-				expect(johnCell?.style.fontWeight).toBe('bold')
-				expect(janeCell?.style.fontWeight).not.toBe('bold')
+				expect(getComputedStyle(johnCell!).fontWeight).toBe('700') // bold
+				expect(getComputedStyle(janeCell!).fontWeight).toBe('400') // normal
 			})
 		})
 

@@ -15,6 +15,7 @@ import { DataGridColumn, type DataGridColumnAlignment, type DataGridColumnConten
  * @attr nonEditable - Whether the column is editable
  * @attr sticky - The sticky position of the column, either 'start', 'end', or 'both'
  * @attr getContentTemplate - The content template of the column.
+ * @attr contentStyle - The content style of the column. It can be a string, CSSResult, or a function that returns either based on the cell value and data.
  * @attr getEditContentTemplate - The edit content template of the column.
  */
 @component('mo-data-grid-column')
@@ -33,13 +34,13 @@ export class DataGridColumnComponent<TData, TValue> extends Component {
 	@property({ reflect: true }) sortDataSelector?: KeyPath.Of<TData>
 	@property({ type: Boolean, reflect: true }) nonSortable = false
 	@property({ type: Boolean, reflect: true, hasChanged }) nonEditable: boolean | Predicate<TData> = false
+	@property({ type: Object }) contentStyle?: DataGridColumnContentStyle<TData, TValue>
 
 	protected getMenuItemsTemplate?(): DataGridColumnMenuItems
 
-	@property({ type: Object }) contentStyle?: DataGridColumnContentStyle<TData, TValue>
-	@property({ type: Object }) getContentTemplate?: (value: TValue | undefined, data: TData) => HTMLTemplateResult
+	getContentTemplate?(value: TValue | undefined, data: TData): HTMLTemplateResult
 
-	@property({ type: Object }) getEditContentTemplate?: (value: TValue | undefined, data: TData) => HTMLTemplateResult
+	getEditContentTemplate?(value: TValue | undefined, data: TData): HTMLTemplateResult
 
 	protected handleEdit(value: TValue | undefined, data: TData) {
 		this.dataGrid?.handleEdit(data, this.column, value as any)
@@ -71,7 +72,7 @@ export class DataGridColumnComponent<TData, TValue> extends Component {
 		yield value?.toString() ?? ''
 	}
 
-	get column() {
+	get column(): DataGridColumn<TData, TValue> {
 		const nonEditable = this.nonEditable
 		return new DataGridColumn<TData, TValue>({
 			dataSelector: this.dataSelector,

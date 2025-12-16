@@ -63,6 +63,7 @@ export class DataGridColumn<TData, TValue = unknown> {
 
 	getMenuItemsTemplate?(): DataGridColumnMenuItems
 
+	contentStyle?: DataGridColumnContentStyle<TData, TValue>
 	getContentTemplate?(value: TValue, data: TData): HTMLTemplateResult
 
 	editable: boolean | Predicate<TData> = false
@@ -131,6 +132,4 @@ export class DataGridColumn<TData, TValue = unknown> {
 
 	generateCsvHeading?(): Generator<string>
 	generateCsvValue?(value: TValue, data: TData): Generator<string>
-
-	contentStyle?: DataGridColumnContentStyle<TData, TValue>
 }
