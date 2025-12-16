@@ -223,8 +223,8 @@ export const WithDetails: StoryObj = {
 	`
 }
 
-export const WithDetails_SubDataGrid: StoryObj = {
-	name: 'With Details - Sub Data Grid',
+export const Details_SubDataGrid: StoryObj = {
+	name: 'Details - Sub Data Grid',
 	args: {
 		multipleDetails: false,
 		detailsOnClick: false,
@@ -247,8 +247,8 @@ export const WithDetails_SubDataGrid: StoryObj = {
 	`
 }
 
-export const WithDetails_SubRows: StoryObj = {
-	name: 'With Details - Sub Rows',
+export const Details_SubRows: StoryObj = {
+	name: 'Details - Sub Rows',
 	args: {
 		multipleDetails: false,
 		detailsOnClick: false,
@@ -347,7 +347,7 @@ export const NoContent: StoryObj = {
 }
 
 
-export const WithCustomMenuItems: StoryObj = {
+export const CustomMenuItems: StoryObj = {
 	render: () => {
 		if (!customElements.get('mo-story-custom-address-column')) {
 			customElements.define('mo-story-custom-address-column', class CustomAddressColumn<TData> extends DataGridColumnText<TData> {
@@ -383,7 +383,7 @@ export const WithCustomMenuItems: StoryObj = {
 	}
 }
 
-export const WithCustomCellStyles: StoryObj = {
+export const CustomCellStyle: StoryObj = {
 	render: () => html`
 		<mo-data-grid .data=${twentyPeople} style='height: 500px'>
 			<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
