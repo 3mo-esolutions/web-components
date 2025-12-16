@@ -42,7 +42,7 @@ export class ModdableDataGridModeColumn<T> {
 			&& other.sticky === this.sticky
 	}
 
-	apply(column: DataGridColumn<T, any>) {
+	apply(column: DataGridColumn<T>) {
 		column.width = this.width ?? column.width
 		column.hidden = this.hidden ?? column.hidden
 		column.sticky = this.sticky ?? column.sticky
