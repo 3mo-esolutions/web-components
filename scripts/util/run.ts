@@ -1,11 +1,19 @@
-import { exec } from 'child_process'
-import { promisify } from 'util'
+import { execa } from 'execa'
 
-/** Runs a command in a directory and returns the stdout */
-export async function run(command: string, directory?: string, noError = false) {
-	const { stdout, stderr } = await promisify(exec)(command, { cwd: directory })
-	if (stderr && !noError) {
-		throw new Error(stderr)
+export async function run(command: string, options?: { directory?: string, reject?: boolean, captureOutput?: boolean }): Promise<string> {
+	try {
+		const { all, stdout } = await execa(command, {
+			cwd: options?.directory,
+			shell: true,
+			reject: !options?.reject,
+			all: options?.captureOutput ? true : undefined,
+			stdio: options?.captureOutput ? undefined : 'inherit'
+		})
+		return !options?.captureOutput ? '' : (all ?? stdout)?.toString() ?? ''
+	} catch (error) {
+		if (options?.reject) {
+			return ''
+		}
+		throw error
 	}
-	return stdout
 }

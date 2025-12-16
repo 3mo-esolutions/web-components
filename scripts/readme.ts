@@ -140,4 +140,4 @@ await Promise.all([
 	generateGlobalReadme(),
 ])
 
-try { await run('git add **/*/README.md') } catch { /* ignore */ }
+try { await run('git add README.md') } catch { /* ignore */ }

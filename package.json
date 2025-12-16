@@ -62,7 +62,8 @@
 		"typescript": "5.x",
 		"@typescript/native-preview": "latest",
 		"vite": "6.x",
-		"web-component-analyzer": "2.x"
+		"web-component-analyzer": "2.x",
+		"execa": "x"
 	},
 	"dependencies": {
 		"@faker-js/faker": "x"

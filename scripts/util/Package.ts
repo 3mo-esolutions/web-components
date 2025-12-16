@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import * as FileSystem from 'fs'
 import process from 'process'
 import Path from 'path'
@@ -31,20 +30,18 @@ export class Package {
 	}
 
 	async release(versionBumpType: string) {
-		await run('npm run clean')
-		console.log(await run('tsc', this.relativePath) || 'TypeScript compiled successfully')
-		await run('npm run analyze', undefined, true)
-
 		if (versionBumpType.includes('--preid')) {
 			throw new Error('Do not include the --preid flag in the version bump type. Use "prerelease" instead.')
 		}
 
 		const isPreRelease = versionBumpType.startsWith('pre')
 
-		console.log(await run(`npm version --loglevel=error ${versionBumpType.replace('prepatch', 'prerelease')} ${!isPreRelease ? '' : '--preid=preview'}`, this.relativePath))
-		console.log(await run(`npm publish --loglevel=error --access public ${!isPreRelease ? '' : '--tag preview'}`, this.relativePath))
-
-		await run('npm run clean')
+		await run('npm run --silent clean')
+		await run('tsc', { directory: this.relativePath })
+		await run('npm run --silent analyze', { reject: true })
+		await run(`npm version --silent --loglevel=error ${versionBumpType.replace('prepatch', 'prerelease')} ${!isPreRelease ? '' : '--preid=preview'}`, { directory: this.relativePath })
+		await run(`npm publish --access public ${!isPreRelease ? '' : '--tag preview'}`, { directory: this.relativePath })
+		await run('npm run --silent clean')
 	}
 }
 

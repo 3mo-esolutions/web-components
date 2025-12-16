@@ -65,14 +65,14 @@ export class ChangeLog {
 	}
 
 	private static async generateForPackage(p: Package) {
-		const commits = (await run('git log --first-parent origin/main ./package.json', p.relativePath))
+		const commits = (await run('git log --first-parent origin/main ./package.json', { directory: p.relativePath, captureOutput: true }))
 			.split(ChangeLog.splitRegex)
 			.filter(s => !!s.trim().length)
 		const releases = new Array<Release>()
 		let lastRelease: Release | undefined
 		for (const [index, commitMessage] of commits.entries()) {
 			const commit = Commit.parse(commitMessage)
-			const output = await run(`git show --unified=0 --word-diff=plain ${commit.hash} package.json`, p.relativePath)
+			const output = await run(`git show --unified=0 --word-diff=plain ${commit.hash} package.json`, { directory: p.relativePath, captureOutput: true })
 			if (!output || !output.includes('version')) {
 				continue
 			}
