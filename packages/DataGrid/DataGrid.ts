@@ -263,7 +263,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		return this.columnsController.extractedColumns
 	}
 
-	extractedColumnsUpdated(extractedColumns: Array<DataGridColumn<TData, TDetailsElement>>) {
+	extractedColumnsUpdated(extractedColumns: Array<DataGridColumn<TData>>) {
 		this.setColumns(extractedColumns)
 	}
 
@@ -275,12 +275,12 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		return this.rows.find(r => r.data === data)
 	}
 
-	getCell(data: TData, column: DataGridColumn<TData, unknown>) {
+	getCell(data: TData, column: DataGridColumn<TData>) {
 		const row = this.getRow(data)
 		return row?.getCell(column)
 	}
 
-	handleEdit(data: TData, column: DataGridColumn<TData, unknown>, value: KeyPath.ValueOf<TData, KeyPath.Of<TData>> | undefined) {
+	handleEdit(data: TData, column: DataGridColumn<TData>, value: KeyPath.ValueOf<TData, KeyPath.Of<TData>> | undefined) {
 		const row = this.getRow(data)
 		const cell = row?.getCell(column)
 		if (row && cell && value !== undefined && column.dataSelector && cell.value !== value) {
@@ -426,7 +426,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				--mo-data-grid-column-details-width: 20px;
 				--mo-data-grid-column-selection-width: 40px;
 				--mo-data-grid-column-actions-width: 28px;
-				--mo-data-grid-cell-padding: 10px;
+				--mo-data-grid-cell-padding: 0.5rem;
 				--mo-data-grid-header-height: 32px;
 				--mo-data-grid-footer-min-height: 40px;
 				--mo-data-grid-toolbar-padding: 0px 14px 14px 14px;
@@ -683,7 +683,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			})
 			.reduce((acc, v) => acc + v.length, 0)
 
-		const getLongestContent = (column: DataGridColumn<TData, unknown>) => {
+		const getLongestContent = (column: DataGridColumn<TData>) => {
 			return this.dataRecords
 				.map(dr => column.getContentTemplate?.(KeyPath.get(dr.data, column.dataSelector), dr.data) ?? html.nothing)
 				.reduce((longest, current) => (getLength(current) > getLength(longest)) || false ? current : longest, html.nothing)

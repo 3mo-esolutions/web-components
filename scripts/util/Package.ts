@@ -40,7 +40,7 @@ export class Package {
 		await run('tsc', { directory: this.relativePath })
 		await run('npm run --silent analyze', { reject: true })
 		await run(`npm version --silent --loglevel=error ${versionBumpType.replace('prepatch', 'prerelease')} ${!isPreRelease ? '' : '--preid=preview'}`, { directory: this.relativePath })
-		await run(`npm publish --access public ${!isPreRelease ? '' : '--tag preview'}`, { directory: this.relativePath })
+		await run(`npm publish --loglevel=error --access public ${!isPreRelease ? '' : '--tag preview'}`, { directory: this.relativePath })
 		await run('npm run --silent clean')
 	}
 }

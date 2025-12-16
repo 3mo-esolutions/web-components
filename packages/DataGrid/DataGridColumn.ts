@@ -1,7 +1,12 @@
-import { html, style, type HTMLTemplateResult } from '@a11d/lit'
+import { html, style, type CSSResult, type HTMLTemplateResult } from '@a11d/lit'
 import { equals } from '@a11d/equals'
 import type { DataGrid, DataGridSortingStrategy } from './index.js'
 import type * as CSS from 'csstype'
+
+export type DataGridColumnContentStyle<TData, TValue> =
+	| string
+	| CSSResult
+	| ((value: TValue, data: TData) => string | CSSResult | undefined)
 
 export type DataGridColumnAlignment = 'start' | 'center' | 'end'
 
@@ -9,7 +14,7 @@ export type DataGridColumnSticky = 'start' | 'both' | 'end'
 
 export type DataGridColumnMenuItems = HTMLTemplateResult | Map<'sorting' | 'stickiness' | 'more', HTMLTemplateResult>
 
-export class DataGridColumn<TData, TValue = unknown> {
+export class DataGridColumn<TData, TValue = any> {
 	dataGrid!: DataGrid<TData, any>
 	dataSelector!: KeyPath.Of<TData>
 
@@ -58,6 +63,7 @@ export class DataGridColumn<TData, TValue = unknown> {
 
 	getMenuItemsTemplate?(): DataGridColumnMenuItems
 
+	contentStyle?: DataGridColumnContentStyle<TData, TValue>
 	getContentTemplate?(value: TValue, data: TData): HTMLTemplateResult
 
 	editable: boolean | Predicate<TData> = false
