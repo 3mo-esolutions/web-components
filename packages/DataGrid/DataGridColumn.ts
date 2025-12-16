@@ -14,7 +14,7 @@ export type DataGridColumnSticky = 'start' | 'both' | 'end'
 
 export type DataGridColumnMenuItems = HTMLTemplateResult | Map<'sorting' | 'stickiness' | 'more', HTMLTemplateResult>
 
-export class DataGridColumn<TData, TValue = unknown> {
+export class DataGridColumn<TData, TValue = any> {
 	dataGrid!: DataGrid<TData, any>
 	dataSelector!: KeyPath.Of<TData>
 

@@ -72,7 +72,7 @@ export class DataGridColumnComponent<TData, TValue> extends Component {
 		yield value?.toString() ?? ''
 	}
 
-	get column(): DataGridColumn<TData, TValue> {
+	get column() {
 		const nonEditable = this.nonEditable
 		return new DataGridColumn<TData, TValue>({
 			dataSelector: this.dataSelector,

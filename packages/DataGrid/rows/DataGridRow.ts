@@ -25,7 +25,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		return this.renderRoot.querySelector('#detailsContainer')?.firstElementChild as TDetailsElement as TDetailsElement | undefined
 	}
 
-	getCell(column: DataGridColumn<TData, any>) {
+	getCell(column: DataGridColumn<TData>) {
 		return this.cells.find(cell => cell.column[equals](column))
 	}
 
@@ -287,7 +287,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		`
 	}
 
-	protected getCellTemplate(column: DataGridColumn<TData, KeyPath.ValueOf<TData, KeyPath.Of<TData>>>) {
+	protected getCellTemplate(column: DataGridColumn<TData>) {
 		return column.hidden ? html.nothing : html`
 			<mo-data-grid-cell
 				.row=${this as any}
