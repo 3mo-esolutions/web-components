@@ -1,13 +1,13 @@
-import { component, html, state } from '@a11d/lit'
+import { component, css, html, state } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { DataGrid, type DataGridRow, DataGridColumn, DataRecord, DataGridSelectability } from './index.js'
 
-type Person = { id: number, name: string, birthDate: DateTime, children?: Array<Person> }
+type Person = { id: number, name: string, birthDate: DateTime, children?: Array<Person>, balance: number }
 
 const testData: Array<Person> = [
-	{ id: 1, name: 'John', birthDate: new DateTime(2000, 0, 0) },
-	{ id: 2, name: 'Jane', birthDate: new DateTime(2000, 0, 0) },
-	{ id: 3, name: 'Joe', birthDate: new DateTime(2000, 0, 0) },
+	{ id: 1, name: 'John', birthDate: new DateTime(2000, 0, 0), balance: 100 },
+	{ id: 2, name: 'Jane', birthDate: new DateTime(2000, 0, 0), balance: -50 },
+	{ id: 3, name: 'Joe', birthDate: new DateTime(2000, 0, 0), balance: 0 },
 ]
 
 class TestDataGrid extends DataGrid<Person> {
@@ -524,6 +524,105 @@ describe('DataGrid', () => {
 			const fixture = new ComponentTestFixture(() => new DataGridWithFilters())
 
 			it('should have filters', () => expect(fixture.component.hasFilters).toBeTrue())
+		})
+	})
+
+	describe('Cell Styling', () => {
+		const fixture = new class extends ComponentTestFixture<DataGrid<Person>> {
+			constructor() {
+				super(html`
+					<test-data-grid>
+						<mo-data-grid-column-number heading='Balance' dataSelector='balance'></mo-data-grid-column-number>
+					</test-data-grid>
+				`)
+			}
+
+			get balanceColumn() {
+				return this.component.columns[0] as DataGridColumn<Person, number>
+			}
+
+			getBalanceCell(rowIndex: number) {
+				return this.component.rows[rowIndex]?.cells?.find(cell => cell.column === this.balanceColumn)
+			}
+
+			get updateCompleted() {
+				return (async () => {
+					await new Promise(r => setTimeout(r, 0))
+					await this.updateComplete
+				})()
+			}
+		}
+
+		describe('no contentStyle', () => {
+			it('should not render style tag when contentStyle is undefined', async () => {
+				fixture.balanceColumn.contentStyle = undefined
+				await fixture.updateCompleted
+
+				const cell = fixture.getBalanceCell(0)
+				expect(cell?.renderRoot.querySelector('style')).toBeFalsy()
+			})
+
+			it('should not modify styles when function returns undefined', async () => {
+				fixture.balanceColumn.contentStyle = () => undefined
+				await fixture.updateCompleted
+
+				const cell = fixture.getBalanceCell(0)
+				expect(cell?.renderRoot.querySelector('style')).toBeFalsy()
+			})
+		})
+
+		describe('string contentStyle', () => {
+			it('should apply function returning string as inline style based on value', async () => {
+				fixture.balanceColumn.contentStyle = value => value < 0 ? 'color: red' : 'color: green'
+				await fixture.updateCompleted
+
+				const positiveCell = fixture.getBalanceCell(0) // balance: 100
+				const negativeCell = fixture.getBalanceCell(1) // balance: -50
+
+				expect(positiveCell?.style.color).toBe('green')
+				expect(negativeCell?.style.color).toBe('red')
+			})
+
+			it('should have access to data object in contentStyle function', async () => {
+				fixture.balanceColumn.contentStyle = (_, person) => person.name === 'John' ? 'font-weight: bold' : ''
+				await fixture.updateCompleted
+
+				const johnCell = fixture.getBalanceCell(0)
+				const janeCell = fixture.getBalanceCell(1)
+				await fixture.updateCompleted
+
+				expect(johnCell?.style.fontWeight).toBe('bold')
+				expect(janeCell?.style.fontWeight).not.toBe('bold')
+			})
+		})
+
+		describe('CSSResult contentStyle', () => {
+			it('should render static CSSResult as style tag in shadow DOM', async () => {
+				fixture.balanceColumn.contentStyle = css`:host { color: blue }`
+				await fixture.updateCompleted
+
+				const cell = fixture.getBalanceCell(0)
+				const styleTag = cell?.renderRoot.querySelector('style')
+
+				expect(styleTag).toBeTruthy()
+				expect(styleTag?.textContent).toContain(':host')
+				expect(getComputedStyle(cell!).color).toBe('rgb(0, 0, 255)')
+			})
+
+			it('should render function returning CSSResult with different styles per cell', async () => {
+				fixture.balanceColumn.contentStyle = value => value < 0 ? css`:host { color: red }` : css`:host { color: green }`
+				await fixture.updateCompleted
+
+				const positiveCell = fixture.getBalanceCell(0) // balance: 100
+				const negativeCell = fixture.getBalanceCell(1) // balance: -50
+
+				const positiveStyle = positiveCell?.renderRoot.querySelector('style')?.textContent
+				const negativeStyle = negativeCell?.renderRoot.querySelector('style')?.textContent
+
+				expect(positiveStyle).toContain('green')
+				expect(negativeStyle).toContain('red')
+				expect(getComputedStyle(positiveCell!).color).toBe('rgb(0, 128, 0)')
+			})
 		})
 	})
 })

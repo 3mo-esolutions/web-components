@@ -123,19 +123,17 @@ export class DataGridCell<TValue extends KeyPath.ValueOf<TData>, TData = any, TD
 	static override get styles() {
 		return css`
 			:host {
-				display: inline-grid;
-				align-items: center;
+				display: block;
 				position: relative;
 				padding-inline: var(--mo-data-grid-cell-padding);
+				padding-block: calc((var(--mo-data-grid-row-height) - 1lh) / 2);
 				font-size: var(--mo-data-grid-cell-font-size);
 				outline: none;
-				min-height: var(--mo-data-grid-row-height);
 			}
 
-			:host(:not([isEditing])) div {
-				user-select: none;
+			:host(:not([isEditing])) {
 				white-space: nowrap;
-				overflow: hidden !important;
+				overflow: hidden;
 				text-overflow: ellipsis;
 			}
 
@@ -189,10 +187,35 @@ export class DataGridCell<TValue extends KeyPath.ValueOf<TData>, TData = any, TD
 
 	private get contentTemplate() {
 		return html`
-			<div>
-				${this.column.getContentTemplate?.(this.value, this.data) ?? html`${this.value}`}
-			</div>
+			${this.contentStyleTemplate}
+			${this.column.getContentTemplate?.(this.value, this.data) ?? html`${this.value}`}
 		`
+	}
+
+	private get contentStyleTemplate() {
+		if (!this.column.contentStyle) {
+			return html.nothing
+		}
+
+		const style = typeof this.column.contentStyle === 'function'
+			? this.column.contentStyle(this.value, this.data)
+			: this.column.contentStyle
+
+		if (!style) {
+			return html.nothing
+		}
+
+		// CSSResult → render as style tag (supports :host, :hover, etc.)
+		if (typeof style === 'object' && 'cssText' in style) {
+			return html`<style>${style}</style>`
+		}
+
+		// String → apply as inline style (performant)
+		if (typeof style === 'string') {
+			this.style.cssText += `;${style}`
+		}
+
+		return html.nothing
 	}
 
 	// Having focus-controller on every cell can lead to performance issues

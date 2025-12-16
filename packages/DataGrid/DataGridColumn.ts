@@ -1,7 +1,12 @@
-import { html, style, type HTMLTemplateResult } from '@a11d/lit'
+import { html, style, type CSSResult, type HTMLTemplateResult } from '@a11d/lit'
 import { equals } from '@a11d/equals'
 import type { DataGrid, DataGridSortingStrategy } from './index.js'
 import type * as CSS from 'csstype'
+
+export type DataGridColumnContentStyle<TData, TValue> =
+	| string
+	| CSSResult
+	| ((value: TValue, data: TData) => string | CSSResult | undefined)
 
 export type DataGridColumnAlignment = 'start' | 'center' | 'end'
 
@@ -126,4 +131,6 @@ export class DataGridColumn<TData, TValue = unknown> {
 
 	generateCsvHeading?(): Generator<string>
 	generateCsvValue?(value: TValue, data: TData): Generator<string>
+
+	contentStyle?: DataGridColumnContentStyle<TData, TValue>
 }

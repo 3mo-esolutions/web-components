@@ -41,13 +41,13 @@ export default {
 class Person {
 	private static get people() {
 		return [
-			new Person({ id: 1, name: 'Octavia Blake', birthDate: new DateTime('2007-06-17'), address: '112 Rue de Elm, 1265 Paris, France' }),
-			new Person({ id: 2, name: 'Charmaine Diyoza', birthDate: new DateTime('2001-06-30'), address: '1234 Elm Street, Springfield, IL 62701, USA' }),
-			new Person({ id: 3, name: 'Clarke Griffin', birthDate: new DateTime('2008-10-13'), address: '7234 Elmstraße, 21001 Berlin, Deutschland' }),
-			new Person({ id: 4, name: 'Elliot Alderson', birthDate: new DateTime('1986-09-17'), address: '9692 Elm Street, Springfield, NSW 62701, Australia' }),
-			new Person({ id: 5, name: 'Arya Stark', birthDate: new DateTime('2002-03-29'), address: '7792 Elm Street, London, England' }),
-			new Person({ id: 6, name: 'Darlene Alderson', birthDate: new DateTime('1990-11-05'), address: '1232 Elm Street, "P-432"' }),
-			new Person({ id: 7, name: 'Max Caufield', birthDate: new DateTime('1995-09-21'), address: '1232 Elm Street, "P-432"' }),
+			new Person({ id: 1, balance: 200, name: 'Octavia Blake', birthDate: new DateTime('2007-06-17'), address: '112 Rue de Elm, 1265 Paris, France' }),
+			new Person({ id: 2, balance: 450, name: 'Charmaine Diyoza', birthDate: new DateTime('2001-06-30'), address: '1234 Elm Street, Springfield, IL 62701, USA' }),
+			new Person({ id: 3, balance: -50, name: 'Clarke Griffin', birthDate: new DateTime('2008-10-13'), address: '7234 Elmstraße, 21001 Berlin, Deutschland' }),
+			new Person({ id: 4, balance: -150, name: 'Elliot Alderson', birthDate: new DateTime('1986-09-17'), address: '9692 Elm Street, Springfield, NSW 62701, Australia' }),
+			new Person({ id: 5, balance: 450, name: 'Arya Stark', birthDate: new DateTime('2002-03-29'), address: '7792 Elm Street, London, England' }),
+			new Person({ id: 6, balance: 500, name: 'Darlene Alderson', birthDate: new DateTime('1990-11-05'), address: '1232 Elm Street, "P-432"' }),
+			new Person({ id: 7, balance: 0, name: 'Max Caufield', birthDate: new DateTime('1995-09-21'), address: '1232 Elm Street, "P-432"' }),
 		]
 	}
 
@@ -62,6 +62,7 @@ class Person {
 	readonly birthDate!: DateTime
 	readonly address!: string
 	readonly children?: Array<Person>
+	readonly balance!: number
 
 
 	constructor(init?: Partial<Person>) {
@@ -165,7 +166,7 @@ export const StickyColumns: StoryObj = {
 export const Sums: StoryObj = {
 	render: () => html`
 		<mo-data-grid
-			.data=${Person.generate(50).map(x => ({ ...x, balance: Math.floor(Math.random() * 1000) }))}
+			.data=${Person.generate(50)}
 			selectability='multiple'
 			style='height: 500px; --mo-data-grid-footer-background: var(--mo-color-transparent-gray-3)'
 			selectOnClick
@@ -380,4 +381,21 @@ export const WithCustomMenuItems: StoryObj = {
 			</mo-data-grid>
 		`
 	}
+}
+
+export const WithCustomCellStyles: StoryObj = {
+	render: () => html`
+		<mo-data-grid .data=${twentyPeople} style='height: 500px'>
+			<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
+			<mo-data-grid-column-currency currency='EUR' heading='Balance' dataSelector='balance'
+				.contentStyle=${(value: number) => {
+					switch (Math.sign(value)) {
+						case -1: return 'background: color-mix(in srgb, var(--mo-color-red), transparent 86%); color: var(--mo-color-red)'
+						case 1: return 'background: color-mix(in srgb, var(--mo-color-green), transparent 86%); color: var(--mo-color-green)'
+						default: return ''
+					}
+				}}
+			></mo-data-grid-column-currency>
+		</mo-data-grid>
+	`
 }

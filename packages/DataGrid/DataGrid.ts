@@ -263,7 +263,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		return this.columnsController.extractedColumns
 	}
 
-	extractedColumnsUpdated(extractedColumns: Array<DataGridColumn<TData, TDetailsElement>>) {
+	extractedColumnsUpdated(extractedColumns: Array<DataGridColumn<TData, any>>) {
 		this.setColumns(extractedColumns)
 	}
 
@@ -275,12 +275,12 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		return this.rows.find(r => r.data === data)
 	}
 
-	getCell(data: TData, column: DataGridColumn<TData, unknown>) {
+	getCell(data: TData, column: DataGridColumn<TData, any>) {
 		const row = this.getRow(data)
 		return row?.getCell(column)
 	}
 
-	handleEdit(data: TData, column: DataGridColumn<TData, unknown>, value: KeyPath.ValueOf<TData, KeyPath.Of<TData>> | undefined) {
+	handleEdit(data: TData, column: DataGridColumn<TData, any>, value: KeyPath.ValueOf<TData, KeyPath.Of<TData>> | undefined) {
 		const row = this.getRow(data)
 		const cell = row?.getCell(column)
 		if (row && cell && value !== undefined && column.dataSelector && cell.value !== value) {

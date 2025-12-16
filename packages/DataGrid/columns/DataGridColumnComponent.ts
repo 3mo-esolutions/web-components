@@ -1,7 +1,7 @@
 import { component, Component, event, property, type HTMLTemplateResult, type PropertyValues } from '@a11d/lit'
 import { hasChanged } from '@a11d/equals'
 import { DataGrid } from '../DataGrid.js'
-import { DataGridColumn, type DataGridColumnAlignment, type DataGridColumnMenuItems, type DataGridColumnSticky } from '../DataGridColumn.js'
+import { DataGridColumn, type DataGridColumnAlignment, type DataGridColumnContentStyle, type DataGridColumnMenuItems, type DataGridColumnSticky } from '../DataGridColumn.js'
 
 /**
  * @attr width - The width of the column
@@ -34,32 +34,12 @@ export class DataGridColumnComponent<TData, TValue> extends Component {
 	@property({ type: Boolean, reflect: true }) nonSortable = false
 	@property({ type: Boolean, reflect: true, hasChanged }) nonEditable: boolean | Predicate<TData> = false
 
-	get column(): DataGridColumn<TData, TValue> {
-		const nonEditable = this.nonEditable
-		return new DataGridColumn({
-			dataSelector: this.dataSelector,
-			sortDataSelector: this.sortDataSelector,
-			heading: this.heading,
-			description: this.description,
-			alignment: this.textAlign,
-			hidden: this.hidden,
-			sticky: this.sticky,
-			width: this.width,
-			sortable: !this.nonSortable,
-			editable: this.getEditContentTemplate !== undefined && (typeof nonEditable !== 'function' ? !nonEditable : x => !nonEditable(x)),
-			getMenuItemsTemplate: this.getMenuItemsTemplate?.bind(this),
-			getContentTemplate: this.getContentTemplate?.bind(this),
-			getEditContentTemplate: this.getEditContentTemplate?.bind(this),
-			generateCsvHeading: this.generateCsvHeading.bind(this),
-			generateCsvValue: this.generateCsvValue.bind(this),
-		})
-	}
-
 	protected getMenuItemsTemplate?(): DataGridColumnMenuItems
 
-	getContentTemplate?(value: TValue | undefined, data: TData): HTMLTemplateResult
+	@property({ type: Object }) contentStyle?: DataGridColumnContentStyle<TData, TValue>
+	@property({ type: Object }) getContentTemplate?: (value: TValue | undefined, data: TData) => HTMLTemplateResult
 
-	getEditContentTemplate?(value: TValue | undefined, data: TData): HTMLTemplateResult
+	@property({ type: Object }) getEditContentTemplate?: (value: TValue | undefined, data: TData) => HTMLTemplateResult
 
 	protected handleEdit(value: TValue | undefined, data: TData) {
 		this.dataGrid?.handleEdit(data, this.column, value as any)
@@ -89,6 +69,28 @@ export class DataGridColumnComponent<TData, TValue> extends Component {
 	*generateCsvValue(value: any, data: TData): Generator<string> {
 		data
 		yield value?.toString() ?? ''
+	}
+
+	get column() {
+		const nonEditable = this.nonEditable
+		return new DataGridColumn<TData, TValue>({
+			dataSelector: this.dataSelector,
+			sortDataSelector: this.sortDataSelector,
+			heading: this.heading,
+			description: this.description,
+			alignment: this.textAlign,
+			hidden: this.hidden,
+			sticky: this.sticky,
+			width: this.width,
+			sortable: !this.nonSortable,
+			editable: this.getEditContentTemplate !== undefined && (typeof nonEditable !== 'function' ? !nonEditable : x => !nonEditable(x)),
+			getMenuItemsTemplate: this.getMenuItemsTemplate?.bind(this),
+			getContentTemplate: this.getContentTemplate?.bind(this),
+			getEditContentTemplate: this.getEditContentTemplate?.bind(this),
+			generateCsvHeading: this.generateCsvHeading.bind(this),
+			generateCsvValue: this.generateCsvValue.bind(this),
+			contentStyle: this.contentStyle,
+		})
 	}
 }
 
