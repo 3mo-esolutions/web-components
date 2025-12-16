@@ -19,7 +19,7 @@ import { DataGridColumn, type DataGridColumnAlignment, type DataGridColumnMenuIt
  */
 @component('mo-data-grid-column')
 export class DataGridColumnComponent<TData, TValue> extends Component {
-	@event({ bubbles: true, cancelable: true, composed: true }) readonly change!: EventDispatcher<DataGridColumnComponent<TData, TValue>>
+	@event({ bubbles: true, cancelable: true, composed: true, type: 'DataGridColumnComponent:update' }) private readonly updateEvent!: EventDispatcher<DataGridColumnComponent<TData, TValue>>
 
 	@property({ type: Object }) dataGrid?: DataGrid<TData, any> | undefined
 
@@ -79,7 +79,7 @@ export class DataGridColumnComponent<TData, TValue> extends Component {
 
 	protected override updated(props: PropertyValues<this>) {
 		super.updated(props)
-		this.change.dispatch(this)
+		this.updateEvent.dispatch(this)
 	}
 
 	*generateCsvHeading(): Generator<string> {

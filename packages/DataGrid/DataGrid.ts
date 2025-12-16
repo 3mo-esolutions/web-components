@@ -11,7 +11,7 @@ import { DataGridColumnsController } from './DataGridColumnsController.js'
 import { DataGridSelectionBehaviorOnDataChange, DataGridSelectionController, type DataGridSelectability } from './DataGridSelectionController.js'
 import { DataGridSortingController, type DataGridRankedSortDefinition, type DataGridSorting } from './DataGridSortingController.js'
 import { DataGridDetailsController } from './DataGridDetailsController.js'
-import { DataGridCsvController, DataGridSidePanelTab, type DataGridColumn, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, type DataGridSidePanel, DataGridContextMenuController, DataGridColumnComponent, DataGridReorderabilityController, type DataGridReorderChange } from './index.js'
+import { type DataGridColumn, DataGridCsvController, DataGridSidePanelTab, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, type DataGridSidePanel, DataGridContextMenuController, DataGridReorderabilityController, type DataGridReorderChange } from './index.js'
 import { DataRecord } from './DataRecord.js'
 
 Localizer.dictionaries.add('de', {
@@ -253,12 +253,10 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		return this.columnsController.extractColumns(...parameters)
 	}
 
-	@eventListener('change')
+	@eventListener('DataGridColumnComponent:update')
 	protected handleColumnChange(e: CustomEvent) {
-		if (e.detail instanceof DataGridColumnComponent) {
-			e.stopPropagation()
-			this.columnsController.extractColumns()
-		}
+		e.stopPropagation()
+		this.columnsController.extractColumns()
 	}
 
 	get extractedColumns() {
