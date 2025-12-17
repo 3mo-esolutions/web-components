@@ -163,6 +163,22 @@ export class DataGridCell<TValue extends KeyPath.ValueOf<TData>, TData = any, TD
 				z-index: 2;
 				background: var(--mo-data-grid-sticky-part-color);
 			}
+
+			:host([data-sticky-edge~=end]) {
+				border-inline-end: 1px solid var(--mo-color-transparent-gray-3);
+				box-shadow: var(--mo-shadow);
+				clip-path: inset(0px -15px 0px 0px);
+			}
+
+			:host([data-sticky-edge~=start]) {
+				border-inline-start: 1px solid var(--mo-color-transparent-gray-3);
+				box-shadow: var(--mo-shadow);
+				clip-path: inset(0px 0px 0px -15px);
+			}
+
+			:host([data-sticky-edge="start end"]) {
+				clip-path: inset(0px -15px 0px -15px);
+			}
 		`
 	}
 
@@ -180,6 +196,8 @@ export class DataGridCell<TValue extends KeyPath.ValueOf<TData>, TData = any, TD
 		this.toggleAttribute('sticky', this.column.sticky !== undefined)
 		this.toggleAttribute('sticking', this.column.intersecting === false)
 		this.style.insetInline = this.column.stickyColumnInsetInline
+		const stickyEdge = this.column.stickyEdge
+		stickyEdge ? this.setAttribute('data-sticky-edge', stickyEdge) : this.removeAttribute('data-sticky-edge')
 		return this.isEditing ? this.editContentTemplate as HTMLTemplateResult : this.contentTemplate
 	}
 

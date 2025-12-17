@@ -130,6 +130,29 @@ export class DataGridColumn<TData, TValue = any> {
 		return this.dataGrid?.columnsController.getStickyColumnInsetInline(this) ?? ''
 	}
 
+	get stickyEdge(): string | undefined {
+		if (!this.sticky || !this.dataGrid) {
+			return undefined
+		}
+
+		if (this.sticky === 'both') {
+			return 'start end'
+		}
+
+		const columns = this.dataGrid.visibleColumns
+		const index = columns.indexOf(this)
+
+		if (this.sticky === 'start' && !columns.slice(index + 1).some(c => c.sticky === 'start')) {
+			return 'end'
+		}
+
+		if (this.sticky === 'end' && !columns.slice(0, index).some(c => c.sticky === 'end')) {
+			return 'start'
+		}
+
+		return undefined
+	}
+
 	generateCsvHeading?(): Generator<string>
 	generateCsvValue?(value: TValue, data: TData): Generator<string>
 }

@@ -57,6 +57,22 @@ export class DataGridColumnHeader extends Component {
 				background: var(--mo-data-grid-sticky-part-color);
 			}
 
+			:host([data-sticky-edge~=end]) {
+				border-inline-end: 1px solid var(--mo-color-transparent-gray-3);
+				box-shadow: var(--mo-shadow);
+				clip-path: inset(0px -15px 0px 0px);
+			}
+
+			:host([data-sticky-edge~=start]) {
+				border-inline-start: 1px solid var(--mo-color-transparent-gray-3);
+				box-shadow: var(--mo-shadow);
+				clip-path: inset(0px 0px 0px -15px);
+			}
+
+			:host([data-sticky-edge="start end"]) {
+				clip-path: inset(0px -15px 0px -15px);
+			}
+
 			mo-data-grid-header-separator {
 				z-index: 5;
 			}
@@ -168,6 +184,8 @@ export class DataGridColumnHeader extends Component {
 		} else {
 			this.setAttribute('data-sticky', this.column.sticky)
 		}
+		const stickyEdge = this.column.stickyEdge
+		stickyEdge ? this.setAttribute('data-sticky-edge', stickyEdge) : this.removeAttribute('data-sticky-edge')
 
 		const direction = this.column.alignment === 'end' ? 'horizontal-reversed' : 'horizontal'
 
