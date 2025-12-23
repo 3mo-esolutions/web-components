@@ -1,7 +1,7 @@
 import { component, Component, html, property, css, state, type HTMLTemplateResult } from '@a11d/lit'
 import { NotificationComponent } from '@a11d/lit-application'
 import { Localizer } from '@3mo/localization'
-import { type DataGridColumn, DataGridEditability, type DataGridRow } from './index.js'
+import { DataGridColumn, DataGridEditability, type DataGridRow } from './index.js'
 
 Localizer.dictionaries.add('de', {
 	'Copied to clipboard': 'In die Zwischenablage kopiert',
@@ -155,14 +155,7 @@ export class DataGridCell<TValue extends KeyPath.ValueOf<TData>, TData = any, TD
 				text-align: end;
 			}
 
-			:host([sticky]) {
-				position: sticky;
-			}
-
-			:host([sticky]) /*[sticking]*/ {
-				z-index: 2;
-				background: var(--mo-data-grid-sticky-part-color);
-			}
+			${DataGridColumn.stickyStyles}
 		`
 	}
 
@@ -177,9 +170,10 @@ export class DataGridCell<TValue extends KeyPath.ValueOf<TData>, TData = any, TD
 		} else {
 			this.setAttribute('tabindex', '-1')
 		}
-		this.toggleAttribute('sticky', this.column.sticky !== undefined)
-		this.toggleAttribute('sticking', this.column.intersecting === false)
+		this.toggleAttribute('data-sticky', this.column.sticky !== undefined)
 		this.style.insetInline = this.column.stickyColumnInsetInline
+		const stickyEdge = this.column.stickyEdge
+		stickyEdge ? this.setAttribute('data-sticky-edge', stickyEdge) : this.removeAttribute('data-sticky-edge')
 		return this.isEditing ? this.editContentTemplate as HTMLTemplateResult : this.contentTemplate
 	}
 

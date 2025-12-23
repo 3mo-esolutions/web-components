@@ -2,7 +2,7 @@ import { bind, Component, component, css, html, join, property, style, unsafeCSS
 import { tooltip } from '@3mo/tooltip'
 import { Localizer } from '@3mo/localization'
 import { ResizeController } from '@3mo/resize-observer'
-import type { DataGridColumn } from './DataGridColumn.js'
+import { DataGridColumn } from './DataGridColumn.js'
 import { DataGridSortingStrategy } from './DataGridSortingController.js'
 import { ReorderabilityState } from './DataGridReorderabilityController.js'
 
@@ -48,20 +48,13 @@ export class DataGridColumnHeader extends Component {
 				background: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-gray) 8%);
 			}
 
-			:host([data-sticky]) {
-				position: sticky;
-			}
-
-			:host([data-sticky]) /*[data-sticking]*/ {
-				z-index: 6;
-				background: var(--mo-data-grid-sticky-part-color);
-			}
+			${DataGridColumn.stickyStyles}
 
 			mo-data-grid-header-separator {
 				z-index: 5;
 			}
 
-			:host([data-sticky]) /*[data-sticking]*/ mo-data-grid-header-separator {
+			:host([data-sticky]) mo-data-grid-header-separator {
 				z-index: 7;
 			}
 
@@ -157,17 +150,17 @@ export class DataGridColumnHeader extends Component {
 	})
 
 	override get template() {
-		if (this.column.sticky && !this.column.intersecting) {
+		if (this.column.sticky) {
 			this.style.insetInline = this.column.stickyColumnInsetInline
 		}
-
-		this.toggleAttribute('data-sticking', this.column.intersecting === false)
 
 		if (!this.column.sticky) {
 			this.removeAttribute('data-sticky')
 		} else {
 			this.setAttribute('data-sticky', this.column.sticky)
 		}
+		const stickyEdge = this.column.stickyEdge
+		stickyEdge ? this.setAttribute('data-sticky-edge', stickyEdge) : this.removeAttribute('data-sticky-edge')
 
 		const direction = this.column.alignment === 'end' ? 'horizontal-reversed' : 'horizontal'
 

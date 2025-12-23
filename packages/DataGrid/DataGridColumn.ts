@@ -1,4 +1,4 @@
-import { html, style, type CSSResult, type HTMLTemplateResult } from '@a11d/lit'
+import { css, html, style, type CSSResult, type HTMLTemplateResult } from '@a11d/lit'
 import { equals } from '@a11d/equals'
 import type { DataGrid, DataGridSortingStrategy } from './index.js'
 import type * as CSS from 'csstype'
@@ -93,13 +93,6 @@ export class DataGridColumn<TData, TValue = any> {
 		this.dataGrid?.requestUpdate()
 	}
 
-	private _intersecting = false
-	get intersecting() { return this._intersecting }
-	set intersecting(value) {
-		this._intersecting = value
-		this.dataGrid?.requestUpdate()
-	}
-
 	get sortingDefinition() {
 		return this.dataGrid
 			?.getSorting()
@@ -128,6 +121,56 @@ export class DataGridColumn<TData, TValue = any> {
 
 	get stickyColumnInsetInline() {
 		return this.dataGrid?.columnsController.getStickyColumnInsetInline(this) ?? ''
+	}
+
+	static readonly stickyStyles = css`
+		:host([data-sticky]) {
+			position: sticky;
+		}
+
+		:host([data-sticky]) {
+			z-index: 6;
+			background: var(--mo-data-grid-sticky-part-color);
+		}
+
+		:host([data-sticky-edge~=end]) {
+			border-inline-end: var(--mo-data-grid-border);
+			box-shadow: var(--mo-shadow-deep);
+			clip-path: inset(0 -1rem 0 0);
+		}
+
+		:host([data-sticky-edge~=start]) {
+			border-inline-start: var(--mo-data-grid-border);
+			box-shadow: var(--mo-shadow-deep);
+			clip-path: inset(0 0 0 -1rem);
+		}
+
+		:host([data-sticky-edge="start end"]) {
+			clip-path: inset(0 -1rem 0 -1rem);
+		}
+	`
+
+	get stickyEdge(): string | undefined {
+		if (!this.sticky || !this.dataGrid) {
+			return undefined
+		}
+
+		if (this.sticky === 'both') {
+			return 'start end'
+		}
+
+		const columns = this.dataGrid.visibleColumns
+		const index = columns.indexOf(this)
+
+		if (this.sticky === 'start' && !columns.slice(index + 1).some(c => c.sticky === 'start')) {
+			return 'end'
+		}
+
+		if (this.sticky === 'end' && !columns.slice(0, index).some(c => c.sticky === 'end')) {
+			return 'start'
+		}
+
+		return undefined
 	}
 
 	generateCsvHeading?(): Generator<string>
