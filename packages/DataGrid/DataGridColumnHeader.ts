@@ -2,7 +2,7 @@ import { bind, Component, component, css, html, join, property, style, unsafeCSS
 import { tooltip } from '@3mo/tooltip'
 import { Localizer } from '@3mo/localization'
 import { ResizeController } from '@3mo/resize-observer'
-import type { DataGridColumn } from './DataGridColumn.js'
+import { DataGridColumn } from './DataGridColumn.js'
 import { DataGridSortingStrategy } from './DataGridSortingController.js'
 import { ReorderabilityState } from './DataGridReorderabilityController.js'
 
@@ -48,36 +48,13 @@ export class DataGridColumnHeader extends Component {
 				background: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-gray) 8%);
 			}
 
-			:host([data-sticky]) {
-				position: sticky;
-			}
-
-			:host([data-sticky]) /*[data-sticking]*/ {
-				z-index: 6;
-				background: var(--mo-data-grid-sticky-part-color);
-			}
-
-			:host([data-sticky-edge~=end]) {
-				border-inline-end: 1px solid var(--mo-color-transparent-gray-3);
-				box-shadow: var(--mo-shadow);
-				clip-path: inset(0px -15px 0px 0px);
-			}
-
-			:host([data-sticky-edge~=start]) {
-				border-inline-start: 1px solid var(--mo-color-transparent-gray-3);
-				box-shadow: var(--mo-shadow);
-				clip-path: inset(0px 0px 0px -15px);
-			}
-
-			:host([data-sticky-edge="start end"]) {
-				clip-path: inset(0px -15px 0px -15px);
-			}
+			${DataGridColumn.stickyStyles}
 
 			mo-data-grid-header-separator {
 				z-index: 5;
 			}
 
-			:host([data-sticky]) /*[data-sticking]*/ mo-data-grid-header-separator {
+			:host([data-sticky]) mo-data-grid-header-separator {
 				z-index: 7;
 			}
 
@@ -173,11 +150,9 @@ export class DataGridColumnHeader extends Component {
 	})
 
 	override get template() {
-		if (this.column.sticky && !this.column.intersecting) {
+		if (this.column.sticky) {
 			this.style.insetInline = this.column.stickyColumnInsetInline
 		}
-
-		this.toggleAttribute('data-sticking', this.column.intersecting === false)
 
 		if (!this.column.sticky) {
 			this.removeAttribute('data-sticky')
