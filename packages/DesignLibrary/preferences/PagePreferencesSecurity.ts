@@ -17,10 +17,12 @@ export class PagePreferencesSecurity extends PageSettings {
 						@change=${(e: CustomEvent<boolean>) => DialogDeletion.deletionConfirmation.value = e.detail}
 					>Vor dem Löschen bestätigen</mo-checkbox-list-item>
 
-					<mo-checkbox-list-item
-						?selected=${BusinessSuiteAuthenticationDialogComponent.shallRememberStorage.value}
-						@change=${(e: CustomEvent<boolean>) => BusinessSuiteAuthenticationDialogComponent.shallRememberStorage.value = e.detail}
-					>Passwort merken & eingeloggt bleiben</mo-checkbox-list-item>
+					${true as boolean ? html.nothing : html`
+						<mo-checkbox-list-item
+							?selected=${BusinessSuiteAuthenticationDialogComponent.shallRememberStorage.value}
+							@change=${(e: CustomEvent<boolean>) => BusinessSuiteAuthenticationDialogComponent.shallRememberStorage.value = e.detail}
+						>Passwort merken & eingeloggt bleiben</mo-checkbox-list-item>
+					`}
 
 					${!Authentication.hasAuthenticator() ? html.nothing : html`
 						<mo-list-item @click=${() => Authentication['authenticator']?.resetPassword()}>Passwort ändern</mo-list-item>

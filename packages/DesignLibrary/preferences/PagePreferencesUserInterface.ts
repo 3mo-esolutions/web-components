@@ -103,11 +103,13 @@ export class PagePreferencesUserInterface extends PageSettings {
 						<mo-flex gap='0.5rem'>
 							<mo-list-item>
 								Zeilen pro Seite
-								<mo-field-select-data-grid-page-size dense
+								<mo-field-select dense
 									${style({ width: '150px' })}
 									value=${DataGrid.pageSize.value}
 									@change=${(e: CustomEvent<Exclude<DataGridPagination, 'auto'>>) => DataGrid.pageSize.value = e.detail}
-								></mo-field-select-data-grid-page-size>
+								>
+									${[10, 25, 50, 100, 250, 500].map(size => html`<mo-option value=${size}>${size.format()}</mo-option>`)}
+								</mo-field-select>
 							</mo-list-item>
 
 							<mo-checkbox-list-item
