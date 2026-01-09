@@ -67,7 +67,7 @@ export class Option<T> extends SelectionListItem {
 			}
 
 			:host([data-search-no-match]) {
-				display: none;
+				display: none !important;
 				pointer-events: none;
 			}
 
