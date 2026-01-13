@@ -399,8 +399,11 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		this.rows.forEach(row => row.requestUpdate())
 		// @ts-expect-error rowIntersectionObserver is initialized once here
 		this.rowIntersectionObserver ??= new IntersectionObserver(entries => {
-			entries.forEach(({ target, isIntersecting }) => {
-				(target as DataGridRow<TData>).isIntersecting = isIntersecting
+			entries.forEach(({ target, isIntersecting, rootBounds }) => {
+				// Skip if rootBounds is null/zero (happens during resize/zoom)
+				if (rootBounds && (rootBounds.width !== 0 || rootBounds.height !== 0)) {
+					(target as DataGridRow<TData>).isIntersecting = isIntersecting
+				}
 			})
 		}, { root: this.scroller, rootMargin: '400px 0px' })
 		this.navigateToLastValidPageIfNeeded()

@@ -27,6 +27,7 @@ export class DataGridColumnHeader extends Component {
 			:host {
 				display: flex;
 				position: relative;
+				cursor: pointer;
 				padding: 0 var(--mo-data-grid-cell-padding);
 				transition: background 0.1s;
 				anchor-name: --mo-data-grid-column-header;
@@ -58,8 +59,47 @@ export class DataGridColumnHeader extends Component {
 				z-index: 7;
 			}
 
-			#container {
-				transition: margin-inline-end 0.1s;
+			#drag-indicator {
+				position: absolute;
+				inset-inline-start: 50%;
+				inset-block-start: 0;
+				transform: translateX(-50%);
+				transition: 0.15s ease;
+				color: var(--mo-color-gray);
+				opacity: 0;
+				height: 0.25rem;
+				width: 1.5rem;
+				cursor: grab;
+				border-end-end-radius: var(--mo-border-radius);
+				border-end-start-radius: var(--mo-border-radius);
+				pointer-events: none;
+				z-index: 10;
+				background: var(--mo-color-transparent-gray-3);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+
+				mo-icon {
+					visibility: hidden;
+					transform: rotate(90deg);
+					font-size: .75rem;
+					color: var(--mo-color-on-accent);
+				}
+
+				&:hover {
+					background: var(--mo-color-accent);
+					inset-block-start: 0;
+					height: 0.75rem;
+					width: 2.5rem;
+					mo-icon {
+						visibility: visible;
+					}
+				}
+			}
+
+			:host(:hover) #drag-indicator {
+				opacity: 1;
+				pointer-events: auto;
 			}
 
 			#content {
@@ -103,33 +143,6 @@ export class DataGridColumnHeader extends Component {
 				}
 			}
 
-			:host(:hover) #sort[data-preview] {
-				display: flex;
-				mo-icon-button {
-					color: var(--mo-color-gray);
-					opacity: 0.5;
-				}
-			}
-
-			#menu-icon {
-				position: absolute;
-				inset-inline-end: calc(var(--mo-data-grid-cell-padding) - 6px);
-				inset-block-start: 2px;
-				opacity: 0;
-				font-size: 20px;
-				transition: 0.1s;
-			}
-
-			:host(:hover), :host([menuOpen]) {
-				#container {
-					margin-inline-end: 20px;
-				}
-
-				#menu-icon {
-					opacity: 1;
-				}
-			}
-
 			mo-menu {
 				position-anchor: --mo-data-grid-column-header;
 
@@ -164,17 +177,27 @@ export class DataGridColumnHeader extends Component {
 
 		const direction = this.column.alignment === 'end' ? 'horizontal-reversed' : 'horizontal'
 
+		const additionalItems = this.column.getMenuItemsTemplate?.()
+
 		return html`
-			<mo-flex id='container' alignItems='center' gap='0.2rem'
-				direction=${direction}
-				@click=${() => this.column.toggleSort()}
-				@contextmenu=${(e: Event) => { e.preventDefault(); this.menuOpen = true }}
-				${style({ flex: '1', overflow: 'hidden' })}
-			>
-				${this.contentTemplate}
-				${this.sortingTemplate}
-			</mo-flex>
-			${this.menuTemplate}
+			<div id='drag-indicator'>
+				<mo-icon icon='drag_indicator'></mo-icon>
+			</div>
+			<mo-popover-container placement='block-end' alignment='start' style='display: contents'>
+				<mo-flex id='container' alignItems='center' gap='0.2rem' direction=${direction} ${style({ flex: '1', overflow: 'hidden' })}>
+					${this.contentTemplate}
+					${this.sortingTemplate}
+				</mo-flex>
+				<mo-menu slot='popover' .anchor=${this} ?open=${bind(this, 'menuOpen')}>
+					<mo-line></mo-line>
+					${join([
+						!this.column.sortable ? undefined : this.getSortingItemsTemplate(additionalItems instanceof Map ? additionalItems.get('sorting') : undefined),
+						// Hide stickiness items for now
+						true as boolean ? undefined : this.getStickinessItemsTemplate(additionalItems instanceof Map ? additionalItems.get('stickiness') : undefined),
+						this.getMoreItemsTemplate(additionalItems instanceof Map ? additionalItems.get('more') : additionalItems),
+					].filter(Boolean), html`<mo-line></mo-line>`)}
+				</mo-menu>
+			</mo-popover-container>
 			${this.separatorTemplate}
 		`
 	}
@@ -192,30 +215,15 @@ export class DataGridColumnHeader extends Component {
 		const sortingDefinition = this.column.sortingDefinition
 		const sortIcon = sortingDefinition?.strategy === DataGridSortingStrategy.Ascending ? 'arrow_upward' : 'arrow_downward'
 		const sortingRank = !sortingDefinition || this.column.dataGrid.getSorting().length <= 1 ? undefined : sortingDefinition.rank
+		const handleSortClick = (e: Event) => {
+			e.stopPropagation()
+			this.column.toggleSort()
+		}
 		return !this.column.sortable ? html.nothing : html`
 			<mo-flex id='sort' direction='horizontal' ?data-preview=${!sortingDefinition?.strategy}>
-				<mo-icon-button dense icon=${sortIcon}></mo-icon-button>
+				<mo-icon-button dense icon=${sortIcon} @click=${handleSortClick}></mo-icon-button>
 				${!sortingRank ? html.nothing : html`<span>${sortingRank}</span>`}
 			</mo-flex>
-		`
-	}
-
-	private get menuTemplate() {
-		const additionalItems = this.column.getMenuItemsTemplate?.()
-		return html`
-			<mo-popover-container placement='block-end' alignment='end' style='display: contents'>
-				<mo-icon-button dense id='menu-icon' icon='more_vert'></mo-icon-button>
-
-				<mo-menu slot='popover' .anchor=${this} target='menu-icon' ?open=${bind(this, 'menuOpen')}>
-					<mo-line></mo-line>
-					${join([
-						!this.column.sortable ? undefined : this.getSortingItemsTemplate(additionalItems instanceof Map ? additionalItems.get('sorting') : undefined),
-						// Hide stickiness items for now
-						true as boolean ? undefined : this.getStickinessItemsTemplate(additionalItems instanceof Map ? additionalItems.get('stickiness') : undefined),
-						this.getMoreItemsTemplate(additionalItems instanceof Map ? additionalItems.get('more') : additionalItems),
-					].filter(Boolean), html`<mo-line></mo-line>`)}
-				</mo-menu>
-			</mo-popover-container>
 		`
 	}
 
