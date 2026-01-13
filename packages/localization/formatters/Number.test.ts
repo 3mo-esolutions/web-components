@@ -30,4 +30,9 @@ describe('Number', () => {
 		expect(12.34.formatAsPercent({ language: 'de' })).toEqual('12,34 %')
 		expect(12.34.formatAsPercent('de')).toEqual('12,34 %')
 	})
+
+	it('.formatAsCurrency() with more than 2 decimal places', () => {
+		expect(1234.567.formatAsCurrency('EUR', { language: 'de' })).toEqual('1.234,567 €')
+		expect(1234.56789.formatAsCurrency('EUR', { language: 'de' })).toEqual('1.234,56789 €')
+	})
 })

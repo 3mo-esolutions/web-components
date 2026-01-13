@@ -12,7 +12,6 @@ Number.prototype.formatAsCurrency = function (this: number, ...[currencyOrCode, 
 	return this.format(language, {
 		useGrouping: true,
 		minimumFractionDigits: 2,
-		maximumFractionDigits: 2,
 		...explicitOptions,
 		style: currency ? 'currency' : 'decimal',
 		currency: currency?.code,

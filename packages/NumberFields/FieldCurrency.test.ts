@@ -11,7 +11,7 @@ describe('FieldCurrency', () => {
 	it('should tunnel disabled', () => expectFieldPropertyTunnelsToInput(fixture, { value: true, key: 'disabled' }))
 	it('should tunnel readonly', () => expectFieldPropertyTunnelsToInput(fixture, { value: true, fieldKey: 'readonly', inputKey: 'readOnly' }))
 	it('should tunnel required', () => expectFieldPropertyTunnelsToInput(fixture, { value: true, key: 'required' }))
-	it('should tunnel value', () => expectFieldPropertyTunnelsToInput(fixture, { fieldValue: 4.999, inputValue: '5.00', key: 'value' }))
+	it('should tunnel value', () => expectFieldPropertyTunnelsToInput(fixture, { fieldValue: 5, inputValue: '5.00', key: 'value' }))
 	it('should proxy input event', () => expectInputEventTunnelsToField(fixture, 'input', '4', 4))
 	it('should proxy change event', async () => {
 		expectInputEventTunnelsToField(fixture, 'change', '5', 5)
