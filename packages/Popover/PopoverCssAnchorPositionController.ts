@@ -6,7 +6,10 @@ import { PopoverVirtualAnchor } from './PopoverVirtualAnchor.js'
 import { PopoverHost } from './PopoverHost.js'
 
 export class PopoverCssAnchorPositionController extends Controller {
-	static readonly supported = CSS.supports('anchor-name: --name')
+	static get supported() {
+		return CSS.supports('anchor-name: --name')
+			&& Number(navigator.userAgent.match(/Chrom(?:e|ium)\/(?<version>\d+)/)?.groups?.version ?? Infinity) < 144
+	}
 
 	private static getCssRoot(element: HTMLElement): HTMLElement {
 		const key = 'cssRoot'
