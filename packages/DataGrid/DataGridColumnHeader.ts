@@ -147,7 +147,7 @@ export class DataGridColumnHeader extends Component {
 				position-anchor: --mo-data-grid-column-header;
 
 				&::part(popover) {
-					margin-inline-start: 4px;
+					margin-inline-start: calc(var(--mo-data-grid-cell-padding) * -1);
 				}
 
 				mo-heading {
