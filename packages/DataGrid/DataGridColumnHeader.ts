@@ -4,7 +4,7 @@ import { Localizer } from '@3mo/localization'
 import { ResizeController } from '@3mo/resize-observer'
 import { DataGridColumn } from './DataGridColumn.js'
 import { DataGridSortingStrategy } from './DataGridSortingController.js'
-import { ReorderabilityState } from './DataGridReorderabilityController.js'
+import { ReorderabilityState, type ReorderabilityController } from './DataGridReorderabilityController.js'
 
 Localizer.dictionaries.add('de', {
 	'Sorting': 'Sortierung',
@@ -21,6 +21,8 @@ Localizer.dictionaries.add('de', {
 export class DataGridColumnHeader extends Component {
 	@property({ type: Object }) column!: DataGridColumn<unknown>
 	@property({ type: Boolean, reflect: true }) menuOpen = false
+	@property({ type: Object }) reorderabilityController!: ReorderabilityController
+	@property({ type: Number }) index = 0
 
 	static override get styles() {
 		return css`
@@ -28,20 +30,26 @@ export class DataGridColumnHeader extends Component {
 				display: flex;
 				position: relative;
 				cursor: pointer;
-				padding: 0 var(--mo-data-grid-cell-padding);
 				transition: background 0.1s;
 				anchor-name: --mo-data-grid-column-header;
 			}
 
-			:host([data-reorderability=${unsafeCSS(ReorderabilityState.Dragging)}]) {
+			#reorderable-area {
+				display: flex;
+				flex: 1;
+				overflow: hidden;
+				padding: 0 var(--mo-data-grid-cell-padding);
+			}
+
+			#reorderable-area[data-reorderability=${unsafeCSS(ReorderabilityState.Dragging)}] {
 				opacity: 0.5;
 			}
 
-			:host([data-reorderability=${unsafeCSS(ReorderabilityState.DropBefore)}]) {
+			:host:has(#reorderable-area[data-reorderability=${unsafeCSS(ReorderabilityState.DropBefore)}]) {
 				border-inline-start: 3px solid var(--mo-color-accent);
 			}
 
-			:host([data-reorderability=${unsafeCSS(ReorderabilityState.DropAfter)}]) {
+			:host:has(#reorderable-area[data-reorderability=${unsafeCSS(ReorderabilityState.DropAfter)}]) {
 				border-inline-end: 3px solid var(--mo-color-accent);
 			}
 
@@ -180,24 +188,26 @@ export class DataGridColumnHeader extends Component {
 		const additionalItems = this.column.getMenuItemsTemplate?.()
 
 		return html`
-			<div id='drag-indicator'>
-				<mo-icon icon='drag_indicator'></mo-icon>
+			<div id='reorderable-area' ${this.reorderabilityController.item({ index: this.index, disabled: !!this.column.sticky })}>
+				<div id='drag-indicator'>
+					<mo-icon icon='drag_indicator'></mo-icon>
+				</div>
+				<mo-popover-container placement='block-end' alignment='start' style='display: contents'>
+					<mo-flex id='container' alignItems='center' gap='0.2rem' direction=${direction} ${style({ flex: '1', overflow: 'hidden' })}>
+						${this.contentTemplate}
+						${this.sortingTemplate}
+					</mo-flex>
+					<mo-menu slot='popover' .anchor=${this} ?open=${bind(this, 'menuOpen')}>
+						<mo-line></mo-line>
+						${join([
+							!this.column.sortable ? undefined : this.getSortingItemsTemplate(additionalItems instanceof Map ? additionalItems.get('sorting') : undefined),
+							// Hide stickiness items for now
+							true as boolean ? undefined : this.getStickinessItemsTemplate(additionalItems instanceof Map ? additionalItems.get('stickiness') : undefined),
+							this.getMoreItemsTemplate(additionalItems instanceof Map ? additionalItems.get('more') : additionalItems),
+						].filter(Boolean), html`<mo-line></mo-line>`)}
+					</mo-menu>
+				</mo-popover-container>
 			</div>
-			<mo-popover-container placement='block-end' alignment='start' style='display: contents'>
-				<mo-flex id='container' alignItems='center' gap='0.2rem' direction=${direction} ${style({ flex: '1', overflow: 'hidden' })}>
-					${this.contentTemplate}
-					${this.sortingTemplate}
-				</mo-flex>
-				<mo-menu slot='popover' .anchor=${this} ?open=${bind(this, 'menuOpen')}>
-					<mo-line></mo-line>
-					${join([
-						!this.column.sortable ? undefined : this.getSortingItemsTemplate(additionalItems instanceof Map ? additionalItems.get('sorting') : undefined),
-						// Hide stickiness items for now
-						true as boolean ? undefined : this.getStickinessItemsTemplate(additionalItems instanceof Map ? additionalItems.get('stickiness') : undefined),
-						this.getMoreItemsTemplate(additionalItems instanceof Map ? additionalItems.get('more') : additionalItems),
-					].filter(Boolean), html`<mo-line></mo-line>`)}
-				</mo-menu>
-			</mo-popover-container>
 			${this.separatorTemplate}
 		`
 	}

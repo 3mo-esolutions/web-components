@@ -181,7 +181,7 @@ export class DataGridHeader<TData> extends Component {
 	private get contentTemplate() {
 		return html`
 			${repeat(this.dataGrid.visibleColumns, c => c.dataSelector, (column, index) => html`
-				<mo-data-grid-column-header ${this.reorderabilityController.item({ index, disabled: !!column.sticky })} .column=${column}></mo-data-grid-column-header>
+				<mo-data-grid-column-header .reorderabilityController=${this.reorderabilityController} .index=${index} .column=${column}></mo-data-grid-column-header>
 			`)}
 		`
 	}
