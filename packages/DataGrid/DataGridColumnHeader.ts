@@ -41,16 +41,34 @@ export class DataGridColumnHeader extends Component {
 				padding: 0 var(--mo-data-grid-cell-padding);
 			}
 
+			:host:has(#reorderable-area[data-reorderability=${unsafeCSS(ReorderabilityState.Dragging)}]) {
+				background: var(--mo-color-surface);
+			}
+
 			#reorderable-area[data-reorderability=${unsafeCSS(ReorderabilityState.Dragging)}] {
-				opacity: 0.5;
+				opacity: 0;
 			}
 
-			:host:has(#reorderable-area[data-reorderability=${unsafeCSS(ReorderabilityState.DropBefore)}]) {
-				border-inline-start: 3px solid var(--mo-color-accent);
-			}
-
+			:host:has(#reorderable-area[data-reorderability=${unsafeCSS(ReorderabilityState.DropBefore)}]),
 			:host:has(#reorderable-area[data-reorderability=${unsafeCSS(ReorderabilityState.DropAfter)}]) {
-				border-inline-end: 3px solid var(--mo-color-accent);
+				&::after {
+					content: '';
+					position: absolute;
+					top: 0;
+					width: 3px;
+					height: calc(var(--_content-height) - 4px);
+					background: var(--mo-color-accent);
+					z-index: 10;
+					pointer-events: none;
+				}
+			}
+
+			:host:has(#reorderable-area[data-reorderability=${unsafeCSS(ReorderabilityState.DropBefore)}])::after {
+				inset-inline-start: 0;
+			}
+
+			:host:has(#reorderable-area[data-reorderability=${unsafeCSS(ReorderabilityState.DropAfter)}])::after {
+				inset-inline-end: 0;
 			}
 
 			:host(:hover) {
@@ -187,8 +205,24 @@ export class DataGridColumnHeader extends Component {
 
 		const additionalItems = this.column.getMenuItemsTemplate?.()
 
+		const dragImageStyle = style({
+			height: '2rem',
+			paddingInline: '0.75rem',
+			background: 'var(--mo-color-accent)',
+			color: 'var(--mo-color-on-accent)',
+			fontSize: 'small',
+		})
+
 		return html`
-			<div id='reorderable-area' ${this.reorderabilityController.item({ index: this.index, disabled: !!this.column.sticky })}>
+			<div id='reorderable-area' ${this.reorderabilityController.item({
+				index: this.index,
+				disabled: !!this.column.sticky,
+				dragImage: html`
+					<mo-flex alignItems='center' justifyContent='center' ${dragImageStyle}>
+						${this.column.heading}
+					</mo-flex>
+				`
+			})}>
 				<div id='drag-indicator'>
 					<mo-icon icon='drag_indicator'></mo-icon>
 				</div>

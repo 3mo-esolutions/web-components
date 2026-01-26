@@ -1,4 +1,4 @@
-import { AsyncDirective, Controller, directive, noChange, PartType, type ElementPart, type PartInfo, type ReactiveElement } from '@a11d/lit'
+import { AsyncDirective, Controller, directive, noChange, PartType, render, type ElementPart, type HTMLTemplateResult, type PartInfo, type ReactiveElement } from '@a11d/lit'
 import type { DataGrid } from './DataGrid.js'
 import type { DataRecord } from './DataRecord.js'
 
@@ -17,6 +17,7 @@ export enum ReorderabilityState {
 type ReorderabilityControllerItemDirectiveOptions = {
 	readonly index: number
 	readonly disabled?: boolean
+	readonly dragImage?: HTMLTemplateResult
 }
 
 export class ReorderabilityController extends Controller {
@@ -120,11 +121,24 @@ export class ReorderabilityController extends Controller {
 	}
 
 	private handleDragStart(e: DragEvent) {
-		const index = this.items.get(e.currentTarget as HTMLElement)!.index
+		const element = e.currentTarget as HTMLElement
+		const itemOptions = this.items.get(element)!
+		const index = itemOptions.index
 
 		this.draggingItem = { source: index, destination: index }
 
-		e.dataTransfer?.setDragImage(DragGhostImage.instance, 0, 0)
+		let dragImage: HTMLElement = DragGhostImage.instance
+		if (itemOptions.dragImage) {
+			const container = document.createElement('div')
+			container.style.cssText = 'position: fixed; left: -9999px; top: -9999px;'
+			render(itemOptions.dragImage, container)
+			dragImage = container
+		}
+
+		document.body.appendChild(dragImage)
+		e.dataTransfer?.setDragImage(dragImage, dragImage.offsetWidth / 2, dragImage.offsetHeight / 2)
+		setTimeout(() => dragImage.remove(), 0)
+
 		e.dataTransfer!.effectAllowed = 'move'
 		this.host.requestUpdate()
 	}

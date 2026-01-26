@@ -7,6 +7,7 @@ import { ThemeController } from '@3mo/theme'
 import { MediaQueryController } from '@3mo/media-query-observer'
 import { Localizer } from '@3mo/localization'
 import { type Scroller } from '@3mo/scroller'
+import { observeResize } from '@3mo/resize-observer'
 import { DataGridColumnsController } from './DataGridColumnsController.js'
 import { DataGridSelectionBehaviorOnDataChange, DataGridSelectionController, type DataGridSelectability } from './DataGridSelectionController.js'
 import { DataGridSortingController, type DataGridRankedSortDefinition, type DataGridSorting } from './DataGridSortingController.js'
@@ -643,6 +644,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			<mo-grid rows='* auto' ${style({ position: 'relative', height: '100%' })}>
 				<mo-scroller
 					${style({ minHeight: 'var(--mo-data-grid-content-min-height, var(--_content-min-height-default))' })}
+					${observeResize(([e]) => this.style.setProperty('--_content-height', `${e?.contentRect.height ?? 0}px`))}
 					@scroll=${this.handleScroll}
 				>
 					<mo-grid id='content' autoRows='min-content' columns='var(--mo-data-grid-columns)'>
