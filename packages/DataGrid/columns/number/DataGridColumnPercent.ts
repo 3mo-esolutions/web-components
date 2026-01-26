@@ -6,7 +6,7 @@ import { DataGridColumnNumberBase } from './DataGridColumnNumberBase.js'
 export class DataGridColumnPercent<TData> extends DataGridColumnNumberBase<TData> {
 	override getContentTemplate(value: number | undefined, data: TData) {
 		data
-		return html`${this.getNumber(value)?.formatAsPercent() ?? html.nothing}`
+		return html`${this.getNumber(value)?.formatAsPercent(this.formatOptions) ?? html.nothing}`
 	}
 
 	override getEditContentTemplate(value: number | undefined, data: TData) {
@@ -22,7 +22,7 @@ export class DataGridColumnPercent<TData> extends DataGridColumnNumberBase<TData
 	}
 
 	getSumTemplate(sum: number) {
-		return html`${sum.formatAsPercent()}`
+		return html`${sum.formatAsPercent(this.formatOptions)}`
 	}
 
 	override *generateCsvHeading() {

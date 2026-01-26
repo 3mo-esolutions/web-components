@@ -1,12 +1,9 @@
-import { component, html, ifDefined, property, style } from '@a11d/lit'
-import { hasChanged } from '@a11d/equals'
+import { component, html, ifDefined, style } from '@a11d/lit'
 import { DataGridColumnNumberBase } from './DataGridColumnNumberBase.js'
 
 /** @element mo-data-grid-column-number */
 @component('mo-data-grid-column-number')
 export class DataGridColumnNumber<TData> extends DataGridColumnNumberBase<TData> {
-	@property({ type: Object, hasChanged }) formatOptions?: Intl.NumberFormatOptions
-
 	override getContentTemplate(value: number | undefined, data: TData) {
 		data
 		return html`${this.getNumber(value)?.format(this.formatOptions) ?? html.nothing}`
