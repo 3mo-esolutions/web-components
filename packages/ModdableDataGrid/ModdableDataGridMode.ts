@@ -167,7 +167,11 @@ export class ModdableDataGridMode<TData, TDataFetcherParameters extends Fetchabl
 
 	apply(dataGrid: ModdableDataGrid<TData, TDataFetcherParameters, any>) {
 		const clone = this.clone()
-		dataGrid.setColumns(dataGrid.extractedColumns.map(c1 => clone.columns?.find(c2 => c1.dataSelector === c2.dataSelector)?.apply(c1) ?? c1))
+		const orderedColumns = clone.columns?.map(c1 => {
+			const extractedCol = dataGrid.extractedColumns.find(c2 => c2.dataSelector === c1.dataSelector)
+			return extractedCol ? c1.apply(extractedCol) : undefined
+		}).filter(c => c !== undefined) ?? dataGrid.extractedColumns
+		dataGrid.setColumns(orderedColumns)
 		dataGrid.sort(clone.sorting ?? [])
 		dataGrid.setPagination(clone.pagination)
 		dataGrid.setParameters(clone.parameters ?? {} as TDataFetcherParameters)

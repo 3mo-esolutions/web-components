@@ -109,16 +109,17 @@ describe('ModdableDataGridMode', () => {
 	})
 
 	describe('apply', () => {
-		const dataGridMock = new class {
-			parameters = {}
-			readonly extractedColumns = []
-			setColumns = jasmine.createSpy()
-			sort = jasmine.createSpy()
-			setPagination = jasmine.createSpy()
-			setParameters = jasmine.createSpy().and.callFake(p => this.parameters = p)
-		}
+		const createDataGridMock = (extractedColumns: Array<any> = []) => ({
+			parameters: {},
+			extractedColumns,
+			setColumns: jasmine.createSpy(),
+			sort: jasmine.createSpy(),
+			setPagination: jasmine.createSpy(),
+			setParameters: jasmine.createSpy().and.callFake(function (this: any, p: any) { this.parameters = p }),
+		})
 
 		it('should not set any associated properties by reference', () => {
+			const dataGridMock = createDataGridMock()
 			const mode = new ModdableDataGridMode({
 				name: 'Test',
 				parameters: { date: '2021-01-01T00:00:00.000Z' },
@@ -130,6 +131,7 @@ describe('ModdableDataGridMode', () => {
 		})
 
 		it('should apply the mode to the data grid', () => {
+			const dataGridMock = createDataGridMock()
 			const mode = new ModdableDataGridMode({
 				name: 'Test',
 				parameters: { date: '2021-01-01T00:00:00.000Z' },
@@ -144,6 +146,53 @@ describe('ModdableDataGridMode', () => {
 			expect(dataGridMock.sort).toHaveBeenCalledWith([{ selector: 'test', strategy: DataGridSortingStrategy.Ascending }])
 			expect(dataGridMock.setPagination).toHaveBeenCalledWith(100)
 			expect(dataGridMock.setColumns).toHaveBeenCalledWith([])
+		})
+
+		it('should apply columns in saved mode order with properties', () => {
+			const col1 = { dataSelector: 'col1', width: '100px', hidden: false, sticky: undefined }
+			const col2 = { dataSelector: 'col2', width: '200px', hidden: false, sticky: undefined }
+			const dataGridMock = createDataGridMock([col1, col2])
+			const mode = new ModdableDataGridMode({
+				name: 'Modified',
+				columns: [
+					new ModdableDataGridModeColumn({ dataSelector: 'col2', width: '300px', hidden: true }),
+					new ModdableDataGridModeColumn({ dataSelector: 'col1', width: '150px', sticky: 'start' }),
+				],
+			})
+
+			mode.apply(dataGridMock as any)
+
+			expect(dataGridMock.setColumns).toHaveBeenCalledWith([
+				{ dataSelector: 'col2', width: '300px', hidden: true, sticky: undefined },
+				{ dataSelector: 'col1', width: '150px', hidden: false, sticky: 'start' },
+			])
+		})
+
+		it('should ignore columns in mode that do not exist in extractedColumns', () => {
+			const col1 = { dataSelector: 'col1', width: undefined, hidden: false, sticky: undefined }
+			const dataGridMock = createDataGridMock([col1])
+			const mode = new ModdableDataGridMode({
+				name: 'WithNonexistent',
+				columns: [
+					new ModdableDataGridModeColumn({ dataSelector: 'nonexistent' }),
+					new ModdableDataGridModeColumn({ dataSelector: 'col1' }),
+				],
+			})
+
+			mode.apply(dataGridMock as any)
+
+			expect(dataGridMock.setColumns).toHaveBeenCalledWith([col1])
+		})
+
+		it('should use extractedColumns when mode has no columns', () => {
+			const col1 = { dataSelector: 'col1' }
+			const col2 = { dataSelector: 'col2' }
+			const dataGridMock = createDataGridMock([col1, col2])
+			const mode = new ModdableDataGridMode({ name: 'NoColumns' })
+
+			mode.apply(dataGridMock as any)
+
+			expect(dataGridMock.setColumns).toHaveBeenCalledWith([col1, col2])
 		})
 	})
 })
