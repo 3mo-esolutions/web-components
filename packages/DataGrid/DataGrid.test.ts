@@ -222,6 +222,34 @@ describe('DataGrid', () => {
 			expect(fixture.component.isRowSelected(row)).toBe(true)
 		}
 
+		const shouldOpenContextMenuWithTheRightClickedRowData = async (fixture: ComponentTestFixture<TestDataGrid>) => {
+			const row0 = fixture.component.rows[0] as DataGridRow<Person>
+			const row1 = fixture.component.rows[1] as DataGridRow<Person>
+
+			// Select row 0
+			fixture.component.select([row0.data])
+			await fixture.updateComplete
+
+			// Spy on getRowContextMenuTemplate to capture the data it receives
+			let receivedData: Array<Person> | undefined
+			const originalTemplate = fixture.component.getRowContextMenuTemplate!
+			fixture.component.getRowContextMenuTemplate = (data: Array<Person>) => {
+				receivedData = data
+				return originalTemplate(data)
+			}
+			await fixture.updateComplete
+
+			// Open context menu on unselected row 1
+			await row1.openContextMenu()
+
+			expect(receivedData).toBeDefined()
+			expect(receivedData!).toEqual([row1.data])
+			expect(receivedData!).not.toEqual([row0.data])
+
+			await row1.closeContextMenu()
+			fixture.component.getRowContextMenuTemplate = originalTemplate
+		}
+
 		const expectCellFocusLeadsToRowSelectionWhenSelectOnClick = async (fixture: ComponentTestFixture<TestDataGrid>) => {
 			const shouldPreservePreviousSelection = fixture.component.selectability === DataGridSelectability.Multiple
 
@@ -310,6 +338,7 @@ describe('DataGrid', () => {
 			})
 
 			it('should auto-select the right-clicked row', () => shouldAutoSelectTheRightClickedRow(fixture))
+			it('should open context menu with the right-clicked row data when another row is selected', () => shouldOpenContextMenuWithTheRightClickedRowData(fixture))
 
 			it('should not select the row when clicked', () => expectClickingTheRowLeadsToSelection(fixture, false))
 			it('should not select the row when isDataSelectable returns false', () => shouldNotSelectTheRowWhenIsDataSelectableReturnsFalse(fixture))
@@ -329,6 +358,7 @@ describe('DataGrid', () => {
 			})
 
 			it('should auto-select the right-clicked row', () => shouldAutoSelectTheRightClickedRow(fixture))
+			it('should open context menu with the right-clicked row data when another row is selected', () => shouldOpenContextMenuWithTheRightClickedRowData(fixture))
 
 			it('should not select the row when clicked', () => expectClickingTheRowLeadsToSelection(fixture, false))
 			it('should not select the row when isDataSelectable returns false', () => shouldNotSelectTheRowWhenIsDataSelectableReturnsFalse(fixture))
