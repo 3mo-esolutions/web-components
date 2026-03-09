@@ -20,6 +20,12 @@ export class NavigationListItem extends ListItem {
 			}
 		`
 	}
+
+	protected override get startSlotDefaultContent() {
+		return !this.icon ? html.nothing : html`
+			<mo-icon part='icon' icon=${this.icon}></mo-icon>
+		`
+	}
 }
 
 declare global {
