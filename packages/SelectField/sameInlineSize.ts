@@ -11,7 +11,7 @@ export function sameInlineSize(): import('@floating-ui/dom').Middleware {
 			if (popover instanceof Popover === false) {
 				return {}
 			}
-			popover.style.minWidth = `${state.rects.reference.width}px`
+			popover.style.setProperty('--_popover-min-width', `${state.rects.reference.width}px`)
 			return {}
 		}
 	}

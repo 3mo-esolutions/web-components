@@ -148,7 +148,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 				overflow-y: auto;
 				scrollbar-width: thin;
 				color: var(--mo-color-foreground);
-				min-width: anchor-size(inline);
+				min-width: var(--_popover-min-width, anchor-size(inline));
 			}
 
 			mo-list-item {
