@@ -58,12 +58,14 @@ export class DataGridCell<TValue extends KeyPath.ValueOf<TData>, TData = any, TD
 	async handleKeyDown(event: KeyboardEvent) {
 		switch (event.key) {
 			case 'Enter':
-				event.preventDefault()
-				event.stopPropagation()
-				if (this.isEditable) {
-					this.setEditing(true)
-				} else {
-					this.click()
+				if (this.isEditing === false) {
+					event.preventDefault()
+					event.stopPropagation()
+					if (this.isEditable) {
+						this.setEditing(true)
+					} else {
+						this.click()
+					}
 				}
 				break
 			case 'Escape':

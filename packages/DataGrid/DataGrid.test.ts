@@ -485,6 +485,17 @@ describe('DataGrid', () => {
 				expect(cell?.isEditing).toBe(false)
 			})
 
+			it('should not stop propagation of Enter key when already editing', () => {
+				const cell = fixture.component.rows[0]?.cells[0]
+				cell?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }))
+				expect(cell?.isEditing).toBe(true)
+
+				const event = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true })
+				spyOn(event, 'stopPropagation')
+				cell?.dispatchEvent(event)
+				expect(event.stopPropagation).not.toHaveBeenCalled()
+			})
+
 			it('should apply the edited value when changed', () => shouldApplyTheEditedValueWhenChanged(fixture))
 		})
 
