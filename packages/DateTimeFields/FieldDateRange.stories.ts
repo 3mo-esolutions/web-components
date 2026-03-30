@@ -14,6 +14,8 @@ export default {
 		dense: false,
 		disabled: false,
 		readonly: false,
+		min: '',
+		max: '',
 	},
 	argTypes: {
 		precision: {
@@ -26,7 +28,7 @@ export default {
 } as Meta
 
 export const FieldDateRange: StoryObj = {
-	render: ({ label, required, disabled, dense, readonly, precision }) => html`
+	render: ({ label, required, disabled, dense, readonly, precision, min, max }) => html`
 		<mo-field-date-range
 			label=${label}
 			?required=${required}
@@ -34,6 +36,16 @@ export const FieldDateRange: StoryObj = {
 			?readonly=${readonly}
 			?dense=${dense}
 			precision=${precision}
+			min=${min}
+			max=${max}
+		></mo-field-date-range>
+	`
+}
+
+export const DateDisabled: StoryObj = {
+	render: ({ precision }) => html`
+		<mo-field-date-range label='Weekends disabled' precision=${precision}
+			.dateDisabled=${(date: DateTime) => date.dayOfWeek === 6 || date.dayOfWeek === 7}
 		></mo-field-date-range>
 	`
 }

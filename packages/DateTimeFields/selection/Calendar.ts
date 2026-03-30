@@ -1,4 +1,5 @@
 import { Component, css, component, html, property, event, repeat, state, unsafeCSS } from '@a11d/lit'
+import { hasChanged } from '@a11d/equals'
 import { CalendarDatesController } from './CalendarDatesController.js'
 import { FieldDateTimePrecision } from '../FieldDateTimePrecision.js'
 
@@ -12,6 +13,9 @@ export class Calendar extends Component {
 	@property({ type: Object }) value?: DateTimeRange
 	@property({ type: Object, updated(this: Calendar) { this.setView(this.precision) } }) precision!: FieldDateTimePrecision
 	@property({ type: Boolean, reflect: true }) includeWeek = false
+	@property({ type: Object }) min?: DateTime
+	@property({ type: Object }) max?: DateTime
+	@property({ type: Object, hasChanged }) dateDisabled?: (date: DateTime) => boolean
 
 	private readonly datesController = new CalendarDatesController(this)
 
@@ -95,6 +99,11 @@ export class Calendar extends Component {
 
 				&[data-in-range] {
 					background: color-mix(in srgb, var(--mo-color-accent), transparent 92%);
+				}
+
+				&[data-disabled] {
+					opacity: 0.38;
+					pointer-events: none;
 				}
 			}
 
@@ -231,6 +240,7 @@ export class Calendar extends Component {
 					?data-start=${this.isStart(date, FieldDateTimePrecision.Year)}
 					?data-end=${this.isEnd(date, FieldDateTimePrecision.Year)}
 					?data-in-range=${this.isInRange(date, FieldDateTimePrecision.Year)}
+					?data-disabled=${this.isDisabled(date, FieldDateTimePrecision.Year)}
 					@click=${this.handleItemClick(date, FieldDateTimePrecision.Year)}
 					${this.datesController.observerIntersectionNavigation(date, FieldDateTimePrecision.Month, FieldDateTimePrecision.Year)}
 				>
@@ -271,6 +281,7 @@ export class Calendar extends Component {
 					?data-start=${this.isStart(date, FieldDateTimePrecision.Month)}
 					?data-end=${this.isEnd(date, FieldDateTimePrecision.Month)}
 					?data-in-range=${this.isInRange(date, FieldDateTimePrecision.Month)}
+					?data-disabled=${this.isDisabled(date, FieldDateTimePrecision.Month)}
 					@click=${this.handleItemClick(date, FieldDateTimePrecision.Month)}
 					${this.datesController.observerIntersectionNavigation(date, FieldDateTimePrecision.Day)}
 				>
@@ -303,6 +314,7 @@ export class Calendar extends Component {
 				?data-start=${this.isStart(date, FieldDateTimePrecision.Week)}
 				?data-end=${this.isEnd(date, FieldDateTimePrecision.Week)}
 				?data-in-range=${this.isInRange(date, FieldDateTimePrecision.Week)}
+				?data-disabled=${this.isDisabled(date, FieldDateTimePrecision.Week)}
 				@click=${this.precision === FieldDateTimePrecision.Day ? html.nothing : this.handleItemClick(date, FieldDateTimePrecision.Week)}
 				${this.datesController.observerIntersectionNavigation(date, FieldDateTimePrecision.Week)}
 			>
@@ -324,6 +336,7 @@ export class Calendar extends Component {
 				?data-start=${this.isStart(day, FieldDateTimePrecision.Day)}
 				?data-end=${this.isEnd(day, FieldDateTimePrecision.Day)}
 				?data-in-range=${this.isInRange(day, FieldDateTimePrecision.Day)}
+				?data-disabled=${this.isDisabled(day, FieldDateTimePrecision.Day)}
 				@click=${this.precision === FieldDateTimePrecision.Week ? html.nothing : this.handleItemClick(day, FieldDateTimePrecision.Day)}
 			>
 				${day.format({ day: 'numeric' })}
@@ -334,6 +347,9 @@ export class Calendar extends Component {
 	private handleItemClick = (date: DateTime, precision: FieldDateTimePrecision) => {
 		return () => {
 			if (this.precision === precision) {
+				if (this.isDisabled(date, precision)) {
+					return
+				}
 				this.dateClick.dispatch(date)
 				this.setNavigatingValue(date, 'smooth')
 			} else {
@@ -347,6 +363,13 @@ export class Calendar extends Component {
 				this.setView(nextView, date)
 			}
 		}
+	}
+
+	private isDisabled(date: DateTime, precision: FieldDateTimePrecision) {
+		return false as boolean
+			|| (!!this.min && precision.isSmallerThan(date, this.min) && !precision.equals(date, this.min))
+			|| (!!this.max && precision.isSmallerThan(this.max, date) && !precision.equals(this.max, date))
+			|| (this.dateDisabled?.(date) ?? false)
 	}
 
 	private isNavigating(date: DateTime, precision: FieldDateTimePrecision) {

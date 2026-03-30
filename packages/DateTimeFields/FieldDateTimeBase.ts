@@ -1,21 +1,41 @@
 
 import { cache, css, html, live, property, style, bind, state, query, ifDefined, type HTMLTemplateResult } from '@a11d/lit'
+import { hasChanged } from '@a11d/equals'
 import { InputFieldComponent } from '@3mo/field'
 import { type MaterialIcon } from '@3mo/icon'
 import { FieldDateTimePrecision } from './FieldDateTimePrecision.js'
 import type { Calendar } from './selection/index.js'
+
+const dateTimeConverter = (value: unknown) => {
+	if (value instanceof DateTime) {
+		return value
+	}
+
+	if (value instanceof Date || typeof value === 'string' || typeof value === 'number') {
+		const date = new DateTime(value)
+		return isNaN(date.getTime()) ? undefined : date
+	}
+
+	return undefined
+}
 
 /**
  * @attr open - Whether the date picker is open
  * @attr pickerHidden - Hide the date picker
  * @attr shortcutReferenceDate - The date to use as a reference for shortcuts
  * @attr precision - The precision of the date picker. Defaults to 'minute'
+ * @attr min - The minimum selectable date (inclusive). Dates before this are disabled.
+ * @attr max - The maximum selectable date (inclusive). Dates after this are disabled.
+ * @attr dateDisabled - A function that determines whether a date should be disabled. Receives a DateTime object and should return a boolean.
  */
 export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	@property({ type: Boolean, reflect: true }) open = false
 	@property({ type: Boolean }) pickerHidden = false
-	@property({ type: Object }) shortcutReferenceDate = new DateTime
+	@property({ type: Object, converter: dateTimeConverter }) shortcutReferenceDate = new DateTime()
 	@property({ type: String, converter: value => FieldDateTimePrecision.parse(value || undefined) }) precision = FieldDateTimePrecision.Minute
+	@property({ type: Object, converter: dateTimeConverter }) min?: DateTime
+	@property({ type: Object, converter: dateTimeConverter }) max?: DateTime
+	@property({ type: Object, hasChanged }) dateDisabled?: (date: DateTime) => boolean
 
 	@state() navigationDate = new DateTime()
 
@@ -210,12 +230,27 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 	protected abstract get presetsTemplate(): HTMLTemplateResult
 
 	protected getPresetTemplate(label: string, value: () => T) {
+		const v = value()
+		if (this.isPresetDisabled(v)) {
+			return html.nothing
+		}
 		const handlePresetClick = () => {
-			const v = value()
 			this.handleChange(v)
 			this.calendar?.setNavigatingValue(v instanceof DateTimeRange ? v.start! : v instanceof DateTime ? v : undefined!, 'smooth')
 		}
 		return html`<mo-list-item @click=${handlePresetClick}>${label}</mo-list-item>`
+	}
+
+	private isPresetDisabled(value: T) {
+		const dates = value instanceof DateTimeRange
+			? [value.start, value.end].filter((d): d is DateTime => !!d)
+			: value instanceof DateTime ? [value] : []
+		const precision = this.precision > FieldDateTimePrecision.Day ? FieldDateTimePrecision.Day : this.precision
+		return dates.some(date =>
+			(!!this.min && precision.isSmallerThan(date, this.min) && !precision.equals(date, this.min))
+			|| (!!this.max && precision.isSmallerThan(this.max, date) && !precision.equals(this.max, date))
+			|| (this.dateDisabled?.(date) ?? false)
+		)
 	}
 
 
@@ -228,6 +263,9 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 			<mo-calendar
 				.precision=${this.precision > FieldDateTimePrecision.Day ? FieldDateTimePrecision.Day : this.precision}
 				.value=${this.calendarValue}
+				.min=${this.min}
+				.max=${this.max}
+				.dateDisabled=${this.dateDisabled}
 				@dateClick=${(e: CustomEvent<DateTime>) => this.handleSelectedDateChange(e.detail, this.precision)}
 			></mo-calendar>
 		`
