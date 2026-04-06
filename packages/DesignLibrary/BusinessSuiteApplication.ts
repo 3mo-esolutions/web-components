@@ -1,8 +1,8 @@
 import { css, html, ifDefined } from '@a11d/lit'
-import { Application, PwaHelper, routerLink } from '@a11d/lit-application'
+import { Application, PwaHelper } from '@a11d/lit-application'
 import { Localizer } from '@3mo/localization'
 import { Icon, IconVariant } from '@3mo/icon'
-import { Authentication, BusinessSuiteAuthenticationDialogComponent, PagePreferences, type INavigation, type User } from './index.js'
+import { Authentication, BusinessSuiteAuthenticationDialogComponent, type INavigation, type User } from './index.js'
 
 Icon.defaultVariant = IconVariant.Sharp
 
@@ -90,10 +90,6 @@ export abstract class BusinessSuiteApplication extends Application {
 	}
 
 	protected get userAvatarMenuItemsTemplate() {
-		return html`
-			<mo-navigation-menu-item icon='manage_accounts'
-				${routerLink({ component: new PagePreferences, matchMode: 'ignore-parameters' })}
-			>${t('User Settings')}</mo-navigation-menu-item>
-		`
+		return html.nothing
 	}
 }
