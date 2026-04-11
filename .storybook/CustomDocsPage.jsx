@@ -35,11 +35,8 @@ export const CustomDocsPage = () => {
 						rgb(16, 17, 20) 60%
 					) !important;
 				}
-				:root[data-theme=dark] .docs-story {
-					background: rgb(16, 17, 20) !important;
-				}
-				:root[data-theme=light] .docs-story {
-					background: white !important;
+				.docs-story {
+					background: light-dark(white, rgb(16, 17, 20)) !important;
 				}
 			`}</style>
 			<mo-flex direction='horizontal' justifyContent='space-between' alignItems='center' gap='6px'>

@@ -14,6 +14,5 @@ export class Theme {
 globalThis.Theme = Theme
 
 declare global {
-	// eslint-disable-next-line no-var
 	var Theme: typeof import('./Theme.js').Theme
 }

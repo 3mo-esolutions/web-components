@@ -3,7 +3,6 @@ import { LocalStorage } from '@a11d/local-storage'
 import { InstanceofAttributeController } from '@3mo/instanceof-attribute-controller'
 import { SlotController } from '@3mo/slot-controller'
 import { tooltip } from '@3mo/tooltip'
-import { ThemeController } from '@3mo/theme'
 import { MediaQueryController } from '@3mo/media-query-observer'
 import { Localizer } from '@3mo/localization'
 import { type Scroller } from '@3mo/scroller'
@@ -381,7 +380,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	protected readonly instanceofAttributeController = new InstanceofAttributeController(this)
 	protected readonly smallScreenObserverController = new MediaQueryController(this, '(max-width: 768px)')
-	protected readonly themeController = new ThemeController(this)
 
 	readonly columnsController = new DataGridColumnsController(this)
 	readonly selectionController = new DataGridSelectionController(this)
@@ -440,7 +438,10 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 				--mo-data-grid-sticky-part-color: var(--mo-color-surface);
 
-				--mo-data-grid-alternating-background: color-mix(in srgb, black var(--mo-data-grid-alternating-background-transparency), transparent 0%);
+				--mo-data-grid-alternating-background: light-dark(
+					color-mix(in srgb, black 5%, transparent),
+					color-mix(in srgb, black 20%, transparent)
+				);
 
 				--mo-data-grid-selection-background: color-mix(in srgb, var(--mo-color-accent), transparent 50%);
 
@@ -453,14 +454,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 			:not(:has([mo-data-grid-row])) {
 				--_content-min-height-default: 150px;
-			}
-
-			:host([data-theme=light]) {
-				--mo-data-grid-alternating-background-transparency : 5%;
-			}
-
-			:host([data-theme=dark]) {
-				--mo-data-grid-alternating-background-transparency: 20%;
 			}
 
 			:host([preventVerticalContentScroll]) mo-scroller {

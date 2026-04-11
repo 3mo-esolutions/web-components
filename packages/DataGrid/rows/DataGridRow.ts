@@ -129,7 +129,10 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			:host([data-has-alternating-background]) {
 				#contentContainer, #detailsContainer:not(:has([instanceof*=mo-data-grid])) {
 					background: var(--mo-data-grid-alternating-background);
-					--mo-data-grid-sticky-part-color: color-mix(in srgb, var(--mo-color-surface), black var(--mo-data-grid-alternating-background-transparency));
+					--mo-data-grid-sticky-part-color: light-dark(
+						color-mix(in srgb, var(--mo-color-surface), black 5%),
+						color-mix(in srgb, var(--mo-color-surface), black 20%)
+					);
 				}
 			}
 
@@ -204,7 +207,6 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 						padding-inline: 0;
 						--mo-data-grid-header-background: color-mix(in srgb, var(--mo-color-foreground), transparent 96%);
 						--mo-data-grid-alternating-background: transparent;
-						--mo-data-grid-alternating-background-transparency: 0;
 						--_content-min-height-default: 0px;
 
 						&::part(row) {

@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/data-grid",
-	"version": "0.26.4",
+	"version": "0.27.0",
 	"description": "A data grid web component",
 	"repository": {
 		"type": "git",
@@ -50,7 +50,7 @@
 		"@3mo/date-time-fields": "x",
 		"@3mo/empty-state": "x",
 		"@3mo/splitter": "x",
-		"@3mo/theme": "x",
+		"@3mo/theme": ">=0.4.x",
 		"@3mo/downloader": "x",
 		"@3mo/line": "x",
 		"@3mo/keyboard-controller": "x",

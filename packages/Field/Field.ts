@@ -1,7 +1,6 @@
 import { css, html, property, Component, component } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
 import { DirectionsByLanguage } from '@3mo/localization'
-import { ThemeController } from '@3mo/theme'
 
 /**
  * @element mo-field
@@ -34,7 +33,6 @@ export class Field extends Component {
 	@property({ type: Boolean, reflect: true }) active = false
 
 	readonly slotController = new SlotController(this)
-	readonly themeController = new ThemeController(this)
 
 	static override get styles() {
 		return css`
@@ -51,20 +49,15 @@ export class Field extends Component {
 				border-start-start-radius: var(--mo-field-border-start-start-radius, var(--mo-border-radius));
 				border-start-end-radius: var(--mo-field-border-start-end-radius, var(--mo-border-radius));
 				box-sizing: border-box;
-				background: var(--mo-field-background, var(--mo-field-background-default));
+				background: var(--mo-field-background, light-dark(
+					color-mix(in srgb, black, transparent 91%),
+					color-mix(in srgb, black, transparent 50%)
+				));
 				gap: 6px;
 				/* TODO: Better handling of height */
 				height: 40px;
 				justify-content: center;
 				align-items: center;
-			}
-
-			:host([data-theme=light]) {
-				--mo-field-background-default: color-mix(in srgb, black, transparent 91%);
-			}
-
-			:host([data-theme=dark]) {
-				--mo-field-background-default: color-mix(in srgb, black, transparent 50%);
 			}
 
 			:host([active]) {

@@ -1,5 +1,4 @@
 import { setCustomElementsManifest } from '@storybook/web-components-vite'
-import { withThemeByDataAttribute } from '@storybook/addon-themes'
 import { CustomDocsPage } from './CustomDocsPage.jsx'
 import customElements from '../custom-elements.json'
 import { themes } from 'storybook/theming'
@@ -28,15 +27,6 @@ export default {
 		},
 	},
 	decorators: [
-		// Your decorators remain the same
-		withThemeByDataAttribute({
-			themes: {
-				light: 'light',
-				dark: 'dark',
-			},
-			defaultTheme: 'dark',
-			attributeName: 'data-storybook-theme',
-		}),
 		(story: any) => {
 			channel.on(DARK_MODE_EVENT_NAME, (isDark: boolean) => {
 				if (globalThis.Theme) {
