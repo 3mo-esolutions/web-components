@@ -6,6 +6,22 @@ describe('Number', () => {
 		expect(1234.56.format('de')).toEqual('1234,56')
 	})
 
+	it('.formatToParts()', () => {
+		const parts = 1234.56.formatToParts({ language: 'de' })
+		expect(parts).toEqual(jasmine.arrayContaining([
+			jasmine.objectContaining({ type: 'integer', value: '1234' }),
+			jasmine.objectContaining({ type: 'decimal', value: ',' }),
+			jasmine.objectContaining({ type: 'fraction', value: '56' }),
+		]))
+	})
+
+	it('.formatToParts() with options', () => {
+		const parts = 1234.56.formatToParts({ language: 'de', useGrouping: true })
+		const integer = parts.filter(p => p.type === 'integer').map(p => p.value).join('')
+		expect(integer).toContain('1')
+		expect(parts.find(p => p.type === 'group')).toBeTruthy()
+	})
+
 	it('.formatAsCurrency()', () => {
 		expect(1234.56.formatAsCurrency(undefined, { language: 'de' })).toEqual('1.234,56')
 		expect(1234.56.formatAsCurrency(undefined, 'de')).toEqual('1.234,56')

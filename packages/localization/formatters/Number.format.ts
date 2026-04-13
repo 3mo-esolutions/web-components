@@ -17,8 +17,19 @@ Number.prototype.format = function (this: number, ...options: NumberFormatOption
 	}).format(this || 0)
 }
 
+Number.prototype.formatToParts = function (this: number, ...options: NumberFormatOptions) {
+	const [language, explicitOptions] = extractFormatOptions(options)
+	return getFormatter(language ?? Localizer.languages.current, {
+		minimumFractionDigits: 0,
+		maximumFractionDigits: 16,
+		useGrouping: false,
+		...explicitOptions,
+	}).formatToParts(this || 0)
+}
+
 declare global {
 	interface Number {
 		format(...options: NumberFormatOptions): string
+		formatToParts(...options: NumberFormatOptions): Array<Intl.NumberFormatPart>
 	}
 }
