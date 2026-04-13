@@ -82,6 +82,10 @@ export abstract class FieldComponent<T> extends Component {
 		this.validate()
 	}
 
+	protected get _label() {
+		return this.label
+	}
+
 	protected get isPopulated() {
 		return this.inputValue !== undefined
 	}
@@ -109,7 +113,7 @@ export abstract class FieldComponent<T> extends Component {
 	protected override get template() {
 		return html`
 			<mo-field id='field' exportparts='container'
-				label=${this.label}
+				label=${this._label}
 				?populated=${this.isPopulated}
 				?disabled=${this.disabled}
 				?readonly=${this.readonly}
