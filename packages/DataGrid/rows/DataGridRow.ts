@@ -138,6 +138,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 
 			#contentContainer {
 				grid-column: -1 / 1;
+				border-block-end: var(--mo-data-grid-border);
 			}
 
 			#contextMenuIconButtonContainer {
@@ -172,6 +173,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			}
 
 			#detailsExpanderIconButton {
+				height: var(--mo-data-grid-row-height);
 				transition: transform 250ms;
 
 				&[data-rtl] {
@@ -208,10 +210,6 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 						--mo-data-grid-header-background: color-mix(in srgb, var(--mo-color-foreground), transparent 96%);
 						--mo-data-grid-alternating-background: transparent;
 						--_content-min-height-default: 0px;
-
-						&::part(row) {
-							border-block-end: var(--mo-data-grid-border);
-						}
 					}
 				}
 			}
