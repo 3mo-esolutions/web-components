@@ -7,6 +7,9 @@ import { Memoize as memoize } from 'typescript-memoize'
 
 Localizer.dictionaries.add('de', {
 	'Date & Time': 'Datum & Uhrzeit',
+	'Date': 'Datum',
+	'Year': 'Jahr',
+	'Month': 'Monat',
 	'Today': 'Heute',
 	'Yesterday': 'Gestern',
 	'Tomorrow': 'Morgen',
@@ -22,6 +25,10 @@ Localizer.dictionaries.add('de', {
  * @element mo-field-date-time
  *
  * @i18n "Date & Time"
+ * @i18n "Date"
+ * @i18n "Year"
+ * @i18n "Month"
+ * @i18n "Week"
  * @i18n "Today"
  * @i18n "Yesterday"
  * @i18n "Tomorrow"
@@ -44,7 +51,20 @@ export class FieldDateTime extends FieldDateTimeBase<Date | undefined> {
 		return this.value
 	}
 
-	@property() override label = t('Date & Time')
+	protected override get _label() {
+		return super._label || this.defaultLabel
+	}
+
+	private get defaultLabel() {
+		switch (this.precision) {
+			case FieldDateTimePrecision.Year: return t('Year')
+			case FieldDateTimePrecision.Month: return t('Month')
+			case FieldDateTimePrecision.Week: return t('Week')
+			case FieldDateTimePrecision.Day: return t('Date')
+			default: return t('Date & Time')
+		}
+	}
+
 	@property({ type: Object }) value?: Date
 
 	@memoize()

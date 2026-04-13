@@ -52,7 +52,6 @@ enum FieldDateRangeSelection {
 export class FieldDateTimeRange extends FieldDateTimeBase<DateTimeRange | undefined> {
 	protected get selectedDate() { return this.selection === FieldDateRangeSelection.Start ? this.value?.start : this.value?.end }
 
-	@property() override label = t('Period')
 	@property() selection = FieldDateRangeSelection.Start
 	@property({ type: Object }) value?: DateTimeRange
 
@@ -60,6 +59,10 @@ export class FieldDateTimeRange extends FieldDateTimeBase<DateTimeRange | undefi
 		this.navigationDate = this.selection === FieldDateRangeSelection.Start
 			? this.value?.start ?? this.navigationDate
 			: this.value?.end ?? this.navigationDate
+	}
+
+	protected override get _label() {
+		return super._label || t('Period')
 	}
 
 	protected override get presetsTemplate() {
