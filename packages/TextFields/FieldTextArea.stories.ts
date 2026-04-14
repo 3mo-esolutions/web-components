@@ -18,7 +18,11 @@ export default {
 } as Meta
 
 export const TextArea: StoryObj = {
-	render: ({ label, required, disabled, dense, readonly, value }) => html`
+    args: {
+        disabled: true
+    },
+
+    render: ({ label, required, disabled, dense, readonly, value }) => html`
 		<mo-field-text-area label=${label} ?required=${required} ?disabled=${disabled} ?readonly=${readonly} ?dense=${dense} value=${value}></mo-field-text-area>
 	`
 }

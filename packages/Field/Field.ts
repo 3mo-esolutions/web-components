@@ -1,6 +1,6 @@
 import { css, html, property, Component, component } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
-import { DirectionsByLanguage } from '@3mo/localization'
+import { SlottedInputDirectionController } from './SlottedInputDirectionController.js'
 
 /**
  * @element mo-field
@@ -33,17 +33,17 @@ export class Field extends Component {
 	@property({ type: Boolean, reflect: true }) active = false
 
 	readonly slotController = new SlotController(this)
+	private readonly inputDirectionController = new SlottedInputDirectionController(this, () => this.slotController.getAssignedElements('')[0])
 
 	static override get styles() {
 		return css`
 			:host {
-				--mo-field-label-scale-on-focus: scale(0.75);
-				--mo-field-label-translate-on-focus: translateY(-50%);
-				--mo-field-label-transform-on-focus : var(--mo-field-label-translate-on-focus) var(--mo-field-label-scale-on-focus);
+				--mo-field-label-font-size-on-focus: 0.75em;
 				position: relative;
-				overflow: hidden;
+				overflow: clip;
 				display: flex;
-				gap: 4px;
+				padding: 0.375rem 0.675rem;
+				gap: 0.375rem;
 				min-width: 0;
 
 				border-start-start-radius: var(--mo-field-border-start-start-radius, var(--mo-border-radius));
@@ -53,9 +53,6 @@ export class Field extends Component {
 					color-mix(in srgb, black, transparent 91%),
 					color-mix(in srgb, black, transparent 50%)
 				));
-				gap: 6px;
-				/* TODO: Better handling of height */
-				height: 40px;
 				justify-content: center;
 				align-items: center;
 			}
@@ -65,8 +62,7 @@ export class Field extends Component {
 			}
 
 			:host([dense]) {
-				height: 32px;
-				--mo-field-label-scale-on-focus: scale(1);
+				--mo-field-label-font-size-on-focus: 1em;
 			}
 
 			:host([disabled]) {
@@ -75,34 +71,24 @@ export class Field extends Component {
 			}
 
 			div {
+				display: grid;
 				position: relative;
 				flex: 1 1 auto;
-				height: 100%;
+				min-width: 0;
+				overflow-x: hidden;
 			}
 
-			div:first-child {
-				margin-inline-start: 10px;
-			}
-
-			slot[name=start]:first-child {
-				margin-inline-start: 8px;
-			}
-
-			div:last-child {
-				margin-inline-end: var(--mo-field-input-padding-inline-end, 10px);
-			}
-
-			slot[name=end]:last-child {
-				margin-inline-end: 8px;
+			span, slot:not([name]) {
+				grid-area: 1 / 1;
 			}
 
 			slot:not([name])::slotted(*) {
 				border: 0px;
 				width: 100%;
+				field-sizing: content;
 				font-family: inherit;
 				outline: none;
 				padding: 0.8rem 0 0 0;
-				height: calc(100% - 0.8rem);
 				color: var(--mo-color-foreground);
 				background-color: transparent;
 				text-align: inherit;
@@ -110,7 +96,6 @@ export class Field extends Component {
 
 			:host([dense]) slot:not([name])::slotted(*) {
 				padding: 0;
-				height: 100%;
 			}
 
 			${this.labelStyles}
@@ -120,37 +105,25 @@ export class Field extends Component {
 			slot {
 				color: var(--mo-color-gray);
 				display: flex;
-				height: 100%;
 				justify-content: center;
 				align-items: center;
 			}
 		`
 	}
 
-	protected static get labelStyles() {
+	private static get labelStyles() {
 		return css`
 			span {
-				position: absolute;
-				top: min(50%, 30px);
-				transform: var(--mo-field-label-translate-on-focus);
+				position: sticky;
+				inset-inline-start: 0;
+				align-self: center;
 				color: var(--mo-color-gray);
-				transition: .1s ease-out;
+				transition: font-size .1s ease-out, color .1s ease-out;
 				pointer-events: none;
 				white-space: nowrap;
 				overflow: hidden !important;
 				text-overflow: ellipsis;
-				max-width: 100%;
 				user-select: none;
-			}
-
-			div[data-direction=left] span {
-				left: 0px;
-				transform-origin: top left;
-			}
-
-			div[data-direction=right] span {
-				right: 0px;
-				transform-origin: top right;
 			}
 
 			:host([dense][populated]) span {
@@ -158,8 +131,8 @@ export class Field extends Component {
 			}
 
 			:host([active]) span, :host([populated]) span {
-				top: 14px;
-				transform: var(--mo-field-label-transform-on-focus);
+				align-self: start;
+				font-size: var(--mo-field-label-font-size-on-focus);
 			}
 
 			:host([active]) span {
@@ -172,13 +145,13 @@ export class Field extends Component {
 		`
 	}
 
-	protected static get indicatorLineStyles() {
+	private static get indicatorLineStyles() {
 		return css`
 			:host {
 				border-bottom: 1px solid var(--mo-color-gray-transparent);
 			}
 
-			:host:after {
+			:host::after {
 				--mo-field-initial-outline-width: 10px;
 				content: '';
 				position: absolute;
@@ -195,7 +168,7 @@ export class Field extends Component {
 				border-bottom: 1px solid var(--mo-color-accent);
 			}
 
-			:host([active]):after {
+			:host([active])::after {
 				visibility: visible;
 				width: 100%;
 				inset-inline-start: 0px;
@@ -205,13 +178,13 @@ export class Field extends Component {
 				border-bottom: 1px solid var(--mo-color-red);
 			}
 
-			:host([invalid]):after {
+			:host([invalid])::after {
 				background-color: var(--mo-color-red);
 			}
 		`
 	}
 
-	protected static get caretStyles() {
+	private static get caretStyles() {
 		return css`
 			::slotted(*) {
 				caret-color: var(--mo-color-accent);
@@ -227,21 +200,12 @@ export class Field extends Component {
 		`
 	}
 
-	private get direction() {
-		const styles = getComputedStyle(this)
-		const isRtl = DirectionsByLanguage.get() === 'rtl'
-			|| this.slotController.getAssignedElements('').some(e => e.getAttribute('dir') === 'rtl')
-		return isRtl
-			? ['end', 'left'].includes(styles.textAlign) ? 'left' : 'right'
-			: ['end', 'right'].includes(styles.textAlign) ? 'right' : 'left'
-	}
-
 	protected override get template() {
 		return html`
 			${!this.slotController.hasAssignedContent('start') ? html.nothing : html`<slot name='start'></slot>`}
-			<div part='container' data-direction=${this.direction}>
+			<div part='container'>
 				<span>${this.label} ${this.required ? '*' : ''}</span>
-				<slot></slot>
+				<slot @slotchange=${() => this.inputDirectionController.observe()}></slot>
 			</div>
 			${!this.slotController.hasAssignedContent('end') ? html.nothing : html`<slot name='end'></slot>`}
 		`

@@ -1,4 +1,4 @@
-import { component, html, ifDefined, live, property, style } from '@a11d/lit'
+import { component, html, ifDefined, literal, live, property, staticHtml, style } from '@a11d/lit'
 import { InputFieldComponent } from '@3mo/field'
 
 export type FieldTextAutoComplete =
@@ -87,23 +87,29 @@ export class FieldText extends InputFieldComponent<string> {
 		return value ?? ''
 	}
 
+	protected get elementTag() {
+		return literal`input`
+	}
+
 	protected override get inputTemplate() {
 		return html`
-			<input
-				part='input'
-				inputmode=${this.inputType}
-				type=${this.type}
-				?readonly=${this.readonly}
-				?required=${this.required}
-				?disabled=${this.disabled}
-				.value=${live(this.inputStringValue || '')}
-				minlength=${ifDefined(this.minLength)}
-				maxlength=${ifDefined(this.maxLength)}
-				pattern=${ifDefined(this.pattern)}
-				autocomplete=${ifDefined(this.autoComplete)}
-				@input=${(e: Event) => this.handleInput(this.inputElement.value, e)}
-				@change=${(e: Event) => this.handleChange(this.inputElement.value, e)}
-			>
+			${staticHtml`
+				<${this.elementTag}
+					part='input'
+					inputmode=${this.inputType}
+					type=${this.type}
+					?readonly=${this.readonly}
+					?required=${this.required}
+					?disabled=${this.disabled}
+					.value=${live(this.inputStringValue || '')}
+					minlength=${ifDefined(this.minLength)}
+					maxlength=${ifDefined(this.maxLength)}
+					pattern=${ifDefined(this.pattern)}
+					autocomplete=${ifDefined(this.autoComplete)}
+					@input=${(e: Event) => this.handleInput(this.inputElement.value, e)}
+					@change=${(e: Event) => this.handleChange(this.inputElement.value, e)}
+				>
+			`}
 		`
 	}
 
