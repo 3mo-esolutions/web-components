@@ -49,10 +49,7 @@ export class Field extends Component {
 				border-start-start-radius: var(--mo-field-border-start-start-radius, var(--mo-border-radius));
 				border-start-end-radius: var(--mo-field-border-start-end-radius, var(--mo-border-radius));
 				box-sizing: border-box;
-				background: var(--mo-field-background, light-dark(
-					color-mix(in srgb, black, transparent 91%),
-					color-mix(in srgb, black, transparent 50%)
-				));
+				background: var(--mo-field-background, light-dark(var(--mo-color-surface-container-highest), var(--mo-color-surface-container-high)));
 				justify-content: center;
 				align-items: center;
 			}
