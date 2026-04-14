@@ -424,15 +424,11 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	static override get styles() {
 		return css`
 			:host {
-				--mo-data-grid-column-reorder-width: 20px;
-				--mo-data-grid-column-details-width: 20px;
-				--mo-data-grid-column-selection-width: 40px;
-				--mo-data-grid-column-actions-width: 28px;
 				--mo-data-grid-cell-padding: 0.5rem;
 				--mo-data-grid-header-height: 32px;
 				--mo-data-grid-footer-min-height: 40px;
 				--mo-data-grid-toolbar-padding: 0px 14px 14px 14px;
-				--mo-data-grid-border: 1px solid var(--mo-color-transparent-gray-3);
+				--mo-data-grid-border: 1px solid var(--mo-color-transparent-gray-2);
 
 				--mo-details-data-grid-start-margin: 26px;
 
@@ -704,13 +700,12 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 						overflow: hidden;
 						text-overflow: ellipsis;
 						padding-inline: var(--mo-data-grid-cell-padding);
-						margin-inline-start: calc(var(--_max-level, 0) * var(--mo-data-grid-column-sub-row-indentation, 20px))
 					}
 				}
 			</style>
 			<div id='size-anchor'>
 				${this.visibleColumns.map(column => html`
-					<div style='--_max-level: ${Math.max(...this.dataRecords.map(dr => dr.level))}'>
+					<div>
 						${getLongestContent(column)}
 					</div>
 				`)}

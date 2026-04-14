@@ -111,8 +111,8 @@ export class DataGridHeader<TData> extends Component {
 	protected override get template() {
 		return html`
 			${this.reorderabilityTemplate}
-			${this.detailsExpanderTemplate}
 			${this.selectionTemplate}
+			${this.detailsExpanderTemplate}
 			${this.contentTemplate}
 			${this.fillerTemplate}
 			${this.actionsTemplate}
@@ -130,12 +130,12 @@ export class DataGridHeader<TData> extends Component {
 
 	private get detailsExpanderTemplate() {
 		return this.dataGrid.hasDetails === false ? html.nothing : html`
-			<mo-flex class='details' justifyContent='center' alignItems='center'
+			<mo-flex class='details' justifyContent='center' alignItems='start'
 				${style({ insetInlineStart: this.dataGrid.columnsController.getStickyColumnInsetInline('details') })}
 				${this.getResizeObserver('details')}
 			>
 				${!this.dataGrid.hasDetails || !this.dataGrid.multipleDetails ? html.nothing : html`
-					<mo-icon-button dense
+					<mo-icon-button style='width: var(--_expander-size); display: flex; align-items: center; justify-content: center;'
 						icon=${this.dataGrid.allRowDetailsOpen ? 'unfold_less' : 'unfold_more'}
 						@click=${() => this.toggleAllDetails()}
 					></mo-icon-button>
