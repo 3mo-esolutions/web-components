@@ -1,6 +1,6 @@
 import { component, html, property, Component, css, style, unsafeCSS } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
-import '@3mo/theme'
+import { surfaceElevation } from '@3mo/theme'
 import '@3mo/heading'
 import '@3mo/flex'
 
@@ -61,6 +61,7 @@ export class Card extends Component {
 
 			:host([type=${unsafeCSS(CardType.Filled)}]) {
 				background: var(--mo-color-surface);
+				--mo-color-surface: ${surfaceElevation('surface')};
 				box-shadow: var(--mo-shadow);
 			}
 

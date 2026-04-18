@@ -1,28 +1,10 @@
 import { css } from '@a11d/lit'
 import { RootCssInjector } from '@a11d/root-css-injector'
 import { colorContrast } from './colorContrast.js'
+import { surfaceElevation } from './surfaceElevation.js'
 
 RootCssInjector.inject(css`
 	:root {
-		--mo-color-foreground: light-dark(black, white);
-		--mo-color-background: light-dark(
-			color-mix(in srgb, rgb(220, 220, 220), var(--mo-color-accent) var(--mo-color-background-leak-percent, 14%)),
-			color-mix(in srgb, rgb(12, 13, 17), var(--mo-color-accent) var(--mo-color-background-leak-percent, 4%))
-		);
-		--mo-color-gray: light-dark(rgb(121, 121, 121), rgb(165, 165, 165));
-		--mo-color-surface: light-dark(
-			color-mix(in srgb, white, var(--mo-color-accent) var(--mo-color-surface-leak-percent, 6%)),
-			color-mix(in srgb, rgb(27, 28, 32), var(--mo-color-accent) var(--mo-color-surface-leak-percent, 8%))
-		);
-		--mo-color-surface-container-lowest: light-dark(
-			var(--mo-color-surface),
-			color-mix(in srgb, var(--mo-color-surface) 100%, black 64%)
-		);
-		--mo-color-surface-container-low: light-dark(
-			var(--mo-color-surface),
-			color-mix(in srgb, var(--mo-color-surface) 100%, black 32%)
-		);
-		--mo-color-surface-container: var(--mo-color-surface);
 		--mo-shadow-base: light-dark(rgb(95, 81, 78), rgb(0, 1, 3));
 
 
@@ -41,8 +23,22 @@ RootCssInjector.inject(css`
 		--mo-color-transparent-gray-2: color-mix(in srgb, var(--mo-color-foreground), transparent calc(100% - var(--mo-color-transparent-gray-alpha) * 2)); /* 8% */
 		--mo-color-transparent-gray-3: color-mix(in srgb, var(--mo-color-foreground), transparent calc(100% - var(--mo-color-transparent-gray-alpha) * 3)); /* 12% */
 		--mo-color-transparent-gray: var(--mo-color-transparent-gray-1);
-		--mo-color-surface-container-high: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-foreground) 4%);
-		--mo-color-surface-container-highest: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-foreground) 8%);
+		--mo-color-foreground: light-dark(black, white);
+		--mo-color-background: light-dark(
+			color-mix(in srgb, rgb(220, 220, 220), var(--mo-color-accent) var(--mo-color-background-leak-percent, 14%)),
+			color-mix(in srgb, rgb(12, 13, 17), var(--mo-color-accent) var(--mo-color-background-leak-percent, 4%))
+		);
+		--mo-color-gray: light-dark(rgb(121, 121, 121), rgb(165, 165, 165));
+
+		--mo-color-surface-container: light-dark(
+			color-mix(in srgb, white, var(--mo-color-accent) var(--mo-color-surface-leak-percent, 6%)),
+			color-mix(in srgb, rgb(27, 28, 32), var(--mo-color-accent) var(--mo-color-surface-leak-percent, 8%))
+		);
+		--mo-color-surface: var(--mo-color-surface-container);
+		--mo-color-surface-container-lowest: ${surfaceElevation('surface-container', -2)};
+		--mo-color-surface-container-low: ${surfaceElevation('surface-container', -1)};
+		--mo-color-surface-container-high: ${surfaceElevation('surface-container', 1)};
+		--mo-color-surface-container-highest: ${surfaceElevation('surface-container', 2)};
 		--mo-color-green: rgb(93, 170, 96);
 		--mo-color-yellow: rgb(232, 152, 35);
 		--mo-color-red: rgb(221, 61, 49);

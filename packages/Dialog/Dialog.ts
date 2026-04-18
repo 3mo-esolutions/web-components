@@ -2,6 +2,7 @@ import { component, property, query, html, css, event, state, Component, ifDefin
 import { type ApplicationTopLayer, DialogActionKey, DialogComponent, type Dialog as IDialog } from '@a11d/lit-application'
 import { MdDialog } from '@material/web/dialog/dialog.js'
 import { tooltip } from '@3mo/tooltip'
+import { surfaceElevation } from '@3mo/theme'
 import { SlotController } from '@3mo/slot-controller'
 import '@3mo/localization'
 
@@ -117,7 +118,8 @@ export class Dialog extends Component implements IDialog {
 	static override get styles() {
 		return css`
 			:host {
-				background: var(--mo-color-surface);
+				background: var(--mo-color-surface-container-lowest);
+				--mo-color-surface: var(--mo-color-surface-container-low);
 				height: fit-content;
 				width: fit-content;
 			}

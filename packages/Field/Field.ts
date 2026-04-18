@@ -1,5 +1,6 @@
 import { css, html, property, Component, component } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
+import { surfaceElevation } from '@3mo/theme'
 import { SlottedInputDirectionController } from './SlottedInputDirectionController.js'
 
 /**
@@ -16,8 +17,6 @@ import { SlottedInputDirectionController } from './SlottedInputDirectionControll
  * @slot - The field's content
  * @slot start - Content to be placed at the start of the field
  * @slot end - Content to be placed at the end of the field
- *
- * @cssprop --mo-field-background - The field's background color
  */
 @component('mo-field')
 export class Field extends Component {
@@ -49,7 +48,7 @@ export class Field extends Component {
 				border-start-start-radius: var(--mo-field-border-start-start-radius, var(--mo-border-radius));
 				border-start-end-radius: var(--mo-field-border-start-end-radius, var(--mo-border-radius));
 				box-sizing: border-box;
-				background: var(--mo-field-background, light-dark(var(--mo-color-surface-container-highest), var(--mo-color-surface-container-high)));
+				background: ${surfaceElevation()};
 				justify-content: center;
 				align-items: center;
 			}
