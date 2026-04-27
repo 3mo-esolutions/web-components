@@ -7,7 +7,6 @@ import { Authentication, BusinessSuiteAuthenticationDialogComponent, type INavig
 Icon.defaultVariant = IconVariant.Sharp
 
 Localizer.dictionaries.add('de', {
-	'User Settings': 'Benutzereinstellungen',
 	'Close': 'Schließen',
 	'Open as Tab': 'Als Tab öffnen',
 	'Cancel': 'Abbrechen',
