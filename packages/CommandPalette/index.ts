@@ -1,4 +1,5 @@
 import '@3mo/flex'
+import '@3mo/scroller'
 import '@3mo/icon'
 import '@3mo/field'
 import '@3mo/empty-state'

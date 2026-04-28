@@ -153,7 +153,7 @@ export class CommandPalette extends Component {
 			}
 
 			mo-scroller {
-				height: 100%;
+				flex: 1;
 				background: var(--mo-color-transparent-gray-1);
 			}
 
@@ -255,9 +255,7 @@ export class CommandPalette extends Component {
 						`)}
 					</mo-tab-bar>
 					<mo-scroller>
-						<mo-flex style='height: 100%'>
-							${this.listTemplate}
-						</mo-flex>
+						${this.listTemplate}
 					</mo-scroller>
 					${this.newItemsTemplate}
 					${this.guidanceTemplate}
