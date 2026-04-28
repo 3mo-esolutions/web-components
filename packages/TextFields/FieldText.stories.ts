@@ -42,15 +42,6 @@ export const StartAndEndSlots: StoryObj = {
 
 export const WithTextAlignEnd: StoryObj = {
 	render: ({ required, disabled, dense, readonly, value }) => html`
-		<mo-field-text label='Text Align End' ?required=${required} ?disabled=${disabled} ?readonly=${readonly} ?dense=${dense} value=${value} style='text-align: end'>
-			<span slot='start' @click=${(e: Event) => setTextAlign(e, 'start')}>⬅️</span>
-			<span slot='end' @click=${(e: Event) => setTextAlign(e, 'end')}>➡️</span>
-		</mo-field-text>
+		<mo-field-text label='Text Align End' ?required=${required} ?disabled=${disabled} ?readonly=${readonly} ?dense=${dense} value=${value} style='text-align: end'></mo-field-text>
 	`
-}
-
-const setTextAlign = (e: Event, textAlign: 'start' | 'end') => {
-	const field = (e.target as HTMLElement)!.closest('mo-field-text')!
-	field.style.textAlign = textAlign
-	field.renderRoot.querySelector('mo-field')?.requestUpdate()
 }

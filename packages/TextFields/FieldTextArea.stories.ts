@@ -12,7 +12,6 @@ export default {
 		disabled: false,
 		readonly: false,
 		value: 'Hey there!',
-		rows: 4,
 	},
 	package: p,
 } as Meta
@@ -24,8 +23,8 @@ export const TextArea: StoryObj = {
 }
 
 export const StartAndEndSlots: StoryObj = {
-	render: ({ required, disabled, dense, readonly, value, rows }) => html`
-		<mo-field-text-area label='Message' ?required=${required} ?disabled=${disabled} ?readonly=${readonly} ?dense=${dense} value=${value} rows=${rows}>
+	render: ({ required, disabled, dense, readonly, value }) => html`
+		<mo-field-text-area label='Message' ?required=${required} ?disabled=${disabled} ?readonly=${readonly} ?dense=${dense} value=${value}>
 			<mo-icon-button dense slot='start' icon='sentiment_satisfied_alt'></mo-icon-button>
 			<mo-icon-button dense slot='end' icon='send'></mo-icon-button>
 		</mo-field-text-area>

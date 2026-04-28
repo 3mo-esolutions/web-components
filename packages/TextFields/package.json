@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/text-fields",
-	"version": "0.0.18",
+	"version": "0.1.0",
 	"description": "Text fields let users enter text into a UI",
 	"repository": {
 		"type": "git",
@@ -34,7 +34,7 @@
 		"tslib": "x",
 		"@3mo/icon": "x",
 		"@3mo/icon-button": "x",
-		"@3mo/field": "x",
+		"@3mo/field": ">=0.6.0",
 		"@3mo/localization": "x"
 	},
 	"devDependencies": {
