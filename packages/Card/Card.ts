@@ -127,6 +127,7 @@ export class Card extends Component {
 				padding: var(--mo-card-body-padding, 1rem);
 				display: block;
 				flex: 1;
+				min-height: 0;
 			}
 
 			slot[name=footer] {
