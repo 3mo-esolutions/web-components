@@ -193,7 +193,7 @@ export class Card extends Component {
 		return html`
 			<slot name='subHeading'>
 				${!this.subHeading ? html.nothing : html`
-					<mo-heading part='subHeading' typography='heading6' ${style({ fontWeight: '400', color: 'rgb(121, 121, 121)' })}>${this.subHeading}</mo-heading>
+					<mo-heading part='subHeading' typography='heading6' ${style({ fontWeight: '400', color: 'var(--mo-color-gray)' })}>${this.subHeading}</mo-heading>
 				`}
 			</slot>
 		`
