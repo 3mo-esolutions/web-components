@@ -102,6 +102,10 @@ export class FieldDateTimeRange extends FieldDateTimeBase<DateTimeRange | undefi
 					}
 				}
 			}
+
+			#selector {
+				flex: none !important;
+			}
 		`
 	}
 
@@ -118,7 +122,7 @@ export class FieldDateTimeRange extends FieldDateTimeBase<DateTimeRange | undefi
 
 	protected override get popoverSelectionTemplate() {
 		return html`
-			<mo-flex>
+			<mo-flex style='flex: 1'>
 				${this.popoverToolbarTemplate}
 				${super.popoverSelectionTemplate}
 			</mo-flex>

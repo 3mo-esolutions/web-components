@@ -19,6 +19,9 @@ export abstract class DateList extends Component {
 		return css`
 			:host {
 				position: relative;
+				display: flex;
+				flex-direction: column;
+				min-height: 0;
 			}
 
 			mo-scroller {

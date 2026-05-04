@@ -9,7 +9,6 @@ export default {
 	component: 'mo-data-grid',
 	argTypes: {
 		headerHidden: { control: 'boolean' },
-		preventVerticalContentScroll: { control: 'boolean' },
 		selectability: {
 			control: 'select',
 			options: [undefined, DataGridSelectability.Single, DataGridSelectability.Multiple]

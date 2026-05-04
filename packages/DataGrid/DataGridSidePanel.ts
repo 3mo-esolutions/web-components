@@ -76,7 +76,7 @@ export class DataGridSidePanel<TData> extends Component {
 
 	protected override get template() {
 		return html`
-			<mo-flex ${style({ height: '100%' })}>
+			<mo-flex ${style({ position: 'absolute', inset: '0' })}>
 				${this.dataGrid.hasToolbar || this.dataGrid.hasFilters === false ? html.nothing : html`
 					<mo-tab-bar ${style({ height: '60px' })}
 						value=${ifDefined(this.dataGrid.sidePanelTab)}

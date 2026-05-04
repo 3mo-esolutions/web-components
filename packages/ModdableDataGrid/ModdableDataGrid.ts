@@ -77,16 +77,6 @@ export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataG
 				padding: 6px 12px;
 
 				white-space: nowrap;
-
-				mo-scroller {
-					overflow: auto hidden;
-					max-width: calc(100% - 40px);
-
-					&::part(container) {
-						display: flex;
-						align-items: center;
-					}
-				}
 			}
 
 			.archived {
@@ -148,18 +138,20 @@ export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataG
 	protected get modebarTemplate() {
 		return !this.hasModebar ? html.nothing : html`
 			<mo-flex id='modebar' direction='horizontal'>
-				<mo-flex ${style({ flexGrow: '1' })} direction='horizontal' alignItems='center' gap='14px'>
-					<mo-scroller>
-						<mo-flex id='modes' direction='horizontal' alignItems='center' gap='0.5rem'>
-							${repeat(this.modesController.visibleModes, mode => mode.id, mode => html`
-								<mo-moddable-data-grid-chip ?data-temporary=${mode.archived} data-mode-id=${mode.id!}
-									.dataGrid=${this}
-									.mode=${mode}
-									?selected=${this.mode?.id === mode.id}
-								></mo-moddable-data-grid-chip>
-							`)}
-						</mo-flex>
-					</mo-scroller>
+				<mo-flex ${style({ flexGrow: '1', minWidth: '0' })} direction='horizontal' alignItems='center' gap='14px'>
+					<div ${style({ position: 'relative', width: '100%', height: '100%' })}>
+						<mo-scroller ${style({ position: 'absolute', inset: '0', overflowY: 'hidden', display: 'flex', alignItems: 'center' })}>
+							<mo-flex id='modes' direction='horizontal' alignItems='center' gap='0.5rem'>
+								${repeat(this.modesController.visibleModes, mode => mode.id, mode => html`
+									<mo-moddable-data-grid-chip ?data-temporary=${mode.archived} data-mode-id=${mode.id!}
+										.dataGrid=${this}
+										.mode=${mode}
+										?selected=${this.mode?.id === mode.id}
+									></mo-moddable-data-grid-chip>
+								`)}
+							</mo-flex>
+						</mo-scroller>
+					</div>
 
 					<mo-icon-button icon='add'
 						${style({ color: 'var(--mo-color-gray)' })}

@@ -9,8 +9,6 @@ import type * as CSS from 'csstype'
  *
  * @cssprop --mo-scroller-thumb-color - The color of the scroller thumb
  * @cssprop --mo-scroller-track-color - The color of the scroller track
- *
- * @csspart container - The container of the scrollable content
  */
 @component('mo-scroller')
 export class Scroller extends Component {
@@ -38,17 +36,9 @@ export class Scroller extends Component {
 				/* 'overlay' is not supported in FireFox so it fallbacks to auto, otherwise overlay is set */
 				overflow: auto;
 				overflow: overlay;
+				min-width: 0;
 				min-height: 0;
 				display: block;
-				position: relative;
-				width: 100%;
-				height: 100%;
-			}
-
-			div {
-				position: absolute;
-				width: 100%;
-				height: 100%;
 			}
 
 			${Scroller.scrollbarStyles}
@@ -62,11 +52,7 @@ export class Scroller extends Component {
 	}
 
 	protected override get template() {
-		return html`
-			<div part='container'>
-				<slot></slot>
-			</div>
-		`
+		return html`<slot></slot>`
 	}
 }
 

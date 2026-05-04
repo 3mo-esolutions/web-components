@@ -112,7 +112,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 			}
 
 			#selector {
-				min-height: 175px;
+				height: clamp(175px, 100vh, 450px);
 			}
 
 			.timezone {
@@ -220,7 +220,7 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 
 	protected get popoverSelectionTemplate() {
 		return html`
-			<mo-flex id='selector' direction='horizontal' style='height: 100%; flex: 1'>
+			<mo-flex id='selector' direction='horizontal' style='flex: 1'>
 				${this.dateTemplate}
 				${this.timeTemplate}
 			</mo-flex>
@@ -275,8 +275,8 @@ export abstract class FieldDateTimeBase<T> extends InputFieldComponent<T> {
 
 	private get timeTemplate() {
 		return this.precision <= FieldDateTimePrecision.Day ? html.nothing : html`
-			<mo-flex gap='0.5rem' style='border-inline-start: 1px solid var(--mo-color-transparent-gray-3)'>
-				<mo-flex direction='horizontal' style='flex: 1'>
+			<mo-flex gap='0.5rem' style='border-inline-start: 1px solid var(--mo-color-transparent-gray-3); min-height: 0'>
+				<mo-flex direction='horizontal' style='flex: 1; min-height: 0'>
 					${this.hourListTemplate}
 					${this.minuteListTemplate}
 					${this.secondListTemplate}

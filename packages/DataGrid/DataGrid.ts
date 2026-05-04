@@ -33,7 +33,6 @@ export enum DataGridEditability {
  * @attr data - The data to be displayed in the DataGrid. It is an array of objects, where each object represents a row.
  * @attr columns - The columns to be displayed in the DataGrid. It is an array of objects, where each object represents a column.
  * @attr headerHidden - Whether the header should be hidden.
- * @attr preventVerticalContentScroll - Whether the content should be prevented from scrolling vertically.
  * @attr page - The current page.
  * @attr pagination - The pagination mode. It can be either `auto` or a number.
  * @attr sorting - The sorting mode. It is an object with `selector` and `strategy` properties.
@@ -117,7 +116,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	@property({ type: Array }) columns = new Array<DataGridColumn<TData>>()
 
 	@property({ type: Boolean, reflect: true }) headerHidden = false
-	@property({ type: Boolean, reflect: true }) preventVerticalContentScroll = false
 	@property({ type: Number }) page = 1
 	@property({ reflect: true, converter: (value: string | null | undefined) => value === null || value === undefined ? undefined : Number.isNaN(Number(value)) ? value : Number(value) }) pagination?: DataGridPagination
 
@@ -454,14 +452,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 			:not(:has([mo-data-grid-row])) {
 				--_content-min-height-default: 150px;
-			}
-
-			:host([preventVerticalContentScroll]) mo-scroller {
-				overflow-y: hidden;
-
-				&::part(container) {
-					position: relative;
-				}
 			}
 
 			#content {
