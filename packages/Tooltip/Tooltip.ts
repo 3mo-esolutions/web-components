@@ -1,6 +1,7 @@
-import { component, css, property, html, Component, state, bind, ifDefined, event } from '@a11d/lit'
+import { component, css, property, html, Component, state, bind, ifDefined, event, type PropertyValues } from '@a11d/lit'
 import { type FocusMethod, FocusController } from '@3mo/focus-controller'
 import { PointerController } from '@3mo/pointer-controller'
+import { PopoverFloatingUiPositionController } from '@3mo/popover'
 import { type TooltipPlacement } from './TooltipPlacement.js'
 
 function targetAnchor(this: Tooltip) {
@@ -66,6 +67,17 @@ export class Tooltip extends Component {
 		handleHoverChange: this.openIfApplicable,
 		handlePressChange: this.openIfApplicable,
 	})
+
+	protected override firstUpdated(props: PropertyValues) {
+		super.firstUpdated(props)
+		this.updateComplete.then(async () => {
+			const popover = this.renderRoot.querySelector('mo-popover')
+			const { shift } = await import('@floating-ui/dom')
+			if (popover?.positionController instanceof PopoverFloatingUiPositionController) {
+				popover.positionController.addMiddleware(shift({ crossAxis: true, padding: 4 }))
+			}
+		})
+	}
 
 	static override get styles() {
 		return css`
