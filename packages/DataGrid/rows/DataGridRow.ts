@@ -155,16 +155,23 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				color: var(--mo-color-gray);
 			}
 
-			:host([selected]), :host([data-context-menu-open]) {
-				#contentContainer {
-					--mo-data-grid-sticky-part-color: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-accent)) !important;
-					background: var(--mo-data-grid-selection-background) !important;
-				}
+			/*
+			 * Don't use nested selector such as below to prevent Safari bugs
+			 * :host([selected]), :host([data-context-menu-open]) {
+			 *   #contentContainer {...}
+			 * }
+			 */
 
-				#contextMenuIconButton {
-					color: currentColor;
-					opacity: 1;
-				}
+			:host([selected]) #contentContainer,
+			:host([data-context-menu-open]) #contentContainer {
+				--mo-data-grid-sticky-part-color: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-accent)) !important;
+				background: var(--mo-data-grid-selection-background) !important;
+			}
+
+			:host([selected]) #contextMenuIconButton,
+			:host([data-context-menu-open]) #contextMenuIconButton {
+				color: currentColor;
+				opacity: 1;
 			}
 
 			#contentContainer:hover #contextMenuIconButton {
