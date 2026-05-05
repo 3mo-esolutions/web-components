@@ -41,6 +41,11 @@ export class Expander extends Component {
 					transition-behavior: allow-discrete;
 				}
 
+				&[open]::details-content {
+					height: auto;
+				}
+
+				/* Not supported in Safari */
 				&:open::details-content {
 					height: auto;
 				}
