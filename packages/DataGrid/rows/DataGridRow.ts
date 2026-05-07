@@ -216,7 +216,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 						padding-inline: 0;
 						--mo-data-grid-header-background: color-mix(in srgb, var(--mo-color-foreground), transparent 96%);
 						--mo-data-grid-alternating-background: transparent;
-						--_content-min-height-default: 0px;
+						--_content-min-height-default: auto;
 					}
 				}
 			}

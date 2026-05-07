@@ -343,7 +343,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 		if (this.pagination === 'auto') {
 			const rowsHeight = (this.scroller?.clientHeight ?? 0) - (this.header?.clientHeight ?? 0)
-			const rowHeight = this.rowHeight
+			const rowHeight = this.rowHeight + 1
 			const pageSize = Math.floor(rowsHeight / rowHeight) || 1
 			return dynamicPageSize(pageSize)
 		}
@@ -443,7 +443,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 				--mo-data-grid-selection-background: color-mix(in srgb, var(--mo-color-accent), transparent 50%);
 
-				--_content-min-height-default: calc(var(--mo-data-grid-min-visible-rows, 2.5) * var(--mo-data-grid-row-height) + var(--mo-data-grid-header-height));
+				--_content-min-height-default: calc(var(--mo-data-grid-min-visible-rows, 2.5) * (var(--mo-data-grid-row-height) + 1px) + var(--mo-data-grid-header-height));
 				display: flex;
 				flex-direction: column;
 				height: 100%;
@@ -455,7 +455,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			}
 
 			#content {
-				width: fit-content;
+				width: 0;
 				min-width: 100%;
 				height: min-content;
 				min-height: 100%;
@@ -624,9 +624,9 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	protected get dataGridTemplate() {
 		this.toggleAttribute('hasDetails', this.hasDetails)
 		return html`
-			<mo-grid rows='* auto' ${style({ position: 'relative', height: '100%' })}>
+			<mo-flex ${style({ position: 'relative', height: '100%' })}>
 				<mo-scroller
-					${style({ minHeight: 'var(--mo-data-grid-content-min-height, var(--_content-min-height-default))' })}
+					${style({ flex: '1 0 var(--mo-data-grid-content-min-height, var(--_content-min-height-default))' })}
 					${observeResize(([e]) => this.style.setProperty('--_content-height', `${e?.contentRect.height ?? 0}px`))}
 					@scroll=${this.handleScroll}
 				>
@@ -636,7 +636,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 					</mo-grid>
 				</mo-scroller>
 				${this.footerTemplate}
-			</mo-grid>
+			</mo-flex>
 		`
 	}
 
