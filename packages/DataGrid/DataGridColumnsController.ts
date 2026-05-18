@@ -135,7 +135,15 @@ export class DataGridColumnsController<TData> extends Controller {
 	}
 
 	setColumnWidth(column: keyof typeof this.columnWidths, widthInPixels: number) {
+		if (this.columnWidths[column] === widthInPixels) {
+			return
+		}
 		this.columnWidths[column] = widthInPixels
+		// Sticky inset-inline values of other rows depend on these widths.
+		// Request an update so cells re-render with the new offsets - in particular
+		// when a sticky helper column (e.g. 'details') is removed and its width
+		// must be reset to 0 to avoid stale offsets.
+		this.host.requestUpdate()
 	}
 
 	getStickyColumnInsetInline(column: DataGridColumn<TData> | keyof typeof this.columnWidths) {

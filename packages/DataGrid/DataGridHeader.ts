@@ -220,7 +220,15 @@ export class DataGridHeader<TData> extends Component {
 	}
 
 	private getResizeObserver(column: Parameters<DataGridColumnsController<TData>['setColumnWidth']>[0]) {
-		return observeResize(([entry]) => this.dataGrid.columnsController.setColumnWidth(column, entry?.contentRect.width ?? 0))
+		return observeResize(
+			([entry]) => this.dataGrid.columnsController.setColumnWidth(column, entry?.contentRect.width ?? 0),
+			undefined,
+			// When the observed header cell is unmounted (e.g. the 'details' column
+			// disappears after disabling grouping), the ResizeObserver does not emit
+			// a final 0-width entry, so the cached width would remain stale and
+			// shift sticky offsets in every row. Reset to 0 on disconnect.
+			() => this.dataGrid.columnsController.setColumnWidth(column, 0)
+		)
 	}
 
 	private toggleAllDetails() {

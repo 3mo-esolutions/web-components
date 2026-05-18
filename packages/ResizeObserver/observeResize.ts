@@ -4,6 +4,7 @@ class ResizeDirective extends AsyncDirective {
 	readonly observer = new ResizeObserver((...args) => this.callback?.(...args))
 	protected readonly element: Element
 	protected callback?: ResizeObserverCallback
+	protected onDisconnect?: () => void
 
 	constructor(partInfo: PartInfo) {
 		super(partInfo)
@@ -16,13 +17,15 @@ class ResizeDirective extends AsyncDirective {
 		this.element = part.element
 	}
 
-	render(callback: ResizeObserverCallback, options?: ResizeObserverOptions) {
+	render(callback: ResizeObserverCallback, options?: ResizeObserverOptions, onDisconnect?: () => void) {
 		this.callback = callback
+		this.onDisconnect = onDisconnect
 		this.observer.observe(this.element, options)
 	}
 
 	protected override disconnected() {
 		this.observer.disconnect()
+		this.onDisconnect?.()
 	}
 }
 
