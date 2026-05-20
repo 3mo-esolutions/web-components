@@ -30,6 +30,10 @@ export class SplitPageHost extends Component {
 
 	static override get styles() {
 		return css`
+			:host {
+				position: relative;
+			}
+
 			lit-page-host {
 				min-height: 100%;
 				padding-inline-start: 14px;
