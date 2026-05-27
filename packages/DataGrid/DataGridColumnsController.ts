@@ -139,14 +139,20 @@ export class DataGridColumnsController<TData> extends Controller {
 	}
 
 	getStickyColumnInsetInline(column: DataGridColumn<TData> | keyof typeof this.columnWidths) {
+		const widths = {
+			reordering: !this.host.reorderabilityController.enabled ? 0 : this.columnWidths.reordering,
+			details: !this.host.hasDetails ? 0 : this.columnWidths.details,
+			selection: !this.host.hasSelection ? 0 : this.columnWidths.selection,
+			actions: !this.host.hasContextMenu ? 0 : this.columnWidths.actions
+		}
 		if (typeof column !== 'object') {
 			switch (column) {
 				case 'reordering':
 					return '0px'
 				case 'details':
-					return `${this.columnWidths.reordering}px`
+					return `${widths.reordering}px`
 				case 'selection':
-					return `${this.columnWidths.reordering + this.columnWidths.details}px`
+					return `${widths.reordering + widths.details}px`
 				case 'actions':
 					return 'auto'
 			}
@@ -163,9 +169,8 @@ export class DataGridColumnsController<TData> extends Controller {
 			.filter(x => x !== undefined)
 			.reduce((a, b) => a! + b!, 0)!
 
-		const { reordering, selection, details, actions } = this.columnWidths
-		const start = `${reordering + selection + details + calculate('start')}px`
-		const end = `${calculate('end') + actions}px`
+		const start = `${widths.reordering + widths.selection + widths.details + calculate('start')}px`
+		const end = `${calculate('end') + widths.actions}px`
 
 		switch (column.sticky) {
 			case 'start':
