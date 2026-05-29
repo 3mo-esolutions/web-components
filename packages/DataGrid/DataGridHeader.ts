@@ -120,7 +120,7 @@ export class DataGridHeader<TData> extends Component {
 	}
 
 	private get reorderabilityTemplate() {
-		return !this.dataGrid.reorderabilityController.enabled ? html.nothing : html`
+		return !this.dataGrid.reorderabilityController.visible ? html.nothing : html`
 			<mo-flex class='reorder'
 				${style({ insetInlineStart: this.dataGrid.columnsController.getStickyColumnInsetInline('reordering') })}
 				${this.getResizeObserver('reordering')}

@@ -187,10 +187,12 @@ export class DataGridReorderabilityController<T> extends ReorderabilityControlle
 		super(host, {})
 	}
 
+	get visible() {
+		return this.host.reorderability && !this.host.detailsController.hasDetails
+	}
+
 	get enabled() {
-		return this.host.reorderability
-			&& this.host.sortingController.enabled === false
-			&& this.host.detailsController.hasDetails === false
+		return this.visible && !this.host.sortingController.enabled
 	}
 
 	reorder(source: number, destination: number) {

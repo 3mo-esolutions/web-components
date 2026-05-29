@@ -27,7 +27,7 @@ export class DataGridSortingController<TData> {
 	constructor(readonly host: SortableComponent<TData>) { }
 
 	get enabled() {
-		return !!this.host.sorting
+		return this.get().length > 0
 	}
 
 	get() {

@@ -28,6 +28,12 @@ describe('DataGridSortingController', () => {
 			controller.set({ selector: 'id', strategy: DataGridSortingStrategy.Descending })
 			expect(controller.enabled).toBeTrue()
 		})
+
+		it('should be false after resetting, since an empty sorting array means no sorting', () => {
+			controller.set({ selector: 'id', strategy: DataGridSortingStrategy.Descending })
+			controller.reset()
+			expect(controller.enabled).toBeFalse()
+		})
 	})
 
 	describe('get', () => {

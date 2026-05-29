@@ -3,7 +3,7 @@ import { DataGridColumnsController } from './DataGridColumnsController.js'
 describe('DataGridColumnsController', () => {
 	const createController = (host = {}) => new DataGridColumnsController({
 		addController: () => { },
-		reorderabilityController: { enabled: false },
+		reorderabilityController: { visible: false },
 		hasSelection: true,
 		hasDetails: true,
 		...host,
@@ -20,6 +20,14 @@ describe('DataGridColumnsController', () => {
 			// Ungrouping removes the details column. Its last measured width must not leak into the inset anymore.
 			;(controller.host as any).hasDetails = false
 			expect(controller.getStickyColumnInsetInline('selection')).toBe('0px')
+		})
+
+		it('keeps the reordering column width in the inset while it is visible but disabled (e.g. the grid is sorted)', () => {
+			const controller = createController({ reorderabilityController: { visible: true }, hasDetails: false })
+			controller.setColumnWidth('reordering', 40)
+
+			// The reordering column still occupies space while sorted, so the selection column must sit behind it.
+			expect(controller.getStickyColumnInsetInline('selection')).toBe('40px')
 		})
 	})
 })

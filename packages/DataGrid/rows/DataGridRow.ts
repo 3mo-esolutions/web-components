@@ -1,10 +1,16 @@
 import { css, property, Component, html, query, queryAll, type HTMLTemplateResult, LitElement, live, style, unsafeCSS } from '@a11d/lit'
 import { equals } from '@a11d/equals'
-import { DirectionsByLanguage } from '@3mo/localization'
+import { DirectionsByLanguage, Localizer } from '@3mo/localization'
 import { popover } from '@3mo/popover'
+import { tooltip } from '@3mo/tooltip'
 import { ContextMenu } from '@3mo/context-menu'
 import { type DataGridColumn } from '../DataGridColumn.js'
 import { type DataGridCell, DataGridPrimaryContextMenuItem, type DataRecord, ReorderabilityState } from '../index.js'
+
+Localizer.dictionaries.add('de', {
+	'Reordering is unavailable while the grid is sorted.': 'Die Reihenfolge kann nicht geändert werden, solange die Tabelle sortiert ist.',
+	'Clear sorting': 'Sortierung zurücksetzen'
+})
 
 export abstract class DataGridRow<TData, TDetailsElement extends Element | undefined = undefined> extends Component {
 	@queryAll('mo-data-grid-cell') readonly cells!: Array<DataGridCell<any, TData, TDetailsElement>>
@@ -88,6 +94,11 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				mo-icon-button {
 					cursor: grab;
 					opacity: 0.5;
+					&[disabled] {
+						/* Keep the disabled handle hoverable so its explanatory tooltip can open. */
+						pointer-events: auto;
+						cursor: not-allowed;
+					}
 				}
 			}
 
@@ -251,9 +262,22 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	protected abstract get rowTemplate(): HTMLTemplateResult
 
 	protected get reorderabilityTemplate() {
-		return !this.dataGrid.reorderabilityController.enabled ? html.nothing : html`
-			<mo-flex id='reorderability' justifyContent='center' alignItems='center' ${style({ insetInlineStart: this.dataGrid.columnsController.getStickyColumnInsetInline('reordering') })}>
-				<mo-icon-button icon='drag_handle'></mo-icon-button>
+		const reorderability = this.dataGrid.reorderabilityController
+		const disabled = !reorderability.enabled
+		return !reorderability.visible ? html.nothing : html`
+			<mo-flex id='reorderability' justifyContent='center' alignItems='center'
+				${style({ insetInlineStart: this.dataGrid.columnsController.getStickyColumnInsetInline('reordering') })}
+			>
+				<mo-icon-button icon='drag_handle' ?disabled=${disabled}
+					${!disabled ? html.nothing : tooltip(() => html`
+						<mo-flex gap='0.5rem'>
+							${t('Reordering is unavailable while the grid is sorted.')}
+							<mo-anchor @click=${(e: Event) => { e.preventDefault(); this.dataGrid.sortingController.reset() }}>
+								${t('Clear sorting')}
+							</mo-anchor>
+						</mo-flex>
+					`)}
+				></mo-icon-button>
 			</mo-flex>
 		`
 	}

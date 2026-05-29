@@ -64,7 +64,7 @@ export class DataGridColumnsController<TData> extends Controller {
 	}
 
 	private get orderColumnWidth() {
-		return !this.host.reorderabilityController.enabled ? undefined : window.getComputedStyle(this.host).getPropertyValue('--mo-data-grid-column-reorder-width')
+		return !this.host.reorderabilityController.visible ? undefined : window.getComputedStyle(this.host).getPropertyValue('--mo-data-grid-column-reorder-width')
 	}
 
 	private get detailsColumnWidth() {
@@ -140,7 +140,7 @@ export class DataGridColumnsController<TData> extends Controller {
 
 	getStickyColumnInsetInline(column: DataGridColumn<TData> | keyof typeof this.columnWidths) {
 		const widths = {
-			reordering: !this.host.reorderabilityController.enabled ? 0 : this.columnWidths.reordering,
+			reordering: !this.host.reorderabilityController.visible ? 0 : this.columnWidths.reordering,
 			details: !this.host.hasDetails ? 0 : this.columnWidths.details,
 			selection: !this.host.hasSelection ? 0 : this.columnWidths.selection,
 			actions: !this.host.hasContextMenu ? 0 : this.columnWidths.actions
