@@ -3,7 +3,6 @@ import * as Polyfill from 'temporal-polyfill'
 globalThis.Temporal ??= Polyfill.Temporal
 
 declare global {
-	// eslint-disable-next-line no-var
 	var Temporal: typeof import('temporal-polyfill').Temporal
 	namespace Temporal {
 		type Instant = Polyfill.Temporal.Instant

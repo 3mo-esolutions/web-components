@@ -23,7 +23,6 @@ export default {
 	package: p,
 } as Meta
 
-/* eslint-disable @html-eslint/use-baseline */
 const content = html`
 	<input autofocus>
 	<mo-card heading='Popover'>

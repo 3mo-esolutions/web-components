@@ -138,7 +138,6 @@ export class DateTimeRange {
 globalThis.DateTimeRange = DateTimeRange
 type DateTimeRangeClass = typeof DateTimeRange
 declare global {
-	// eslint-disable-next-line
 	var DateTimeRange: DateTimeRangeClass
 	type DateTimeRange = InstanceType<DateTimeRangeClass>
 }

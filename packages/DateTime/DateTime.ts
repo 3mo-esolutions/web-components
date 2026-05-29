@@ -218,7 +218,6 @@ export class DateTime extends Date {
 globalThis.DateTime = DateTime
 type DateTimeClass = typeof DateTime
 declare global {
-	// eslint-disable-next-line
 	var DateTime: DateTimeClass
 	type DateTime = InstanceType<DateTimeClass>
 }

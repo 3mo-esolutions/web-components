@@ -59,7 +59,6 @@ export class LocalizableString<Key extends LocalizableStringKey> {
 globalThis.t = LocalizableString.getAsString
 
 declare global {
-	// eslint-disable-next-line no-var
 	var t: typeof LocalizableString.getAsString
 	// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 	interface LocalizableStringKeys { }

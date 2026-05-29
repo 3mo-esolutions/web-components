@@ -63,7 +63,6 @@ export class TimeSpan {
 globalThis.TimeSpan = TimeSpan
 type TimeSpanClass = typeof TimeSpan
 declare global {
-	// eslint-disable-next-line
 	var TimeSpan: TimeSpanClass
 	type TimeSpan = InstanceType<TimeSpanClass>
 }
