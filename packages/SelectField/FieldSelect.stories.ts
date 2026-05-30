@@ -21,7 +21,7 @@ export const Select: StoryObj = {
 			<mo-field-select label='Countries' ?searchable=${searchable} ?multiple=${multiple} default=${defaultText}>
 				${countries.map(country => html`
 					<mo-option value=${country.code} .data=${country}>
-						<img width='25px' src=${`https://flagcdn.com/h40/${country.code.toLowerCase()}.png`}>
+						<img slot='start' width='25px' src=${`https://flagcdn.com/h40/${country.code.toLowerCase()}.png`}>
 						${country.label}
 					</mo-option>
 				`)}
@@ -36,7 +36,7 @@ export const FreeInput: StoryObj = {
 			<mo-field-select label='Countries' searchable freeInput ?multiple=${multiple} default=${defaultText} .value=${multiple ? ['DE'] : 'DE'}>
 				${countries.map(country => html`
 					<mo-option value=${country.code} .data=${country}>
-						<img width='25px' src=${`https://flagcdn.com/h40/${country.code.toLowerCase()}.png`}>
+						<img slot='start' width='25px' src=${`https://flagcdn.com/h40/${country.code.toLowerCase()}.png`}>
 						${country.label}
 					</mo-option>
 				`)}
@@ -51,7 +51,7 @@ export const PreSelectedValue: StoryObj = {
 			<mo-field-select label='Countries' ?searchable=${searchable} ?multiple=${multiple} default=${defaultText} .value=${multiple ? [] : 'DE'}>
 				${countries.map(country => html`
 					<mo-option value=${country.code} .data=${country}>
-						<img width='25px' src=${`https://flagcdn.com/h40/${country.code.toLowerCase()}.png`}>
+						<img slot='start' width='25px' src=${`https://flagcdn.com/h40/${country.code.toLowerCase()}.png`}>
 						${country.label}
 					</mo-option>
 				`)}
