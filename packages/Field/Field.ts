@@ -72,6 +72,7 @@ export class Field extends Component {
 
 			div {
 				display: grid;
+				grid-template-columns: minmax(0, 1fr);
 				position: relative;
 				flex: 1 1 auto;
 				min-width: 0;

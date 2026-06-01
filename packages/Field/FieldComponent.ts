@@ -102,6 +102,8 @@ export abstract class FieldComponent<T> extends Component {
 		return css`
 			:host {
 				display: block;
+				width: 100%;
+				max-width: 100%;
 			}
 
 			mo-field {

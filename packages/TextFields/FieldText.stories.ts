@@ -45,3 +45,13 @@ export const WithTextAlignEnd: StoryObj = {
 		<mo-field-text label='Text Align End' ?required=${required} ?disabled=${disabled} ?readonly=${readonly} ?dense=${dense} value=${value} style='text-align: end'></mo-field-text>
 	`
 }
+
+export const ContentFieldSizing: StoryObj = {
+	render: ({ required, disabled, dense, readonly, value }) => html`
+		Type a long value
+		<mo-field-text label='Label'
+			?required=${required} ?disabled=${disabled} ?readonly=${readonly} ?dense=${dense} value=${value}
+			style='width: fit-content; min-width: 100px'
+		></mo-field-text>
+	`
+}
