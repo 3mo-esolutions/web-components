@@ -55,8 +55,8 @@ export class DataGridColumnsController<TData> extends Controller {
 	private get columns() {
 		return [
 			{ name: 'order', width: this.orderColumnWidth },
-			{ name: 'details', width: this.detailsColumnWidth },
 			{ name: 'selection', width: this.selectionColumnWidth },
+			{ name: 'details', width: this.detailsColumnWidth },
 			...this.dataColumnsWidths.map(width => ({ name: 'data', width })),
 			{ name: 'padding', width: '1fr' },
 			{ name: 'actions', width: this.actionsColumnWidth }
@@ -64,15 +64,15 @@ export class DataGridColumnsController<TData> extends Controller {
 	}
 
 	private get orderColumnWidth() {
-		return !this.host.reorderabilityController.visible ? undefined : window.getComputedStyle(this.host).getPropertyValue('--mo-data-grid-column-reorder-width')
+		return !this.host.reorderabilityController.visible ? undefined : 'max-content'
 	}
 
 	private get detailsColumnWidth() {
-		return !this.host.hasDetails ? undefined : window.getComputedStyle(this.host).getPropertyValue('--mo-data-grid-column-details-width')
+		return !this.host.hasDetails ? undefined : 'max-content'
 	}
 
 	private get selectionColumnWidth() {
-		return !this.host.hasSelection ? undefined : window.getComputedStyle(this.host).getPropertyValue('--mo-data-grid-column-selection-width')
+		return !this.host.hasSelection ? undefined : 'max-content'
 	}
 
 	private get dataColumnsWidths() {
@@ -82,7 +82,7 @@ export class DataGridColumnsController<TData> extends Controller {
 	}
 
 	private get actionsColumnWidth() {
-		return this.host.sidePanelHidden && !this.host.hasContextMenu ? undefined : window.getComputedStyle(this.host).getPropertyValue('--mo-data-grid-column-actions-width')
+		return this.host.sidePanelHidden && !this.host.hasContextMenu ? undefined : 'max-content'
 	}
 
 	private get columnsElements() {
@@ -149,10 +149,10 @@ export class DataGridColumnsController<TData> extends Controller {
 			switch (column) {
 				case 'reordering':
 					return '0px'
-				case 'details':
-					return `${widths.reordering}px`
 				case 'selection':
-					return `${widths.reordering + widths.details}px`
+					return `${widths.reordering}px`
+				case 'details':
+					return `${widths.reordering + widths.selection}px`
 				case 'actions':
 					return 'auto'
 			}

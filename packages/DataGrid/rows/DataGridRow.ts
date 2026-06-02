@@ -95,7 +95,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			#reorderability {
 				position: sticky;
 				z-index: 2;
-				width: var(--mo-data-grid-column-reorder-width);
+				width: 20px;
 				height: 100%;
 				background: var(--mo-data-grid-sticky-part-color);
 
@@ -113,12 +113,15 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			#detailsExpanderContainer {
 				position: sticky;
 				z-index: 2;
+				height: 100%;
 				inset-inline-start: 0px;
 				background: var(--mo-data-grid-sticky-expander-part-color, var(--mo-data-grid-sticky-part-color));
+				display: flex;
+				align-items: center;
 			}
 
 			#selectionContainer {
-				width: var(--mo-data-grid-column-selection-width);
+				width: 40px;
 				position: sticky;
 				z-index: 2;
 				height: 100%;
@@ -130,18 +133,6 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 					--mo-data-grid-sticky-part-color: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-accent) 25%) !important;
 					color: inherit;
 					background: var(--mo-color-accent-transparent) !important;
-				}
-
-				#contentContainer, #detailsContainer {
-					&::before {
-						content: '';
-						width: 2px;
-						height: 100%;
-						top: 0;
-						position: absolute;
-						background-color: var(--mo-color-accent);
-						z-index: 2;
-					}
 				}
 			}
 
@@ -156,6 +147,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			}
 
 			#contentContainer {
+				position: relative;
 				grid-column: -1 / 1;
 				border-block-end: var(--mo-data-grid-border);
 			}
@@ -201,6 +193,15 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			#detailsExpanderIconButton {
 				height: var(--mo-data-grid-row-height);
 				transition: transform 250ms;
+				flex-shrink: 0;
+				--md-icon-button-state-layer-height: 20px;
+				--md-icon-button-state-layer-width: 20px;
+				--md-icon-button-icon-size: 18px;
+				width: var(--_expander-size, 26px);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 18px;
 
 				&[data-rtl] {
 					transform: rotate(180deg);
@@ -240,14 +241,79 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				}
 			}
 
-			mo-data-grid-cell:first-of-type:not([alignment=end]), mo-data-grid-cell[alignment=end]:first-of-type + mo-data-grid-cell {
-				margin-inline-start: calc(var(--_level, 0) * var(--mo-data-grid-column-sub-row-indentation, 20px));
+			#tree-guides {
+				height: 100%;
+				display: flex;
+				pointer-events: none;
+			}
+
+			.tree-guide {
+				width: var(--_expander-size, 26px);
+				height: 100%;
+				position: relative;
+				flex-shrink: 0;
+			}
+
+			.tree-guide[data-type=line]::before {
+				content: '';
+				position: absolute;
+				inset-inline-start: 50%;
+				top: 0;
+				height: 100%;
+				border-inline-start: 1px solid var(--mo-color-gray-transparent);
+			}
+
+			.tree-guide[data-type=branch]::before {
+				content: '';
+				position: absolute;
+				inset-inline-start: 50%;
+				top: 0;
+				height: 100%;
+				border-inline-start: 1px solid var(--mo-color-gray-transparent);
+			}
+
+			.tree-guide[data-type=branch]::after {
+				content: '';
+				position: absolute;
+				inset-inline-start: 50%;
+				top: 50%;
+				width: 50%;
+				border-top: 1px solid var(--mo-color-gray-transparent);
+			}
+
+			.tree-guide[data-type=last-branch]::before {
+				content: '';
+				position: absolute;
+				inset-inline-start: 50%;
+				top: 0;
+				height: 50%;
+				border-inline-start: 1px solid var(--mo-color-gray-transparent);
+			}
+
+			.tree-guide[data-type=last-branch]::after {
+				content: '';
+				position: absolute;
+				inset-inline-start: 50%;
+				top: 50%;
+				width: 50%;
+				border-top: 1px solid var(--mo-color-gray-transparent);
 			}
 		`
 	}
 
 	protected override get template() {
 		this.style.setProperty('--_level', this.level.toString())
+		const isLastInEntireGroup = (() => {
+			if (this.level === 0 || this.detailsOpen) return false
+			let record: DataRecord<TData> | undefined = this.dataRecord
+			while (record && record.level > 0) {
+				if (!record.isLastChild) return false
+				record = record.parentRecord
+			}
+			return true
+		})()
+		const showBorder = (this.level === 0 && !this.detailsOpen) || isLastInEntireGroup
+		this.style.setProperty('--_level-border-display', showBorder ? 'block' : 'none')
 		this.toggleAttribute('selected', this.dataRecord.isSelected)
 		this.toggleAttribute('detailsOpen', this.dataRecord.detailsOpen)
 		return !this.isIntersecting ? html.nothing : html`
@@ -268,6 +334,31 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	}
 
 	protected abstract get rowTemplate(): HTMLTemplateResult
+
+	protected get treeGuideTemplate() {
+		if (this.level === 0) {
+			return html.nothing
+		}
+
+		const chain = new Array<DataRecord<TData>>()
+		let current: DataRecord<TData> | undefined = this.dataRecord
+		while (current && current.level > 0) {
+			chain.unshift(current)
+			current = current.parentRecord
+		}
+
+		return html`
+			<div id='tree-guides'>
+				${chain.map((record, index) => {
+					const isLast = index === chain.length - 1
+					const type = isLast
+						? (record.isLastChild ? 'last-branch' : 'branch')
+						: (record.isLastChild ? 'blank' : 'line')
+					return html`<span class='tree-guide' data-type=${type}></span>`
+				})}
+			</div>
+		`
+	}
 
 	protected get reorderabilityTemplate() {
 		const reorderability = this.dataGrid.reorderabilityController
@@ -292,11 +383,12 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 
 	protected get detailsExpanderTemplate() {
 		return this.dataGrid.hasDetails === false ? html.nothing : html`
-			<mo-flex id='detailsExpanderContainer' justifyContent='center' alignItems='center'
+			<div id='detailsExpanderContainer'
 				${style({ insetInlineStart: this.dataGrid.columnsController.getStickyColumnInsetInline('details') })}
 				@click=${(e: Event) => e.stopPropagation()}
 				@dblclick=${(e: Event) => e.stopPropagation()}
 			>
+				${this.treeGuideTemplate}
 				${this.hasDetails === false ? html.nothing : html`
 					<mo-icon-button id='detailsExpanderIconButton'
 						icon='keyboard_arrow_right'
@@ -304,7 +396,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 						@click=${() => this.toggleDetails()}
 					></mo-icon-button>
 				`}
-			</mo-flex>
+			</div>
 		`
 	}
 

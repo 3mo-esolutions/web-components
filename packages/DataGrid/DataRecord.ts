@@ -8,6 +8,15 @@ export class DataRecord<TData> {
 	readonly data!: TData
 	readonly index!: number
 	readonly level!: number
+	readonly parentRecord?: DataRecord<TData>
+
+	get isLastChild(): boolean {
+		if (!this.parentRecord) {
+			return true
+		}
+		const siblings = this.parentRecord.subDataRecords
+		return siblings ? siblings[siblings.length - 1] === this : true
+	}
 
 	get isSelected(): boolean {
 		return this.dataGrid.selectionController.isSelected(this.data)
@@ -38,7 +47,7 @@ export class DataRecord<TData> {
 
 		return this._subDataRecords = this.dataGrid.sortingController
 			.toSortedBy<TData>(subData, d => d)
-			.map(data => new DataRecord(this.dataGrid, { data, level: this.level + 1 }))
+			.map(data => new DataRecord(this.dataGrid, { data, level: this.level + 1, parentRecord: this }))
 	}
 
 	get flattenedRecords(): Array<DataRecord<TData>> {
