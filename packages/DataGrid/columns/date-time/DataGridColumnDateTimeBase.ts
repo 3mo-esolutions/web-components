@@ -22,7 +22,7 @@ export abstract class DataGridColumnDateTimeBase<TData, TDate extends { format(.
 	override getEditContentTemplate(value: TDate | undefined, data: TData) {
 		return html`
 			${staticHtml`
-				<${this.fieldTag} dense autofocus selectOnFocus
+				<${this.fieldTag} dense autofocus selectOnFocus style='width: fit-content; min-width: 100%;'
 					.precision=${this.precision}
 					?pickerHidden=${this.pickerHidden}
 					.value=${value}

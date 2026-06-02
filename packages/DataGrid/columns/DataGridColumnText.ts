@@ -11,7 +11,7 @@ export class DataGridColumnText<TData> extends DataGridColumnComponent<TData, st
 
 	override getEditContentTemplate(value: string | undefined, data: TData) {
 		return html`
-			<mo-field-text dense autofocus selectOnFocus
+			<mo-field-text dense autofocus selectOnFocus style='width: fit-content; min-width: 100%;'
 				value=${ifDefined(value)}
 				@change=${(e: CustomEvent<string>) => this.handleEdit(e.detail, data)}
 			></mo-field-text>

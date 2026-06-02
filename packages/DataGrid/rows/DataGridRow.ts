@@ -70,6 +70,14 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				position: relative;
 				height: auto;
 				width: 100%;
+				/*
+				 * Establish a stacking context per row so the z-index of sticky cells/columns
+				 * (e.g. z-index: 6 on sticky columns) stays scoped to the row. Without this, those
+				 * z-indices resolve in the shared grid context and paint over the sticky header
+				 * (z-index: 4) as rows scroll underneath it. isolation: isolate creates the context
+				 * without affecting layout or sticky anchoring (which stays relative to the scroller).
+				 */
+				isolation: isolate;
 			}
 
 			:host([data-reorderability=${unsafeCSS(ReorderabilityState.Dragging)}]) {

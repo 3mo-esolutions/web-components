@@ -11,7 +11,7 @@ export class DataGridColumnPercent<TData> extends DataGridColumnNumberBase<TData
 
 	override getEditContentTemplate(value: number | undefined, data: TData) {
 		return html`
-			<mo-field-percent dense autofocus selectOnFocus
+			<mo-field-percent dense autofocus selectOnFocus style='width: fit-content; min-width: 100%;'
 				min=${ifDefined(this.getMin(data))}
 				max=${ifDefined(this.getMax(data))}
 				step=${ifDefined(this.getStep(data))}

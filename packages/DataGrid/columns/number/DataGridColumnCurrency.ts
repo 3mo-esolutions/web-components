@@ -32,7 +32,7 @@ export class DataGridColumnCurrency<TData> extends DataGridColumnNumberBase<TDat
 
 	override getEditContentTemplate(value: number | undefined, data: TData) {
 		return html`
-			<mo-field-currency dense autofocus selectOnFocus
+			<mo-field-currency dense autofocus selectOnFocus style='width: fit-content; min-width: 100%;'
 				.currency=${this.getCurrency(data)}
 				min=${ifDefined(this.getMin(data))}
 				max=${ifDefined(this.getMax(data))}
