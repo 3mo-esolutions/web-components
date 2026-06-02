@@ -19,18 +19,14 @@ export class DataGridDefaultRow<TData, TDetailsElement extends Element | undefin
 				text-overflow: ellipsis;
 				overflow: hidden;
 			}
-
-			#selectionContainer {
-				height: var(--mo-data-grid-row-height);
-			}
 		`
 	}
 
 	protected override get rowTemplate() {
 		return html`
 			${this.reorderabilityTemplate}
-			${this.detailsExpanderTemplate}
 			${this.selectionTemplate}
+			${this.detailsExpanderTemplate}
 			${this.dataGrid.columns.map(column => this.getCellTemplate(column))}
 			${this.fillerTemplate}
 			${this.contextMenuIconButtonTemplate}

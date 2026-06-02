@@ -142,10 +142,10 @@ export class DataGridColumnsController<TData> extends Controller {
 			switch (column) {
 				case 'reordering':
 					return '0px'
-				case 'details':
-					return `${widths.reordering}px`
 				case 'selection':
-					return `${widths.reordering + widths.details}px`
+					return `${widths.reordering}px`
+				case 'details':
+					return `${widths.reordering + widths.selection}px`
 				case 'actions':
 					return 'auto'
 			}
