@@ -58,7 +58,7 @@ export class DataGridRecordsController<TData> {
 		const subData = this.childrenOf(record.data)
 		return !subData?.length ? undefined : this.controller.sorting
 			.toSortedBy<TData>([...subData], data => data)
-			.map(data => new DataRecord(this.controller, { data, level: record.level + 1 }))
+			.map(data => new DataRecord(this.controller, { data, level: record.level + 1, parentRecord: record }))
 	}
 
 	invalidate() {

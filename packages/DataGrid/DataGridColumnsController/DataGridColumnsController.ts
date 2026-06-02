@@ -299,8 +299,8 @@ export class DataGridColumnsController<TData> extends Controller implements Even
 		}
 		const insets = new Map<unknown, string>([
 			['reordering', '0px'],
-			['details', `${widths.reordering}px`],
-			['selection', `${widths.reordering + widths.details}px`],
+			['selection', `${widths.reordering}px`],
+			['details', `${widths.reordering + widths.selection}px`],
 			['actions', 'auto'],
 		])
 		const visibleColumns = this.columns.visible

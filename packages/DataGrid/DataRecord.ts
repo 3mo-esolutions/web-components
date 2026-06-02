@@ -2,7 +2,7 @@ import { type HierarchyNode } from '@3mo/hierarchy'
 import { type DataGridController } from './DataGridController.js'
 
 export class DataRecord<TData> {
-	constructor(readonly controller: DataGridController<TData, any>, init: Partial<Pick<DataRecord<TData>, 'data' | 'index' | 'level' | 'node'>>) {
+	constructor(readonly controller: DataGridController<TData, any>, init: Partial<Pick<DataRecord<TData>, 'data' | 'index' | 'level' | 'node' | 'parentRecord'>>) {
 		const { node, ...rest } = init
 		Object.assign(this, rest)
 		Object.defineProperty(this, 'node', { value: node, enumerable: false, writable: true, configurable: true })
@@ -12,6 +12,15 @@ export class DataRecord<TData> {
 	readonly data!: TData
 	readonly index!: number
 	readonly level!: number
+	readonly parentRecord?: DataRecord<TData>
+
+	get isLastChild(): boolean {
+		if (!this.parentRecord) {
+			return true
+		}
+		const siblings = this.parentRecord.subDataRecords
+		return siblings ? siblings[siblings.length - 1] === this : true
+	}
 
 	get isSelected(): boolean {
 		return this.controller.selection.isSelected(this.data)
