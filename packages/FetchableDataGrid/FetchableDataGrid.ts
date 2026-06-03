@@ -149,12 +149,12 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 
 	protected override get toolbarActionsTemplate() {
 		return html`
+			${super.toolbarActionsTemplate}
 			<mo-fetchable-data-grid-refetch-icon-button
 				?fetching=${this.fetcherController.pending}
 				autoRefetch=${bind(this, 'autoRefetch')}
 				@requestFetch=${() => this.requestFetch()}
 			></mo-fetchable-data-grid-refetch-icon-button>
-			${super.toolbarActionsTemplate}
 		`
 	}
 
