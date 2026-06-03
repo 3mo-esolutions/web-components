@@ -1,1 +1,1 @@
-import './remove-body-padding-of-data-grid-card-containers'
+import './remove-body-padding-of-data-grid-card-containers.js'
