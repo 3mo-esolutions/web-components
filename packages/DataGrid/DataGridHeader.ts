@@ -1,7 +1,7 @@
-import { component, Component, css, html, property, event, style, live, queryAll, repeat } from '@a11d/lit'
+import { component, Component, css, html, property, event, style, live, queryAll, repeat, bind } from '@a11d/lit'
 import { observeResize } from '@3mo/resize-observer'
 import { Localizer } from '@3mo/localization'
-import { DataGridSelectability, type DataGrid, DataGridSidePanelTab, type DataGridColumnHeader, ReorderabilityController } from './index.js'
+import { DataGridSelectability, type DataGrid, type DataGridColumn, type DataGridColumnHeader, ReorderabilityController } from './index.js'
 import type { DataGridColumnsController } from './DataGridColumnsController.js'
 
 Localizer.dictionaries.add('en', {
@@ -16,6 +16,11 @@ Localizer.dictionaries.add('de', {
 		'Optionen für den ausgewählten Eintrag',
 		'Optionen für ${count} ausgewählte Einträge',
 	],
+	'Settings': 'Einstellungen',
+	'Columns': 'Spalten',
+	'Font Size': 'Schriftgröße',
+	'Row Height': 'Zeilenhöhe',
+	'Design': 'Design',
 })
 
 @component('mo-data-grid-header')
@@ -93,15 +98,24 @@ export class DataGridHeader<TData> extends Component {
 
 			.context-menu {
 				background-color: var(--mo-color-surface);
-				&[data-multiple-selected] {
-					background-color: var(--mo-color-accent);
-				}
+				background-color: var(--mo-color-accent);
 				mo-icon-button {
 					color: var(--mo-color-on-accent);
 					font-size: 20px;
-					&:not([data-multiple-selected]) {
-						opacity: 0;
-						pointer-events: none;
+				}
+			}
+
+			mo-popover {
+				background: var(--mo-color-surface);
+				border-radius: var(--mo-border-radius);
+				box-shadow: var(--mo-shadow);
+
+				mo-section {
+					padding: 10px 14px 20px;
+					border-bottom: var(--mo-data-grid-border);
+					&::part(heading) {
+						font-size: min(1em, 14px);
+						letter-spacing: 0.15px;
 					}
 				}
 			}
@@ -191,32 +205,64 @@ export class DataGridHeader<TData> extends Component {
 	}
 
 	private get actionsTemplate() {
-		if (this.dataGrid.hasContextMenu) {
-			const multipleSelected = this.dataGrid.selectedData.length > 1
-			return html`
-				<mo-flex ?data-multiple-selected=${multipleSelected} class='context-menu' alignItems='end' justifyContent='center' ${this.getResizeObserver('actions')}>
-					<mo-popover-container>
-						<mo-icon-button ?data-multiple-selected=${multipleSelected} dense icon='more_vert' title=${t('Actions for ${count:pluralityNumber} selected entries', { count: this.dataGrid.selectedData.length })}></mo-icon-button>
+		return this.dataGrid.hasContextMenu && this.dataGrid.selectedData.length > 1 ? this.contextMenuTemplate : this.columnsTemplate
+	}
 
-						<mo-menu slot='popover'>
-							${this.dataGrid.contextMenuController.getMenuContentTemplate()}
-						</mo-menu>
-					</mo-popover-container>
-				</mo-flex>
-			`
-		}
+	private get contextMenuTemplate() {
+		return html`
+			<mo-flex class='context-menu' alignItems='end' justifyContent='center' ${this.getResizeObserver('actions')}>
+				<mo-popover-container>
+					<mo-icon-button dense icon='more_vert' title=${t('Actions for ${count:pluralityNumber} selected entries', { count: this.dataGrid.selectedData.length })}></mo-icon-button>
 
-		if (!this.dataGrid.hasToolbar && !this.dataGrid.sidePanelHidden) {
-			return html`
-				<mo-flex class='actions' alignItems='end' justifyContent='center' ${this.getResizeObserver('actions')}>
-					<mo-icon-button dense icon='settings'
-						@click=${() => this.dataGrid.navigateToSidePanelTab(this.dataGrid.sidePanelTab ? undefined : DataGridSidePanelTab.Settings)}
-					></mo-icon-button>
-				</mo-flex>
-			`
-		}
+					<mo-menu slot='popover'>
+						${this.dataGrid.contextMenuController.getMenuContentTemplate()}
+					</mo-menu>
+				</mo-popover-container>
+			</mo-flex>
+		`
+	}
 
-		return html.nothing
+	private get columnsTemplate() {
+		return html`
+			<mo-flex class='actions' alignItems='end' justifyContent='center' ${this.getResizeObserver('actions')}>
+				<mo-popover-container>
+					<mo-icon-button dense>
+						<mo-icon slot='icon' variant='outlined' icon='view_column' style='color: var(--mo-color-gray)'></mo-icon>
+					</mo-icon-button>
+					<mo-popover slot='popover'>
+						<mo-scroller style='max-height: 45vh; min-width: 15rem; overflow-y: auto; overflow-x: hidden;'>
+							<mo-flex>
+								<mo-section heading=${t('Design')}>
+									<mo-flex gap='1rem'>
+										<mo-field-select label=${t('Font Size')} ${bind(this, 'dataGrid', { keyPath: 'cellFontSize' as any })}>
+											${Array.from({ length: 5 }).map((_, i) => {
+												const value = 0.8 + i * 0.1
+												return html`<mo-option value=${value}>${(value * 100).formatAsPercent()}</mo-option>`
+											})}
+										</mo-field-select>
+										<mo-field-select label=${t('Row Height')} ${bind(this, 'dataGrid', { keyPath: 'rowHeight' as any })}>
+											${Array.from({ length: 7 }).map((_, i) => {
+												const value = 30 + i * 5
+												return html`<mo-option value=${value}>${value.format()}px</mo-option>`
+											})}
+										</mo-field-select>
+									</mo-flex>
+								</mo-section>
+
+								<mo-section .heading=${html`
+									${t('Columns')}
+									<span style='color: var(--mo-color-gray)'>
+										${this.dataGrid.visibleColumns.length.format()}/${this.dataGrid.columns.length.format()}
+									</span>
+								`}>
+									${this.dataGrid.columns.map(this.getColumnTemplate)}
+								</mo-section>
+							</mo-flex>
+						</mo-scroller>
+					</mo-popover>
+				</mo-popover-container>
+			</mo-flex>
+		`
 	}
 
 	private getResizeObserver(column: Parameters<DataGridColumnsController<TData>['setColumnWidth']>[0]) {
@@ -226,6 +272,20 @@ export class DataGridHeader<TData> extends Component {
 	private toggleAllDetails() {
 		this.dataGrid.toggleRowDetails()
 		this.requestUpdate()
+	}
+
+	private readonly getColumnTemplate = (column: DataGridColumn<TData>) => {
+		const change = (e: CustomEvent<boolean>) => {
+			column.hidden = e.detail === false
+			this.dataGrid.setColumns(this.dataGrid.columns)
+		}
+		return html`
+			<mo-checkbox ${style({ height: '30px' })}
+				label=${column.heading}
+				?selected=${column.hidden === false}
+				@change=${change}
+			></mo-checkbox>
+		`
 	}
 }
 

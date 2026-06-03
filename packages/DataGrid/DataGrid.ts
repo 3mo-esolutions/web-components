@@ -63,7 +63,6 @@ export enum DataGridEditability {
  * @slot toolbar-action - A slot for action icon-buttons in the toolbar which are displayed on the end.
  * @slot filter - A vertical bar for elements which filter DataGrid's data. It is opened through an icon-button in the toolbar.
  * @slot sum - A horizontal bar in the DataGrid's footer for showing sums. Calculated sums are also placed here by default.
- * @slot settings - A vertical bar for elements which change DataGrid's settings. It is pre-filled with columns' settings and can be opened through an icon-button in the toolbar.
  * @slot fab - A wrapper at the bottom right edge, floating right above the footer, expecting Floating Action Button to be placed in.
  * @slot error-no-content - A slot for displaying an error message when no data is available.
  *
@@ -570,18 +569,10 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	private get sidePanelTemplate() {
 		return html`
-			<mo-data-grid-side-panel
-				.dataGrid=${this as any}
-				tab=${ifDefined(this.sidePanelTab)}
-			>
-				<slot slot='settings' name='settings'>${this.settingsDefaultTemplate}</slot>
+			<mo-data-grid-side-panel .dataGrid=${this as any} tab=${ifDefined(this.sidePanelTab)}>
 				<slot slot='filter' name='filter'>${this.filtersDefaultTemplate}</slot>
 			</mo-data-grid-side-panel>
 		`
-	}
-
-	protected get settingsDefaultTemplate() {
-		return html.nothing
 	}
 
 	protected get filtersDefaultTemplate() {
@@ -772,12 +763,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 					@click=${() => this.navigateToSidePanelTab(this.sidePanelTab === DataGridSidePanelTab.Filters ? undefined : DataGridSidePanelTab.Filters)}
 				></mo-icon-button>
 			`}
-
-			<mo-icon-button icon='settings'
-				${tooltip(t('Settings'))}
-				?data-selected=${this.sidePanelTab === DataGridSidePanelTab.Settings}
-				@click=${() => this.navigateToSidePanelTab(this.sidePanelTab === DataGridSidePanelTab.Settings ? undefined : DataGridSidePanelTab.Settings)}
-			></mo-icon-button>
 		`
 	}
 

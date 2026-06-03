@@ -13,7 +13,7 @@ const testData: Array<Person> = [
 class TestDataGrid extends DataGrid<Person> {
 	override data: Array<Person> = [...testData]
 
-	get headerSelectionCheckbox() { return this['header']?.renderRoot.querySelector('mo-checkbox') ?? undefined }
+	get headerSelectionCheckbox() { return this['header']?.renderRoot.querySelector('.selection mo-checkbox') ?? undefined }
 	get rowsSelectionCheckboxes() { return this.rows.map(row => row.renderRoot.querySelector('mo-checkbox') ?? undefined).filter(Boolean) }
 
 	isRowSelected(row: DataGridRow<Person>, skipCheckboxCheck = false) {
@@ -68,21 +68,21 @@ describe('DataGrid', () => {
 
 			const [firstRecord, secondRecord, thirdRecord] = fixture.component.dataRecords
 
-			expect(firstRecord.index).toBe(0)
-			expect(firstRecord.level).toBe(0)
-			expect(firstRecord.data).toBe(firstWithChildren)
-			expect(firstRecord.subDataRecords?.length).toBe(1)
-			expect(firstRecord.subDataRecords?.[0].index).toBe(1)
-			expect(firstRecord.subDataRecords?.[0].level).toBe(1)
-			expect(firstRecord.subDataRecords?.[0].data).toBe(third)
+			expect(firstRecord?.index).toBe(0)
+			expect(firstRecord?.level).toBe(0)
+			expect(firstRecord?.data).toBe(firstWithChildren)
+			expect(firstRecord?.subDataRecords?.length).toBe(1)
+			expect(firstRecord?.subDataRecords?.[0]?.index).toBe(1)
+			expect(firstRecord?.subDataRecords?.[0]?.level).toBe(1)
+			expect(firstRecord?.subDataRecords?.[0]?.data).toBe(third)
 
-			expect(secondRecord.index).toBe(1)
-			expect(secondRecord.level).toBe(1)
-			expect(secondRecord.data).toBe(third)
+			expect(secondRecord?.index).toBe(1)
+			expect(secondRecord?.level).toBe(1)
+			expect(secondRecord?.data).toBe(third)
 
-			expect(thirdRecord.index).toBe(2)
-			expect(thirdRecord.level).toBe(0)
-			expect(thirdRecord.data).toBe(second)
+			expect(thirdRecord?.index).toBe(2)
+			expect(thirdRecord?.level).toBe(0)
+			expect(thirdRecord?.data).toBe(second)
 		})
 	})
 
@@ -230,11 +230,13 @@ describe('DataGrid', () => {
 			fixture.component.select([row0.data])
 			await fixture.updateComplete
 
-			// Spy on getRowContextMenuTemplate to capture the data it receives
-			let receivedData: Array<Person> | undefined
+			// Capture every data set passed to getRowContextMenuTemplate. It is invoked for every
+			// row during rendering (not only the opened one), so we assert on the set of calls and
+			// on the resulting selection rather than on the last call.
+			const receivedDataSets = new Array<Array<Person>>()
 			const originalTemplate = fixture.component.getRowContextMenuTemplate!
 			fixture.component.getRowContextMenuTemplate = (data: Array<Person>) => {
-				receivedData = data
+				receivedDataSets.push(data)
 				return originalTemplate(data)
 			}
 			await fixture.updateComplete
@@ -242,9 +244,11 @@ describe('DataGrid', () => {
 			// Open context menu on unselected row 1
 			await row1.openContextMenu()
 
-			expect(receivedData).toBeDefined()
-			expect(receivedData!).toEqual([row1.data])
-			expect(receivedData!).not.toEqual([row0.data])
+			// Right-clicking the unselected row re-selects it, so the open menu reflects the
+			// right-clicked row's data — not the previously selected row 0.
+			expect(fixture.component.selectedData).toEqual([row1.data])
+			expect(fixture.component.selectedData).not.toEqual([row0.data])
+			expect(receivedDataSets).toContain([row1.data])
 
 			await row1.closeContextMenu()
 			fixture.component.getRowContextMenuTemplate = originalTemplate
@@ -324,7 +328,7 @@ describe('DataGrid', () => {
 				expect(fixture.component.rowsSelectionCheckboxes.length).toBe(0)
 			})
 
-			it('should not dispatch the "selectionChange" event when a row is clicked', () => shouldDispatchSelectionChange(fixture, [fixture.component.data[0]], false))
+			it('should not dispatch the "selectionChange" event when a row is clicked', () => shouldDispatchSelectionChange(fixture, [fixture.component.data[0]!], false))
 		})
 
 		describe('Single', () => {
@@ -344,7 +348,7 @@ describe('DataGrid', () => {
 			it('should not select the row when isDataSelectable returns false', () => shouldNotSelectTheRowWhenIsDataSelectableReturnsFalse(fixture))
 			it('should select the row when clicked and selectOnClick is true', () => shouldSelectTheRowWhenSelectOnClick(fixture))
 			it('should select the row when focused with the keyboard', () => expectCellFocusLeadsToRowSelectionWhenSelectOnClick(fixture))
-			it('should dispatch the "selectionChange" event when a row is clicked', () => shouldDispatchSelectionChange(fixture, [fixture.component.data[0]], true))
+			it('should dispatch the "selectionChange" event when a row is clicked', () => shouldDispatchSelectionChange(fixture, [fixture.component.data[0]!], true))
 		})
 
 		describe('Multiple', () => {
@@ -419,7 +423,7 @@ describe('DataGrid', () => {
 		`)
 
 		it('should not include sub-rows of different levels in the details', async () => {
-			const firstRow = fixture.component.rows[0]
+			const firstRow = fixture.component.rows[0]!
 			firstRow.renderRoot.querySelector('#contentContainer')?.dispatchEvent(new MouseEvent('click'))
 
 			await fixture.updateComplete
@@ -450,7 +454,7 @@ describe('DataGrid', () => {
 			}
 			cell?.renderRoot.querySelector('mo-field-text')?.change.dispatch('Not John!')
 
-			expect(fixture.component.data[0].name).toBe('Not John!')
+			expect(fixture.component.data[0]?.name).toBe('Not John!')
 		}
 
 		describe('Never', () => {

@@ -64,7 +64,7 @@ export class DataGridColumnsController<TData> extends Controller {
 	}
 
 	private get orderColumnWidth() {
-		return !this.host.reorderabilityController.visible ? undefined : window.getComputedStyle(this.host).getPropertyValue('--mo-data-grid-column-reorder-width')
+		return !this.host.reorderabilityController.enabled ? undefined : window.getComputedStyle(this.host).getPropertyValue('--mo-data-grid-column-reorder-width')
 	}
 
 	private get detailsColumnWidth() {

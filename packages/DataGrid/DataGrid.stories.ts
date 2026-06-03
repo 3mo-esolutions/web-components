@@ -286,15 +286,6 @@ export const Editability: StoryObj = {
 	`
 }
 
-export const WithFiltersWithoutToolbar: StoryObj = {
-	render: () => html`
-		<mo-data-grid .data=${hundredPeople} style='height: 500px'>
-			${columnsTemplate}
-			<mo-checkbox slot='filter' label='Something'></mo-checkbox>
-		</mo-data-grid>
-	`
-}
-
 export const Virtualization: StoryObj = {
 	render: () => html`
 		<mo-flex gap='10px'>
