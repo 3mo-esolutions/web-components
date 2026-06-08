@@ -45,7 +45,7 @@ export const WithWrappedLabel: StoryObj = {
 		label: 'This is a very long label that should wrap to the next line if it is too long to fit in one line',
 	},
 	render: ({ label, disabled, selected }) => html`
-		<mo-flex style='width: 400px; border: 1px dashed var(--mo-color-gray-transparent); padding: 1rem;'>
+		<mo-flex gap='1rem' style='width: 400px; border: 1px dashed var(--mo-color-gray-transparent); padding: 1rem;'>
 			<mo-checkbox label=${label} ?disabled=${disabled} .selected=${selected}></mo-checkbox>
 			<mo-checkbox label=${label} ?disabled=${disabled} .selected=${selected}></mo-checkbox>
 		</mo-flex>

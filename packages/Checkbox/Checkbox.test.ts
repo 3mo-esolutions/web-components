@@ -30,8 +30,8 @@ describe('Checkbox', () => {
 	describe('styles', () => {
 		const fixture = new CheckboxTestFixture(html`<mo-checkbox label="Label"></mo-checkbox>`)
 
-		it('should have a height of 32px when one-line', () => {
-			expect(getComputedStyle(fixture.component).height).toBe('32px')
+		it('should have a height of 18px when one-line', () => {
+			expect(getComputedStyle(fixture.component).height).toBe('18px')
 		})
 	})
 

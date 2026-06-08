@@ -37,6 +37,7 @@ export class Checkbox extends Component {
 			:host {
 				display: inline-flex;
 				align-items: center;
+				font-size: 0.875rem;
 			}
 
 			:host([disabled]) {
@@ -45,7 +46,6 @@ export class Checkbox extends Component {
 
 			md-checkbox {
 				flex-shrink: 0;
-				margin-block-start: max(0px, calc(calc(1lh - 18px) / 2));
 				--md-checkbox-selected-disabled-container-opacity: 1;
 				--md-checkbox-container-shape: var(--mo-border-radius);
 
@@ -65,24 +65,26 @@ export class Checkbox extends Component {
 			}
 
 			label {
-				padding-block: 7px;
 				display: flex;
 				gap: 0.5rem;
-				font-size: 0.875rem;
 				-webkit-font-smoothing: antialiased;
 				user-select: none;
-			}
 
-			:host([disabled]) label {
-				color: var(--mo-checkbox-disabled-color, var(--mo-color-gray));
-				opacity: 0.5;
+				&[data-disabled] {
+					color: var(--mo-checkbox-disabled-color, var(--mo-color-gray));
+					opacity: 0.5;
+				}
+
+				md-checkbox {
+					margin-block-start: max(0px, calc(calc(1lh - 18px) / 2));
+				}
 			}
 		`
 	}
 
 	protected override get template() {
 		return !this.label ? this.checkboxTemplate : html`
-			<label>
+			<label ?data-disabled=${this.disabled}>
 				${this.checkboxTemplate}
 				${this.label}
 			</label>
