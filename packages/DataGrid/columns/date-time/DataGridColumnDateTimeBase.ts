@@ -23,6 +23,7 @@ export abstract class DataGridColumnDateTimeBase<TData, TDate extends { format(.
 		return html`
 			${staticHtml`
 				<${this.fieldTag} dense autofocus selectOnFocus style='width: fit-content; min-width: 100%;'
+					label=' '
 					.precision=${this.precision}
 					?pickerHidden=${this.pickerHidden}
 					.value=${value}
