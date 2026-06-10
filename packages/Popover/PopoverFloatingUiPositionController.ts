@@ -98,10 +98,10 @@ export class PopoverFloatingUiPositionController extends Controller {
 			strategy: 'fixed',
 			placement: this.floatingUiPlacement,
 			middleware: [
-				flip(),
-				!this.host.arrowElement ? undefined : arrow({ element: this.host.arrowElement, padding: 4 }),
-				!this.host.offset ? undefined : offset(this.host.offset),
 				...this.customMiddlewares,
+				flip(),
+				!this.host.offset ? undefined : offset(this.host.offset),
+				!this.host.arrowElement ? undefined : arrow({ element: this.host.arrowElement, padding: 4 }),
 			].filter(Boolean)
 		})
 
