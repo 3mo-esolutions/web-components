@@ -82,7 +82,7 @@ export class DataGridColumnsController<TData> extends Controller {
 	}
 
 	private get actionsColumnWidth() {
-		return this.host.sidePanelHidden && !this.host.hasContextMenu ? undefined : window.getComputedStyle(this.host).getPropertyValue('--mo-data-grid-column-actions-width')
+		return window.getComputedStyle(this.host).getPropertyValue('--mo-data-grid-column-actions-width')
 	}
 
 	private get columnsElements() {
