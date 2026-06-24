@@ -2,27 +2,32 @@ import { Component, component, event, html, ifDefined, property, query, state } 
 import { NotificationComponent } from '@a11d/lit-application'
 import '@3mo/localization'
 
+/** The selected file when "multiple" is not set, or an array of files when it is. */
+export type FileUploadSelection<TMultiple extends boolean = false> = TMultiple extends true ? Array<File> : File | undefined
+
 /**
  * @element mo-file-upload - Facilitates the upload of files.
  *
- * @attr upload - The mandatory upload function that is called when the user selects a file.
+ * @attr upload - The mandatory upload function that is called when the user selects one or more files.
  * @attr uploadOnSelection
+ * @attr multiple - Whether multiple files can be selected at once.
  * @attr accept - The file types that are accepted for upload, specified as a string containing a comma-separated list of MIME types or file extensions.
  *
  * @i18n "Upload has failed. Try again."
  *
  * @fires change - Dispatched when the uploading process results in success or failure. The event detail is the result of the upload, either the result of the upload function or undefined if the upload failed.
  * @fires uploadingChange - Dispatched when the uploading process starts or ends. The event detail is true if the uploading process has started, false otherwise.
- * @fires fileChange - Dispatched when the selected file changes. The event detail is the selected file or undefined if no file is selected.
+ * @fires selectionChange - Dispatched when the selection changes. The event detail is the selected file (or array of files when "multiple" is set) or undefined if no file is selected.
  */
 @component('mo-file-upload')
-export class FileUpload<TResult> extends Component {
+export class FileUpload<TResult, TMultiple extends boolean = false> extends Component {
 	@event() readonly change!: EventDispatcher<TResult | undefined>
 	@event() readonly uploadingChange!: EventDispatcher<boolean>
-	@event() readonly fileChange!: EventDispatcher<File | undefined>
+	@event() readonly selectionChange!: EventDispatcher<FileUploadSelection<TMultiple>>
 
-	@property({ type: Object }) upload!: (file: File) => Promise<TResult>
+	@property({ type: Object }) upload!: (selection: FileUploadSelection<TMultiple>) => Promise<TResult>
 	@property({ type: Boolean }) uploadOnSelection = false
+	@property({ type: Boolean }) multiple?: TMultiple | boolean
 	@property({ type: String }) accept?: string
 
 	@state() protected isUploading = false
@@ -33,7 +38,10 @@ export class FileUpload<TResult> extends Component {
 		this.inputElement.click()
 	}
 
-	get file() { return this.inputElement.files?.[0] }
+	get selection() {
+		const files = [...this.inputElement.files ?? []]
+		return (this.multiple ? files : files[0]) as FileUploadSelection<TMultiple>
+	}
 
 	async executeUpload(action: () => Promise<TResult>) {
 		try {
@@ -51,12 +59,11 @@ export class FileUpload<TResult> extends Component {
 		}
 	}
 
-	uploadFile(file?: File) {
-		file ??= this.file
-		if (!file) {
+	uploadSelection(override?: FileUploadSelection<TMultiple>) {
+		if (Array.isArray(override) ? !override.length : !override) {
 			throw new Error('No file selected')
 		}
-		return this.executeUpload(() => this.upload(file as File))
+		return this.executeUpload(() => this.upload(override ?? this.selection))
 	}
 
 	protected setIsUploading(isUploading: boolean) {
@@ -66,19 +73,22 @@ export class FileUpload<TResult> extends Component {
 
 	protected resetFiles() {
 		this.inputElement.files = null
-		this.fileChange.dispatch(undefined)
+		this.selectionChange.dispatch(this.selection)
 	}
 
 	protected override get template() {
 		return html`
-			<input type='file' style='display: none' accept=${ifDefined(this.accept)} @change=${this.handleChange}>
+			<input type='file' style='display: none'
+				?multiple=${this.multiple}
+				accept=${ifDefined(this.accept)}
+				@change=${this.handleChange}
+			>
 		`
 	}
 
 	private handleChange = () => {
-		const file = this.file
-		this.fileChange.dispatch(file)
-		return !this.uploadOnSelection ? undefined : this.uploadFile(file)
+		this.selectionChange.dispatch(this.selection)
+		return !this.uploadOnSelection ? undefined : this.uploadSelection()
 	}
 }
 
