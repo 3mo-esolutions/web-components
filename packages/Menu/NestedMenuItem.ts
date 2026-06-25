@@ -77,13 +77,18 @@ export class NestedMenuItem extends MenuItem {
 		`
 	}
 
+	protected override get endSlotDefaultContent() {
+		return !this.hasSubMenu ? html.nothing : html`
+			<mo-icon icon='chevron_right'></mo-icon>
+		`
+	}
+
 	protected get hasSubMenu() {
 		return this.slotController.hasAssignedContent('submenu')
 	}
 
 	protected get subMenuTemplate() {
 		return !this.hasSubMenu ? html.nothing : html`
-			<mo-icon icon='chevron_right'></mo-icon>
 			<mo-menu .anchor=${this} placement='inline-end' alignment='start'
 				?open=${bind(this, 'open')}
 				@listKeyDown=${(e: CustomEvent<KeyboardEvent>) => { e.stopImmediatePropagation(); !['Left', 'ArrowLeft'].includes(e.detail.key) ? void 0 : this.setOpen(false) }}

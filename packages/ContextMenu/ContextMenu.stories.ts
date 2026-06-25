@@ -9,22 +9,22 @@ export default {
 	package: p,
 } as Meta
 
-const keyboardShortcut = (shortcut: string) => html`<span style='font-size: 13px; color: darkgray'>${shortcut}</span>`
+const keyboardShortcut = (shortcut: string) => html`<span slot='end' style='font-size: 13px; color: darkgray'>${shortcut}</span>`
 
 const mainContextMenu = html`
 	<mo-context-menu-item>
-		<mo-icon style='opacity: 0.66' icon='content_cut'></mo-icon>
-		<span style='flex: 1'>Cut</span>
+		<mo-icon slot='start' style='opacity: 0.66' icon='content_cut'></mo-icon>
+		Cut
 		${keyboardShortcut('Ctrl + X')}
 	</mo-context-menu-item>
 	<mo-context-menu-item>
-		<mo-icon style='opacity: 0.66' icon='content_copy'></mo-icon>
-		<span style='flex: 1'>Copy</span>
+		<mo-icon slot='start' style='opacity: 0.66' icon='content_copy'></mo-icon>
+		Copy
 		${keyboardShortcut('Ctrl + C')}
 	</mo-context-menu-item>
 	<mo-context-menu-item>
-		<mo-icon style='opacity: 0.66' icon='content_paste'></mo-icon>
-		<span style='flex: 1'>Paste</span>
+		<mo-icon slot='start' style='opacity: 0.66' icon='content_paste'></mo-icon>
+		Paste
 		${keyboardShortcut('Ctrl + V')}
 	</mo-context-menu-item>
 	<div role='separator' style='width: 100%; height: 1px; background: darkgray; opacity: 0.3'></div>
@@ -44,8 +44,8 @@ const mainContextMenu = html`
 
 const specialContextMenu = html`
 	<mo-context-menu-item>
-		<mo-icon style='opacity: 0.66' icon='auto_fix_normal'></mo-icon>
-		<span style='flex: 1'>Another Item</span>
+		<mo-icon slot='start' style='opacity: 0.66' icon='auto_fix_normal'></mo-icon>
+		Another Item
 	</mo-context-menu-item>
 `
 
