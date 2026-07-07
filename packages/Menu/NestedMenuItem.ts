@@ -46,7 +46,6 @@ export class NestedMenuItem extends MenuItem {
 
 			:host {
 				position: relative;
-				anchor-name: --mo-nested-menu-item;
 			}
 
 			mo-icon[icon=chevron_right] {
@@ -55,7 +54,6 @@ export class NestedMenuItem extends MenuItem {
 			}
 
 			mo-menu {
-				position-anchor: --mo-nested-menu-item;
 				inset-inline-end: 0px;
 				height: 100%;
 			}

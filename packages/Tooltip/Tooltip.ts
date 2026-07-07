@@ -118,7 +118,6 @@ export class Tooltip extends Component {
 				.anchor=${this.anchor}
 				placement=${ifDefined(this.placement)}
 				alignment='center'
-				.cssRoot=${this}
 			>
 				<slot @slotchange=${this.handleSlotChange}></slot>
 			</mo-popover>

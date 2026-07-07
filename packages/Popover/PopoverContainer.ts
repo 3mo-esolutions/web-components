@@ -40,10 +40,6 @@ export class PopoverContainer extends Component {
 				display: inline-flex;
 				position: relative;
 			}
-
-			slot:not([name])::slotted(*) {
-				anchor-name: --mo-popover-container;
-			}
 		`
 	}
 

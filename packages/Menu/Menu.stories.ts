@@ -94,11 +94,6 @@ class ButtonWithMenuStory extends Component {
 				flex-flow: column;
 				position: relative;
 				align-items: flex-end;
-				anchor-name: --mo-button-with-menu;
-			}
-
-			mo-menu {
-				position-anchor: --mo-button-with-menu;
 			}
 		`
 	}

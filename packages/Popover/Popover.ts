@@ -46,15 +46,30 @@ export class Popover extends Component {
 	@property({ reflect: true }) placement = PopoverPlacement.BlockEnd
 	@property({ reflect: true }) alignment = PopoverAlignment.Start
 	@property({ type: Number }) offset?: number
-	@property({ type: Boolean, reflect: true, updated(this: Popover) { if (this.isConnected) { this.togglePopover(this.open) } } }) open = false
+	@property({ type: Boolean, reflect: true, updated(this: Popover) { this.openUpdated() } }) open = false
 	@property({ type: Object }) shouldOpen?: (e: Event) => boolean
-	@property({ type: Object }) cssRoot?: HTMLElement
 
 	readonly positionController = PopoverCssAnchorPositionController.supported
 		? new PopoverCssAnchorPositionController(this)
 		: new PopoverFloatingUiPositionController(this)
 
 	@query('[part=arrow]') readonly arrowElement?: HTMLElement
+
+	protected openUpdated() {
+		if (this.isConnected && this.open !== this.matches(':popover-open')) {
+			if (this.open) {
+				// The source establishes the implicit anchor used for native anchor positioning
+				// alongside a sensible keyboard focus navigation order. Engines without support
+				// for the options parameter ignore it altogether.
+				const source = this.positionController instanceof PopoverCssAnchorPositionController
+					? this.positionController.anchorElement
+					: this.anchor
+				this.showPopover({ source })
+			} else {
+				this.hidePopover()
+			}
+		}
+	}
 
 	@eventListener('toggle')
 	protected handleToggle(e: ToggleEvent) {
@@ -170,5 +185,9 @@ export class Popover extends Component {
 declare global {
 	interface HTMLElementTagNameMap {
 		'mo-popover': Popover
+	}
+
+	interface HTMLElement {
+		showPopover(options?: { source?: HTMLElement }): void
 	}
 }

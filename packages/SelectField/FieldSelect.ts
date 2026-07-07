@@ -118,7 +118,6 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 				display: flex;
 				flex-flow: column;
 				--_grid-column-full-span-in-case: 1 / -1;
-				anchor-name: --mo-field-select;
 			}
 
 			input {
@@ -135,10 +134,6 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 
 			mo-field[active] mo-icon[part=dropDownIcon] {
 				color: var(--mo-color-accent);
-			}
-
-			mo-menu {
-				position-anchor: --mo-field-select;
 			}
 
 			mo-menu::part(popover) {

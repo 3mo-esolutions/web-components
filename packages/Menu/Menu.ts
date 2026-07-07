@@ -159,7 +159,6 @@ export class Menu extends Component {
 				@openChange=${(e: CustomEvent<boolean>) => this.setOpen(e.detail)}
 				.coordinates=${this.coordinates}
 				.shouldOpen=${this.shouldOpen}
-				.cssRoot=${this}
 			>
 				<mo-selectable-list part='list'
 					selectability=${ifDefined(this.selectability)}

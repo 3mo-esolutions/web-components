@@ -23,7 +23,6 @@ export class SplitButton extends Component {
 		return css`
 			:host {
 				display: inline-flex;
-				anchor-name: --mo-split-button;
 			}
 
 			:host([disabled]) {
@@ -32,10 +31,6 @@ export class SplitButton extends Component {
 
 			mo-button {
 				--mo-button-horizontal-padding: 6px;
-			}
-
-			mo-menu {
-				position-anchor: --mo-split-button;
 			}
 		`
 	}

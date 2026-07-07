@@ -6,59 +6,73 @@ import { PopoverVirtualAnchor } from './PopoverVirtualAnchor.js'
 import { PopoverHost } from './PopoverHost.js'
 
 export class PopoverCssAnchorPositionController extends Controller {
+	/**
+	 * Tethering is based on the implicit anchor established via `showPopover({ source })`
+	 * rather than `anchor-name` matching: since Chromium 144, `anchor-name` references are
+	 * tree-scoped per the CSS Scoping specification and no longer match across shadow boundaries,
+	 * while the implicit anchor is a direct element association that is not subject to name scoping
+	 * and therefore tethers popovers to anchors living in any tree.
+	 *
+	 * The popover defaults to `position-anchor: auto` which resolves to the implicit anchor, while
+	 * explicit author declarations (e.g. `position-anchor: --some-anchor`) naturally take precedence
+	 * through the cascade.
+	 *
+	 * Implicit anchors via `source` are supported by Chromium 133+, Firefox 147+ and Safari 26+.
+	 * Support is probed at runtime rather than feature-detected to also rule out partial
+	 * implementations, falling back to the Floating UI controller otherwise: the probe tethers
+	 * a popover to an anchor across a shadow boundary and asserts the resulting layout, thereby
+	 * exercising the `source` option, `position-anchor` and `position-area` all at once.
+	 *
+	 * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/showPopover#source
+	 * @see https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/position-anchor
+	 */
 	static get supported() {
-		return CSS.supports('anchor-name: --name')
-			&& Number(navigator.userAgent.match(/Chrom(?:e|ium)\/(?<version>\d+)/)?.groups?.version ?? Infinity) < 144
+		return PopoverCssAnchorPositionController.implicitAnchorSupported ??= PopoverCssAnchorPositionController.probeImplicitAnchor()
 	}
 
-	private static getCssRoot(element: HTMLElement): HTMLElement {
-		const key = 'cssRoot'
-		let root: HTMLElement | undefined = (element as any)
-		while (root && key in root) {
-			const newRoot = (root as any)[key]
-			if (newRoot) {
-				if (root) {
-					root.style.positionAnchor = 'inherit'
-				}
-			}
-			root = newRoot
+	private static implicitAnchorSupported?: boolean
+
+	private static probeImplicitAnchor() {
+		const anchor = document.createElement('div')
+		anchor.style.cssText = 'position: fixed; left: 0px; top: 0px; width: 10px; height: 10px; visibility: hidden;'
+		const host = document.createElement('div')
+		const popover = document.createElement('div')
+		popover.setAttribute('popover', 'manual')
+		popover.style.cssText = 'position: fixed; width: 10px; height: 10px; margin: 0px; padding: 0px; border: none; visibility: hidden; position-anchor: auto; position-area: bottom right;'
+		host.attachShadow({ mode: 'open' }).appendChild(popover)
+		const root = document.body ?? document.documentElement
+		root.append(anchor, host)
+		try {
+			popover.showPopover({ source: anchor })
+			const { left, top } = popover.getBoundingClientRect()
+			return Math.abs(left - 10) < 1 && Math.abs(top - 10) < 1
+		} catch {
+			return false
+		} finally {
+			anchor.remove()
+			host.remove()
 		}
-		return root ?? element
 	}
 
 	static get styles() {
 		const getPositionArea = (placement: PopoverPlacement, alignment: PopoverAlignment) => {
-			const p = unsafeCSS(placement)
-			const a = unsafeCSS(alignment)
 			const flippedAxis = placement.includes('block') ? 'inline' : 'block'
-			const tethering = unsafeCSS(
-				alignment === PopoverAlignment.Center
-					? 'span-all'
-					: alignment === PopoverAlignment.Start
-						? `span-${flippedAxis}-end`
-						: `span-${flippedAxis}-start`
-			)
-			return css`
-				:host([placement=${p}][alignment=${a}]) {
-					position-area: ${p} ${tethering};
+			const tethering = alignment === PopoverAlignment.Center
+				? 'span-all'
+				: alignment === PopoverAlignment.Start
+					? `span-${flippedAxis}-end`
+					: `span-${flippedAxis}-start`
+			return `
+				:host([placement=${placement}][alignment=${alignment}]) {
+					position-area: ${placement} ${tethering};
 				}
 			`
 		}
 		return !PopoverCssAnchorPositionController.supported ? css`` : css`
-			${getPositionArea(PopoverPlacement.BlockStart, PopoverAlignment.Start)}
-			${getPositionArea(PopoverPlacement.BlockStart, PopoverAlignment.Center)}
-			${getPositionArea(PopoverPlacement.BlockStart, PopoverAlignment.End)}
-			${getPositionArea(PopoverPlacement.InlineStart, PopoverAlignment.Start)}
-			${getPositionArea(PopoverPlacement.InlineStart, PopoverAlignment.Center)}
-			${getPositionArea(PopoverPlacement.InlineStart, PopoverAlignment.End)}
-			${getPositionArea(PopoverPlacement.InlineEnd, PopoverAlignment.Start)}
-			${getPositionArea(PopoverPlacement.InlineEnd, PopoverAlignment.Center)}
-			${getPositionArea(PopoverPlacement.InlineEnd, PopoverAlignment.End)}
-			${getPositionArea(PopoverPlacement.BlockEnd, PopoverAlignment.Start)}
-			${getPositionArea(PopoverPlacement.BlockEnd, PopoverAlignment.Center)}
-			${getPositionArea(PopoverPlacement.BlockEnd, PopoverAlignment.End)}
+			${unsafeCSS(Object.values(PopoverPlacement).flatMap(placement => Object.values(PopoverAlignment).map(alignment => getPositionArea(placement, alignment))).join(''))}
 
 			:host {
+				position-anchor: auto;
 				position-visibility: always;
 			}
 
@@ -76,46 +90,30 @@ export class PopoverCssAnchorPositionController extends Controller {
 		super(host)
 	}
 
+	/** The element the popover shall tether to, serving as the `source` of the implicit anchor. */
+	get anchorElement() {
+		return !this.host.coordinates ? this.host.anchor : this.requireVirtualAnchor()
+	}
+
 	override hostUpdated() {
-		if (this.host.anchor) {
-			this.host.coordinates
-				? this.tetherToCoordinates()
-				: this.tetherTo(this.host.anchor)
+		if (this.host.coordinates) {
+			// Keep the virtual anchor's coordinates in sync while the popover stays open
+			this.requireVirtualAnchor()
 		}
 	}
 
 	override hostDisconnected() {
-		if (this.virtualAnchor) {
-			this.virtualAnchor.remove()
-			this.virtualAnchor = undefined
-		}
+		this.virtualAnchor?.remove()
+		this.virtualAnchor = undefined
 	}
 
 	private virtualAnchor?: PopoverVirtualAnchor
-	private tetherToCoordinates() {
-		const popover = this.host
-		const coordinates = popover.coordinates
+	private requireVirtualAnchor() {
 		this.virtualAnchor ??= new PopoverVirtualAnchor()
-		this.virtualAnchor.coordinates = coordinates
-		PopoverHost.get(popover.anchor!).appendChild(this.virtualAnchor)
-		this.tetherTo(this.virtualAnchor)
-	}
-
-	private tetherTo(anchor = this.host.anchor) {
-		const popover = this.host
-		const cssRoot = PopoverCssAnchorPositionController.getCssRoot(popover)
-		const positionAnchor = getComputedStyle(cssRoot).positionAnchor
-		if (anchor && !(positionAnchor === 'auto' ? '' : positionAnchor)) {
-			cssRoot.style.positionAnchor
-				= anchor.style.anchorName
-				||= `--${anchor.id || `${anchor.tagName.toLowerCase()}--${Math.random().toString(36).substring(2, 15)}`}`
+		this.virtualAnchor.coordinates = this.host.coordinates
+		if (this.virtualAnchor.isConnected === false) {
+			PopoverHost.get(this.host.anchor ?? this.host).appendChild(this.virtualAnchor)
 		}
-	}
-}
-
-declare global {
-	interface CSSStyleDeclaration {
-		anchorName: string
-		positionAnchor: string
+		return this.virtualAnchor
 	}
 }

@@ -31,7 +31,6 @@ export class DataGridColumnHeader extends Component {
 				position: relative;
 				cursor: pointer;
 				transition: background 0.1s;
-				anchor-name: --mo-data-grid-column-header;
 			}
 
 			#reorderable-area {
@@ -170,8 +169,6 @@ export class DataGridColumnHeader extends Component {
 			}
 
 			mo-menu {
-				position-anchor: --mo-data-grid-column-header;
-
 				&::part(popover) {
 					margin-inline-start: calc(var(--mo-data-grid-cell-padding) * -1);
 				}
