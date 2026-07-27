@@ -168,6 +168,7 @@ describe('DataGridColumns', () => {
 			columns.move('balance', 0)
 
 			expect(columns.map(c => c.dataSelector)).toEqual(['balance', 'id', 'name'])
+			// Moving a column expresses intent about the order of all of them
 			expect(columns.modifications.map(m => m.dataSelector)).toEqual(['balance', 'id', 'name'])
 		})
 
@@ -188,6 +189,32 @@ describe('DataGridColumns', () => {
 
 			expect(columns.map(c => c.dataSelector)).toEqual(['id', 'name'])
 			expect(columns.modifications.length).toBe(0)
+		})
+	})
+
+	describe('composed', () => {
+		it('should compose the given modifications with the current definitions without applying anything', () => {
+			const columns = columnsWith('id', 'name')
+
+			const composed = columns.composed([{ dataSelector: 'name', width: '200px', hidden: true }])
+
+			expect(composed.map(c => c.dataSelector)).toEqual(['name', 'id'])
+			expect(composed[0]?.width).toBe('200px')
+			expect(composed[0]?.hidden).toBeTrue()
+			expect(columns.modifications.length).toBe(0)
+			expect(columns.get('name')?.hidden).toBeFalse()
+		})
+
+		it('should compose differently shaped modifications describing the same columns to the same result', () => {
+			const columns = columnsWith('id', 'name')
+			// Modifying a column back and forth leaves modifications behind which change nothing
+			columns.modify('id', { hidden: true })
+			columns.modify('id', { hidden: false })
+			expect(columns.modifications.length).toBe(2)
+
+			const projected = (modifications: Parameters<typeof columns.composed>[0]) =>
+				columns.composed(modifications).map(({ dataSelector, width, hidden, sticky }) => ({ dataSelector, width, hidden, sticky }))
+			expect(projected([...columns.modifications])).toEqual(projected([]))
 		})
 	})
 

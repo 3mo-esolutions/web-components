@@ -82,22 +82,42 @@ export class DataGridColumns<TData> extends ArrayLikeView<DataGridColumn<TData>>
 		this.init?.updated?.()
 	}
 
+	/**
+	 * The columns which the given modifications would compose to with the current definitions,
+	 * without applying anything. This is also how differently shaped modifications are compared,
+	 * as the very same columns can be described in more than one way — e.g. a fully specified
+	 * modification of every column composes to what a handful of partial ones do, and modifying
+	 * a column back and forth leaves modifications behind which change nothing.
+	 */
+	composed(modifications: ReadonlyArray<DataGridColumnModification<TData>>) {
+		return this.composedWith(modifications).map(({ modification, definition }) => !modification ? definition : definition.with({
+			width: modification.width ?? definition.width,
+			hidden: modification.hidden ?? definition.hidden,
+			sticky: modification.sticky === undefined ? definition.sticky : modification.sticky ?? undefined,
+		}))
+	}
+
 	private compose() {
-		const columns = [
-			...this.modifications
-				.map(modification => {
-					const definition = this.definitions.get(modification.dataSelector)
-					return definition?.with({
-						width: modification.width ?? definition.width,
-						hidden: modification.hidden ?? definition.hidden,
-						sticky: modification.sticky === undefined ? definition.sticky : modification.sticky ?? undefined,
-					})
-				})
-				.filter(column => column !== undefined),
-			...this.definitions.filter(definition => !this.modifications.get(definition.dataSelector)),
-		]
+		const columns = this.composed([...this.modifications])
 		columns.forEach(column => this.init?.prepare?.(column))
 		this.setItems(columns)
+	}
+
+	/**
+	 * Pairs the given modifications with the definitions they apply to, in the order they compose to:
+	 * the modifications having a definition first, followed by the definitions no modification
+	 * mentions. Modifications without a definition are left out, as they have nothing to compose to.
+	 */
+	private composedWith(modifications: ReadonlyArray<DataGridColumnModification<TData>>) {
+		return [
+			...modifications.flatMap(modification => {
+				const definition = this.definitions.get(modification.dataSelector)
+				return !definition ? [] : [{ modification, definition }]
+			}),
+			...this.definitions
+				.filter(definition => !modifications.some(m => m.dataSelector === definition.dataSelector))
+				.map(definition => ({ modification: undefined, definition })),
+		]
 	}
 
 	/**
@@ -111,4 +131,5 @@ export class DataGridColumns<TData> extends ArrayLikeView<DataGridColumn<TData>>
 			...this.modifications.filter(modification => !this.get(modification.dataSelector)),
 		]
 	}
+
 }

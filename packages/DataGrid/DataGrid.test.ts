@@ -326,11 +326,12 @@ describe('DataGrid', () => {
 				expect(fixture.component.columnsController.columns.modifications.find(e => e.dataSelector === 'id')?.hidden).toBe(true)
 			})
 
-			it('should materialize order intent when moving a column', async () => {
+			it('should record the placement of a moved column', async () => {
 				fixture.component.columnsController.columns.move('name', 0)
 				await fixture.updateComplete
 
 				expect(fixture.component.columns.map(c => c.dataSelector)).toEqual(['name', 'id'])
+				// Moving a column expresses intent about the order of all of them
 				expect(fixture.component.columnsController.columns.modifications.map(e => e.dataSelector)).toEqual(['name', 'id'])
 			})
 		})

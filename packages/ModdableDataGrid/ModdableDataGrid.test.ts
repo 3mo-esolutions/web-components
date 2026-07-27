@@ -432,6 +432,50 @@ describe('ModdableDataGrid', () => {
 		})
 	})
 
+	describe('Unsaved changes', () => {
+		const fixture = new ModdableDataGridTestFixture({ modes: ModdableDataGridTestFixture.modes, selectedModeId: '2' })
+
+		beforeEach(() => new Promise(r => setTimeout(r)))
+
+		// A mode which mirrors the current view exactly, so that the baseline is genuinely clean
+		const selectCleanMode = async () => {
+			const cleanMode = fixture.component.currentMode.with({ id: 'clean', name: 'Clean' })
+			fixture.component.modesAdapter.modes = [cleanMode]
+			await fixture.component.modesController.set(cleanMode)
+			await fixture.updateComplete
+			expect(fixture.component.hasUnsavedChanges).toBeFalse()
+		}
+
+		it('should report no unsaved changes after a column is moved and moved back', async () => {
+			await selectCleanMode()
+			const [first] = fixture.component.columns
+
+			fixture.component.columnsController.columns.move(first!.dataSelector, 2)
+			await fixture.updateComplete
+			expect(fixture.component.hasUnsavedChanges).toBeTrue()
+
+			fixture.component.columnsController.columns.move(first!.dataSelector, 0)
+			await fixture.updateComplete
+
+			expect(fixture.component.hasUnsavedChanges).toBeFalse()
+		})
+
+		it('should report no unsaved changes after a column is hidden and shown again', async () => {
+			await selectCleanMode()
+			const [first] = fixture.component.columns
+			const wasHidden = first!.hidden
+
+			first!.modify({ hidden: !wasHidden })
+			await fixture.updateComplete
+			expect(fixture.component.hasUnsavedChanges).toBeTrue()
+
+			fixture.component.columnsController.columns.modify(first!.dataSelector, { hidden: wasHidden })
+			await fixture.updateComplete
+
+			expect(fixture.component.hasUnsavedChanges).toBeFalse()
+		})
+	})
+
 	// Modes persisted before columns were split into definitions and modifications stored a full
 	// snapshot of every column instead of only the user's intent. Such a snapshot is a fully
 	// specified set of modifications, so it keeps working without any migration of stored data.
