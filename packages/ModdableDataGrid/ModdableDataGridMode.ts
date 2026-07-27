@@ -26,6 +26,30 @@ export class ModdableDataGridModeColumn<T> {
 		})
 	}
 
+	/**
+	 * Arranges the given columns by the given arrangement, treating the arrangement as a partial
+	 * spec over whatever columns are available: columns the arrangement knows adopt its order and
+	 * presentation (width, hidden, sticky), columns it doesn't know — e.g. those the application
+	 * rendered only after the arrangement was captured — are appended as-is, and arrangement
+	 * entries without an available column are omitted.
+	 */
+	static arrange<T, TColumn extends Pick<ModdableDataGridModeColumn<T>, 'dataSelector' | 'width' | 'hidden' | 'sticky'>>(
+		arrangement: Array<ModdableDataGridModeColumn<T>> | undefined,
+		columns: Array<TColumn>,
+	): Array<TColumn> {
+		if (!arrangement) {
+			return columns
+		}
+		const arranged = arrangement
+			.map(arrangementColumn => {
+				const column = columns.find(c => c.dataSelector === arrangementColumn.dataSelector)
+				return column === undefined ? undefined : arrangementColumn.apply(column)
+			})
+			.filter(column => column !== undefined)
+		const appended = columns.filter(column => arrangement.every(arrangementColumn => arrangementColumn.dataSelector !== column.dataSelector))
+		return [...arranged, ...appended]
+	}
+
 	dataSelector!: KeyPath.Of<T>
 	width?: CSS.DataType.TrackBreadth<(string & {}) | 0>
 	hidden?: boolean
@@ -42,7 +66,7 @@ export class ModdableDataGridModeColumn<T> {
 			&& other.sticky === this.sticky
 	}
 
-	apply(column: DataGridColumn<T>) {
+	apply<TColumn extends Pick<ModdableDataGridModeColumn<T>, 'width' | 'hidden' | 'sticky'>>(column: TColumn): TColumn {
 		column.width = this.width ?? column.width
 		column.hidden = this.hidden ?? column.hidden
 		column.sticky = this.sticky ?? column.sticky
@@ -167,11 +191,7 @@ export class ModdableDataGridMode<TData, TDataFetcherParameters extends Fetchabl
 
 	apply(dataGrid: ModdableDataGrid<TData, TDataFetcherParameters, any>) {
 		const clone = this.clone()
-		const orderedColumns = clone.columns?.map(c1 => {
-			const extractedCol = dataGrid.extractedColumns.find(c2 => c2.dataSelector === c1.dataSelector)
-			return extractedCol ? c1.apply(extractedCol) : undefined
-		}).filter(c => c !== undefined) ?? dataGrid.extractedColumns
-		dataGrid.setColumns(orderedColumns)
+		dataGrid.setColumns(ModdableDataGridModeColumn.arrange(clone.columns, dataGrid.extractedColumns))
 		dataGrid.sort(clone.sorting ?? [])
 		dataGrid.setPagination(clone.pagination)
 		dataGrid.setParameters(clone.parameters ?? {} as TDataFetcherParameters)

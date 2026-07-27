@@ -194,5 +194,27 @@ describe('ModdableDataGridMode', () => {
 
 			expect(dataGridMock.setColumns).toHaveBeenCalledWith([col1, col2])
 		})
+
+		it('should append extracted columns not present in the mode snapshot after the snapshot columns', () => {
+			const col1 = { dataSelector: 'col1', width: '100px', hidden: false, sticky: undefined }
+			const col2 = { dataSelector: 'col2', width: '200px', hidden: false, sticky: undefined }
+			const lateColumn = { dataSelector: 'lateColumn', width: undefined, hidden: false, sticky: undefined }
+			const dataGridMock = createDataGridMock([col1, col2, lateColumn])
+			const mode = new ModdableDataGridMode({
+				name: 'Modified',
+				columns: [
+					new ModdableDataGridModeColumn({ dataSelector: 'col2' }),
+					new ModdableDataGridModeColumn({ dataSelector: 'col1' }),
+				],
+			})
+
+			mode.apply(dataGridMock as any)
+
+			expect(dataGridMock.setColumns).toHaveBeenCalledWith([
+				{ dataSelector: 'col2', width: '200px', hidden: false, sticky: undefined },
+				{ dataSelector: 'col1', width: '100px', hidden: false, sticky: undefined },
+				lateColumn,
+			])
+		})
 	})
 })
