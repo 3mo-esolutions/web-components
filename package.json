@@ -8,10 +8,10 @@
 		"lint": "eslint **/*.ts",
 		"docs:build": "node ./scripts/docs-build.ts",
 		"clean": "node ./scripts/clean.ts",
-		"typescript": "tsgo --build --noEmit",
+		"typescript": "node ./node_modules/typescript-7/bin/tsc --build --noEmit",
 		"release": "node ./scripts/release.ts",
 		"release:all": "node ./scripts/release-all.ts",
-		"build": "npm run clean && tsc --build && npm run clean",
+		"build": "npm run clean && node ./node_modules/typescript/bin/tsc --build && npm run clean",
 		"analyze": "node ./scripts/analyze.ts",
 		"readme": "node ./scripts/readme.ts",
 		"pre-commit": "node ./scripts/pre-commit.ts"
@@ -59,8 +59,8 @@
 		"pre-commit": "x",
 		"react-router": "x",
 		"storybook": "10.x",
-		"typescript": "5.x",
-		"@typescript/native-preview": "latest",
+		"typescript": "6.x",
+		"typescript-7": "npm:typescript@7.x",
 		"vite": "6.x",
 		"web-component-analyzer": "2.x",
 		"execa": "x"
