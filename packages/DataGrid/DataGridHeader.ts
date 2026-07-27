@@ -1,8 +1,7 @@
 import { component, Component, css, html, property, event, style, live, queryAll, repeat, bind } from '@a11d/lit'
 import { observeResize } from '@3mo/resize-observer'
 import { Localizer } from '@3mo/localization'
-import { DataGridSelectability, type DataGrid, type DataGridColumn, type DataGridColumnHeader, ReorderabilityController } from './index.js'
-import type { DataGridColumnsController } from './DataGridColumnsController.js'
+import { DataGridSelectability, type DataGrid, type DataGridColumn, type DataGridColumnHeader, type DataGridColumnsController, ReorderabilityController } from './index.js'
 
 Localizer.dictionaries.add('en', {
 	'Actions for ${count:pluralityNumber} selected entries': [
@@ -37,11 +36,7 @@ export class DataGridHeader<TData> extends Component {
 		handleReorder: (source, destination) => {
 			const sourceColumn = this.dataGrid.visibleColumns[source]!
 			const destinationColumn = this.dataGrid.visibleColumns[destination]!
-			const sourceIndex = this.dataGrid.columns.indexOf(sourceColumn)
-			const destinationIndex = this.dataGrid.columns.indexOf(destinationColumn)
-			this.dataGrid.columns.splice(sourceIndex, 1)
-			this.dataGrid.columns.splice(destinationIndex, 0, sourceColumn)
-			this.dataGrid.setColumns(this.dataGrid.columns)
+			this.dataGrid.columnsController.columns.move(sourceColumn.dataSelector, this.dataGrid.columns.indexOf(destinationColumn))
 		}
 	})
 
@@ -276,8 +271,7 @@ export class DataGridHeader<TData> extends Component {
 
 	private readonly getColumnTemplate = (column: DataGridColumn<TData>) => {
 		const change = (e: CustomEvent<boolean>) => {
-			column.hidden = e.detail === false
-			this.dataGrid.setColumns(this.dataGrid.columns)
+			column.modify({ hidden: e.detail === false })
 		}
 		return html`
 			<mo-checkbox ${style({ height: '30px' })}

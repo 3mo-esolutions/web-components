@@ -1,7 +1,7 @@
 import { type FetchableDataGridParametersType } from '@3mo/fetchable-data-grid'
 import { NotificationComponent } from '@a11d/lit-application'
 import { equals } from '@a11d/equals'
-import { type DataGridColumn, type DataGridSorting, type DataGridPagination, type DataGridColumnSticky } from '@3mo/data-grid'
+import { type DataGridColumn, type DataGridColumnModification, type DataGridSorting, type DataGridPagination, type DataGridColumnSticky } from '@3mo/data-grid'
 import { Localizer } from '@3mo/localization'
 import { type ModdableDataGrid } from './ModdableDataGrid.js'
 import type * as CSS from 'csstype'
@@ -16,7 +16,7 @@ Localizer.dictionaries.add({
 	}
 })
 
-export class ModdableDataGridModeColumn<T> {
+export class ModdableDataGridModeColumn<T> implements DataGridColumnModification<T> {
 	static fromColumn<T>(column: DataGridColumn<T>) {
 		return new ModdableDataGridModeColumn<T>({
 			dataSelector: column.dataSelector,
@@ -26,34 +26,10 @@ export class ModdableDataGridModeColumn<T> {
 		})
 	}
 
-	/**
-	 * Arranges the given columns by the given arrangement, treating the arrangement as a partial
-	 * spec over whatever columns are available: columns the arrangement knows adopt its order and
-	 * presentation (width, hidden, sticky), columns it doesn't know — e.g. those the application
-	 * rendered only after the arrangement was captured — are appended as-is, and arrangement
-	 * entries without an available column are omitted.
-	 */
-	static arrange<T, TColumn extends Pick<ModdableDataGridModeColumn<T>, 'dataSelector' | 'width' | 'hidden' | 'sticky'>>(
-		arrangement: Array<ModdableDataGridModeColumn<T>> | undefined,
-		columns: Array<TColumn>,
-	): Array<TColumn> {
-		if (!arrangement) {
-			return columns
-		}
-		const arranged = arrangement
-			.map(arrangementColumn => {
-				const column = columns.find(c => c.dataSelector === arrangementColumn.dataSelector)
-				return column === undefined ? undefined : arrangementColumn.apply(column)
-			})
-			.filter(column => column !== undefined)
-		const appended = columns.filter(column => arrangement.every(arrangementColumn => arrangementColumn.dataSelector !== column.dataSelector))
-		return [...arranged, ...appended]
-	}
-
 	dataSelector!: KeyPath.Of<T>
 	width?: CSS.DataType.TrackBreadth<(string & {}) | 0>
 	hidden?: boolean
-	sticky?: DataGridColumnSticky
+	sticky?: DataGridColumnSticky | null
 
 	constructor(init?: Partial<ModdableDataGridModeColumn<T>>) {
 		Object.assign(this, structuredClone(init))
@@ -64,13 +40,6 @@ export class ModdableDataGridModeColumn<T> {
 			&& other.width === this.width
 			&& other.hidden === this.hidden
 			&& other.sticky === this.sticky
-	}
-
-	apply<TColumn extends Pick<ModdableDataGridModeColumn<T>, 'width' | 'hidden' | 'sticky'>>(column: TColumn): TColumn {
-		column.width = this.width ?? column.width
-		column.hidden = this.hidden ?? column.hidden
-		column.sticky = this.sticky ?? column.sticky
-		return column
 	}
 }
 
@@ -87,7 +56,12 @@ export class ModdableDataGridMode<TData, TDataFetcherParameters extends Fetchabl
 			name: dataGrid.mode?.name,
 			archived: dataGrid.mode?.archived,
 			// Situational properties
-			columns: dataGrid.columns.map(c => ModdableDataGridModeColumn.fromColumn(c)),
+			// The columns modifications are the intent about column order and presentation, so a mode
+			// stores exactly that intent rather than a materialized snapshot of the columns. No intent
+			// at all — the columns following their definitions untouched — is stored as no columns.
+			columns: !dataGrid.columnsController.columns.modifications.length
+				? undefined
+				: dataGrid.columnsController.columns.modifications.map(c => new ModdableDataGridModeColumn<TData>(c)),
 			pagination: dataGrid.pagination,
 			parameters: structuredClone(dataGrid.parameters) ?? {} as TParameters,
 			sorting: structuredClone(dataGrid.sorting) ?? [],
@@ -191,7 +165,7 @@ export class ModdableDataGridMode<TData, TDataFetcherParameters extends Fetchabl
 
 	apply(dataGrid: ModdableDataGrid<TData, TDataFetcherParameters, any>) {
 		const clone = this.clone()
-		dataGrid.setColumns(ModdableDataGridModeColumn.arrange(clone.columns, dataGrid.extractedColumns))
+		dataGrid.columnsController.columns.modifications.set(clone.columns)
 		dataGrid.sort(clone.sorting ?? [])
 		dataGrid.setPagination(clone.pagination)
 		dataGrid.setParameters(clone.parameters ?? {} as TDataFetcherParameters)

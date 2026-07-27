@@ -83,16 +83,18 @@ class ModdableDataGridStory extends ModdableDataGrid<User, Parameters> {
 }
 
 class ModdableDataGridTestFixture extends ComponentTestFixture<ModdableDataGridStory> {
+	static readonly columns = [
+		new ModdableDataGridModeColumn<User>({ dataSelector: 'id', width: 'max-content', hidden: true, sticky: undefined }),
+		new ModdableDataGridModeColumn<User>({ dataSelector: 'firstName', width: 'max-content', hidden: false, sticky: undefined }),
+		new ModdableDataGridModeColumn<User>({ dataSelector: 'lastName', width: 'max-content', hidden: false, sticky: undefined }),
+		new ModdableDataGridModeColumn<User>({ dataSelector: 'age', width: 'max-content', hidden: false, sticky: undefined }),
+	]
+
+	// An untouched data grid has no columns modifications, so the default mode carries no column intent
 	static readonly defaultMode = new ModdableDataGridMode<User, Parameters>({
 		id: undefined,
 		name: undefined,
 		parameters: {},
-		columns: [
-			new ModdableDataGridModeColumn({ dataSelector: 'id', width: 'max-content', hidden: true, sticky: undefined }),
-			new ModdableDataGridModeColumn({ dataSelector: 'firstName', width: 'max-content', hidden: false, sticky: undefined }),
-			new ModdableDataGridModeColumn({ dataSelector: 'lastName', width: 'max-content', hidden: false, sticky: undefined }),
-			new ModdableDataGridModeColumn({ dataSelector: 'age', width: 'max-content', hidden: false, sticky: undefined }),
-		]
 	})
 
 	static get modes(): ModdableDataGridMode<User, Parameters>[] {
@@ -101,7 +103,7 @@ class ModdableDataGridTestFixture extends ComponentTestFixture<ModdableDataGridS
 				id: '1',
 				name: 'Mode 1',
 				parameters: { keyword: 'Friedrich Nietzsche' } as Parameters,
-				columns: ModdableDataGridTestFixture.defaultMode.columns
+				columns: ModdableDataGridTestFixture.columns
 			}),
 			new ModdableDataGridMode({
 				id: '2',
@@ -109,9 +111,9 @@ class ModdableDataGridTestFixture extends ComponentTestFixture<ModdableDataGridS
 				parameters: {},
 				columns: [
 					new ModdableDataGridModeColumn({ dataSelector: 'id', width: 'max-content', hidden: false, sticky: undefined }), // Changed hidden to false
-					ModdableDataGridTestFixture.defaultMode.columns![1]!,
+					ModdableDataGridTestFixture.columns[1]!,
 					new ModdableDataGridModeColumn({ dataSelector: 'lastName', width: '200px', hidden: false, sticky: undefined }), // Changed width to 200px
-					ModdableDataGridTestFixture.defaultMode.columns![3]!,
+					ModdableDataGridTestFixture.columns[3]!,
 				]
 			}),
 		]
@@ -404,7 +406,7 @@ describe('ModdableDataGrid', () => {
 			expect(fixture.component.hasUnsavedChanges).toBeFalse()
 		})
 
-		it('should restore the saved arrangement of a mode column whose element renders late', async () => {
+		it('should restore the saved modification of a mode column whose element renders late', async () => {
 			const currentMode = fixture.component.currentMode
 			const modeWithLateColumn = currentMode.with({
 				id: 'late',

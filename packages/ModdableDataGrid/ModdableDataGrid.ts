@@ -1,9 +1,8 @@
 import { css, html, style, event, property, repeat, queryAll } from '@a11d/lit'
 import { tooltip } from '@3mo/tooltip'
 import { FetchableDataGrid, type FetchableDataGridParametersType } from '@3mo/fetchable-data-grid'
-import { type DataGridColumn } from '@3mo/data-grid'
 import { Localizer } from '@3mo/localization'
-import { ModdableDataGridMode, ModdableDataGridModeColumn } from './ModdableDataGridMode.js'
+import { ModdableDataGridMode } from './ModdableDataGridMode.js'
 import { DialogMode } from './DialogMode.js'
 import { equals } from '@a11d/equals'
 import { IndexedDbAdapter, type ModdableDataGridChip, type ModdableDataGridModesAdapter } from './index.js'
@@ -40,38 +39,6 @@ export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataG
 	protected override updated(...parameters: Parameters<FetchableDataGrid<TData, TParameters, TDetailsElement>['updated']>) {
 		super.updated(...parameters)
 		this.modeChips.forEach(chip => chip.requestUpdate())
-	}
-
-	override extractedColumnsUpdated(columns: Array<DataGridColumn<TData, unknown>>) {
-		const mode = this.mode
-		if (!mode) {
-			return super.extractedColumnsUpdated(columns)
-		}
-
-		// An empty extraction while a mode is selected is a transient mid-render state, not an intent
-		// to clear all columns — ignore it so we don't momentarily wipe the applied column set.
-		if (!columns.length) {
-			return
-		}
-
-		// While a mode is selected, the live columns own the arrangement — the mode plus any unsaved
-		// user changes — so a re-extraction must not replace them wholesale; it only decides
-		// membership: a column whose element rendered only now (e.g. asynchronously) surfaces — with
-		// its saved arrangement if the mode knows it, appended as declared otherwise — and one whose
-		// element was removed disappears.
-		const liveArrangement = this.columns.map(column => ModdableDataGridModeColumn.fromColumn(column))
-		const arrangement = [
-			...liveArrangement,
-			...mode.columns?.filter(column => this.columns.every(c => c.dataSelector !== column.dataSelector)) ?? [],
-		]
-		const arrangedColumns = ModdableDataGridModeColumn.arrange(arrangement, columns)
-
-		// Extraction re-fires on every column-element render; only write back when the arrangement
-		// actually changed to avoid re-render feedback loops.
-		const arrangementUnchanged = Object[equals](arrangedColumns.map(column => ModdableDataGridModeColumn.fromColumn(column)), liveArrangement)
-		if (!arrangementUnchanged) {
-			this.setColumns(arrangedColumns)
-		}
 	}
 
 	static override get styles() {
@@ -146,23 +113,7 @@ export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataG
 	}
 
 	get hasUnsavedChanges() {
-		const mode = this.mode
-		if (!mode) {
-			return false
-		}
-
-		// A mode is a partial spec over whatever columns the application currently renders, so
-		// compare the current state against the mode's projection onto the currently extracted
-		// columns — i.e. "would re-applying the mode change anything?". This keeps app-provided
-		// columns the mode doesn't know (e.g. rendered asynchronously) from counting as unsaved
-		// changes, while user edits to them still do.
-		const projectedMode = mode.with({
-			columns: !mode.columns ? undefined : ModdableDataGridModeColumn.arrange(
-				mode.columns,
-				this.extractedColumns.map(column => ModdableDataGridModeColumn.fromColumn(column)),
-			),
-		})
-		return !this.currentMode[equals](projectedMode)
+		return !!this.mode && !this.currentMode[equals](this.mode)
 	}
 
 	protected override get template() {

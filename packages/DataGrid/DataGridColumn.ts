@@ -1,6 +1,6 @@
 import { css, html, style, type CSSResult, type HTMLTemplateResult } from '@a11d/lit'
 import { equals } from '@a11d/equals'
-import type { DataGrid, DataGridSortingStrategy } from './index.js'
+import type { DataGrid, DataGridColumns, DataGridSortingStrategy } from './index.js'
 import type * as CSS from 'csstype'
 
 export type DataGridColumnContentStyle<TData, TValue> =
@@ -14,34 +14,41 @@ export type DataGridColumnSticky = 'start' | 'both' | 'end'
 
 export type DataGridColumnMenuItems = HTMLTemplateResult | Map<'sorting' | 'stickiness' | 'more', HTMLTemplateResult>
 
+/**
+ * An immutable value-object representing a column of a data grid at a given point in time.
+ *
+ * All value properties are read-only: what a column *is* changes only through its definition
+ * source (element, property, or data), and how it *shows* only through a modification via
+ * `modify()`, after which the data grid re-derives fresh column instances.
+ *
+ * The only mutable members are the `dataGrid` context back-reference the controller attaches,
+ * and `widthInPixels`, which is a view over the data grid's measurements rather than a value.
+ */
 export class DataGridColumn<TData, TValue = any> {
 	dataGrid!: DataGrid<TData, any>
-	dataSelector!: KeyPath.Of<TData>
+	readonly dataSelector!: KeyPath.Of<TData>
 
-	heading!: string
-	description?: string
+	readonly heading!: string
+	readonly description?: string
 
-	width: CSS.DataType.TrackBreadth<(string & {}) | 0> = 'max-content'
+	readonly width: CSS.DataType.TrackBreadth<(string & {}) | 0> = 'max-content'
 
-	alignment: DataGridColumnAlignment = 'start'
+	readonly alignment: DataGridColumnAlignment = 'start'
 
-	hidden = false
+	readonly hidden: boolean = false
 	hide() {
-		this.hidden = true
-		this.dataGrid.requestUpdate()
+		this.modify({ hidden: true })
 	}
 
-	sticky?: DataGridColumnSticky
+	readonly sticky?: DataGridColumnSticky
 	toggleSticky(sticky: DataGridColumnSticky) {
-		this.sticky = this.sticky === sticky ? undefined : sticky
-		this.dataGrid.requestUpdate()
+		// `null` pins the column as not sticky even if its definition declares stickiness
+		this.modify({ sticky: (this.sticky === sticky ? undefined : sticky) ?? null })
 	}
 
-	sortable = true
+	readonly sortable: boolean = true
 
-	private _sortDataSelector?: KeyPath.Of<TData>
-	get sortDataSelector() { return this._sortDataSelector || this.dataSelector }
-	set sortDataSelector(value) { this._sortDataSelector = value }
+	readonly sortDataSelector!: KeyPath.Of<TData>
 
 	toggleSort(strategy?: DataGridSortingStrategy | null) {
 		if (!this.sortable) {
@@ -61,19 +68,24 @@ export class DataGridColumn<TData, TValue = any> {
 		this.dataGrid.requestUpdate()
 	}
 
-	getMenuItemsTemplate?(): DataGridColumnMenuItems
+	readonly getMenuItemsTemplate?: () => DataGridColumnMenuItems
 
-	contentStyle?: DataGridColumnContentStyle<TData, TValue>
-	getContentTemplate?(value: TValue, data: TData): HTMLTemplateResult
+	readonly contentStyle?: DataGridColumnContentStyle<TData, TValue>
+	readonly getContentTemplate?: (value: TValue, data: TData) => HTMLTemplateResult
 
-	editable: boolean | Predicate<TData> = false
-	getEditContentTemplate?(value: TValue, data: TData): HTMLTemplateResult
+	readonly editable: boolean | Predicate<TData> = false
+	readonly getEditContentTemplate?: (value: TValue, data: TData) => HTMLTemplateResult
 
-	sumHeading?: string
-	getSumTemplate?(sum: number): HTMLTemplateResult
+	readonly sumHeading?: string
+	readonly getSumTemplate?: (sum: number) => HTMLTemplateResult
 
 	constructor(column: Partial<DataGridColumn<TData, TValue>>) {
 		Object.assign(this, column)
+		this.sortDataSelector ||= this.dataSelector
+	}
+
+	modify(modification: Parameters<DataGridColumns<TData>['modify']>[1]) {
+		return this.dataGrid.columnsController.columns.modify(this.dataSelector, modification)
 	}
 
 	[equals](other: DataGridColumn<TData, any>): boolean {
@@ -86,10 +98,11 @@ export class DataGridColumn<TData, TValue = any> {
 		return new DataGridColumn<TData, TValue>({ ...this, ...other })
 	}
 
-	private _widthInPixels?: number
-	get widthInPixels() { return this._widthInPixels || 0 }
+	// Measured widths are stored on the columns controller keyed by data selector, so that they
+	// survive column instances being re-derived from definitions and modifications.
+	get widthInPixels() { return this.dataGrid?.columnsController.getWidthInPixels(this.dataSelector) ?? 0 }
 	set widthInPixels(value) {
-		this._widthInPixels = value
+		this.dataGrid?.columnsController.setWidthInPixels(this.dataSelector, value)
 		this.dataGrid?.requestUpdate()
 	}
 
@@ -173,6 +186,6 @@ export class DataGridColumn<TData, TValue = any> {
 		return undefined
 	}
 
-	generateCsvHeading?(): Generator<string>
-	generateCsvValue?(value: TValue, data: TData): Generator<string>
+	readonly generateCsvHeading?: () => Generator<string>
+	readonly generateCsvValue?: (value: TValue, data: TData) => Generator<string>
 }

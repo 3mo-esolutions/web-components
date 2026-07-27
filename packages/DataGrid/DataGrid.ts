@@ -7,7 +7,7 @@ import { MediaQueryController } from '@3mo/media-query-observer'
 import { Localizer } from '@3mo/localization'
 import { type Scroller } from '@3mo/scroller'
 import { observeResize } from '@3mo/resize-observer'
-import { DataGridColumnsController } from './DataGridColumnsController.js'
+import { DataGridColumnsController } from './DataGridColumnsController/index.js'
 import { DataGridSelectionBehaviorOnDataChange, DataGridSelectionController, type DataGridSelectability } from './DataGridSelectionController.js'
 import { DataGridSortingController, type DataGridRankedSortDefinition, type DataGridSorting } from './DataGridSortingController.js'
 import { DataGridDetailsController } from './DataGridDetailsController.js'
@@ -31,7 +31,7 @@ export enum DataGridEditability {
  * @element mo-data-grid
  *
  * @attr data - The data to be displayed in the DataGrid. It is an array of objects, where each object represents a row.
- * @attr columns - The columns to be displayed in the DataGrid. It is an array of objects, where each object represents a column.
+ * @attr columns - The read-only columns of the DataGrid, composed of their definitions and modifications. Provide columns programmatically via `columns.definitions.programmatic`.
  * @attr headerHidden - Whether the header should be hidden.
  * @attr page - The current page.
  * @attr pagination - The pagination mode. It can be either `auto` or a number.
@@ -112,7 +112,10 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	@event() readonly cellEdit!: EventDispatcher<DataGridCell<any, TData, TDetailsElement>>
 
 	@property({ type: Array }) data = new Array<TData>()
-	@property({ type: Array }) columns = new Array<DataGridColumn<TData>>()
+
+	@property({ type: Array })
+	get columns() { return [...this.columnsController.columns] }
+	set columns(value) { this.columnsController.columns.definitions.programmatic = value }
 
 	@property({ type: Boolean, reflect: true }) headerHidden = false
 	@property({ type: Number }) page = 1
@@ -256,16 +259,8 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		this.columnsController.extractColumns()
 	}
 
-	get extractedColumns() {
-		return this.columnsController.extractedColumns
-	}
-
-	extractedColumnsUpdated(extractedColumns: Array<DataGridColumn<TData>>) {
-		this.setColumns(extractedColumns)
-	}
-
 	get visibleColumns() {
-		return this.columnsController.visibleColumns
+		return this.columnsController.columns.visible
 	}
 
 	getRow(data: TData) {

@@ -77,9 +77,8 @@ export class DataGridHeaderSeparator extends Component {
 		this.isResizing = false
 		this.initialWidth = undefined
 		if (this.targetWidth) {
-			this.column.width = `${this.targetWidth}px`
+			this.column.modify({ width: `${this.targetWidth}px` })
 		}
-		this.dataGrid.setColumns(this.dataGrid.columns)
 	}
 
 	@eventListener({ target: window, type: 'pointermove', options: { passive: false } })
@@ -117,8 +116,7 @@ export class DataGridHeaderSeparator extends Component {
 
 	private readonly handleDoubleClick = () => {
 		this.isResizing = false
-		this.column.width = 'max-content'
-		this.dataGrid.setColumns(this.dataGrid.columns)
+		this.column.modify({ width: 'max-content' })
 	}
 }
 

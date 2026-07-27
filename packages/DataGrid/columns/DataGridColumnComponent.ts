@@ -55,7 +55,7 @@ export class DataGridColumnComponent<TData, TValue> extends Component {
 
 	override disconnectedCallback() {
 		super.disconnectedCallback()
-		this.dataGrid?.extractColumns()
+		this.dataGrid?.columnsController.extractColumns()
 	}
 
 	protected override updated(props: PropertyValues<this>) {
