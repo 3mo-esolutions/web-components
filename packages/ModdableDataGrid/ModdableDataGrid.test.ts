@@ -83,6 +83,9 @@ class ModdableDataGridStory extends ModdableDataGrid<User, Parameters> {
 }
 
 class ModdableDataGridTestFixture extends ComponentTestFixture<ModdableDataGridStory> {
+	// Shaped like the modes persisted before columns were split into definitions and modifications:
+	// a full snapshot of every column with all of its properties materialized, which is a valid —
+	// merely fully specified rather than partial — set of modifications. @see 'Legacy modes'
 	static readonly columns = [
 		new ModdableDataGridModeColumn<User>({ dataSelector: 'id', width: 'max-content', hidden: true, sticky: undefined }),
 		new ModdableDataGridModeColumn<User>({ dataSelector: 'firstName', width: 'max-content', hidden: false, sticky: undefined }),
@@ -425,6 +428,54 @@ describe('ModdableDataGrid', () => {
 
 			expect(hasColumn('score')).toBeTrue()
 			expect(fixture.component.columns.find(c => (c.dataSelector as string) === 'score')?.width).toBe('321px')
+			expect(fixture.component.hasUnsavedChanges).toBeFalse()
+		})
+	})
+
+	// Modes persisted before columns were split into definitions and modifications stored a full
+	// snapshot of every column instead of only the user's intent. Such a snapshot is a fully
+	// specified set of modifications, so it keeps working without any migration of stored data.
+	describe('Legacy modes', () => {
+		const fixture = new ModdableDataGridTestFixture({ modes: ModdableDataGridTestFixture.modes, selectedModeId: '2' })
+
+		beforeEach(() => new Promise(r => setTimeout(r)))
+
+		// Serialized exactly as modes were before the split, being a snapshot of every column with all
+		// of its properties materialized. It is derived from the current mode so that everything but
+		// the columns round-trips, as the seeded fixture modes do not.
+		const selectLegacyMode = async () => {
+			const legacyMode = fixture.component.currentMode.with({
+				id: 'legacy',
+				name: 'Legacy',
+				columns: fixture.component.columns.map(c => ModdableDataGridModeColumn.fromColumn(c)),
+			})
+			fixture.component.modesAdapter.modes = [legacyMode]
+			await fixture.component.modesController.set(legacyMode)
+			await fixture.updateComplete
+			return legacyMode
+		}
+
+		it('should apply a full column snapshot without reporting unsaved changes', async () => {
+			const legacyMode = await selectLegacyMode()
+
+			// Every property is specified, so the snapshot wins over the column elements' declarations
+			expect(legacyMode.columns!.every(c => c.width !== undefined && c.hidden !== undefined)).toBeTrue()
+			expect(fixture.component.columns.map(c => c.dataSelector)).toEqual(['id', 'firstName', 'lastName', 'age'])
+			expect(fixture.component.columns.find(c => c.dataSelector === 'lastName')?.width).toBe('200px')
+			expect(fixture.component.hasUnsavedChanges).toBeFalse()
+		})
+
+		it('should surface a column the snapshot does not know instead of dropping it', async () => {
+			await selectLegacyMode()
+
+			const column = document.createElement('mo-data-grid-column-text') as any
+			column.dataSelector = 'score'
+			column.heading = 'Score'
+			fixture.component.appendChild(column)
+			await new Promise(r => setTimeout(r))
+			await fixture.updateComplete
+
+			expect(fixture.component.columns.map(c => c.dataSelector)).toEqual(['id', 'firstName', 'lastName', 'age', 'score' as any])
 			expect(fixture.component.hasUnsavedChanges).toBeFalse()
 		})
 	})

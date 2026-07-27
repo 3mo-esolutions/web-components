@@ -29,18 +29,17 @@ type DataGridColumnsInit<TData> = {
  * composed anew whenever either layer changes, so they are never stale and never stored twice.
  */
 export class DataGridColumns<TData> extends ArrayLikeView<DataGridColumn<TData>> {
-	readonly definitions: DataGridColumnDefinitions<TData>
-	readonly modifications: DataGridColumnModifications<TData>
+	readonly definitions = new DataGridColumnDefinitions<TData>({
+		generate: () => this.init?.generate?.() ?? [],
+		updated: () => this.updated(),
+	})
+
+	readonly modifications = new DataGridColumnModifications<TData>({
+		updated: () => this.updated()
+	})
 
 	constructor(private readonly init?: DataGridColumnsInit<TData>) {
 		super()
-		this.definitions = new DataGridColumnDefinitions<TData>({
-			generate: () => this.init?.generate?.() ?? [],
-			updated: () => this.layerUpdated(),
-		})
-		this.modifications = new DataGridColumnModifications<TData>({
-			updated: () => this.layerUpdated(),
-		})
 		this.compose()
 	}
 
@@ -78,7 +77,7 @@ export class DataGridColumns<TData> extends ArrayLikeView<DataGridColumn<TData>>
 		this.definitions.update()
 	}
 
-	private layerUpdated() {
+	private updated() {
 		this.compose()
 		this.init?.updated?.()
 	}

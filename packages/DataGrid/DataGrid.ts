@@ -245,8 +245,8 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		return this.csvController.generateCsv(...parameters)
 	}
 
-	setColumns(...parameters: Parameters<typeof this.columnsController.setColumns>) {
-		return this.columnsController.setColumns(...parameters)
+	setColumns(columns: Array<DataGridColumn<TData>>) {
+		this.columns = columns
 	}
 
 	extractColumns(...parameters: Parameters<typeof this.columnsController.extractColumns>) {
@@ -257,6 +257,10 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	protected handleColumnChange(e: CustomEvent) {
 		e.stopPropagation()
 		this.columnsController.extractColumns()
+	}
+
+	get extractedColumns() {
+		return [...this.columnsController.columns.definitions]
 	}
 
 	get visibleColumns() {

@@ -123,7 +123,7 @@ describe('DataGrid', () => {
 			const fixture = new ComponentTestFixture<TestDataGrid>(html`<test-data-grid></test-data-grid>`)
 
 			it('should automatically set dataGrid property of columns', async () => {
-				fixture.component.columnsController.columns.definitions.programmatic = [
+				fixture.component.columns = [
 					new DataGridColumn({ heading: 'Id', dataSelector: 'id' }),
 					new DataGridColumn({ heading: 'Name', dataSelector: 'name' }),
 				]
@@ -136,7 +136,7 @@ describe('DataGrid', () => {
 			})
 
 			it('should take precedence over auto-generated columns', async () => {
-				fixture.component.columnsController.columns.definitions.programmatic = [
+				fixture.component.columns = [
 					new DataGridColumn({ heading: 'Name', dataSelector: 'name' }),
 				]
 
@@ -145,6 +145,16 @@ describe('DataGrid', () => {
 				expect(fixture.component.columns.map(c => c.dataSelector)).toEqual(['name'])
 				expect(fixture.component.columnsController.columns.definitions.programmatic.length).toBe(1)
 				expect(fixture.component.columnsController.columns.definitions.generated.length).toBe(0)
+			})
+
+			it('should be providable through the deprecated setColumns as well', async () => {
+				fixture.component.setColumns([
+					new DataGridColumn({ heading: 'Name', dataSelector: 'name' }),
+				])
+
+				await fixture.updateComplete
+
+				expect(fixture.component.columns.map(c => c.dataSelector)).toEqual(['name'])
 			})
 		})
 
