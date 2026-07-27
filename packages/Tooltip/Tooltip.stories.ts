@@ -12,11 +12,13 @@ export default {
 export const Tooltip: StoryObj = {
 	render: () => html`
 		<h3>Hover or focus on the following elements to see their tooltip</h3>
-		<mo-icon-button icon='skip_previous' ${tooltip('Previous')}></mo-icon-button>
-		<mo-icon-button icon='fast_rewind' ${tooltip('Rewind')}></mo-icon-button>
-		<mo-icon-button icon='play_arrow' ${tooltip('Play')}></mo-icon-button>
-		<mo-icon-button icon='fast_forward' ${tooltip('Forward')}></mo-icon-button>
-		<mo-icon-button icon='skip_next' ${tooltip('Next')}></mo-icon-button>
+		<div style='margin-left: -20px'>
+			<mo-icon-button icon='skip_previous' ${tooltip('Previous')}></mo-icon-button>
+			<mo-icon-button icon='fast_rewind' ${tooltip('Rewind')}></mo-icon-button>
+			<mo-icon-button icon='play_arrow' ${tooltip('Play')}></mo-icon-button>
+			<mo-icon-button icon='fast_forward' ${tooltip('Forward')}></mo-icon-button>
+			<mo-icon-button icon='skip_next' ${tooltip('Next')}></mo-icon-button>
+		</div>
 	`
 }
 

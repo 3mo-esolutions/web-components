@@ -25,6 +25,8 @@ export type PopoverMode = 'auto' | 'manual' | 'hint'
  * @slot - Default slot for popover content
  *
  * @fires openChange - Dispatched when the popover is opened or closed.
+ *
+ * @cssprop [--mo-popover-tip-size] - The size of the tip (arrow) pointing towards the anchor. Defaults to `0` (no tip); the `[part=arrow]` element must also be revealed via `::part(arrow)`.
  */
 @component('mo-popover')
 export class Popover extends Component {
@@ -143,34 +145,15 @@ export class Popover extends Component {
 				display: none !important;
 			}
 
-			${PopoverCssAnchorPositionController.styles}
-
 			[part=arrow] {
 				display: none;
-				position: absolute;
 				pointer-events: none;
-				clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
 				background: inherit;
 				z-index: -1;
-				width: 1rem;
-				aspect-ratio: 1 / 1;
-				&[data-placement=top] {
-					transform: translateY(-50%);
-					top: 0;
-				}
-				&[data-placement=bottom] {
-					transform: translateY(50%);
-					bottom: 0;
-				}
-				&[data-placement=left] {
-					transform: translateX(-50%);
-					left: 0;
-				}
-				&[data-placement=right] {
-					transform: translateX(50%);
-					right: 0;
-				}
 			}
+
+			${PopoverFloatingUiPositionController.styles}
+			${PopoverCssAnchorPositionController.styles}
 		`
 	}
 

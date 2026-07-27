@@ -1,12 +1,50 @@
-import { Controller, EventListenerController } from '@a11d/lit'
+import { Controller, EventListenerController, css } from '@a11d/lit'
 import { type Popover } from './Popover.js'
 import { DirectionsByLanguage } from '@3mo/localization'
 import { ResizeController } from '@3mo/resize-observer'
 import { PopoverPlacement } from './PopoverPlacement.js'
 import { PopoverAlignment } from './PopoverAlignment.js'
+import { PopoverCssAnchorPositionController } from './PopoverCssAnchorPositionController.js'
 
 export class PopoverFloatingUiPositionController extends Controller {
 	private static floatingUi?: typeof import('@floating-ui/dom')
+
+	/**
+	 * The tip is a diamond pinned to the anchor-facing edge of the popover, whose in-flow
+	 * position along that edge is driven imperatively by Floating UI's `arrow` middleware.
+	 * Only used when native anchor positioning is unavailable — otherwise the
+	 * `PopoverCssAnchorPositionController` renders a self-tethering tip in pure CSS.
+	 */
+	static get styles() {
+		return PopoverCssAnchorPositionController.supported ? css`` : css`
+			[part=arrow] {
+				position: absolute;
+				clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+				width: var(--mo-popover-tip-size, 1rem);
+				aspect-ratio: 1 / 1;
+
+				&[data-placement=top] {
+					transform: translateY(-50%);
+					top: 0;
+				}
+
+				&[data-placement=bottom] {
+					transform: translateY(50%);
+					bottom: 0;
+				}
+
+				&[data-placement=left] {
+					transform: translateX(-50%);
+					left: 0;
+				}
+
+				&[data-placement=right] {
+					transform: translateX(50%);
+					right: 0;
+				}
+			}
+		`
+	}
 
 	private static readonly arrowSideByPlacement = new Map([
 		['top', 'bottom'],
