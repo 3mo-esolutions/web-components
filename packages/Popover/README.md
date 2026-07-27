@@ -66,6 +66,12 @@ import '@3mo/popover'
 | --- | --- |
 | (default) | Default slot for popover content |
 
+#### CSS custom properties
+
+| Name | Description |
+| --- | --- |
+| `--mo-popover-tip-size` | The size of the tip (arrow) pointing towards the anchor. Defaults to `0` (no tip); the `[part=arrow]` element must also be revealed via `::part(arrow)`. |
+
 ### `mo-popover-container`
 
 Anchors the popover in its `popover` slot to the element in its default slot.
