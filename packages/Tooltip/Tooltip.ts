@@ -93,7 +93,6 @@ export class Tooltip extends Component {
 
 				&::part(arrow) {
 					display: block;
-					width: var(--_tooltip-default-tip-size);
 				}
 			}
 
@@ -101,19 +100,19 @@ export class Tooltip extends Component {
 				pointer-events: none;
 				color: var(--mo-color-background);
 				--_tooltip-default-background: var(--mo-color-foreground);
-				--_tooltip-default-tip-size: 0.75rem;
+				--mo-popover-tip-size: 0.75rem;
 			}
 
 			:host([rich]) mo-popover {
 				--_tooltip-default-background: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-foreground) 6%);
-				--_tooltip-default-tip-size: 1rem;
+				--mo-popover-tip-size: 1rem;
 			}
 		`
 	}
 
 	protected override get template() {
 		return html`
-			<mo-popover mode='hint'
+			<mo-popover mode='hint' tip
 				?open=${bind(this, 'open')}
 				.anchor=${this.anchor}
 				placement=${ifDefined(this.placement)}
