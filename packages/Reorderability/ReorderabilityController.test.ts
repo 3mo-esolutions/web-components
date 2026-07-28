@@ -1,0 +1,325 @@
+import { component, Component, css, html, repeat } from '@a11d/lit'
+import { ComponentTestFixture } from '@a11d/lit-testing'
+import { ReorderabilityController, ReorderabilityState, type ReorderabilityStrategy } from './ReorderabilityController.js'
+
+@component('reorderability-controller-test-component')
+class ReorderabilityControllerTestComponent extends Component {
+	layout: 'column' | 'row' | 'grid' = 'column'
+	direction: 'ltr' | 'rtl' = 'ltr'
+	strategy: ReorderabilityStrategy = 'live'
+	handle = ''
+	withInput = false
+	withDragImage = false
+	items = [0, 1, 2, 3]
+
+	readonly reorders = new Array<[source: number, destination: number]>()
+	readonly controller: ReorderabilityController
+
+	constructor() {
+		super()
+		const component = this
+		this.controller = new ReorderabilityController(this, {
+			get strategy() { return component.strategy },
+			handleReorder: (source, destination) => {
+				this.reorders.push([source, destination])
+				this.items.splice(destination, 0, ...this.items.splice(source, 1))
+				this.requestUpdate()
+			},
+		})
+	}
+
+	get itemElements() { return [...this.renderRoot.querySelectorAll<HTMLElement>('.item')] }
+
+	static override get styles() {
+		return css`
+			.items { gap: 10px; }
+			.items.column { display: flex; flex-direction: column; width: 100px; }
+			.items.row { display: flex; flex-direction: row; width: max-content; }
+			.items.grid { display: grid; grid-template-columns: repeat(3, 70px); width: 230px; }
+			.item { height: 30px; background: gray; }
+			.items.row .item { width: 60px; }
+		`
+	}
+
+	protected override get template() {
+		return html`
+			<div class='items ${this.layout}' dir=${this.direction}>
+				${repeat(this.items, item => item, (item, index) => html`
+					<div class='item' ${this.controller.item({
+						index,
+						handle: this.handle || undefined,
+						dragImage: !this.withDragImage ? undefined : html`<span>Preview of ${item}</span>`,
+					})}>
+						${!this.handle ? html.nothing : html`<span class='grip'>∷</span>`}
+						${!this.withInput ? html.nothing : html`<input>`}
+						<span>${item}</span>
+					</div>
+				`)}
+			</div>
+		`
+	}
+}
+
+/** A board: one controller per column, so cards reorder within their own column only. */
+@component('reorderability-board-test-component')
+class ReorderabilityBoardTestComponent extends Component {
+	readonly columns = [['a1', 'a2', 'a3'], ['b1', 'b2', 'b3']]
+	readonly reorders = new Array<[column: number, source: number, destination: number]>()
+	readonly controllers: Array<ReorderabilityController>
+
+	constructor() {
+		super()
+		this.controllers = this.columns.map((_, column) => new ReorderabilityController(this, {
+			handleReorder: (source, destination) => {
+				this.reorders.push([column, source, destination])
+				this.columns[column]!.splice(destination, 0, ...this.columns[column]!.splice(source, 1))
+				this.requestUpdate()
+			},
+		}))
+	}
+
+	itemsOf(column: number) {
+		return [...this.renderRoot.querySelectorAll<HTMLElement>(`.column-${column} .card`)]
+	}
+
+	static override get styles() {
+		return css`
+			:host { display: flex; gap: 20px; }
+			.column { display: flex; flex-direction: column; gap: 10px; width: 100px; }
+			.card { height: 30px; background: gray; }
+		`
+	}
+
+	protected override get template() {
+		return html`
+			${this.columns.map((cards, column) => html`
+				<div class='column column-${column}'>
+					${repeat(cards, card => card, (card, index) => html`
+						<div class='card' ${this.controllers[column]!.item({ index })}>${card}</div>
+					`)}
+				</div>
+			`)}
+		`
+	}
+}
+
+describe('ReorderabilityController', () => {
+	const center = (element: Element) => {
+		const rect = element.getBoundingClientRect()
+		return { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 }
+	}
+
+	const dispatch = (target: EventTarget, type: string, options: PointerEventInit = {}) =>
+		target.dispatchEvent(new PointerEvent(type, { bubbles: true, composed: true, pointerId: 1, isPrimary: true, button: 0, buttons: 1, ...options }))
+
+	const frame = () => new Promise(requestAnimationFrame)
+
+	/** A synthetic mouse drag: press on `from`, glide to `to` through a midpoint (so mid-drag hooks
+	 * can observe the in-flight state), release unless told otherwise. */
+	async function drag(from: Element | { x: number, y: number }, to: { x: number, y: number }, options?: { via?: EventTarget, midway?: () => unknown, release?: boolean, pointerType?: string }) {
+		const start = from instanceof Element ? center(from) : from
+		const target = options?.via ?? (from instanceof Element ? from : document)
+		dispatch(target, 'pointerdown', { clientX: start.x, clientY: start.y, pointerType: options?.pointerType ?? 'mouse' })
+		for (const progress of [0.5, 1]) {
+			dispatch(target, 'pointermove', { clientX: start.x + (to.x - start.x) * progress, clientY: start.y + (to.y - start.y) * progress, pointerType: options?.pointerType ?? 'mouse' })
+			await frame()
+			await frame()
+			if (progress === 0.5) {
+				await options?.midway?.()
+			}
+		}
+		if (options?.release !== false) {
+			dispatch(target, 'pointerup', { clientX: to.x, clientY: to.y, buttons: 0, pointerType: options?.pointerType ?? 'mouse' })
+		}
+	}
+
+	const create = (setup: Partial<ReorderabilityControllerTestComponent> = {}) =>
+		new ComponentTestFixture(() => Object.assign(new ReorderabilityControllerTestComponent(), setup))
+
+	describe('in a vertical list', () => {
+		const fixture = create()
+
+		it('reports (source, destination) for a drag across two items', async () => {
+			const items = fixture.component.itemElements
+			await drag(items[0]!, center(items[2]!))
+			expect(fixture.component.reorders).toEqual([[0, 2]])
+			expect(fixture.component.items).toEqual([1, 2, 0, 3])
+		})
+
+		it('treats a press within the dead zone as a plain click — nothing is lifted or reordered', async () => {
+			const item = fixture.component.itemElements[0]!
+			const { x, y } = center(item)
+			await drag({ x, y }, { x: x + 2, y: y + 2 }, { via: item })
+			expect(fixture.component.reorders).toEqual([])
+			expect(fixture.component.hasAttribute('data-reordering')).toBe(false)
+		})
+
+		it('lifts the dragged item and glides its displaced sibling, then clears everything on release', async () => {
+			const items = fixture.component.itemElements
+			await drag(items[0]!, center(items[2]!), {
+				// Midway the drag has travelled one slot: the first sibling has already given way.
+				midway: () => {
+					expect(fixture.component.hasAttribute('data-reordering')).toBe(true)
+					expect(items[0]!.dataset.reorderability).toBe(ReorderabilityState.Dragging)
+					expect(items[0]!.style.transform).not.toBe('')
+					expect(items[1]!.style.transform).not.toBe('')
+				}
+			})
+			expect(fixture.component.hasAttribute('data-reordering')).toBe(false)
+			expect(items.every(item => !item.style.transform)).toBe(true)
+			expect(items.every(item => item.dataset.reorderability === ReorderabilityState.Idle)).toBe(true)
+		})
+
+		it('clamps the drag to the items — a drop far beyond the end lands on the last item, and a vertical list allows no horizontal travel', async () => {
+			const items = fixture.component.itemElements
+			const { x, y } = center(items[0]!)
+			await drag(items[0]!, { x: x + 300, y: y + 1000 }, {
+				midway: () => expect(items[0]!.style.transform).toMatch(/translate\(0px/)
+			})
+			expect(fixture.component.reorders).toEqual([[0, 3]])
+		})
+
+		it('does not resurrect a gesture whose press was released outside the host', async () => {
+			const items = fixture.component.itemElements
+			const { x, y } = center(items[0]!)
+			dispatch(items[0]!, 'pointerdown', { clientX: x, clientY: y })
+			dispatch(items[0]!, 'pointermove', { clientX: x, clientY: y + 50, buttons: 0 }) // returned button-less
+			await frame()
+			expect(fixture.component.hasAttribute('data-reordering')).toBe(false)
+			expect(fixture.component.reorders).toEqual([])
+		})
+	})
+
+	describe('with the indicator strategy', () => {
+		const fixture = create({ strategy: 'indicator', withDragImage: true })
+
+		it('stamps the drop side on the target and moves nothing; the drag image follows instead', async () => {
+			const items = fixture.component.itemElements
+			await drag(items[0]!, center(items[2]!), {
+				midway: () => {
+					expect(items[0]!.dataset.reorderability).toBe(ReorderabilityState.Dragging)
+					expect(items.some(item => item.dataset.reorderability === ReorderabilityState.DropAfter)).toBe(true)
+					expect(items.every(item => !item.style.transform)).toBe(true)
+					expect(document.body.lastElementChild?.textContent).toContain('Preview of 0')
+				}
+			})
+			expect(document.body.lastElementChild?.textContent).not.toContain('Preview of 0')
+			expect(fixture.component.reorders).toEqual([[0, 2]])
+		})
+	})
+
+	describe('in a horizontal row', () => {
+		const fixture = create({ layout: 'row' })
+		const rtlFixture = create({ layout: 'row', direction: 'rtl' })
+
+		it('derives the axis from the geometry', async () => {
+			const items = fixture.component.itemElements
+			await drag(items[0]!, center(items[2]!))
+			expect(fixture.component.reorders).toEqual([[0, 2]])
+		})
+
+		it('derives a right-to-left flow too: dragging visually backwards moves the item FORWARD in data', async () => {
+			const items = rtlFixture.component.itemElements
+			expect(center(items[1]!).x).toBeLessThan(center(items[0]!).x) // rtl: data order runs right to left
+			await drag(items[0]!, center(items[2]!))
+			expect(rtlFixture.component.reorders).toEqual([[0, 2]])
+		})
+	})
+
+	describe('in a wrapping grid', () => {
+		const fixture = create({ layout: 'grid', items: [0, 1, 2, 3, 4, 5] })
+
+		it('resolves the drop by hit-testing, across row boundaries', async () => {
+			const items = fixture.component.itemElements
+			await drag(items[0]!, center(items[4]!)) // 4 sits on the second row
+			expect(fixture.component.reorders).toEqual([[0, 4]])
+			expect(fixture.component.items).toEqual([1, 2, 3, 4, 0, 5])
+		})
+	})
+
+	describe('with a handle', () => {
+		const fixture = create({ handle: '.grip' })
+
+		it('a press outside the handle is left to the item; inside it drags', async () => {
+			const items = fixture.component.itemElements
+			await drag(items[0]!, center(items[1]!))
+			expect(fixture.component.reorders).toEqual([])
+			await drag(items[0]!.querySelector('.grip')!, center(items[1]!))
+			expect(fixture.component.reorders).toEqual([[0, 1]])
+		})
+	})
+
+	describe('with interactive content', () => {
+		const fixture = create({ withInput: true })
+
+		it('never starts a drag from an input', async () => {
+			const items = fixture.component.itemElements
+			await drag(items[0]!.querySelector('input')!, center(items[2]!))
+			expect(fixture.component.reorders).toEqual([])
+		})
+	})
+
+	// Several controllers on ONE host is how independent lists are built (a board's columns): each
+	// only ever sees the items registered with it, so a gesture belongs to exactly one of them and a
+	// drag can never cross from one list into another.
+	describe('with several controllers on one host', () => {
+		const fixture = new ComponentTestFixture(() => new ReorderabilityBoardTestComponent())
+
+		it('answers only for its own list, and reports positions within that list', async () => {
+			const first = fixture.component.itemsOf(0)
+			await drag(first[0]!, center(first[2]!))
+			expect(fixture.component.reorders).toEqual([[0, 0, 2]])
+			expect(fixture.component.columns[0]).toEqual(['a2', 'a3', 'a1'])
+			expect(fixture.component.columns[1]).toEqual(['b1', 'b2', 'b3'])
+		})
+
+		it('keeps every list to its own geometry — dragging in one column leaves the others untouched', async () => {
+			const second = fixture.component.itemsOf(1)
+			await drag(second[2]!, center(second[0]!), {
+				midway: () => expect(fixture.component.itemsOf(0).every(item => !item.style.transform)).toBe(true)
+			})
+			expect(fixture.component.reorders).toEqual([[1, 2, 0]])
+		})
+
+		it('does not carry an item across lists: a drag toward another column stays in its own', async () => {
+			const first = fixture.component.itemsOf(0)
+			const target = center(fixture.component.itemsOf(1)[2]!)
+			await drag(first[0]!, target)
+			// Clamped to its own column's bounds, so the horizontal travel is dropped and the vertical
+			// part still resolves within the source list.
+			expect(fixture.component.reorders.every(([column]) => column === 0)).toBe(true)
+			expect(fixture.component.columns[1]).toEqual(['b1', 'b2', 'b3'])
+		})
+	})
+
+	describe('on touch', () => {
+		const fixture = create()
+
+		beforeEach(() => jasmine.clock().install())
+		afterEach(() => jasmine.clock().uninstall())
+
+		it('a swipe before the press-and-hold lands keeps scrolling — no drag', () => {
+			const items = fixture.component.itemElements
+			const { x, y } = center(items[0]!)
+			dispatch(items[0]!, 'pointerdown', { clientX: x, clientY: y, pointerType: 'touch' })
+			dispatch(items[0]!, 'pointermove', { clientX: x, clientY: y + 50, pointerType: 'touch' })
+			dispatch(items[0]!, 'pointerup', { clientX: x, clientY: y + 50, buttons: 0, pointerType: 'touch' })
+			jasmine.clock().tick(600)
+			expect(fixture.component.reorders).toEqual([])
+		})
+
+		it('a landed hold lifts the item, and the drag then commits like any other', async () => {
+			const items = fixture.component.itemElements
+			const { x, y } = center(items[0]!)
+			dispatch(items[0]!, 'pointerdown', { clientX: x, clientY: y, pointerType: 'touch' })
+			jasmine.clock().tick(600)
+			expect(items[0]!.dataset.reorderability).toBe(ReorderabilityState.Dragging)
+			const to = center(items[2]!)
+			dispatch(items[0]!, 'pointermove', { clientX: to.x, clientY: to.y, pointerType: 'touch' })
+			await frame()
+			await frame()
+			dispatch(items[0]!, 'pointerup', { clientX: to.x, clientY: to.y, buttons: 0, pointerType: 'touch' })
+			expect(fixture.component.reorders).toEqual([[0, 2]])
+		})
+	})
+})

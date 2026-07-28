@@ -1,0 +1,35 @@
+{
+	"name": "@3mo/reorderability",
+	"version": "0.1.0",
+	"description": "A controller that makes elements reorderable by dragging — on mouse, touch and pen — deriving its layout from the elements themselves.",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/3mo-esolutions/web-components"
+	},
+	"keywords": [
+		"lit",
+		"web-component",
+		"controller",
+		"reorder",
+		"sortable",
+		"drag-and-drop",
+		"pointer"
+	],
+	"author": "3MO GmbH",
+	"license": "MIT",
+	"homepage": "https://www.3mo.de",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"customElements": "dist/custom-elements.json",
+	"files": [
+		"dist"
+	],
+	"dependencies": {
+		"@a11d/lit": "x",
+		"tslib": "x"
+	},
+	"devDependencies": {
+		"@a11d/lit-testing": "x"
+	}
+}
