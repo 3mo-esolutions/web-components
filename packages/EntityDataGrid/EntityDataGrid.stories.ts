@@ -37,7 +37,7 @@ export const EntityDataGrid: StoryObj = {
 		<mo-entity-data-grid style='height: 500px' selectability='multiple'
 			.fetch=${fetch}
 			.parameters=${{ count: 50 }}
-			.create=${() => alert('Create')}
+			.create=${() => { return new Promise(resolve => setTimeout(() => { alert('Create completed'); resolve(undefined) }, 1000)) }}
 			.edit=${(person: Person) => alert(`Edit ${person.name}`)}
 			.isEntityEditable=${(person: Person) => person.age > 7}
 			.delete=${(...people: Array<Person>) => alert(`Delete ${people.map(person => person.name).join(', ')}`)}

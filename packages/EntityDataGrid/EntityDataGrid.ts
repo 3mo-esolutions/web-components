@@ -1,4 +1,4 @@
-import { component, property, html, type TemplateResult } from '@a11d/lit'
+import { component, css, property, html, type TemplateResult } from '@a11d/lit'
 import { type FetchableDialogComponentParameters as EntityWithId } from '@3mo/fetchable-dialog'
 import { type EntityDialogComponent } from '@3mo/entity-dialog'
 import { type FetchableDataGridParametersType, FetchableDataGrid } from '@3mo/fetchable-data-grid'
@@ -17,7 +17,7 @@ type CreateOrEditAction<TEntity extends EntityWithId> = CreateAction | EditActio
  * @attr createOrEdit - The createOrEdit is an aggregate of the create and edit actions. It can be either a function or a class that extends EntityDialogComponent.
  * @attr delete - The delete action can be either a function or a class that extends EntityDialogComponent.
  * @attr isEntityDeletable - A predicate that determines whether an entity is deletable.
- * @attr hideFab - Whether to hide the floating action button.
+ * @attr primaryActionHidden - Whether to hide the primary action button generated for the create action.
  */
 @component('mo-entity-data-grid')
 export class EntityDataGrid<TEntity extends EntityWithId, TDataFetcherParameters extends FetchableDataGridParametersType = Record<string, never>, TDetailsElement extends Element | undefined = undefined> extends FetchableDataGrid<TEntity, TDataFetcherParameters, TDetailsElement> {
@@ -40,7 +40,7 @@ export class EntityDataGrid<TEntity extends EntityWithId, TDataFetcherParameters
 	@property({ type: Object }) isEntityDeletable?: (entity: TEntity) => boolean
 
 	@property({ type: Object }) rowContextMenuTemplate?: (rowData: Array<TEntity>) => TemplateResult
-	@property({ type: Boolean }) hideFab = false
+	@property({ type: Boolean }) primaryActionHidden = false
 
 	override readonly primaryContextMenuItemOnDoubleClick = true
 	override parameters = {} as TDataFetcherParameters
@@ -73,10 +73,30 @@ export class EntityDataGrid<TEntity extends EntityWithId, TDataFetcherParameters
 		await this.requestFetch()
 	}
 
-	protected override get fabTemplate() {
+	static override get styles() {
+		return css`
+			${super.styles}
+
+			/* A tonal look for the create button, subtle enough to not overpower the icon-buttons next to it */
+			#primary-action {
+				--mo-button-horizontal-padding: 0px;
+				width: 2.5rem;
+			}
+		`
+	}
+
+	override get hasPrimaryAction() {
+		return (!!this.create && !this.primaryActionHidden) || super.hasPrimaryAction
+	}
+
+	protected override get primaryActionTemplate() {
 		return html`
-			${!this.create || this.hideFab ? html.nothing : html`<mo-fab icon='add' @click=${() => this.createAndRefetch()}></mo-fab>`}
-			${super.fabTemplate}
+			${!this.create || this.primaryActionHidden ? html.nothing : html`
+				<mo-loading-button id='primary-action' type='filled' @click=${() => this.createAndRefetch()}>
+					<mo-icon icon='add'></mo-icon>
+				</mo-loading-button>
+			`}
+			${super.primaryActionTemplate}
 		`
 	}
 
