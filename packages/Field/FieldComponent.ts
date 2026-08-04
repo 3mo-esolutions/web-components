@@ -1,6 +1,7 @@
 import { html, property, event, Component, type HTMLTemplateResult, state, css, type PropertyValues } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
 import { FocusController, type FocusMethod } from '@3mo/focus-controller'
+import { InstanceofAttributeController } from '@3mo/instanceof-attribute-controller'
 
 /**
  * @attr value - The field's value
@@ -38,6 +39,7 @@ export abstract class FieldComponent<T> extends Component {
 	@state() private focused = false
 	@state() protected inputValue?: T
 
+	protected readonly instanceofAttributeController = new InstanceofAttributeController(this)
 	protected readonly slotController = new SlotController(this)
 	protected readonly focusController = new FocusController(this, {
 		handleChange: (focused, bubbled, method) => {
@@ -46,11 +48,11 @@ export abstract class FieldComponent<T> extends Component {
 		}
 	})
 
-	protected override update(changedProperties: PropertyValues<this>) {
-		if (changedProperties.has('value')) {
+	protected override update(props: PropertyValues<this>) {
+		if (props.has('value')) {
 			this.valueUpdated()
 		}
-		super.update(changedProperties)
+		super.update(props)
 	}
 
 	protected valueUpdated() {
