@@ -1,9 +1,8 @@
 import { css, html, style, event, property, repeat, queryAll } from '@a11d/lit'
 import { tooltip } from '@3mo/tooltip'
 import { FetchableDataGrid, type FetchableDataGridParametersType } from '@3mo/fetchable-data-grid'
-import { type DataGridColumn } from '@3mo/data-grid'
 import { Localizer } from '@3mo/localization'
-import { ModdableDataGridMode } from './ModdableDataGridMode.js'
+import { ModdableDataGridMode, ModdableDataGridModeColumn } from './ModdableDataGridMode.js'
 import { DialogMode } from './DialogMode.js'
 import { equals } from '@a11d/equals'
 import { IndexedDbAdapter, type ModdableDataGridChip, type ModdableDataGridModesAdapter } from './index.js'
@@ -40,12 +39,6 @@ export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataG
 	protected override updated(...parameters: Parameters<FetchableDataGrid<TData, TParameters, TDetailsElement>['updated']>) {
 		super.updated(...parameters)
 		this.modeChips.forEach(chip => chip.requestUpdate())
-	}
-
-	override extractedColumnsUpdated(columns: Array<DataGridColumn<TData, unknown>>) {
-		if (!this.mode) {
-			return super.extractedColumnsUpdated(columns)
-		}
 	}
 
 	static override get styles() {
@@ -120,7 +113,22 @@ export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataG
 	}
 
 	get hasUnsavedChanges() {
-		return this.mode && !this.currentMode[equals](this.mode)
+		const mode = this.mode
+		if (!mode) {
+			return false
+		}
+		// The columns of a mode are compared by the columns they compose to rather than by the shape
+		// of their modifications, as the very same columns can be described in more than one way — a
+		// view saved before columns were split into definitions and modifications holds a fully
+		// specified modification of every column, and modifying a column back and forth leaves
+		// modifications behind which change nothing. So "unsaved changes" asks exactly one question:
+		// would re-applying the mode change anything?
+		const columns = this.columnsController.columns
+		const composed = (modifications: ReadonlyArray<ModdableDataGridModeColumn<TData>> = []) =>
+			columns.composed(modifications).map(c => ModdableDataGridModeColumn.fromColumn(c))
+		const currentMode = this.currentMode
+		currentMode.columns = composed([...columns.modifications])
+		return !currentMode[equals](mode.with({ columns: composed(mode.columns) }))
 	}
 
 	protected override get template() {

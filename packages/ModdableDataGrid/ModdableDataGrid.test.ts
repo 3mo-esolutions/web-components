@@ -1,5 +1,5 @@
 import { component, DialogAlert, html } from '@3mo/del'
-import { DialogMode, ModdableDataGrid, type ModdableDataGridChip, ModdableDataGridMode, ModdableDataGridModeColumn, type ModdableDataGridModesAdapter } from '.'
+import { DialogMode, ModdableDataGrid, type ModdableDataGridChip, ModdableDataGridMode, ModdableDataGridModeColumn, type ModdableDataGridModesAdapter } from './index.js'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { faker } from '@faker-js/faker'
 
@@ -26,17 +26,17 @@ class ModesAdapterMock implements ModdableDataGridModesAdapter<User, Parameters>
 	selectedModeId?: string
 
 	getAll = () => Promise.resolve(this.modes)
-	get = (_, modeId: string) => Promise.resolve(this.modes.find(m => m.id === modeId))
-	save = (_, mode: ModdableDataGridMode<User, Parameters>) => {
+	get = (_: string, modeId: string) => Promise.resolve(this.modes.find(m => m.id === modeId))
+	save = (_: string, mode: ModdableDataGridMode<User, Parameters>) => {
 		this.modes = this.modes.map(m => m.id === mode.id ? mode : m)
 		return Promise.resolve(mode)
 	}
-	delete = (_, mode: ModdableDataGridMode<User, Parameters>) => {
+	delete = (_: string, mode: ModdableDataGridMode<User, Parameters>) => {
 		this.modes = this.modes.filter(m => m.id !== mode.id)
 		return Promise.resolve()
 	}
 	getSelectedId = () => Promise.resolve(this.selectedModeId)
-	setSelectedId = (_, modeId: string) => {
+	setSelectedId = (_: string, modeId: string) => {
 		this.selectedModeId = modeId
 		return Promise.resolve()
 	}
@@ -83,16 +83,21 @@ class ModdableDataGridStory extends ModdableDataGrid<User, Parameters> {
 }
 
 class ModdableDataGridTestFixture extends ComponentTestFixture<ModdableDataGridStory> {
+	// Shaped like the modes persisted before columns were split into definitions and modifications:
+	// a full snapshot of every column with all of its properties materialized, which is a valid —
+	// merely fully specified rather than partial — set of modifications. @see 'Legacy modes'
+	static readonly columns = [
+		new ModdableDataGridModeColumn<User>({ dataSelector: 'id', width: 'max-content', hidden: true, sticky: undefined }),
+		new ModdableDataGridModeColumn<User>({ dataSelector: 'firstName', width: 'max-content', hidden: false, sticky: undefined }),
+		new ModdableDataGridModeColumn<User>({ dataSelector: 'lastName', width: 'max-content', hidden: false, sticky: undefined }),
+		new ModdableDataGridModeColumn<User>({ dataSelector: 'age', width: 'max-content', hidden: false, sticky: undefined }),
+	]
+
+	// An untouched data grid has no columns modifications, so the default mode carries no column intent
 	static readonly defaultMode = new ModdableDataGridMode<User, Parameters>({
 		id: undefined,
 		name: undefined,
 		parameters: {},
-		columns: [
-			new ModdableDataGridModeColumn({ dataSelector: 'id', width: 'max-content', hidden: true, sticky: undefined }),
-			new ModdableDataGridModeColumn({ dataSelector: 'firstName', width: 'max-content', hidden: false, sticky: undefined }),
-			new ModdableDataGridModeColumn({ dataSelector: 'lastName', width: 'max-content', hidden: false, sticky: undefined }),
-			new ModdableDataGridModeColumn({ dataSelector: 'age', width: 'max-content', hidden: false, sticky: undefined }),
-		]
 	})
 
 	static get modes(): ModdableDataGridMode<User, Parameters>[] {
@@ -101,7 +106,7 @@ class ModdableDataGridTestFixture extends ComponentTestFixture<ModdableDataGridS
 				id: '1',
 				name: 'Mode 1',
 				parameters: { keyword: 'Friedrich Nietzsche' } as Parameters,
-				columns: ModdableDataGridTestFixture.defaultMode.columns
+				columns: ModdableDataGridTestFixture.columns
 			}),
 			new ModdableDataGridMode({
 				id: '2',
@@ -109,9 +114,9 @@ class ModdableDataGridTestFixture extends ComponentTestFixture<ModdableDataGridS
 				parameters: {},
 				columns: [
 					new ModdableDataGridModeColumn({ dataSelector: 'id', width: 'max-content', hidden: false, sticky: undefined }), // Changed hidden to false
-					ModdableDataGridTestFixture.defaultMode.columns![1],
+					ModdableDataGridTestFixture.columns[1]!,
 					new ModdableDataGridModeColumn({ dataSelector: 'lastName', width: '200px', hidden: false, sticky: undefined }), // Changed width to 200px
-					ModdableDataGridTestFixture.defaultMode.columns![3],
+					ModdableDataGridTestFixture.columns[3]!,
 				]
 			}),
 		]
@@ -215,17 +220,16 @@ describe('ModdableDataGrid', () => {
 		it('should select the associated mode when a chip is clicked', async () => {
 			fixture.expectModeToBeSelected('default')
 
-			fixture.modeChips[0].dispatchEvent(new MouseEvent('click'))
+			fixture.modeChips[0]!.dispatchEvent(new MouseEvent('click'))
 			await fixture.updateComplete
 
 			fixture.expectModeToBeSelected('1')
 		})
 
 		xit('should display shortcuts and have more context menu items if there are change to the current view', async () => {
-			const chip = fixture.modeChips[0]
+			const chip = fixture.modeChips[0]!
 
 			// Why does the initial chip has changes?
-
 			chip.dispatchEvent(new MouseEvent('click'))
 			chip.mode.save(fixture.component)
 			await new Promise<void>(r => setTimeout(r, 20))
@@ -240,7 +244,7 @@ describe('ModdableDataGrid', () => {
 		})
 
 		it('should discard changes when "undo" icon-button is clicked', async () => {
-			const chip = fixture.modeChips[0]
+			const chip = fixture.modeChips[0]!
 			await fixture.selectChip(chip)
 
 			fixture.component.parameters = { ...fixture.component.parameters, keyword: '' }
@@ -255,7 +259,7 @@ describe('ModdableDataGrid', () => {
 		})
 
 		it('should apply changes when clicking "done" icon', async () => {
-			const chip = fixture.modeChips[0]
+			const chip = fixture.modeChips[0]!
 			await fixture.selectChip(chip)
 
 			fixture.component.parameters = { ...fixture.component.parameters, keyword: '' }
@@ -272,7 +276,7 @@ describe('ModdableDataGrid', () => {
 		it('should delete the mode when clicking "delete" icon-button', async () => {
 			spyOn(fixture.component.modesController, 'delete')
 
-			const chip = fixture.modeChips[0]
+			const chip = fixture.modeChips[0]!
 			await fixture.selectChip(chip)
 			chip.renderRoot.querySelector('mo-menu-item[data-test-id=delete]')!.dispatchEvent(new MouseEvent('click'))
 
@@ -282,7 +286,7 @@ describe('ModdableDataGrid', () => {
 
 
 		it('should archive or unarchive a mode when "archive" icon-button is clicked', async () => {
-			const chip = fixture.modeChips[0]
+			const chip = fixture.modeChips[0]!
 			await fixture.selectChip(chip)
 			spyOn(chip.mode, 'archive')
 
@@ -297,7 +301,7 @@ describe('ModdableDataGrid', () => {
 				parameters = this.parameters
 				return Promise.resolve(undefined)
 			})
-			const chip = fixture.modeChips[0]
+			const chip = fixture.modeChips[0]!
 			await fixture.selectChip(chip)
 
 			chip.renderRoot.querySelector('[data-test-id=edit]')!.dispatchEvent(new MouseEvent('click'))
@@ -314,7 +318,7 @@ describe('ModdableDataGrid', () => {
 				return Promise.resolve(undefined)
 			})
 
-			const chip = fixture.modeChips[0]
+			const chip = fixture.modeChips[0]!
 			await fixture.selectChip(chip)
 			fixture.component.parameters = { ...fixture.component.parameters, keyword: '' }
 			await fixture.updateComplete
@@ -361,6 +365,162 @@ describe('ModdableDataGrid', () => {
 
 				fixture.expectModeToBeSelected('default')
 			})
+		})
+	})
+
+	describe('Asynchronously rendered columns', () => {
+		const fixture = new ModdableDataGridTestFixture({ modes: ModdableDataGridTestFixture.modes, selectedModeId: '2' })
+
+		// Columns are not extracted/applied immediately, so we wait for the next macrotask
+		beforeEach(() => new Promise(r => setTimeout(r)))
+
+		const hasColumn = (dataSelector: string) => fixture.component.columns.some(c => (c.dataSelector as string) === dataSelector)
+
+		const appendColumnAfterRender = async (dataSelector: string) => {
+			const column = document.createElement('mo-data-grid-column-text') as any
+			column.dataSelector = dataSelector
+			column.heading = dataSelector
+			fixture.component.appendChild(column)
+			await new Promise(r => setTimeout(r))
+			await fixture.updateComplete
+		}
+
+		it('should surface a column rendered after a mode has been applied', async () => {
+			fixture.expectModeToBeSelected('2')
+			expect(hasColumn('score')).toBeFalse()
+
+			await appendColumnAfterRender('score')
+
+			expect(hasColumn('score')).toBeTrue()
+		})
+
+		it('should not let an app-provided column add unsaved changes to a selected mode', async () => {
+			// Select a mode that mirrors the current view exactly, so the baseline is genuinely clean
+			// (the seeded fixture modes do not round-trip and would report changes regardless).
+			const cleanMode = fixture.component.currentMode.with({ id: 'clean', name: 'Clean' })
+			fixture.component.modesAdapter.modes = [cleanMode]
+			await fixture.component.modesController.set(cleanMode)
+			await fixture.updateComplete
+			expect(fixture.component.hasUnsavedChanges).toBeFalse()
+
+			await appendColumnAfterRender('score')
+
+			expect(hasColumn('score')).toBeTrue()
+			expect(fixture.component.hasUnsavedChanges).toBeFalse()
+		})
+
+		it('should restore the saved modification of a mode column whose element renders late', async () => {
+			const currentMode = fixture.component.currentMode
+			const modeWithLateColumn = currentMode.with({
+				id: 'late',
+				name: 'Late',
+				columns: [
+					...currentMode.columns!,
+					new ModdableDataGridModeColumn<User>({ dataSelector: 'score' as KeyPath.Of<User>, width: '321px', hidden: false, sticky: undefined }),
+				],
+			})
+			fixture.component.modesAdapter.modes = [modeWithLateColumn]
+			await fixture.component.modesController.set(modeWithLateColumn)
+			await fixture.updateComplete
+			expect(hasColumn('score')).toBeFalse()
+
+			await appendColumnAfterRender('score')
+
+			expect(hasColumn('score')).toBeTrue()
+			expect(fixture.component.columns.find(c => (c.dataSelector as string) === 'score')?.width).toBe('321px')
+			expect(fixture.component.hasUnsavedChanges).toBeFalse()
+		})
+	})
+
+	describe('Unsaved changes', () => {
+		const fixture = new ModdableDataGridTestFixture({ modes: ModdableDataGridTestFixture.modes, selectedModeId: '2' })
+
+		beforeEach(() => new Promise(r => setTimeout(r)))
+
+		// A mode which mirrors the current view exactly, so that the baseline is genuinely clean
+		const selectCleanMode = async () => {
+			const cleanMode = fixture.component.currentMode.with({ id: 'clean', name: 'Clean' })
+			fixture.component.modesAdapter.modes = [cleanMode]
+			await fixture.component.modesController.set(cleanMode)
+			await fixture.updateComplete
+			expect(fixture.component.hasUnsavedChanges).toBeFalse()
+		}
+
+		it('should report no unsaved changes after a column is moved and moved back', async () => {
+			await selectCleanMode()
+			const [first] = fixture.component.columns
+
+			fixture.component.columnsController.columns.move(first!.dataSelector, 2)
+			await fixture.updateComplete
+			expect(fixture.component.hasUnsavedChanges).toBeTrue()
+
+			fixture.component.columnsController.columns.move(first!.dataSelector, 0)
+			await fixture.updateComplete
+
+			expect(fixture.component.hasUnsavedChanges).toBeFalse()
+		})
+
+		it('should report no unsaved changes after a column is hidden and shown again', async () => {
+			await selectCleanMode()
+			const [first] = fixture.component.columns
+			const wasHidden = first!.hidden
+
+			first!.modify({ hidden: !wasHidden })
+			await fixture.updateComplete
+			expect(fixture.component.hasUnsavedChanges).toBeTrue()
+
+			fixture.component.columnsController.columns.modify(first!.dataSelector, { hidden: wasHidden })
+			await fixture.updateComplete
+
+			expect(fixture.component.hasUnsavedChanges).toBeFalse()
+		})
+	})
+
+	// Modes persisted before columns were split into definitions and modifications stored a full
+	// snapshot of every column instead of only the user's intent. Such a snapshot is a fully
+	// specified set of modifications, so it keeps working without any migration of stored data.
+	describe('Legacy modes', () => {
+		const fixture = new ModdableDataGridTestFixture({ modes: ModdableDataGridTestFixture.modes, selectedModeId: '2' })
+
+		beforeEach(() => new Promise(r => setTimeout(r)))
+
+		// Serialized exactly as modes were before the split, being a snapshot of every column with all
+		// of its properties materialized. It is derived from the current mode so that everything but
+		// the columns round-trips, as the seeded fixture modes do not.
+		const selectLegacyMode = async () => {
+			const legacyMode = fixture.component.currentMode.with({
+				id: 'legacy',
+				name: 'Legacy',
+				columns: fixture.component.columns.map(c => ModdableDataGridModeColumn.fromColumn(c)),
+			})
+			fixture.component.modesAdapter.modes = [legacyMode]
+			await fixture.component.modesController.set(legacyMode)
+			await fixture.updateComplete
+			return legacyMode
+		}
+
+		it('should apply a full column snapshot without reporting unsaved changes', async () => {
+			const legacyMode = await selectLegacyMode()
+
+			// Every property is specified, so the snapshot wins over the column elements' declarations
+			expect(legacyMode.columns!.every(c => c.width !== undefined && c.hidden !== undefined)).toBeTrue()
+			expect(fixture.component.columns.map(c => c.dataSelector)).toEqual(['id', 'firstName', 'lastName', 'age'])
+			expect(fixture.component.columns.find(c => c.dataSelector === 'lastName')?.width).toBe('200px')
+			expect(fixture.component.hasUnsavedChanges).toBeFalse()
+		})
+
+		it('should surface a column the snapshot does not know instead of dropping it', async () => {
+			await selectLegacyMode()
+
+			const column = document.createElement('mo-data-grid-column-text') as any
+			column.dataSelector = 'score'
+			column.heading = 'Score'
+			fixture.component.appendChild(column)
+			await new Promise(r => setTimeout(r))
+			await fixture.updateComplete
+
+			expect(fixture.component.columns.map(c => c.dataSelector)).toEqual(['id', 'firstName', 'lastName', 'age', 'score' as any])
+			expect(fixture.component.hasUnsavedChanges).toBeFalse()
 		})
 	})
 })

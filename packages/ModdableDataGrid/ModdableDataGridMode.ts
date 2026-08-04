@@ -1,7 +1,7 @@
 import { type FetchableDataGridParametersType } from '@3mo/fetchable-data-grid'
 import { NotificationComponent } from '@a11d/lit-application'
 import { equals } from '@a11d/equals'
-import { type DataGridColumn, type DataGridSorting, type DataGridPagination, type DataGridColumnSticky } from '@3mo/data-grid'
+import { type DataGridColumn, type DataGridColumnModification, type DataGridSorting, type DataGridPagination, type DataGridColumnSticky } from '@3mo/data-grid'
 import { Localizer } from '@3mo/localization'
 import { type ModdableDataGrid } from './ModdableDataGrid.js'
 import type * as CSS from 'csstype'
@@ -16,7 +16,7 @@ Localizer.dictionaries.add({
 	}
 })
 
-export class ModdableDataGridModeColumn<T> {
+export class ModdableDataGridModeColumn<T> implements DataGridColumnModification<T> {
 	static fromColumn<T>(column: DataGridColumn<T>) {
 		return new ModdableDataGridModeColumn<T>({
 			dataSelector: column.dataSelector,
@@ -29,7 +29,7 @@ export class ModdableDataGridModeColumn<T> {
 	dataSelector!: KeyPath.Of<T>
 	width?: CSS.DataType.TrackBreadth<(string & {}) | 0>
 	hidden?: boolean
-	sticky?: DataGridColumnSticky
+	sticky?: DataGridColumnSticky | null
 
 	constructor(init?: Partial<ModdableDataGridModeColumn<T>>) {
 		Object.assign(this, structuredClone(init))
@@ -40,13 +40,6 @@ export class ModdableDataGridModeColumn<T> {
 			&& other.width === this.width
 			&& other.hidden === this.hidden
 			&& other.sticky === this.sticky
-	}
-
-	apply(column: DataGridColumn<T>) {
-		column.width = this.width ?? column.width
-		column.hidden = this.hidden ?? column.hidden
-		column.sticky = this.sticky ?? column.sticky
-		return column
 	}
 }
 
@@ -63,7 +56,12 @@ export class ModdableDataGridMode<TData, TDataFetcherParameters extends Fetchabl
 			name: dataGrid.mode?.name,
 			archived: dataGrid.mode?.archived,
 			// Situational properties
-			columns: dataGrid.columns.map(c => ModdableDataGridModeColumn.fromColumn(c)),
+			// The columns modifications are the intent about column order and presentation, so a mode
+			// stores exactly that intent rather than a materialized snapshot of the columns. No intent
+			// at all — the columns following their definitions untouched — is stored as no columns.
+			columns: !dataGrid.columnsController.columns.modifications.length
+				? undefined
+				: dataGrid.columnsController.columns.modifications.map(c => new ModdableDataGridModeColumn<TData>(c)),
 			pagination: dataGrid.pagination,
 			parameters: structuredClone(dataGrid.parameters) ?? {} as TParameters,
 			sorting: structuredClone(dataGrid.sorting) ?? [],
@@ -167,11 +165,7 @@ export class ModdableDataGridMode<TData, TDataFetcherParameters extends Fetchabl
 
 	apply(dataGrid: ModdableDataGrid<TData, TDataFetcherParameters, any>) {
 		const clone = this.clone()
-		const orderedColumns = clone.columns?.map(c1 => {
-			const extractedCol = dataGrid.extractedColumns.find(c2 => c2.dataSelector === c1.dataSelector)
-			return extractedCol ? c1.apply(extractedCol) : undefined
-		}).filter(c => c !== undefined) ?? dataGrid.extractedColumns
-		dataGrid.setColumns(orderedColumns)
+		dataGrid.columnsController.columns.modifications.set(clone.columns)
 		dataGrid.sort(clone.sorting ?? [])
 		dataGrid.setPagination(clone.pagination)
 		dataGrid.setParameters(clone.parameters ?? {} as TDataFetcherParameters)
