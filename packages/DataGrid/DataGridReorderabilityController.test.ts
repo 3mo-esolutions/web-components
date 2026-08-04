@@ -31,4 +31,44 @@ describe('DataGridReorderabilityController', () => {
 			expect(createController().enabled).toBe(true)
 		})
 	})
+
+	describe('handleReorder', () => {
+		const createGrid = (data: Array<string>) => {
+			const dispatched = new Array<Array<{ type: string, oldIndex: number, index: number }>>()
+			const host = {
+				addController: () => { },
+				reorderability: true,
+				sortingController: { enabled: false },
+				detailsController: { hasDetails: false },
+				data,
+				get dataRecords() { return this.data.map((_: string, index: number) => ({ index })) },
+				reorder: { dispatch: (changes: any) => dispatched.push(changes.map((c: any) => ({ type: c.type, oldIndex: c.oldIndex, index: c.record.index }))) },
+			}
+			return { host, controller: new DataGridReorderabilityController(host as any), dispatched }
+		}
+
+		it('moves the datum and reports the move plus every record it shifted', () => {
+			const { host, controller, dispatched } = createGrid(['a', 'b', 'c', 'd'])
+			controller.reorder(0, 2)
+			expect(host.data).toEqual(['b', 'c', 'a', 'd'])
+			expect(dispatched[0]).toEqual([
+				{ type: 'move', oldIndex: 0, index: 2 },
+				{ type: 'shift', oldIndex: 1, index: 0 },
+				{ type: 'shift', oldIndex: 2, index: 1 },
+			])
+		})
+
+		it('moves backwards too', () => {
+			const { host, controller } = createGrid(['a', 'b', 'c', 'd'])
+			controller.reorder(3, 1)
+			expect(host.data).toEqual(['a', 'd', 'b', 'c'])
+		})
+
+		it('is a no-op when the destination is the source', () => {
+			const { host, controller, dispatched } = createGrid(['a', 'b'])
+			controller.reorder(1, 1)
+			expect(host.data).toEqual(['a', 'b'])
+			expect(dispatched).toEqual([])
+		})
+	})
 })

@@ -2,9 +2,9 @@ import { bind, Component, component, css, html, join, property, style, unsafeCSS
 import { tooltip } from '@3mo/tooltip'
 import { Localizer } from '@3mo/localization'
 import { ResizeController } from '@3mo/resize-observer'
+import { ReorderabilityState } from '@3mo/reorderability'
 import { DataGridColumn } from './DataGridColumn.js'
 import { DataGridSortingStrategy } from './DataGridSortingController.js'
-import { ReorderabilityState, type ReorderabilityController } from './DataGridReorderabilityController.js'
 
 Localizer.dictionaries.add('de', {
 	'Sorting': 'Sortierung',
@@ -21,8 +21,6 @@ Localizer.dictionaries.add('de', {
 export class DataGridColumnHeader extends Component {
 	@property({ type: Object }) column!: DataGridColumn<unknown>
 	@property({ type: Boolean, reflect: true }) menuOpen = false
-	@property({ type: Object }) reorderabilityController!: ReorderabilityController
-	@property({ type: Number }) index = 0
 
 	static override get styles() {
 		return css`
@@ -40,16 +38,19 @@ export class DataGridColumnHeader extends Component {
 				padding: 0 var(--mo-data-grid-cell-padding);
 			}
 
-			:host:has(#reorderable-area[data-reorderability=${unsafeCSS(ReorderabilityState.Dragging)}]) {
+			/* The host itself is the controller's registered item (see DataGridHeader), so the state
+			   arrives as the host's own attribute — deliberately NOT via :host:has(), which WebKit
+			   doesn't match (the insertion lines were simply invisible on iOS). */
+			:host([data-reorderability=${unsafeCSS(ReorderabilityState.Dragging)}]) {
 				background: var(--mo-color-surface);
+
+				#reorderable-area {
+					opacity: 0;
+				}
 			}
 
-			#reorderable-area[data-reorderability=${unsafeCSS(ReorderabilityState.Dragging)}] {
-				opacity: 0;
-			}
-
-			:host:has(#reorderable-area[data-reorderability=${unsafeCSS(ReorderabilityState.DropBefore)}]),
-			:host:has(#reorderable-area[data-reorderability=${unsafeCSS(ReorderabilityState.DropAfter)}]) {
+			:host([data-reorderability=${unsafeCSS(ReorderabilityState.DropBefore)}]),
+			:host([data-reorderability=${unsafeCSS(ReorderabilityState.DropAfter)}]) {
 				&::after {
 					content: '';
 					position: absolute;
@@ -62,11 +63,11 @@ export class DataGridColumnHeader extends Component {
 				}
 			}
 
-			:host:has(#reorderable-area[data-reorderability=${unsafeCSS(ReorderabilityState.DropBefore)}])::after {
+			:host([data-reorderability=${unsafeCSS(ReorderabilityState.DropBefore)}])::after {
 				inset-inline-start: 0;
 			}
 
-			:host:has(#reorderable-area[data-reorderability=${unsafeCSS(ReorderabilityState.DropAfter)}])::after {
+			:host([data-reorderability=${unsafeCSS(ReorderabilityState.DropAfter)}])::after {
 				inset-inline-end: 0;
 			}
 
@@ -202,24 +203,8 @@ export class DataGridColumnHeader extends Component {
 
 		const additionalItems = this.column.getMenuItemsTemplate?.()
 
-		const dragImageStyle = style({
-			height: '2rem',
-			paddingInline: '0.75rem',
-			background: 'var(--mo-color-accent)',
-			color: 'var(--mo-color-on-accent)',
-			fontSize: 'small',
-		})
-
 		return html`
-			<div id='reorderable-area' ${this.reorderabilityController.item({
-				index: this.index,
-				disabled: !!this.column.sticky,
-				dragImage: html`
-					<mo-flex alignItems='center' justifyContent='center' ${dragImageStyle}>
-						${this.column.heading}
-					</mo-flex>
-				`
-			})}>
+			<div id='reorderable-area'>
 				<div id='drag-indicator'>
 					<mo-icon icon='drag_indicator'></mo-icon>
 				</div>

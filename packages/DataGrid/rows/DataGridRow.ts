@@ -4,8 +4,9 @@ import { DirectionsByLanguage, Localizer } from '@3mo/localization'
 import { popover } from '@3mo/popover'
 import { tooltip } from '@3mo/tooltip'
 import { ContextMenu } from '@3mo/context-menu'
+import { ReorderabilityState } from '@3mo/reorderability'
 import { type DataGridColumn } from '../DataGridColumn.js'
-import { type DataGridCell, DataGridPrimaryContextMenuItem, type DataRecord, ReorderabilityState } from '../index.js'
+import { type DataGridCell, DataGridPrimaryContextMenuItem, type DataRecord } from '../index.js'
 
 Localizer.dictionaries.add('de', {
 	'Reordering is unavailable while the grid is sorted.': 'Die Reihenfolge kann nicht geändert werden, solange die Tabelle sortiert ist.',
@@ -80,8 +81,14 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				isolation: isolate;
 			}
 
+			/* Rows reorder in live mode: the grabbed row rides the pointer, so it LIFTS (opaque, over
+			   its neighbours) instead of being ghosted in place, and the row order itself shows where
+			   the drop lands — the insertion borders below are only reached in indicator mode. */
 			:host([data-reorderability=${unsafeCSS(ReorderabilityState.Dragging)}]) {
-				opacity: 0.5;
+				z-index: 3;
+				background: var(--mo-color-surface);
+				box-shadow: var(--mo-shadow);
+				cursor: grabbing;
 			}
 
 			:host([data-reorderability=${unsafeCSS(ReorderabilityState.DropBefore)}]) {

@@ -1,8 +1,8 @@
 import { component, Component, css, html, property, event, style, live, queryAll, repeat, bind } from '@a11d/lit'
 import { observeResize } from '@3mo/resize-observer'
 import { Localizer } from '@3mo/localization'
-import { DataGridSelectability, type DataGrid, type DataGridColumn, type DataGridColumnHeader, ReorderabilityController } from './index.js'
-import type { DataGridColumnsController } from './DataGridColumnsController.js'
+import { ReorderabilityController } from '@3mo/reorderability'
+import { DataGridSelectability, type DataGrid, type DataGridColumn, type DataGridColumnsController, type DataGridColumnHeader } from './index.js'
 
 Localizer.dictionaries.add('en', {
 	'Actions for ${count:pluralityNumber} selected entries': [
@@ -34,14 +34,11 @@ export class DataGridHeader<TData> extends Component {
 	@queryAll('mo-data-grid-column-header') private readonly columnHeaders!: Array<DataGridColumnHeader>
 
 	readonly reorderabilityController = new ReorderabilityController(this, {
+		strategy: 'indicator',
 		handleReorder: (source, destination) => {
 			const sourceColumn = this.dataGrid.visibleColumns[source]!
 			const destinationColumn = this.dataGrid.visibleColumns[destination]!
-			const sourceIndex = this.dataGrid.columns.indexOf(sourceColumn)
-			const destinationIndex = this.dataGrid.columns.indexOf(destinationColumn)
-			this.dataGrid.columns.splice(sourceIndex, 1)
-			this.dataGrid.columns.splice(destinationIndex, 0, sourceColumn)
-			this.dataGrid.setColumns(this.dataGrid.columns)
+			this.dataGrid.columnsController.columns.move(sourceColumn.dataSelector, this.dataGrid.columns.indexOf(destinationColumn))
 		}
 	})
 
@@ -193,9 +190,25 @@ export class DataGridHeader<TData> extends Component {
 	}
 
 	private get contentTemplate() {
+		const dragImageStyle = style({
+			height: '2rem',
+			paddingInline: '0.75rem',
+			background: 'var(--mo-color-accent)',
+			color: 'var(--mo-color-on-accent)',
+			fontSize: 'small',
+		})
 		return html`
 			${repeat(this.dataGrid.visibleColumns, c => c.dataSelector, (column, index) => html`
-				<mo-data-grid-column-header .reorderabilityController=${this.reorderabilityController} .index=${index} .column=${column}></mo-data-grid-column-header>
+				<mo-data-grid-column-header .column=${column} ${this.reorderabilityController.item({
+					index,
+					disabled: !!column.sticky,
+					handle: '#reorderable-area',
+					dragImage: html`
+						<mo-flex alignItems='center' justifyContent='center' ${dragImageStyle}>
+							${column.heading}
+						</mo-flex>
+					`,
+				})}></mo-data-grid-column-header>
 			`)}
 		`
 	}
@@ -276,8 +289,7 @@ export class DataGridHeader<TData> extends Component {
 
 	private readonly getColumnTemplate = (column: DataGridColumn<TData>) => {
 		const change = (e: CustomEvent<boolean>) => {
-			column.hidden = e.detail === false
-			this.dataGrid.setColumns(this.dataGrid.columns)
+			column.modify({ hidden: e.detail === false })
 		}
 		return html`
 			<mo-checkbox ${style({ height: '30px' })}

@@ -1,6 +1,6 @@
 import { component, css, html, state } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { DataGrid, type DataGridRow, DataGridColumn, DataRecord, DataGridSelectability } from './index.js'
+import { DataGrid, type DataGridRow, DataGridColumn, type DataGridColumnComponent, DataRecord, DataGridSelectability } from './index.js'
 
 type Person = { id: number, name: string, birthDate: DateTime, children?: Array<Person>, balance: number }
 
@@ -134,6 +134,28 @@ describe('DataGrid', () => {
 				expect(firstColumn?.dataGrid).toBe(fixture.component)
 				expect(secondColumn?.dataGrid).toBe(fixture.component)
 			})
+
+			it('should take precedence over auto-generated columns', async () => {
+				fixture.component.columns = [
+					new DataGridColumn({ heading: 'Name', dataSelector: 'name' }),
+				]
+
+				await fixture.updateComplete
+
+				expect(fixture.component.columns.map(c => c.dataSelector)).toEqual(['name'])
+				expect(fixture.component.columnsController.columns.definitions.programmatic.length).toBe(1)
+				expect(fixture.component.columnsController.columns.definitions.generated.length).toBe(0)
+			})
+
+			it('should be providable through the deprecated setColumns as well', async () => {
+				fixture.component.setColumns([
+					new DataGridColumn({ heading: 'Name', dataSelector: 'name' }),
+				])
+
+				await fixture.updateComplete
+
+				expect(fixture.component.columns.map(c => c.dataSelector)).toEqual(['name'])
+			})
 		})
 
 		describe('extracted from slotted elements', () => {
@@ -176,6 +198,42 @@ describe('DataGrid', () => {
 				await fixture.updateComplete
 				expect(fixture.component.columns.map(c => c.dataSelector)).toEqual(['name', 'id'])
 			})
+
+			it('should expose the definition sources with extracted definitions winning', () => {
+				const definitions = fixture.component.columnsController.columns.definitions
+
+				expect(definitions.extracted.map(c => c.dataSelector)).toEqual(['id', 'name'])
+				expect(definitions.programmatic.length).toBe(0)
+				expect(definitions.generated.length).toBe(0)
+			})
+
+			it('should be iterable and array-like over the effective definitions', () => {
+				const definitions = fixture.component.columnsController.columns.definitions
+
+				expect(definitions.length).toBe(2)
+				expect(definitions[0]?.dataSelector).toBe('id')
+				expect([...definitions].map(c => c.dataSelector)).toEqual(['id', 'name'])
+				expect(Array.from(definitions).map(c => c.dataSelector)).toEqual(['id', 'name'])
+				expect(definitions.map(c => c.dataSelector)).toEqual(['id', 'name'])
+				expect(definitions.find(c => c.dataSelector === 'name')?.heading).toBe('Name')
+				expect(definitions.filter(c => c.dataSelector === 'id').length).toBe(1)
+			})
+
+			it('should compose anew and update the data grid when a source is assigned', async () => {
+				const definitions = fixture.component.columnsController.columns.definitions
+				const columnsChange = jasmine.createSpy()
+				fixture.component.addEventListener('columnsChange', columnsChange)
+
+				definitions.extracted = [new DataGridColumn({ heading: 'Balance', dataSelector: 'balance' })]
+				await fixture.updateComplete
+
+				expect(columnsChange).toHaveBeenCalled()
+				expect(definitions.length).toBe(1)
+				expect(definitions[0]?.dataSelector).toBe('balance')
+				expect(definitions[1]).toBeUndefined()
+				expect([...definitions].map(c => c.dataSelector)).toEqual(['balance'])
+				expect(fixture.component.columns.map(c => c.dataSelector)).toEqual(['balance'])
+			})
 		})
 
 		describe('extracted from non-slotted elements', () => {
@@ -211,6 +269,70 @@ describe('DataGrid', () => {
 				fixture.component.disconnectId = false
 				await fixture.updateComplete
 				expect(fixture.component.columns.map(c => c.dataSelector)).toEqual(['id', 'name'])
+			})
+		})
+
+		describe('modifications', () => {
+			const fixture = new ComponentTestFixture<TestDataGrid>(html`
+				<test-data-grid>
+					<mo-data-grid-column-number heading='Id' dataSelector='id'></mo-data-grid-column-number>
+					<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
+				</test-data-grid>
+			`)
+
+			it('should apply modifications to known columns by order and presentation and append unknown ones as defined', async () => {
+				fixture.component.columnsController.columns.modifications.set([{ dataSelector: 'name', width: '200px', hidden: true }])
+				await fixture.updateComplete
+
+				expect(fixture.component.columns.map(c => c.dataSelector)).toEqual(['name', 'id'])
+				expect(fixture.component.columns[0]?.width).toBe('200px')
+				expect(fixture.component.columns[0]?.hidden).toBe(true)
+				expect(fixture.component.columns[1]?.heading).toBe('Id')
+				expect(fixture.component.columns[1]?.hidden).toBe(false)
+			})
+
+			it('should keep the modifications when a definition changes', async () => {
+				fixture.component.columnsController.columns.modifications.set([{ dataSelector: 'name', width: '200px' }, { dataSelector: 'id' }])
+
+				fixture.component.querySelector('mo-data-grid-column-text')!.heading = 'Full Name'
+				await fixture.updateComplete
+
+				expect(fixture.component.columns[0]?.heading).toBe('Full Name')
+				expect(fixture.component.columns[0]?.width).toBe('200px')
+			})
+
+			it('should omit modifications without a definition and apply them once their column element renders', async () => {
+				fixture.component.columnsController.columns.modifications.set([{ dataSelector: 'birthDate', width: '321px' }, { dataSelector: 'name' }, { dataSelector: 'id' }])
+				await fixture.updateComplete
+				expect(fixture.component.columns.map(c => c.dataSelector)).toEqual(['name', 'id'])
+
+				const column = document.createElement('mo-data-grid-column-text') as any
+				column.heading = 'Birth Date'
+				column.dataSelector = 'birthDate'
+				fixture.component.appendChild(column)
+				await new Promise(r => setTimeout(r))
+				await fixture.updateComplete
+
+				expect(fixture.component.columns.map(c => c.dataSelector)).toEqual(['birthDate', 'name', 'id'])
+				expect(fixture.component.columns[0]?.width).toBe('321px')
+				expect(fixture.component.columns[0]?.heading).toBe('Birth Date')
+			})
+
+			it('should record hiding a column in the modifications', async () => {
+				fixture.component.columns.find(c => c.dataSelector === 'id')!.hide()
+				await fixture.updateComplete
+
+				expect(fixture.component.columns.find(c => c.dataSelector === 'id')?.hidden).toBe(true)
+				expect(fixture.component.columnsController.columns.modifications.find(e => e.dataSelector === 'id')?.hidden).toBe(true)
+			})
+
+			it('should record the placement of a moved column', async () => {
+				fixture.component.columnsController.columns.move('name', 0)
+				await fixture.updateComplete
+
+				expect(fixture.component.columns.map(c => c.dataSelector)).toEqual(['name', 'id'])
+				// Moving a column expresses intent about the order of all of them
+				expect(fixture.component.columnsController.columns.modifications.map(e => e.dataSelector)).toEqual(['name', 'id'])
 			})
 		})
 	})
@@ -582,12 +704,13 @@ describe('DataGrid', () => {
 				`)
 			}
 
-			get balanceColumn() {
-				return this.component.columns[0] as DataGridColumn<Person, number>
+			// Columns are immutable value-objects, so styling is defined where the column is defined: on the element
+			get balanceColumnElement() {
+				return this.component.querySelector('mo-data-grid-column-number') as DataGridColumnComponent<Person, number>
 			}
 
 			getBalanceCell(rowIndex: number) {
-				return this.component.rows[rowIndex]?.cells?.find(cell => cell.column === this.balanceColumn)
+				return this.component.rows[rowIndex]?.cells?.find(cell => cell.column.dataSelector === 'balance')
 			}
 
 			get updateCompleted() {
@@ -600,7 +723,7 @@ describe('DataGrid', () => {
 
 		describe('no contentStyle', () => {
 			it('should not render style tag when contentStyle is undefined', async () => {
-				fixture.balanceColumn.contentStyle = undefined
+				fixture.balanceColumnElement.contentStyle = undefined
 				await fixture.updateCompleted
 
 				const cell = fixture.getBalanceCell(0)
@@ -608,7 +731,7 @@ describe('DataGrid', () => {
 			})
 
 			it('should not modify styles when function returns undefined', async () => {
-				fixture.balanceColumn.contentStyle = () => undefined
+				fixture.balanceColumnElement.contentStyle = () => undefined
 				await fixture.updateCompleted
 
 				const cell = fixture.getBalanceCell(0)
@@ -618,7 +741,7 @@ describe('DataGrid', () => {
 
 		describe('string contentStyle', () => {
 			it('should apply function returning string as inline style based on value', async () => {
-				fixture.balanceColumn.contentStyle = value => value < 0 ? 'color: red' : 'color: green'
+				fixture.balanceColumnElement.contentStyle = value => value < 0 ? 'color: red' : 'color: green'
 				await fixture.updateCompleted
 
 				const positiveCell = fixture.getBalanceCell(0) // balance: 100
@@ -629,7 +752,7 @@ describe('DataGrid', () => {
 			})
 
 			it('should have access to data object in contentStyle function', async () => {
-				fixture.balanceColumn.contentStyle = (_, person) => person.balance > 0 ? 'font-weight: bold' : 'font-weight: normal'
+				fixture.balanceColumnElement.contentStyle = (_, person) => person.balance > 0 ? 'font-weight: bold' : 'font-weight: normal'
 				await fixture.updateCompleted
 
 				const johnCell = fixture.getBalanceCell(0) // balance: 100
@@ -642,7 +765,7 @@ describe('DataGrid', () => {
 
 		describe('CSSResult contentStyle', () => {
 			it('should render static CSSResult as style tag in shadow DOM', async () => {
-				fixture.balanceColumn.contentStyle = css`:host { color: blue }`
+				fixture.balanceColumnElement.contentStyle = css`:host { color: blue }`
 				await fixture.updateCompleted
 
 				const cell = fixture.getBalanceCell(0)
@@ -654,7 +777,7 @@ describe('DataGrid', () => {
 			})
 
 			it('should render function returning CSSResult with different styles per cell', async () => {
-				fixture.balanceColumn.contentStyle = value => value < 0 ? css`:host { color: red }` : css`:host { color: green }`
+				fixture.balanceColumnElement.contentStyle = value => value < 0 ? css`:host { color: red }` : css`:host { color: green }`
 				await fixture.updateCompleted
 
 				const positiveCell = fixture.getBalanceCell(0) // balance: 100

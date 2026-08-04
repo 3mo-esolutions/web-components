@@ -1,18 +1,18 @@
-import { property, component, Component, html, css, query, ifDefined, type PropertyValues, event, style, literal, staticHtml, type HTMLTemplateResult, cache, eventOptions, queryAll, repeat, eventListener } from '@a11d/lit'
+import { property, component, Component, html, css, query, type PropertyValues, event, style, literal, staticHtml, type HTMLTemplateResult, queryAll, repeat, eventListener, eventOptions } from '@a11d/lit'
 import { LocalStorage } from '@a11d/local-storage'
 import { InstanceofAttributeController } from '@3mo/instanceof-attribute-controller'
 import { SlotController } from '@3mo/slot-controller'
 import { tooltip } from '@3mo/tooltip'
-import { MediaQueryController } from '@3mo/media-query-observer'
 import { Localizer } from '@3mo/localization'
 import { type Scroller } from '@3mo/scroller'
 import { observeResize } from '@3mo/resize-observer'
-import { DataGridColumnsController } from './DataGridColumnsController.js'
+import { DataGridColumnsController } from './DataGridColumnsController/index.js'
 import { DataGridSelectionBehaviorOnDataChange, DataGridSelectionController, type DataGridSelectability } from './DataGridSelectionController.js'
 import { DataGridSortingController, type DataGridRankedSortDefinition, type DataGridSorting } from './DataGridSortingController.js'
 import { DataGridDetailsController } from './DataGridDetailsController.js'
-import { type DataGridColumn, DataGridCsvController, DataGridSidePanelTab, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, type DataGridSidePanel, DataGridContextMenuController, DataGridReorderabilityController, type DataGridReorderChange } from './index.js'
+import { type DataGridColumn, DataGridCsvController, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, DataGridContextMenuController, DataGridReorderabilityController, type DataGridReorderChange } from './index.js'
 import { DataRecord } from './DataRecord.js'
+import { DataGridToolbarElementStyles } from './DataGridToolbarElementStyles.js'
 
 Localizer.dictionaries.add('de', {
 	'No results': 'Kein Ergebnis',
@@ -31,7 +31,7 @@ export enum DataGridEditability {
  * @element mo-data-grid
  *
  * @attr data - The data to be displayed in the DataGrid. It is an array of objects, where each object represents a row.
- * @attr columns - The columns to be displayed in the DataGrid. It is an array of objects, where each object represents a column.
+ * @attr columns - The read-only columns of the DataGrid, composed of their definitions and modifications. Provide columns programmatically via `columns.definitions.programmatic`.
  * @attr headerHidden - Whether the header should be hidden.
  * @attr page - The current page.
  * @attr pagination - The pagination mode. It can be either `auto` or a number.
@@ -50,8 +50,6 @@ export enum DataGridEditability {
  * @attr editability - The editability mode.
  * @attr getRowDetailsTemplate - A function which returns a template for the details of a given row.
  * @attr getRowContextMenuTemplate - A function which returns a template for the context menu of a given row.
- * @attr sidePanelTab - The side panel tab.
- * @attr sidePanelHidden - Whether the side panel should be hidden.
  * @attr hasAlternatingBackground - Whether the rows should have alternating background.
  * @attr preventFabCollapse - Whether the FAB should be prevented from collapsing.
  * @attr cellFontSize - The font size of the cells relative to the default font size. Defaults @see DataGrid.cellFontSize 's value which defaults to 0.8.
@@ -61,7 +59,7 @@ export enum DataGridEditability {
  * @slot - Use this slot only for declarative DataGrid APIs e.g. setting ColumnDefinitions via `mo-data-grid-columns` tag.
  * @slot toolbar - The horizontal bar above DataGrid's contents.
  * @slot toolbar-action - A slot for action icon-buttons in the toolbar which are displayed on the end.
- * @slot filter - A vertical bar for elements which filter DataGrid's data. It is opened through an icon-button in the toolbar.
+ * @slot filter - Elements which filter DataGrid's data. When expanded, they continue the toolbar's row if they all fit into its remaining space, otherwise they wrap into rows of their own. It is toggled through an icon-button in the toolbar.
  * @slot sum - A horizontal bar in the DataGrid's footer for showing sums. Calculated sums are also placed here by default.
  * @slot fab - A wrapper at the bottom right edge, floating right above the footer, expecting Floating Action Button to be placed in.
  * @slot error-no-content - A slot for displaying an error message when no data is available.
@@ -76,8 +74,6 @@ export enum DataGridEditability {
  * @fires pageChange
  * @fires paginationChange
  * @fires columnsChange
- * @fires sidePanelOpen
- * @fires sidePanelClose
  * @fires sortingChange
  * @fires reorder
  * @fires rowDetailsOpen
@@ -95,13 +91,13 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	static readonly hasAlternatingBackground = new LocalStorage('DataGrid.HasAlternatingBackground', false)
 	protected static readonly defaultRowElementTag = literal`mo-data-grid-default-row`
 
+	static readonly toolbarElementStyles = new DataGridToolbarElementStyles()
+
 	@event() readonly dataChange!: EventDispatcher<Array<TData>>
 	@event() readonly selectionChange!: EventDispatcher<Array<TData>>
 	@event() readonly pageChange!: EventDispatcher<number>
 	@event() readonly paginationChange!: EventDispatcher<DataGridPagination | undefined>
 	@event() readonly columnsChange!: EventDispatcher<Array<DataGridColumn<TData>>>
-	@event() readonly sidePanelOpen!: EventDispatcher<DataGridSidePanelTab>
-	@event() readonly sidePanelClose!: EventDispatcher
 	@event() readonly sortingChange!: EventDispatcher<Array<DataGridRankedSortDefinition<TData>>>
 	@event() readonly reorder!: EventDispatcher<Array<DataGridReorderChange<TData>>>
 	@event() readonly rowDetailsOpen!: EventDispatcher<DataGridRow<TData, TDetailsElement>>
@@ -112,7 +108,10 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	@event() readonly cellEdit!: EventDispatcher<DataGridCell<any, TData, TDetailsElement>>
 
 	@property({ type: Array }) data = new Array<TData>()
-	@property({ type: Array }) columns = new Array<DataGridColumn<TData>>()
+
+	@property({ type: Array })
+	get columns() { return [...this.columnsController.columns] }
+	set columns(value) { this.columnsController.columns.definitions.programmatic = value }
 
 	@property({ type: Boolean, reflect: true }) headerHidden = false
 	@property({ type: Number }) page = 1
@@ -139,8 +138,8 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	@property({ reflect: true }) editability = DataGridEditability.Never
 
-	@property() sidePanelTab: DataGridSidePanelTab | undefined
-	@property({ type: Boolean }) sidePanelHidden = false
+	@property({ type: Boolean }) filtersOpen = false
+
 	@property({ type: Boolean }) hasAlternatingBackground = DataGrid.hasAlternatingBackground.value
 
 	@property({ type: Boolean }) preventFabCollapse = false
@@ -168,7 +167,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	@query('mo-scroller') private readonly scroller?: Scroller
 	@queryAll('[mo-data-grid-row]') readonly rows!: Array<DataGridRow<TData, TDetailsElement>>
 	@query('mo-data-grid-footer') private readonly footer?: DataGridFooter<TData>
-	@query('mo-data-grid-side-panel') private readonly sidePanel?: DataGridSidePanel<TData>
 
 	setPage(page: number) {
 		this.page = page
@@ -242,8 +240,8 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		return this.csvController.generateCsv(...parameters)
 	}
 
-	setColumns(...parameters: Parameters<typeof this.columnsController.setColumns>) {
-		return this.columnsController.setColumns(...parameters)
+	setColumns(columns: Array<DataGridColumn<TData>>) {
+		this.columns = columns
 	}
 
 	extractColumns(...parameters: Parameters<typeof this.columnsController.extractColumns>) {
@@ -257,15 +255,11 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}
 
 	get extractedColumns() {
-		return this.columnsController.extractedColumns
-	}
-
-	extractedColumnsUpdated(extractedColumns: Array<DataGridColumn<TData>>) {
-		this.setColumns(extractedColumns)
+		return [...this.columnsController.columns.definitions]
 	}
 
 	get visibleColumns() {
-		return this.columnsController.visibleColumns
+		return this.columnsController.columns.visible
 	}
 
 	getRow(data: TData) {
@@ -285,11 +279,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			KeyPath.set(row.data, column.dataSelector, value as any)
 			this.cellEdit.dispatch(cell)
 		}
-	}
-
-	navigateToSidePanelTab(tab?: DataGridSidePanelTab) {
-		this.sidePanelTab = tab
-		!tab ? this.sidePanelClose.dispatch() : this.sidePanelOpen.dispatch(tab)
 	}
 
 	get hasContextMenu() {
@@ -376,7 +365,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	})
 
 	protected readonly instanceofAttributeController = new InstanceofAttributeController(this)
-	protected readonly smallScreenObserverController = new MediaQueryController(this, '(max-width: 768px)')
 
 	readonly columnsController = new DataGridColumnsController(this)
 	readonly selectionController = new DataGridSelectionController(this)
@@ -390,7 +378,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	protected override updated(...parameters: Parameters<Component['updated']>) {
 		this.header?.requestUpdate()
-		this.sidePanel?.requestUpdate()
 		this.footer?.requestUpdate()
 		this.rows.forEach(row => row.requestUpdate())
 		// @ts-expect-error rowIntersectionObserver is initialized once here
@@ -416,6 +403,11 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		super.firstUpdated(props)
 		this.cellEdit.subscribe(() => this.requestUpdate())
 		this.setPage(1)
+	}
+
+	protected static override finalizeStyles(...parameters: Parameters<typeof Component.finalizeStyles>) {
+		const styleSheet = DataGrid.toolbarElementStyles.styleSheet
+		return [...super.finalizeStyles(...parameters), ...styleSheet ? [styleSheet] : []]
 	}
 
 	static override get styles() {
@@ -453,6 +445,14 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				--_content-min-height-default: 150px;
 			}
 
+			:host([data-reordering]) {
+				user-select: none;
+
+				[part=row]:not([data-reorderability=dragging]) {
+					transition: transform 0.15s ease;
+				}
+			}
+
 			#content {
 				width: 0;
 				min-width: 100%;
@@ -460,9 +460,39 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				min-height: 100%;
 			}
 
+			/*
+				A zero-specificity baseline for toolbar and filter elements, so that any size convention
+				of @see DataGrid.toolbarElementStyles as well as element's own styles can override it.
+			*/
+			:where(slot[name=toolbar], slot[name=filter])::slotted(*), :where(slot[name=toolbar], slot[name=filter]) > * {
+				width: fit-content;
+			}
+
 			#toolbar {
 				position: relative;
-				padding: var(--mo-data-grid-toolbar-padding);
+
+				slot[name=filter] {
+					display: flex;
+					flex-flow: row wrap;
+					gap: 0.5rem;
+					align-items: center;
+					width: fit-content;
+					interpolate-size: allow-keywords;
+					overflow: hidden;
+					transition: height 0.25s ease, opacity 0.25s ease, display 0.25s ease allow-discrete;
+
+					@starting-style {
+						height: 0;
+						opacity: 0;
+					}
+
+					&[data-collapsed] {
+						display: none;
+						height: 0;
+						opacity: 0;
+					}
+				}
+
 
 				#actions {
 					margin-inline-start: auto;
@@ -512,21 +542,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				position: absolute;
 				inset: 0;
 			}
-
-			#overlayModeContainer {
-				position: relative;
-				height: 100%;
-				width: 100%;
-
-				mo-data-grid-side-panel {
-					position: absolute;
-					inset: 0;
-					width: 100%;
-					height: 100%;
-					z-index: 5;
-					background-color: var(--mo-color-surface);
-				}
-			}
 		`
 	}
 
@@ -534,44 +549,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		return html`
 			<slot name='column' hidden>${this.columnsTemplate}</slot>
 			${this.toolbarTemplate}
-			${this.smallScreenObserverController.matches ? this.overlayModeTemplate : this.splitterModeTemplate}
-		`
-	}
-
-	private readonly splitterResizerTemplate = html`
-		<mo-splitter-resizer-line style='--mo-splitter-resizer-line-thickness: 1px; --mo-splitter-resizer-line-idle-background: var(--mo-color-transparent-gray-3); --mo-splitter-resizer-line-horizontal-transform: scaleX(5);'></mo-splitter-resizer-line>
-	`
-
-	private get splitterModeTemplate() {
-		return html`
-			<mo-splitter direction='horizontal-reversed' ${style({ height: '100%' })} .resizerTemplate=${this.splitterResizerTemplate}>
-				${cache(this.sidePanelTab === undefined ? html.nothing : html`
-					<mo-splitter-item size='min(25%, 300px)' min='max(15%, 250px)' max='clamp(100px, 50%, 750px)'>
-						${this.sidePanelTemplate}
-					</mo-splitter-item>
-				`)}
-
-				<mo-splitter-item min='0px' ${style({ position: 'relative' })}>
-					${this.dataGridTemplate}
-				</mo-splitter-item>
-			</mo-splitter>
-		`
-	}
-
-	private get overlayModeTemplate() {
-		return html`
-			<mo-flex id='overlayModeContainer'>
-				${this.dataGridTemplate}
-				${this.sidePanelTab === undefined ? html.nothing : this.sidePanelTemplate}
-			</mo-flex>
-		`
-	}
-
-	private get sidePanelTemplate() {
-		return html`
-			<mo-data-grid-side-panel .dataGrid=${this as any} tab=${ifDefined(this.sidePanelTab)}>
-				<slot slot='filter' name='filter'>${this.filtersDefaultTemplate}</slot>
-			</mo-data-grid-side-panel>
+			${this.dataGridTemplate}
 		`
 	}
 
@@ -615,7 +593,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	protected get dataGridTemplate() {
 		this.toggleAttribute('hasDetails', this.hasDetails)
 		return html`
-			<mo-flex ${style({ position: 'relative', height: '100%' })}>
+			<mo-flex ${style({ position: 'relative', flex: '1' })}>
 				<mo-scroller
 					${style({ flex: '1 0 var(--mo-data-grid-content-min-height, var(--_content-min-height-default))' })}
 					${observeResize(([e]) => this.style.setProperty('--_content-height', `${e?.contentRect.height ?? 0}px`))}
@@ -731,14 +709,25 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}
 
 	protected get toolbarTemplate() {
-		return this.hasToolbar === false ? html.nothing : html`
-			<mo-flex id='toolbar' direction='horizontal' gap='8px' wrap='wrap' alignItems='center'>
-				<slot name='toolbar'>${this.toolbarDefaultTemplate}</slot>
-				<mo-flex id='actions' direction='horizontal' gap='8px' alignContent='center'>
-					<slot name='toolbar-action'>${this.toolbarActionDefaultTemplate}</slot>
-					${this.toolbarActionsTemplate}
-				</mo-flex>
-			</mo-flex>
+		return this.hasToolbar === false && this.hasFilters === false ? html.nothing : html`
+			<div id='toolbar'>
+				<mo-grid columns='1fr auto' gap='0.5rem' alignItems='start' style='padding: var(--mo-data-grid-toolbar-padding)'>
+					<mo-flex direction='horizontal' gap='0.5rem' wrap='wrap' alignItems='center' style='min-width: 0; min-height: var(--mo-data-grid-toolbar-row-height, 2.625rem)'>
+						<slot name='toolbar'>
+							${this.toolbarDefaultTemplate}
+						</slot>
+						<slot name='filter' ?data-collapsed=${!this.filtersOpen}>
+							${this.filtersDefaultTemplate}
+						</slot>
+					</mo-flex>
+					<mo-flex id='actions' direction='horizontal' gap='0.5rem' alignItems='center'>
+						<slot name='toolbar-action'>
+							${this.toolbarActionDefaultTemplate}
+						</slot>
+						${this.toolbarActionsTemplate}
+					</mo-flex>
+				</mo-grid>
+			</div>
 		`
 	}
 
@@ -759,8 +748,8 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			${!this.hasFilters ? html.nothing : html`
 				<mo-icon-button icon='filter_list'
 					${tooltip(t('More Filters'))}
-					?data-selected=${this.sidePanelTab === DataGridSidePanelTab.Filters}
-					@click=${() => this.navigateToSidePanelTab(this.sidePanelTab === DataGridSidePanelTab.Filters ? undefined : DataGridSidePanelTab.Filters)}
+					?data-selected=${this.filtersOpen}
+					@click=${() => this.filtersOpen = !this.filtersOpen}
 				></mo-icon-button>
 			`}
 		`

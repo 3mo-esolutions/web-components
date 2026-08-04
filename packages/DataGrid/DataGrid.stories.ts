@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite'
-import { html, ifDefined, style, type HTMLTemplateResult } from '@a11d/lit'
+import { html, style, type HTMLTemplateResult } from '@a11d/lit'
 import p from './package.json'
 import { DataGridEditability, DataGridSelectionBehaviorOnDataChange, DataGridSelectability, DataGridSortingStrategy, DataGridColumnText, type DataGridColumnMenuItems, type DataGridReorderChange } from './index.js'
 import { DialogAlert } from '../StandardDialogs/index.js'
@@ -99,6 +99,27 @@ export const DataGrid: StoryObj = {
 	render: () => html`
 		<mo-data-grid .data=${twentyPeople} style='height: 500px'>
 			${columnsTemplate}
+		</mo-data-grid>
+	`
+}
+
+export const Filters: StoryObj = {
+	parameters: {
+		docs: {
+			description: {
+				story: 'Elements slotted into the "filter" slot are toggled through the filter icon-button in the toolbar. They continue the toolbar\'s row when they all fit into its remaining space, and wrap into rows of their own otherwise - as in the second data grid below.'
+			},
+		}
+	},
+	render: () => html`
+		<mo-data-grid .data=${twentyPeople} style='height: 300px'>
+			${columnsTemplate}
+			<mo-field-search slot='toolbar'></mo-field-search>
+			<mo-field-select label='Name' slot='filter'>
+				${[...new Set(twentyPeople.map(p => p.name))].map(name => html`<mo-option value=${name}>${name}</mo-option>`)}
+			</mo-field-select>
+			<mo-field-date-range label='Birth Date' slot='filter'></mo-field-date-range>
+			<mo-checkbox label='Positive balances only' slot='filter'></mo-checkbox>
 		</mo-data-grid>
 	`
 }
