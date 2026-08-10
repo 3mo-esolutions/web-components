@@ -43,7 +43,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 	@property() default?: string
 	@property({ type: Boolean }) dense = false
 	@property({ type: Boolean }) reflectDefault = false
-	@property({ type: Boolean }) multiple = false
+	@property({ type: Boolean, reflect: true }) multiple = false
 	@property({ type: Boolean }) searchable = false
 	@property({ type: Boolean }) freeInput = false
 	@property() menuAlignment?: PopoverAlignment
