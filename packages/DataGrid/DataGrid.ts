@@ -470,38 +470,58 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 			#toolbar {
 				position: relative;
-
-				slot[name=filter] {
-					display: flex;
-					flex-flow: row wrap;
-					gap: 0.5rem;
-					align-items: center;
-					width: fit-content;
-					interpolate-size: allow-keywords;
-					overflow: hidden;
-					transition: height 0.25s ease, opacity 0.25s ease, display 0.25s ease allow-discrete;
-
-					@starting-style {
-						height: 0;
-						opacity: 0;
-					}
-
-					&[data-collapsed] {
-						display: none;
-						height: 0;
-						opacity: 0;
-					}
-				}
-
+				/* Contains the floating actions */
+				display: flow-root;
+				padding: var(--mo-data-grid-toolbar-padding);
 
 				#actions {
-					margin-inline-start: auto;
+					/* Floats, so that only the toolbar is narrowed by the actions while the filter rows below use the full width */
+					float: inline-end;
+					margin-inline-start: 0.5rem;
+					min-height: var(--mo-data-grid-toolbar-row-height, 2.625rem);
 
 					mo-icon-button, ::slotted(mo-icon-button[slot='toolbar-action']) {
 						color: var(--mo-color-gray);
 						&[data-selected] {
 							color: var(--mo-color-accent);
 						}
+					}
+				}
+
+				/*
+					A flex container establishes its own formatting context,
+					hence the floating actions narrow it instead of pushing it below.
+				*/
+				slot[name=toolbar] {
+					display: flex;
+					flex-flow: row wrap;
+					gap: 0.5rem;
+					align-items: center;
+					min-height: var(--mo-data-grid-toolbar-row-height, 2.625rem);
+				}
+
+				/* Starts below the floating actions, hence it uses the full width */
+				slot[name=filter] {
+					display: flex;
+					flex-flow: row wrap;
+					gap: 0.5rem;
+					align-items: center;
+					margin-block-start: 0.5rem;
+					interpolate-size: allow-keywords;
+					overflow: hidden;
+					transition: height 0.25s ease, opacity 0.25s ease, margin-block-start 0.25s ease, display 0.25s ease allow-discrete;
+
+					@starting-style {
+						height: 0;
+						opacity: 0;
+						margin-block-start: 0;
+					}
+
+					&[data-collapsed] {
+						display: none;
+						height: 0;
+						opacity: 0;
+						margin-block-start: 0;
 					}
 				}
 			}
@@ -711,22 +731,18 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	protected get toolbarTemplate() {
 		return this.hasToolbar === false && this.hasFilters === false ? html.nothing : html`
 			<div id='toolbar'>
-				<mo-grid columns='1fr auto' gap='0.5rem' alignItems='start' style='padding: var(--mo-data-grid-toolbar-padding)'>
-					<mo-flex direction='horizontal' gap='0.5rem' wrap='wrap' alignItems='center' style='min-width: 0; min-height: var(--mo-data-grid-toolbar-row-height, 2.625rem)'>
-						<slot name='toolbar'>
-							${this.toolbarDefaultTemplate}
-						</slot>
-						<slot name='filter' ?data-collapsed=${!this.filtersOpen}>
-							${this.filtersDefaultTemplate}
-						</slot>
-					</mo-flex>
-					<mo-flex id='actions' direction='horizontal' gap='0.5rem' alignItems='center'>
-						<slot name='toolbar-action'>
-							${this.toolbarActionDefaultTemplate}
-						</slot>
-						${this.toolbarActionsTemplate}
-					</mo-flex>
-				</mo-grid>
+				<mo-flex id='actions' direction='horizontal' gap='0.5rem' alignItems='center'>
+					<slot name='toolbar-action'>
+						${this.toolbarActionDefaultTemplate}
+					</slot>
+					${this.toolbarActionsTemplate}
+				</mo-flex>
+				<slot name='toolbar'>
+					${this.toolbarDefaultTemplate}
+				</slot>
+				<slot name='filter' ?data-collapsed=${!this.filtersOpen}>
+					${this.filtersDefaultTemplate}
+				</slot>
 			</div>
 		`
 	}

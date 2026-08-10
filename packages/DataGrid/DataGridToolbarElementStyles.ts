@@ -27,9 +27,14 @@ export class DataGridToolbarElementStyles {
 	}
 
 	constructor() {
-		this.set('[instanceof~=mo-field-text], [instanceof~=mo-field-email], [instanceof~=mo-field-number], [instanceof~=mo-field-select]', css`width: 13rem;`)
-		this.set('[instanceof~=mo-field-date-time]', css`width: 15rem;`)
-		this.set('[instanceof~=mo-field-date-time-range]', css`width: 18rem;`)
-		this.set('[instanceof~=mo-field-search]', css`flex: 1 1 20rem; max-width: 20rem;`)
+		this.set('[instanceof~=mo-field-text], [instanceof~=mo-field-email], [instanceof~=mo-field-number]', css`max-width: 10rem; flex: 1 1 auto;`)
+
+		this.set('[instanceof~=mo-field-select]', css`max-width: 13rem; flex: 1.3 1 auto;`)
+		this.set('[instanceof~=mo-field-select][multiple]', css`max-width: 15rem; flex: 1.5 1 auto;`)
+
+		this.set('[instanceof~=mo-field-date-time]', css`max-width: 13rem; flex: 1.3 1 auto;`)
+		this.set('[instanceof~=mo-field-date-time-range]', css`max-width: 15rem; flex: 1.5 1 auto;`)
+
+		this.set('[instanceof~=mo-field-search]', css`max-width: 20rem; flex: 2 1 auto;`)
 	}
 }
