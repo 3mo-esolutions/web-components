@@ -31,7 +31,8 @@ export class LoadingButton extends Button {
 
 	protected readonly clickEventListenerController = new EventListenerController(this, {
 		type: 'click',
-		target: () => this.button,
+		// Yields no target if the button has not rendered, which is the case when the element gets disconnected before its first update
+		target: async () => await this.button ?? [],
 		listener: async (e: PointerEvent) => {
 			if (this.preventClickEventInference === false) {
 				const results = [...this.clickEventListeners]

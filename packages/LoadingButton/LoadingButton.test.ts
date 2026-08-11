@@ -16,4 +16,20 @@ describe('LoadingButton', () => {
 		await fixture.updateComplete
 		expect(getComputedStyle(fixture.component).pointerEvents).toBe('none')
 	})
+
+	// Regression: the click event target resolves to the rendered button, which does not exist
+	// when the element gets disconnected before its first update - rejecting unhandled back then.
+	it('should not reject when disconnected before its first update', async () => {
+		const rejections = new Array<PromiseRejectionEvent>()
+		const listener = (e: PromiseRejectionEvent) => rejections.push(e)
+		window.addEventListener('unhandledrejection', listener)
+
+		const button = document.createElement('mo-loading-button')
+		document.body.appendChild(button)
+		button.remove()
+		await new Promise(r => setTimeout(r, 50))
+
+		window.removeEventListener('unhandledrejection', listener)
+		expect(rejections.map(e => String(e.reason))).toEqual([])
+	})
 })
