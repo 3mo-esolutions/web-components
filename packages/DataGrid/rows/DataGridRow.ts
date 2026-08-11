@@ -134,9 +134,9 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 
 			:host(:hover) {
 				#contentContainer {
-					--mo-data-grid-sticky-part-color: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-accent) 25%) !important;
+					--mo-data-grid-sticky-part-color: color-mix(in srgb, var(--mo-color-surface), var(--mo-data-grid-selection-background) 50%) !important;
 					color: inherit;
-					background: var(--mo-color-accent-transparent) !important;
+					background: color-mix(in srgb, var(--mo-data-grid-selection-background), transparent 50%) !important;
 				}
 
 				#contentContainer, #detailsContainer {
@@ -190,7 +190,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 
 			:host([selected]) #contentContainer,
 			:host([data-context-menu-open]) #contentContainer {
-				--mo-data-grid-sticky-part-color: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-accent)) !important;
+				--mo-data-grid-sticky-part-color: var(--mo-data-grid-selection-background) !important;
 				background: var(--mo-data-grid-selection-background) !important;
 			}
 

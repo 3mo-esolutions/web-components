@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/moddable-data-grid",
-	"version": "0.6.0",
+	"version": "0.6.1",
 	"description": "A moddable variant of @3mo/fetchable-data-grid",
 	"repository": {
 		"type": "git",
@@ -37,7 +37,7 @@
 		"@3mo/scroller": ">=0.5.x",
 		"@3mo/popover": ">=0.8.x",
 		"@3mo/chip": "x",
-		"@3mo/data-grid": ">=0.33.x",
+		"@3mo/data-grid": ">=0.34.x",
 		"@3mo/fetchable-data-grid": "x",
 		"@3mo/standard-dialogs": "x",
 		"@3mo/tooltip": "x",

@@ -1,4 +1,5 @@
 import { component, property, html, type TemplateResult } from '@a11d/lit'
+import { tooltip } from '@3mo/tooltip'
 import { type FetchableDialogComponentParameters as EntityWithId } from '@3mo/fetchable-dialog'
 import { type EntityDialogComponent } from '@3mo/entity-dialog'
 import { type FetchableDataGridParametersType, FetchableDataGrid } from '@3mo/fetchable-data-grid'
@@ -17,7 +18,7 @@ type CreateOrEditAction<TEntity extends EntityWithId> = CreateAction | EditActio
  * @attr createOrEdit - The createOrEdit is an aggregate of the create and edit actions. It can be either a function or a class that extends EntityDialogComponent.
  * @attr delete - The delete action can be either a function or a class that extends EntityDialogComponent.
  * @attr isEntityDeletable - A predicate that determines whether an entity is deletable.
- * @attr hideFab - Whether to hide the floating action button.
+ * @attr createHidden - Whether to hide the primary action button generated for the create action.
  */
 @component('mo-entity-data-grid')
 export class EntityDataGrid<TEntity extends EntityWithId, TDataFetcherParameters extends FetchableDataGridParametersType = Record<string, never>, TDetailsElement extends Element | undefined = undefined> extends FetchableDataGrid<TEntity, TDataFetcherParameters, TDetailsElement> {
@@ -40,7 +41,7 @@ export class EntityDataGrid<TEntity extends EntityWithId, TDataFetcherParameters
 	@property({ type: Object }) isEntityDeletable?: (entity: TEntity) => boolean
 
 	@property({ type: Object }) rowContextMenuTemplate?: (rowData: Array<TEntity>) => TemplateResult
-	@property({ type: Boolean }) hideFab = false
+	@property({ type: Boolean }) createHidden = false
 
 	override readonly primaryContextMenuItemOnDoubleClick = true
 	override parameters = {} as TDataFetcherParameters
@@ -73,10 +74,22 @@ export class EntityDataGrid<TEntity extends EntityWithId, TDataFetcherParameters
 		await this.requestFetch()
 	}
 
-	protected override get fabTemplate() {
+	/** The generated create button lives in @see primaryActionsTemplate rather than the slot's default content, hence the visibility contribution */
+	override get hasPrimaryAction() {
+		return (!!this.create && !this.createHidden) || super.hasPrimaryAction
+	}
+
+	protected override get primaryActionsTemplate() {
 		return html`
-			${!this.create || this.hideFab ? html.nothing : html`<mo-fab icon='add' @click=${() => this.createAndRefetch()}></mo-fab>`}
-			${super.fabTemplate}
+			${!this.create || this.createHidden ? html.nothing : html`
+				<mo-loading-button type='tonal' style='--mo-button-horizontal-padding: 0.5rem'
+					${tooltip(t('Create'))}
+					@click=${() => this.createAndRefetch()}
+				>
+					<mo-icon icon='add' style='display: flex'></mo-icon>
+				</mo-loading-button>
+			`}
+			${super.primaryActionsTemplate}
 		`
 	}
 

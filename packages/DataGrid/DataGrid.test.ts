@@ -694,6 +694,93 @@ describe('DataGrid', () => {
 		})
 	})
 
+	describe('Primary Action', () => {
+		const getPrimaryActionSlot = (component: TestDataGrid) => component.renderRoot.querySelector<HTMLSlotElement>('slot[name=primary-action]') ?? undefined
+
+		describe('without', () => {
+			const fixture = new ComponentTestFixture<TestDataGrid>(html`<test-data-grid></test-data-grid>`)
+
+			it('should not have a primary action by default', () => expect(fixture.component.hasPrimaryAction).toBeFalse())
+
+			it('should not render the toolbar', () => expect(fixture.component.renderRoot.querySelector('#toolbar')).toBeNull())
+		})
+
+		describe('with slotted primary action', () => {
+			const fixture = new ComponentTestFixture<TestDataGrid>(html`
+				<test-data-grid>
+					<button slot='primary-action'>Create</button>
+				</test-data-grid>
+			`)
+
+			it('should have a primary action', () => expect(fixture.component.hasPrimaryAction).toBeTrue())
+
+			it('should render the slotted element', () => {
+				expect(fixture.component.primaryActionElements.length).toBe(1)
+				expect(getPrimaryActionSlot(fixture.component)?.assignedElements().length).toBe(1)
+			})
+		})
+
+		// Regression: a primary action provided by a template getter instead of a slotted element used to leave
+		// "hasPrimaryAction" false, which hid the whole toolbar - consumers had to override the flag themselves.
+		describe('with primaryActionDefaultTemplate', () => {
+			@component('test-data-grid-with-primary-action')
+			class DataGridWithPrimaryAction extends TestDataGrid {
+				@state() primaryActionHidden = false
+				protected override get primaryActionDefaultTemplate() {
+					return this.primaryActionHidden ? html.nothing : html`<button id='create'>Create</button>`
+				}
+			}
+
+			const fixture = new ComponentTestFixture(() => new DataGridWithPrimaryAction())
+
+			it('should have a primary action without overriding "hasPrimaryAction"', () => expect(fixture.component.hasPrimaryAction).toBeTrue())
+
+			it('should render the toolbar', () => expect(fixture.component.renderRoot.querySelector('#toolbar')).not.toBeNull())
+
+			it('should render the primary action as the slot\'s default content', () => {
+				const button = fixture.component.renderRoot.querySelector('#create')
+				expect(button).not.toBeNull()
+				expect(getPrimaryActionSlot(fixture.component)?.assignedElements().length).toBe(0)
+			})
+
+			it('should render the primary action visibly', () => {
+				const button = fixture.component.renderRoot.querySelector('#create') as HTMLElement
+				expect(button.checkVisibility()).toBeTrue()
+				expect(button.getBoundingClientRect().width).toBeGreaterThan(0)
+				expect(button.getBoundingClientRect().height).toBeGreaterThan(0)
+			})
+
+			it('should be replaced by slotted primary actions like any other default slot content', async () => {
+				const slotted = document.createElement('button')
+				slotted.id = 'slotted'
+				slotted.slot = 'primary-action'
+				fixture.component.appendChild(slotted)
+				await fixture.updateComplete
+
+				expect(getPrimaryActionSlot(fixture.component)?.assignedElements()).toEqual([slotted])
+				expect((fixture.component.renderRoot.querySelector('#create') as HTMLElement).checkVisibility()).toBeFalse()
+
+				slotted.remove()
+				await fixture.updateComplete
+				expect((fixture.component.renderRoot.querySelector('#create') as HTMLElement).checkVisibility()).toBeTrue()
+			})
+
+			it('should hide the toolbar again when the template becomes empty', async () => {
+				fixture.component.primaryActionHidden = true
+				await fixture.updateComplete
+
+				expect(fixture.component.hasPrimaryAction).toBeFalse()
+				expect(fixture.component.renderRoot.querySelector('#toolbar')).toBeNull()
+
+				fixture.component.primaryActionHidden = false
+				await fixture.updateComplete
+
+				expect(fixture.component.hasPrimaryAction).toBeTrue()
+				expect(fixture.component.renderRoot.querySelector('#create')).not.toBeNull()
+			})
+		})
+	})
+
 	describe('Cell Styling', () => {
 		const fixture = new class extends ComponentTestFixture<DataGrid<Person>> {
 			constructor() {

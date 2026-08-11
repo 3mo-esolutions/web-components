@@ -1,4 +1,4 @@
-import { property, component, Component, html, css, query, type PropertyValues, event, style, literal, staticHtml, type HTMLTemplateResult, queryAll, repeat, eventListener, eventOptions } from '@a11d/lit'
+import { property, component, Component, html, css, query, type PropertyValues, event, style, literal, staticHtml, type HTMLTemplateResult, queryAll, repeat, eventListener } from '@a11d/lit'
 import { LocalStorage } from '@a11d/local-storage'
 import { InstanceofAttributeController } from '@3mo/instanceof-attribute-controller'
 import { SlotController } from '@3mo/slot-controller'
@@ -51,7 +51,6 @@ export enum DataGridEditability {
  * @attr getRowDetailsTemplate - A function which returns a template for the details of a given row.
  * @attr getRowContextMenuTemplate - A function which returns a template for the context menu of a given row.
  * @attr hasAlternatingBackground - Whether the rows should have alternating background.
- * @attr preventFabCollapse - Whether the FAB should be prevented from collapsing.
  * @attr cellFontSize - The font size of the cells relative to the default font size. Defaults @see DataGrid.cellFontSize 's value which defaults to 0.8.
  * @attr rowHeight - The height of the rows in pixels. Defaults to @see DataGrid.rowHeight 's value which defaults to 35.
  * @attr exportable - Whether the DataGrid is exportable. This will show an export button in the footer.
@@ -61,7 +60,7 @@ export enum DataGridEditability {
  * @slot toolbar-action - A slot for action icon-buttons in the toolbar which are displayed on the end.
  * @slot filter - Elements which filter DataGrid's data. When expanded, they continue the toolbar's row if they all fit into its remaining space, otherwise they wrap into rows of their own. It is toggled through an icon-button in the toolbar.
  * @slot sum - A horizontal bar in the DataGrid's footer for showing sums. Calculated sums are also placed here by default.
- * @slot fab - A wrapper at the bottom right edge, floating right above the footer, expecting Floating Action Button to be placed in.
+ * @slot primary-action - A slot at the very end of the toolbar expecting primary action elements (e.g. an "add" button) to be placed in. Slotted elements replace the slot's default content, but complement primary actions generated outside of it e.g. EntityDataGrid's create button, which is suppressed via "primaryActionHidden" instead.
  * @slot error-no-content - A slot for displaying an error message when no data is available.
  *
  * @cssprop --mo-data-grid-min-visible-rows - The minimum number of visible rows. Default to 2.5.
@@ -141,9 +140,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	@property({ type: Boolean }) filtersOpen = false
 
 	@property({ type: Boolean }) hasAlternatingBackground = DataGrid.hasAlternatingBackground.value
-
-	@property({ type: Boolean }) preventFabCollapse = false
-	@property({ type: Boolean, reflect: true }) protected fabSlotCollapsed = false
 
 	@property({ type: Boolean }) exportable = false
 
@@ -301,16 +297,18 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		return this.filtersDefaultTemplate !== html.nothing || this.filterElements.length > 0
 	}
 
+	get primaryActionElements() {
+		return this.slotController.getAssignedElements('primary-action')
+	}
+
+	get hasPrimaryAction() {
+		return this.primaryActionDefaultTemplate !== html.nothing || this.primaryActionElements.length > 0
+	}
+
 	get hasSums() {
 		const hasSums = !!this.columns.find(c => c.sumHeading) || !!this.querySelector('* [slot="sum"]') || !!this.renderRoot?.querySelector('slot[name="sum"] > *')
 		this.toggleAttribute('hasSums', hasSums)
 		return hasSums
-	}
-
-	get hasFabs() {
-		const hasFabs = !!this.querySelector('* [slot=fab]') || !!this.renderRoot?.querySelector('#fab *:not(slot[name=fab])')
-		this.toggleAttribute('hasFabs', hasFabs)
-		return hasFabs
 	}
 
 	get hasPagination() {
@@ -357,12 +355,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		return this.page !== this.maxPage
 	}
 
-	protected readonly slotController = new SlotController(this, async () => {
-		this.hasSums
-		this.hasFabs
-		await new Promise(r => requestIdleCallback(r))
-		this.style.setProperty('--mo-data-grid-fab-slot-width', `${this.renderRoot?.querySelector('slot[name=fab]')?.getBoundingClientRect().width || 75}px`)
-	})
+	protected readonly slotController = new SlotController(this, () => { this.hasSums })
 
 	protected readonly instanceofAttributeController = new InstanceofAttributeController(this)
 
@@ -432,7 +425,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 					color-mix(in srgb, black 20%, transparent)
 				);
 
-				--mo-data-grid-selection-background: color-mix(in srgb, var(--mo-color-accent), transparent 50%);
+				--mo-data-grid-selection-background: var(--mo-color-accent-container);
 
 				--_content-min-height-default: calc(var(--mo-data-grid-min-visible-rows, 2.5) * (var(--mo-data-grid-row-height) + 1px) + var(--mo-data-grid-header-height));
 				display: flex;
@@ -526,36 +519,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				}
 			}
 
-			#fab {
-				position: absolute;
-				inset-inline-end: 16px;
-				transition: var(--mo-data-grid-fab-transition, 250ms);
-				z-index: 3;
-				top: -64px;
-			}
-
-			:host([hasFooter]) #fab {
-				top: -28px;
-			}
-
-			:host([fabSlotCollapsed][hasFabs]) #fab {
-				transform: scale(0);
-				opacity: 0;
-			}
-
-			mo-data-grid-footer {
-				transition: var(--mo-data-grid-fab-transition, 250ms);
-			}
-
-			:host([hasSums][hasFabs]:not([fabSlotCollapsed])) mo-data-grid-footer {
-				--mo-data-grid-footer-trailing-padding: calc(var(--mo-data-grid-fab-slot-width, 56px) + 16px);
-			}
-
-			slot[name=fab] {
-				display: block;
-				z-index: 1;
-			}
-
 			mo-empty-state, ::slotted(mo-empty-state) {
 				height: calc(100% - var(--mo-data-grid-header-height) / 2);
 				margin-block-start: calc(var(--mo-data-grid-header-height) / 2);
@@ -589,13 +552,14 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		return this.rowElementTag === DataGrid.defaultRowElementTag
 	}
 
-	protected get fabTemplate() {
-		// These also update the respective attributes for now
-		this.hasSums
-		this.hasFabs
-		return html`
-			<slot name='fab' @slotchange=${() => { this.hasSums; this.hasFabs }}></slot>
-		`
+	/**
+	 * Override this to provide a primary action without slotting one from the outside.
+	 * It is rendered next to the "primary-action" slot rather than as its fallback content,
+	 * so that consumers can slot additional primary actions without having to re-implement this one.
+	 * @see hasPrimaryAction which detects it, so that the toolbar does not stay hidden.
+	 */
+	protected get primaryActionDefaultTemplate() {
+		return html.nothing
 	}
 
 	protected get contentTemplate() {
@@ -617,7 +581,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				<mo-scroller
 					${style({ flex: '1 0 var(--mo-data-grid-content-min-height, var(--_content-min-height-default))' })}
 					${observeResize(([e]) => this.style.setProperty('--_content-height', `${e?.contentRect.height ?? 0}px`))}
-					@scroll=${this.handleScroll}
 				>
 					<mo-grid id='content' autoRows='min-content' columns='var(--mo-data-grid-columns)'>
 						${this.headerTemplate}
@@ -708,17 +671,10 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}
 
 	protected get footerTemplate() {
-		return html`
-			<mo-flex ${style({ position: 'relative' })}>
-				<mo-flex id='fab' direction='vertical-reversed' gap='0.5rem'>
-					${this.fabTemplate}
-				</mo-flex>
-				${this.hasFooter === false ? html.nothing : html`
-					<mo-data-grid-footer .dataGrid=${this as any} page=${this.page}>
-						<slot name='sum' slot='sum'>${this.sumDefaultTemplate}</slot>
-					</mo-data-grid-footer>
-				`}
-			</mo-flex>
+		return this.hasFooter === false ? html.nothing : html`
+			<mo-data-grid-footer .dataGrid=${this as any} page=${this.page}>
+				<slot name='sum' slot='sum'>${this.sumDefaultTemplate}</slot>
+			</mo-data-grid-footer>
 		`
 	}
 
@@ -729,12 +685,10 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}
 
 	protected get toolbarTemplate() {
-		return this.hasToolbar === false && this.hasFilters === false ? html.nothing : html`
+		return this.hasToolbar === false && this.hasFilters === false && this.hasPrimaryAction === false ? html.nothing : html`
 			<div id='toolbar'>
-				<mo-flex id='actions' direction='horizontal' gap='0.5rem' alignItems='center'>
-					<slot name='toolbar-action'>
-						${this.toolbarActionDefaultTemplate}
-					</slot>
+				<mo-flex id='actions' direction='horizontal-reversed' gap='0.5rem' alignItems='center'>
+					${this.primaryActionsTemplate}
 					${this.toolbarActionsTemplate}
 				</mo-flex>
 				<slot name='toolbar'>
@@ -745,6 +699,10 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				</slot>
 			</div>
 		`
+	}
+
+	protected get primaryActionsTemplate() {
+		return html`<slot name='primary-action'>${this.primaryActionDefaultTemplate}</slot>`
 	}
 
 	protected get toolbarDefaultTemplate() {
@@ -768,26 +726,10 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 					@click=${() => this.filtersOpen = !this.filtersOpen}
 				></mo-icon-button>
 			`}
+			<slot name='toolbar-action'>
+				${this.toolbarActionDefaultTemplate}
+			</slot>
 		`
-	}
-
-	private lastScrollElementTop = 0
-	@eventOptions({ passive: true })
-	private handleScroll(e: Event) {
-		if (this.preventFabCollapse === false) {
-			if (!e.composed) {
-				e.preventDefault()
-				e.target?.dispatchEvent(new Event('scroll', { composed: true, bubbles: true }))
-
-				if (this.hasFabs) {
-					const targetElement = e.composedPath()[0] as HTMLElement
-					const scrollTop = targetElement.scrollTop
-					const isUpScrolling = scrollTop <= this.lastScrollElementTop
-					this.fabSlotCollapsed = !isUpScrolling
-					this.lastScrollElementTop = scrollTop <= 0 ? 0 : scrollTop
-				}
-			}
-		}
 	}
 
 	@eventListener({ target: document, type: 'pointerdown' })

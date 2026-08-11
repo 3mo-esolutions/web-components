@@ -29,9 +29,7 @@ export default {
 				options: [DataGridEditability.Never, DataGridEditability.Cell, DataGridEditability.Always]
 			}
 		},
-		sidePanelHidden: { control: 'boolean' },
 		hasAlternatingBackground: { control: 'boolean' },
-		preventFabCollapse: { control: 'boolean' },
 		exportable: { control: 'boolean' }
 	},
 	package: p,
@@ -328,15 +326,44 @@ export const MinVisibleRows: StoryObj = {
 	`
 }
 
-export const Fab: StoryObj = {
-	args: {
-		label: 'Add',
-		withFooter: false,
+export const PrimaryAction: StoryObj = {
+	parameters: {
+		docs: {
+			description: {
+				story: 'The element slotted into the "primary-action" slot is displayed at the very end of the toolbar, after the other action icon-buttons.'
+			},
+		}
 	},
-	render: ({ label, withFooter }) => html`
-		<mo-data-grid .data=${hundredPeople} style='height: 500px' pagination=${ifDefined(withFooter ? 'auto' : undefined)}>
+	render: () => html`
+		<mo-data-grid .data=${hundredPeople} style='height: 500px'>
 			${columnsTemplate}
-			<mo-fab slot='fab' icon='add'>${label}</mo-fab>
+			<mo-field-search slot='toolbar'></mo-field-search>
+			<mo-field-select label='Name' slot='filter'></mo-field-select>
+			<mo-loading-button slot='primary-action' type='filled' startIcon='add'>Create</mo-loading-button>
+		</mo-data-grid>
+	`
+}
+
+export const PrimaryActionWithSplitButton: StoryObj = {
+	args: {
+		label: 'Create',
+	},
+	parameters: {
+		docs: {
+			description: {
+				story: 'The "primary-action" slot can also host composite actions such as a split button.'
+			},
+		}
+	},
+	render: ({ label }) => html`
+		<mo-data-grid .data=${hundredPeople} style='height: 500px'>
+			${columnsTemplate}
+			<mo-field-search slot='toolbar'></mo-field-search>
+			<mo-field-select label='Name' slot='filter'></mo-field-select>
+			<mo-split-button slot='primary-action'>
+				<mo-loading-button startIcon='add'>${label}</mo-loading-button>
+				<mo-menu-item slot='more' icon='upload'>Import</mo-menu-item>
+			</mo-split-button>
 		</mo-data-grid>
 	`
 }

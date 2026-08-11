@@ -185,13 +185,13 @@ export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataG
 
 	protected override get toolbarActionsTemplate() {
 		return html`
+			${super.toolbarActionsTemplate}
 			${this.hasModebar ? html.nothing : html`
 				<mo-icon-button icon='playlist_add' data-test-id='add-mode'
 					@click=${() => this.createOrEditMode()}
 					${tooltip(t('Add new view'))}
 				></mo-icon-button>
 			`}
-			${super.toolbarActionsTemplate}
 		`
 	}
 
