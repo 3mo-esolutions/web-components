@@ -1,10 +1,13 @@
 import { component, css, Component, html, event, property } from '@a11d/lit'
 import { disabledProperty } from '@3mo/disabled-property'
+import { type ButtonGroup } from '@3mo/button-group'
+import { ButtonType } from '@3mo/button'
 
 /**
  * @element mo-split-button
  *
  * @attr open - Whether the menu is open.
+ * @attr type - The type of the buttons, which is passed down to the button-group.
  * @attr disabled - Whether the "more" button is disabled.
  *
  * @slot - The content of the button.
@@ -17,6 +20,7 @@ export class SplitButton extends Component {
 	@event() readonly openChange!: EventDispatcher<boolean>
 
 	@property({ type: Boolean, reflect: true }) open = false
+	@property({ reflect: true }) type: ButtonGroup['type'] = ButtonType.Filled
 	@disabledProperty() disabled = false
 
 	static override get styles() {
@@ -44,7 +48,7 @@ export class SplitButton extends Component {
 
 	protected get buttonGroupTemplate() {
 		return html`
-			<mo-button-group type='filled'>
+			<mo-button-group type=${this.type}>
 				<slot></slot>
 				${this.moreButtonTemplate}
 			</mo-button-group>
