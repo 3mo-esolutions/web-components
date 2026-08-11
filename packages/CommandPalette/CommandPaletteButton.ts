@@ -6,6 +6,7 @@ import { CommandPalette } from './CommandPalette.js'
 export class CommandPaletteButton extends Component {
 	static override get styles() {
 		return css`
+			/* Tints itself with the color it inherits from its surroundings, so that it keeps its contrast on any background e.g. the navbar's tonal container */
 			mo-button {
 				color: inherit;
 				--mo-button-accent-color: currentColor;

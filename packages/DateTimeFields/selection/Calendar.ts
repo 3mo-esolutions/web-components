@@ -92,6 +92,9 @@ export class Calendar extends Component {
 				}
 
 				&[data-start], &[data-end] {
+					background: var(--mo-color-accent-container);
+					opacity: 1;
+					color: var(--mo-color-on-accent-container) !important;
 					background: var(--mo-color-accent-transparent);
 					opacity: 1;
 					color: color-mix(in srgb, var(--mo-color-accent), var(--mo-color-foreground)) !important;

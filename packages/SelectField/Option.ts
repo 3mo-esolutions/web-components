@@ -62,8 +62,10 @@ export class Option<T> extends SelectionListItem {
 				background-color: var(--mo-color-transparent-gray);
 			}
 
+			/* Material Design 3 fills selected list items with the "secondary container" role. @see --mo-color-accent-container in @3mo/theme */
 			:host([selected]) {
-				background-color: var(--mo-color-accent-transparent);
+				background-color: var(--mo-color-accent-container);
+				color: var(--mo-color-on-accent-container);
 			}
 
 			:host([data-search-no-match]) {

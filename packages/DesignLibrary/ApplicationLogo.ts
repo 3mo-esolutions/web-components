@@ -9,7 +9,8 @@ export class ApplicationLogo extends Component {
 	static override get styles() {
 		return css`
 			:host {
-				color: var(--mo-color-on-accent);
+				/* Inherited from the navbar, which owns the contrasting color of its contents */
+				color: inherit;
 				display: flex;
 				justify-content: center;
 				height: 100%;

@@ -99,8 +99,8 @@ RootCssInjector.inject(css`
 			and the container pair for medium-emphasis fills where the solid accent would be too loud
 			(e.g. tonal buttons, selected-state backgrounds, or avatars).
 			*/
-		--mo-color-accent: var(--mo-color-accent-seed);
-		--mo-color-on-accent: var(--mo-color-on-accent-seed);
+		--mo-color-accent: ${deriveColor('var(--mo-color-accent-seed)', { light: { lightness: 48, maximumChroma: .135 }, dark: { lightness: 83.5, maximumChroma: .085 } })};
+		--mo-color-on-accent: ${deriveColor('var(--mo-color-accent)', { light: { lightness: 100, maximumChroma: 0 }, dark: { lightness: 31, maximumChroma: .085 } })};
 		--mo-color-accent-container: ${deriveColor('var(--mo-color-accent)', { light: { lightness: 91, maximumChroma: .05 }, dark: { lightness: 40, maximumChroma: .085 } })};
 		--mo-color-on-accent-container: ${deriveColor('var(--mo-color-accent)', { light: { lightness: 40, maximumChroma: .085 }, dark: { lightness: 91, maximumChroma: .05 } })};
 
@@ -122,12 +122,7 @@ RootCssInjector.inject(css`
 		--mdc-theme-text-primary-on-background: var(--mo-color-foreground) !important;
 		/* Override Material Design variables */
 		--md-sys-color-primary: var(--mo-color-accent);
-		--md-sys-color-primary-container: var(--mo-color-accent-transparent);
-		--md-sys-color-secondary: var(--mo-color-accent);
-		--md-sys-color-secondary-container: var(--mo-color-accent-transparent);
-		--md-sys-color-surface: var(--mo-color-surface);
-		--md-sys-color-surface-container: var(--mo-color-accent);
-		/* --md-sys-color-on-primary: var(--mo-color-on-accent);
+		--md-sys-color-on-primary: var(--mo-color-on-accent);
 		--md-sys-color-primary-container: var(--mo-color-accent-container);
 		--md-sys-color-on-primary-container: var(--mo-color-on-accent-container);
 		--md-sys-color-secondary: var(--mo-color-accent);
@@ -135,7 +130,7 @@ RootCssInjector.inject(css`
 		--md-sys-color-secondary-container: var(--mo-color-accent-container);
 		--md-sys-color-on-secondary-container: var(--mo-color-on-accent-container);
 		--md-sys-color-surface: var(--mo-color-surface);
-		--md-sys-color-surface-container: var(--mo-color-surface-container); */
+		--md-sys-color-surface-container: var(--mo-color-surface-container);
 		--md-sys-color-on-surface: var(--mo-color-on-surface);
 		--md-sys-color-on-surface-variant: var(--mo-color-on-surface);
 	}

@@ -113,8 +113,8 @@ export class Card extends Component {
 					align-items: center;
 					border-radius: 50%;
 					font-size: 1.125rem;
-					background: var(--mo-card-avatar-background, var(--mo-color-accent));
-					color: var(--mo-card-avatar-color, var(--mo-color-on-accent));
+					background: var(--mo-card-avatar-background, var(--mo-color-accent-container));
+					color: var(--mo-card-avatar-color, var(--mo-color-on-accent-container));
 					margin-inline-end: 0.375rem;
 				}
 			}
