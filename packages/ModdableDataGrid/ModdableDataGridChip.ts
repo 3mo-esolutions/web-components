@@ -54,9 +54,10 @@ export class ModdableDataGridChip<TData, TParameters extends FetchableDataGridPa
 				--mo-chip-background-color: color-mix(in srgb, var(--mo-color-foreground), transparent 85%);
 			}
 
+			/* Material Design 3 fills selected filter chips with the "secondary container" role rather than the solid accent. @see --mo-color-accent-container in @3mo/theme */
 			:host([selected]) mo-chip {
-				--mo-chip-background-color: var(--mo-color-accent);
-				--mo-chip-foreground-color: var(--mo-color-on-accent);
+				--mo-chip-background-color: var(--mo-color-accent-container);
+				--mo-chip-foreground-color: var(--mo-color-on-accent-container);
 				font-weight: 500;
 			}
 

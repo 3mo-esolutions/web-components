@@ -16,7 +16,8 @@ export class NavigationItem extends Component {
 				display: inline-block;
 				border-radius: var(--mo-border-radius);
 				padding: 0 0.5rem;
-				color: var(--mo-color-on-accent);
+				/* Inherited from the navbar, which owns the contrasting color of its contents */
+				color: inherit;
 				cursor: pointer;
 				white-space: nowrap;
 				outline: none;
@@ -41,7 +42,7 @@ export class NavigationItem extends Component {
 			}
 
 			mo-focus-ring {
-				--mo-focus-ring-color: var(--mo-color-on-accent);
+				--mo-focus-ring-color: currentColor;
 			}
 
 			mo-navigation-menu-item {

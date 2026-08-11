@@ -21,15 +21,16 @@ export class UserAvatar extends Component {
 				display: flex;
 			}
 
+			/* Tints itself with the color it inherits from its surroundings, so that it keeps its contrast on any background e.g. the navbar's tonal container */
 			mo-avatar {
 				place-self: center;
-				color: var(--mo-color-accessible);
-				background: rgba(0, 0, 0, 0.25);
+				color: inherit;
+				background: color-mix(in srgb, currentColor, transparent 80%);
 			}
 
 			mo-avatar:hover {
 				cursor: pointer;
-				background: rgba(0, 0, 0, calc(0.25 * 2));
+				background: color-mix(in srgb, currentColor, transparent 65%);
 			}
 
 			mo-menu {

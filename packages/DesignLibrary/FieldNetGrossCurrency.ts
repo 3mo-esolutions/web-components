@@ -53,9 +53,10 @@ export class FieldNetGrossCurrency extends InputFieldComponent<NetGrossCurrency>
 				background: var(--mo-color-transparent-gray-3);
 			}
 
+			/* Material Design 3 fills selected segmented buttons with the "secondary container" role rather than the solid accent. @see --mo-color-accent-container in @3mo/theme */
 			button[data-selected] {
-				color: var(--mo-color-on-accent);
-				background-color: var(--mo-color-accent);
+				color: var(--mo-color-on-accent-container);
+				background-color: var(--mo-color-accent-container);
 			}
 		`
 	}

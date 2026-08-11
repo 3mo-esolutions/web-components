@@ -6,12 +6,13 @@ import { CommandPalette } from './CommandPalette.js'
 export class CommandPaletteButton extends Component {
 	static override get styles() {
 		return css`
+			/* Tints itself with the color it inherits from its surroundings, so that it keeps its contrast on any background e.g. the navbar's tonal container */
 			mo-button {
-				color: var(--mo-color-on-accent);
-				--mo-button-accent-color: var(--mo-color-on-accent);
+				color: inherit;
+				--mo-button-accent-color: currentColor;
 				--mo-button-horizontal-padding: 8px;
-				background: rgba(0, 0, 0, 0.1);
-				border: 1px solid rgba(0, 0, 0, 0.5);
+				background: color-mix(in srgb, currentColor, transparent 92%);
+				border: 1px solid color-mix(in srgb, currentColor, transparent 50%);
 				font-size: small;
 				border-radius: 4px;
 				gap: 6px;
@@ -40,7 +41,7 @@ export class CommandPaletteButton extends Component {
 					${dependsOnScreenSize({
 						desktop: html`
 							${searchLabelTemplate}
-							<mo-keyboard-key key='Meta P' splitter='+' style='--mo-keyboard-key-background: rgba(0,0,0,0.1); --mo-keyboard-key-border-color: rgba(0,0,0,0.5)'></mo-keyboard-key>
+							<mo-keyboard-key key='Meta P' splitter='+' style='--mo-keyboard-key-background: color-mix(in srgb, currentColor, transparent 92%); --mo-keyboard-key-border-color: color-mix(in srgb, currentColor, transparent 50%)'></mo-keyboard-key>
 						`,
 						tablet: searchLabelTemplate,
 						mobile: html.nothing,

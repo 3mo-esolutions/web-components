@@ -57,15 +57,23 @@ export class Navigation extends Component {
 				display: none;
 			}
 
+			/*
+				Material Design 3 does not fill top app bars with the solid accent.
+				The tonal "primary container" role keeps the brand hue without overpowering the contents.
+				@see --mo-color-accent-container in @3mo/theme
+				The contents inherit this color instead of referring to a role themselves,
+				so that they stay legible if the bar is recolored.
+			*/
 			#navbar {
-				background: var(--mo-color-accent);
+				background: var(--mo-color-accent-container);
+				color: var(--mo-color-on-accent-container);
 				padding-inline-start: 4px;
 				height: 48px;
 				overflow: hidden;
 			}
 
 			#navbar mo-flex:first-of-type {
-				color: var(--mo-color-on-accent);
+				color: inherit;
 				white-space: nowrap;
 				overflow: hidden;
 				text-overflow: ellipsis;

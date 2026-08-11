@@ -14,7 +14,9 @@ export class Avatar extends Component {
 				align-items: center;
 				border-radius: 50%;
 				font-size: large;
-				background: var(--mo-color-accent);
+				/* @see --mo-color-accent-container in @3mo/theme */
+				background: var(--mo-avatar-background, var(--mo-color-accent-container));
+				color: var(--mo-avatar-color, var(--mo-color-on-accent-container));
 			}
 		`
 	}

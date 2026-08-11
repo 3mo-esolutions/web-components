@@ -18,6 +18,9 @@ import '@3mo/theme'
  * @slot - The default slot is used to provide the label for the button.
  * @slot icon - The icon slot is used to provide the icon for the button.
  *
+ * @cssprop --mo-fab-accent-color - The container color of the FAB. Defaults to var(--mo-color-accent-container).
+ * @cssprop --mo-fab-on-accent-color - The color of the FAB's contents. Defaults to var(--mo-color-on-accent-container).
+ *
  * @csspart button - The button element
  * @csspart ripple - The ripple element
  * @csspart focus-ring - The focus-ring element
@@ -51,14 +54,15 @@ export class Fab extends Component {
 			md-fab {
 				--md-fab-label-text-size: medium;
 
-				--md-fab-background-color: var(--mo-color-accent);
-				--md-fab-foreground-color: var(--mo-color-on-accent);
+				/* Material Design 3 fills FABs with the "primary container" role rather than the solid accent. @see --mo-color-accent-container in @3mo/theme */
+				--md-fab-background-color: var(--mo-fab-accent-color, var(--mo-color-accent-container));
+				--md-fab-foreground-color: var(--mo-fab-on-accent-color, var(--mo-color-on-accent-container));
 				--md-focus-ring-color: var(--mo-color-accent);
 
-				--md-fab-primary-state-layer-color: var(--mo-color-on-accent);
-				--md-fab-primary-hover-state-layer-color: var(--mo-color-on-accent);
-				--md-fab-primary-focus-state-layer-color: var(--mo-color-on-accent);
-				--md-fab-primary-pressed-state-layer-color: var(--mo-color-on-accent);
+				--md-fab-primary-state-layer-color: var(--mo-fab-on-accent-color, var(--mo-color-on-accent-container));
+				--md-fab-primary-hover-state-layer-color: var(--mo-fab-on-accent-color, var(--mo-color-on-accent-container));
+				--md-fab-primary-focus-state-layer-color: var(--mo-fab-on-accent-color, var(--mo-color-on-accent-container));
+				--md-fab-primary-pressed-state-layer-color: var(--mo-fab-on-accent-color, var(--mo-color-on-accent-container));
 			}
 
 			md-fab::part(button) {

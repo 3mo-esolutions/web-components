@@ -65,7 +65,7 @@ export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataG
 
 			#modebar {
 				border-radius: var(--mo-border-radius) var(--mo-border-radius) 0 0;
-				background-color: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-accent) 8%);
+				background-color: var(--mo-color-surface-container-low);
 				min-height: 40px;
 				padding: 6px 12px;
 
