@@ -25,6 +25,7 @@ export class ButtonGroup extends Component {
 		const text = unsafeCSS(ButtonType.Text)
 		const outlined = unsafeCSS(ButtonType.Outlined)
 		const filled = unsafeCSS(ButtonType.Filled)
+		const tonal = unsafeCSS(ButtonType.Tonal)
 		return css`
 			:host {
 				display: inline-block;
@@ -96,7 +97,13 @@ export class ButtonGroup extends Component {
 
 			:host([type=${filled}]) {
 				::slotted([instanceof*=mo-button]:not([data-mo-button-group-last]))::after {
-					background: var(--mo-button-group-separator-color, color-mix(in srgb, var(--mo-color-on-accent), transparent 70%));
+					background: var(--mo-button-group-separator-color, color-mix(in srgb, var(--mo-button-on-accent-color, var(--mo-color-on-accent)), transparent 70%));
+				}
+			}
+
+			:host([type=${tonal}]) {
+				::slotted([instanceof*=mo-button]:not([data-mo-button-group-last]))::after {
+					background: var(--mo-button-group-separator-color, color-mix(in srgb, var(--mo-button-on-accent-color, var(--mo-color-on-accent-container)), transparent 70%));
 				}
 			}
 

@@ -12,7 +12,7 @@ export default {
 		direction: 'horizontal',
 	},
 	argTypes: {
-		type: { control: 'select', options: [ButtonType.Text, ButtonType.Outlined, ButtonType.Filled] },
+		type: { control: 'select', options: [ButtonType.Text, ButtonType.Outlined, ButtonType.Filled, ButtonType.Tonal] },
 		direction: { control: 'select', options: ['horizontal', 'vertical', 'horizontal-reversed', 'vertical-reversed'] },
 	},
 	package: p,
