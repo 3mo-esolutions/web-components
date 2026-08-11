@@ -26,6 +26,7 @@ export const Colors: StoryObj = {
 			<div style='background: var(--mo-color-gray); color: black;'>Gray</div>
 			<div style='background: var(--mo-color-gray-transparent)'>Gray Transparent</div>
 			<div style='background: var(--mo-color-accent); color: var(--mo-color-on-accent)'>Accent / On Accent</div>
+			<div style='background: var(--mo-color-accent-container); color: var(--mo-color-on-accent-container)'>Accent Container / On Accent Container</div>
 		`
 		return html`
 			<style>

@@ -1,18 +1,49 @@
-import { css } from '@a11d/lit'
+import { css, unsafeCSS } from '@a11d/lit'
 import { RootCssInjector } from '@a11d/root-css-injector'
 import { colorContrast } from './colorContrast.js'
 
+type SchemeParameters = {
+	/** The oklch lightness in percent the seed's lightness gets re-pinned to, which is roughly interchangeable with an M3 "tone" via `oklch lightness ≈ (tone + 16) / 116 * 100%`. */
+	lightness: number
+	/** The maximum oklch chroma, usually the sRGB gamut ceiling at the role's tone. Capping instead of re-pinning lets deliberately muted seed colors stay muted. */
+	maximumChroma: number
+}
+
+/**
+ * Derives a color-scheme-adaptive color from a seed color à la Material Design 3's tonal color roles:
+ * The seed's exact hue is preserved, while its lightness is re-pinned per color scheme
+ * and its chroma is capped to the given maximum.
+ *
+ * @param seed A CSS color expression e.g. `var(--mo-color-accent-seed)` or `rgb(0, 119, 200)`.
+ * @param parameters The lightness and maximum chroma per color scheme.
+ *
+ * @example deriveColor('var(--mo-color-accent-seed)', { light: { lightness: 48, maximumChroma: .135 }, dark: { lightness: 83.5, maximumChroma: .085 } })
+ */
+function deriveColor(seed: string, parameters: { light: SchemeParameters, dark: SchemeParameters }) {
+	const branch = ({ lightness, maximumChroma }: SchemeParameters) => `oklch(from ${seed} ${lightness}% min(c, ${maximumChroma}) h)`
+	return unsafeCSS(`light-dark(${branch(parameters.light)}, ${branch(parameters.dark)})`)
+}
+
 RootCssInjector.inject(css`
+	/* Has to stay at the top level, as "@property" is not a nestable at-rule and gets dropped inside of a style rule */
+	@property --mo-color-accent-seed {
+		syntax: '<color>';
+		inherits: true;
+		initial-value: rgb(0, 119, 200);
+	}
+
 	:root {
+		--mo-color-on-accent-seed: ${colorContrast('var(--mo-color-accent-seed)')};
+
 		--mo-color-foreground: light-dark(black, white);
 		--mo-color-background: light-dark(
-			color-mix(in srgb, rgb(220, 220, 220), var(--mo-color-accent) var(--mo-color-background-leak-percent, 14%)),
-			color-mix(in srgb, rgb(12, 13, 17), var(--mo-color-accent) var(--mo-color-background-leak-percent, 4%))
+			color-mix(in srgb, rgb(220, 220, 220), var(--mo-color-accent-seed) var(--mo-color-background-leak-percent, 14%)),
+			color-mix(in srgb, rgb(12, 13, 17), var(--mo-color-accent-seed) var(--mo-color-background-leak-percent, 4%))
 		);
 		--mo-color-gray: light-dark(rgb(121, 121, 121), rgb(165, 165, 165));
 		--mo-color-surface: light-dark(
-			color-mix(in srgb, white, var(--mo-color-accent) var(--mo-color-surface-leak-percent, 6%)),
-			color-mix(in srgb, rgb(27, 28, 32), var(--mo-color-accent) var(--mo-color-surface-leak-percent, 8%))
+			color-mix(in srgb, white, var(--mo-color-accent-seed) var(--mo-color-surface-leak-percent, 6%)),
+			color-mix(in srgb, rgb(27, 28, 32), var(--mo-color-accent-seed) var(--mo-color-surface-leak-percent, 8%))
 		);
 		--mo-color-surface-container-lowest: light-dark(
 			var(--mo-color-surface),
@@ -47,8 +78,32 @@ RootCssInjector.inject(css`
 		--mo-color-yellow: rgb(232, 152, 35);
 		--mo-color-red: rgb(221, 61, 49);
 		--mo-color-blue: rgb(0, 119, 200);
+		/*
+			Simulation of Material Design 3's color scheme derivation from a "seed" color, which itself is never used directly anywhere.
+			@see https://github.com/material-foundation/material-color-utilities
+
+			The color roles are re-derived from the seed in the "oklch" color space, preserving its exact hue,
+			pinning the lightness to the M3 tone (i.e. CIE lightness) assigned to each role per scheme,
+			and capping the chroma to M3's gamut-clamped palette values at the respective tone
+			- capping instead of re-pinning, so that deliberately muted brand colors stay muted:
+
+			Role                          | Light theme       | Dark theme
+			------------------------------|-------------------|------------------
+			accent (M3 "primary")         | tone 40 ≈ 48%     | tone 80 ≈ 83.5%
+			on-accent                     | tone 100 = white  | tone 20 ≈ 31%
+			accent-container              | tone 90 ≈ 91%     | tone 30 ≈ 40%
+			on-accent-container           | tone 30 ≈ 40%     | tone 90 ≈ 91%
+
+			Use the solid accent for small high-emphasis elements (e.g. filled buttons, selection controls, indicators),
+			and the container pair for medium-emphasis fills where the solid accent would be too loud
+			(e.g. tonal buttons, selected-state backgrounds, or avatars).
+			*/
+		--mo-color-accent: var(--mo-color-accent-seed);
+		--mo-color-on-accent: var(--mo-color-on-accent-seed);
+		--mo-color-accent-container: ${deriveColor('var(--mo-color-accent)', { light: { lightness: 91, maximumChroma: .05 }, dark: { lightness: 40, maximumChroma: .085 } })};
+		--mo-color-on-accent-container: ${deriveColor('var(--mo-color-accent)', { light: { lightness: 40, maximumChroma: .085 }, dark: { lightness: 91, maximumChroma: .05 } })};
+
 		--mo-color-accent-transparent: color-mix(in srgb, var(--mo-color-accent), transparent 75%);
-		--mo-color-on-accent: ${colorContrast('var(--mo-color-accent)')};
 
 		/* Override Material Web Components variables */
 		--mdc-icon-font: Material Icons Sharp !important;
@@ -71,6 +126,15 @@ RootCssInjector.inject(css`
 		--md-sys-color-secondary-container: var(--mo-color-accent-transparent);
 		--md-sys-color-surface: var(--mo-color-surface);
 		--md-sys-color-surface-container: var(--mo-color-accent);
+		/* --md-sys-color-on-primary: var(--mo-color-on-accent);
+		--md-sys-color-primary-container: var(--mo-color-accent-container);
+		--md-sys-color-on-primary-container: var(--mo-color-on-accent-container);
+		--md-sys-color-secondary: var(--mo-color-accent);
+		--md-sys-color-on-secondary: var(--mo-color-on-accent);
+		--md-sys-color-secondary-container: var(--mo-color-accent-container);
+		--md-sys-color-on-secondary-container: var(--mo-color-on-accent-container);
+		--md-sys-color-surface: var(--mo-color-surface);
+		--md-sys-color-surface-container: var(--mo-color-surface-container); */
 		--md-sys-color-on-surface: var(--mo-color-on-surface);
 		--md-sys-color-on-surface-variant: var(--mo-color-on-surface);
 	}
