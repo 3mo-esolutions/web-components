@@ -12,7 +12,7 @@ export default {
 		disabled: false,
 	},
 	argTypes: {
-		type: { control: 'select', options: [ButtonType.Text, ButtonType.Outlined, ButtonType.Elevated, ButtonType.Filled] },
+		type: { control: 'select', options: [ButtonType.Text, ButtonType.Outlined, ButtonType.Elevated, ButtonType.Filled, ButtonType.Tonal] },
 		disabled: { control: 'boolean' },
 	},
 	package: p,

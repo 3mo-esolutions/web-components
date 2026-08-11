@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/button",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"description": "Buttons let people take action and make choices with one tap.",
 	"repository": {
 		"type": "git",
@@ -25,7 +25,7 @@
 	"dependencies": {
 		"@a11d/lit": "x",
 		"tslib": "x",
-		"@3mo/theme": "x",
+		"@3mo/theme": ">=0.4.1",
 		"@3mo/flex": "x",
 		"@3mo/icon": "x",
 		"@3mo/instanceof-attribute-controller": "x",

@@ -4,6 +4,7 @@ import { type MaterialIcon } from '@3mo/icon'
 import { MdTextButton } from '@material/web/button/text-button.js'
 import { MdOutlinedButton } from '@material/web/button/outlined-button.js'
 import { MdFilledButton } from '@material/web/button/filled-button.js'
+import { MdFilledTonalButton } from '@material/web/button/filled-tonal-button.js'
 import { MdElevatedButton } from '@material/web/button/elevated-button.js'
 import { disabledProperty } from '@3mo/disabled-property'
 import '@3mo/theme'
@@ -12,6 +13,7 @@ import '@3mo/flex'
 export enum ButtonType {
 	Text = 'text',
 	Outlined = 'outlined',
+	Tonal = 'tonal',
 	Elevated = 'elevated',
 	Filled = 'filled',
 }
@@ -49,6 +51,7 @@ export class Button extends Component {
 		[ButtonType.Outlined, literal`md-outlined-button`],
 		[ButtonType.Elevated, literal`md-elevated-button`],
 		[ButtonType.Filled, literal`md-filled-button`],
+		[ButtonType.Tonal, literal`md-filled-tonal-button`],
 	])
 
 	@property({ reflect: true }) type = ButtonType.Text
@@ -181,6 +184,31 @@ export class Button extends Component {
 				--md-filled-button-pressed-container-color: var(--mo-button-accent-color, var(--mo-color-accent));
 			}
 
+			/* Unlike the other types, this one defaults to the tonal "primary container" role pair. @see --mo-color-accent-container in @3mo/theme */
+			md-filled-tonal-button {
+				--md-filled-tonal-button-disabled-label-text-opacity: 0.5;
+				--md-filled-tonal-button-disabled-label-text-color: var(--mo-button-disabled-color, var(--mo-color-gray));
+				--md-filled-tonal-button-label-text-color: var(--mo-button-on-accent-color, var(--mo-color-on-accent-container));
+				--md-filled-tonal-button-hover-label-text-color: var(--mo-button-on-accent-color, var(--mo-color-on-accent-container));
+				--md-filled-tonal-button-focus-label-text-color: var(--mo-button-on-accent-color, var(--mo-color-on-accent-container));
+				--md-filled-tonal-button-pressed-label-text-color: var(--mo-button-on-accent-color, var(--mo-color-on-accent-container));
+
+				--md-filled-tonal-button-state-layer-color: var(--mo-button-on-accent-color, var(--mo-color-on-accent-container));
+				--md-filled-tonal-button-hover-state-layer-color: var(--mo-button-on-accent-color, var(--mo-color-on-accent-container));
+				--md-filled-tonal-button-hover-state-layer-opacity: 0.15;
+				--md-filled-tonal-button-focus-state-layer-color: var(--mo-button-on-accent-color, var(--mo-color-on-accent-container));
+				--md-filled-tonal-button-focus-state-layer-opacity: 0.15;
+				--md-filled-tonal-button-pressed-state-layer-color: var(--mo-button-on-accent-color, var(--mo-color-on-accent-container));
+				--md-filled-tonal-button-pressed-state-layer-opacity: 0.3;
+
+				--md-filled-tonal-button-disabled-container-opacity: 0.25;
+				--md-filled-tonal-button-disabled-container-color: var(--mo-button-disabled-background-color, var(--mo-color-gray));
+				--md-filled-tonal-button-container-color: var(--mo-button-accent-color, var(--mo-color-accent-container));
+				--md-filled-tonal-button-hover-container-color: var(--mo-button-accent-color, var(--mo-color-accent-container));
+				--md-filled-tonal-button-focus-container-color: var(--mo-button-accent-color, var(--mo-color-accent-container));
+				--md-filled-tonal-button-pressed-container-color: var(--mo-button-accent-color, var(--mo-color-accent-container));
+			}
+
 			md-elevated-button {
 				--md-elevated-button-disabled-label-text-opacity: 0.5;
 				--md-elevated-button-disabled-label-text-color: var(--mo-button-disabled-color, var(--mo-color-gray));
@@ -271,7 +299,7 @@ export class Button extends Component {
 	}
 }
 
-const Buttons = [MdTextButton, MdOutlinedButton, MdFilledButton, MdElevatedButton]
+const Buttons = [MdTextButton, MdOutlinedButton, MdFilledButton, MdFilledTonalButton, MdElevatedButton]
 
 Buttons.forEach(Button => Button.addInitializer(element => {
 	element.addController({
