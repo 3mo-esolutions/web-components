@@ -199,6 +199,9 @@
 			"path": "./packages/IconButton"
 		},
 		{
+			"path": "./packages/Indexability"
+		},
+		{
 			"path": "./packages/InstanceofAttributeController"
 		},
 		{
