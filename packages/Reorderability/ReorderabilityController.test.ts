@@ -1,6 +1,7 @@
 import { component, Component, css, html, repeat } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { ReorderabilityController, ReorderabilityState, type ReorderabilityStrategy } from './ReorderabilityController.js'
+import { IndexabilityController } from '@3mo/indexability'
+import { ReorderabilityController, ReorderabilityState, type ReorderabilityControllerItemDirectiveOptions, type ReorderabilityStrategy } from './ReorderabilityController.js'
 
 @component('reorderability-controller-test-component')
 class ReorderabilityControllerTestComponent extends Component {
@@ -99,6 +100,44 @@ class ReorderabilityBoardTestComponent extends Component {
 					`)}
 				</div>
 			`)}
+		`
+	}
+}
+
+/** The OWNER creates the registry and the controller adopts it — the shared-registry path, where an
+ * item declares itself once no matter how many controllers act on it. The registry may carry MORE
+ * than the controller's own options (another concern's fields), which the generic accommodates. */
+@component('reorderability-adopted-registry-test-component')
+class ReorderabilityAdoptedRegistryTestComponent extends Component {
+	items = [0, 1, 2, 3]
+	readonly reorders = new Array<[source: number, destination: number]>()
+
+	readonly indexability = new IndexabilityController<number, ReorderabilityControllerItemDirectiveOptions & { data: number }>(this)
+	readonly controller = new ReorderabilityController(this, {
+		indexability: this.indexability,
+		handleReorder: (source, destination) => {
+			this.reorders.push([source, destination])
+			this.items.splice(destination, 0, ...this.items.splice(source, 1))
+			this.requestUpdate()
+		},
+	})
+
+	get itemElements() { return [...this.renderRoot.querySelectorAll<HTMLElement>('.item')] }
+
+	static override get styles() {
+		return css`
+			.items { display: flex; flex-direction: column; gap: 10px; width: 100px; }
+			.item { height: 30px; background: gray; }
+		`
+	}
+
+	protected override get template() {
+		return html`
+			<div class='items'>
+				${repeat(this.items, item => item, (item, index) => html`
+					<div class='item' ${this.indexability.item({ index, data: item })}>${item}</div>
+				`)}
+			</div>
 		`
 	}
 }
@@ -289,6 +328,24 @@ describe('ReorderabilityController', () => {
 			// part still resolves within the source list.
 			expect(fixture.component.reorders.every(([column]) => column === 0)).toBe(true)
 			expect(fixture.component.columns[1]).toEqual(['b1', 'b2', 'b3'])
+		})
+	})
+
+	describe('with an adopted registry', () => {
+		const fixture = new ComponentTestFixture(() => new ReorderabilityAdoptedRegistryTestComponent())
+
+		it('reads the owner’s registry rather than creating its own', () => {
+			expect(fixture.component.controller.indexability).toBe(fixture.component.indexability)
+			expect(fixture.component.controller.item).toBe(fixture.component.indexability.item)
+		})
+
+		it('drags items the OWNER registered, stamping its state onto them', async () => {
+			const items = fixture.component.itemElements
+			await drag(items[0]!, center(items[2]!), {
+				midway: () => expect(items[0]!.dataset.reorderability).toBe(ReorderabilityState.Dragging)
+			})
+			expect(fixture.component.reorders).toEqual([[0, 2]])
+			expect(fixture.component.items).toEqual([1, 2, 0, 3])
 		})
 	})
 

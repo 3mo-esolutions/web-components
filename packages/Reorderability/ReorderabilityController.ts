@@ -1,4 +1,5 @@
-import { AsyncDirective, Controller, directive, noChange, PartType, render, type DirectiveResult, type ElementPart, type HTMLTemplateResult, type PartInfo, type ReactiveElement } from '@a11d/lit'
+import { Controller, render, type HTMLTemplateResult, type ReactiveElement } from '@a11d/lit'
+import { IndexabilityController, type IndexabilityItemOptions } from '@3mo/indexability'
 
 export enum ReorderabilityState {
 	Idle = 'idle',
@@ -19,7 +20,7 @@ export enum ReorderabilityState {
  */
 export type ReorderabilityStrategy = 'live' | 'indicator'
 
-export type ReorderabilityControllerItemDirectiveOptions = {
+export interface ReorderabilityControllerItemDirectiveOptions extends IndexabilityItemOptions {
 	/** The item's position in the OWNER's data — what {@link ReorderabilityController.handleReorder}
 	 * reports, and the order the items are read in (never DOM order: items may live in separate
 	 * shadow roots, where document position is not comparable). */
@@ -41,6 +42,8 @@ interface ReorderabilitySlot {
 	readonly element: HTMLElement
 	readonly index: number
 	readonly disabled: boolean
+	/** Captured with the geometry, so the preview is the one the item declared when the drag began. */
+	readonly dragImage?: HTMLTemplateResult
 	readonly x: number
 	readonly y: number
 	readonly width: number
@@ -84,10 +87,13 @@ interface ReorderabilityDrag {
  *
  * The `item` element-part directive is the whole registration story — an item registers on render
  * and deregisters when lit drops it, so nothing has to be queried, and no identity attributes are
- * needed in the DOM. Items are ordered by their declared `index` (never by document position: they
- * may live in separate shadow roots, where that is not comparable), and the drop reports
- * `(source, destination)` in those same indices through {@link handleReorder} — which owners either
- * pass as an option or override in a subclass. The controller never touches the data.
+ * needed in the DOM. That registry is {@link IndexabilityController}, which this controller owns and
+ * exposes: it is the same substrate every item-wise interaction reads, so an item that also takes
+ * part in others need not declare itself once per concern. Items are ordered by their declared
+ * `index` (never by document position: they may live in separate shadow roots, where that is not
+ * comparable), and the drop reports `(source, destination)` in those same indices through
+ * {@link handleReorder} — which owners either pass as an option or override in a subclass. The
+ * controller never touches the data.
  *
  * Several controllers may share one host: each knows only its own items, so a host with one
  * controller per list gets independent lists — a board whose cards reorder within their own column.
@@ -114,7 +120,7 @@ interface ReorderabilityDrag {
  * What it buys, beyond cadence: haptics, drags that work while the list auto-scrolls, and a preview
  * that isn't subject to the platform's drag-image rules.
  */
-export class ReorderabilityController extends Controller implements EventListenerObject {
+export class ReorderabilityController<TItemOptions extends ReorderabilityControllerItemDirectiveOptions = ReorderabilityControllerItemDirectiveOptions> extends Controller implements EventListenerObject {
 	/** Touch/pen: how long (ms) a press must stay still — within {@link touchHoldTolerance} — before a
 	 * drag begins, so a plain swipe still scrolls the list. ~half a second matches the OS long-press. */
 	protected static readonly touchHoldDuration = 500
@@ -138,13 +144,27 @@ export class ReorderabilityController extends Controller implements EventListene
 	 * `handle` overrides this, so a drag handle is allowed to be a button. */
 	protected static readonly interactive = 'input, select, textarea, a[href], [popover], [contenteditable]:not([contenteditable=false])'
 
+	/** The item registry this controller reads — adopted or its own. See {@link IndexabilityController}. */
+	readonly indexability: IndexabilityController<unknown, TItemOptions>
+
 	constructor(override readonly host: ReactiveElement, readonly options: {
 		handleReorder?: (source: number, destination: number) => void
 		/** Defaults to `live` — see {@link ReorderabilityStrategy}. */
 		strategy?: ReorderabilityStrategy
-	} = {}) { super(host) }
+		/** A shared registry to adopt — the owner declares the item directive once per element and
+		 * every controller reading the registry acts on it. Absent, the controller creates its own.
+		 * Read once, and expected to live on this controller's own host. */
+		indexability?: IndexabilityController<unknown, TItemOptions>
+	} = {}) {
+		super(host)
+		// Constructed from the PARAMETERS rather than the fields, and observed from the constructor
+		// body, so neither depends on where TypeScript happens to place field initializers.
+		this.indexability = options.indexability ?? new IndexabilityController<unknown, TItemOptions>(host)
+		this.indexability.observe({
+			handleItemUpdated: ({ element, options }) => element.dataset.reorderability = this.stateOf(options.index),
+		})
+	}
 
-	private readonly items = new Map<HTMLElement, ReorderabilityControllerItemDirectiveOptions>()
 	private drag?: ReorderabilityDrag
 
 	// The controller registers ITSELF as the listener (an EventListenerObject) rather than bound
@@ -194,61 +214,8 @@ export class ReorderabilityController extends Controller implements EventListene
 			: drag.target < drag.position ? ReorderabilityState.DropBefore : ReorderabilityState.DropAfter
 	}
 
-	private _item?: (options: ReorderabilityControllerItemDirectiveOptions) => DirectiveResult
-	get item() {
-		const controller = this
-		// Memoised: lit identifies a directive by its class, so a fresh class per access would make
-		// every render tear the part down and construct a new one.
-		return this._item ??= directive(class extends AsyncDirective {
-			// Public: a directive class is part of the emitted declaration, which cannot expose private members.
-			part?: ElementPart
-			options?: ReorderabilityControllerItemDirectiveOptions
-
-			constructor(partInfo: PartInfo) {
-				super(partInfo)
-				if (partInfo.type !== PartType.ELEMENT) {
-					throw new Error('This directive can only be used on an element')
-				}
-			}
-
-			override render(options: ReorderabilityControllerItemDirectiveOptions) {
-				options
-				return noChange
-			}
-
-			override update(part: ElementPart, [options]: [ReorderabilityControllerItemDirectiveOptions]) {
-				this.part = part
-				this.options = options
-				const element = part.element as HTMLElement
-				controller.items.set(element, options)
-				element.dataset.reorderability = controller.stateOf(options.index)
-				return noChange
-			}
-
-			override disconnected() {
-				controller.items.delete(this.part!.element as HTMLElement)
-			}
-
-			override reconnected() {
-				controller.items.set(this.part!.element as HTMLElement, this.options!)
-			}
-		})
-	}
-
-	/** The registered item a press landed on — resolved through {@link Event.composedPath}, so it works
-	 * whether the items sit in the host's own tree or several shadow roots below it. Returns the
-	 * NEAREST one, so an item nested inside another draggable item resolves to itself. A press on
-	 * another controller's item resolves to nothing here, which is what keeps sibling controllers
-	 * (one per list) out of each other's gestures. */
-	private itemAt(path: ReadonlyArray<EventTarget>) {
-		for (const target of path) {
-			const options = this.items.get(target as HTMLElement)
-			if (options) {
-				return { element: target as HTMLElement, options }
-			}
-		}
-		return undefined
-	}
+	/** Registers an item: `<div ${controller.item({ index })}>`. See {@link IndexabilityController.item}. */
+	get item() { return this.indexability.item }
 
 	/** The nearest scrollable ancestor, crossing shadow boundaries. */
 	private scrollerOf(element: Element): Element | undefined {
@@ -277,23 +244,25 @@ export class ReorderabilityController extends Controller implements EventListene
 	 * anything else is treated as a grid of slots and resolved by hit-testing.
 	 */
 	private snapshot() {
-		const entries = [...this.items]
-			.map(([element, options]) => ({ element, options, rect: element.getBoundingClientRect() }))
-			.sort((a, b) => a.options.index - b.options.index)
-		if (entries.length < 2) {
+		const items = this.indexability.items
+		if (items.length < 2) {
 			return undefined
 		}
-		const scroller = this.scrollerOf(entries[0]!.element)
+		const scroller = this.scrollerOf(items[0]!.element)
 		const scroll = this.scrollOf(scroller)
-		const slots = entries.map(({ element, options, rect }) => ({
-			element,
-			index: options.index,
-			disabled: !!options.disabled,
-			x: rect.left + scroll.x,
-			y: rect.top + scroll.y,
-			width: rect.width,
-			height: rect.height,
-		}))
+		const slots = items.map(({ element, options }) => {
+			const rect = element.getBoundingClientRect()
+			return {
+				element,
+				index: options.index,
+				disabled: !!options.disabled,
+				dragImage: options.dragImage,
+				x: rect.left + scroll.x,
+				y: rect.top + scroll.y,
+				width: rect.width,
+				height: rect.height,
+			}
+		})
 		const bounds = {
 			x: Math.min(...slots.map(slot => slot.x)),
 			y: Math.min(...slots.map(slot => slot.y)),
@@ -324,7 +293,7 @@ export class ReorderabilityController extends Controller implements EventListene
 			this.teardown()
 		}
 		const path = e.composedPath()
-		const item = this.itemAt(path)
+		const item = this.indexability.itemAt(path)
 		if (!item || item.options.disabled) {
 			return
 		}
@@ -398,7 +367,7 @@ export class ReorderabilityController extends Controller implements EventListene
 
 	/** The pointer-following preview, when the item declared a `dragImage`. */
 	private mount(drag: ReorderabilityDrag) {
-		const template = this.items.get(drag.slots[drag.position]!.element)?.dragImage
+		const template = drag.slots[drag.position]!.dragImage
 		if (!template) {
 			return
 		}
