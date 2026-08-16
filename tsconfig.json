@@ -88,6 +88,9 @@
 			"path": "./packages/ColorPicker"
 		},
 		{
+			"path": "./packages/CommandPalette"
+		},
+		{
 			"path": "./packages/Confetti"
 		},
 		{
@@ -95,6 +98,9 @@
 		},
 		{
 			"path": "./packages/DataGrid"
+		},
+		{
+			"path": "./packages/DataGridCardIntegration"
 		},
 		{
 			"path": "./packages/DateTime"
@@ -172,6 +178,9 @@
 			"path": "./packages/FocusController"
 		},
 		{
+			"path": "./packages/FocusRing"
+		},
+		{
 			"path": "./packages/FontImporter"
 		},
 		{
@@ -203,6 +212,9 @@
 		},
 		{
 			"path": "./packages/LanguageField"
+		},
+		{
+			"path": "./packages/Line"
 		},
 		{
 			"path": "./packages/LinearProgress"
@@ -253,6 +265,9 @@
 			"path": "./packages/Radio"
 		},
 		{
+			"path": "./packages/Reorderability"
+		},
+		{
 			"path": "./packages/ResizeObserver"
 		},
 		{
@@ -292,6 +307,9 @@
 			"path": "./packages/StandardDialogs"
 		},
 		{
+			"path": "./packages/styleProperty"
+		},
+		{
 			"path": "./packages/Switch"
 		},
 		{
@@ -308,6 +326,9 @@
 		},
 		{
 			"path": "./packages/Throttler"
+		},
+		{
+			"path": "./packages/Timeline"
 		},
 		{
 			"path": "./packages/Toolbar"
