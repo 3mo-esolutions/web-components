@@ -1,0 +1,36 @@
+{
+	"name": "@3mo/selectability",
+	"version": "0.1.0",
+	"description": "A controller that makes items selectable, single or multiple, with range and modifier gestures, keyed identity and ARIA",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/3mo-esolutions/web-components"
+	},
+	"keywords": [
+		"lit",
+		"web-component",
+		"controller",
+		"selection",
+		"select",
+		"range",
+		"aria"
+	],
+	"author": "3MO GmbH",
+	"license": "MIT",
+	"homepage": "https://www.3mo.de",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"customElements": "dist/custom-elements.json",
+	"files": [
+		"dist"
+	],
+	"dependencies": {
+		"@3mo/indexability": "x",
+		"@a11d/lit": "x",
+		"tslib": "x"
+	},
+	"devDependencies": {
+		"@a11d/lit-testing": "x"
+	}
+}
