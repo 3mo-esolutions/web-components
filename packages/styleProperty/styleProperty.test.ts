@@ -14,6 +14,7 @@ describe('styleProperty', () => {
 				toStyle: (value: string) => value === '*' ? '100%' : value,
 			}
 		}) withCustomConverter?: string
+		@styleProperty({ styleKey: '--custom-property' }) withCustomProperty?: string
 	}
 
 	const fixture = new ComponentTestFixture(() => new TestComponent)
@@ -46,5 +47,15 @@ describe('styleProperty', () => {
 		expect(fixture.component.style.width).toBe('100%')
 		expect(fixture.component.withCustomConverter).toBe('*')
 		expect(fixture.component.requestUpdate).toHaveBeenCalledOnceWith('withCustomConverter', '')
+	})
+
+	it('should handle property with custom CSS property as style key', () => {
+		spyOn(fixture.component, 'requestUpdate')
+
+		fixture.component.withCustomProperty = '10px'
+
+		expect(fixture.component.style.getPropertyValue('--custom-property')).toBe('10px')
+		expect(fixture.component.withCustomProperty).toBe('10px')
+		expect(fixture.component.requestUpdate).toHaveBeenCalledOnceWith('withCustomProperty', '')
 	})
 })
