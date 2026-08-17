@@ -266,5 +266,54 @@ describe('FieldSelect', () => {
 			await fixture.updateComplete
 			expect(fixture.component.renderRoot.querySelector('mo-field')?.populated).toBe(false)
 		})
+
+		describe('by clicking', () => {
+			const settle = async () => {
+				await fixture.updateComplete
+				await new Promise(r => setTimeout(r, 0))
+			}
+
+			/** The press carries the modifiers; the option then reports itself with a plain event. */
+			const click = async (index: number, { shift = false } = {}) => {
+				const option = fixture.component.options[index]!
+				option.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, composed: true, shiftKey: shift }))
+				option.click()
+				window.dispatchEvent(new KeyboardEvent('keyup', { key: 'Shift' }))
+				await settle()
+			}
+
+			beforeEach(settle)
+
+			it('should add each option clicked', async () => {
+				await click(1)
+				await click(3)
+				expect(fixture.component.index).toEqual([1, 3])
+			})
+
+			it('should remove an option clicked again', async () => {
+				await click(1)
+				await click(3)
+				await click(1)
+				expect(fixture.component.index).toEqual([3])
+			})
+
+			// The gesture a select field has never had: it went straight to the option, which knew
+			// only itself, so there was nothing to hold a range between.
+			it('should extend over the run when shift is held', async () => {
+				await click(1)
+				await click(3, { shift: true })
+				expect(fixture.component.index).toEqual([1, 2, 3])
+			})
+
+			it('should remove the run where the anchor was left deselected', async () => {
+				await click(0)
+				await click(3, { shift: true })
+				expect(fixture.component.index).toEqual([0, 1, 2, 3])
+
+				await click(1)
+				await click(3, { shift: true })
+				expect(fixture.component.index).toEqual([0])
+			})
+		})
 	})
 })
