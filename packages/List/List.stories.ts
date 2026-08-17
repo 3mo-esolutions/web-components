@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite'
+import { action } from 'storybook/actions'
 import { html } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
@@ -10,6 +11,9 @@ export default {
 	component: 'mo-list',
 	package: p,
 } as Meta
+
+const changed = action('change')
+const itemsChanged = action('itemsChange')
 
 const keyboardShortcut = (shortcut: string) => html`
 	<span style='font-size: 13px; color: darkgray; text-align: end'>${shortcut}</span>
@@ -196,17 +200,19 @@ export const Selectable: StoryObj = {
 }
 
 const getSelectableTemplate = (selectability: SelectableListSelectability) => html`
-	Check the console for the selected item.
-	<mo-selectable-list selectability=${selectability}>
+	<mo-selectable-list selectability=${selectability}
+		@change=${(e: CustomEvent<Array<number>>) => changed(e.detail)}
+		@itemsChange=${(e: CustomEvent<Array<HTMLElement>>) => itemsChanged(e.detail.length)}
+	>
 		<mo-selectable-list-item toggleable>Item 1</mo-selectable-list-item>
 		<mo-selectable-list-item toggleable>Item 2</mo-selectable-list-item>
-		<mo-checkbox-list-item disabled>Item 3</mo-checkbox-list-item>
-		<mo-checkbox-list-item>Item 3</mo-checkbox-list-item>
+		<mo-checkbox-list-item disabled>Item 3 (disabled)</mo-checkbox-list-item>
 		<mo-checkbox-list-item>Item 4</mo-checkbox-list-item>
-		<mo-switch-list-item>Item 5</mo-switch-list-item>
+		<mo-checkbox-list-item>Item 5</mo-checkbox-list-item>
 		<mo-switch-list-item>Item 6</mo-switch-list-item>
-		<mo-radio-list-item>Item 7</mo-radio-list-item>
+		<mo-switch-list-item>Item 7</mo-switch-list-item>
 		<mo-radio-list-item>Item 8</mo-radio-list-item>
+		<mo-radio-list-item>Item 9</mo-radio-list-item>
 	</mo-selectable-list>
 `
 

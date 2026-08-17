@@ -1,4 +1,5 @@
 import { component, event, eventListener, property, queryAsync } from '@a11d/lit'
+import { Selectability, SelectabilityController, SelectabilityInteraction, SelectabilityStamping } from '@3mo/selectability'
 import { List } from './List.js'
 
 export class SelectionListItemChangeEvent<T> extends CustomEvent<T> {
@@ -10,10 +11,7 @@ export class SelectionListItemChangeEvent<T> extends CustomEvent<T> {
 	}
 }
 
-export enum SelectableListSelectability {
-	Single = 'single',
-	Multiple = 'multiple',
-}
+export { Selectability as SelectableListSelectability } from '@3mo/selectability'
 
 /**
  * @element mo-selectable-list
@@ -30,44 +28,59 @@ export class SelectableList extends List {
 	@event() readonly change!: EventDispatcher<Array<number>>
 
 	@property({ type: Array, bindingDefault: true }) value = new Array<number>()
-	@property() selectability = SelectableListSelectability.Single
+	@property() selectability = Selectability.Single
 
 	@queryAsync('slot') protected readonly slotElement!: Promise<HTMLSlotElement>
+
+	readonly selectabilityController: SelectabilityController<HTMLElement>
+
+	constructor() {
+		super()
+		const component = this
+		this.selectabilityController = new SelectabilityController<HTMLElement>(this, {
+			get selectability() { return component.selectability },
+			get items() { return component.items },
+			get selection() { return component.selectionFromValue },
+			handleChange: ({ selection }) => {
+				component.value = selection.map(item => component.items.indexOf(item))
+				component.syncItems()
+				component.change.dispatch(component.value)
+			},
+			interaction: SelectabilityInteraction.Manual,
+			stamping: SelectabilityStamping.None,
+		})
+	}
+
+	/** The value's indices resolved to their elements — the list's own state stays the indices. */
+	private get selectionFromValue() {
+		return this.value
+			.map(index => this.items[index])
+			.filter((item): item is HTMLElement => !!item)
+	}
+
+	/** Items announce their own state as they are clicked, so after the controller has ruled on it
+	 * they are told what the answer actually was — including the ones that were not touched. */
+	private syncItems() {
+		for (const item of this.items) {
+			const selected = this.selectabilityController.isSelected(item)
+			if ('selected' in item) {
+				(item as HTMLElement & { selected: unknown }).selected = selected
+			} else {
+				item.toggleAttribute('selected', selected)
+			}
+		}
+	}
 
 	@eventListener({ type: 'change', target(this: SelectableList) { return this.slotElement } })
 	protected handleChange(event: CustomEvent) {
 		if (event instanceof SelectionListItemChangeEvent) {
 			event.stopImmediatePropagation()
-			const index = this.items.indexOf(event.target as HTMLElement)
-
-			if (index === -1) {
-				return
+			const item = event.target as HTMLElement
+			if (this.items.includes(item)) {
+				// An item that carries its own control speaks only for itself, which is what `preserve`
+				// means — and what single selectability goes on ignoring.
+				this.selectabilityController.select(item, { selected: event.selected, preserve: true, event })
 			}
-
-			const value = new Set(this.value)
-
-			if (this.selectability === SelectableListSelectability.Single) {
-				for (const [i, item] of this.items.entries()) {
-					if (i !== index) {
-						if ('selected' in item) {
-							item.selected = false
-						} else {
-							item.removeAttribute('selected')
-						}
-					}
-				}
-
-				value.clear()
-			}
-
-			if (event.selected) {
-				value.add(index)
-			} else {
-				value.delete(index)
-			}
-
-			this.value = [...value]
-			this.change.dispatch(this.value)
 		}
 	}
 }
