@@ -438,6 +438,21 @@ describe('DataGrid', () => {
 			}
 		}
 
+		// A row context menu acts on a row, so a grid that has one has to be able to have a row.
+		describe('Defaulting from a row context menu', () => {
+			const plain = new ComponentTestFixture<TestDataGrid>(html`<test-data-grid></test-data-grid>`)
+			const withMenu = new ComponentTestFixture<TestDataGrid>(html`
+				<test-data-grid .getRowContextMenuTemplate=${getRowContextMenuTemplate}></test-data-grid>
+			`)
+			const withMenuAndSelectability = new ComponentTestFixture<TestDataGrid>(html`
+				<test-data-grid selectability=${DataGridSelectability.Multiple} .getRowContextMenuTemplate=${getRowContextMenuTemplate}></test-data-grid>
+			`)
+
+			it('should stay undefined without one', () => expect(plain.component.selectability).toBe(undefined))
+			it('should become single with one', () => expect(withMenu.component.selectability).toBe(DataGridSelectability.Single))
+			it('should leave an explicit selectability alone', () => expect(withMenuAndSelectability.component.selectability).toBe(DataGridSelectability.Multiple))
+		})
+
 		describe('None', () => {
 			const fixture = new ComponentTestFixture<TestDataGrid>(html`
 				<test-data-grid></test-data-grid>

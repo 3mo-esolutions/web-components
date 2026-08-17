@@ -259,7 +259,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		this.toggleAttribute('detailsOpen', this.dataRecord.detailsOpen)
 		return !this.isIntersecting ? html.nothing : html`
 			<mo-grid id='contentContainer' columns='subgrid'
-				@click=${() => this.handleContentClick()}
+				@click=${(e: MouseEvent) => this.handleContentClick(e)}
 				@dblclick=${() => this.handleContentDoubleClick()}
 				@auxclick=${(e: PointerEvent) => e.button !== 1 ? void 0 : this.handleContentMiddleClick()}
 				${this.contextMenuTemplate === html.nothing ? html.nothing : popover(() => html`
@@ -327,7 +327,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 					tabindex='-1'
 					?disabled=${this.dataRecord.isSelectable === false}
 					.selected=${live(this.selected)}
-					@change=${(e: CustomEvent<boolean>) => this.dataGrid.selectionController.setSelection(this.data, e.detail, true)}
+					@change=${(e: CustomEvent<boolean>) => this.dataGrid.selectionController.select(this.data, { selected: e.detail, preserve: true, event: e })}
 				></mo-checkbox>
 			</mo-flex>
 		`
@@ -379,9 +379,9 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		`
 	}
 
-	protected handleContentClick() {
+	protected handleContentClick(event?: MouseEvent) {
 		if (this.dataGrid.selectOnClick) {
-			this.dataGrid.selectionController.setSelection(this.data, true)
+			this.dataGrid.selectionController.select(this.data, { event })
 		}
 
 		if (this.dataGrid.detailsOnClick && this.dataGrid.hasDetails) {

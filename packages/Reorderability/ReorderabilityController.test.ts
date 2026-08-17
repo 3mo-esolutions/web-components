@@ -155,6 +155,14 @@ describe('ReorderabilityController', () => {
 	const dispatch = (target: EventTarget, type: string, options: PointerEventInit = {}) =>
 		target.dispatchEvent(new PointerEvent(type, { bubbles: true, composed: true, pointerId: 1, isPrimary: true, button: 0, buttons: 1, ...options }))
 
+	/** The displacement an item has been given, in pixels. Read as NUMBERS rather than compared as a
+	 * string, because the serialisation is not the same everywhere: Firefox drops a zero second
+	 * component, so `translate(50px, 0px)` reads back from it as `translate(50px)`. */
+	const translationOf = (element: HTMLElement) => {
+		const [, x, y] = element.style.transform.match(/^translate\((-?[\d.]+)px(?:,\s*(-?[\d.]+)px)?\)$/) ?? []
+		return x === undefined ? undefined : { x: Number(x), y: Number(y ?? 0) }
+	}
+
 	const frame = () => new Promise(requestAnimationFrame)
 
 	/** A synthetic mouse drag: press on `from`, glide to `to` through a midpoint (so mid-drag hooks
@@ -282,9 +290,9 @@ describe('ReorderabilityController', () => {
 
 			// 30 tall plus the gap of 10, for each of them. Stepping onto the neighbour's start would
 			// move the second by 70 instead — onto the item above it, which is 60 tall.
-			expect(items[1]!.style.transform).toBe('translate(0px, -40px)')
-			expect(items[2]!.style.transform).toBe('translate(0px, -40px)')
-			expect(items[3]!.style.transform).toBe('translate(0px, -40px)')
+			expect(translationOf(items[1]!)).toEqual({ x: 0, y: -40 })
+			expect(translationOf(items[2]!)).toEqual({ x: 0, y: -40 })
+			expect(translationOf(items[3]!)).toEqual({ x: 0, y: -40 })
 		})
 	})
 
@@ -296,9 +304,9 @@ describe('ReorderabilityController', () => {
 			await drag(items[0]!, center(items[3]!), { release: false })
 
 			// Data order runs right to left, so closing the vacancy moves them to greater x
-			expect(items[1]!.style.transform).toBe('translate(50px, 0px)')
-			expect(items[2]!.style.transform).toBe('translate(50px, 0px)')
-			expect(items[3]!.style.transform).toBe('translate(50px, 0px)')
+			expect(translationOf(items[1]!)).toEqual({ x: 50, y: 0 })
+			expect(translationOf(items[2]!)).toEqual({ x: 50, y: 0 })
+			expect(translationOf(items[3]!)).toEqual({ x: 50, y: 0 })
 		})
 	})
 

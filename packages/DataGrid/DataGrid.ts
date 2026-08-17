@@ -7,7 +7,7 @@ import { Localizer } from '@3mo/localization'
 import { type Scroller } from '@3mo/scroller'
 import { observeResize } from '@3mo/resize-observer'
 import { DataGridColumnsController } from './DataGridColumnsController/index.js'
-import { DataGridSelectionBehaviorOnDataChange, DataGridSelectionController, type DataGridSelectability } from './DataGridSelectionController.js'
+import { DataGridSelectability, DataGridSelectionBehaviorOnDataChange, DataGridSelectionController } from './DataGridSelectionController.js'
 import { DataGridSortingController, type DataGridRankedSortDefinition, type DataGridSorting } from './DataGridSortingController.js'
 import { DataGridDetailsController } from './DataGridDetailsController.js'
 import { type DataGridColumn, DataGridCsvController, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, DataGridContextMenuController, DataGridReorderabilityController, type DataGridReorderChange } from './index.js'
@@ -176,7 +176,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	setData(data: Array<TData>, selectionBehavior = this.selectionBehaviorOnDataChange) {
 		this.data = data
-		this.selectionController.handleDataChange(selectionBehavior)
+		this.selectionController.handleItemsChange(selectionBehavior)
 		this.dataChange.dispatch(data)
 	}
 
@@ -192,8 +192,8 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		return this.selectionController.deselectAll(...parameters)
 	}
 
-	select(...parameters: Parameters<typeof this.selectionController.select>) {
-		return this.selectionController.select(...parameters)
+	select(data: Array<TData>) {
+		this.selectionController.selection = data
 	}
 
 	isSelectable(...parameters: Parameters<typeof this.selectionController.isSelectable>) {
@@ -368,6 +368,15 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	readonly reorderabilityController = new DataGridReorderabilityController(this)
 
 	readonly rowIntersectionObserver?: IntersectionObserver
+
+	protected override willUpdate(...parameters: Parameters<Component['willUpdate']>) {
+		super.willUpdate(...parameters)
+		// A row context menu acts on a row, so the grid has to be able to have one — a default the
+		// selection controller used to apply by writing to its own host as it was read.
+		if (this.hasContextMenu && this.selectability === undefined) {
+			this.selectability = DataGridSelectability.Single
+		}
+	}
 
 	protected override updated(...parameters: Parameters<Component['updated']>) {
 		this.header?.requestUpdate()

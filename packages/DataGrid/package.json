@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/data-grid",
-	"version": "0.34.0",
+	"version": "0.35.0",
 	"description": "A data grid web component",
 	"repository": {
 		"type": "git",
@@ -38,6 +38,7 @@
 		"@3mo/instanceof-attribute-controller": "x",
 		"@3mo/resize-observer": "x",
 		"@3mo/reorderability": "x",
+		"@3mo/selectability": "x",
 		"@3mo/localization": "x",
 		"@3mo/popover": ">=0.10.x",
 		"@3mo/menu": ">=0.11.0",

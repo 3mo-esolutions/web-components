@@ -1,190 +1,234 @@
-import { PureEventDispatcher } from '@a11d/lit'
-import { DataGridSelectionBehaviorOnDataChange, DataGridSelectionController, DataGridSelectability } from './DataGridSelectionController'
-import type { DataRecord } from '.'
+import { component, Component, PureEventDispatcher } from '@a11d/lit'
+import { ComponentTestFixture } from '@a11d/lit-testing'
+import { DataGridSelectability, DataGridSelectionBehaviorOnDataChange, DataGridSelectionController } from './DataGridSelectionController.js'
+import type { DataRecord } from './DataRecord.js'
 
 type Data = { id: number }
 
+/** Stands in for the grid: the controller only ever asks a host for these. */
+@component('data-grid-selection-controller-test-host')
+class TestHost extends Component {
+	selectability?: DataGridSelectability
+	source = new Array<Data>()
+	selectedData = new Array<Data>()
+	isDataSelectable?: (data: Data) => boolean
+	selectionBehaviorOnDataChange?: DataGridSelectionBehaviorOnDataChange
+
+	readonly selectionChange = new PureEventDispatcher<Array<Data>>()
+
+	get dataRecords() { return this.source.map((data, index) => ({ data, index }) as DataRecord<Data>) }
+
+	readonly controller = new DataGridSelectionController<Data>(this)
+}
+
 describe('DataGridSelectionController', () => {
-	let controller: DataGridSelectionController<Data>
+	const data = [{ id: 1 }, { id: 2 }, { id: 3 }]
 
-	const data = [
-		{ id: 1 },
-		{ id: 2 },
-		{ id: 3 },
-	]
-
-	beforeEach(() => {
-		controller = new DataGridSelectionController<Data>({
-			dataRecords: data.map((data, index) => ({ data, index } as DataRecord<Data>)),
-			selectedData: [],
-			selectionChange: new PureEventDispatcher<Array<Data>>()
-		})
-	})
+	const create = (setup: Partial<TestHost> = {}) => new ComponentTestFixture(() =>
+		Object.assign(new TestHost(), { source: [...data], selectability: DataGridSelectability.Multiple }, setup))
 
 	describe('hasSelection', () => {
+		const fixture = create()
+
 		for (const [mode, hasSelection] of [[undefined, false], [DataGridSelectability.Single, true], [DataGridSelectability.Multiple, true]] as const) {
-			it(`should return ${hasSelection} when mode is ${mode}`, () => {
-				controller.host.selectability = mode
-				expect(controller.hasSelection).toBe(hasSelection)
+			it(`is ${hasSelection} when the selectability is ${mode}`, () => {
+				fixture.component.selectability = mode!
+				expect(fixture.component.controller.hasSelection).toBe(hasSelection)
 			})
 		}
 	})
 
-	describe('selectability', () => {
-		it('should default to "undefined" normally', () => {
-			controller.hasSelection
-			expect(controller.host.selectability).toBe(undefined)
-		})
-		it('should default to "single" when has context menu', () => {
-			controller = new DataGridSelectionController<Data>({
-				hasContextMenu: true,
-				dataRecords: [],
-				selectedData: [],
-			})
-			controller.hasSelection
-			expect(controller.host.selectability).toBe(DataGridSelectability.Single)
-		})
-
-		it('should not change when already defined', () => {
-			for (const selectability of [undefined, DataGridSelectability.Multiple]) {
-				controller = new DataGridSelectionController<Data>({
-					selectability,
-					hasContextMenu: true,
-					dataRecords: [],
-					selectedData: [],
-				})
-				expect(controller.host.selectability).toBe(selectability)
-			}
-		})
-	})
-
 	describe('isSelectable', () => {
-		it('should return true when isDataSelectable is not defined', () => {
-			expect(controller.isSelectable(data[0])).toBe(true)
+		const fixture = create()
+
+		it('is true where the grid says nothing', () => {
+			expect(fixture.component.controller.isSelectable(data[0]!)).toBe(true)
 		})
 
-		it('should return isDataSelectable result', () => {
-			controller.host.isDataSelectable = (x: Data) => x.id % 2 === 0
-
-			expect(controller.isSelectable(data[0])).toBe(false)
-			expect(controller.isSelectable(data[1])).toBe(true)
+		it('defers to isDataSelectable', () => {
+			fixture.component.isDataSelectable = x => x.id % 2 === 0
+			expect(fixture.component.controller.isSelectable(data[0]!)).toBe(false)
+			expect(fixture.component.controller.isSelectable(data[1]!)).toBe(true)
 		})
 	})
 
 	describe('isSelected', () => {
-		it('should return true when data is selected', () => {
-			controller.host.selectability = DataGridSelectability.Single
-			controller.select([data[0]])
+		const fixture = create()
 
-			expect(controller.isSelected(data[0])).toBe(true)
+		it('answers for what is selected', () => {
+			fixture.component.controller.selection = [data[0]!]
+			expect(fixture.component.controller.isSelected(data[0]!)).toBe(true)
+			expect(fixture.component.controller.isSelected(data[1]!)).toBe(false)
 		})
 
-		it('should return false when data is not selected', () => {
-			controller.select([data[0]])
-
-			expect(controller.isSelected(data[1])).toBe(false)
+		it('answers by id, so a refetched instance of the same record counts', () => {
+			fixture.component.controller.selection = [data[0]!]
+			expect(fixture.component.controller.isSelected({ ...data[0]! })).toBe(true)
 		})
 	})
 
 	describe('selectAll', () => {
-		for (const [mode, selectedData] of [[undefined, []], [DataGridSelectability.Single, []], [DataGridSelectability.Multiple, [...data]]] as const) {
-			it(`should ${!data.length ? 'not' : ''} select data when mode is ${mode}`, () => {
-				controller.host.selectability = mode
-				Object.defineProperty(controller.host, 'flattenedData', { value: [...data] })
+		const fixture = create()
 
-				controller.selectAll()
-
-				expect(controller.host.selectedData).toEqual(selectedData)
+		for (const [mode, selectedData] of [[undefined, []], [DataGridSelectability.Single, []], [DataGridSelectability.Multiple, data]] as const) {
+			it(`${selectedData.length ? 'selects' : 'selects nothing'} when the selectability is ${mode}`, () => {
+				fixture.component.selectability = mode!
+				fixture.component.controller.selectAll()
+				expect(fixture.component.selectedData).toEqual([...selectedData])
 			})
 		}
 	})
 
 	describe('deselectAll', () => {
-		it('should deselect all data', () => {
-			controller.host.selectability = DataGridSelectability.Multiple
-			controller.host.selectedData = [...data]
+		const fixture = create()
 
-			controller.deselectAll()
-
-			expect(controller.host.selectedData).toEqual([])
+		it('clears the selection', () => {
+			fixture.component.controller.selectAll()
+			fixture.component.controller.deselectAll()
+			expect(fixture.component.selectedData).toEqual([])
 		})
 	})
 
-	describe('select', () => {
-		it('should select only selectable data', () => {
-			controller.host.selectability = DataGridSelectability.Multiple
-			controller.host.isDataSelectable = (x: Data) => x.id % 2 === 0
+	describe('assigning the selection', () => {
+		const fixture = create()
 
-			controller.select([...data])
-
-			expect(controller.host.selectedData).toEqual([data[1]])
+		it('takes only the selectable data', () => {
+			fixture.component.isDataSelectable = x => x.id % 2 === 0
+			fixture.component.controller.selection = [...data]
+			expect(fixture.component.selectedData).toEqual([data[1]!])
 		})
 
-		it('should dispatch selectionChange with selected data', () => {
-			controller.host.selectability = DataGridSelectability.Multiple
-			spyOn(controller.host.selectionChange!, 'dispatch')
+		it('dispatches selectionChange with what is now selected', () => {
+			spyOn(fixture.component.selectionChange, 'dispatch')
+			fixture.component.controller.selection = [...data]
+			expect(fixture.component.selectionChange.dispatch).toHaveBeenCalledWith([...data])
+		})
 
-			controller.select([...data])
-
-			expect(controller.host.selectionChange?.dispatch).toHaveBeenCalledWith([...data])
+		it('stays quiet where nothing actually changed', () => {
+			fixture.component.controller.selection = [...data]
+			spyOn(fixture.component.selectionChange, 'dispatch')
+			fixture.component.controller.selection = [...data]
+			expect(fixture.component.selectionChange.dispatch).not.toHaveBeenCalled()
 		})
 	})
 
-	describe('setSelection', () => {
-		it('should not select unselectable data', () => {
-			controller.host.selectability = DataGridSelectability.Single
-			controller.host.isDataSelectable = () => false
+	describe('selecting an item', () => {
+		const fixture = create({ selectability: DataGridSelectability.Single })
 
-			controller.setSelection(data[0], true)
-
-			expect(controller.host.selectedData).toEqual([])
+		it('refuses unselectable data', () => {
+			fixture.component.isDataSelectable = () => false
+			fixture.component.controller.select(data[0]!, { selected: true })
+			expect(fixture.component.selectedData).toEqual([])
 		})
 
-		it('should select data when selected is true', () => {
-			controller.host.selectability = DataGridSelectability.Single
+		it('selects and deselects', () => {
+			fixture.component.controller.select(data[0]!, { selected: true })
+			expect(fixture.component.selectedData).toEqual([data[0]!])
 
-			controller.setSelection(data[0], true)
-
-			expect(controller.host.selectedData).toEqual([data[0]])
+			fixture.component.controller.select(data[0]!, { selected: false })
+			expect(fixture.component.selectedData).toEqual([])
 		})
 
-		it('should deselect data when selected is false', () => {
-			controller.host.selectability = DataGridSelectability.Single
-			controller.host.selectedData = [data[0]]
+		it('accumulates when told to preserve, in multiple', () => {
+			fixture.component.selectability = DataGridSelectability.Multiple
+			fixture.component.controller.select(data[0]!, { selected: true, preserve: true })
+			fixture.component.controller.select(data[2]!, { selected: true, preserve: true })
+			expect(fixture.component.selectedData).toEqual([data[0]!, data[2]!])
+		})
+	})
 
-			controller.setSelection(data[0], false)
+	// Never covered before: the shift came from a global keyboard snapshot that no test event could
+	// set, so the whole range branch went unexercised.
+	describe('shift-clicking a checkbox', () => {
+		const fixture = create()
 
-			expect(controller.host.selectedData).toEqual([])
+		/** What the browser does: the shift arrives with the press, and the checkbox then reports
+		 * itself with a plain CustomEvent that carries no modifier state whatsoever. */
+		const shiftPress = () => fixture.component.dispatchEvent(
+			new PointerEvent('pointerdown', { bubbles: true, composed: true, shiftKey: true }))
+
+		it('extends the selection over the run', () => {
+			fixture.component.controller.select(data[0]!, { selected: true, preserve: true })
+			shiftPress()
+			fixture.component.controller.select(data[2]!, { selected: true, preserve: true })
+
+			expect(fixture.component.selectedData).toEqual([...data])
+		})
+
+		it('removes the run instead, where the anchor was left deselected', () => {
+			fixture.component.controller.selectAll()
+			fixture.component.controller.select(data[0]!, { selected: false, preserve: true })
+			shiftPress()
+			fixture.component.controller.select(data[1]!, { selected: false, preserve: true })
+
+			expect(fixture.component.selectedData).toEqual([data[2]!])
+		})
+
+		it('takes no notice of a shift the grid never saw', () => {
+			fixture.component.controller.select(data[0]!, { selected: true, preserve: true })
+			fixture.component.controller.select(data[2]!, { selected: true, preserve: true })
+			expect(fixture.component.selectedData).toEqual([data[0]!, data[2]!])
 		})
 	})
 
 	describe('selectPreviouslySelectedData', () => {
-		it('should select previously selected data', () => {
-			controller.host.selectability = DataGridSelectability.Multiple
-			controller.host.selectedData = [...data]
-			Object.defineProperty(controller.host, 'flattenedData', { value: [...data, { id: 4 }] })
+		const fixture = create()
 
-			controller.selectPreviouslySelectedData()
+		it('re-resolves the selection onto the data now present', () => {
+			fixture.component.controller.selection = [...data]
+			fixture.component.source = [...data, { id: 4 }]
 
-			expect(controller.host.selectedData).toEqual([...data])
+			fixture.component.controller.selectPreviouslySelectedData()
+
+			expect(fixture.component.selectedData).toEqual([...data])
 		})
 	})
 
-	describe('handleDataChange', () => {
+	describe('handleItemsChange', () => {
 		const dataToSelect = [{ id: 3 }, { id: 99 }]
+
 		for (const [behavior, selectedData] of [
 			[DataGridSelectionBehaviorOnDataChange.Reset, []],
 			[DataGridSelectionBehaviorOnDataChange.Maintain, [{ id: 3 }]],
 			[DataGridSelectionBehaviorOnDataChange.Prevent, dataToSelect],
 		] as const) {
-			it(`should ${!data.length ? 'not' : ''} select data on data change when behavior is ${behavior}`, () => {
-				controller.host.selectability = DataGridSelectability.Multiple
-				controller.host.selectedData = dataToSelect
+			describe(behavior, () => {
+				const fixture = create()
 
-				controller.handleDataChange(behavior)
-
-				expect(controller.host.selectedData).toEqual(selectedData)
+				it('leaves the right data selected', () => {
+					fixture.component.selectedData = [...dataToSelect]
+					fixture.component.controller.handleItemsChange(behavior)
+					expect(fixture.component.selectedData).toEqual([...selectedData])
+				})
 			})
 		}
+
+		describe('maintain', () => {
+			const fixture = create()
+
+			it('points the selection at the instances that now exist, not the ones replaced', () => {
+				fixture.component.controller.selection = [data[0]!]
+				const refetched = data.map(d => ({ ...d }))
+				fixture.component.source = refetched
+
+				fixture.component.controller.handleItemsChange(DataGridSelectionBehaviorOnDataChange.Maintain)
+
+				expect(fixture.component.selectedData[0]).toBe(refetched[0]!)
+			})
+		})
+
+		describe('with data carrying no id', () => {
+			const shapes = [{ name: 'a' }, { name: 'b' }] as unknown as Array<Data>
+			const fixture = create({ source: [...shapes] })
+
+			it('falls back on the data’s own shape to maintain the selection', () => {
+				fixture.component.controller.selection = [shapes[0]!]
+				fixture.component.source = shapes.map(d => ({ ...d }))
+
+				fixture.component.controller.handleItemsChange(DataGridSelectionBehaviorOnDataChange.Maintain)
+
+				expect(fixture.component.selectedData).toEqual([shapes[0]!])
+			})
+		})
 	})
 })
