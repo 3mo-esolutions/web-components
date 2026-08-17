@@ -238,6 +238,9 @@
 			"path": "./packages/localization"
 		},
 		{
+			"path": "./packages/Masonry"
+		},
+		{
 			"path": "./packages/MediaQueryObserver"
 		},
 		{
