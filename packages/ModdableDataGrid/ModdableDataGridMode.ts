@@ -54,6 +54,7 @@ export class ModdableDataGridMode<TData, TDataFetcherParameters extends Fetchabl
 			// Non situational properties
 			id: dataGrid.mode?.id,
 			name: dataGrid.mode?.name,
+			index: dataGrid.mode?.index,
 			archived: dataGrid.mode?.archived,
 			// Situational properties
 			// The columns modifications are the intent about column order and presentation, so a mode
@@ -70,6 +71,7 @@ export class ModdableDataGridMode<TData, TDataFetcherParameters extends Fetchabl
 
 	readonly id!: string
 	readonly name!: string
+	index?: number
 	readonly parameters?: TDataFetcherParameters
 	columns?: Array<ModdableDataGridModeColumn<TData>>
 	sorting?: DataGridSorting<TData>
@@ -128,9 +130,21 @@ export class ModdableDataGridMode<TData, TDataFetcherParameters extends Fetchabl
 			&& other.id === this.id
 			&& other.archived === this.archived
 			&& Object[equals](other.columns, this.columns)
-			&& Object[equals](other.sorting, this.sorting)
+			&& Object[equals](other.normalizedSorting, this.normalizedSorting)
 			&& Object[equals](other.pagination, this.pagination)
 			&& Object[equals](other.definedParameters, this.definedParameters)
+	}
+
+	/**
+	 * The sorting as the data grid's sorting controller normalizes it: applying a mode leaves ranked
+	 * definitions — and an empty array where there was nothing — on the data grid, so a mode saved
+	 * as a single definition, without ranks or without any sorting at all must compare clean against
+	 * what its own application leaves behind.
+	 */
+	private get normalizedSorting() {
+		const sorting = this.sorting ?? []
+		return (Array.isArray(sorting) ? sorting : [sorting])
+			.map(({ selector, strategy }, index) => ({ selector, strategy, rank: index + 1 }))
 	}
 
 	private get definedParameters() {

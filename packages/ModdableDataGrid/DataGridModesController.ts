@@ -58,7 +58,10 @@ export class DataGridModesController<TData, TParameters extends FetchableDataGri
 	}
 
 	private async fetchAll() {
-		this._modes = await this.adapter.getAll(this.dataGridKey)
+		const modes = await this.adapter.getAll(this.dataGridKey)
+		// Presented by the modes' own indices. The unindexed — created before any reorder, or stored
+		// by an older version — keep the adapter's order at the start, where a new mode is expected.
+		this._modes = [...modes].sort((a, b) => (a.index ?? -1) - (b.index ?? -1))
 	}
 
 	private async fetchSelected() {
@@ -71,6 +74,30 @@ export class DataGridModesController<TData, TParameters extends FetchableDataGri
 		this._selectedMode = mode
 		this.host.modeChange.dispatch(mode);
 		(this.selectedMode ?? this.defaultMode)?.apply(this.host)
+	}
+
+	/**
+	 * Moves a mode to the given index within {@link modes}, then persists the new order by saving
+	 * every mode whose {@link ModdableDataGridMode.index} it changed — the order is data on the
+	 * modes themselves, so no adapter has to know reordering exists. The modes move at once rather
+	 * than once the adapter acknowledges, so a dropped view settles in the frame it is released in.
+	 */
+	async move(mode: ModdableDataGridMode<TData, TParameters>, index: number) {
+		const modes = [...this._modes]
+		const from = modes.findIndex(m => m.id === mode.id)
+		if (from === -1 || from === index) {
+			return
+		}
+		modes.splice(index, 0, ...modes.splice(from, 1))
+		const changed = modes.filter((mode, index) => mode.index !== index)
+		modes.forEach((mode, index) => mode.index = index)
+		this._modes = modes
+		this.host.requestUpdate()
+		// One at a time: a read-modify-write adapter — IndexedDb being one — loses writes to itself
+		// when the changed modes race each other.
+		for (const mode of changed) {
+			await this.adapter.save(this.dataGridKey, mode)
+		}
 	}
 
 	async save(mode: ModdableDataGridMode<TData, TParameters>) {

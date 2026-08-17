@@ -24,10 +24,13 @@ const dummyData = new Array(100).fill(undefined).map((_, i) => ({
 class ModesAdapterMock implements ModdableDataGridModesAdapter<User, Parameters> {
 	modes = new Array<ModdableDataGridMode<User, Parameters>>()
 	selectedModeId?: string
+	/** Every mode handed to {@link save}, so that a reorder can be asserted to have been persisted */
+	readonly saved = new Array<ModdableDataGridMode<User, Parameters>>()
 
 	getAll = () => Promise.resolve(this.modes)
 	get = (_: string, modeId: string) => Promise.resolve(this.modes.find(m => m.id === modeId))
 	save = (_: string, mode: ModdableDataGridMode<User, Parameters>) => {
+		this.saved.push(mode)
 		this.modes = this.modes.map(m => m.id === mode.id ? mode : m)
 		return Promise.resolve(mode)
 	}
@@ -128,7 +131,9 @@ class ModdableDataGridTestFixture extends ComponentTestFixture<ModdableDataGridS
 	}) {
 		super(() => {
 			const dataGrid = new ModdableDataGridStory
-			dataGrid.modesAdapter.modes = options.modes
+			// Cloned per construction: a reorder assigns indices ON the modes, and specs run in random
+			// order, so sharing the instances would leak one spec's reorder into another's seed.
+			dataGrid.modesAdapter.modes = options.modes.map(m => m.clone())
 			dataGrid.modesAdapter.selectedModeId = options.selectedModeId
 			return dataGrid
 		})
@@ -364,6 +369,136 @@ describe('ModdableDataGrid', () => {
 				await fixture.updateComplete
 
 				fixture.expectModeToBeSelected('default')
+			})
+		})
+	})
+
+	describe('Reordering modes', () => {
+		const center = (element: Element) => {
+			const rect = element.getBoundingClientRect()
+			return { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 }
+		}
+
+		const dispatch = (target: EventTarget, type: string, options: PointerEventInit = {}) =>
+			target.dispatchEvent(new PointerEvent(type, { bubbles: true, composed: true, pointerId: 1, isPrimary: true, button: 0, buttons: 1, ...options }))
+
+		const frame = () => new Promise(requestAnimationFrame)
+
+		/** A synthetic mouse drag: press on `from`, glide past the dead zone to `to`, release. */
+		const drag = async (from: Element, to: { x: number, y: number }, midway?: () => unknown) => {
+			const start = center(from)
+			dispatch(from, 'pointerdown', { clientX: start.x, clientY: start.y, pointerType: 'mouse' })
+			for (const progress of [0.5, 1]) {
+				dispatch(from, 'pointermove', { clientX: start.x + (to.x - start.x) * progress, clientY: start.y + (to.y - start.y) * progress, pointerType: 'mouse' })
+				await frame()
+				await frame()
+				if (progress === 0.5) {
+					await midway?.()
+				}
+			}
+			dispatch(from, 'pointerup', { clientX: to.x, clientY: to.y, buttons: 0, pointerType: 'mouse' })
+			await new Promise(r => setTimeout(r))
+		}
+
+		/** The chip's label — where a press on a chip's body lands, its own actions aside */
+		const labelOf = (chip: ModdableDataGridChip<User, Parameters>) => chip.renderRoot.querySelector('#title')!
+
+		/** A point past the last chip — the drag is clamped to the chips, so it lands on the last one */
+		const pastTheLastChip = (chips: Array<ModdableDataGridChip<User, Parameters>>) => {
+			const rect = chips[chips.length - 1]!.getBoundingClientRect()
+			return { x: rect.right + 100, y: rect.y + rect.height / 2 }
+		}
+
+		describe('With docked modes only', () => {
+			const fixture = new ModdableDataGridTestFixture({ modes: ModdableDataGridTestFixture.modes })
+
+			beforeEach(() => new Promise<void>(r => setTimeout(r)))
+
+			it('should render the chips in the order the adapter returned the modes in', () => {
+				expect(fixture.modeChips.map(chip => chip.mode.id)).toEqual(['1', '2'])
+			})
+
+			it('should move a mode and persist the new order onto the modes\' indices when dragged onto another chip', async () => {
+				const chips = fixture.modeChips
+
+				await drag(labelOf(chips[0]!), pastTheLastChip(chips), () => {
+					// The dragged chip follows the pointer while the chip it passes glides into its room
+					expect(chips[0]!.dataset.reorderability).toBe('dragging')
+					expect(chips[0]!.style.transform).not.toBe('')
+					expect(chips[1]!.style.transform).not.toBe('')
+				})
+
+				expect(fixture.component.modesController.modes.map(m => m.id)).toEqual(['2', '1'])
+				expect(fixture.component.modesController.modes.map(m => m.index)).toEqual([0, 1])
+				// The order rides on the modes through the adapter's plain save — no other API involved
+				expect(fixture.component.modesAdapter.saved.map(m => m.id).sort()).toEqual(['1', '2'])
+				expect(fixture.modeChips.map(chip => chip.mode.id)).toEqual(['2', '1'])
+			})
+
+			it('should not reorder when dragging from the chip\'s own actions', async () => {
+				const chips = fixture.modeChips
+				await fixture.selectChip(chips[0]!)
+
+				await drag(chips[0]!.renderRoot.querySelector('mo-icon-button[icon=more_vert]')!, pastTheLastChip(chips))
+
+				expect(fixture.component.modesAdapter.saved).toEqual([])
+				expect(fixture.component.modesController.modes.map(m => m.id)).toEqual(['1', '2'])
+			})
+
+			it('should not save anything when a mode is dropped back where it was', async () => {
+				const chips = fixture.modeChips
+				const { x, y } = center(labelOf(chips[0]!))
+
+				await drag(labelOf(chips[0]!), { x: x + 10, y })
+
+				expect(fixture.component.modesAdapter.saved).toEqual([])
+			})
+		})
+
+		describe('With indexed modes', () => {
+			const fixture = new ModdableDataGridTestFixture({
+				modes: [
+					...ModdableDataGridTestFixture.modes,
+					new ModdableDataGridMode<User, Parameters>({ id: '3', name: 'Mode 3', parameters: {} }),
+				].map((m, i) => {
+					m.index = 2 - i // stored in the opposite of the adapter's order
+					return m
+				})
+			})
+
+			beforeEach(() => new Promise<void>(r => setTimeout(r)))
+
+			it('should present the modes by their indices, not by the adapter\'s order', () => {
+				expect(fixture.modeChips.map(chip => chip.mode.id)).toEqual(['3', '2', '1'])
+			})
+
+			it('should save only the modes a reorder changes the index of', async () => {
+				const chips = fixture.modeChips
+
+				// One step: '3' and '2' swap, while '1' keeps its index of 2 — so only those two are saved
+				await drag(labelOf(chips[0]!), center(chips[1]!))
+
+				expect(fixture.component.modesController.modes.map(m => m.id)).toEqual(['2', '3', '1'])
+				expect(fixture.component.modesController.modes.map(m => m.index)).toEqual([0, 1, 2])
+				expect(fixture.component.modesAdapter.saved.map(m => m.id).sort()).toEqual(['2', '3'])
+			})
+		})
+
+		describe('With an archived mode between the docked ones', () => {
+			const [first, last] = ModdableDataGridTestFixture.modes
+			const archived = new ModdableDataGridMode<User, Parameters>({ id: 'archived', name: 'Archived', parameters: {}, archived: true })
+			const fixture = new ModdableDataGridTestFixture({ modes: [first!, archived, last!] })
+
+			beforeEach(() => new Promise<void>(r => setTimeout(r)))
+
+			it('should map the dragged chips onto the modes as a whole, leaving the archived one where it is', async () => {
+				const chips = fixture.modeChips
+				expect(chips.map(chip => chip.mode.id)).toEqual(['1', '2'])
+
+				await drag(labelOf(chips[0]!), pastTheLastChip(chips))
+
+				expect(fixture.component.modesController.modes.map(m => m.id)).toEqual(['archived', '2', '1'])
+				expect(fixture.component.modesController.modes.map(m => m.index)).toEqual([0, 1, 2])
 			})
 		})
 	})

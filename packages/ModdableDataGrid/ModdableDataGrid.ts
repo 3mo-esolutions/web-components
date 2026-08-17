@@ -1,5 +1,6 @@
 import { css, html, style, event, property, repeat, queryAll } from '@a11d/lit'
 import { tooltip } from '@3mo/tooltip'
+import { ReorderabilityController } from '@3mo/reorderability'
 import { FetchableDataGrid, type FetchableDataGridParametersType } from '@3mo/fetchable-data-grid'
 import { Localizer } from '@3mo/localization'
 import { ModdableDataGridMode, ModdableDataGridModeColumn } from './ModdableDataGridMode.js'
@@ -36,6 +37,13 @@ export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataG
 
 	readonly modesController = new DataGridModesController<TData, TParameters>(this)
 
+	readonly modesReorderabilityController = new ReorderabilityController(this, {
+		handleReorder: (source, destination) => {
+			const { modes, visibleModes } = this.modesController
+			this.modesController.move(visibleModes[source]!, modes.indexOf(visibleModes[destination]!))
+		},
+	})
+
 	protected override updated(...parameters: Parameters<FetchableDataGrid<TData, TParameters, TDetailsElement>['updated']>) {
 		super.updated(...parameters)
 		this.modeChips.forEach(chip => chip.requestUpdate())
@@ -65,11 +73,15 @@ export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataG
 
 			#modebar {
 				border-radius: var(--mo-border-radius) var(--mo-border-radius) 0 0;
-				background-color: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-accent) 8%);
+				background-color: var(--mo-color-surface-container-low);
 				min-height: 40px;
 				padding: 6px 12px;
 
 				white-space: nowrap;
+			}
+
+			:host([data-reordering]) mo-moddable-data-grid-chip:not([data-reorderability=dragging]) {
+				transition: transform 0.15s ease;
 			}
 
 			.archived {
@@ -150,11 +162,18 @@ export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataG
 					<div ${style({ position: 'relative', width: '100%', height: '100%' })}>
 						<mo-scroller ${style({ position: 'absolute', inset: '0', overflowY: 'hidden', display: 'flex', alignItems: 'center' })}>
 							<mo-flex id='modes' direction='horizontal' alignItems='center' gap='0.5rem'>
-								${repeat(this.modesController.visibleModes, mode => mode.id, mode => html`
+								${repeat(this.modesController.visibleModes, mode => mode.id, (mode, index) => html`
 									<mo-moddable-data-grid-chip ?data-temporary=${mode.archived} data-mode-id=${mode.id!}
 										.dataGrid=${this}
 										.mode=${mode}
 										?selected=${this.mode?.id === mode.id}
+										${this.modesReorderabilityController.item({
+											index,
+											// A chip is a button carrying buttons, so a press on its label and one on its
+											// actions resolve to the very same element: only excluding the actions can
+											// tell them apart, and a handle confining the drag to the label cannot.
+											excluded: 'mo-icon-button, mo-popover-container',
+										})}
 									></mo-moddable-data-grid-chip>
 								`)}
 							</mo-flex>
