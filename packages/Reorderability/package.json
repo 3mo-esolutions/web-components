@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/reorderability",
-	"version": "0.2.0",
+	"version": "0.3.0",
 	"description": "A controller that makes elements reorderable by dragging — on mouse, touch and pen — deriving its layout from the elements themselves.",
 	"repository": {
 		"type": "git",

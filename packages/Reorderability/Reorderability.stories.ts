@@ -2,6 +2,9 @@ import type { Meta, StoryObj } from '@storybook/web-components-vite'
 import { Component, css, html, property, repeat, state } from '@a11d/lit'
 import p from './package.json'
 import { ReorderabilityController, type ReorderabilityStrategy } from './ReorderabilityController.js'
+// Real controls for the story which is about them — @see ItemsWithTheirOwnControls
+import '../Checkbox/index.js'
+import '../IconButton/index.js'
 
 export default {
 	title: 'Utilities / Reorderability',
@@ -172,6 +175,141 @@ export const DragHandle: StoryObj = {
 
 export const DisabledItems: StoryObj = {
 	render: () => html`<story-reorderability .disabled=${[0, 3]}></story-reorderability>`
+}
+
+/**
+ * Items which carry their OWN controls, kept out of the drag by `excluded: '.actions'` — the whole
+ * row drags, its buttons never do, and they keep the clicks they have of their own. Naming the
+ * container excludes everything within it, controls added later included.
+ *
+ * Excluding is not a handle turned inside out. A `handle` names what the drag MAY start from, so it
+ * needs an element covering the row's body and nothing else — and there is none: the body is the row
+ * ITSELF, the item element, which a handle may never be, while every control is a descendant of it.
+ * Wrapping the label to point a handle at would confine the drag to the text's own box and leave the
+ * padding around it dead. Naming what must not drag is exact where naming what must cannot be.
+ *
+ * Of the two controls here only the icon button strictly needs it: the checkbox carries a native
+ * `input`, which every item excludes anyway, while a button — Material's included — does not appear
+ * in that list, as a button is exactly what a drag handle is often made of. Naming the container
+ * rather than the controls spares the row that distinction, and covers whatever is added to it next.
+ *
+ * Among real controls a body which cannot be named is the rule rather than the exception: a Material
+ * chip or button covers its own content with a touch-target overlay, so even a press on a label
+ * resolves to the button beneath it — which the chip's own icon buttons descend from as well, leaving
+ * the two indistinguishable by ancestry.
+ */
+class StoryReorderabilityControls extends Component {
+	@state() private tasks = [
+		{ label: 'Write the spec', pinned: true, done: false },
+		{ label: 'Sketch the flow', pinned: false, done: true },
+		{ label: 'Extract the package', pinned: false, done: false },
+		{ label: 'Measure the cadence', pinned: false, done: false },
+		{ label: 'Ship the stories', pinned: false, done: false },
+	]
+
+	private readonly controller: ReorderabilityController
+
+	constructor() {
+		super()
+		this.controller = new ReorderabilityController(this, {
+			handleReorder: (source, destination) => {
+				const tasks = [...this.tasks]
+				tasks.splice(destination, 0, ...tasks.splice(source, 1))
+				this.tasks = tasks
+			},
+		})
+	}
+
+	private toggle(task: typeof this.tasks[number], key: 'pinned' | 'done') {
+		this.tasks = this.tasks.map(t => t !== task ? t : { ...t, [key]: !t[key] })
+	}
+
+	static override get styles() {
+		return css`
+			.rows {
+				display: flex;
+				flex-direction: column;
+				gap: 0.5rem;
+				max-width: 24rem;
+			}
+
+			/* The row IS the item — its label is bare text, so its whole surface, padding included,
+			   resolves to the row itself and starts a drag. */
+			.row {
+				display: flex;
+				align-items: center;
+				padding: 0.75rem 0.5rem 0.75rem 1rem;
+				border-radius: var(--mo-border-radius);
+				background: var(--mo-color-transparent-gray-3);
+				color: var(--mo-color-foreground);
+				cursor: grab;
+				user-select: none;
+
+				&[data-reorderability=dragging] {
+					background: var(--mo-color-accent);
+					color: var(--mo-color-on-accent);
+					z-index: 1;
+					cursor: grabbing;
+
+					/* On accent, an accented pin would be invisible */
+					mo-icon-button, mo-icon-button[data-pinned] {
+						color: var(--mo-color-on-accent);
+					}
+				}
+
+				&[data-done] {
+					text-decoration: line-through;
+				}
+			}
+
+			/* Excluded, so everything in here keeps the gesture it has of its own */
+			.actions {
+				display: flex;
+				align-items: center;
+				gap: 0.25rem;
+				margin-inline-start: auto;
+				text-decoration: none;
+
+				mo-icon-button {
+					font-size: 20px;
+					color: var(--mo-color-gray);
+
+					&[data-pinned] {
+						color: var(--mo-color-accent);
+					}
+				}
+			}
+
+			:host([data-reordering]) .row:not([data-reorderability=dragging]) {
+				transition: transform 0.15s ease;
+			}
+		`
+	}
+
+	protected override get template() {
+		return html`
+			<div class='rows'>
+				${repeat(this.tasks, task => task.label, (task, index) => html`
+					<div class='row' ?data-done=${task.done} ${this.controller.item({ index, excluded: '.actions' })}>
+						${task.label}
+						<div class='actions'>
+							<mo-icon-button dense icon='push_pin' title='Pin'
+								?data-pinned=${task.pinned}
+								@click=${() => this.toggle(task, 'pinned')}
+							></mo-icon-button>
+							<mo-checkbox title='Done' ?selected=${task.done} @change=${() => this.toggle(task, 'done')}></mo-checkbox>
+						</div>
+					</div>
+				`)}
+			</div>
+		`
+	}
+}
+
+customElements.define('story-reorderability-controls', StoryReorderabilityControls)
+
+export const ItemsWithTheirOwnControls: StoryObj = {
+	render: () => html`<story-reorderability-controls></story-reorderability-controls>`
 }
 
 /** A board with ONE CONTROLLER PER COLUMN. Each controller knows only its own cards, so a card

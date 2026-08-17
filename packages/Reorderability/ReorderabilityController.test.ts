@@ -9,9 +9,12 @@ class ReorderabilityControllerTestComponent extends Component {
 	direction: 'ltr' | 'rtl' = 'ltr'
 	strategy: ReorderabilityStrategy = 'live'
 	handle = ''
+	excluded = ''
 	withInput = false
 	withDragImage = false
 	items = [0, 1, 2, 3]
+	/** Per-item extent along the layout's axis, where a story needs items of differing sizes */
+	sizes = new Array<number>()
 
 	readonly reorders = new Array<[source: number, destination: number]>()
 	readonly controller: ReorderabilityController
@@ -46,12 +49,13 @@ class ReorderabilityControllerTestComponent extends Component {
 		return html`
 			<div class='items ${this.layout}' dir=${this.direction}>
 				${repeat(this.items, item => item, (item, index) => html`
-					<div class='item' ${this.controller.item({
+					<div class='item' style=${this.sizes[index] === undefined ? '' : `${this.layout === 'row' ? 'width' : 'height'}: ${this.sizes[index]}px`} ${this.controller.item({
 						index,
 						handle: this.handle || undefined,
+						excluded: this.excluded || undefined,
 						dragImage: !this.withDragImage ? undefined : html`<span>Preview of ${item}</span>`,
 					})}>
-						${!this.handle ? html.nothing : html`<span class='grip'>∷</span>`}
+						${!this.handle && !this.excluded ? html.nothing : html`<span class='grip'>∷</span>`}
 						${!this.withInput ? html.nothing : html`<input>`}
 						<span>${item}</span>
 					</div>
@@ -265,6 +269,39 @@ describe('ReorderabilityController', () => {
 		})
 	})
 
+	// A line of differently sized items is laid out ANEW while dragging, rather than each displaced item
+	// stepping onto its neighbour's start: with unequal sizes that step is not the size of the vacancy,
+	// so the preview would overlap. Both cases below drag the item all the way to the far end, where
+	// every other item is displaced, and are asserted before the release for exactly that reason.
+	describe('in a line of differently sized items', () => {
+		const fixture = create({ sizes: [30, 60, 30, 30] }) // a column, whose gap the fixture sets to 10
+
+		it('shifts every displaced item by the dragged item\'s own extent', async () => {
+			const items = fixture.component.itemElements
+			await drag(items[0]!, center(items[3]!), { release: false })
+
+			// 30 tall plus the gap of 10, for each of them. Stepping onto the neighbour's start would
+			// move the second by 70 instead — onto the item above it, which is 60 tall.
+			expect(items[1]!.style.transform).toBe('translate(0px, -40px)')
+			expect(items[2]!.style.transform).toBe('translate(0px, -40px)')
+			expect(items[3]!.style.transform).toBe('translate(0px, -40px)')
+		})
+	})
+
+	describe('in a right-to-left row of differently sized items', () => {
+		const fixture = create({ layout: 'row', direction: 'rtl', sizes: [40, 80, 40, 40] })
+
+		it('shifts them along the flow, not along the coordinates', async () => {
+			const items = fixture.component.itemElements
+			await drag(items[0]!, center(items[3]!), { release: false })
+
+			// Data order runs right to left, so closing the vacancy moves them to greater x
+			expect(items[1]!.style.transform).toBe('translate(50px, 0px)')
+			expect(items[2]!.style.transform).toBe('translate(50px, 0px)')
+			expect(items[3]!.style.transform).toBe('translate(50px, 0px)')
+		})
+	})
+
 	describe('in a wrapping grid', () => {
 		const fixture = create({ layout: 'grid', items: [0, 1, 2, 3, 4, 5] })
 
@@ -284,6 +321,22 @@ describe('ReorderabilityController', () => {
 			await drag(items[0]!, center(items[1]!))
 			expect(fixture.component.reorders).toEqual([])
 			await drag(items[0]!.querySelector('.grip')!, center(items[1]!))
+			expect(fixture.component.reorders).toEqual([[0, 1]])
+		})
+	})
+
+	// What a handle cannot express: an item whose own controls share its every ancestor, so that only
+	// singling THEM out tells a press on the body from a press on a control.
+	describe('with an excluded descendant', () => {
+		const fixture = create({ excluded: '.grip' })
+
+		it('never starts a drag from it, while the rest of the item still drags', async () => {
+			const items = fixture.component.itemElements
+			await drag(items[0]!.querySelector('.grip')!, center(items[1]!))
+			expect(fixture.component.reorders).toEqual([])
+
+			await drag(items[0]!, center(items[1]!))
+
 			expect(fixture.component.reorders).toEqual([[0, 1]])
 		})
 	})

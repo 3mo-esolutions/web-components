@@ -11,7 +11,9 @@ export enum ReorderabilityState {
 /**
  * How the reorder is presented while dragging:
  * - `live` — the dragged item follows the pointer and the items it displaces glide into the freed
- *   slot, so the list previews its own result. At its best where items share a size or a track.
+ *   slot, so the list previews its own result. Exact whatever the items' sizes on a line, which is
+ *   laid out anew; a wrapping grid steps them onto their neighbour's place, which asks that its
+ *   slots share a track.
  * - `indicator` — nothing moves; only {@link ReorderabilityState} is stamped, and the consumer draws
  *   an insertion line from it. The right choice where translating the real items would fight their
  *   layout (sticky columns, subgrid separators).
@@ -31,6 +33,12 @@ export interface ReorderabilityControllerItemDirectiveOptions extends Indexabili
 	/** Confines the grab to a descendant of the item (e.g. `'#handle'`). Without it the whole item
 	 * is the handle. A press inside the handle is always a drag, so a handle may itself be a button. */
 	readonly handle?: string
+	/** Descendants of THIS item a drag must never be started from, on top of the ones every item
+	 * excludes anyway (@see {@link ReorderabilityController.interactive}). It is what a {@link handle}
+	 * cannot express: an item whose own controls are DESCENDANTS of the very element a press on its
+	 * body resolves to — a chip built on a button, say — shares its whole ancestry with them, so no
+	 * selector can single the body out, while singling the controls out is exact. */
+	readonly excluded?: string
 	/** Rendered as a preview that follows the pointer, in place of moving the item itself. Meant for
 	 * the `indicator` strategy; the item is expected to efface itself via its `Dragging` state styling. */
 	readonly dragImage?: HTMLTemplateResult
@@ -141,7 +149,8 @@ export class ReorderabilityController<TItemOptions extends ReorderabilityControl
 	protected static readonly autoScrollMax = 12
 
 	/** Interactive descendants a drag must never be started from — their own gesture wins. An item's
-	 * `handle` overrides this, so a drag handle is allowed to be a button. */
+	 * `handle` overrides this, so a drag handle is allowed to be a button, while an item's `excluded`
+	 * adds to it. */
 	protected static readonly interactive = 'input, select, textarea, a[href], [popover], [contenteditable]:not([contenteditable=false])'
 
 	/** The item registry this controller reads — adopted or its own. See {@link IndexabilityController}. */
@@ -298,13 +307,18 @@ export class ReorderabilityController<TItemOptions extends ReorderabilityControl
 			return
 		}
 		const withinItem = path.slice(0, path.indexOf(item.element))
+		const within = (selector: string) => withinItem.some(target => (target as HTMLElement)?.matches?.(selector))
 		const handle = item.options.handle
+		// The item's own exclusions hold whatever else the press is in, a handle included.
+		if (item.options.excluded && within(item.options.excluded)) {
+			return
+		}
 		if (handle) {
 			// Inside a handle every press is a drag — a handle is allowed to be a button.
-			if (!withinItem.some(target => (target as HTMLElement)?.matches?.(handle))) {
+			if (!within(handle)) {
 				return
 			}
-		} else if (withinItem.some(target => (target as HTMLElement)?.matches?.(ReorderabilityController.interactive))) {
+		} else if (within(ReorderabilityController.interactive)) {
 			return
 		}
 		const snapshot = this.snapshot()
@@ -505,21 +519,61 @@ export class ReorderabilityController<TItemOptions extends ReorderabilityControl
 		drag.target = this.targetOf(drag, dx, dy, { x: drag.point.x + scroll.x, y: drag.point.y + scroll.y })
 
 		if (this.strategy === 'live') {
-			// Preview the displacement the owner's move will cause: everything between the vacated and
-			// the target slot steps one slot toward the vacancy — a plain 2D FLIP to the neighbour's
-			// place, so a wrapping grid's step across a row boundary comes out of the same arithmetic.
-			for (const [position, slot] of drag.slots.entries()) {
-				if (position === drag.position) {
-					continue
+			// Preview the displacement the owner's move will cause.
+			if (drag.line) {
+				this.layOutLine(drag)
+			} else {
+				// A wrapping GRID: everything between the vacated and the target slot steps one slot
+				// toward the vacancy — a plain 2D FLIP to the neighbour's place, which is what carries a
+				// step across a row boundary. Its slots share a track, so a neighbour's place fits.
+				for (const [position, slot] of drag.slots.entries()) {
+					if (position === drag.position) {
+						continue
+					}
+					const displaced = position > drag.position
+						? position <= drag.target ? drag.slots[position - 1]! : undefined
+						: position >= drag.target ? drag.slots[position + 1]! : undefined
+					slot.element.style.transform = !displaced ? '' : `translate(${displaced.x - slot.x}px, ${displaced.y - slot.y}px)`
 				}
-				const displaced = position > drag.position
-					? position <= drag.target ? drag.slots[position - 1]! : undefined
-					: position >= drag.target ? drag.slots[position + 1]! : undefined
-				slot.element.style.transform = !displaced ? '' : `translate(${displaced.x - slot.x}px, ${displaced.y - slot.y}px)`
 			}
 		}
 		for (const slot of drag.slots) {
 			slot.element.dataset.reorderability = this.stateOf(slot.index)
+		}
+	}
+
+	/**
+	 * Lays the LINE out anew in the order the drop would produce, and translates every item that is not
+	 * the dragged one to where it would then sit. Items are laid end to end from the line's start, so
+	 * items of DIFFERENT sizes close the vacancy exactly: stepping each one onto its neighbour's start
+	 * instead — which is what a wrapping grid does — would leave every displaced item its own size
+	 * rather than its neighbour's out of place, and a row of differently sized items overlapping.
+	 *
+	 * The arithmetic runs in the line's own coordinate `u`, which ascends in DATA order, so a
+	 * right-to-left flow needs no second case.
+	 */
+	private layOutLine(drag: ReorderabilityDrag) {
+		const { vertical, sign } = drag.line!
+		const sizeOf = (slot: ReorderabilitySlot) => vertical ? slot.height : slot.width
+		const startOf = (slot: ReorderabilitySlot) => {
+			const u = sign * (vertical ? slot.y : slot.x)
+			return sign > 0 ? u : u - sizeOf(slot)
+		}
+		const first = drag.slots[0]!
+		const second = drag.slots[1]!
+		// The spacing the line leaves between two items, which a line leaves between any two.
+		const gap = startOf(second) - (startOf(first) + sizeOf(first))
+		const order = [...drag.slots.keys()]
+		order.splice(drag.target, 0, ...order.splice(drag.position, 1))
+		let cursor = startOf(first)
+		for (const position of order) {
+			const slot = drag.slots[position]!
+			// The dragged item is placed by the pointer, not by the layout — it merely takes its room.
+			if (position !== drag.position) {
+				const travel = sign * (cursor - startOf(slot))
+				slot.element.style.transform = !travel ? '' : vertical ? `translate(0px, ${travel}px)` : `translate(${travel}px, 0px)`
+			}
+			cursor += sizeOf(slot) + gap
 		}
 	}
 
