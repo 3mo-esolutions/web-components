@@ -250,6 +250,9 @@
 			"path": "./packages/Masonry"
 		},
 		{
+			"path": "./packages/MasterDetail"
+		},
+		{
 			"path": "./packages/MediaQueryObserver"
 		},
 		{

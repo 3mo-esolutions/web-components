@@ -1,0 +1,32 @@
+{
+	"name": "@3mo/master-detail",
+	"version": "0.1.0",
+	"description": "A web component which pairs a master pane with a detail pane that only takes space while it has content.",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/3mo-esolutions/web-components"
+	},
+	"keywords": [
+		"lit",
+		"web-component",
+		"master-detail",
+		"list-detail",
+		"layout"
+	],
+	"author": "3MO GmbH",
+	"license": "MIT",
+	"homepage": "https://www.3mo.de",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"customElements": "dist/custom-elements.json",
+	"files": [
+		"dist"
+	],
+	"dependencies": {
+		"@a11d/lit": "x",
+		"tslib": "x",
+		"@3mo/flex": "x",
+		"@3mo/splitter": "x"
+	}
+}
