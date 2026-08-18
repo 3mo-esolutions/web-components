@@ -169,45 +169,59 @@ export class DataGridFooter<TData> extends Component {
 	}
 
 	private get paginationTemplate() {
+		return !this.dataGrid.hasPagination ? html.nothing : html`
+			<mo-flex direction='horizontal' alignItems='center' gap='3vw'>
+				${this.pageNavigationTemplate}
+				${this.paginationInfoTemplate}
+			</mo-flex>
+		`
+	}
+
+	/**
+	 * Navigating pages and choosing a page size only make sense where the user drives the pagination,
+	 * i.e. when a pagination is set. A grid which pages on its own - e.g. via infinite scrolling -
+	 * leaves it unset, limiting the footer to informing about the loaded range.
+	 */
+	private get hasPageNavigation() {
+		return this.dataGrid.pagination !== undefined
+	}
+
+	private get pageNavigationTemplate() {
 		const isRtl = DirectionsByLanguage.get() === 'rtl'
 		const hasUnknownDataLength = this.dataGrid.dataLength === undefined
 		const pageText = hasUnknownDataLength ? this.page : t('${page:number} of ${maxPage:number}', { page: this.page, maxPage: this.dataGrid.maxPage ?? 0 })
-		return !this.dataGrid.hasPagination ? html.nothing : html`
-			<mo-flex direction='horizontal' alignItems='center' gap='3vw'>
-				<mo-flex direction='horizontal' gap='4px' alignItems='center' justifyContent='center'>
-					<mo-icon-button dense icon=${isRtl ? 'last_page' : 'first_page'}
-						?disabled=${this.page === 1}
-						@click=${() => this.setPage(1)}
-					></mo-icon-button>
+		return !this.hasPageNavigation ? html.nothing : html`
+			<mo-flex direction='horizontal' gap='4px' alignItems='center' justifyContent='center'>
+				<mo-icon-button dense icon=${isRtl ? 'last_page' : 'first_page'}
+					?disabled=${this.page === 1}
+					@click=${() => this.setPage(1)}
+				></mo-icon-button>
 
-					<mo-icon-button dense icon=${isRtl ? 'keyboard_arrow_right' : 'keyboard_arrow_left'}
-						?disabled=${this.page === 1}
-						@click=${() => this.setPage(this.page - 1)}
-					></mo-icon-button>
+				<mo-icon-button dense icon=${isRtl ? 'keyboard_arrow_right' : 'keyboard_arrow_left'}
+					?disabled=${this.page === 1}
+					@click=${() => this.setPage(this.page - 1)}
+				></mo-icon-button>
 
-					<div ${style({ width: hasUnknownDataLength ? '40px' : '75px', textAlign: 'center' })}>
-						${this.manualPagination ? html`
-							<mo-field-number dense
-								value=${this.page}
-								@change=${(e: CustomEvent<number>) => this.handleManualPageChange(e.detail)}>
-							</mo-field-number>
-						` : html`
-							<div ${style({ fontSize: 'small', userSelect: 'none' })} @click=${() => this.manualPagination = hasUnknownDataLength === false}>${pageText}</div>
-						`}
-					</div>
+				<div ${style({ width: hasUnknownDataLength ? '40px' : '75px', textAlign: 'center' })}>
+					${this.manualPagination ? html`
+						<mo-field-number dense
+							value=${this.page}
+							@change=${(e: CustomEvent<number>) => this.handleManualPageChange(e.detail)}>
+						</mo-field-number>
+					` : html`
+						<div ${style({ fontSize: 'small', userSelect: 'none' })} @click=${() => this.manualPagination = hasUnknownDataLength === false}>${pageText}</div>
+					`}
+				</div>
 
-					<mo-icon-button dense icon=${isRtl ? 'keyboard_arrow_left' : 'keyboard_arrow_right'}
-						?disabled=${!this.dataGrid.hasNextPage}
-						@click=${() => this.setPage(this.page + 1)}
-					></mo-icon-button>
+				<mo-icon-button dense icon=${isRtl ? 'keyboard_arrow_left' : 'keyboard_arrow_right'}
+					?disabled=${!this.dataGrid.hasNextPage}
+					@click=${() => this.setPage(this.page + 1)}
+				></mo-icon-button>
 
-					<mo-icon-button dense icon=${isRtl ? 'first_page' : 'last_page'}
-						?disabled=${hasUnknownDataLength || this.page === this.dataGrid.maxPage}
-						@click=${() => this.setPage(this.dataGrid.maxPage ?? 1)}
-					></mo-icon-button>
-				</mo-flex>
-
-				${this.paginationInfoTemplate}
+				<mo-icon-button dense icon=${isRtl ? 'first_page' : 'last_page'}
+					?disabled=${hasUnknownDataLength || this.page === this.dataGrid.maxPage}
+					@click=${() => this.setPage(this.dataGrid.maxPage ?? 1)}
+				></mo-icon-button>
 			</mo-flex>
 		`
 	}
@@ -216,18 +230,23 @@ export class DataGridFooter<TData> extends Component {
 		const from = (this.page - 1) * this.dataGrid.pageSize + 1
 		const to = from + this.dataGrid.renderDataRecords.length - 1
 		const rangeText = `${(Math.min(from, to)).format()}-${to.format()}`
-		return html`
+		const infoTemplate = html`
+			<mo-flex direction='horizontal' alignItems='center'>
+				${join([
+					this.dataGrid.selectedData.length
+						? html`<span id='selected-length'>${this.dataGrid.selectedData.length.format()}</span>`
+						: html`<span id='range' tabindex='0'>${rangeText}</span>`,
+					this.dataGrid.dataLength === undefined ? undefined : html`<span id='length'>${this.dataGrid.dataLength.format()}</span>`
+				].filter(Boolean), html`<span id='separator'> / </span>`)}
+			</mo-flex>
+		`
+		// Without page navigation there is no page size to choose either, so the info is not interactive.
+		return !this.hasPageNavigation ? html`
+			<div id='page-info'>${infoTemplate}</div>
+		` : html`
 			<mo-popover-container id='page-info' placement='block-start'>
 				<mo-flex alignItems='center' gap='6px' direction='horizontal'>
-					<mo-flex direction='horizontal' alignItems='center'>
-						${join([
-							this.dataGrid.selectedData.length
-								? html`<span id='selected-length'>${this.dataGrid.selectedData.length.format()}</span>`
-								: html`<span id='range' tabindex='0'>${rangeText}</span>`,
-							this.dataGrid.dataLength === undefined ? undefined : html`<span id='length'>${this.dataGrid.dataLength.format()}</span>`
-						].filter(Boolean), html`<span id='separator'> / </span>`)}
-					</mo-flex>
-
+					${infoTemplate}
 					<mo-icon icon='keyboard_arrow_up' style='font-size: 20px'></mo-icon>
 				</mo-flex>
 				<mo-menu slot='popover'>

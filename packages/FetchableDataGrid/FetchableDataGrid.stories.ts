@@ -24,8 +24,9 @@ const generatePeople = (count: number) => {
 
 const twentyPeople = generatePeople(20)
 const twoHundredPeople = generatePeople(200)
+const thousandPeople = generatePeople(1000)
 
-const wait = (ms = 2000) => new Promise(r => setTimeout(r, ms))
+const wait = (ms = 1200) => new Promise(r => setTimeout(r, ms))
 
 const columnsTemplate = html`
 	<mo-data-grid-column-number hidden nonEditable heading='ID' dataSelector='id'></mo-data-grid-column-number>
@@ -47,23 +48,23 @@ export const FetchableDataGrid: StoryObj = {
 	`
 }
 
+const paginationParameters = (p: { page: number, pageSize: number }) => p
+
+const fetchPage = (data: Array<Person>, delay?: number) => async ({ page, pageSize }: { page: number, pageSize: number }) => {
+	await wait(delay)
+	return {
+		data: data.slice((page - 1) * pageSize, page * pageSize),
+		dataLength: data.length
+	}
+}
+
 export const FetchableDataGrid_DataLength: StoryObj = {
 	name: 'With Pagination via Fetching Data-length',
-	render: () => {
-		const fetch = async ({ page, pageSize }: { page: number, pageSize: number }) => {
-			await wait()
-			return {
-				data: twoHundredPeople.slice((page - 1) * pageSize, page * pageSize),
-				dataLength: twoHundredPeople.length
-			}
-		}
-		const paginationParameters = (p: { page: number, pageSize: number }) => p
-		return html`
-			<mo-fetchable-data-grid .parameters=${{}} .fetch=${fetch} .paginationParameters=${paginationParameters} style='height: 500px; flex: 1'>
-				${columnsTemplate}
-			</mo-fetchable-data-grid>
-		`
-	}
+	render: () => html`
+		<mo-fetchable-data-grid pagination='25' .parameters=${{}} .fetch=${fetchPage(twoHundredPeople)} .paginationParameters=${paginationParameters} style='height: 500px; flex: 1'>
+			${columnsTemplate}
+		</mo-fetchable-data-grid>
+	`
 }
 
 export const FetchableDataGrid_HasNextPage: StoryObj = {
@@ -76,7 +77,69 @@ export const FetchableDataGrid_HasNextPage: StoryObj = {
 				hasNextPage: page < Math.ceil(twoHundredPeople.length / pageSize)
 			}
 		}
-		const paginationParameters = (p: { page: number, pageSize: number }) => p
+		return html`
+			<mo-fetchable-data-grid pagination='25' .parameters=${{}} .fetch=${fetch} .paginationParameters=${paginationParameters} style='height: 500px; flex: 1'>
+				${columnsTemplate}
+			</mo-fetchable-data-grid>
+		`
+	}
+}
+
+export const InfiniteScrolling: StoryObj = {
+	name: 'With infinite scrolling',
+	parameters: {
+		docs: {
+			description: {
+				story: 'Leaving `pagination` unset is the default for server-side pagination. Instead of navigating between pages, the grid streams page after page into the view as the user scrolls towards the end.'
+			}
+		}
+	},
+	render: () => html`
+		<mo-fetchable-data-grid .parameters=${{}} .fetch=${fetchPage(thousandPeople, 750)} .paginationParameters=${paginationParameters} style='height: 500px; flex: 1'>
+			${columnsTemplate}
+		</mo-fetchable-data-grid>
+	`
+}
+
+export const InfiniteScrolling_HasNextPage: StoryObj = {
+	name: 'With infinite scrolling via fetching hasNextPage',
+	render: () => {
+		const fetch = async ({ page, pageSize }: { page: number, pageSize: number }) => {
+			await wait(750)
+			return {
+				data: thousandPeople.slice((page - 1) * pageSize, page * pageSize),
+				hasNextPage: page < Math.ceil(thousandPeople.length / pageSize)
+			}
+		}
+		return html`
+			<mo-fetchable-data-grid .parameters=${{}} .fetch=${fetch} .paginationParameters=${paginationParameters} style='height: 500px; flex: 1'>
+				${columnsTemplate}
+			</mo-fetchable-data-grid>
+		`
+	}
+}
+
+export const InfiniteScrolling_Failing: StoryObj = {
+	name: 'With infinite scrolling and a failing page',
+	parameters: {
+		docs: {
+			description: {
+				story: 'Every third page fails. The stream stops instead of hammering the server and offers to retry.'
+			}
+		}
+	},
+	render: () => {
+		let attempt = 0
+		const fetch = async ({ page, pageSize }: { page: number, pageSize: number }) => {
+			await wait(750)
+			if (page > 1 && ++attempt % 3 === 0) {
+				throw new Error('The page could not be fetched.')
+			}
+			return {
+				data: thousandPeople.slice((page - 1) * pageSize, page * pageSize),
+				dataLength: thousandPeople.length
+			}
+		}
 		return html`
 			<mo-fetchable-data-grid .parameters=${{}} .fetch=${fetch} .paginationParameters=${paginationParameters} style='height: 500px; flex: 1'>
 				${columnsTemplate}

@@ -1,6 +1,8 @@
 import { Binder, component, css, event, html, property, bind } from '@a11d/lit'
 import { hasChanged } from '@a11d/equals'
 import { Localizer } from '@3mo/localization'
+import { tooltip } from '@3mo/tooltip'
+import { InfiniteScrollController } from '@3mo/infinite-scroll-controller'
 import { DataGrid } from '@3mo/data-grid'
 import { FetchableDataGridFetcherController } from './FetchableDataGridFetcherController.js'
 import './FetchableDataGridRefetchIconButton.js'
@@ -21,6 +23,8 @@ export type FetchableDataGridResult<TData> = PaginatedResult<TData> | NonPaginat
 
 Localizer.dictionaries.add('de', {
 	'Make a filter selection': 'Filterauswahl vornehmen',
+	'Loading more entries failed': 'Weitere Einträge konnten nicht geladen werden',
+	'Retry': 'Erneut versuchen',
 })
 
 /**
@@ -29,11 +33,13 @@ Localizer.dictionaries.add('de', {
  * @attr fetch - A function that fetches the data from the server.
  * @attr silentFetch - If set, the DataGrid's content will not be cleared when the fetch is initiated.
  * @attr parameters - The parameters that are passed to the fetch function.
- * @attr paginationParameters - The parameters that are passed to the fetch function when the page changes. This enables server-side pagination.
+ * @attr paginationParameters - The parameters that are passed to the fetch function when the page changes. This enables server-side pagination, which streams pages into the grid as the user scrolls unless a `pagination` opts into paged navigation.
  * @attr sortParameters - The parameters that are passed to the fetch function when the sort changes. This enables server-side sorting.
  * @attr autoRefetch - The interval in seconds at which the data should be refetched automatically. If set, the DataGrid will automatically refetch the data at the specified interval.
  *
  * @slot error-no-selection - A slot for displaying an error message when user action is required in order for DataGrid to initiate the fetch.
+ *
+ * @csspart infinite-scroll-indicator - The row at the end of the stream which indicates that more data is being loaded, or that loading it has failed.
  *
  * @fires parametersChange
  * @fires dataFetch
@@ -54,6 +60,12 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 
 	readonly fetcherController = new FetchableDataGridFetcherController<TData>(this)
 
+	readonly infiniteScrollController = new InfiniteScrollController(this, grid => ({
+		get container() { return grid.scroller },
+		get disabled() { return !grid.hasInfiniteScroll || grid.fetcherController.pending },
+		fetchNext: () => grid.fetcherController.fetchNextPage(),
+	}))
+
 	override get hasNextPage() {
 		return !this.hasServerSidePagination ? super.hasNextPage : this.fetcherController.hasNextPage
 	}
@@ -72,13 +84,29 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 		return css`
 			${super.styles}
 
-			mo-circular-progress {
+			mo-circular-progress#fetching-indicator {
 				position: absolute;
 				width: 48px;
 				height: 48px;
 				inset-inline-start: 50%;
 				inset-block-start: 50%;
 				transform: translate(-50%, calc(-50% + var(--mo-data-grid-header-height) / 2));
+			}
+
+			#infinite-scroll-indicator {
+				grid-column: -1 / 1;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				gap: 6px;
+				min-height: var(--mo-data-grid-row-height);
+				font-size: var(--mo-data-grid-cell-font-size);
+				color: var(--mo-color-gray);
+
+				mo-circular-progress {
+					width: 24px;
+					height: 24px;
+				}
 			}
 		`
 	}
@@ -89,6 +117,14 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 
 	get hasServerSideSort() {
 		return this.sortParameters !== undefined
+	}
+
+	/**
+	 * Whether pages are streamed into the grid as the user scrolls instead of being navigated
+	 * explicitly. This is the default for server-side pagination unless a @see pagination is set.
+	 */
+	get hasInfiniteScroll() {
+		return this.hasServerSidePagination && this.pagination === undefined
 	}
 
 	setParameters(parameters: TDataFetcherParameters) {
@@ -166,13 +202,34 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 			case this.data.length === 0 && this.parameters === undefined:
 				return this.noSelectionTemplate
 			default:
-				return super.contentTemplate
+				return html`
+					${super.contentTemplate}
+					${this.infiniteScrollIndicatorTemplate}
+				`
 		}
 	}
 
 	private get fetchingTemplate() {
 		return html`
-			<mo-circular-progress></mo-circular-progress>
+			<mo-circular-progress id='fetching-indicator'></mo-circular-progress>
+		`
+	}
+
+	protected get infiniteScrollIndicatorTemplate() {
+		const { pending, error } = this.infiniteScrollController
+		const isIdle = pending === false && error === undefined
+		return !this.hasInfiniteScroll || this.data.length === 0 || isIdle ? html.nothing : html`
+			<div id='infinite-scroll-indicator' part='infinite-scroll-indicator'>
+				${error === undefined ? html`
+					<mo-circular-progress></mo-circular-progress>
+				` : html`
+					<span>${t('Loading more entries failed')}</span>
+					<mo-icon-button dense icon='refresh'
+						${tooltip(t('Retry'))}
+						@click=${() => this.infiniteScrollController.reset()}
+					></mo-icon-button>
+				`}
+			</div>
 		`
 	}
 

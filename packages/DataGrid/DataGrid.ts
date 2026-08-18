@@ -160,7 +160,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}) rowHeight = DataGrid.rowHeight.value
 
 	@query('mo-data-grid-header') private readonly header?: DataGridHeader<TData>
-	@query('mo-scroller') private readonly scroller?: Scroller
+	@query('mo-scroller') protected readonly scroller?: Scroller
 	@queryAll('[mo-data-grid-row]') readonly rows!: Array<DataGridRow<TData, TDetailsElement>>
 	@query('mo-data-grid-footer') private readonly footer?: DataGridFooter<TData>
 

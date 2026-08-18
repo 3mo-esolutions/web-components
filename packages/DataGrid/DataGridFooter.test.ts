@@ -1,7 +1,7 @@
 import { query } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { type MenuItem } from '@3mo/menu'
-import { DataGrid, type DataGridFooter } from './index.js'
+import { DataGrid, type DataGridFooter, type DataGridPagination } from './index.js'
 
 type Person = { id: number, name: string, birthDate: DateTime, children?: Array<Person> }
 
@@ -13,8 +13,8 @@ const testData: Array<Person> = [
 
 class TestDataGrid extends DataGrid<Person> {
 	override data: Array<Person> = [...testData]
-	get supportsDynamicPageSize() { return false }
-	get hasPagination() { return true }
+	override pagination?: DataGridPagination = 25
+	override get supportsDynamicPageSize() { return false }
 
 	@query('mo-data-grid-footer') readonly footerElement!: DataGridFooter<Person>
 }
@@ -30,5 +30,17 @@ describe('DataGridFooter', () => {
 			?.textContent?.toNumber()
 
 		expect(selectedPageSize).toBe(fixture.component.pageSize)
+	})
+
+	it('should show a plain count without navigation for a grid which paginates on its own', async () => {
+		fixture.component.pagination = undefined
+		spyOnProperty(fixture.component, 'hasPagination').and.returnValue(true)
+		await fixture.update()
+		await fixture.component.footerElement.updateComplete
+
+		const footerRoot = fixture.component.footerElement.renderRoot
+		expect(footerRoot.querySelector('#page-info')).not.toBeNull()
+		expect(footerRoot.querySelector('mo-menu')).toBeNull()
+		expect(footerRoot.querySelector('mo-icon-button')).toBeNull()
 	})
 })
