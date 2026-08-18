@@ -100,6 +100,9 @@
 			"path": "./packages/ContextMenu"
 		},
 		{
+			"path": "./packages/InfiniteScrollController"
+		},
+		{
 			"path": "./packages/DataGrid"
 		},
 		{
