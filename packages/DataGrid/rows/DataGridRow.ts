@@ -451,9 +451,3 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		}
 	}
 }
-
-declare global {
-	interface HTMLElementTagNameMap {
-		'mo-data-grid-row': DataGridRow<unknown>
-	}
-}
