@@ -7,11 +7,11 @@ export class CommandPaletteButton extends Component {
 	static override get styles() {
 		return css`
 			mo-button {
-				color: var(--mo-color-on-accent);
-				--mo-button-accent-color: var(--mo-color-on-accent);
+				color: inherit;
+				--mo-button-accent-color: currentColor;
 				--mo-button-horizontal-padding: 8px;
-				background: rgba(0, 0, 0, 0.1);
-				border: 1px solid rgba(0, 0, 0, 0.5);
+				background: color-mix(in srgb, currentColor 8%, transparent);
+				border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
 				font-size: small;
 				border-radius: 4px;
 				gap: 6px;
@@ -40,7 +40,7 @@ export class CommandPaletteButton extends Component {
 					${dependsOnScreenSize({
 						desktop: html`
 							${searchLabelTemplate}
-							<mo-keyboard-key key='Meta P' splitter='+' style='--mo-keyboard-key-background: rgba(0,0,0,0.1); --mo-keyboard-key-border-color: rgba(0,0,0,0.5)'></mo-keyboard-key>
+							<mo-key>Meta+P</mo-key>
 						`,
 						tablet: searchLabelTemplate,
 						mobile: html.nothing,

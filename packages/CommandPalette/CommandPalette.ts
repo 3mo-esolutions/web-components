@@ -296,9 +296,10 @@ export class CommandPalette extends Component {
 	}
 
 	private get newItemsTemplate() {
+		// "getNewItem" is allowed to decline, e.g. while nothing has been typed yet, so its result cannot be assumed.
 		const items = this.dataSources
-			.filter(ds => ds.getNewItem)
-			.map(ds => ds.getNewItem!(this.keyword)!)
+			.map(ds => ds.getNewItem?.(this.keyword))
+			.filter(item => !!item)
 		return html`
 			<mo-flex id='buttons' direction='horizontal'>
 				${items.map(item => html`
@@ -322,15 +323,15 @@ export class CommandPalette extends Component {
 		return html`
 			<mo-flex id='guidance' direction='horizontal' gap='24px'>
 				<span>
-					<mo-keyboard-key key='Escape'></mo-keyboard-key>
+					<mo-key>Escape</mo-key>
 					${t('Close')}
 				</span>
 				<span>
-					<mo-keyboard-key key='ArrowUp + ArrowDown'></mo-keyboard-key>
+					<mo-key>ArrowUp ArrowDown</mo-key>
 					${t('Navigate list')}
 				</span>
 				<span>
-					<mo-keyboard-key key='Tab'></mo-keyboard-key>
+					<mo-key>Tab</mo-key>
 					${t('Navigate tabs')}
 				</span>
 			</mo-flex>
@@ -340,6 +341,6 @@ export class CommandPalette extends Component {
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'eb-command-palette': CommandPalette
+		'mo-command-palette': CommandPalette
 	}
 }
