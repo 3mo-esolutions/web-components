@@ -16,6 +16,15 @@ export enum ReorderabilityState {
  */
 export type ReorderabilityStrategy = 'live' | 'indicator'
 
+export interface ReorderabilityControllerOptions<TItemOptions extends ReorderabilityControllerItemDirectiveOptions = ReorderabilityControllerItemDirectiveOptions> {
+	/** Called on the drop with the dragged item's index and the one it lands at; the host moves the data. */
+	handleReorder?: (source: number, destination: number) => void
+	/** `live` moves the other items aside during the drag, `indicator` leaves them in place and marks the drop target. Defaults to `live`. */
+	strategy?: ReorderabilityStrategy
+	/** A registry shared with other controllers on the same host; created when absent. */
+	indexability?: IndexabilityController<unknown, TItemOptions>
+}
+
 export interface ReorderabilityControllerItemDirectiveOptions extends IndexabilityItemOptions {
 	/** The item's position in the owner's data. Items are ordered by it rather than by document
 	 * position, which is not comparable across shadow roots. */
@@ -77,7 +86,7 @@ interface ReorderabilityDrag {
  * The drop reports `(source, destination)` through {@link handleReorder}; the controller never touches the data.
  * Built on pointer events, as Android delivers native drag events only a few times a second and Firefox on Android none for touch.
  */
-export class ReorderabilityController<TItemOptions extends ReorderabilityControllerItemDirectiveOptions = ReorderabilityControllerItemDirectiveOptions> extends Controller {
+export class ReorderabilityController<TItemOptions extends ReorderabilityControllerItemDirectiveOptions = ReorderabilityControllerItemDirectiveOptions, THost extends ReactiveElement = ReactiveElement> extends Controller {
 	/** Touch and pen hold first, so a plain swipe still scrolls. */
 	protected static readonly touchHoldDuration = 500
 	protected static readonly touchHoldFeedback = 15
@@ -89,16 +98,21 @@ export class ReorderabilityController<TItemOptions extends ReorderabilityControl
 
 	readonly indexability: IndexabilityController<unknown, TItemOptions>
 
-	constructor(override readonly host: ReactiveElement, readonly options: {
-		/** Called on the drop with the dragged item's index and the one it lands at; the host moves the data. */
-		handleReorder?: (source: number, destination: number) => void
-		/** `live` moves the other items aside during the drag, `indicator` leaves them in place and marks the drop target. Defaults to `live`. */
-		strategy?: ReorderabilityStrategy
-		/** A registry shared with other controllers on the same host; created when absent. */
-		indexability?: IndexabilityController<unknown, TItemOptions>
-	} = {}) {
+	readonly options: ReorderabilityControllerOptions<TItemOptions>
+
+	constructor(
+		override readonly host: THost,
+		/**
+		 * The options, or a factory receiving the host — the latter lets an owner declare
+		 * getter-backed options inline in a field initialiser instead of in its constructor.
+		 */
+		options: ReorderabilityControllerOptions<TItemOptions> | ((host: THost) => ReorderabilityControllerOptions<TItemOptions>) = {}
+	) {
 		super(host)
-		this.indexability = options.indexability ?? new IndexabilityController<unknown, TItemOptions>(host)
+		// Normalised once, so that the options may be a factory whose host parameter lets an owner
+		// declare getter-backed options inline in a field initialiser instead of in its constructor.
+		this.options = typeof options === 'function' ? options(host) : options
+		this.indexability = this.options.indexability ?? new IndexabilityController<unknown, TItemOptions>(host)
 		this.indexability.observe({
 			handleItemUpdated: ({ element, options }) => element.dataset.reorderability = this.stateOf(options.index),
 		})

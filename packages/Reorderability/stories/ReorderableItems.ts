@@ -13,20 +13,14 @@ export class ReorderableItems extends Component {
 
 	@state() private items = new Array<number>()
 
-	readonly reorderability: ReorderabilityController
-
-	constructor() {
-		super()
-		const host = this
-		this.reorderability = new ReorderabilityController(this, {
-			get strategy() { return host.strategy },
-			handleReorder: (source, destination) => {
-				const items = [...this.items]
-				items.splice(destination, 0, ...items.splice(source, 1))
-				this.items = items
-			},
-		})
-	}
+	readonly reorderability = new ReorderabilityController(this, host => ({
+		get strategy() { return host.strategy },
+		handleReorder: (source, destination) => {
+			const items = [...host.items]
+			items.splice(destination, 0, ...items.splice(source, 1))
+			host.items = items
+		},
+	}))
 
 	protected override willUpdate() {
 		if (this.items.length !== this.count) {

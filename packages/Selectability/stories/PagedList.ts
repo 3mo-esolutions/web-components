@@ -1,5 +1,5 @@
 import { Component, component, css, html, state } from '@a11d/lit'
-import { Selectability, SelectabilityController } from '@3mo/selectability'
+import { Selectability, SelectabilityController, type SelectabilityControllerOptions } from '@3mo/selectability'
 import '@3mo/icon-button'
 import { people as characters, type Person } from '../../../stories/index.js'
 
@@ -13,19 +13,13 @@ export class PagedList extends Component {
 	@state() private page = 0
 	@state() private selection = new Array<Person>()
 
-	readonly selectabilityController: SelectabilityController<Person>
-
-	constructor() {
-		super()
-		const list = this
-		this.selectabilityController = new SelectabilityController<Person>(this, {
-			selectability: Selectability.Multiple,
-			items: people,
-			get selection() { return list.selection },
-			key: person => person.id,
-			handleChange: ({ selection }) => list.selection = [...selection],
-		})
-	}
+	readonly selectabilityController = new SelectabilityController(this, (list): SelectabilityControllerOptions<Person> => ({
+		selectability: Selectability.Multiple,
+		items: people,
+		get selection() { return list.selection },
+		key: person => person.id,
+		handleChange: ({ selection }) => list.selection = [...selection],
+	}))
 
 	static override get styles() {
 		return css`

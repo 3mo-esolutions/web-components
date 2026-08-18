@@ -1,5 +1,5 @@
 import { Component, component, css, event, html, property, state } from '@a11d/lit'
-import { Selectability, SelectabilityAllState, SelectabilityController, SelectabilityStrategy } from '@3mo/selectability'
+import { Selectability, SelectabilityAllState, SelectabilityController, type SelectabilityControllerOptions, SelectabilityStrategy } from '@3mo/selectability'
 import '@3mo/checkbox'
 import { people as characters, type Person } from '../../../stories/index.js'
 
@@ -17,24 +17,18 @@ export class SelectableList extends Component {
 
 	@state() private selection = new Array<Person>()
 
-	readonly selectabilityController: SelectabilityController<Person>
-
-	constructor() {
-		super()
-		const list = this
-		this.selectabilityController = new SelectabilityController<Person>(this, {
-			get selectability() { return list.selectability },
-			get strategy() { return list.strategy },
-			get selection() { return list.selection },
-			items: people,
-			key: person => person.id,
-			isSelectable: person => !list.unselectable.includes(person.id),
-			handleChange: ({ selection }) => {
-				list.selection = [...selection]
-				list.change.dispatch(list.selection)
-			},
-		})
-	}
+	readonly selectabilityController = new SelectabilityController(this, (list): SelectabilityControllerOptions<Person> => ({
+		get selectability() { return list.selectability },
+		get strategy() { return list.strategy },
+		get selection() { return list.selection },
+		items: people,
+		key: person => person.id,
+		isSelectable: person => !list.unselectable.includes(person.id),
+		handleChange: ({ selection }) => {
+			list.selection = [...selection]
+			list.change.dispatch(list.selection)
+		},
+	}))
 
 	static override get styles() {
 		return css`
