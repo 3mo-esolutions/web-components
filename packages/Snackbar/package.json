@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/snackbar",
-	"version": "0.2.5",
+	"version": "0.3.0",
 	"description": "Snackbars show short updates about app processes at the bottom of the screen.",
 	"repository": {
 		"type": "git",
@@ -9,8 +9,9 @@
 	"keywords": [
 		"lit",
 		"web-component",
-		"material",
-		"snackbar"
+		"snackbar",
+		"toast",
+		"notification"
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
@@ -26,7 +27,7 @@
 		"tslib": "x",
 		"@a11d/lit": "x",
 		"@a11d/lit-application": "x",
-		"@material/mwc-snackbar": "x",
+		"@3mo/theme": "x",
 		"@3mo/icon": "x",
 		"@3mo/icon-button": "x",
 		"@3mo/button": "x",
