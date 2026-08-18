@@ -29,22 +29,14 @@ class StoryReorderability extends Component {
 		}
 	}
 
-	// In the constructor, as reactive controllers should be — a controller constructed mid-render
-	// can miss its hostConnected callback. The strategy is read lazily so it may vary per story.
-	private readonly controller: ReorderabilityController
-
-	constructor() {
-		super()
-		const component = this
-		this.controller = new ReorderabilityController(this, {
-			get strategy() { return component.strategy },
-			handleReorder: (source, destination) => {
-				const items = [...this.items]
-				items.splice(destination, 0, ...items.splice(source, 1))
-				this.items = items
-			},
-		})
-	}
+	private readonly controller = new ReorderabilityController(this, component => ({
+		get strategy() { return component.strategy },
+		handleReorder: (source, destination) => {
+			const items = [...component.items]
+			items.splice(destination, 0, ...items.splice(source, 1))
+			component.items = items
+		},
+	}))
 
 	static override get styles() {
 		return css`
