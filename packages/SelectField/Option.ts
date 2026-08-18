@@ -86,7 +86,6 @@ export class Option<T> extends SelectionListItem {
 
 			mo-checkbox {
 				height: fit-content;
-				margin-inline-start: auto;
 			}
 		`
 	}
