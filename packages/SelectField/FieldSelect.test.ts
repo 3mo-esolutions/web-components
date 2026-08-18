@@ -75,6 +75,51 @@ describe('FieldSelect', () => {
 
 			expect(fixture.component.open).toBe(false)
 		})
+
+		describe('with more options than fit', () => {
+			const numbers = [...new Array(60).keys()]
+			const selectedIndex = 50
+
+			const fixture = new ComponentTestFixture<FieldSelect<number>>(html`
+				<mo-field-select label='Select'>
+					${numbers.map(n => html`<mo-option value=${n} .data=${n}>Option ${n}</mo-option>`)}
+				</mo-field-select>
+			`)
+
+			const getPopover = () => fixture.component.menu!.renderRoot.querySelector('mo-popover')!
+
+			async function open() {
+				const opened = new Promise<void>(resolve => getPopover().addEventListener('toggle', () => resolve(), { once: true }))
+				fixture.component.open = true
+				await fixture.updateComplete
+				await opened
+			}
+
+			beforeEach(async () => {
+				fixture.component.value = selectedIndex
+				await fixture.updateComplete
+				await new Promise(r => setTimeout(r, 0))
+			})
+
+			it('should scroll the selected option into view when opened', async () => {
+				await open()
+
+				const popover = getPopover()
+				const option = fixture.component.options[selectedIndex]!
+				expect(option.selected).toBeTrue()
+				expect(popover.scrollTop).toBeGreaterThan(0)
+				expect(option.getBoundingClientRect().top).toBeGreaterThanOrEqual(popover.getBoundingClientRect().top)
+				expect(option.getBoundingClientRect().bottom).toBeLessThanOrEqual(popover.getBoundingClientRect().bottom)
+			})
+
+			it('should move the keyboard focus on from the selected option', async () => {
+				await open()
+
+				document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }))
+
+				expect(fixture.component.menu!.list.focusController.focusedItemIndex).toBe(selectedIndex + 1)
+			})
+		})
 	})
 
 	describe('searchable', () => {

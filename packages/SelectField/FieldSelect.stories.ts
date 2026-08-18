@@ -60,6 +60,23 @@ export const PreSelectedValue: StoryObj = {
 	`
 }
 
+export const PreSelectedValueFarDownTheList: StoryObj = {
+	name: 'Pre-selected Value Far Down The List',
+	render: ({ searchable, multiple, defaultText }) => html`
+		<mo-card style='max-width: 300px'>
+			<span>The selection (United States) sits far down a long list. Opening the menu should scroll straight to it and highlight it as the focused option, and the first ArrowDown should step from it to Uruguay rather than jumping back to Andorra at the top.</span>
+			<mo-field-select label='Countries' ?searchable=${searchable} ?multiple=${multiple} default=${defaultText} .value=${multiple ? ['UG', 'US'] : 'US'}>
+				${countries.map(country => html`
+					<mo-option value=${country.code} .data=${country}>
+						<img width='25px' src=${`https://flagcdn.com/h40/${country.code.toLowerCase()}.png`}>
+						${country.label}
+					</mo-option>
+				`)}
+			</mo-field-select>
+		</mo-card>
+	`
+}
+
 export const WithSubGridLayout: StoryObj = {
 	render: ({ searchable, multiple, defaultText }) => html`
 		<style>
