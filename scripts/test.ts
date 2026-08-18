@@ -10,10 +10,8 @@ function getTestFiles(directory: string): Array<string> {
 			return getTestFiles(fullPath)
 		}
 
-		if (fullPath.endsWith('.test.ts') && !fullPath.includes('node_modules')) {
-			return fullPath
-		}
-	}).filter(Boolean) as Array<string>
+		return fullPath.endsWith('.test.ts') && !fullPath.includes('node_modules') ? [fullPath] : []
+	})
 }
 
 FileSystem.mkdirSync('./dist', { recursive: true })

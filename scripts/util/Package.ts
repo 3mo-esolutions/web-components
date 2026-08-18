@@ -54,9 +54,7 @@ function getPackagePathsByDirectory(directory: string): Array<string> {
 			return getPackagePathsByDirectory(fullPath)
 		}
 
-		if (fullPath.endsWith('package.json') && !fullPath.includes('node_modules')) {
-			// remove the package.json file name from the path:
-			return Path.dirname(fullPath)
-		}
-	}).filter(Boolean) as Array<string>
+		// remove the package.json file name from the path:
+		return fullPath.endsWith('package.json') && !fullPath.includes('node_modules') ? [Path.dirname(fullPath)] : []
+	})
 }

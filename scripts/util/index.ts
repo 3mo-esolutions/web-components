@@ -1,3 +1,5 @@
 export * from './run.ts'
+export * from './ComponentMembers.ts'
+export * from './CustomElementsManifest.ts'
 export * from './Package.ts'
 export * from './Arguments.ts'

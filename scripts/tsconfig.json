@@ -1,0 +1,19 @@
+{
+	"extends": "../tsconfig.base.json",
+	"include": [
+		"**/*.ts"
+	],
+	"compilerOptions": {
+		/* The scripts are run by node through its type stripping, so they are only ever type-checked, never emitted. */
+		"noEmit": true,
+		"declaration": false,
+		"declarationMap": false,
+		"allowImportingTsExtensions": true,
+		"lib": [
+			"ES2023"
+		],
+		"types": [
+			"node"
+		]
+	}
+}

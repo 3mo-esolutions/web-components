@@ -46,6 +46,9 @@
 	"files": [],
 	"references": [
 		{
+			"path": "./scripts"
+		},
+		{
 			"path": "./packages/Alert"
 		},
 		{

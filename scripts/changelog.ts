@@ -27,7 +27,7 @@ class Release {
 	readonly date!: Date
 	readonly commits = new Array<Commit>()
 
-	get dateString() { return this.date.toISOString().split('T')[0] }
+	get dateString() { return this.date.toISOString().split('T')[0]! }
 
 	constructor(init: Partial<Release>) { Object.assign(this, init) }
 
