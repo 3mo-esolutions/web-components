@@ -58,6 +58,7 @@ RootCssInjector.inject(css`
 
 
 		--mo-font-family: Roboto, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+		--mo-font-family-mono: ui-monospace, 'Cascadia Mono', 'Segoe UI Mono', 'SF Mono', Menlo, Consolas, 'Roboto Mono', 'DejaVu Sans Mono', monospace;
 		--mo-border-radius: 4px;
 
 		/* Shadows */
