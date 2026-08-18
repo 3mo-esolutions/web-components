@@ -1,5 +1,5 @@
 import { component, event, eventListener, property, queryAsync } from '@a11d/lit'
-import { Selectability, SelectabilityController, SelectabilityInteraction, SelectabilityStamping } from '@3mo/selectability'
+import { Selectability, SelectabilityController, type SelectabilityControllerOptions, SelectabilityInteraction, SelectabilityStamping } from '@3mo/selectability'
 import { List } from './List.js'
 
 export class SelectionListItemChangeEvent<T> extends CustomEvent<T> {
@@ -32,24 +32,18 @@ export class SelectableList extends List {
 
 	@queryAsync('slot') protected readonly slotElement!: Promise<HTMLSlotElement>
 
-	readonly selectabilityController: SelectabilityController<HTMLElement>
-
-	constructor() {
-		super()
-		const component = this
-		this.selectabilityController = new SelectabilityController<HTMLElement>(this, {
-			get selectability() { return component.selectability },
-			get items() { return component.items },
-			get selection() { return component.selectionFromValue },
-			handleChange: ({ selection }) => {
-				component.value = selection.map(item => component.items.indexOf(item))
-				component.syncItems()
-				component.change.dispatch(component.value)
-			},
-			interaction: SelectabilityInteraction.Manual,
-			stamping: SelectabilityStamping.None,
-		})
-	}
+	readonly selectabilityController = new SelectabilityController(this, (component): SelectabilityControllerOptions<HTMLElement> => ({
+		get selectability() { return component.selectability },
+		get items() { return component.items },
+		get selection() { return component.selectionFromValue },
+		handleChange: ({ selection }) => {
+			component.value = selection.map(item => component.items.indexOf(item))
+			component.syncItems()
+			component.change.dispatch(component.value)
+		},
+		interaction: SelectabilityInteraction.Manual,
+		stamping: SelectabilityStamping.None,
+	}))
 
 	/** The value's indices resolved to their elements — the list's own state stays the indices. */
 	private get selectionFromValue() {

@@ -22,6 +22,16 @@ export enum ReorderabilityState {
  */
 export type ReorderabilityStrategy = 'live' | 'indicator'
 
+export interface ReorderabilityControllerOptions<TItemOptions extends ReorderabilityControllerItemDirectiveOptions = ReorderabilityControllerItemDirectiveOptions> {
+	handleReorder?: (source: number, destination: number) => void
+	/** Defaults to `live` — see {@link ReorderabilityStrategy}. */
+	strategy?: ReorderabilityStrategy
+	/** A shared registry to adopt — the owner declares the item directive once per element and
+	 * every controller reading the registry acts on it. Absent, the controller creates its own.
+	 * Read once, and expected to live on this controller's own host. */
+	indexability?: IndexabilityController<unknown, TItemOptions>
+}
+
 export interface ReorderabilityControllerItemDirectiveOptions extends IndexabilityItemOptions {
 	/** The item's position in the OWNER's data — what {@link ReorderabilityController.handleReorder}
 	 * reports, and the order the items are read in (never DOM order: items may live in separate
@@ -128,7 +138,7 @@ interface ReorderabilityDrag {
  * What it buys, beyond cadence: haptics, drags that work while the list auto-scrolls, and a preview
  * that isn't subject to the platform's drag-image rules.
  */
-export class ReorderabilityController<TItemOptions extends ReorderabilityControllerItemDirectiveOptions = ReorderabilityControllerItemDirectiveOptions> extends Controller implements EventListenerObject {
+export class ReorderabilityController<TItemOptions extends ReorderabilityControllerItemDirectiveOptions = ReorderabilityControllerItemDirectiveOptions, THost extends ReactiveElement = ReactiveElement> extends Controller implements EventListenerObject {
 	/** Touch/pen: how long (ms) a press must stay still — within {@link touchHoldTolerance} — before a
 	 * drag begins, so a plain swipe still scrolls the list. ~half a second matches the OS long-press. */
 	protected static readonly touchHoldDuration = 500
@@ -156,19 +166,23 @@ export class ReorderabilityController<TItemOptions extends ReorderabilityControl
 	/** The item registry this controller reads — adopted or its own. See {@link IndexabilityController}. */
 	readonly indexability: IndexabilityController<unknown, TItemOptions>
 
-	constructor(override readonly host: ReactiveElement, readonly options: {
-		handleReorder?: (source: number, destination: number) => void
-		/** Defaults to `live` — see {@link ReorderabilityStrategy}. */
-		strategy?: ReorderabilityStrategy
-		/** A shared registry to adopt — the owner declares the item directive once per element and
-		 * every controller reading the registry acts on it. Absent, the controller creates its own.
-		 * Read once, and expected to live on this controller's own host. */
-		indexability?: IndexabilityController<unknown, TItemOptions>
-	} = {}) {
+	readonly options: ReorderabilityControllerOptions<TItemOptions>
+
+	constructor(
+		override readonly host: THost,
+		/**
+		 * The options, or a factory receiving the host — the latter lets an owner declare
+		 * getter-backed options inline in a field initialiser instead of in its constructor.
+		 */
+		options: ReorderabilityControllerOptions<TItemOptions> | ((host: THost) => ReorderabilityControllerOptions<TItemOptions>) = {}
+	) {
 		super(host)
+		// Normalised once, so that the options may be a factory whose host parameter lets an owner
+		// declare getter-backed options inline in a field initialiser instead of in its constructor.
+		this.options = typeof options === 'function' ? options(host) : options
 		// Constructed from the PARAMETERS rather than the fields, and observed from the constructor
 		// body, so neither depends on where TypeScript happens to place field initializers.
-		this.indexability = options.indexability ?? new IndexabilityController<unknown, TItemOptions>(host)
+		this.indexability = this.options.indexability ?? new IndexabilityController<unknown, TItemOptions>(host)
 		this.indexability.observe({
 			handleItemUpdated: ({ element, options }) => element.dataset.reorderability = this.stateOf(options.index),
 		})

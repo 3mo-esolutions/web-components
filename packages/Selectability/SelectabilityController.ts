@@ -101,6 +101,35 @@ export type SelectabilityChange<T> = {
 	readonly removed: ReadonlyArray<T>
 }
 
+export interface SelectabilityControllerOptions<T, TItemOptions extends SelectabilityItemOptions<T> = SelectabilityItemOptions<T>> {
+	/** `undefined` turns selection off: every operation becomes a no-op, and the selection is
+	 * dropped as it goes off. Read lazily, so hosts pass a getter onto their own property. */
+	selectability?: Selectability
+	/** The owner's FULL ordered universe — not merely what is rendered. Defaults to the registry's
+	 * data, which is right for a list that renders all of itself and wrong for anything paged. */
+	items?: ReadonlyArray<T>
+	/** Identity. Defaults to the item itself, i.e. reference identity. */
+	key?: (item: T) => unknown
+	isSelectable?: (item: T) => boolean
+	/** The host's own selection property. Given, the host owns the state and must commit the
+	 * controller's answer synchronously in {@link handleChange}; left out, the controller keeps it. */
+	selection?: ReadonlyArray<T>
+	/** Called only when the selection actually changed, compared by key. */
+	handleChange?: (change: SelectabilityChange<T>) => void
+	/** What {@link SelectabilityController.handleItemsChange} does by default. Defaults to `reset`. */
+	behaviorOnItemsChange?: SelectabilityBehaviorOnItemsChange
+	/** Who turns an event into a selection. Defaults to {@link SelectabilityInteraction.Auto}. */
+	interaction?: SelectabilityInteraction
+	/** What a plain activation means, where the controller wires itself up. Defaults to `replace`. */
+	strategy?: SelectabilityStrategy
+	/** Defaults to `full` — see {@link SelectabilityStamping}. */
+	stamping?: SelectabilityStamping
+	/** A shared registry to adopt — the owner declares the item directive once per element and
+	 * every controller reading the registry acts on it. Absent, the controller creates its own.
+	 * Read once, and expected to live on this controller's own host. */
+	indexability?: IndexabilityController<T, TItemOptions>
+}
+
 type SelectabilityModifiers = { readonly shift: boolean, readonly ctrl: boolean, readonly meta: boolean }
 
 const noModifiers: SelectabilityModifiers = { shift: false, ctrl: false, meta: false }
@@ -109,16 +138,18 @@ const noModifiers: SelectabilityModifiers = { shift: false, ctrl: false, meta: f
  * Selection — of items declared inline in a template, or of whatever the owner calls its data:
  *
  * ```ts
- * readonly selectability = new SelectabilityController<Person>(this, {
+ * readonly selectability = new SelectabilityController(this, component => ({
  *   selectability: Selectability.Multiple,          // settled once — a plain value
  *   get items() { return component.people },        // changes — read on every access
- *   handleChange: ({ selection }) => this.selectionChange.dispatch([...selection]),
- * })
+ *   handleChange: ({ selection }) => component.selectionChange.dispatch([...selection]),
+ * }))
  * ```
  *
  * Every option is read LAZILY, so a value that varies with the host is passed as a getter and one
- * that never varies is passed as itself. A getter needs the host captured (`component` above): its
- * `this` is the options object, not the component — which is also why the callbacks are arrows.
+ * that never varies is passed as itself. A getter's `this` is the options object rather than the
+ * host, which is what the options FACTORY above is for: its parameter is the host, so getter-backed
+ * options can be declared right in a field initialiser. The options may equally be passed as a plain
+ * object where nothing needs the host.
  *
  * The controller stores no selection of its own unless asked to. Where the host already has a
  * reactive property for it — and a grid or a field always does — it passes that property as
@@ -141,7 +172,7 @@ const noModifiers: SelectabilityModifiers = { shift: false, ctrl: false, meta: f
  * focus (that is the list's roving-focus concern, which it composes with rather than replaces), or
  * decide when a menu closes.
  */
-export class SelectabilityController<T, TItemOptions extends SelectabilityItemOptions<T> = SelectabilityItemOptions<T>> extends Controller implements EventListenerObject {
+export class SelectabilityController<T, TItemOptions extends SelectabilityItemOptions<T> = SelectabilityItemOptions<T>, THost extends ReactiveElement = ReactiveElement> extends Controller implements EventListenerObject {
 	private static readonly selectedRoles = ['option', 'row', 'treeitem', 'gridcell', 'tab', 'columnheader', 'rowheader']
 	private static readonly checkedRoles = ['menuitemcheckbox', 'menuitemradio', 'checkbox', 'radio', 'switch']
 	private static readonly multiselectableRoles = ['listbox', 'grid', 'treegrid', 'tree', 'tablist']
@@ -150,38 +181,23 @@ export class SelectabilityController<T, TItemOptions extends SelectabilityItemOp
 	 * See {@link IndexabilityController}. */
 	readonly indexability: IndexabilityController<T, TItemOptions>
 
-	constructor(override readonly host: ReactiveElement, readonly options: {
-		/** `undefined` turns selection off: every operation becomes a no-op, and the selection is
-		 * dropped as it goes off. Read lazily, so hosts pass a getter onto their own property. */
-		selectability?: Selectability
-		/** The owner's FULL ordered universe — not merely what is rendered. Defaults to the registry's
-		 * data, which is right for a list that renders all of itself and wrong for anything paged. */
-		items?: ReadonlyArray<T>
-		/** Identity. Defaults to the item itself, i.e. reference identity. */
-		key?: (item: T) => unknown
-		isSelectable?: (item: T) => boolean
-		/** The host's own selection property. Given, the host owns the state and must commit the
-		 * controller's answer synchronously in {@link handleChange}; left out, the controller keeps it. */
-		selection?: ReadonlyArray<T>
-		/** Called only when the selection actually changed, compared by key. */
-		handleChange?: (change: SelectabilityChange<T>) => void
-		/** What {@link handleItemsChange} does by default. Defaults to `reset`. */
-		behaviorOnItemsChange?: SelectabilityBehaviorOnItemsChange
-		/** Who turns an event into a selection. Defaults to {@link SelectabilityInteraction.Auto}. */
-		interaction?: SelectabilityInteraction
-		/** What a plain activation means, where the controller wires itself up. Defaults to `replace`. */
-		strategy?: SelectabilityStrategy
-		/** Defaults to `full` — see {@link SelectabilityStamping}. */
-		stamping?: SelectabilityStamping
-		/** A shared registry to adopt — the owner declares the item directive once per element and
-		 * every controller reading the registry acts on it. Absent, the controller creates its own.
-		 * Read once, and expected to live on this controller's own host. */
-		indexability?: IndexabilityController<T, TItemOptions>
-	} = {}) {
+	readonly options: SelectabilityControllerOptions<T, TItemOptions>
+
+	constructor(
+		override readonly host: THost,
+		/**
+		 * The options, or a factory receiving the host — the latter lets an owner declare
+		 * getter-backed options inline in a field initializer instead of in its constructor.
+		 */
+		options: SelectabilityControllerOptions<T, TItemOptions> | ((host: THost) => SelectabilityControllerOptions<T, TItemOptions>) = {}
+	) {
 		super(host)
-		// Built from the PARAMETER and observed here rather than in a field initialiser, so neither
+		// Normalised once, so that the options may be a factory whose host parameter lets an owner
+		// declare getter-backed options inline in a field initializer instead of in its constructor.
+		this.options = typeof options === 'function' ? options(host) : options
+		// Built from the PARAMETER and observed here rather than in a field initializer, so neither
 		// depends on where TypeScript happens to place those.
-		this.indexability = options.indexability ?? new IndexabilityController<T, TItemOptions>(host)
+		this.indexability = this.options.indexability ?? new IndexabilityController<T, TItemOptions>(host)
 		this.indexability.observe({ handleItemUpdated: item => this.stampItem(item, this.selectedKeys) })
 	}
 
@@ -193,7 +209,7 @@ export class SelectabilityController<T, TItemOptions extends SelectabilityItemOp
 
 	// Registered as ITSELF (an EventListenerObject) rather than as bound handlers: `Controller`'s
 	// constructor adds this to its host, and lit calls `hostConnected` right there when the host is
-	// already connected — before this class's field initialisers have run. A field would register
+	// already connected — before this class's field initializers have run. A field would register
 	// `undefined` and silently never listen. Prototype methods exist before construction begins.
 	override hostConnected() {
 		this.host.addEventListener('pointerdown', this)

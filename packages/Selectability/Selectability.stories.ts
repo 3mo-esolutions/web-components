@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite'
 import { Component, component, css, html, property, state } from '@a11d/lit'
 import p from './package.json'
-import { Selectability, SelectabilityAllState, SelectabilityController, SelectabilityStrategy } from './SelectabilityController.js'
+import { Selectability, SelectabilityAllState, SelectabilityController, type SelectabilityControllerOptions, SelectabilityStrategy } from './SelectabilityController.js'
 
 export default {
 	title: 'Utilities / Selectability',
@@ -81,23 +81,17 @@ class StorySelectability extends Component {
 	@property({ type: Number }) count = 8
 	@property({ type: Boolean }) withSelectAll = false
 
-	@state() private selection: ReadonlyArray<Person> = []
+	@state() private selection = new Array<Person>()
 
-	private readonly controller: SelectabilityController<Person>
-
-	constructor() {
-		super()
-		const component = this
-		this.controller = new SelectabilityController<Person>(this, {
-			get selectability() { return component.selectability },
-			get strategy() { return component.strategy },
-			get items() { return people.slice(0, component.count) },
-			get selection() { return component.selection },
-			key: person => person.id,
-			isSelectable: person => !component.unselectable.includes(person.id),
-			handleChange: ({ selection }) => this.selection = selection,
-		})
-	}
+	private readonly controller = new SelectabilityController(this, (component): SelectabilityControllerOptions<Person> => ({
+		get selectability() { return component.selectability },
+		get strategy() { return component.strategy },
+		get items() { return people.slice(0, component.count) },
+		get selection() { return component.selection },
+		key: person => person.id,
+		isSelectable: person => !component.unselectable.includes(person.id),
+		handleChange: ({ selection }) => component.selection = [...selection],
+	}))
 
 	protected override connected() {
 		this.setAttribute('role', 'listbox')
@@ -202,20 +196,14 @@ class StorySelectabilityPaged extends Component {
 	@state() private page = 0
 	@state() private selection: ReadonlyArray<Person> = []
 
-	private readonly controller: SelectabilityController<Person>
-
-	constructor() {
-		super()
-		const component = this
-		this.controller = new SelectabilityController<Person>(this, {
-			selectability: Selectability.Multiple,
-			// The FULL universe — every page of it, whether or not it is on screen.
-			get items() { return people },
-			get selection() { return component.selection },
-			key: person => person.id,
-			handleChange: ({ selection }) => this.selection = selection,
-		})
-	}
+	private readonly controller = new SelectabilityController(this, (component): SelectabilityControllerOptions<Person> => ({
+		selectability: Selectability.Multiple,
+		// The FULL universe — every page of it, whether or not it is on screen.
+		get items() { return people },
+		get selection() { return component.selection },
+		key: person => person.id,
+		handleChange: ({ selection }) => component.selection = [...selection],
+	}))
 
 	protected override connected() {
 		this.setAttribute('role', 'listbox')

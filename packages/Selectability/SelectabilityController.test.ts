@@ -1,7 +1,7 @@
 import { component, Component, css, html, ifDefined } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { IndexabilityController } from '@3mo/indexability'
-import { Selectability, SelectabilityBehaviorOnItemsChange, SelectabilityController, type SelectabilityChange, type SelectabilityItemOptions, SelectabilityAllState, SelectabilityInteraction, SelectabilityStamping, SelectabilityStrategy } from './SelectabilityController.js'
+import { Selectability, SelectabilityBehaviorOnItemsChange, SelectabilityController, type SelectabilityChange, type SelectabilityControllerOptions, type SelectabilityItemOptions, SelectabilityAllState, SelectabilityInteraction, SelectabilityStamping, SelectabilityStrategy } from './SelectabilityController.js'
 
 type Person = { readonly id: number, readonly name: string }
 
@@ -22,28 +22,22 @@ class SelectabilityTest extends Component {
 	hostSelection: ReadonlyArray<Person> = []
 
 	readonly changes = new Array<SelectabilityChange<Person>>()
-	readonly controller: SelectabilityController<Person>
-
-	constructor() {
-		super()
-		const component = this
-		this.controller = new SelectabilityController<Person>(this, {
-			get selectability() { return component.selectability },
-			get items() { return component.items },
-			get isSelectable() { return component.isSelectable },
-			get key() { return component.key },
-			get selection() { return component.hostOwned ? component.hostSelection : undefined },
-			get behaviorOnItemsChange() { return component.behaviorOnItemsChange },
-			handleChange: change => {
-				component.changes.push(change)
-				if (component.hostOwned) {
-					component.hostSelection = [...change.selection]
-				}
-			},
-			interaction: SelectabilityInteraction.Manual,
-			stamping: SelectabilityStamping.None,
-		})
-	}
+	readonly controller = new SelectabilityController(this, (component): SelectabilityControllerOptions<Person> => ({
+		get selectability() { return component.selectability },
+		get items() { return component.items },
+		get isSelectable() { return component.isSelectable },
+		get key() { return component.key },
+		get selection() { return component.hostOwned ? component.hostSelection : undefined },
+		get behaviorOnItemsChange() { return component.behaviorOnItemsChange },
+		handleChange: change => {
+			component.changes.push(change)
+			if (component.hostOwned) {
+				component.hostSelection = [...change.selection]
+			}
+		},
+		interaction: SelectabilityInteraction.Manual,
+		stamping: SelectabilityStamping.None,
+	}))
 
 	/** What is selected, by id — the shape every assertion below reads. */
 	get selectedIds() { return ids([...this.controller.selection]) }
@@ -63,19 +57,13 @@ class SelectabilityListTest extends Component {
 	disabledIds: ReadonlyArray<number> = []
 
 	readonly changes = new Array<SelectabilityChange<Person>>()
-	readonly controller: SelectabilityController<Person>
-
-	constructor() {
-		super()
-		const component = this
-		this.controller = new SelectabilityController<Person>(this, {
-			get selectability() { return component.selectability },
-			get items() { return component.items },
-			get strategy() { return component.strategy },
-			get stamping() { return component.stamping },
-			handleChange: change => component.changes.push(change),
-		})
-	}
+	readonly controller = new SelectabilityController(this, (component): SelectabilityControllerOptions<Person> => ({
+		get selectability() { return component.selectability },
+		get items() { return component.items },
+		get strategy() { return component.strategy },
+		get stamping() { return component.stamping },
+		handleChange: change => component.changes.push(change),
+	}))
 
 	protected override connected() {
 		this.setAttribute('role', this.hostRole)
