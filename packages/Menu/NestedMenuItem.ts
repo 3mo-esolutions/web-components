@@ -52,7 +52,7 @@ export class NestedMenuItem extends MenuItem {
 			}
 
 			mo-icon[icon=chevron_right] {
-				margin-inline-start: auto;
+				/* The end column already pushes it to the end, no auto margin needed */
 				margin-inline-end: -8px;
 			}
 

@@ -1,7 +1,7 @@
 import { Component, component, css, event, html, unsafeCSS } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
 import { ListFocusController } from './ListFocusController.js'
-import { listItems } from './extensions.js'
+import { listItemRoles, listItems } from './extensions.js'
 
 /**
  * @element mo-list
@@ -31,7 +31,11 @@ export class List extends Component {
 			:host {
 				display: grid;
 				grid-template-columns: auto 1fr auto;
-				column-gap: 16px;
+				/*
+				 * Deliberately no column-gap. Gutters are painted even when the
+				 * start/end tracks are empty, which would indent every icon-less
+				 * list. The spacing lives on the content instead, see ListItem.
+				 */
 			}
 
 			:host(:focus) {
@@ -42,7 +46,7 @@ export class List extends Component {
 				grid-column: -1 / 1;
 			}
 
-			${unsafeCSS(List.itemRoles.map(role => `::slotted([role='${role}'])`).join(','))} {
+			${unsafeCSS(listItemRoles.map(role => `::slotted([role='${role}'])`).join(','))} {
 				grid-template-columns: subgrid;
 				display: grid;
 			}
