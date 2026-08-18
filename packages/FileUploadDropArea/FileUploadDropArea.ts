@@ -2,7 +2,9 @@ import { html, eventListener, css, component, query, Component, property, event,
 import { type FileUpload, type FileUploadSelection } from '@3mo/file-upload'
 
 /**
- * @element mo-file-upload-drop-area UploadDropArea is a component that allows the user to upload files by dragging them into the component.
+ * @element mo-file-upload-drop-area
+ *
+ * UploadDropArea is a component that allows the user to upload files by dragging them into the component.
  *
  * @attr upload - The mandatory upload function that is called when the user selects one or more files.
  * @attr multiple - Whether multiple files can be selected at once.

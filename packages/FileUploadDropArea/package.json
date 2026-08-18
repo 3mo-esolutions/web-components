@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/file-upload-drop-area",
-	"version": "0.2.1",
+	"version": "0.2.2",
 	"description": "A component to upload files via drag and drop",
 	"repository": {
 		"type": "git",
