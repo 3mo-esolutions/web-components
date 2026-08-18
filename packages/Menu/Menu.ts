@@ -120,10 +120,20 @@ export class Menu extends Component {
 	}
 
 	protected openUpdated() {
-		if (this.open) {
-			this.list.focusController.focusIn()
-		} else {
+		if (!this.open) {
+			// Dropped rather than remembered, so that the next opening starts from whatever is selected
+			// by then instead of resuming where the closed one left off.
+			this.list.focusController.focusedItemIndex = undefined
 			this.list.focusController.focusOut()
+		}
+	}
+
+	protected handlePopoverOpenChange(open: boolean) {
+		this.setOpen(open)
+		if (open) {
+			// Deliberately here and not in `openUpdated`: that runs while the popover is still
+			// `display: none`, where an unlaid-out list cannot be scrolled to its selected item.
+			this.list.focusController.focusIn()
 		}
 	}
 
@@ -156,7 +166,7 @@ export class Menu extends Component {
 				placement=${ifDefined(this.placement)}
 				alignment=${ifDefined(this.alignment)}
 				?open=${this.open}
-				@openChange=${(e: CustomEvent<boolean>) => this.setOpen(e.detail)}
+				@openChange=${(e: CustomEvent<boolean>) => this.handlePopoverOpenChange(e.detail)}
 				.coordinates=${this.coordinates}
 				.shouldOpen=${this.shouldOpen}
 			>
