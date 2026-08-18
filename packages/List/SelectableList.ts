@@ -71,6 +71,11 @@ export class SelectableList extends List {
 		}
 	}
 
+	/** The topmost selected item — the `ListElement` hook the roving focus starts from. */
+	get defaultFocusedItemIndex() {
+		return this.value.length === 0 ? undefined : Math.min(...this.value)
+	}
+
 	@eventListener({ type: 'change', target(this: SelectableList) { return this.slotElement } })
 	protected handleChange(event: CustomEvent) {
 		if (event instanceof SelectionListItemChangeEvent) {

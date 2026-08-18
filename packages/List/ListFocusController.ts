@@ -15,6 +15,13 @@ export interface ListElement extends HTMLElement {
 	readonly itemsLength?: number
 	getItem?(index: number): VirtualizedListItem | ListItem | undefined
 	getRenderedItemIndex?(item: ListItem): number | undefined
+	/**
+	 * Where the roving focus lands when the list is focused without one — the selected item, in a list
+	 * that has a notion of selection. This is what scrolls a long menu to what it has selected when it
+	 * opens, and what makes the first arrow key step away from there rather than from the top.
+	 * `undefined` leaves the list without a focused item, as before.
+	 */
+	readonly defaultFocusedItemIndex?: number
 }
 
 export class ListFocusController extends Controller {
@@ -46,7 +53,9 @@ export class ListFocusController extends Controller {
 	get focusedItemIndex() { return this._focusedItemIndex }
 	set focusedItemIndex(value) {
 		if (value !== undefined) {
-			value %= this.itemsLength
+			// An empty list has no index to land on — without this the modulo yields NaN, which no
+			// item ever matches and which no later traversal can recover from.
+			value = this.itemsLength === 0 ? undefined : value % this.itemsLength
 		}
 
 		this._focusedItemIndex = value
@@ -105,6 +114,15 @@ export class ListFocusController extends Controller {
 	}
 
 	protected handleFocusIn() {
+		// Seeded before `focused`, so the very first `updateFocus` already has an item to scroll to.
+		// Only when there is none yet: a pointer-down on an item sets it before focus arrives, and
+		// that gesture must not be overruled by the selection.
+		if (this.focusedItemIndex === undefined) {
+			const defaultFocusedItemIndex = this.host.defaultFocusedItemIndex
+			if (defaultFocusedItemIndex !== undefined) {
+				this.focusedItemIndex = defaultFocusedItemIndex
+			}
+		}
 		this.focused = true
 		ListFocusController.forceFocusedListsQueue.add(this)
 	}
