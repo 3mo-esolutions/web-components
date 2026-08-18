@@ -29,6 +29,21 @@ const getRowContextMenuTemplate = () => html`
 
 customElements.define('test-data-grid', TestDataGrid)
 
+/**
+ * Mimics the composition of ModdableDataGrid, whose modebar renders a decorative scroller
+ * before the grid's own content scroller.
+ */
+class TestDataGridWithLeadingScroller extends TestDataGrid {
+	protected override get template() {
+		return html`
+			<mo-scroller id='modebar'>modebar</mo-scroller>
+			${super.template}
+		`
+	}
+}
+
+customElements.define('test-data-grid-with-leading-scroller', TestDataGridWithLeadingScroller)
+
 describe('DataGrid', () => {
 	describe('Data', () => {
 		const fixture = new ComponentTestFixture<TestDataGrid>(html`<test-data-grid></test-data-grid>`)
@@ -891,6 +906,43 @@ describe('DataGrid', () => {
 				expect(positiveStyle).toContain('green')
 				expect(negativeStyle).toContain('red')
 				expect(getComputedStyle(positiveCell!).color).toBe('rgb(0, 128, 0)')
+			})
+		})
+	})
+
+	describe('Scroller', () => {
+		const scrollerOf = (dataGrid: DataGrid<Person>) => dataGrid['scroller']
+
+		describe('without other scrollers in the shadow root', () => {
+			const fixture = new ComponentTestFixture<TestDataGrid>(html`<test-data-grid></test-data-grid>`)
+
+			it('should resolve to the scroller containing the content', () => {
+				expect(scrollerOf(fixture.component)?.querySelector('#content')).not.toBeNull()
+			})
+		})
+
+		// A subclass rendering its own scroller before the content used to shadow the content scroller,
+		// as the query resolved to the first scroller in the shadow root instead of the grid's own one.
+		describe('with another scroller preceding the content', () => {
+			const fixture = new ComponentTestFixture<TestDataGridWithLeadingScroller>(
+				html`<test-data-grid-with-leading-scroller></test-data-grid-with-leading-scroller>`
+			)
+
+			it('should resolve to the scroller containing the content', () => {
+				expect(scrollerOf(fixture.component)?.querySelector('#content')).not.toBeNull()
+			})
+
+			it('should not resolve to the preceding scroller', () => {
+				const precedingScroller = fixture.component.renderRoot.querySelector('mo-scroller#modebar')
+
+				expect(precedingScroller).not.toBeNull()
+				expect(scrollerOf(fixture.component)).not.toBe(precedingScroller as never)
+			})
+
+			it('should scroll the rows and not the preceding scroller', () => {
+				const scroller = scrollerOf(fixture.component)
+
+				expect(scroller?.contains(fixture.component.rows[0]!)).toBe(true)
 			})
 		})
 	})

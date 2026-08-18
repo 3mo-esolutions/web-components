@@ -160,7 +160,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}) rowHeight = DataGrid.rowHeight.value
 
 	@query('mo-data-grid-header') private readonly header?: DataGridHeader<TData>
-	@query('mo-scroller') protected readonly scroller?: Scroller
+	@query('mo-scroller#scroller') protected readonly scroller?: Scroller
 	@queryAll('[mo-data-grid-row]') readonly rows!: Array<DataGridRow<TData, TDetailsElement>>
 	@query('mo-data-grid-footer') private readonly footer?: DataGridFooter<TData>
 
@@ -587,7 +587,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		this.toggleAttribute('hasDetails', this.hasDetails)
 		return html`
 			<mo-flex ${style({ position: 'relative', flex: '1' })}>
-				<mo-scroller
+				<mo-scroller id='scroller'
 					${style({ flex: '1 0 var(--mo-data-grid-content-min-height, var(--_content-min-height-default))' })}
 					${observeResize(([e]) => this.style.setProperty('--_content-height', `${e?.contentRect.height ?? 0}px`))}
 				>

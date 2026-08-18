@@ -1,6 +1,6 @@
 // @ts-check
 import { promises as FileSystem } from 'fs'
-import { Package, run } from './util/index.ts'
+import { type CustomElementsManifest, Package, run } from './util/index.ts'
 
 const packageNames = Package.all.map(p => p.name)
 
@@ -21,7 +21,7 @@ const getPackageReadmeElements = (packageName: string) => {
 const cell = (value?: string) => value || ''
 const codeCell = (value?: string) => value ? `<code>${value.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code>` : ''
 
-async function generatePackageReadme(manifest: typeof import('../custom-elements.json'), pack: Package) {
+async function generatePackageReadme(manifest: CustomElementsManifest, pack: Package) {
 	const elements = manifest.tags.filter(tag => tag.path.includes(pack.relativePath.replace('/', '\\') + '\\'))
 	const readmeElements = getPackageReadmeElements(pack.name)
 	await FileSystem.writeFile(`${pack.path}/README.md`, `
@@ -62,7 +62,7 @@ async function generatePackageReadme(manifest: typeof import('../custom-elements
 						<tr>
 							<td>${cell(prop.name)}</td>
 							<td>${codeCell(prop.type)}</td>
-							<td>${cell((prop as any).description)}</td>
+							<td>${cell(prop.description)}</td>
 						</tr>
 					`).join('\n')}
 				`}
@@ -75,7 +75,7 @@ async function generatePackageReadme(manifest: typeof import('../custom-elements
 						<tr>
 							<td>${cell(event.name)}</td>
 							<td>${codeCell(event.type)}</td>
-							<td>${cell((event as any).description)}</td>
+							<td>${cell(event.description)}</td>
 						</tr>
 					`).join('\n')}
 				`}
@@ -88,7 +88,7 @@ async function generatePackageReadme(manifest: typeof import('../custom-elements
 						<tr>
 							<td>${cell(prop.name)}</td>
 							<td></td>
-							<td>${cell((prop as any).description)}</td>
+							<td>${cell(prop.description)}</td>
 						</tr>
 					`).join('\n')}
 				`}
@@ -101,7 +101,7 @@ async function generatePackageReadme(manifest: typeof import('../custom-elements
 						<tr>
 							<td>${cell(part.name)}</td>
 							<td></td>
-							<td>${cell((part as any).description)}</td>
+							<td>${cell(part.description)}</td>
 						</tr>
 					`).join('\n')}
 				`}
@@ -133,7 +133,7 @@ async function generateGlobalReadme() {
 	`.replace(/\t/g, ''))
 }
 
-//const manifest = (await import('../custom-elements.json', { assert: { type: 'json' } })).default
+//const manifest = JSON.parse(await FileSystem.readFile('./custom-elements.json', 'utf8')) as CustomElementsManifest
 
 await Promise.all([
 	//...Package.all.map(p => generatePackageReadme(manifest, p)),

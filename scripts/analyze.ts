@@ -3,7 +3,7 @@ import { promises as FileSystem, existsSync } from 'fs'
 
 await run('wca analyze --outFiles ./custom-elements.json --visibility public ./packages/**/*.ts')
 
-const customElements = (await import('../custom-elements.json', { with: { type: 'json' } })).default as unknown as CustomElementsManifest
+const customElements = JSON.parse(await FileSystem.readFile('./custom-elements.json', 'utf8')) as CustomElementsManifest
 
 const unknownTags = new Array<string>()
 
