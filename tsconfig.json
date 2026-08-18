@@ -214,6 +214,9 @@
 			"path": "./packages/IntervalController"
 		},
 		{
+			"path": "./packages/Key"
+		},
+		{
 			"path": "./packages/KeyboardController"
 		},
 		{
