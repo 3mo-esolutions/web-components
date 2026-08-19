@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/del",
-	"version": "0.4.1",
+	"version": "0.4.2",
 	"description": "3MO Design Library to build business-suite web applications",
 	"repository": {
 		"type": "git",
@@ -46,6 +46,7 @@
 		"@3mo/media-query-observer": "x",
 		"@3mo/localization": "x",
 		"@3mo/fetcher-controller": "x",
+		"@3mo/overflow-controller": "x",
 		"@3mo/flex": "x",
 		"@3mo/grid": "x",
 		"@3mo/splitter": "x",

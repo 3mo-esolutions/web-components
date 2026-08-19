@@ -1,14 +1,20 @@
 import { type Meta, type StoryObj } from '@storybook/web-components-vite'
-import { Component, html, property, range } from '@a11d/lit'
+import { Component, html, property, range, style } from '@a11d/lit'
 import { type MaterialIcon } from '@3mo/icon'
 import { ToolbarController } from './index.js'
 import p from './package.json'
 
 export default {
-	title: 'Utilities / Toolbar',
+	title: 'Layout & Containment / Toolbar',
 	component: 'mo-toolbar',
 	package: p,
 } as Meta
+
+const resizable = (content: unknown) => html`
+	<div ${style({ resize: 'horizontal', overflow: 'hidden', minWidth: '100px', padding: '4px', border: '1px dashed var(--mo-color-transparent-gray-3)', borderRadius: 'var(--mo-border-radius)' })}>
+		${content}
+	</div>
+`
 
 export const Default: StoryObj = {
 	args: {
@@ -29,7 +35,14 @@ export const Default: StoryObj = {
 			options: ['start', 'end']
 		}
 	},
-	render: ({ collapsed, extraItems, overflowIcon, overflowPosition }) => html`
+	parameters: {
+		docs: {
+			description: {
+				story: 'Items which no longer fit move into the overflow menu - drag the handle at the dashed container\'s end corner to resize the toolbar. As the very same elements are only reassigned between slots, they keep their state and event listeners in either home. The "Paste" item opts out of overflowing via the `data-no-overflow` attribute and always stays in the toolbar.'
+			}
+		}
+	},
+	render: ({ collapsed, extraItems, overflowIcon, overflowPosition }) => resizable(html`
 		<mo-toolbar ?collapsed=${collapsed} overflowIcon=${overflowIcon} overflowPosition=${overflowPosition}>
 			<mo-menu-item icon='content_cut'>
 				<span>Cut</span>
@@ -46,13 +59,20 @@ export const Default: StoryObj = {
 				</mo-menu-item>
 			`)}
 		</mo-toolbar>
-	`
+	`)
 }
 
 export const WithController: StoryObj = {
 	args: { itemCount: 4 },
+	parameters: {
+		docs: {
+			description: {
+				story: 'The `ToolbarController` orchestrates any pane/overflow-slot pair on a custom component. This one hosts two independent panes - the right one laid out right-to-left - whose overflowing items gather in a shared list toggled by the button in between.'
+			}
+		}
+	},
 	render: ({ itemCount }) => {
-		return html`
+		return resizable(html`
 			<story-custom-toolbar>
 				${[...range(0, itemCount)].map(i => html`
 					<mo-menu-item icon='arrow_circle_left' slot='left'>
@@ -65,7 +85,7 @@ export const WithController: StoryObj = {
 					</mo-menu-item>
 				`)}
 			</story-custom-toolbar>
-		`
+		`)
 	}
 }
 class StoryCustomToolbar extends Component {

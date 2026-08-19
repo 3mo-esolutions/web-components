@@ -1,7 +1,6 @@
-import { Component, bind, component, css, eventListener, html, property, query, queryAll, repeat, style } from '@a11d/lit'
+import { Component, bind, component, css, eventListener, html, property, type PropertyValues, query, queryAll, repeat, style } from '@a11d/lit'
 import { Key } from '@a11d/lit-application'
-import { observeResize } from '@3mo/resize-observer'
-import { observeMutation } from '@3mo/mutation-observer'
+import { OverflowController } from '@3mo/overflow-controller'
 import type { INavigation } from './INavigation.js'
 
 /**
@@ -28,9 +27,21 @@ export class Navigation extends Component {
 	@property({ type: Boolean, reflect: true }) mobileNavigation = false
 
 	@query('mo-drawer mo-list') private readonly drawerNavigationList?: HTMLElement
-	@query('#navbar-navigations') private readonly navigationsContainer!: HTMLElement
+	@query('#navbar-navigations') private readonly navigationsContainer?: HTMLElement
 	@queryAll('#navbar-navigations mo-navigation-item') readonly navigationItems!: Array<HTMLElement>
 	@query('mo-icon-button[icon=menu]') readonly menuButton?: HTMLElement
+
+	/**
+	 * The navigation-bar collapses as a whole rather than item by item, so only the controller's
+	 * verdict on whether *anything* overflows is of interest - which items do is left unapplied.
+	 */
+	private readonly overflowController = new OverflowController(this, host => ({
+		get container() { return host.navigationsContainer },
+		get items() { return host.navigationItems },
+		// A bar which has not been laid out yet would report all of its items as overflowing,
+		// collapsing the navigation into the hamburger until the first resize corrects it.
+		get disabled() { return !host.navigationsContainer?.clientWidth },
+	}))
 
 	@eventListener({ target: window, type: 'keydown' })
 	protected handleKeyPress(event: KeyboardEvent) {
@@ -42,6 +53,11 @@ export class Navigation extends Component {
 	}
 
 	override role = 'navigation'
+
+	protected override update(props: PropertyValues<this>) {
+		this.mobileNavigation = this.overflowController.hasOverflow
+		super.update(props)
+	}
 
 	static override get styles() {
 		return css`
@@ -116,11 +132,7 @@ export class Navigation extends Component {
 					<slot name='navbar-heading'>${manifest?.short_name}</slot>
 				</mo-flex>
 
-				<mo-flex id='navbar-navigations' direction='horizontal' alignItems='center' gap='8px'
-					${style({ flex: '1', overflow: 'hidden', opacity: '0' })}
-					${observeResize(() => this.checkNavigationOverflow())}
-					${observeMutation(() => this.checkNavigationOverflow())}
-				>
+				<mo-flex id='navbar-navigations' direction='horizontal' alignItems='center' gap='8px' ${style({ flex: '1', overflow: 'hidden' })}>
 					${repeat(this.navigations, n => n, navigation => navigation.getItemTemplate({ navigationInvocationHandler: () => this.drawerOpen = false }))}
 				</mo-flex>
 
@@ -129,24 +141,6 @@ export class Navigation extends Component {
 				</mo-flex>
 			</mo-flex>
 		`
-	}
-
-	private async checkNavigationOverflow() {
-		// As the items render using a "repeat" directive, they are not immediately available in the DOM sometimes.
-		await new Promise(r => setTimeout(r))
-
-		const lastNavigationItem = this.navigationsContainer.style.flexDirection === 'row-reverse'
-			? this.navigationsContainer.firstElementChild
-			: this.navigationsContainer.lastElementChild
-
-		const firstNavigationItem = this.navigationsContainer.style.flexDirection === 'row-reverse'
-			? this.navigationsContainer.lastElementChild
-			: this.navigationsContainer.firstElementChild
-
-		const scrollWidth = (lastNavigationItem?.getBoundingClientRect().right ?? 0) - (firstNavigationItem?.getBoundingClientRect().left ?? 0)
-		this.mobileNavigation = this.navigationsContainer.clientWidth < scrollWidth
-
-		this.navigationsContainer.style.opacity = '1'
 	}
 
 	private get drawerTemplate() {

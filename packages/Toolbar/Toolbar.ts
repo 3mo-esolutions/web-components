@@ -29,7 +29,19 @@ export class Toolbar extends Component {
 	static override get styles() {
 		return css`
 			:host([collapsed]) mo-toolbar-pane {
-				display: none
+				display: none;
+			}
+
+			/*
+				Items are sized to their content and neither grow nor shrink: a zero flex-basis resolves
+				each item to its min-content size, which "nowrap" keeps at the full label width - so
+				fill-width components like menu items do not stretch across the pane, and the measured
+				sizes stay stable no matter how crowded the pane is.
+			*/
+			mo-toolbar-pane slot::slotted(*) {
+				flex: 0 0 0%;
+				white-space: nowrap;
+				text-overflow: ellipsis;
 			}
 		`
 	}

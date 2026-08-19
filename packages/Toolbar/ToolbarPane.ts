@@ -1,17 +1,17 @@
-import { Component, component, css, html, event } from '@a11d/lit'
-import { observeResize } from '@3mo/resize-observer'
+import { Component, component, css, html } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
-import '@3mo/flex'
 
 /**
- * @fires fillerResize
- * @fires itemsChange
+ * @element mo-toolbar-pane
+ *
+ * A single-line container which lays its items out along the inline axis and clips those which do
+ * not fit - the measurable pane of a @see ToolbarController. Spacing between items shall be provided
+ * via `gap`, as the controller's measurements do not account for margins.
+ *
+ * @slot - The toolbar items
  */
 @component('mo-toolbar-pane')
 export class ToolbarPane extends Component {
-	@event() readonly fillerResize!: EventDispatcher<Array<ResizeObserverEntry>>
-	@event() readonly itemsChange!: EventDispatcher
-
 	readonly slotController = new SlotController(this)
 
 	get items() { return this.slotController.getAssignedElements('') }
@@ -19,9 +19,10 @@ export class ToolbarPane extends Component {
 	static override get styles() {
 		return css`
 			:host {
-				display: inline-block;
+				display: flex;
 				flex: 1 1 0;
 				width: 0;
+				align-items: center;
 				overflow: clip;
 			}
 
@@ -29,38 +30,16 @@ export class ToolbarPane extends Component {
 				outline: none;
 			}
 
-			mo-flex {
-				overflow: clip;
-				flex-direction: row;
-				align-items: center;
-				align-content: center;
-			}
-
 			::slotted(*) {
 				flex: 0 0 0%;
-				text-overflow: ellipsis;
 				white-space: nowrap;
-			}
-
-			#filler {
-				flex: 0 1 100%;
-				align-self: stretch;
-			}
-
-			#pad {
-				flex: 0 0 1px;
+				text-overflow: ellipsis;
 			}
 		`
 	}
 
 	protected override get template() {
-		return html`
-			<mo-flex part='pane'>
-				<div id='pad'></div>
-				<slot @slotchange=${() => this.itemsChange.dispatch()}></slot>
-				<div id='filler' ${observeResize(elements => this.fillerResize.dispatch(elements))}></div>
-			</mo-flex>
-		`
+		return html`<slot></slot>`
 	}
 }
 

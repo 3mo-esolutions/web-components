@@ -1,70 +1,52 @@
 import { type ElementPart, AsyncDirective, Controller, type ReactiveControllerHost, directive, html } from '@a11d/lit'
-import { IntersectionController } from '@3mo/intersection-observer'
+import { OverflowController } from '@3mo/overflow-controller'
 import { SlotController } from '@3mo/slot-controller'
-import { type ToolbarPane } from './index.js'
 
 const generatePaneDirective = (controller: ToolbarController) => directive(class ToolbarPaneDirective extends AsyncDirective {
-	pane?: ToolbarPane
-
-	override reconnected() { super.reconnected() }
+	pane?: Element
 
 	render() { return html.nothing }
 
-	override async update(part: ElementPart) {
-		this.pane = part.element as ToolbarPane
-		controller.beginObserving(this.pane)
-		this.pane.fillerResize.subscribe(this.handleResize)
-		await this.pane.updateComplete
-		this.pane.items.forEach(x => x.slot === controller.paneSlotName && !x.hasAttribute('data-no-overflow') && controller.intersectionController?.observe(x))
-		this.pane.itemsChange.subscribe(this.handleItemsChange)
+	override update(part: ElementPart) {
+		this.pane = part.element
+		controller.paneElement = this.pane
 		return super.update(part, [])
 	}
 
 	override disconnected() {
-		this.pane?.fillerResize.unsubscribe(this.handleResize)
-		this.pane?.itemsChange.unsubscribe(this.handleItemsChange)
-	}
-
-	handleItemsChange = () => {
-		this.pane?.items.forEach(x => x.slot === controller.paneSlotName && !x.hasAttribute('data-no-overflow') && controller.intersectionController?.observe(x))
-	}
-
-	handleResize = () => {
-		for (const target of controller.slotController?.getAssignedElements(controller.overflowContentSlotName) ?? []) {
-			target.slot = controller.paneSlotName
+		if (controller.paneElement === this.pane) {
+			controller.paneElement = undefined
 		}
+	}
+
+	override reconnected() {
+		controller.paneElement = this.pane
 	}
 })
 
+/**
+ * Moves the host's items between a pane slot and an overflow slot, so that items which do not fit
+ * the pane render wherever the overflow slot is projected into - usually an overflow menu. Being
+ * plain slot reassignments of one and the same element, the items keep their state and listeners.
+ *
+ * The measured pane is designated by rendering the @see pane directive on it:
+ *
+ * ```html
+ * <mo-toolbar-pane ${this.toolbarController.pane()}>
+ *     <slot name=${this.toolbarController.paneSlotName}></slot>
+ * </mo-toolbar-pane>
+ * ```
+ *
+ * Items opt out of overflowing via the `data-no-overflow` attribute.
+ *
+ * @ssr false
+ */
 export class ToolbarController extends Controller {
 	readonly slotController = this.host.slotController ?? new SlotController(this.host)
 
-	protected _intersectionController?: IntersectionController
-	get intersectionController() { return this._intersectionController }
+	readonly overflowController: OverflowController<HTMLElement>
 
-	beginObserving(root: ToolbarPane) {
-		this._intersectionController = new IntersectionController(root, {
-			target: null,
-			config: { threshold: .99, root },
-			callback: entries => {
-				let changed = false
-				for (const entry of entries) {
-					const target = entry.target
-					if (!entry.isIntersecting) {
-						target.slot = this.overflowContentSlotName
-						this.intersectionController?.unobserve(target)
-						changed = true
-					}
-				}
-				if (changed) {
-					root.requestUpdate()
-				}
-			}
-		})
-	}
-
-	get paneSlotName() { return this.options?.paneSlotName ?? '' }
-	get overflowContentSlotName() { return this.options?.overflowContentSlotName ?? 'overflow-content' }
+	paneElement?: Element
 
 	readonly pane = generatePaneDirective(this)
 
@@ -74,5 +56,20 @@ export class ToolbarController extends Controller {
 			readonly paneSlotName: string
 			readonly overflowContentSlotName: string
 		}
-	) { super(host) }
+	) {
+		super(host)
+		const controller = this
+		this.overflowController = new OverflowController<HTMLElement>(host, {
+			get container() { return controller.paneElement },
+			get items() {
+				return [...controller.host.children].filter((child): child is HTMLElement =>
+					child instanceof HTMLElement && (child.slot === controller.paneSlotName || child.slot === controller.overflowContentSlotName))
+			},
+			isPinned: item => item.hasAttribute('data-no-overflow'),
+			handleChange: (item, overflows) => item.slot = overflows ? controller.overflowContentSlotName : controller.paneSlotName,
+		})
+	}
+
+	get paneSlotName() { return this.options?.paneSlotName ?? '' }
+	get overflowContentSlotName() { return this.options?.overflowContentSlotName ?? 'overflow-content' }
 }

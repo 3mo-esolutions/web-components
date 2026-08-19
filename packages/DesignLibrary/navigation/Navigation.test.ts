@@ -3,7 +3,58 @@ import { Key } from '@a11d/lit-application'
 import { Navigation } from './Navigation.js'
 import { NavigationLink } from './INavigation.js'
 
+/** Awaits the resize observations and microtask-batched measurements the overflow controller settles through. */
+const settle = async (component: Navigation) => {
+	for (let i = 0; i < 10; i++) {
+		await component.updateComplete
+		await new Promise(resolve => requestAnimationFrame(resolve))
+	}
+	await component.updateComplete
+}
+
 describe('Navigation', () => {
+	describe('collapsing into the hamburger', () => {
+		const fixture = new ComponentTestFixture(() => {
+			const navigation = new Navigation()
+			navigation.style.display = 'block'
+			navigation.navigations = new Array(10).fill(undefined).map((_, index) =>
+				new NavigationLink({ label: `Navigation ${index + 1}`, component: { urlMatches: () => false } } as any))
+			return navigation
+		})
+		beforeAll(() => (globalThis as any).manifest = {})
+
+		const hamburgerVisible = () => getComputedStyle(fixture.component.menuButton!).display !== 'none'
+
+		it('should keep the navigation-bar as long as all items fit', async () => {
+			fixture.component.style.width = '3000px'
+
+			await settle(fixture.component)
+
+			expect(fixture.component.mobileNavigation).toBeFalse()
+			expect(hamburgerVisible()).toBeFalse()
+		})
+
+		it('should collapse into the hamburger once the items no longer fit', async () => {
+			fixture.component.style.width = '400px'
+
+			await settle(fixture.component)
+
+			expect(fixture.component.mobileNavigation).toBeTrue()
+			expect(hamburgerVisible()).toBeTrue()
+		})
+
+		it('should restore the navigation-bar once the items fit again', async () => {
+			fixture.component.style.width = '400px'
+			await settle(fixture.component)
+			expect(fixture.component.mobileNavigation).toBeTrue()
+
+			fixture.component.style.width = '3000px'
+			await settle(fixture.component)
+
+			expect(fixture.component.mobileNavigation).toBeFalse()
+		})
+	})
+
 	describe('Alt key activation', () => {
 		const fixture = new ComponentTestFixture(() => {
 			const navigation = new Navigation()
