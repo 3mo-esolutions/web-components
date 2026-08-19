@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/del",
-	"version": "0.4.0",
+	"version": "0.4.1",
 	"description": "3MO Design Library to build business-suite web applications",
 	"repository": {
 		"type": "git",
@@ -125,6 +125,13 @@
 		"@3mo/screen-size": "x",
 		"@3mo/focus-ring": "x",
 		"@3mo/command-palette": "x",
+		"@3mo/indexability": "x",
+		"@3mo/selectability": "x",
+		"@3mo/infinite-scroll-controller": "x",
+		"@3mo/key": "x",
+		"@3mo/masonry": "x",
+		"@3mo/master-detail": "x",
+		"@3mo/style-property": "x",
 		"detect-browser": "x",
 		"typescript-memoize": "1.x",
 		"@ts-stack/markdown": "x"
