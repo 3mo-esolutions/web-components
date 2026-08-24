@@ -79,4 +79,8 @@ export class LocalizedString<Key extends LocalizableStringKey> {
 	toString() {
 		return this.value
 	}
+
+	toJSON() {
+		return this.value
+	}
 }

@@ -1,4 +1,6 @@
-const currencyCodes = ['BTC', 'AFN', 'EUR', 'ALL', 'DZD', 'USD', 'AOA', 'XCD', 'ARS', 'AMD', 'AWG', 'AUD', 'AZN', 'BSD', 'BHD', 'BDT', 'BBD', 'BYN', 'BZD', 'XOF', 'BMD', 'INR', 'BTN', 'BOB', 'BOV', 'BAM', 'BWP', 'NOK', 'BRL', 'BND', 'BGN', 'BIF', 'CVE', 'KHR', 'XAF', 'CAD', 'KYD', 'CLP', 'CLF', 'CNY', 'COP', 'COU', 'KMF', 'CDF', 'NZD', 'CRC', 'CUP', 'CUC', 'ANG', 'CZK', 'DKK', 'DJF', 'DOP', 'EGP', 'SVC', 'ERN', 'SZL', 'ETB', 'FKP', 'FJD', 'XPF', 'GMD', 'GEL', 'GHS', 'GIP', 'GTQ', 'GBP', 'GNF', 'GYD', 'HTG', 'HNL', 'HKD', 'HUF', 'ISK', 'IDR', 'XDR', 'IRR', 'IQD', 'ILS', 'JMD', 'JPY', 'JOD', 'KZT', 'KES', 'KPW', 'KRW', 'KWD', 'KGS', 'LAK', 'LBP', 'LSL', 'ZAR', 'LRD', 'LYD', 'CHF', 'MOP', 'MKD', 'MGA', 'MWK', 'MYR', 'MVR', 'MRU', 'MUR', 'XUA', 'MXN', 'MXV', 'MDL', 'MNT', 'MAD', 'MZN', 'MMK', 'NAD', 'NPR', 'NIO', 'NGN', 'OMR', 'PKR', 'PAB', 'PGK', 'PYG', 'PEN', 'PHP', 'PLN', 'QAR', 'RON', 'RUB', 'RWF', 'SHP', 'WST', 'STN', 'SAR', 'RSD', 'SCR', 'SLL', 'SGD', 'XSU', 'SBD', 'SOS', 'SSP', 'LKR', 'SDG', 'SRD', 'SEK', 'CHE', 'CHW', 'SYP', 'SLE', 'TWD', 'TJS', 'TZS', 'THB', 'TOP', 'TTD', 'TND', 'TRY', 'TMT', 'UGX', 'UAH', 'AED', 'USN', 'UYU', 'UYI', 'UYW', 'UZS', 'VUV', 'VES', 'VED', 'VND', 'YER', 'ZMW', 'ZWL', 'XBA', 'XBB', 'XBC', 'XBD', 'XTS', 'XXX', 'XAU', 'XPD', 'XPT', 'XAG'] as const
+import { Localizer } from '../Localizer.js'
+
+const currencyCodes = ['BTC', 'AFN', 'EUR', 'ALL', 'DZD', 'USD', 'AOA', 'XCD', 'ARS', 'AMD', 'AWG', 'AUD', 'AZN', 'BSD', 'BHD', 'BDT', 'BBD', 'BYN', 'BZD', 'XOF', 'BMD', 'INR', 'BTN', 'BOB', 'BOV', 'BAM', 'BWP', 'NOK', 'BRL', 'BND', 'BGN', 'BIF', 'CVE', 'KHR', 'XAF', 'CAD', 'KYD', 'CLP', 'CLF', 'CNY', 'COP', 'COU', 'KMF', 'CDF', 'NZD', 'CRC', 'CUP', 'CUC', 'ANG', 'XCG', 'CZK', 'DKK', 'DJF', 'DOP', 'EGP', 'SVC', 'ERN', 'SZL', 'ETB', 'FKP', 'FJD', 'XPF', 'GMD', 'GEL', 'GHS', 'GIP', 'GTQ', 'GBP', 'GNF', 'GYD', 'HTG', 'HNL', 'HKD', 'HUF', 'ISK', 'IDR', 'XDR', 'IRR', 'IQD', 'ILS', 'JMD', 'JPY', 'JOD', 'KZT', 'KES', 'KPW', 'KRW', 'KWD', 'KGS', 'LAK', 'LBP', 'LSL', 'ZAR', 'LRD', 'LYD', 'CHF', 'MOP', 'MKD', 'MGA', 'MWK', 'MYR', 'MVR', 'MRU', 'MUR', 'XUA', 'MXN', 'MXV', 'MDL', 'MNT', 'MAD', 'MZN', 'MMK', 'NAD', 'NPR', 'NIO', 'NGN', 'OMR', 'PKR', 'PAB', 'PGK', 'PYG', 'PEN', 'PHP', 'PLN', 'QAR', 'RON', 'RUB', 'RWF', 'SHP', 'WST', 'STN', 'SAR', 'RSD', 'SCR', 'SLL', 'SGD', 'XSU', 'SBD', 'SOS', 'SSP', 'LKR', 'SDG', 'SRD', 'SEK', 'CHE', 'CHW', 'SYP', 'SLE', 'TWD', 'TJS', 'TZS', 'THB', 'TOP', 'TTD', 'TND', 'TRY', 'TMT', 'UGX', 'UAH', 'AED', 'USN', 'UYU', 'UYI', 'UYW', 'UZS', 'VUV', 'VES', 'VED', 'VND', 'YER', 'ZMW', 'ZWL', 'ZWG', 'XBA', 'XBB', 'XBC', 'XBD', 'XTS', 'XXX', 'XAU', 'XPD', 'XPT', 'XAG'] as const
 
 export type CurrencyCode = typeof currencyCodes[number]
 
@@ -11,10 +13,12 @@ export class Currency {
 		}
 	}
 
-	constructor(readonly code: CurrencyCode) {
-		code = code.toUpperCase() as CurrencyCode
-		if (!currencyCodes.includes(code)) {
-			throw new Error(`Invalid currency code: ${code}`)
+	readonly code: CurrencyCode
+
+	constructor(code: CurrencyCode) {
+		this.code = code.toUpperCase() as CurrencyCode
+		if (!currencyCodes.includes(this.code)) {
+			throw new Error(`Invalid currency code: ${this.code}`)
 		}
 	}
 
@@ -22,9 +26,15 @@ export class Currency {
 
 	valueOf() { return this.code }
 
-	get symbol() {
+	get symbol() { return this.getSymbol() }
+
+	/**
+	 * The symbol the given language writes this currency with, falling back to the code itself.
+	 * Symbols are language-specific: `CNY` is `¥` in Chinese but `CN¥` in German.
+	 */
+	getSymbol(language = Localizer.languages.current) {
 		try {
-			return Intl.NumberFormat('de-DE', { style: 'currency', currency: this.code, maximumFractionDigits: 0 })
+			return Intl.NumberFormat(language, { style: 'currency', currency: this.code, maximumFractionDigits: 0 })
 				.formatToParts(0)
 				.find(part => part.type === 'currency')
 				?.value ?? this.code
@@ -36,357 +46,361 @@ export class Currency {
 	// #region Pre-defined currencies
 	/** Bitcoin */
 	static readonly BTC: Currency
-	/** Afghani */
+	/** Afghan Afghani */
 	static readonly AFN: Currency
 	/** Euro */
 	static readonly EUR: Currency
-	/** Lek */
+	/** Albanian Lek */
 	static readonly ALL: Currency
 	/** Algerian Dinar */
 	static readonly DZD: Currency
 	/** US Dollar */
 	static readonly USD: Currency
-	/** Kwanza */
+	/** Angolan Kwanza */
 	static readonly AOA: Currency
 	/** East Caribbean Dollar */
 	static readonly XCD: Currency
-	/** No universal currency */
-	static readonly ARS: Currency
 	/** Argentine Peso */
-	static readonly AMD: Currency
+	static readonly ARS: Currency
 	/** Armenian Dram */
-	static readonly AWG: Currency
+	static readonly AMD: Currency
 	/** Aruban Florin */
-	static readonly AUD: Currency
+	static readonly AWG: Currency
 	/** Australian Dollar */
+	static readonly AUD: Currency
+	/** Azerbaijani Manat */
 	static readonly AZN: Currency
-	/** Azerbaijan Manat */
-	static readonly BSD: Currency
 	/** Bahamian Dollar */
-	static readonly BHD: Currency
+	static readonly BSD: Currency
 	/** Bahraini Dinar */
+	static readonly BHD: Currency
+	/** Bangladeshi Taka */
 	static readonly BDT: Currency
-	/** Taka */
+	/** Barbadian Dollar */
 	static readonly BBD: Currency
-	/** Barbados Dollar */
-	static readonly BYN: Currency
 	/** Belarusian Ruble */
-	static readonly BZD: Currency
+	static readonly BYN: Currency
 	/** Belize Dollar */
+	static readonly BZD: Currency
+	/** West African CFA Franc */
 	static readonly XOF: Currency
-	/** CFA Franc BCEAO */
+	/** Bermudan Dollar */
 	static readonly BMD: Currency
-	/** Bermudian Dollar */
-	static readonly INR: Currency
 	/** Indian Rupee */
+	static readonly INR: Currency
+	/** Bhutanese Ngultrum */
 	static readonly BTN: Currency
-	/** Ngultrum */
+	/** Bolivian Boliviano */
 	static readonly BOB: Currency
-	/** Boliviano */
+	/** Bolivian Mvdol */
 	static readonly BOV: Currency
-	/** Mvdol */
+	/** Bosnia-Herzegovina Convertible Mark */
 	static readonly BAM: Currency
-	/** Convertible Mark */
+	/** Botswanan Pula */
 	static readonly BWP: Currency
-	/** Pula */
-	static readonly NOK: Currency
 	/** Norwegian Krone */
-	static readonly BRL: Currency
+	static readonly NOK: Currency
 	/** Brazilian Real */
-	static readonly BND: Currency
+	static readonly BRL: Currency
 	/** Brunei Dollar */
-	static readonly BGN: Currency
+	static readonly BND: Currency
 	/** Bulgarian Lev */
+	static readonly BGN: Currency
+	/** Burundian Franc */
 	static readonly BIF: Currency
-	/** Burundi Franc */
+	/** Cape Verdean Escudo */
 	static readonly CVE: Currency
-	/** Cabo Verde Escudo */
+	/** Cambodian Riel */
 	static readonly KHR: Currency
-	/** Riel */
+	/** Central African CFA Franc */
 	static readonly XAF: Currency
-	/** CFA Franc BEAC */
-	static readonly CAD: Currency
 	/** Canadian Dollar */
-	static readonly KYD: Currency
+	static readonly CAD: Currency
 	/** Cayman Islands Dollar */
-	static readonly CLP: Currency
+	static readonly KYD: Currency
 	/** Chilean Peso */
+	static readonly CLP: Currency
+	/** Chilean Unit of Account (UF) */
 	static readonly CLF: Currency
-	/** Unidad de Fomento */
+	/** Chinese Yuan */
 	static readonly CNY: Currency
-	/** Yuan Renminbi */
-	static readonly COP: Currency
 	/** Colombian Peso */
+	static readonly COP: Currency
+	/** Colombian Real Value Unit */
 	static readonly COU: Currency
-	/** Unidad de Valor Real */
-	static readonly KMF: Currency
 	/** Comorian Franc */
-	static readonly CDF: Currency
+	static readonly KMF: Currency
 	/** Congolese Franc */
-	static readonly NZD: Currency
+	static readonly CDF: Currency
 	/** New Zealand Dollar */
+	static readonly NZD: Currency
+	/** Costa Rican Colón */
 	static readonly CRC: Currency
-	/** Kuna */
-	static readonly CUP: Currency
 	/** Cuban Peso */
+	static readonly CUP: Currency
+	/** Cuban Convertible Peso */
 	static readonly CUC: Currency
-	/** Peso Convertible */
-	static readonly ANG: Currency
 	/** Netherlands Antillean Guilder */
-	static readonly CZK: Currency
+	static readonly ANG: Currency
+	/** Caribbean guilder */
+	static readonly XCG: Currency
 	/** Czech Koruna */
-	static readonly DKK: Currency
+	static readonly CZK: Currency
 	/** Danish Krone */
+	static readonly DKK: Currency
+	/** Djiboutian Franc */
 	static readonly DJF: Currency
-	/** Djibouti Franc */
-	static readonly DOP: Currency
 	/** Dominican Peso */
-	static readonly EGP: Currency
+	static readonly DOP: Currency
 	/** Egyptian Pound */
+	static readonly EGP: Currency
+	/** Salvadoran Colón */
 	static readonly SVC: Currency
-	/** El Salvador Colon */
+	/** Eritrean Nakfa */
 	static readonly ERN: Currency
-	/** Nakfa */
+	/** Swazi Lilangeni */
 	static readonly SZL: Currency
-	/** Lilangeni */
-	static readonly ETB: Currency
 	/** Ethiopian Birr */
-	static readonly FKP: Currency
+	static readonly ETB: Currency
 	/** Falkland Islands Pound */
+	static readonly FKP: Currency
+	/** Fijian Dollar */
 	static readonly FJD: Currency
-	/** Fiji Dollar */
-	static readonly XPF: Currency
 	/** CFP Franc */
+	static readonly XPF: Currency
+	/** Gambian Dalasi */
 	static readonly GMD: Currency
-	/** Dalasi */
+	/** Georgian Lari */
 	static readonly GEL: Currency
-	/** Lari */
+	/** Ghanaian Cedi */
 	static readonly GHS: Currency
-	/** Ghana Cedi */
-	static readonly GIP: Currency
 	/** Gibraltar Pound */
+	static readonly GIP: Currency
+	/** Guatemalan Quetzal */
 	static readonly GTQ: Currency
-	/** Quetzal */
+	/** British Pound */
 	static readonly GBP: Currency
-	/** Pound Sterling */
-	static readonly GNF: Currency
 	/** Guinean Franc */
+	static readonly GNF: Currency
+	/** Guyanaese Dollar */
 	static readonly GYD: Currency
-	/** Guyana Dollar */
+	/** Haitian Gourde */
 	static readonly HTG: Currency
-	/** Gourde */
+	/** Honduran Lempira */
 	static readonly HNL: Currency
-	/** Lempira */
-	static readonly HKD: Currency
 	/** Hong Kong Dollar */
+	static readonly HKD: Currency
+	/** Hungarian Forint */
 	static readonly HUF: Currency
-	/** Forint */
+	/** Icelandic Króna */
 	static readonly ISK: Currency
-	/** Iceland Krona */
+	/** Indonesian Rupiah */
 	static readonly IDR: Currency
-	/** Rupiah */
+	/** Special Drawing Rights */
 	static readonly XDR: Currency
-	/** SDR (Special Drawing Right) */
-	static readonly IRR: Currency
 	/** Iranian Rial */
-	static readonly IQD: Currency
+	static readonly IRR: Currency
 	/** Iraqi Dinar */
+	static readonly IQD: Currency
+	/** Israeli New Shekel */
 	static readonly ILS: Currency
-	/** New Israeli Sheqel */
-	static readonly JMD: Currency
 	/** Jamaican Dollar */
+	static readonly JMD: Currency
+	/** Japanese Yen */
 	static readonly JPY: Currency
-	/** Yen */
-	static readonly JOD: Currency
 	/** Jordanian Dinar */
+	static readonly JOD: Currency
+	/** Kazakhstani Tenge */
 	static readonly KZT: Currency
-	/** Tenge */
-	static readonly KES: Currency
 	/** Kenyan Shilling */
-	static readonly KPW: Currency
+	static readonly KES: Currency
 	/** North Korean Won */
+	static readonly KPW: Currency
+	/** South Korean Won */
 	static readonly KRW: Currency
-	/** Won */
-	static readonly KWD: Currency
 	/** Kuwaiti Dinar */
+	static readonly KWD: Currency
+	/** Kyrgyz Som */
 	static readonly KGS: Currency
-	/** Som */
+	/** Laotian Kip */
 	static readonly LAK: Currency
-	/** Lao Kip */
-	static readonly LBP: Currency
 	/** Lebanese Pound */
+	static readonly LBP: Currency
+	/** Lesotho Loti */
 	static readonly LSL: Currency
-	/** Loti */
+	/** South African Rand */
 	static readonly ZAR: Currency
-	/** Rand */
-	static readonly LRD: Currency
 	/** Liberian Dollar */
-	static readonly LYD: Currency
+	static readonly LRD: Currency
 	/** Libyan Dinar */
-	static readonly CHF: Currency
+	static readonly LYD: Currency
 	/** Swiss Franc */
+	static readonly CHF: Currency
+	/** Macanese Pataca */
 	static readonly MOP: Currency
-	/** Pataca */
+	/** Macedonian Denar */
 	static readonly MKD: Currency
-	/** Denar */
-	static readonly MGA: Currency
 	/** Malagasy Ariary */
+	static readonly MGA: Currency
+	/** Malawian Kwacha */
 	static readonly MWK: Currency
-	/** Malawi Kwacha */
-	static readonly MYR: Currency
 	/** Malaysian Ringgit */
+	static readonly MYR: Currency
+	/** Maldivian Rufiyaa */
 	static readonly MVR: Currency
-	/** Rufiyaa */
+	/** Mauritanian Ouguiya */
 	static readonly MRU: Currency
-	/** Ouguiya */
+	/** Mauritian Rupee */
 	static readonly MUR: Currency
-	/** Mauritius Rupee */
-	static readonly XUA: Currency
 	/** ADB Unit of Account */
-	static readonly MXN: Currency
+	static readonly XUA: Currency
 	/** Mexican Peso */
+	static readonly MXN: Currency
+	/** Mexican Investment Unit */
 	static readonly MXV: Currency
-	/** Mexican Unidad de Inversion (UDI) */
-	static readonly MDL: Currency
 	/** Moldovan Leu */
+	static readonly MDL: Currency
+	/** Mongolian Tugrik */
 	static readonly MNT: Currency
-	/** Tugrik */
-	static readonly MAD: Currency
 	/** Moroccan Dirham */
+	static readonly MAD: Currency
+	/** Mozambican Metical */
 	static readonly MZN: Currency
-	/** Mozambique Metical */
+	/** Myanmar Kyat */
 	static readonly MMK: Currency
-	/** Kyat */
+	/** Namibian Dollar */
 	static readonly NAD: Currency
-	/** Namibia Dollar */
-	static readonly NPR: Currency
 	/** Nepalese Rupee */
+	static readonly NPR: Currency
+	/** Nicaraguan Córdoba */
 	static readonly NIO: Currency
-	/** Cordoba Oro */
+	/** Nigerian Naira */
 	static readonly NGN: Currency
-	/** Naira */
+	/** Omani Rial */
 	static readonly OMR: Currency
-	/** Rial Omani */
+	/** Pakistani Rupee */
 	static readonly PKR: Currency
-	/** Pakistan Rupee */
+	/** Panamanian Balboa */
 	static readonly PAB: Currency
-	/** Balboa */
+	/** Papua New Guinean Kina */
 	static readonly PGK: Currency
-	/** Kina */
+	/** Paraguayan Guarani */
 	static readonly PYG: Currency
-	/** Guarani */
+	/** Peruvian Sol */
 	static readonly PEN: Currency
-	/** Sol */
-	static readonly PHP: Currency
 	/** Philippine Peso */
+	static readonly PHP: Currency
+	/** Polish Zloty */
 	static readonly PLN: Currency
-	/** Zloty */
+	/** Qatari Riyal */
 	static readonly QAR: Currency
-	/** Qatari Rial */
-	static readonly RON: Currency
 	/** Romanian Leu */
-	static readonly RUB: Currency
+	static readonly RON: Currency
 	/** Russian Ruble */
+	static readonly RUB: Currency
+	/** Rwandan Franc */
 	static readonly RWF: Currency
-	/** Rwanda Franc */
+	/** St. Helena Pound */
 	static readonly SHP: Currency
-	/** Saint Helena Pound */
+	/** Samoan Tala */
 	static readonly WST: Currency
-	/** Tala */
+	/** São Tomé & Príncipe Dobra */
 	static readonly STN: Currency
-	/** Dobra */
-	static readonly SAR: Currency
 	/** Saudi Riyal */
-	static readonly RSD: Currency
+	static readonly SAR: Currency
 	/** Serbian Dinar */
+	static readonly RSD: Currency
+	/** Seychellois Rupee */
 	static readonly SCR: Currency
-	/** Seychelles Rupee */
+	/** Sierra Leonean Leone (1964—2022) */
 	static readonly SLL: Currency
-	/** Leone */
-	static readonly SGD: Currency
 	/** Singapore Dollar */
-	static readonly XSU: Currency
+	static readonly SGD: Currency
 	/** Sucre */
-	static readonly SBD: Currency
+	static readonly XSU: Currency
 	/** Solomon Islands Dollar */
-	static readonly SOS: Currency
+	static readonly SBD: Currency
 	/** Somali Shilling */
-	static readonly SSP: Currency
+	static readonly SOS: Currency
 	/** South Sudanese Pound */
+	static readonly SSP: Currency
+	/** Sri Lankan Rupee */
 	static readonly LKR: Currency
-	/** Sri Lanka Rupee */
-	static readonly SDG: Currency
 	/** Sudanese Pound */
+	static readonly SDG: Currency
+	/** Surinamese Dollar */
 	static readonly SRD: Currency
-	/** Surinam Dollar */
-	static readonly SEK: Currency
 	/** Swedish Krona */
-	static readonly CHE: Currency
+	static readonly SEK: Currency
 	/** WIR Euro */
-	static readonly CHW: Currency
+	static readonly CHE: Currency
 	/** WIR Franc */
-	static readonly SYP: Currency
-	/** Sierra Leonean leone */
-	static readonly SLE: Currency
+	static readonly CHW: Currency
 	/** Syrian Pound */
-	static readonly TWD: Currency
+	static readonly SYP: Currency
+	/** Sierra Leonean Leone */
+	static readonly SLE: Currency
 	/** New Taiwan Dollar */
+	static readonly TWD: Currency
+	/** Tajikistani Somoni */
 	static readonly TJS: Currency
-	/** Somoni */
-	static readonly TZS: Currency
 	/** Tanzanian Shilling */
+	static readonly TZS: Currency
+	/** Thai Baht */
 	static readonly THB: Currency
-	/** Baht */
+	/** Tongan Paʻanga */
 	static readonly TOP: Currency
-	/** Pa’anga */
+	/** Trinidad & Tobago Dollar */
 	static readonly TTD: Currency
-	/** Trinidad and Tobago Dollar */
-	static readonly TND: Currency
 	/** Tunisian Dinar */
-	static readonly TRY: Currency
+	static readonly TND: Currency
 	/** Turkish Lira */
+	static readonly TRY: Currency
+	/** Turkmenistani Manat */
 	static readonly TMT: Currency
-	/** Turkmenistan New Manat */
+	/** Ugandan Shilling */
 	static readonly UGX: Currency
-	/** Uganda Shilling */
+	/** Ukrainian Hryvnia */
 	static readonly UAH: Currency
-	/** Hryvnia */
+	/** United Arab Emirates Dirham */
 	static readonly AED: Currency
-	/** UAE Dirham */
-	static readonly USN: Currency
 	/** US Dollar (Next day) */
+	static readonly USN: Currency
+	/** Uruguayan Peso */
 	static readonly UYU: Currency
-	/** Peso Uruguayo */
+	/** Uruguayan Peso (Indexed Units) */
 	static readonly UYI: Currency
-	/** Uruguay Peso en Unidades Indexadas (UI) */
+	/** Uruguayan Nominal Wage Index Unit */
 	static readonly UYW: Currency
-	/** Unidad Previsional */
+	/** Uzbekistani Som */
 	static readonly UZS: Currency
-	/** Uzbekistan Sum */
+	/** Vanuatu Vatu */
 	static readonly VUV: Currency
-	/** Vatu */
+	/** Venezuelan Bolívar */
 	static readonly VES: Currency
 	/** Bolívar Soberano */
 	static readonly VED: Currency
-	/** Dong */
+	/** Vietnamese Dong */
 	static readonly VND: Currency
 	/** Yemeni Rial */
 	static readonly YER: Currency
 	/** Zambian Kwacha */
 	static readonly ZMW: Currency
-	/** Zimbabwe Dollar */
+	/** Zimbabwean Dollar (2009–2024) */
 	static readonly ZWL: Currency
-	/** Bond Markets Unit European Composite Unit (EURCO) */
+	/** Zimbabwean Gold */
+	static readonly ZWG: Currency
+	/** European Composite Unit */
 	static readonly XBA: Currency
-	/** Bond Markets Unit European Monetary Unit (E.M.U.-6) */
+	/** European Monetary Unit */
 	static readonly XBB: Currency
-	/** Bond Markets Unit European Unit of Account 9 (E.U.A.-9) */
+	/** European Unit of Account (XBC) */
 	static readonly XBC: Currency
-	/** Bond Markets Unit European Unit of Account 17 (E.U.A.-17) */
+	/** European Unit of Account (XBD) */
 	static readonly XBD: Currency
-	/** Codes specifically reserved for testing purposes */
+	/** Testing Currency Code */
 	static readonly XTS: Currency
-	/** The codes assigned for transactions where no currency is involved */
+	/** Unknown Currency */
 	static readonly XXX: Currency
 	/** Gold */
 	static readonly XAU: Currency

@@ -1,5 +1,5 @@
-import { LocalizedString } from './LocalizedString'
-import { Localizer } from '.'
+import { LocalizedString } from './LocalizedString.js'
+import { Localizer } from './index.js'
 
 
 describe('LocalizedString', () => {
@@ -81,5 +81,15 @@ describe('LocalizedString', () => {
 		const ls = LocalizedString.get(key, 'de', { number, date })
 
 		expect(ls.toString()).toContain('Formatierte Nummer 520,11 und Datum 27.08.2024') // followed by "21:49:13 GMT GMT" or other timezone where the test is run
+	})
+
+	describe('JSON serialization', () => {
+		it('should serialize to JSON as string', () => {
+			Localizer.dictionaries.add('de', { 'Hello': 'Hallo' })
+			const ls = LocalizedString.get('Hello', 'de', {})
+			expect(ls.toJSON()).toBe('Hallo')
+			expect(JSON.stringify(ls)).toBe('"Hallo"')
+			expect(JSON.stringify({ greeting: ls })).toBe('{"greeting":"Hallo"}')
+		})
 	})
 })
