@@ -334,6 +334,9 @@
 			"path": "./packages/styleProperty"
 		},
 		{
+			"path": "./packages/Swap"
+		},
+		{
 			"path": "./packages/Switch"
 		},
 		{
