@@ -1,0 +1,35 @@
+{
+	"name": "@3mo/accordion",
+	"version": "0.1.0",
+	"description": "A web component which stacks disclosures and reveals them one at a time, built on the native details element.",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/3mo-esolutions/web-components"
+	},
+	"keywords": [
+		"lit",
+		"web-component",
+		"accordion",
+		"disclosure",
+		"details"
+	],
+	"author": "3MO GmbH",
+	"license": "MIT",
+	"homepage": "https://www.3mo.de",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"customElements": "dist/custom-elements.json",
+	"files": [
+		"dist"
+	],
+	"dependencies": {
+		"@a11d/lit": "x",
+		"tslib": "x",
+		"@3mo/disabled-property": "x",
+		"@3mo/icon": "x"
+	},
+	"devDependencies": {
+		"@a11d/lit-testing": "x"
+	}
+}
