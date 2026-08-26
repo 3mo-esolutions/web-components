@@ -38,6 +38,15 @@ export class LoadingDialog extends Dialog {
 				inset: 0;
 				z-index: 1;
 				place-items: center;
+				transition: opacity var(--mo-duration-quick, 250ms) ease;
+
+				@starting-style {
+					opacity: 0;
+				}
+			}
+
+			[part=content] {
+				transition: opacity var(--mo-duration-quick, 250ms) ease, filter var(--mo-duration-quick, 250ms) ease;
 			}
 
 			:host(.loading) [part=content] {
