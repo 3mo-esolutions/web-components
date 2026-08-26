@@ -31,6 +31,8 @@ export function isMenu(element: EventTarget): element is HTMLElement {
  *
  * @csspart popover - The popover part of the menu.
  * @csspart list - The list part of the menu.
+ *
+ * @cssprop --mo-menu-resize-duration - The duration of the animation of a size change triggered via "animateResize".
  */
 @component('mo-menu')
 export class Menu extends Component {
@@ -98,6 +100,76 @@ export class Menu extends Component {
 	@state() protected coordinates?: PopoverCoordinates
 
 	@query('mo-selectable-list') readonly list!: ListElement & SelectableList
+	@query('mo-popover') private readonly popoverElement?: Popover
+
+	/**
+	 * Applies a change to the menu's content, e.g. filtering its items, and animates the menu from the size
+	 * it had to the one the change results in. A transition cannot do this on its own, as a content-driven
+	 * height computes to "auto" both before and after such a change - and a menu which is scrolling its items
+	 * does not change height at all until the remaining ones fit into it.
+	 */
+	animateResize(change: () => void) {
+		const popover = this.popoverElement
+
+		if (!this.open || !popover) {
+			change()
+			return
+		}
+
+		// Lest the release of a previous change cuts this one short, e.g. while a search is being typed.
+		this.cancelHeightRelease?.()
+
+		const from = popover.getBoundingClientRect().height
+		change()
+		popover.style.height = ''
+		const to = popover.getBoundingClientRect().height
+
+		if (from === to) {
+			return
+		}
+
+		popover.style.height = `${from}px`
+		// Reading the layout back computes the height the transition then starts from.
+		popover.offsetHeight
+		popover.style.height = `${to}px`
+
+		this.releaseHeightWhenResized(popover)
+	}
+
+	private cancelHeightRelease?: () => void
+
+	private releaseHeightWhenResized(popover: Popover) {
+		const handleTransitionEnd = (event: TransitionEvent) => {
+			if (event.target === popover && event.propertyName === 'height') {
+				release()
+			}
+		}
+		// A transition which does not run at all - be it a zeroed duration or a tab which is not being painted - shall not leave the height pinned either.
+		const timeoutHandle = setTimeout(() => release(), Menu.getTransitionDuration(popover) + 50)
+
+		const stop = () => {
+			popover.removeEventListener('transitionend', handleTransitionEnd)
+			clearTimeout(timeoutHandle)
+			this.cancelHeightRelease = undefined
+		}
+
+		// Sizing itself by its content again once it has reached the size the change resulted in.
+		const release = () => {
+			stop()
+			popover.style.height = ''
+		}
+
+		popover.addEventListener('transitionend', handleTransitionEnd)
+		this.cancelHeightRelease = stop
+	}
+
+	private static getTransitionDuration(element: Element) {
+		const durations = getComputedStyle(element).transitionDuration
+			.split(',')
+			.map(duration => parseFloat(duration) * 1000)
+			.filter(duration => !Number.isNaN(duration))
+		return Math.max(0, ...durations)
+	}
 
 	get items() { return this.list.items as Array<ListItem & HTMLElement> }
 
@@ -153,6 +225,8 @@ export class Menu extends Component {
 				border-radius: var(--mo-toolbar-border-radius, var(--mo-border-radius));
 				background: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-gray) 8%);
 				border-radius: var(--mo-border-radius);
+				/* Only ever animated in tandem with "animateResize", which turns the content-driven height into a length to start from. */
+				--mo-popover-resize-duration: var(--mo-menu-resize-duration, var(--mo-duration-quick, 250ms));
 			}
 		`
 	}

@@ -137,5 +137,44 @@ describe('Menu', () => {
 
 			expect(fixture.component.list.focusController.focusedItemIndex).toBe(10)
 		})
+
+		describe('animateResize', () => {
+			// Shortened, so that a settled state can be awaited without slowing the suite down.
+			const transitionDuration = 30
+			const hideAllItemsButTheFirst = () => fixture.component.items.slice(1).forEach(item => item.style.display = 'none')
+			const settle = () => new Promise(resolve => setTimeout(resolve, transitionDuration * 4))
+
+			beforeEach(() => fixture.component.style.setProperty('--mo-menu-resize-duration', `${transitionDuration}ms`))
+
+			it('should transition from the height it had towards the one the change results in', async () => {
+				await open()
+				const height = getPopover().getBoundingClientRect().height
+
+				fixture.component.animateResize(hideAllItemsButTheFirst)
+
+				const transitionedProperties = getPopover().getAnimations().map(animation => (animation as CSSTransition).transitionProperty)
+				expect(transitionedProperties).toContain('height')
+				expect(getPopover().getBoundingClientRect().height).toBe(height)
+			})
+
+			it('should end up at the height of the remaining items and size itself by its content again', async () => {
+				await open()
+				const height = getPopover().getBoundingClientRect().height
+
+				fixture.component.animateResize(hideAllItemsButTheFirst)
+				// Transitions cannot be sampled reliably mid-flight, hence only the settled state is asserted.
+				await settle()
+
+				expect(getPopover().getBoundingClientRect().height).toBeLessThan(height)
+				expect(getPopover().style.height).toBe('')
+			})
+
+			it('should apply the change and animate nothing while closed', () => {
+				fixture.component.animateResize(hideAllItemsButTheFirst)
+
+				expect(fixture.component.items[1]!.style.display).toBe('none')
+				expect(getPopover().style.height).toBe('')
+			})
+		})
 	})
 })

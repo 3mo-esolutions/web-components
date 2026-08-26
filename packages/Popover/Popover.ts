@@ -130,7 +130,11 @@ export class Popover extends Component {
 				padding: 0;
 				border: 1px solid var(--mo-color-transparent-gray-3);
 				overflow: unset;
-				transition: opacity 125ms, transform 125ms, display 0ms allow-discrete;
+				/*
+					The height only animates for popovers which opt in by setting a duration - and even then only
+					while something gives them a height to animate between, @see "animateResize" of "mo-menu".
+				*/
+				transition: opacity 125ms, transform 125ms, display 0ms allow-discrete, height var(--mo-popover-resize-duration, 0s);
 			}
 
 			:host([open]) {

@@ -66,6 +66,10 @@ export class Option<T> extends SelectionListItem {
 				background-color: var(--mo-color-accent-transparent);
 			}
 
+			/*
+				Hidden right away instead of collapsing on its own, so that the menu knows the size it has to
+				animate towards - @see "animateResize" of "mo-menu", which is what carries the motion here.
+			*/
 			:host([data-search-no-match]) {
 				display: none !important;
 				pointer-events: none;

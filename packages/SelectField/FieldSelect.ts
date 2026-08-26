@@ -136,6 +136,11 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 				color: var(--mo-color-accent);
 			}
 
+			mo-menu {
+				/* Snappier than "--mo-duration-quick", as the menu resizes on every keystroke of a search. */
+				--mo-menu-resize-duration: min(100ms, var(--mo-duration-quick, 250ms));
+			}
+
 			mo-menu::part(popover) {
 				position-visibility: anchors-visible;
 				background: var(--mo-color-background);
@@ -360,11 +365,13 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 		const matchedValues = this.options
 			.filter(option => option.textMatches(this.searchKeyword))
 			.map(option => option.normalizedValue)
-		for (const option of this.options) {
-			const matches = matchedValues.some(v => option.valueMatches(v))
-			option.toggleAttribute('data-search-no-match', !matches)
-			option.disabled = !matches
-		}
+		this.resizeMenuWhile(() => {
+			for (const option of this.options) {
+				const matches = matchedValues.some(v => option.valueMatches(v))
+				option.toggleAttribute('data-search-no-match', !matches)
+				option.disabled = !matches
+			}
+		})
 		return Promise.resolve()
 	}
 
@@ -372,9 +379,20 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 		if (!this.freeInput) {
 			this.searchString = this.valueToInputValue(this.value)
 		}
-		for (const option of this.options) {
-			option.removeAttribute('data-search-no-match')
-			option.disabled = false
+		this.resizeMenuWhile(() => {
+			for (const option of this.options) {
+				option.removeAttribute('data-search-no-match')
+				option.disabled = false
+			}
+		})
+	}
+
+	/** Lets the menu shrink and grow along with the options which a search leaves over. */
+	private resizeMenuWhile(change: () => void) {
+		if (!this.menu) {
+			change()
+		} else {
+			this.menu.animateResize(change)
 		}
 	}
 }
