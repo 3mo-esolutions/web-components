@@ -32,18 +32,17 @@ export class Page extends Component {
 		return css`
 			:host {
 				display: inherit;
-				animation: transitionIn 150ms;
-			}
+				/* A page is replaced on navigation instead of being closed, hence there is nothing to animate out. */
+				transition: opacity 150ms ease;
 
-			@keyframes transitionIn
-			{
-				0% {
-					visibility: hidden;
+				@starting-style {
 					opacity: 0;
 				}
-				100% {
-					visibility: visible;
-					opacity: 1;
+			}
+
+			@media (prefers-reduced-motion: reduce) {
+				:host {
+					transition: none;
 				}
 			}
 
