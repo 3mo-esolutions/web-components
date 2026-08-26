@@ -533,6 +533,12 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				margin-block-start: calc(var(--mo-data-grid-header-height) / 2);
 				position: absolute;
 				inset: 0;
+				transition: opacity var(--mo-duration-quick, 250ms) ease;
+
+				/* Fades in when the data empties. Rows are not faded in return, as they are re-inserted on every data change. */
+				@starting-style {
+					opacity: 0;
+				}
 			}
 		`
 	}

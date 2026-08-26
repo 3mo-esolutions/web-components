@@ -565,6 +565,32 @@ describe('DataGrid', () => {
 			expect(fixture.component.rowDetailsClose.dispatch).toHaveBeenCalledTimes(1)
 			expect(fixture.component.rowDetailsClose.dispatch).toHaveBeenCalledWith(row)
 		})
+
+		describe('animating out', () => {
+			const row = () => fixture.component.rows[0] as DataGridRow<Person>
+			const detailsContainer = () => row().renderRoot.querySelector('#detailsContainer')!
+			const toggle = async () => {
+				row().renderRoot.querySelector('#detailsExpanderIconButton')?.dispatchEvent(new MouseEvent('click'))
+				await fixture.updateComplete
+				await row().updateComplete
+			}
+
+			it('should keep the details rendered while they animate out, and drop them afterwards', async () => {
+				await toggle()
+				expect(detailsContainer().children.length).toBe(1)
+
+				await toggle()
+				expect(row().detailsOpen).toBe(false)
+				// Still rendered, so that the collapse can be animated at all.
+				expect(detailsContainer().children.length).toBe(1)
+
+				// Transitions cannot be sampled reliably mid-flight, hence only the settled state is asserted.
+				await new Promise(resolve => setTimeout(resolve, 1000))
+				await fixture.updateComplete
+
+				expect(detailsContainer().children.length).toBe(0)
+			})
+		})
 	})
 
 	describe('with multi-level data', () => {

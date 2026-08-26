@@ -1,4 +1,4 @@
-import { css, property, Component, html, query, queryAll, type HTMLTemplateResult, LitElement, live, style, unsafeCSS } from '@a11d/lit'
+import { css, property, state, Component, html, query, queryAll, type HTMLTemplateResult, LitElement, live, style, unsafeCSS } from '@a11d/lit'
 import { equals } from '@a11d/equals'
 import { DirectionsByLanguage, Localizer } from '@3mo/localization'
 import { popover } from '@3mo/popover'
@@ -17,6 +17,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	@queryAll('mo-data-grid-cell') readonly cells!: Array<DataGridCell<any, TData, TDetailsElement>>
 	@queryAll('[mo-data-grid-row]') readonly subRows!: Array<DataGridRow<TData, TDetailsElement>>
 	@query('#contentContainer') readonly content!: HTMLElement
+	@query('#detailsContainer') private readonly detailsContainer?: HTMLSlotElement
 
 	@property({ type: Boolean }) isIntersecting = true
 
@@ -27,6 +28,15 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	get level() { return this.dataRecord.level }
 	get selected() { return this.dataRecord.isSelected }
 	get detailsOpen() { return this.dataRecord.detailsOpen }
+
+	/**
+	 * Whether the details are closed but still rendered, so that they can animate out.
+	 * They are dropped afterwards, as details can be arbitrarily expensive to keep alive.
+	 */
+	@state() private detailsCollapsing = false
+	private dataBeforeUpdate?: TData
+	private detailsOpenBeforeUpdate = false
+	private detailsCollapseKey = 0
 
 	get detailsElement() {
 		return this.renderRoot.querySelector('#detailsContainer')?.firstElementChild as TDetailsElement as TDetailsElement | undefined
@@ -49,6 +59,52 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 
 	protected override disconnected() {
 		this.dataGrid.rowIntersectionObserver?.unobserve?.(this)
+	}
+
+	protected override willUpdate(...parameters: Parameters<Component['willUpdate']>) {
+		if (this.hasDetails) {
+			// The data instead of the record, as the grid hands out a new record for the same data on every render.
+			if (this.data !== this.dataBeforeUpdate) {
+				// A recycled row picks up the state of its new data instead of animating out the previous one's details.
+				this.detailsCollapseKey++
+				this.detailsCollapsing = false
+			} else if (this.detailsOpen === false && this.detailsOpenBeforeUpdate === true) {
+				this.collapseDetails()
+			} else if (this.detailsOpen === true) {
+				this.detailsCollapseKey++
+				this.detailsCollapsing = false
+			}
+
+			this.dataBeforeUpdate = this.data
+			this.detailsOpenBeforeUpdate = this.detailsOpen
+		}
+
+		super.willUpdate(...parameters)
+	}
+
+	private async collapseDetails() {
+		const key = ++this.detailsCollapseKey
+		this.detailsCollapsing = true
+		await this.updateComplete
+		const container = this.detailsContainer
+		await Promise.race([
+			// Rejects when the animation is cancelled, e.g. by the row leaving the viewport, hence "allSettled".
+			Promise.allSettled(container?.getAnimations().map(animation => animation.finished) ?? []),
+			// An animation which does not run at all - be it a zeroed duration or a tab which is not being painted -
+			// shall not keep the details alive either.
+			new Promise(resolve => setTimeout(resolve, DataGridRow.getTransitionDuration(container))),
+		])
+		if (key === this.detailsCollapseKey) {
+			this.detailsCollapsing = false
+		}
+	}
+
+	private static getTransitionDuration(element?: Element) {
+		const durations = !element ? [] : getComputedStyle(element).transitionDuration
+			.split(',')
+			.map(duration => parseFloat(duration) * 1000)
+			.filter(duration => !Number.isNaN(duration))
+		return Math.max(0, ...durations)
 	}
 
 	override updated(...parameters: Parameters<Component['updated']>) {
@@ -223,6 +279,31 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				grid-template-columns: subgrid;
 				grid-column: -1 / 1;
 
+				interpolate-size: allow-keywords;
+				/*
+					"clip" instead of "hidden", as the latter would make this a scroll container, to which the
+					sticky cells of nested rows would then anchor instead of to the grid's own scroller.
+				*/
+				overflow: clip;
+				transition:
+					height var(--mo-duration-quick, 250ms) ease,
+					opacity var(--mo-duration-quick, 250ms) ease,
+					content-visibility var(--mo-duration-quick, 250ms) allow-discrete;
+
+				/* The details are rendered only while open, hence they animate in from the state they are inserted with. */
+				@starting-style {
+					height: 0;
+					opacity: 0;
+				}
+
+				/* Stays rendered until the animation has run, after which the row drops the details altogether. */
+				&[data-collapsed] {
+					height: 0;
+					opacity: 0;
+					content-visibility: hidden;
+					pointer-events: none;
+				}
+
 				&:empty {
 					display: none;
 				}
@@ -270,7 +351,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			>
 				${this.rowTemplate}
 			</mo-grid>
-			<slot id='detailsContainer'>${this.detailsOpen ? this.detailsTemplate : html.nothing}</slot>
+			<slot id='detailsContainer' ?data-collapsed=${this.hasDetails && !this.detailsOpen}>${this.detailsOpen || this.detailsCollapsing ? this.detailsTemplate : html.nothing}</slot>
 		`
 	}
 
