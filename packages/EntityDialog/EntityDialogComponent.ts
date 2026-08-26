@@ -18,6 +18,14 @@ export abstract class EntityDialogComponent<
 	protected abstract save(entity: TEntity): (TEntity | void) | PromiseLike<TEntity | void>
 	protected abstract delete?(entity: TEntity): void | PromiseLike<void>
 
+	/**
+	 * The key of the handler which is invoked after a dialog re-opened from the success notification has been confirmed,
+	 * so that the opener - e.g. an entity data grid - can react to the change just like it does for the dialog it opened itself.
+	 */
+	static readonly confirmationHandler = Symbol('EntityDialogComponent.confirmationHandler')
+
+	declare [EntityDialogComponent.confirmationHandler]?: () => unknown
+
 	override get dialogElement() {
 		if (super.dialogElement instanceof EntityDialog === false) {
 			throw new Error('EntityDialogComponent must be used with an mo-entity-dialog element or a subclass thereof')
@@ -36,8 +44,14 @@ export abstract class EntityDialogComponent<
 		const id = result !== null && typeof result === 'object' && 'id' in result ? result.id : this.parameters.id
 		NotificationComponent.notifySuccess(this.successMessage, {
 			title: t('Open'),
-			handleClick: () => void new DialogConstructor({ id }).confirm(),
+			handleClick: () => this.reconfirm(new DialogConstructor({ ...this.parameters, id })),
 		})
+	}
+
+	private async reconfirm(dialog: EntityDialogComponent<TEntity>) {
+		dialog[EntityDialogComponent.confirmationHandler] = this[EntityDialogComponent.confirmationHandler]
+		await dialog.confirm()
+		await this[EntityDialogComponent.confirmationHandler]?.()
 	}
 
 	protected get successMessage() {

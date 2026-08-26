@@ -1,5 +1,7 @@
 import { component, html } from '@a11d/lit'
+import { NotificationComponent } from '@a11d/lit-application'
 import { ComponentTestFixture } from '@a11d/lit-testing'
+import { type FetchableDialogComponentParameters } from '@3mo/fetchable-dialog'
 import { EntityDialogComponent } from './index.js'
 
 class Entity { }
@@ -9,7 +11,7 @@ const saveSpy = jasmine.createSpy()
 const deleteSpy = jasmine.createSpy()
 
 @component('mo-dialog-entity-test')
-class DialogTest extends EntityDialogComponent<Entity> {
+class DialogTest extends EntityDialogComponent<Entity, FetchableDialogComponentParameters & { readonly parentId?: number }> {
 	protected entity = entity
 	protected fetch = fetchSpy
 	protected save = saveSpy
@@ -81,6 +83,39 @@ describe('EntityDialogComponent', () => {
 
 			spyOn(entity as any, 'toString').and.returnValue('Foo "Bar"')
 			await expectHeadingToBe('Edit Foo "Bar"')
+		})
+	})
+
+	describe('the success notification', () => {
+		const fixture = new ComponentTestFixture(() => new DialogTest({ id: 10, parentId: 99 }))
+
+		const notifySuccessAndGetOpenAction = () => {
+			const notifySuccessSpy = spyOn(NotificationComponent, 'notifySuccess')
+			const confirmSpy = spyOn(DialogTest.prototype, 'confirm')
+			fixture.component['notifySuccess']({ id: 42 } as unknown as Entity)
+			const [, action] = notifySuccessSpy.calls.mostRecent().args as unknown as [string, { handleClick: () => PromiseLike<void> }]
+			return { confirmSpy, open: action.handleClick }
+		}
+
+		it('should re-open the dialog with all parameters it was opened with', async () => {
+			const { confirmSpy, open } = notifySuccessAndGetOpenAction()
+
+			await open()
+
+			const reopenedDialog = confirmSpy.calls.mostRecent().object as DialogTest
+			expect(reopenedDialog.parameters).toEqual({ id: 42, parentId: 99 })
+		})
+
+		it('should invoke the confirmationHandler and pass it on, so the opener also refetches for re-opened dialogs', async () => {
+			const confirmationHandler = jasmine.createSpy()
+			fixture.component[EntityDialogComponent.confirmationHandler] = confirmationHandler
+			const { confirmSpy, open } = notifySuccessAndGetOpenAction()
+
+			await open()
+
+			expect(confirmationHandler).toHaveBeenCalledTimes(1)
+			const reopenedDialog = confirmSpy.calls.mostRecent().object as DialogTest
+			expect(reopenedDialog[EntityDialogComponent.confirmationHandler]).toBe(confirmationHandler)
 		})
 	})
 })

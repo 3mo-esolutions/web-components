@@ -1,7 +1,7 @@
 import { component, property, html, type TemplateResult } from '@a11d/lit'
 import { tooltip } from '@3mo/tooltip'
 import { type FetchableDialogComponentParameters as EntityWithId } from '@3mo/fetchable-dialog'
-import { type EntityDialogComponent } from '@3mo/entity-dialog'
+import { EntityDialogComponent } from '@3mo/entity-dialog'
 import { type FetchableDataGridParametersType, FetchableDataGrid } from '@3mo/fetchable-data-grid'
 
 type CreateAction = (() => unknown | PromiseLike<unknown>)
@@ -120,6 +120,7 @@ export class EntityDataGrid<TEntity extends EntityWithId, TDataFetcherParameters
 	}
 
 	private async confirmEntityDialog(dialog: EntityDialogComponent<TEntity>) {
+		dialog[EntityDialogComponent.confirmationHandler] = () => this.requestFetch()
 		try {
 			await dialog.confirm()
 		} finally {
