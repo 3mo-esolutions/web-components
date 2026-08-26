@@ -1,11 +1,14 @@
 import { Controller, html, type DirectiveResult } from '@a11d/lit'
 import { observeIntersection } from '@3mo/intersection-observer'
-import { MemoizeExpiring as memoizeExpiring } from 'typescript-memoize'
+import { Memoize as memoize, clear } from 'typescript-memoize'
+import { Localizer } from '@3mo/localization'
 import type { Calendar } from './Calendar.js'
 import { FieldDateTimePrecision } from '../FieldDateTimePrecision.js'
 
 export class CalendarDatesController extends Controller {
-	@memoizeExpiring(60_000)
+	private static readonly cacheKey = 'CalendarDatesController'
+
+	@memoize({ expiring: 60_000, tags: [CalendarDatesController.cacheKey] })
 	static get today() { return new DateTime().dayStart }
 
 	private static *generate(start: DateTime, count: number, step: 'days' | 'months' | 'years') {
@@ -14,18 +17,50 @@ export class CalendarDatesController extends Controller {
 		}
 	}
 
-	private static _sampleWeek = new Array<DateTime>()
-	static get sampleWeek() { return this._sampleWeek as ReadonlyArray<DateTime> }
+	private static _sampleWeek?: ReadonlyArray<DateTime>
+	static get sampleWeek() { return CalendarDatesController._sampleWeek ??= CalendarDatesController.generateWeek() }
 
-	private static generateWeek() {
+	private static generateWeek(): ReadonlyArray<DateTime> {
 		const sample = [...CalendarDatesController.generate(CalendarDatesController.today, CalendarDatesController.today.daysInWeek * 2, 'days')]
 		const indexOfFirstWeekStart = sample.findIndex(d => d.dayOfWeek === 1)
 		const daysInWeek = sample[0]!.daysInWeek
-		CalendarDatesController._sampleWeek = sample.slice(indexOfFirstWeekStart, indexOfFirstWeekStart + daysInWeek).map(d => d.dayStart)
+		return sample.slice(indexOfFirstWeekStart, indexOfFirstWeekStart + daysInWeek).map(d => d.dayStart)
 	}
 
+	private static readonly connectedControllers = new Set<CalendarDatesController>()
+
 	static {
-		CalendarDatesController.generateWeek()
+		// `DateTime` freezes its calendar and time zone at construction, so every date which has already
+		// been generated still belongs to the previous language's calendar. Without discarding them,
+		// switching language only re-formats the existing Gregorian grid instead of rebuilding it.
+		Localizer.languages.change.subscribe(() => {
+			// Deferred so that every other subscriber has run first — in particular `DateTime`, which
+			// clears its own memoized calendar and time zone on the very same event. Regenerating any
+			// date before that happens would just reproduce the outgoing calendar.
+			queueMicrotask(() => {
+				clear([CalendarDatesController.cacheKey])
+				CalendarDatesController._sampleWeek = undefined
+				for (const controller of CalendarDatesController.connectedControllers) {
+					controller.invalidate()
+				}
+			})
+		})
+	}
+
+	override hostConnected() {
+		CalendarDatesController.connectedControllers.add(this)
+	}
+
+	override hostDisconnected() {
+		CalendarDatesController.connectedControllers.delete(this)
+	}
+
+	/** Discards every generated date and regenerates them for the current calendar. */
+	private invalidate() {
+		this.days = []
+		this.months = []
+		this.years = []
+		this.navigationDate = DateTime.from(this._navigationDate.valueOf())
 	}
 
 	disableObservers = false
