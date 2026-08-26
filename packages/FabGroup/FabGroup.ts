@@ -28,10 +28,21 @@ export class FabGroup extends Component {
 			#fabs {
 				margin-bottom: calc(56px + 16px);
 				display: block;
+				/* Opening reveals the fabs right away, so that they can scale in. Only the transition of the closed state below is delayed. */
+				transition: visibility 0s;
 			}
 
 			:host(:not([open])) #fabs {
 				visibility: collapse;
+				pointer-events: none;
+				/* Hide only once the fabs have scaled out - they all share one duration while closing, as their stagger only applies while opening. */
+				transition: visibility 0s var(--mo-fab-group-transition-duration, 250ms);
+			}
+
+			@media (prefers-reduced-motion: reduce) {
+				:host(:not([open])) #fabs {
+					transition: none;
+				}
 			}
 
 			mo-fab {
