@@ -57,6 +57,23 @@ export class CollapsibleListItem extends Component {
 
 			details {
 				width: 100%;
+				interpolate-size: allow-keywords;
+
+				&::details-content {
+					height: 0;
+					overflow: hidden;
+					transition: height var(--mo-duration-quick, 250ms), content-visibility var(--mo-duration-quick, 250ms);
+					transition-behavior: allow-discrete;
+				}
+
+				&[open]::details-content {
+					height: auto;
+				}
+
+				/* Not supported in Safari, hence a rule of its own instead of a selector list */
+				&:open::details-content {
+					height: auto;
+				}
 			}
 
 			summary {
