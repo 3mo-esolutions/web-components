@@ -59,9 +59,17 @@ export class MasterDetail extends Component {
 				opacity: 0;
 			}
 
-			/* Without any detail content there is no gap to preserve either, so the resizer gives up its space. */
+			/*
+				Without any detail content there is no gap to preserve either, so the resizer gives up its space
+				- but only once it has faded out, hence the discrete transition of "display".
+			*/
 			:host(:not([open])) mo-splitter::part(resizer-host) {
 				display: none;
+				opacity: 0;
+				pointer-events: none;
+				transition:
+					opacity var(--mo-duration-quick, 250ms),
+					display var(--mo-duration-quick, 250ms) allow-discrete;
 			}
 		`
 	}
