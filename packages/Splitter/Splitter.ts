@@ -11,6 +11,8 @@ import '@3mo/theme'
  * @attr resizerTemplate
  *
  * @slot
+ *
+ * @cssprop --mo-splitter-transition-duration - The duration of the animation of a pane's size change. Defaults to "0s", i.e. no animation, as it only suits panes whose size does not follow their content.
  */
 @component('mo-splitter')
 export class Splitter extends Component {
@@ -48,9 +50,24 @@ export class Splitter extends Component {
 				pointer-events: none;
 			}
 
+			/*
+				A pane is sized by the flex algorithm out of "flex-basis", "flex-grow" and its own size properties at
+				once, so interpolating all of them overshoots whenever a state change moves which of them decides the
+				size: "flex-basis" is therefore left out, and the duration is opt-in, so that a pane only animates
+				towards a size of its own instead of towards one which its content is animating anyway.
+			*/
 			slot {
 				display: block;
 				position: relative;
+				interpolate-size: allow-keywords;
+				transition-property: width, height, min-width, min-height, flex-grow;
+				transition-duration: var(--mo-splitter-transition-duration, 0s);
+				transition-timing-function: ease;
+			}
+
+			/* Dragging writes a new size on every pointer move, which a transition would lag behind. */
+			:host([resizing]) slot {
+				transition: none;
 			}
 
 			mo-splitter-resizer-host {

@@ -42,6 +42,23 @@ export class MasterDetail extends Component {
 
 			mo-splitter {
 				height: 100%;
+				/*
+					Only the way into the shared state is animated. On the way out the detail pane is sized by its own
+					content, which is what animates then - a pane animating towards that at the same time fights it.
+				*/
+				--mo-splitter-transition-duration: var(--mo-duration-quick, 250ms);
+			}
+
+			:host([collapsed]) mo-splitter, :host(:not([open])) mo-splitter {
+				--mo-splitter-transition-duration: 0s;
+			}
+
+			/*
+				A pane which appears has no size of its own to animate from: whichever way its share is animated, it
+				enters either shrinking from the whole space or squeezed by the master pane giving its share up.
+			*/
+			:host([data-appearing]) mo-splitter {
+				--mo-splitter-transition-duration: 0s;
 			}
 
 			::slotted(*) {
@@ -95,9 +112,18 @@ export class MasterDetail extends Component {
 			this.open = open
 			this.openChange.dispatch(open)
 			if (open) {
+				this.markAppearing()
 				this.revealLastInteraction()
 			}
 		}
+	}
+
+	/** Marks the pane as appearing for as long as it takes to lay out, @see the styles above. */
+	private async markAppearing() {
+		this.toggleAttribute('data-appearing', true)
+		await this.updateComplete
+		await new Promise(resolve => requestAnimationFrame(resolve))
+		this.toggleAttribute('data-appearing', false)
 	}
 
 	private lastInteraction?: Element
