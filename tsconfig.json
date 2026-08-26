@@ -226,6 +226,9 @@
 			"path": "./packages/KeyboardController"
 		},
 		{
+			"path": "./packages/KeyValueList"
+		},
+		{
 			"path": "./packages/LanguageField"
 		},
 		{
