@@ -2,7 +2,7 @@ import { component, property, Component, css, state, html, query, style, ifDefin
 import { type FieldNumber } from '@3mo/number-fields'
 import { DirectionsByLanguage, Localizer } from '@3mo/localization'
 import { TooltipPlacement, tooltip } from '@3mo/tooltip'
-import { type DataGrid, type DataGridPagination } from './index.js'
+import { type DataGrid, type DataGridPaginationSize } from './index.js'
 
 Localizer.dictionaries.add('de', {
 	'${page:number} of ${maxPage:number}': '${page} von ${maxPage}',
@@ -23,7 +23,7 @@ Localizer.dictionaries.add('fa', {
  */
 @component('mo-data-grid-footer')
 export class DataGridFooter<TData> extends Component {
-	private static readonly pageSizes = new Array<DataGridPagination & number>(10, 25, 50, 100, 250, 500)
+	private static readonly pageSizes: ReadonlyArray<number> = [10, 25, 50, 100, 250, 500]
 
 	@property({ type: Object }) dataGrid!: DataGrid<TData, any>
 
@@ -178,12 +178,12 @@ export class DataGridFooter<TData> extends Component {
 	}
 
 	/**
-	 * Navigating pages and choosing a page size only make sense where the user drives the pagination,
-	 * i.e. when a pagination is set. A grid which pages on its own - e.g. via infinite scrolling -
-	 * leaves it unset, limiting the footer to informing about the loaded range.
+	 * Navigating pages only makes sense where the user drives the pagination. A grid which pages on
+	 * its own - by streaming as the user scrolls - limits the footer to informing about the loaded
+	 * range instead.
 	 */
 	private get hasPageNavigation() {
-		return this.dataGrid.pagination !== undefined
+		return this.dataGrid.resolvedPagination?.strategy === 'pages'
 	}
 
 	private get pageNavigationTemplate() {
@@ -240,8 +240,7 @@ export class DataGridFooter<TData> extends Component {
 				].filter(Boolean), html`<span id='separator'> / </span>`)}
 			</mo-flex>
 		`
-		// Without page navigation there is no page size to choose either, so the info is not interactive.
-		return !this.hasPageNavigation ? html`
+		return !this.dataGrid.hasPagination ? html`
 			<div id='page-info'>${infoTemplate}</div>
 		` : html`
 			<mo-popover-container id='page-info' placement='block-start'>
@@ -251,7 +250,7 @@ export class DataGridFooter<TData> extends Component {
 				</mo-flex>
 				<mo-menu slot='popover'>
 					${!this.dataGrid?.supportsDynamicPageSize ? html.nothing : html`
-						<mo-menu-item icon='done' ?selected=${this.dataGrid.pagination === 'auto'} @click=${() => this.handlePaginationChange('auto')}>${t('Auto')}</mo-menu-item>
+						<mo-menu-item icon='done' ?selected=${this.dataGrid.pagination?.size === undefined} @click=${() => this.handlePaginationChange('auto')}>${t('Auto')}</mo-menu-item>
 					`}
 					${DataGridFooter.pageSizes.map(size => html`
 						<mo-menu-item icon='done' ?selected=${this.dataGrid.pageSize === size} @click=${() => this.handlePaginationChange(size)}>${size.format()}</mo-menu-item>
@@ -261,11 +260,11 @@ export class DataGridFooter<TData> extends Component {
 		`
 	}
 
-	private handlePaginationChange(value: DataGridPagination) {
+	private handlePaginationChange(size: DataGridPaginationSize) {
 		if (this.dataGrid.maxPage && this.dataGrid.page > this.dataGrid.maxPage) {
 			this.dataGrid.page = this.dataGrid.maxPage
 		}
-		this.dataGrid.setPagination(value)
+		this.dataGrid.setPagination(this.dataGrid.pagination?.with({ size }) ?? { size })
 	}
 
 	private handleManualPageChange(value: number) {

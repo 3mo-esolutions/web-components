@@ -1,7 +1,7 @@
 import { type FetchableDataGridParametersType } from '@3mo/fetchable-data-grid'
 import { NotificationComponent } from '@a11d/lit-application'
 import { equals } from '@a11d/equals'
-import { type DataGridColumn, type DataGridColumnModification, type DataGridSorting, type DataGridPagination, type DataGridColumnSticky } from '@3mo/data-grid'
+import { DataGridPagination, type DataGridColumn, type DataGridColumnModification, type DataGridSorting, type DataGridColumnSticky } from '@3mo/data-grid'
 import { Localizer } from '@3mo/localization'
 import { type ModdableDataGrid } from './ModdableDataGrid.js'
 import type * as CSS from 'csstype'
@@ -63,7 +63,7 @@ export class ModdableDataGridMode<TData, TDataFetcherParameters extends Fetchabl
 			columns: !dataGrid.columnsController.columns.modifications.length
 				? undefined
 				: dataGrid.columnsController.columns.modifications.map(c => new ModdableDataGridModeColumn<TData>(c)),
-			pagination: dataGrid.pagination,
+			pagination: dataGrid.pagination?.toString(),
 			parameters: structuredClone(dataGrid.parameters) ?? {} as TParameters,
 			sorting: structuredClone(dataGrid.sorting) ?? [],
 		})
@@ -75,11 +75,12 @@ export class ModdableDataGridMode<TData, TDataFetcherParameters extends Fetchabl
 	readonly parameters?: TDataFetcherParameters
 	columns?: Array<ModdableDataGridModeColumn<TData>>
 	sorting?: DataGridSorting<TData>
-	pagination?: DataGridPagination
+	pagination?: string
 	archived = false
 
 	constructor(init?: Partial<ModdableDataGridMode<TData, TDataFetcherParameters>>) {
 		Object.assign(this, structuredClone(init))
+		this.pagination = DataGridPagination.from(this.pagination)?.toString()
 		if (this.columns) {
 			this.columns = init?.columns?.map(c => new ModdableDataGridModeColumn<TData>(c))
 		}

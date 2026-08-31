@@ -135,7 +135,7 @@ describe('ModdableDataGridMode', () => {
 				name: 'Test',
 				parameters: { date: '2021-01-01T00:00:00.000Z' },
 				sorting: [{ selector: 'test', strategy: DataGridSortingStrategy.Ascending }],
-				pagination: 100,
+				pagination: 100 as never,
 				columns: [new ModdableDataGridModeColumn({ dataSelector: 'test', width: '100px', hidden: true, sticky: 'start' })],
 			})
 
@@ -143,7 +143,8 @@ describe('ModdableDataGridMode', () => {
 
 			expect(dataGridMock.setParameters).toHaveBeenCalledWith({ date: new Date('2021-01-01') })
 			expect(dataGridMock.sort).toHaveBeenCalledWith([{ selector: 'test', strategy: DataGridSortingStrategy.Ascending }])
-			expect(dataGridMock.setPagination).toHaveBeenCalledWith(100)
+			expect(mode.pagination).toBe('100')
+			expect(dataGridMock.setPagination).toHaveBeenCalledWith('100')
 			expect(dataGridMock.columnsController.columns.modifications.set).toHaveBeenCalledWith(mode.columns!)
 		})
 

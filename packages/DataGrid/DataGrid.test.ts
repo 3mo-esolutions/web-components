@@ -1,6 +1,6 @@
 import { component, css, html, state } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { DataGrid, type DataGridRow, DataGridColumn, type DataGridColumnComponent, DataRecord, DataGridSelectability } from './index.js'
+import { DataGrid, DataGridPagination, type DataGridRow, DataGridColumn, type DataGridColumnComponent, DataRecord, DataGridSelectability } from './index.js'
 
 type Person = { id: number, name: string, birthDate: DateTime, children?: Array<Person>, balance: number }
 
@@ -76,7 +76,7 @@ describe('DataGrid', () => {
 		it('should extract records out of nested data', async () => {
 			const [first, second, third] = fixture.component.data
 			fixture.component.subDataGridDataSelector = 'children'
-			fixture.component.data = [{ ...first, children: [third] }, second]
+			fixture.component.data = [{ ...first, children: [third!] }, second!]
 			const firstWithChildren = fixture.component.data[0]
 
 			await fixture.updateComplete
@@ -907,6 +907,63 @@ describe('DataGrid', () => {
 				expect(negativeStyle).toContain('red')
 				expect(getComputedStyle(positiveCell!).color).toBe('rgb(0, 128, 0)')
 			})
+		})
+	})
+
+	describe('Pagination resolution', () => {
+		const fixture = new ComponentTestFixture<TestDataGrid>(html`<test-data-grid></test-data-grid>`)
+
+		afterEach(() => DataGrid.defaultPagination = undefined)
+
+		it('should not paginate a grid which specifies none', () => {
+			expect(fixture.component.resolvedPagination).toBeUndefined()
+			expect(fixture.component.hasPagination).toBeFalse()
+		})
+
+		it('should revive a pagination which is set as a string, as a mode applies it', () => {
+			fixture.component.setPagination('pages 100')
+
+			expect(fixture.component.pagination).toBeInstanceOf(DataGridPagination)
+			expect(fixture.component.pagination?.toString()).toBe('pages 100')
+		})
+
+		it('should fill the strategy of a size-only pagination', () => {
+			fixture.component.setPagination(25)
+
+			expect(fixture.component.resolvedPagination).toEqual({ strategy: 'pages', size: 25 })
+		})
+
+		it('should fill the size of a strategy-only pagination', () => {
+			fixture.component.setPagination('pages')
+
+			expect(fixture.component.resolvedPagination).toEqual({ strategy: 'pages', size: 'auto' })
+		})
+
+		it('should take an unspecified slot from the class default', () => {
+			DataGrid.defaultPagination = 'pages 50'
+
+			expect(fixture.component.resolvedPagination).toEqual({ strategy: 'pages', size: 50 })
+		})
+
+		it('should prefer the specified slots over the class default', () => {
+			DataGrid.defaultPagination = 'pages 50'
+			fixture.component.setPagination(100)
+
+			expect(fixture.component.resolvedPagination).toEqual({ strategy: 'pages', size: 100 })
+		})
+
+		it('should accept a class default depending on the grid it is applied to', () => {
+			DataGrid.defaultPagination = dataGrid => dataGrid.data.length > 0 ? 'pages 10' : undefined
+
+			expect(fixture.component.resolvedPagination).toEqual({ strategy: 'pages', size: 10 })
+		})
+
+		it('should cut the rows into a page only while navigating pages explicitly', () => {
+			fixture.component.setPagination('pages 2')
+			expect(fixture.component.renderDataRecords.length).toBe(2)
+
+			fixture.component.setPagination('scroll 2')
+			expect(fixture.component.renderDataRecords.length).toBe(fixture.component.data.length)
 		})
 	})
 

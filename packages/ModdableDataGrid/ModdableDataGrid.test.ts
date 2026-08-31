@@ -1,4 +1,4 @@
-import { component, DialogAlert, html } from '@3mo/del'
+import { component, DataGrid, DialogAlert, html } from '@3mo/del'
 import { DialogMode, ModdableDataGrid, type ModdableDataGridChip, ModdableDataGridMode, ModdableDataGridModeColumn, type ModdableDataGridModesAdapter } from './index.js'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { faker } from '@faker-js/faker'
@@ -83,6 +83,11 @@ class ModdableDataGridStory extends ModdableDataGrid<User, Parameters> {
 			<mo-data-grid-column-number dataSelector='age' heading='Age'></mo-data-grid-column-number>
 		`
 	}
+}
+
+@component('story-moddable-data-grid-with-infinite-scroll')
+class ModdableDataGridStoryWithInfiniteScroll extends ModdableDataGridStory {
+	static override defaultPagination = 'scroll'
 }
 
 class ModdableDataGridTestFixture extends ComponentTestFixture<ModdableDataGridStory> {
@@ -176,6 +181,45 @@ class ModdableDataGridTestFixture extends ComponentTestFixture<ModdableDataGridS
 }
 
 describe('ModdableDataGrid', () => {
+	describe('Infinite scrolling', () => {
+		const paginationParameters = ({ page, pageSize }: { page: number, pageSize: number }) => ({ page, pageSize })
+
+		const serverSidePaginated = <T extends ModdableDataGridStory>(dataGrid: T) => {
+			dataGrid.paginationParameters = paginationParameters as never
+			dataGrid.style.height = '0px'
+			return dataGrid
+		}
+
+		const fixture = new ComponentTestFixture<ModdableDataGridStory>(
+			() => serverSidePaginated(new ModdableDataGridStory)
+		)
+
+		it('should be the default, as for any fetchable data grid', () => {
+			expect(fixture.component.hasInfiniteScroll).toBeTrue()
+		})
+
+		describe('opted out of application-wide', () => {
+			beforeEach(() => ModdableDataGrid.defaultPagination = dataGrid => dataGrid.hasServerSidePagination ? 'pages' : undefined)
+			afterEach(() => ModdableDataGrid.defaultPagination = undefined)
+
+			it('should navigate pages explicitly instead', () => {
+				expect(fixture.component.hasInfiniteScroll).toBeFalse()
+				expect(fixture.component.hasPagination).toBeTrue()
+				expect(fixture.component.pageSize).toBe(DataGrid.pageSize.value)
+			})
+
+			describe('and opted back in by a single grid', () => {
+				const optedInFixture = new ComponentTestFixture<ModdableDataGridStoryWithInfiniteScroll>(
+					() => serverSidePaginated(new ModdableDataGridStoryWithInfiniteScroll)
+				)
+
+				it('should stream its pages', () => {
+					expect(optedInFixture.component.hasInfiniteScroll).toBeTrue()
+				})
+			})
+		})
+	})
+
 	describe('No modes', () => {
 		const fixture = new ModdableDataGridTestFixture({ modes: [] })
 

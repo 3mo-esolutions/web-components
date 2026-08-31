@@ -33,7 +33,7 @@ Localizer.dictionaries.add('de', {
  * @attr fetch - A function that fetches the data from the server.
  * @attr silentFetch - If set, the DataGrid's content will not be cleared when the fetch is initiated.
  * @attr parameters - The parameters that are passed to the fetch function.
- * @attr paginationParameters - The parameters that are passed to the fetch function when the page changes. This enables server-side pagination, which streams pages into the grid as the user scrolls unless a `pagination` opts into paged navigation.
+ * @attr paginationParameters - The parameters that are passed to the fetch function when the page changes. This enables server-side pagination, whose pages are streamed into the grid as the user scrolls unless the resolved `pagination` opts into explicit page navigation.
  * @attr sortParameters - The parameters that are passed to the fetch function when the sort changes. This enables server-side sorting.
  * @attr autoRefetch - The interval in seconds at which the data should be refetched automatically. If set, the DataGrid will automatically refetch the data at the specified interval.
  *
@@ -119,12 +119,16 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 		return this.sortParameters !== undefined
 	}
 
-	/**
-	 * Whether pages are streamed into the grid as the user scrolls instead of being navigated
-	 * explicitly. This is the default for server-side pagination unless a @see pagination is set.
-	 */
+	/** Whether pages stream into the grid as the user scrolls instead of being navigated explicitly. */
 	get hasInfiniteScroll() {
-		return this.hasServerSidePagination && this.pagination === undefined
+		return this.hasServerSidePagination && this.resolvedPagination?.strategy === 'scroll'
+	}
+
+	protected override get intrinsicPagination() {
+		return !this.hasServerSidePagination ? super.intrinsicPagination : {
+			strategy: 'scroll' as const,
+			size: DataGrid.pageSize.value,
+		}
 	}
 
 	setParameters(parameters: TDataFetcherParameters) {
@@ -173,10 +177,6 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 		}
 
 		return this.getFlattenedData(data)
-	}
-
-	override get hasPagination() {
-		return super.hasPagination || this.hasServerSidePagination
 	}
 
 	override get supportsDynamicPageSize() {

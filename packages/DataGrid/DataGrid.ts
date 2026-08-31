@@ -13,13 +13,13 @@ import { DataGridDetailsController } from './DataGridDetailsController.js'
 import { type DataGridColumn, DataGridCsvController, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, DataGridContextMenuController, DataGridReorderabilityController, type DataGridReorderChange } from './index.js'
 import { DataRecord } from './DataRecord.js'
 import { DataGridToolbarElementStyles } from './DataGridToolbarElementStyles.js'
+import { DataGridPagination, type DataGridPaginationLike, type DataGridPaginationSize, type DataGridPaginationStrategy } from './DataGridPagination.js'
 
 Localizer.dictionaries.add('de', {
 	'No results': 'Kein Ergebnis',
 	'More Filters': 'Weitere Filter',
 })
 
-export type DataGridPagination = 'auto' | number
 
 export enum DataGridEditability {
 	Never = 'never',
@@ -86,9 +86,12 @@ export enum DataGridEditability {
 export class DataGrid<TData, TDetailsElement extends Element | undefined = undefined> extends Component {
 	static readonly rowHeight = new LocalStorage<number>('DataGrid.RowHeight', 35)
 	static readonly cellRelativeFontSize = new LocalStorage<number>('DataGrid.CellRelativeFontSize', 0.8)
-	static readonly pageSize = new LocalStorage<Exclude<DataGridPagination, 'auto'>>('DataGrid.PageSize', 25)
+	static readonly pageSize = new LocalStorage<number>('DataGrid.PageSize', 25)
 	static readonly hasAlternatingBackground = new LocalStorage('DataGrid.HasAlternatingBackground', false)
 	protected static readonly defaultRowElementTag = literal`mo-data-grid-default-row`
+
+	/** Default pagination applied when pagination property is unspecified. */
+	static defaultPagination?: DataGridPaginationLike | ((dataGrid: any) => DataGridPaginationLike | undefined)
 
 	static readonly toolbarElementStyles = new DataGridToolbarElementStyles()
 
@@ -114,7 +117,13 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	@property({ type: Boolean, reflect: true }) headerHidden = false
 	@property({ type: Number }) page = 1
-	@property({ reflect: true, converter: (value: string | null | undefined) => value === null || value === undefined ? undefined : Number.isNaN(Number(value)) ? value : Number(value) }) pagination?: DataGridPagination
+	@property({
+		reflect: true,
+		converter: {
+			fromAttribute: (value: string | null) => DataGridPagination.from(value),
+			toAttribute: (value: DataGridPagination | undefined) => value?.toString() ?? null,
+		},
+	}) pagination?: DataGridPagination
 
 	@property({ type: Object }) sorting?: DataGridSorting<TData>
 
@@ -169,9 +178,9 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		this.pageChange.dispatch(page)
 	}
 
-	setPagination(pagination?: DataGridPagination) {
-		this.pagination = pagination
-		this.paginationChange.dispatch(pagination)
+	setPagination(pagination?: DataGridPaginationLike) {
+		this.pagination = DataGridPagination.from(pagination)
+		this.paginationChange.dispatch(this.pagination)
 	}
 
 	setData(data: Array<TData>, selectionBehavior = this.selectionBehaviorOnDataChange) {
@@ -312,7 +321,32 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}
 
 	get hasPagination() {
-		return this.pagination !== undefined
+		return this.resolvedPagination !== undefined
+	}
+
+	/** Resolves effective pagination configuration from property, static default, and fallback. */
+	get resolvedPagination(): { readonly strategy: DataGridPaginationStrategy, readonly size: DataGridPaginationSize } | undefined {
+		const classDefault = (this.constructor as typeof DataGrid).defaultPagination
+		const sources = [
+			this.pagination,
+			DataGridPagination.from(classDefault instanceof Function ? classDefault(this) : classDefault),
+			DataGridPagination.from(this.intrinsicPagination),
+		]
+
+		return sources.every(source => source === undefined) ? undefined : {
+			// A grid which cannot stream navigates pages, of as many rows as fit where no size is given.
+			strategy: sources.map(source => source?.strategy).find(strategy => strategy !== undefined) ?? 'pages',
+			size: sources.map(source => source?.size).find(size => size !== undefined) ?? 'auto',
+		}
+	}
+
+	/**
+	 * How this grid paginates by nature of its data source, as opposed to what the class
+	 * defaults to in @see DataGrid.defaultPagination. Undefined where a grid holds all of its data
+	 * and therefore does not paginate unless it is asked to.
+	 */
+	protected get intrinsicPagination(): DataGridPaginationLike | undefined {
+		return undefined
 	}
 
 	get supportsDynamicPageSize() {
@@ -323,18 +357,20 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		const dynamicPageSize = (pageSize: number) =>
 			this.supportsDynamicPageSize ? pageSize : DataGrid.pageSize.value
 
-		if (!this.pagination) {
+		const size = this.resolvedPagination?.size
+
+		if (size === undefined) {
 			return dynamicPageSize(this.data.length)
 		}
 
-		if (this.pagination === 'auto') {
+		if (size === 'auto') {
 			const rowsHeight = (this.scroller?.clientHeight ?? 0) - (this.header?.clientHeight ?? 0)
 			const rowHeight = this.rowHeight + 1
 			const pageSize = Math.floor(rowsHeight / rowHeight) || 1
 			return dynamicPageSize(pageSize)
 		}
 
-		return this.pagination
+		return size
 	}
 
 	get hasFooter() {
@@ -764,7 +800,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	get renderDataRecords() {
 		const rootRecords = this.dataRecords.filter(r => r.level === 0)
 
-		if (this.hasPagination === false) {
+		if (this.resolvedPagination?.strategy !== 'pages') {
 			return rootRecords
 		}
 
