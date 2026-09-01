@@ -64,6 +64,7 @@ export class TabBar extends Component {
 				this.tabsElement.updateComplete,
 				...this.tabs.map(tab => tab.updateComplete)
 			])
+			this.syncActiveTab()
 			this.dispatchChange()
 		}
 	}
@@ -75,8 +76,13 @@ export class TabBar extends Component {
 	}
 
 	private dispatchChange() {
-		this.value = (this.tabsElement.activeTab as Tab | undefined)?.value
-		this.change.dispatch(this.activeTab?.value)
+		const activeTab = this.tabsElement.activeTab as Tab | null
+		if (!activeTab || activeTab.value === this.value) {
+			return
+		}
+
+		this.value = activeTab.value
+		this.change.dispatch(this.value)
 	}
 }
 

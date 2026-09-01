@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/tab",
-	"version": "0.1.5",
+	"version": "0.1.6",
 	"description": "Tabs organize content across different screens and views.",
 	"repository": {
 		"type": "git",
