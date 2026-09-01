@@ -132,9 +132,9 @@ export class OverflowController<TItem extends Element = Element, THost extends R
 	}
 
 	private get observer() {
-		// Writes happen in a microtask after the observer's delivery has completed, so the resulting
-		// size changes are delivered in the next frame instead of tripping the same-frame loop limit.
-		return this.resizeObserver ??= new ResizeObserver(() => this.requestMeasurement())
+		// Measuring in the next frame keeps the writes out of the observer's own delivery loop, whose
+		// notifications would otherwise stay undelivered and surface as a global error.
+		return this.resizeObserver ??= new ResizeObserver(() => requestAnimationFrame(() => this.requestMeasurement()))
 	}
 
 	private measure() {

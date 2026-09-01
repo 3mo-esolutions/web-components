@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/overflow-controller",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "A lit controller which determines the items overflowing a single-line container, powering \"Priority+\" toolbars and menu bars",
 	"repository": {
 		"type": "git",
