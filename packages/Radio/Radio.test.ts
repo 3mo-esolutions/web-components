@@ -84,6 +84,19 @@ describe('Radio', () => {
 		expect(spy).toHaveBeenCalledTimes(1)
 	})
 
+	it('should not dispatch "change" event when an already selected radio is clicked', async () => {
+		fixture.component.selected = true
+		await fixture.update()
+		const spy = jasmine.createSpy('change')
+		fixture.component.addEventListener('change', spy)
+
+		fixture.component.renderRoot.querySelector('md-radio')?.click()
+		await fixture.update()
+
+		expect(fixture.component.selected).toBe(true)
+		expect(spy).not.toHaveBeenCalled()
+	})
+
 	it('should select when its label is clicked', async () => {
 		fixture.component.label = 'test'
 		await fixture.update()

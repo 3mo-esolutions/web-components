@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/radio",
-	"version": "0.4.0",
+	"version": "0.4.1",
 	"description": "A radio web-component based on Material Web.",
 	"repository": {
 		"type": "git",

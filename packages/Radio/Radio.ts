@@ -124,6 +124,11 @@ export class Radio extends Component {
 
 	protected handleChange(event: Event) {
 		event.stopImmediatePropagation()
+		// Clicking an already-selected radio is not a change. Firefox delivers a second click for
+		// label-associated custom elements, which would otherwise dispatch "change" twice.
+		if (this.selected) {
+			return
+		}
 		this.selected = true
 		this.change.dispatch(true)
 	}
