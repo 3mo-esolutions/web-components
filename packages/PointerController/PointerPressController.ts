@@ -1,4 +1,4 @@
-import { Controller, type EventListenerTarget, type ReactiveElement, eventListener, extractEventTargets } from '@a11d/lit'
+import { Controller, EventListenerController, type EventListenerTarget, type ReactiveElement, extractEventTargets } from '@a11d/lit'
 
 export interface PointerPressControllerOptions {
 	target?: EventListenerTarget
@@ -21,14 +21,31 @@ export class PointerPressController extends Controller {
 		}
 	}
 
-	@eventListener({ type: 'pointerdown', target(this: PointerPressController) { return extractEventTargets(this.host, this.options?.target) } })
+	protected readonly pressController = new EventListenerController(this.host, {
+		type: 'pointerdown', target: () => extractEventTargets(this.host, this.options?.target),
+		listener: () => this.setPressTrue(),
+	})
+
+	resubscribe() {
+		this.pressController.resubscribe()
+	}
+
+	private readonly handleRelease = () => this.setPressFalse()
+
 	protected setPressTrue() {
+		// Attached for the duration of the press alone
+		document.addEventListener('pointerup', this.handleRelease, { once: true })
+		document.addEventListener('pointercancel', this.handleRelease, { once: true })
 		this.setPress(true)
 	}
 
-	@eventListener({ type: 'pointerup', target: document })
-	@eventListener({ type: 'pointercancel', target: document })
 	protected setPressFalse() {
+		document.removeEventListener('pointerup', this.handleRelease)
+		document.removeEventListener('pointercancel', this.handleRelease)
 		this.setPress(false)
+	}
+
+	override hostDisconnected() {
+		this.setPressFalse()
 	}
 }

@@ -26,4 +26,13 @@ export class PointerController extends Controller {
 	private readonly typeController = new PointerTypeController(this.host, {
 		handleTypeChange: this.options?.handleTypeChange
 	})
+
+	resubscribe() {
+		this.hoverController.resubscribe()
+		this.pressController.resubscribe()
+	}
+
+	refresh() {
+		return this.hoverController.refresh()
+	}
 }

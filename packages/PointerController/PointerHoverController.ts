@@ -1,15 +1,14 @@
-import { Controller, type EventListenerTarget, type ReactiveElement, eventListener, extractEventTargets } from '@a11d/lit'
-import { ResizeController } from '@3mo/resize-observer'
+import { Controller, EventListenerController, type EventListenerTarget, type ReactiveElement, extractEventTargets } from '@a11d/lit'
 
 export interface PointerHoverControllerOptions {
 	target?: EventListenerTarget
 	handleHoverChange?(hover: boolean): void
 }
 
-function target(this: PointerHoverController) {
-	return extractEventTargets(this.host, this.options?.target)
-}
-
+/**
+ * Follows the pointer boundary events, which engines also dispatch for layout changes underneath
+ * a resting pointer, so that the state stays in sync with `:hover` without ever polling it.
+ */
 export class PointerHoverController extends Controller {
 	protected _hover = false
 	get hover() { return this._hover }
@@ -18,21 +17,34 @@ export class PointerHoverController extends Controller {
 		super(host)
 	}
 
-	protected readonly resizeController = new ResizeController(this.host, {
-		target: this.host,
-		callback: () => this.checkHover()
+	private readonly target = () => extractEventTargets(this.host, this.options?.target)
+
+	protected readonly enterController = new EventListenerController(this.host, {
+		type: 'pointerenter', target: this.target,
+		listener: () => this.setHover(true),
 	})
 
-	@eventListener({ type: 'pointerenter', target })
-	@eventListener({ type: 'pointerleave', target })
-	@eventListener({ type: 'pointerdown', target: document })
-	@eventListener({ type: 'pointerup', target: document })
-	@eventListener({ type: 'pointercancel', target: document })
-	protected async checkHover() {
-		const elements = await extractEventTargets(this.host, this.options?.target) as Array<Element>
-		// Without this delay, the :hover state won't work in Firefox sometimes
+	protected readonly leaveController = new EventListenerController(this.host, {
+		type: 'pointerleave', target: this.target,
+		listener: () => this.setHover(false),
+	})
+
+	resubscribe() {
+		this.enterController.resubscribe()
+		this.leaveController.resubscribe()
+	}
+
+	/** Adopts a hover the listeners missed, e.g. of a target hovered before they were bound, leaving a reported state untouched otherwise. */
+	async refresh() {
+		const elements = await this.target() as Array<Element>
+		// Engines settle the hover flag one frame after layout
 		await new Promise(requestAnimationFrame)
-		const hover = elements.some(e => e.matches(':hover'))
+		if ([...elements].some(element => element.matches(':hover'))) {
+			this.setHover(true)
+		}
+	}
+
+	protected setHover(hover: boolean) {
 		if (this._hover !== hover) {
 			this._hover = hover
 			this.options?.handleHoverChange?.(hover)
