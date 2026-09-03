@@ -58,4 +58,17 @@ describe('styleProperty', () => {
 		expect(fixture.component.withCustomProperty).toBe('10px')
 		expect(fixture.component.requestUpdate).toHaveBeenCalledOnceWith('withCustomProperty', '')
 	})
+
+	it('should read back a style set directly on the element, as the property holds no state of its own', () => {
+		fixture.component.style.gap = '20px'
+		fixture.component.style.alignItems = 'flex-end'
+		fixture.component.style.width = '100%'
+		fixture.component.style.setProperty('--custom-property', '30px')
+
+		expect(fixture.component.gap).toBe('20px')
+		expect(fixture.component.withCustomKey).toBe('flex-end')
+		// The converter maps the style value back into the property's own vocabulary.
+		expect(fixture.component.withCustomConverter).toBe('*')
+		expect(fixture.component.withCustomProperty).toBe('30px')
+	})
 })

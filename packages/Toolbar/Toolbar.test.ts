@@ -5,10 +5,11 @@ import './index.js'
 
 /** Awaits the resize observations and microtask-batched measurements the controller settles through. */
 const settle = async (component: Toolbar) => {
-	for (let i = 0; i < 10; i++) {
-		await component.updateComplete
-		await new Promise(resolve => requestAnimationFrame(resolve))
-	}
+	await component.updateComplete
+	component['toolbarController']?.overflowController['measure']()
+	await component.updateComplete
+	await new Promise(resolve => setTimeout(resolve, 30))
+	component['toolbarController']?.overflowController['measure']()
 	await component.updateComplete
 }
 
@@ -27,6 +28,8 @@ describe('Toolbar', () => {
 	const items = () => [...fixture.component.children] as Array<HTMLElement>
 	const overflowedItems = () => items().filter(item => item.slot === 'overflow-content')
 	const iconButton = () => fixture.component.renderRoot.querySelector('mo-icon-button')!
+	const pane = () => fixture.component.renderRoot.querySelector('mo-toolbar-pane')!
+	const anchorContainer = () => fixture.component.renderRoot.querySelector('mo-popover-container')!
 
 	beforeEach(() => settle(fixture.component))
 
@@ -73,5 +76,40 @@ describe('Toolbar', () => {
 		await settle(fixture.component)
 
 		expect(overflowedItems()).toEqual([])
+	})
+
+	// The pane's clipping is what keeps the measured width the toolbar's own width, so items which
+	// cannot overflow must not push the pane - and with it the overflow anchor - past the toolbar.
+	it('should clip the pane instead of letting items which cannot overflow grow the toolbar', async () => {
+		for (const item of items()) {
+			item.setAttribute('data-no-overflow', '')
+		}
+		fixture.component.style.width = '200px'
+
+		await settle(fixture.component)
+
+		expect(overflowedItems()).toEqual([])
+		expect(pane().getBoundingClientRect().width).toBeLessThanOrEqual(fixture.component.getBoundingClientRect().width)
+		expect(iconButton().getBoundingClientRect().right).toBeLessThanOrEqual(fixture.component.getBoundingClientRect().right + 1)
+	})
+
+	describe('Overflow anchor', () => {
+		it('should render the configured "overflowIcon" on the icon-button', async () => {
+			expect(iconButton().icon).toBe('more_vert')
+
+			fixture.component.overflowIcon = 'menu'
+			await settle(fixture.component)
+
+			expect(iconButton().icon).toBe('menu')
+		})
+
+		it('should place the overflow anchor before the pane when "overflowPosition" is \'start\'', async () => {
+			expect(anchorContainer().getBoundingClientRect().left).toBeGreaterThanOrEqual(pane().getBoundingClientRect().right - 1)
+
+			fixture.component.overflowPosition = 'start'
+			await settle(fixture.component)
+
+			expect(anchorContainer().getBoundingClientRect().right).toBeLessThanOrEqual(pane().getBoundingClientRect().left + 1)
+		})
 	})
 })

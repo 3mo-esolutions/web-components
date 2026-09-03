@@ -11,4 +11,26 @@ describe('FontImporter', () => {
 		FontImporter.import(fontUrl)
 		expect(getStylesContent()).toContain(fontUrl)
 	})
+
+	it('should not duplicate a font that was already imported', () => {
+		const fontUrl = 'https://fonts.googleapis.com/css2?family=Dedupe:wght@100&display=swap'
+		const occurrences = () => getStylesContent().split(`@import '${fontUrl}';`).length - 1
+
+		FontImporter.import(fontUrl)
+		FontImporter.import(fontUrl)
+		FontImporter.import(fontUrl)
+
+		expect(occurrences()).toBe(1)
+	})
+
+	it('should preserve previously imported fonts when importing another', () => {
+		const firstFontUrl = 'https://fonts.googleapis.com/css2?family=First:wght@100&display=swap'
+		const secondFontUrl = 'https://fonts.googleapis.com/css2?family=Second:wght@100&display=swap'
+
+		FontImporter.import(firstFontUrl)
+		FontImporter.import(secondFontUrl)
+
+		expect(getStylesContent()).toContain(`@import '${firstFontUrl}';`)
+		expect(getStylesContent()).toContain(`@import '${secondFontUrl}';`)
+	})
 })

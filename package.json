@@ -5,7 +5,7 @@
 		"dev": "node ./scripts/test.ts",
 		"watch": "npm-watch",
 		"test": "node ./scripts/test.ts && karma start --single-run",
-		"lint": "eslint **/*.ts",
+		"lint": "eslint \"**/*.ts\"",
 		"docs:build": "node ./scripts/docs-build.ts",
 		"clean": "node ./scripts/clean.ts",
 		"typescript": "node ./node_modules/typescript-7/bin/tsc --build --noEmit",

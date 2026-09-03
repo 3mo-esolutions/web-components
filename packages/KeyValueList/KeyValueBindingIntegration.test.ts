@@ -14,6 +14,7 @@ class TestSubject {
 class TestHost extends Component {
 	@property({ type: Object }) subject = new TestSubject()
 	@property() keyPath: 'first' | 'second' = 'first'
+	@label('Own label') @property() own? = 'own value'
 
 	get keyValues() { return [...this.renderRoot.querySelectorAll('mo-key-value')] as Array<KeyValue> }
 
@@ -23,14 +24,26 @@ class TestHost extends Component {
 			<mo-key-value key='Given' ${bind(this, 'subject', { keyPath: 'first' })}></mo-key-value>
 			<mo-key-value ${bind(this, 'subject', { keyPath: 'readOnly' })}></mo-key-value>
 			<mo-key-value ${bind(this, 'subject', { keyPath: this.keyPath })}></mo-key-value>
+			<mo-key-value ${bind(this, 'own')}></mo-key-value>
 		`
+	}
+}
+
+@component('key-value-binding-integration-null-source-test')
+class NullSourceTestHost extends Component {
+	@property({ type: Object }) subject?: TestSubject = undefined
+
+	get keyValue() { return this.renderRoot.querySelector('mo-key-value') as KeyValue }
+
+	protected override get template() {
+		return html`<mo-key-value ${bind(this, 'subject', { keyPath: 'first' })}></mo-key-value>`
 	}
 }
 
 describe('KeyValueBindingIntegration', () => {
 	const fixture = new ComponentTestFixture<TestHost>(html`<key-value-binding-integration-test></key-value-binding-integration-test>`)
 
-	const [bound, given, readOnly, switching] = [0, 1, 2, 3]
+	const [bound, given, readOnly, switching, own] = [0, 1, 2, 3, 4]
 	const keyValue = (index: number) => fixture.component.keyValues[index]!
 
 	it('should write the value of the bound property', () => {
@@ -40,6 +53,25 @@ describe('KeyValueBindingIntegration', () => {
 
 	it('should derive the key from the label of the bound property', () => {
 		expect(keyValue(bound).key).toBe('First label')
+	})
+
+	it('should derive the key from the label of the host component\'s own property when bound without a key-path', () => {
+		expect(keyValue(own).key).toBe('Own label')
+		expect(keyValue(own).value).toBe('own value')
+	})
+
+	it('should leave the key untouched while the bound source is null', async () => {
+		const host = new NullSourceTestHost()
+		document.body.appendChild(host)
+		try {
+			await host.updateComplete
+			await host.keyValue.updateComplete
+
+			expect(host.keyValue.key).toBeUndefined()
+			expect(host.keyValue.empty).toBe(true)
+		} finally {
+			host.remove()
+		}
 	})
 
 	it('should keep a key the consumer has given', () => {

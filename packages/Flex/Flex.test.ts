@@ -34,12 +34,12 @@ describe('Flex', () => {
 		])
 
 		for (const [direction, flexDirection] of flexDirectionByDirection) {
-			it('should get from CSS property "flex-direction"', () => {
+			it(`should get "${direction}" from CSS property "flex-direction: ${flexDirection}"`, () => {
 				fixture.component.style.flexDirection = flexDirection
 				expect(fixture.component.direction).toBe(direction)
 			})
 
-			it('should set CSS property "flex-direction"', () => {
+			it(`should set CSS property "flex-direction: ${flexDirection}" for "${direction}"`, () => {
 				setPropertyValue('direction', direction)
 				expect(fixture.component.style.flexDirection).toBe(flexDirection)
 			})

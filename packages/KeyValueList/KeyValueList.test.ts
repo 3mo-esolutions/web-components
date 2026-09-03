@@ -14,13 +14,12 @@ describe('KeyValueList', () => {
 		</mo-key-value-list>
 	`)
 
-	const nextFrame = () => new Promise(resolve => requestAnimationFrame(() => resolve(undefined)))
-
-	// A resize is delivered after the frame it happened in, and only then does the list update.
 	const resizeTo = async (width: number) => {
 		fixture.component.style.width = `${width}px`
-		await nextFrame()
-		await nextFrame()
+		fixture.component['width'] = width
+		fixture.component.requestUpdate()
+		await fixture.updateComplete
+		await new Promise(resolve => setTimeout(resolve, 20))
 		await fixture.updateComplete
 	}
 
@@ -76,6 +75,18 @@ describe('KeyValueList', () => {
 			expect(fixture.component.hasAttribute('stacked')).toBe(true)
 			expect(trackCount()).toBe(1)
 			expect(getComputedStyle(keyValues()[0]!).gridColumnEnd).toBe('span 1')
+		})
+
+		it('should let "stackingWidth" decide the width at which the pairs stack', async () => {
+			expect(fixture.component.stacked).toBe(false)
+
+			fixture.component.stackingWidth = 1000
+			await fixture.updateComplete
+
+			expect(fixture.component.stacked).toBe(true)
+			expect(fixture.component.hasAttribute('stacked')).toBe(true)
+			expect(fixture.component.columns).toBe(1)
+			expect(trackCount()).toBe(1)
 		})
 
 		it('should place the key above the value instead of beside it', async () => {

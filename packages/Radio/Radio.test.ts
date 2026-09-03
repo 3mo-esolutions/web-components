@@ -1,6 +1,7 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { Component, component, html } from '@a11d/lit'
 import { type Radio } from './Radio.js'
+import './index.js'
 
 @component('mo-test-radio-shadow-host')
 class TestRadioShadowHost extends Component {
@@ -33,6 +34,21 @@ class TestRadioGroupWithDisabled extends Component {
 			<mo-radio name='keyboard-disabled'></mo-radio>
 			<mo-radio name='keyboard-disabled' disabled></mo-radio>
 			<mo-radio name='keyboard-disabled'></mo-radio>
+		`
+	}
+}
+
+@component('mo-test-radio-group-rtl')
+class TestRadioGroupRtl extends Component {
+	get radios() { return [...this.renderRoot.querySelectorAll('mo-radio')] }
+
+	protected override get template() {
+		return html`
+			<div dir='rtl'>
+				<mo-radio name='keyboard-rtl'></mo-radio>
+				<mo-radio name='keyboard-rtl'></mo-radio>
+				<mo-radio name='keyboard-rtl'></mo-radio>
+			</div>
 		`
 	}
 }
@@ -110,9 +126,7 @@ describe('Radio', () => {
 		expect(spy).toHaveBeenCalledTimes(1)
 	})
 
-	it('should associate its label with the md-radio element', async () => {
-		// What makes a click anywhere in the 40px box select the radio: `md-radio` is form-associated,
-		// so the browser forwards label activation to it.
+	it('should associate its label with the md-radio element', () => {
 		const radioElement = fixture.component.renderRoot.querySelector('md-radio')
 		const label = fixture.component.renderRoot.querySelector('label')
 		expect([...radioElement!.labels]).toContain(label!)
@@ -125,6 +139,16 @@ describe('Radio', () => {
 		await fixture.update()
 		expect(fixture.component.selected).toBe(true)
 		expect(spy).not.toHaveBeenCalled()
+	})
+
+	it('should forward focus() to the md-radio element', () => {
+		const radioElement = fixture.component.renderRoot.querySelector('md-radio')!
+			; (document.activeElement as HTMLElement | null)?.blur()
+
+		fixture.component.focus()
+
+		expect(fixture.component.shadowRoot!.activeElement).toBe(radioElement)
+		expect(document.activeElement).toBe(fixture.component)
 	})
 
 	describe('integrates with other radio components', () => {
@@ -218,6 +242,7 @@ describe('Radio', () => {
 
 	describe('keyboard navigation', () => {
 		const groupFixture = new ComponentTestFixture<TestRadioGroup>('mo-test-radio-group')
+		const rtlGroupFixture = new ComponentTestFixture<TestRadioGroupRtl>('mo-test-radio-group-rtl')
 
 		it('should make the selected radio the group\'s only tab stop', async () => {
 			const radios = groupFixture.component.radios
@@ -239,6 +264,33 @@ describe('Radio', () => {
 
 			pressKey(radios[1]!, 'ArrowUp')
 			expect(radios.map(radio => radio.selected)).toEqual([true, false, false])
+		})
+
+		it('should treat ArrowRight like ArrowDown and ArrowLeft like ArrowUp', async () => {
+			const radios = groupFixture.component.radios
+			radios[0]!.selected = true
+			await Promise.all(radios.map(radio => radio.updateComplete))
+
+			pressKey(radios[0]!, 'ArrowRight')
+			expect(radios.map(radio => radio.selected)).toEqual([false, true, false])
+
+			pressKey(radios[1]!, 'ArrowLeft')
+			expect(radios.map(radio => radio.selected)).toEqual([true, false, false])
+		})
+
+		it('should invert the horizontal arrows in right-to-left direction while vertical arrows stay unchanged', async () => {
+			const radios = rtlGroupFixture.component.radios
+			radios[1]!.selected = true
+			await Promise.all(radios.map(radio => radio.updateComplete))
+
+			pressKey(radios[1]!, 'ArrowRight')
+			expect(radios.map(radio => radio.selected)).toEqual([true, false, false])
+
+			pressKey(radios[0]!, 'ArrowLeft')
+			expect(radios.map(radio => radio.selected)).toEqual([false, true, false])
+
+			pressKey(radios[1]!, 'ArrowDown')
+			expect(radios.map(radio => radio.selected)).toEqual([false, false, true])
 		})
 
 		it('should wrap around at the group\'s edges', () => {
@@ -329,7 +381,6 @@ describe('Radio', () => {
 			fixture2.component.name = 'somewhere-else'
 			await Promise.all([fixture1.component.updateComplete, fixture2.component.updateComplete])
 
-			// When departing a group with no other selection, the remaining radio becomes reachable again
 			expect(tabIndexOf(fixture1.component)).toBe(0)
 		})
 	})

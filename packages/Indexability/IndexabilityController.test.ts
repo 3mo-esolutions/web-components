@@ -1,9 +1,7 @@
-import { component, Component, html, render, repeat } from '@a11d/lit'
+import { cache, component, Component, html, render, repeat } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { IndexabilityController, type IndexabilityItem } from './IndexabilityController.js'
 
-/** An item living in its OWN shadow root, registered with the host's registry — the case document
- * position cannot order, and the reason the declared index is the only order there is. */
 @component('indexability-test-child')
 class IndexabilityTestChild extends Component {
 	controller!: IndexabilityController<string>
@@ -23,7 +21,6 @@ class IndexabilityControllerTestComponent extends Component {
 	withShadowChild = false
 
 	readonly controller = new IndexabilityController<string>(this)
-	/** A second registry on the SAME host — the board case. */
 	readonly other = new IndexabilityController<string>(this)
 
 	get itemElements() { return [...this.renderRoot.querySelectorAll<HTMLElement>('.item')] }
@@ -47,6 +44,21 @@ class IndexabilityControllerTestComponent extends Component {
 	}
 }
 
+@component('indexability-cache-test')
+class IndexabilityCacheTest extends Component {
+	swapped = false
+
+	readonly controller = new IndexabilityController<string>(this)
+
+	get cachedElement() { return this.renderRoot.querySelector<HTMLElement>('.cached')! }
+
+	protected override get template() {
+		return html`${cache(this.swapped
+			? html`<div class='elsewhere'></div>`
+			: html`<div class='cached' ${this.controller.item({ index: 0, data: 'cached-0' })}></div>`)}`
+	}
+}
+
 describe('IndexabilityController', () => {
 	const create = (setup: Partial<IndexabilityControllerTestComponent> = {}) =>
 		new ComponentTestFixture(() => Object.assign(new IndexabilityControllerTestComponent(), setup))
@@ -63,6 +75,7 @@ describe('IndexabilityController', () => {
 
 	describe('registration', () => {
 		const fixture = create()
+		const cacheFixture = new ComponentTestFixture(() => new IndexabilityCacheTest())
 
 		it('registers an item on render and drops it when lit does', async () => {
 			expect(fixture.component.controller.items.length).toBe(3)
@@ -109,6 +122,22 @@ describe('IndexabilityController', () => {
 			fixture.component.items = [0]
 			await fixture.update()
 			expect(fixture.component.controller.items.length).toBe(1)
+		})
+
+		it('re-registers an item whose template is restored from lit’s cache, so a cached swap never loses items', async () => {
+			const { component } = cacheFixture
+			const element = component.cachedElement
+			expect(component.controller.items.map(item => item.options.data)).toEqual(['cached-0'])
+
+			component.swapped = true
+			await cacheFixture.update()
+			expect(component.controller.items).toEqual([]) // put aside, and deregistered with it
+
+			component.swapped = false
+			await cacheFixture.update()
+
+			expect(component.controller.items.map(item => item.options.data)).toEqual(['cached-0'])
+			expect(component.controller.items[0]!.element).toBe(element) // the very element lit cached
 		})
 	})
 

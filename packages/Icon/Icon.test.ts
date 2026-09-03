@@ -4,41 +4,52 @@ import { Icon, IconVariant } from './Icon.js'
 describe('Icon', () => {
 	const fixture = new ComponentTestFixture<Icon>('mo-icon')
 
-	it('should have a default font-size of 24px', () => {
-		expect(getComputedStyle(fixture.component).fontSize).toBe('24px')
-	})
-
-	it('should have a default display of inline-grid', () => {
-		expect(getComputedStyle(fixture.component).display).toBe('inline-grid')
-	})
-
-	it('should have the default variant', async () => {
-		const originalDefaultVariant = Icon.defaultVariant
-		expect(fixture.component.variant).toBe(originalDefaultVariant)
-
-		Icon.defaultVariant = IconVariant.Outlined
-		await fixture.initialize()
-
-		expect(fixture.component.variant).toBe(IconVariant.Outlined)
-		Icon.defaultVariant = originalDefaultVariant
-	})
-
 	it('should render the icon into the span element', async () => {
 		const icon = fixture.component.icon = 'favorite'
+
 		await fixture.update()
+
 		expect(fixture.component.renderRoot.querySelector('span')?.textContent).toBe(icon)
 	})
 
-	Icon.fontsByVariant.forEach((font, variant) => {
-		it(`should set the font-family to "${font.name}" and load the font automatically when the variant is set to "${variant}"`, async () => {
-			fixture.component.variant = variant
-			await fixture.update()
-			expect(getComputedStyle(fixture.component.renderRoot.querySelector('span')!).fontFamily).toContain(font.name)
+	describe('defaults', () => {
+		it('should have a default font-size of 24px', () => {
+			expect(getComputedStyle(fixture.component).fontSize).toBe('24px')
+		})
 
-			const fontStyleSheetsContent = [...document.head.querySelectorAll('style')]
-				.map(style => style.textContent)
-				.join('\n')
-			expect(fontStyleSheetsContent).toContain(font.url)
+		it('should have a default display of inline-grid', () => {
+			expect(getComputedStyle(fixture.component).display).toBe('inline-grid')
+		})
+
+		it('should adopt the static "defaultVariant"', async () => {
+			const originalDefaultVariant = Icon.defaultVariant
+			expect(fixture.component.variant).toBe(originalDefaultVariant)
+
+			try {
+				Icon.defaultVariant = IconVariant.Outlined
+				await fixture.initialize()
+
+				expect(fixture.component.variant).toBe(IconVariant.Outlined)
+			} finally {
+				Icon.defaultVariant = originalDefaultVariant
+			}
+		})
+	})
+
+	describe('variants', () => {
+		Icon.fontsByVariant.forEach((font, variant) => {
+			it(`should set the font-family to "${font.name}" and load the font automatically when the variant is set to "${variant}"`, async () => {
+				fixture.component.variant = variant
+
+				await fixture.update()
+
+				expect(getComputedStyle(fixture.component.renderRoot.querySelector('span')!).fontFamily).toContain(font.name)
+
+				const fontStyleSheetsContent = [...document.head.querySelectorAll('style')]
+					.map(style => style.textContent)
+					.join('\n')
+				expect(fontStyleSheetsContent).toContain(font.url)
+			})
 		})
 	})
 })

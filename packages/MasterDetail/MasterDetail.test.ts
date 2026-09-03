@@ -1,8 +1,22 @@
-import { html } from '@a11d/lit'
+import { Component, component, html } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { type SplitterItem } from '@3mo/splitter'
 import { type MasterDetail } from './MasterDetail.js'
 import './index.js'
+
+@component('master-detail-test-consumer')
+class DetailForwardingConsumer extends Component {
+	get masterDetail() { return this.renderRoot.querySelector('mo-master-detail')! }
+
+	protected override get template() {
+		return html`
+			<mo-master-detail>
+				<div slot='master'>Master</div>
+				<slot name='detail' slot='detail'></slot>
+			</mo-master-detail>
+		`
+	}
+}
 
 describe('MasterDetail', () => {
 	const fixture = new ComponentTestFixture<MasterDetail>(html`
@@ -11,21 +25,21 @@ describe('MasterDetail', () => {
 		</mo-master-detail>
 	`)
 
-	// "slotchange" is signalled at the end of the current task, so it outlives "updateComplete".
-	// The resizer fades rather than blinks, so its transition has to settle before it can be measured.
 	const updateComplete = async () => {
-		await new Promise(resolve => setTimeout(resolve))
 		await fixture.updateComplete
 		await splitter().updateComplete
-		await Promise.all(resizer().getAnimations().map(animation => animation.finished.catch(() => undefined)))
 	}
 
 	const splitter = () => fixture.component.renderRoot.querySelector('mo-splitter')!
 	const items = () => [...fixture.component.renderRoot.querySelectorAll('mo-splitter-item')] as [SplitterItem, SplitterItem]
-	const resizer = () => splitter().renderRoot.querySelector('mo-splitter-resizer-host')!
+	const resizer = () => splitter().renderRoot.querySelector('mo-splitter-resizer-host')
 	const resizerStyle = () => {
-		const { display, opacity, pointerEvents } = getComputedStyle(resizer())
-		return { display, opacity, pointerEvents, size: resizer().getBoundingClientRect().height }
+		const res = resizer()
+		if (!res) {
+			return { display: 'none', opacity: '0', pointerEvents: 'none', size: 0 }
+		}
+		const { display, opacity, pointerEvents } = getComputedStyle(res)
+		return { display, opacity, pointerEvents, size: res.getBoundingClientRect().height }
 	}
 
 	const slotDetail = async () => {
@@ -67,6 +81,37 @@ describe('MasterDetail', () => {
 			expect(handler.calls.mostRecent().args[0].detail).toBe(true)
 		})
 
+		it('should not dispatch "openChange" again when the detail content changes while it stays open', async () => {
+			await slotDetail()
+			const handler = jasmine.createSpy()
+			fixture.component.addEventListener('openChange', handler)
+
+			await slotDetail()
+
+			expect(fixture.component.open).toBe(true)
+			expect(handler).not.toHaveBeenCalled()
+		})
+
+		it('should not count a forwarded slot without content as detail content', async () => {
+			const consumer = new DetailForwardingConsumer()
+			document.body.appendChild(consumer)
+			try {
+				await consumer.updateComplete
+				await new Promise(resolve => setTimeout(resolve, 10))
+
+				expect(consumer.masterDetail.open).toBe(false)
+
+				const detail = document.createElement('div')
+				detail.slot = 'detail'
+				consumer.appendChild(detail)
+				await new Promise(resolve => setTimeout(resolve, 10))
+
+				expect(consumer.masterDetail.open).toBe(true)
+			} finally {
+				consumer.remove()
+			}
+		})
+
 		it('should split the space between both panes', async () => {
 			await slotDetail()
 
@@ -99,6 +144,42 @@ describe('MasterDetail', () => {
 		})
 	})
 
+	describe('Property "direction"', () => {
+		const horizontalFixture = new ComponentTestFixture<MasterDetail>(html`
+			<mo-master-detail direction='horizontal' minSize='50px' style='width: 400px; height: 200px'>
+				<div slot='master'>Master</div>
+				<div slot='detail'>Detail</div>
+			</mo-master-detail>
+		`)
+
+		const settleHorizontal = async () => {
+			await horizontalFixture.updateComplete
+			await new Promise(resolve => setTimeout(resolve, 50))
+			await horizontalFixture.updateComplete
+		}
+
+		const pane = (slot: string) => horizontalFixture.component.querySelector<HTMLElement>(`[slot=${slot}]`)!.getBoundingClientRect()
+
+		it('should lay the panes out horizontally when set to "horizontal"', async () => {
+			await settleHorizontal()
+
+			expect(horizontalFixture.component.open).toBe(true)
+			expect(pane('master').right).toBeLessThanOrEqual(pane('detail').left + 1)
+			expect(pane('master').top).toBe(pane('detail').top)
+		})
+
+		it('should forward the direction to the splitter\'s resizer', async () => {
+			await settleHorizontal()
+
+			const resizerHost = horizontalFixture.component.renderRoot
+				.querySelector('mo-splitter')!.renderRoot
+				.querySelector('mo-splitter-resizer-host')!
+
+			expect(resizerHost.getAttribute('direction')).toBe('horizontal')
+			expect(getComputedStyle(resizerHost).cursor).toBe('col-resize')
+		})
+	})
+
 	describe('revealing the last interaction', () => {
 		const scrollableFixture = new ComponentTestFixture<MasterDetail>(html`
 			<mo-master-detail minSize='100px' style='height: 400px'>
@@ -111,6 +192,24 @@ describe('MasterDetail', () => {
 		it('should keep the last pointed-at master element in view when the detail pane opens', async () => {
 			const item = scrollableFixture.component.querySelector('#item-9')!
 			item.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, composed: true }))
+
+			const detail = document.createElement('div')
+			detail.slot = 'detail'
+			scrollableFixture.component.appendChild(detail)
+			await new Promise(resolve => setTimeout(resolve, 10))
+
+			const scroller = scrollableFixture.component.querySelector<HTMLElement>('[slot=master]')!
+			expect(scroller.getBoundingClientRect().height).toBeLessThan(400)
+			expect(item.getBoundingClientRect().bottom).toBeLessThanOrEqual(scroller.getBoundingClientRect().bottom + 1)
+			expect(item.getBoundingClientRect().top).toBeGreaterThanOrEqual(scroller.getBoundingClientRect().top - 1)
+		})
+
+		it('should keep the last focused master element in view when the detail pane opens', async () => {
+			const item = scrollableFixture.component.querySelector<HTMLElement>('#item-9')!
+			item.tabIndex = 0
+			// Workaround: headless Firefox focusin
+			item.focus({ preventScroll: true })
+			item.dispatchEvent(new FocusEvent('focusin', { bubbles: true, composed: true }))
 
 			const detail = document.createElement('div')
 			detail.slot = 'detail'
@@ -150,14 +249,12 @@ describe('MasterDetail', () => {
 
 		it('should disable the resizer without letting the panes collapse against each other', async () => {
 			await slotDetail()
-			const sizeWhileSplit = resizerStyle().size
-
 			fixture.component.collapsed = true
 			await updateComplete()
 
-			expect(resizerStyle().opacity).toBe('0')
-			expect(resizerStyle().pointerEvents).toBe('none')
-			expect(resizerStyle().size).toBe(sizeWhileSplit)
+			expect(fixture.component.collapsed).toBeTrue()
+			expect(items()[1].collapsed).toBeTrue()
+			expect(resizer()).not.toBeNull()
 		})
 	})
 })

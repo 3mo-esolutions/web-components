@@ -89,4 +89,24 @@ describe('listItems', () => {
 			expect(fixture.component[listItems]).toEqual([item1, item2])
 		})
 	})
+
+	describe('slot', () => {
+		const fixture = new ComponentTestFixture(html`
+			<div>
+				<li>Item 1</li>
+				<ul>
+					<li>Item 2</li>
+				</ul>
+				<div>Not an item</div>
+			</div>
+		`)
+
+		it('should flatten the assigned elements\' list items across the slot', () => {
+			const shadowRoot = fixture.component.attachShadow({ mode: 'open' })
+			shadowRoot.append(document.createElement('slot'))
+			const slot = shadowRoot.querySelector('slot')!
+
+			expect(slot[listItems]?.map(item => item.textContent?.trim())).toEqual(['Item 1', 'Item 2'])
+		})
+	})
 })

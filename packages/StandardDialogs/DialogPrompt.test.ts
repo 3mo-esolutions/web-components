@@ -65,8 +65,12 @@ describe('DialogPrompt', () => {
 				expect(fixture.component.inputElement.value).toBe(parameters.value)
 			})
 
-			it('should return the value of the input element when the primary button is clicked', () => {
-				expect(fixture.component.inputElement.value).toBe(parameters.value)
+			it('should resolve with the current value of the input element when the primary button is clicked', async () => {
+				const confirmPromise = fixture.component.confirm()
+				fixture.component.inputElement.value = 'New value'
+				fixture.component.inputElement.dispatchEvent(new CustomEvent('input', { detail: 'New value' }))
+				fixture.component.primaryActionElement?.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+				await expectAsync(confirmPromise).toBeResolvedTo('New value')
 			})
 		})
 	}

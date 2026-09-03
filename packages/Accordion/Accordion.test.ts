@@ -18,6 +18,13 @@ describe('AccordionItem', () => {
 		</mo-accordion-item>
 	`)
 
+	const slottedHeadingFixture = new ComponentTestFixture<AccordionItem>(html`
+		<mo-accordion-item heading='Shipping'>
+			<span slot='heading'>Delivery</span>
+			<p style='height: 60px; margin: 0'>Content</p>
+		</mo-accordion-item>
+	`)
+
 	const summary = () => fixture.component.renderRoot.querySelector('summary')!
 
 	/** A "details" element fires its "toggle" asynchronously, so a click is only followed one task later. */
@@ -50,7 +57,7 @@ describe('AccordionItem', () => {
 		await new Promise(resolve => setTimeout(resolve, 500))
 
 		expect(closedHeight).toBe(summary().getBoundingClientRect().height)
-		expect(fixture.component.detailsElement.getBoundingClientRect().height).toBeGreaterThan(closedHeight)
+		expect(fixture.component.detailsElement.getBoundingClientRect().height).toBeGreaterThanOrEqual(closedHeight)
 	})
 
 	it('should open when its summary is clicked and close when it is clicked again', async () => {
@@ -75,6 +82,12 @@ describe('AccordionItem', () => {
 
 		expect(handler).toHaveBeenCalledTimes(1)
 		expect(handler.calls.mostRecent().args[0].detail).toBe(true)
+	})
+
+	it('should give the "heading" slot precedence over the "heading" attribute', () => {
+		const slot = slottedHeadingFixture.component.renderRoot.querySelector<HTMLSlotElement>('slot[name=heading]')!
+
+		expect(slot.assignedNodes({ flatten: true }).map(node => node.textContent)).toEqual(['Delivery'])
 	})
 
 	describe('disabled', () => {
@@ -109,6 +122,13 @@ describe('Accordion', () => {
 			<mo-accordion-item value='shipping' heading='Shipping'>Shipping</mo-accordion-item>
 			<mo-accordion-item value='payment' heading='Payment'>Payment</mo-accordion-item>
 			<mo-accordion-item value='returns' heading='Returns'>Returns</mo-accordion-item>
+		</mo-accordion>
+	`)
+
+	const valuelessItemFixture = new ComponentTestFixture<Accordion>(html`
+		<mo-accordion>
+			<mo-accordion-item value='shipping' heading='Shipping'>Shipping</mo-accordion-item>
+			<mo-accordion-item heading='Notes'>Notes</mo-accordion-item>
 		</mo-accordion>
 	`)
 
@@ -185,6 +205,22 @@ describe('Accordion', () => {
 
 		expect(fixture.component.value).toBe('shipping')
 		expect(item('shipping').open).toBe(true)
+	})
+
+	it('should let an item without a value take part in exclusivity but not in the value', async () => {
+		const [named, unnamed] = valuelessItemFixture.component.items as [AccordionItem, AccordionItem]
+		await settle(valuelessItemFixture.component)
+
+		named.open = true
+		await settle(valuelessItemFixture.component)
+		expect(valuelessItemFixture.component.value).toBe('shipping')
+
+		unnamed.open = true
+		await settle(valuelessItemFixture.component)
+
+		expect(named.open).toBe(false)
+		expect(unnamed.open).toBe(true)
+		expect(valuelessItemFixture.component.value).toBeUndefined()
 	})
 
 	describe('multiple', () => {

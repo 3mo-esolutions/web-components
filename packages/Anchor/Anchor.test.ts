@@ -22,6 +22,20 @@ describe('Anchor', () => {
 		})
 	}
 
+	it('should not prevent the click when an "href" is set, as only void anchors are inert', async () => {
+		fixture.component.href = 'https://www.3mo.de/'
+		await fixture.updateComplete
+		let preventedByComponent: boolean | undefined
+
+		fixture.component.addEventListener('click', event => {
+			preventedByComponent = event.defaultPrevented
+			event.preventDefault()
+		})
+		fixture.component.dispatchEvent(new MouseEvent('click', { cancelable: true }))
+
+		expect(preventedByComponent).toBe(false)
+	})
+
 	describe('foreground color', () => {
 		const blue = 'rgb(0, 0, 255)'
 		const red = 'rgb(255, 0, 0)'

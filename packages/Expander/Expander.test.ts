@@ -1,9 +1,18 @@
+import { html } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { type Expander } from './Expander.js'
-import '.'
+import './index.js'
 
 describe('Expander', () => {
 	const fixture = new ComponentTestFixture<Expander>('mo-expander')
+
+	const summary = () => fixture.component.renderRoot.querySelector('summary')!
+
+	const click = async () => {
+		summary().click()
+		await new Promise(resolve => setTimeout(resolve))
+		await fixture.updateComplete
+	}
 
 	it('should be closed by default', () => {
 		expect(fixture.component.open).toBe(false)
@@ -14,6 +23,12 @@ describe('Expander', () => {
 	})
 
 	describe('heading', () => {
+		const slottedHeadingFixture = new ComponentTestFixture<Expander>(html`
+			<mo-expander heading='Default heading'>
+				<span slot='heading'>Custom heading</span>
+			</mo-expander>
+		`)
+
 		it('should have the "heading" part', () => {
 			expect(fixture.component.renderRoot.querySelector('mo-heading')?.getAttribute('part')).toBe('heading')
 		})
@@ -27,7 +42,15 @@ describe('Expander', () => {
 		})
 
 		it('should not be user-selectable', () => {
-			expect(getComputedStyle(fixture.component.renderRoot.querySelector('summary')!)?.userSelect).toBe('none')
+			expect(getComputedStyle(summary()).userSelect).toBe('none')
+		})
+
+		it('should give the "heading" slot precedence over the default heading', () => {
+			const slot = slottedHeadingFixture.component.renderRoot.querySelector<HTMLSlotElement>('slot[name=heading]')!
+			const defaultHeading = slottedHeadingFixture.component.renderRoot.querySelector('mo-heading[part=heading]')!
+
+			expect(slot.assignedElements({ flatten: true })).toEqual([slottedHeadingFixture.component.querySelector('[slot=heading]')!])
+			expect(defaultHeading.getClientRects().length).toBe(0)
 		})
 	})
 
@@ -62,15 +85,29 @@ describe('Expander', () => {
 			expect(fixture.component.detailsElement.open).toBe(true)
 		})
 
-		it('should reflect "open" & dispatch "openChange" event when opens', async () => {
-			spyOn(fixture.component.openChange, 'dispatch')
-			fixture.component.detailsElement.open = true
-			fixture.component.detailsElement.dispatchEvent(new Event('toggle'))
+		it('should open when the summary is clicked and dispatch "openChange"', async () => {
+			const handler = jasmine.createSpy('openChange')
+			fixture.component.addEventListener('openChange', handler)
 
-			await fixture.updateComplete
+			await click()
 
+			expect(fixture.component.detailsElement.open).toBe(true)
 			expect(fixture.component.open).toBe(true)
-			expect(fixture.component.openChange.dispatch).toHaveBeenCalledWith(true)
+			expect(handler).toHaveBeenCalledTimes(1)
+			expect(handler.calls.mostRecent().args[0].detail).toBe(true)
+		})
+
+		// BUG: programmatic setOpen dispatches openChange
+		xit('should not dispatch "openChange" for a programmatically set state', async () => {
+			const handler = jasmine.createSpy('openChange')
+			fixture.component.addEventListener('openChange', handler)
+
+			fixture.component.open = true
+			await fixture.updateComplete
+			await new Promise(resolve => setTimeout(resolve))
+
+			expect(fixture.component.detailsElement.open).toBe(true)
+			expect(handler).not.toHaveBeenCalled()
 		})
 	})
 
@@ -80,7 +117,23 @@ describe('Expander', () => {
 
 			fixture.component.appendChild(div)
 
-			expect(getComputedStyle(div)?.userSelect).toBe('auto')
+			expect(getComputedStyle(div).userSelect).toBe('auto')
+		})
+
+		it('should not take up more room than its summary while it is closed', async () => {
+			const content = document.createElement('div')
+			content.style.height = '60px'
+			fixture.component.appendChild(content)
+			await fixture.update()
+
+			const closedHeight = fixture.component.detailsElement.getBoundingClientRect().height
+			expect(closedHeight).toBe(summary().getBoundingClientRect().height)
+
+			fixture.component.open = true
+			await fixture.updateComplete
+			await new Promise(resolve => setTimeout(resolve, 500))
+
+			expect(fixture.component.detailsElement.getBoundingClientRect().height).toBeGreaterThan(closedHeight)
 		})
 	})
 })

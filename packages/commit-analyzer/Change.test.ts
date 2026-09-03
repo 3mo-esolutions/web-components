@@ -122,4 +122,19 @@ describe('Change', () => {
 			isBreaking: false
 		}))
 	})
+
+	describe('valueOf()', () => {
+		it('should order changes by type priority with untyped changes last', () => {
+			const changes = [
+				Change.parse('This is a non-conventional change'),
+				Change.parse('chore: Update dependencies'),
+				Change.parse('feat: Add something'),
+				Change.parse('fix: Fix something'),
+			]
+
+			const ordered = [...changes].sort((a, b) => a.valueOf() - b.valueOf())
+
+			expect(ordered.map(change => change.type)).toEqual(['feat', 'fix', 'chore', undefined])
+		})
+	})
 })

@@ -14,6 +14,8 @@ class OverflowTestComponent extends Component {
 	@property({ type: Number }) itemCount = 5
 	@property({ type: Boolean }) concealed = false
 	@property({ type: Number }) pinnedIndex = -1
+	@property({ type: Boolean }) suspended = false
+	@property({ type: Boolean }) rightToLeft = false
 
 	readonly updateCalls = new Array<[Element, boolean]>()
 
@@ -21,6 +23,7 @@ class OverflowTestComponent extends Component {
 		get container() { return host.container },
 		get items() { return [...host.renderRoot?.querySelectorAll('.item') ?? []] },
 		get reservedSize() { return host.reservedSize },
+		get disabled() { return host.suspended },
 		isPinned: item => item.hasAttribute('data-pinned'),
 		handleChange: (item, overflows) => {
 			host.updateCalls.push([item, overflows])
@@ -56,6 +59,7 @@ class OverflowTestComponent extends Component {
 				width: `${this.containerWidth}px`,
 				gap: `${this.gap}px`,
 				display: this.concealed ? 'none' : undefined,
+				direction: this.rightToLeft ? 'rtl' : undefined,
 			})}>
 				${new Array(this.itemCount).fill(undefined).map((_, index) => html`
 					<div class='item' ?data-pinned=${index === this.pinnedIndex}></div>
@@ -69,7 +73,7 @@ class OverflowTestComponent extends Component {
 const settle = async (component: OverflowTestComponent) => {
 	for (let i = 0; i < 10; i++) {
 		await component.updateComplete
-		await new Promise(resolve => requestAnimationFrame(resolve))
+		await new Promise(resolve => setTimeout(resolve, 10))
 	}
 	await component.updateComplete
 }
@@ -174,5 +178,56 @@ describe('OverflowController', () => {
 
 		expect(fixture.component.overflowedItems.length).toBe(5)
 		expect(fixture.component.overflowedItems).toContain(fixture.component.items[5]!)
+	})
+
+	it('should not measure or change verdicts while disabled', async () => {
+		fixture.component.suspended = true
+		await settle(fixture.component)
+
+		fixture.component.containerWidth = itemWidth + 10
+		await settle(fixture.component)
+
+		expect(fixture.component.overflowedItems).toEqual([])
+		expect(fixture.component.controller.hasOverflow).toBeFalse()
+		expect(fixture.component.updateCalls).toEqual([])
+
+		fixture.component.suspended = false
+		await settle(fixture.component)
+
+		expect(fixture.component.overflowedItems.length).toBe(4)
+	})
+
+	it('should re-measure when a fitting item\'s size changes', async () => {
+		const firstItem = fixture.component.items[0] as HTMLElement
+
+		firstItem.style.width = `${itemWidth + 140}px`
+
+		await settle(fixture.component)
+
+		expect(fixture.component.overflowedItems).toEqual(fixture.component.items.slice(2))
+	})
+
+	it('should overflow the same items in a right-to-left container', async () => {
+		fixture.component.rightToLeft = true
+		fixture.component.containerWidth = itemWidth * 4 + 10
+
+		await settle(fixture.component)
+
+		expect(getComputedStyle(fixture.component.container).direction).toBe('rtl')
+		expect(fixture.component.overflowedItems).toEqual([fixture.component.items[4]!])
+	})
+
+	it('should stop observing and measuring after the host is disconnected', async () => {
+		const firstItem = fixture.component.items[0] as HTMLElement
+
+		fixture.component.remove()
+
+		fixture.component.containerWidth = itemWidth + 10
+		firstItem.style.width = `${itemWidth + 140}px`
+		await settle(fixture.component)
+
+		expect(fixture.component.updateCalls).toEqual([])
+		expect(fixture.component.overflowedItems).toEqual([])
+		expect(fixture.component.controller.hasOverflow).toBeFalse()
 	})
 })
