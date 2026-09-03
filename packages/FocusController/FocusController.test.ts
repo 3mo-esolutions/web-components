@@ -6,7 +6,7 @@ import { FocusController, type FocusMethod } from './FocusController.js'
 class FocusControllerTestComponent extends Component {
 	focused = false
 	bubbled = false
-	method: 'pointer' | 'keyboard' | 'programmatic' = 'programmatic'
+	method: FocusMethod = 'programmatic'
 	readonly focusController = new FocusController(this, {
 		handleChange: (focused, bubbled, method) => {
 			this.focused = focused
@@ -22,7 +22,7 @@ class FocusControllerTestComponent extends Component {
 
 @component('focus-controller-target-test-component')
 class FocusControllerTargetTestComponent extends Component {
-	readonly focusTarget = document.createElement('div')
+	focusTarget = document.createElement('div')
 
 	focused = false
 
@@ -80,34 +80,60 @@ describe('FocusController', () => {
 	})
 
 	describe('method', () => {
-		it('should be pointer when pointerdown', () => {
-			document.dispatchEvent(new PointerEvent('pointerdown'))
-			fixture.component.dispatchEvent(new FocusEvent('focusin'))
-			expectFocused(true, false, 'pointer')
-		})
+		beforeEach(() => fixture.component.tabIndex = 0)
 
-		it('should be keyboard when keydown', () => {
-			document.dispatchEvent(new KeyboardEvent('keydown'))
+		afterEach(() => fixture.component.blur())
+
+		// Headless Firefox delivers no focus events for a programmatic focus(), so the event is dispatched alongside
+		const focusWith = (focusVisible: boolean) => {
+			fixture.component.focus({ focusVisible } as FocusOptions)
 			fixture.component.dispatchEvent(new FocusEvent('focusin'))
+		}
+
+		it('should be keyboard when the focus is visible', () => {
+			focusWith(true)
+			if (!fixture.component.matches(':focus-visible')) {
+				pending('The platform did not apply the requested focus visibility, as headless Firefox does not in an inactive window')
+			}
 			expectFocused(true, false, 'keyboard')
 		})
 
-		it('should be programmatic when focusin', () => {
-			fixture.component.dispatchEvent(new FocusEvent('focusin'))
+		it('should be pointer when a press within the target precedes the focus', () => {
+			fixture.component.dispatchEvent(new PointerEvent('pointerdown'))
+			focusWith(false)
+			expectFocused(true, false, 'pointer')
+		})
+
+		it('should be programmatic when the focus is neither visible nor preceded by a press within the target', () => {
+			focusWith(false)
 			expectFocused(true, false, 'programmatic')
 		})
 
-		it('should be programmatic after pointerdown', () => {
-			document.dispatchEvent(new PointerEvent('pointerdown'))
-			fixture.component.dispatchEvent(new FocusEvent('focusin'))
+		it('should be pointer when losing focus after a pointer interaction within the target', () => {
+			focusWith(true)
+			fixture.component.dispatchEvent(new PointerEvent('pointerdown'))
+
 			fixture.component.dispatchEvent(new FocusEvent('focusout'))
 
-			document.dispatchEvent(new KeyboardEvent('keydown'))
-			fixture.component.dispatchEvent(new FocusEvent('focusin'))
+			expectFocused(false, false, 'pointer')
+		})
+
+		it('should be programmatic when losing focus without an interaction within the target', () => {
+			focusWith(false)
+
 			fixture.component.dispatchEvent(new FocusEvent('focusout'))
 
-			fixture.component.dispatchEvent(new FocusEvent('focusin'))
-			expectFocused(true, false, 'programmatic')
+			expectFocused(false, false, 'programmatic')
+		})
+
+		it('should be keyboard when losing focus after a keyboard interaction within the target', () => {
+			focusWith(false)
+			fixture.component.dispatchEvent(new PointerEvent('pointerdown'))
+			fixture.component.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab' }))
+
+			fixture.component.dispatchEvent(new FocusEvent('focusout'))
+
+			expectFocused(false, false, 'keyboard')
 		})
 	})
 
@@ -141,6 +167,21 @@ describe('FocusController', () => {
 			fixture.component.focusTarget.dispatchEvent(new FocusEvent('focusin', { bubbles: true }))
 			expect(fixture.component.focusController.focused).toBeTrue()
 			expect(fixture.component.focused).toBeTrue()
+		})
+
+		it('should follow a changed target once resubscribed', async () => {
+			const previous = fixture.component.focusTarget
+			const next = document.body.appendChild(document.createElement('div'))
+			fixture.component.focusTarget = next
+			fixture.component.focusController.resubscribe()
+			await new Promise(r => setTimeout(r))
+
+			previous.dispatchEvent(new FocusEvent('focusin'))
+			expect(fixture.component.focused).toBe(false)
+
+			next.dispatchEvent(new FocusEvent('focusin'))
+			expect(fixture.component.focused).toBe(true)
+			next.remove()
 		})
 	})
 
