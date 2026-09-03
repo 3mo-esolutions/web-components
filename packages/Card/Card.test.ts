@@ -1,6 +1,7 @@
 import { html, render } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { type Card } from './Card.js'
+import { CardType, type Card } from './Card.js'
+import './index.js'
 
 describe('Card', () => {
 	const fixture = new ComponentTestFixture<Card>('mo-card')
@@ -27,6 +28,30 @@ describe('Card', () => {
 			expect(fixture.component.renderRoot.querySelector(`slot[part=${toBeRenderSlotName}]`)).not.toBeNull()
 		})
 	}
+
+	describe('Type', () => {
+		const stylingByType = new Map<CardType, (card: Card) => void>([
+			[CardType.Filled, card => {
+				expect(getComputedStyle(card).boxShadow).not.toBe('none')
+				expect(getComputedStyle(card).borderBlockStartWidth).toBe('0px')
+			}],
+			[CardType.Outlined, card => {
+				expect(getComputedStyle(card).borderBlockStartWidth).toBe('1px')
+				expect(getComputedStyle(card).borderBlockStartStyle).toBe('solid')
+			}],
+		])
+
+		for (const [type, expectStyling] of stylingByType) {
+			it(`should reflect the "type" attribute so the ${type} styling applies`, async () => {
+				fixture.component.type = type
+
+				await fixture.updateComplete
+
+				expect(fixture.component.getAttribute('type')).toBe(type)
+				expectStyling(fixture.component)
+			})
+		}
+	})
 
 	describe('Media', () => {
 		testSlotHiddenIfNoContentAvailable('media', 'media')
@@ -62,6 +87,23 @@ describe('Card', () => {
 				expect(fixture.component.renderRoot.querySelector(elementSelector)?.textContent).toBe(content)
 			})
 		}
+
+		it('should replace the composed default header when content is slotted into "header", as the "avatar"/"heading"/"subHeading"/"action" slots are its fallback', async () => {
+			fixture.component.avatar = 'A'
+			fixture.component.heading = 'Heading'
+			fixture.component.subHeading = 'Sub heading'
+			render(html`<div slot='header'>Custom header</div>`, fixture.component)
+			await fixture.update()
+
+			const headerSlot = fixture.component.renderRoot.querySelector<HTMLSlotElement>('slot[name=header]')!
+			const slottedHeader = fixture.component.querySelector('[slot=header]')!
+
+			expect(headerSlot.assignedElements({ flatten: true })).toEqual([slottedHeader])
+			expect(slottedHeader.getClientRects().length).toBeGreaterThan(0)
+			for (const selector of ['div[part=avatar]', 'mo-heading[part=heading]', 'mo-heading[part=subHeading]']) {
+				expect(fixture.component.renderRoot.querySelector(selector)!.getClientRects().length).toBe(0)
+			}
+		})
 	})
 
 	describe('Body', () => {

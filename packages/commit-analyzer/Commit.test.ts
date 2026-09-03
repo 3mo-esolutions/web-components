@@ -96,4 +96,35 @@ Date:   Wed Apr 3 21:07:48 2024 +0200
 			],
 		}))
 	})
+
+	it('should parse a decorated commit header', () => {
+		const commit = Commit.parse(`
+commit c2b80b96119829801c5b0de375f8155f46389c4c (HEAD -> main, origin/main, origin/HEAD)
+Author: a11delavar <a11delavar@outlook.com>
+Date:   Wed Apr 3 21:07:48 2024 +0200
+
+    feat: New feature
+	`)
+
+		expect(commit.hash).toBe('c2b80b96119829801c5b0de375f8155f46389c4c')
+		expect(commit.changes).toEqual([
+			new Change({ type: 'feat', scope: undefined, heading: 'New feature', description: undefined, isBreaking: false }),
+		])
+	})
+
+	it('should keep description lines that merely contain a colon', () => {
+		const commit = Commit.parse(`
+commit c2b80b96119829801c5b0de375f8155f46389c4c
+Author: a11delavar <a11delavar@outlook.com>
+Date:   Wed Apr 3 21:07:48 2024 +0200
+
+    feat: New feature
+
+    Do note that: it has to be enabled in the settings
+	`)
+
+		expect(commit.trailers).toEqual([])
+		expect(commit.changes.length).toBe(1)
+		expect(commit.changes[0]!.description).toBe('Do note that: it has to be enabled in the settings')
+	})
 })

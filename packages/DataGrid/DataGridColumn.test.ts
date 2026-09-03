@@ -1,10 +1,12 @@
+import { PureEventDispatcher } from '@a11d/lit'
 import { equals } from '@a11d/equals'
 import { DataGridColumn } from './DataGridColumn'
+import { DataGridSortingController, DataGridSortingStrategy } from './DataGridSortingController.js'
 
-type Person = { name: string }
+type Person = { id: number, name: string }
 
 describe('DataGridColumn', () => {
-	it('with', () => {
+	it('should derive a new column via "with", leaving the original untouched', () => {
 		const column = new DataGridColumn<Person, string>({
 			heading: 'Name',
 			sortable: true,
@@ -70,6 +72,80 @@ describe('DataGridColumn', () => {
 			expect(column1[equals](column2)).toBe(false)
 			expect(column2[equals](column3)).toBe(false)
 			expect(column1[equals](column3)).toBe(false)
+		})
+	})
+
+	const createDataGrid = (...columns: Array<DataGridColumn<Person>>) => {
+		const sortingController = new DataGridSortingController<Person>({ sortingChange: new PureEventDispatcher() })
+		const dataGrid = {
+			sortingController,
+			getSorting: () => sortingController.get(),
+			visibleColumns: columns,
+			requestUpdate: jasmine.createSpy('requestUpdate'),
+			columnsController: { columns: { modify: jasmine.createSpy('modify') } },
+		}
+		columns.forEach(column => column.dataGrid = dataGrid as any)
+		return dataGrid
+	}
+
+	beforeEach(() => window.dispatchEvent(new KeyboardEvent('keyup')))
+
+	describe('sortDataSelector', () => {
+		it('should default to the dataSelector when unspecified', () => {
+			expect(new DataGridColumn<Person>({ dataSelector: 'name' }).sortDataSelector).toBe('name')
+			expect(new DataGridColumn<Person>({ dataSelector: 'name', sortDataSelector: 'id' }).sortDataSelector).toBe('id')
+		})
+	})
+
+	describe('toggleSort', () => {
+		it('should be refused for a non-sortable column', () => {
+			const column = new DataGridColumn<Person>({ dataSelector: 'name', sortable: false })
+			const dataGrid = createDataGrid(column)
+
+			column.toggleSort()
+
+			expect(dataGrid.sortingController.get()).toEqual([])
+			expect(dataGrid.requestUpdate).not.toHaveBeenCalled()
+		})
+
+		it('should toggle the sorting of the sortDataSelector, not the dataSelector', () => {
+			const column = new DataGridColumn<Person>({ dataSelector: 'name', sortDataSelector: 'id' })
+			const dataGrid = createDataGrid(column)
+
+			column.toggleSort()
+
+			expect(dataGrid.sortingController.get()).toEqual([{ selector: 'id', strategy: DataGridSortingStrategy.Descending, rank: 1 }])
+			expect(column.sortingDefinition?.selector).toBe('id')
+		})
+
+		it('should reset the sorting when forcing the strategy it already has', () => {
+			const column = new DataGridColumn<Person>({ dataSelector: 'name' })
+			const dataGrid = createDataGrid(column)
+			dataGrid.sortingController.set({ selector: 'name', strategy: DataGridSortingStrategy.Descending })
+
+			column.toggleSort(DataGridSortingStrategy.Descending)
+
+			expect(dataGrid.sortingController.get()).toEqual([])
+		})
+	})
+
+	describe('toggleSticky', () => {
+		it('should record the stickiness as a modification', () => {
+			const column = new DataGridColumn<Person>({ dataSelector: 'name' })
+			const dataGrid = createDataGrid(column)
+
+			column.toggleSticky('start')
+
+			expect(dataGrid.columnsController.columns.modify).toHaveBeenCalledOnceWith('name', { sticky: 'start' })
+		})
+
+		it('should pin the column as not sticky (null) when toggling its current stickiness off, so a sticky definition stays overridden', () => {
+			const column = new DataGridColumn<Person>({ dataSelector: 'name', sticky: 'start' })
+			const dataGrid = createDataGrid(column)
+
+			column.toggleSticky('start')
+
+			expect(dataGrid.columnsController.columns.modify).toHaveBeenCalledOnceWith('name', { sticky: null })
 		})
 	})
 

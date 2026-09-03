@@ -16,6 +16,8 @@ export default config => config.set({
 		executors: 4,
 	},
 	helpfulReporter: {
+		// eslint-disable-next-line no-undef
+		renderOnRunCompleteOnly: Boolean(process.env.CI || process.env.GITHUB_ACTIONS),
 		removeTail: true,
 		colorBrowser: 205,
 		colorConsoleLogs: 45,

@@ -1,7 +1,17 @@
-import { component, DataGrid, DialogAlert, html } from '@3mo/del'
+import { component, DataGrid, DataGridSortingStrategy, DialogAlert, DialogDeletion, GenericDialog, html } from '@3mo/del'
 import { DialogMode, ModdableDataGrid, type ModdableDataGridChip, ModdableDataGridMode, ModdableDataGridModeColumn, type ModdableDataGridModesAdapter } from './index.js'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { faker } from '@faker-js/faker'
+
+const waitUntil = async (condition: () => boolean, timeoutInMilliseconds = 3000) => {
+	const start = performance.now()
+	while (condition() === false) {
+		if (performance.now() - start > timeoutInMilliseconds) {
+			throw new Error('The condition has not been met in time.')
+		}
+		await new Promise(resolve => setTimeout(resolve, 10))
+	}
+}
 
 interface User {
 	id: number
@@ -275,20 +285,37 @@ describe('ModdableDataGrid', () => {
 			fixture.expectModeToBeSelected('1')
 		})
 
-		xit('should display shortcuts and have more context menu items if there are change to the current view', async () => {
+		it('should dispatch modeChange when a mode is selected and when the selection is cleared', async () => {
+			const dispatchedModes = new Array<ModdableDataGridMode<User, Parameters> | undefined>()
+			fixture.component.addEventListener('modeChange', event => dispatchedModes.push((event as CustomEvent).detail))
 			const chip = fixture.modeChips[0]!
 
-			// Why does the initial chip has changes?
-			chip.dispatchEvent(new MouseEvent('click'))
-			chip.mode.save(fixture.component)
-			await new Promise<void>(r => setTimeout(r, 20))
+			await fixture.selectChip(chip)
+			await fixture.selectChip(chip)
+
+			expect(dispatchedModes.map(mode => mode?.id)).toEqual(['1', undefined])
+			expect(fixture.component.mode).toBeUndefined()
+		})
+
+		it('should surface the discard and save shortcuts on the selected chip only while the view has unsaved changes', async () => {
+			const chip = fixture.modeChips[0]!
+			await fixture.selectChip(chip)
+
 			expect(chip.renderRoot.querySelectorAll('mo-icon-button').length).toBe(1)
+
+			fixture.component.parameters = { ...fixture.component.parameters, keyword: '' }
+			await fixture.updateComplete
+			expect(chip.renderRoot.querySelectorAll('mo-icon-button').length).toBe(3)
+		})
+
+		it('should offer discard, save and save-as-new menu items only while the view has unsaved changes', async () => {
+			const chip = fixture.modeChips[0]!
+			await fixture.selectChip(chip)
+
 			expect(chip.renderRoot.querySelectorAll('mo-menu-item').length).toBe(4)
 
 			fixture.component.parameters = { ...fixture.component.parameters, keyword: '' }
-
 			await fixture.updateComplete
-			expect(chip.renderRoot.querySelectorAll('mo-icon-button').length).toBe(3)
 			expect(chip.renderRoot.querySelectorAll('mo-menu-item').length).toBe(7)
 		})
 
@@ -378,6 +405,73 @@ describe('ModdableDataGrid', () => {
 			expect(parameters.mode).toEqual(new ModdableDataGridMode<unknown, any>({ ...fixture.component.currentMode, id: parameters.mode!.id, name: '' } as any))
 		})
 
+		describe('Switching modes with unsaved changes', () => {
+			const seedCleanModes = async () => {
+				const currentMode = fixture.component.currentMode
+				const first = currentMode.with({ id: 'first', name: 'First' })
+				const second = currentMode.with({ id: 'second', name: 'Second' })
+				fixture.component.modesAdapter.modes = [first, second]
+				await fixture.component.modesController.save(first)
+				await fixture.component.modesController.set(first)
+				await fixture.updateComplete
+				fixture.component.modesAdapter.saved.splice(0)
+				expect(fixture.component.hasUnsavedChanges).toBeFalse()
+				return { first, second }
+			}
+
+			const changeTheView = async () => {
+				fixture.component.parameters = { ...fixture.component.parameters, keyword: 'changed' }
+				await fixture.updateComplete
+				expect(fixture.component.hasUnsavedChanges).toBeTrue()
+			}
+
+			const chipOf = (mode: ModdableDataGridMode<User, Parameters>) =>
+				fixture.modeChips.find(chip => chip.mode.id === mode.id)!
+
+			it('should prompt whether to save before switching to another mode', async () => {
+				const { second } = await seedCleanModes()
+				await changeTheView()
+				let parameters!: GenericDialog<boolean>['parameters']
+				const confirmSpy = spyOn(GenericDialog.prototype, 'confirm').and.callFake(function (this: GenericDialog<boolean>) {
+					parameters = this.parameters
+					return Promise.resolve(false)
+				})
+
+				await fixture.selectChip(chipOf(second))
+
+				expect(confirmSpy).toHaveBeenCalledTimes(1)
+				expect(parameters.heading?.toString()).toBe('Unsaved changes')
+				expect(parameters.content?.toString()).toContain('First')
+			})
+
+			it('should save the current view onto the previous mode before switching when confirmed', async () => {
+				const { second } = await seedCleanModes()
+				await changeTheView()
+				spyOn(GenericDialog.prototype, 'confirm').and.resolveTo(true)
+
+				await fixture.selectChip(chipOf(second))
+				await waitUntil(() => fixture.component.mode?.id === 'second')
+
+				const { saved, modes } = fixture.component.modesAdapter
+				expect(saved.map(mode => mode.id)).toEqual(['first'])
+				expect(saved[0]!.parameters).toEqual({ keyword: 'changed' })
+				expect(modes.find(mode => mode.id === 'first')?.parameters).toEqual({ keyword: 'changed' })
+			})
+
+			it('should switch without saving when declined, leaving the previous mode untouched', async () => {
+				const { second } = await seedCleanModes()
+				await changeTheView()
+				spyOn(GenericDialog.prototype, 'confirm').and.resolveTo(false)
+
+				await fixture.selectChip(chipOf(second))
+				await waitUntil(() => fixture.component.mode?.id === 'second')
+
+				expect(fixture.component.modesAdapter.saved).toEqual([])
+				expect(fixture.component.modesAdapter.modes.find(mode => mode.id === 'first')?.parameters?.keyword).toBeUndefined()
+				expect(fixture.component.hasUnsavedChanges).toBeFalse()
+			})
+		})
+
 		describe('With archived mode', () => {
 			const fixture = new ModdableDataGridTestFixture({
 				modes: ModdableDataGridTestFixture.modes.map((m, i) => {
@@ -386,12 +480,54 @@ describe('ModdableDataGrid', () => {
 				})
 			})
 
+			beforeEach(() => new Promise<void>(r => setTimeout(r)))
+
+			const archiveMenuItems = () => [...fixture.component.renderRoot.querySelectorAll<HTMLElement>('mo-menu-item.archived')]
+
 			it('should display an archive icon-button when at least one mode is archived', () => {
 				expect(fixture.archiveIconButton).not.toBeNull()
 			})
 
 			it('should render chips for each non-archived mode', () => {
 				expect(fixture.modeChips.length).toBe(1)
+			})
+
+			it('should list the archived modes in the archive menu', () => {
+				expect(archiveMenuItems().map(item => item.querySelector('span')?.textContent?.trim())).toEqual(['Mode 2'])
+			})
+
+			it('should show the selected archived mode as a temporary chip in the dock', async () => {
+				archiveMenuItems()[0]!.click()
+				await waitUntil(() => fixture.component.mode?.id === '2')
+				await fixture.updateComplete
+
+				const chip = fixture.modeChips.find(chip => chip.mode.id === '2')
+				expect(fixture.modeChips.map(chip => chip.mode.id)).toEqual(['1', '2'])
+				expect(chip!.hasAttribute('data-temporary')).toBeTrue()
+				expect(chip!.selected).toBeTrue()
+			})
+
+			it('should deselect the archived mode when it is clicked again in the archive menu', async () => {
+				archiveMenuItems()[0]!.click()
+				await waitUntil(() => fixture.component.mode?.id === '2')
+				await fixture.updateComplete
+
+				archiveMenuItems()[0]!.click()
+				await waitUntil(() => fixture.component.mode === undefined)
+				await fixture.updateComplete
+
+				expect(fixture.modeChips.map(chip => chip.mode.id)).toEqual(['1'])
+			})
+
+			it('should unarchive a mode via "Keep in Dock", moving it into the dock permanently', async () => {
+				archiveMenuItems()[0]!.querySelector<HTMLElement>('mo-icon-button[icon=push_pin]')!.click()
+				await waitUntil(() => fixture.component.modesController.archivedModes.length === 0)
+				await fixture.updateComplete
+
+				expect(fixture.modeChips.map(chip => chip.mode.id)).toEqual(['1', '2'])
+				expect(fixture.modeChips.some(chip => chip.hasAttribute('data-temporary'))).toBeFalse()
+				expect(fixture.archiveIconButton).toBeNull()
+				expect(fixture.component.modesAdapter.saved.map(mode => mode.id)).toEqual(['2'])
 			})
 		})
 
@@ -414,6 +550,21 @@ describe('ModdableDataGrid', () => {
 
 				fixture.expectModeToBeSelected('default')
 			})
+
+			it('should reset to the default mode when the selected mode is deleted', async () => {
+				spyOn(DialogDeletion.prototype, 'confirm').and.callFake(function (this: DialogDeletion) {
+					return Promise.resolve(this.parameters.deletionAction?.call(this))
+				})
+				const selectedMode = fixture.component.mode!
+
+				await fixture.component.modesController.delete(selectedMode)
+				await fixture.updateComplete
+
+				expect(fixture.component.mode).toBeUndefined()
+				expect(fixture.modes.map(mode => mode.id)).toEqual(['1'])
+				expect(fixture.modeChips.map(chip => chip.mode.id)).toEqual(['1'])
+				fixture.expectModeToBeSelected('default')
+			})
 		})
 	})
 
@@ -426,7 +577,7 @@ describe('ModdableDataGrid', () => {
 		const dispatch = (target: EventTarget, type: string, options: PointerEventInit = {}) =>
 			target.dispatchEvent(new PointerEvent(type, { bubbles: true, composed: true, pointerId: 1, isPrimary: true, button: 0, buttons: 1, ...options }))
 
-		const frame = () => new Promise(requestAnimationFrame)
+		const frame = () => new Promise(resolve => setTimeout(resolve, 10))
 
 		/** A synthetic mouse drag: press on `from`, glide past the dead zone to `to`, release. */
 		const drag = async (from: Element, to: { x: number, y: number }, midway?: () => unknown) => {
@@ -557,10 +708,12 @@ describe('ModdableDataGrid', () => {
 
 		const appendColumnAfterRender = async (dataSelector: string) => {
 			const column = document.createElement('mo-data-grid-column-text') as any
+			column.slot = 'column'
 			column.dataSelector = dataSelector
 			column.heading = dataSelector
 			fixture.component.appendChild(column)
-			await new Promise(r => setTimeout(r))
+			await new Promise(r => setTimeout(r, 20))
+			await column.updateComplete
 			await fixture.updateComplete
 		}
 
@@ -653,6 +806,39 @@ describe('ModdableDataGrid', () => {
 
 			expect(fixture.component.hasUnsavedChanges).toBeFalse()
 		})
+
+		it('should report unsaved changes when the sorting changes and none once the mode\'s sorting is restored', async () => {
+			await selectCleanMode()
+
+			fixture.component.sort([{ selector: 'age', strategy: DataGridSortingStrategy.Descending }])
+			await fixture.updateComplete
+			expect(fixture.component.hasUnsavedChanges).toBeTrue()
+
+			fixture.component.sort([])
+			await fixture.updateComplete
+
+			expect(fixture.component.hasUnsavedChanges).toBeFalse()
+		})
+
+		it('should report unsaved changes when the pagination changes', async () => {
+			await selectCleanMode()
+			expect(fixture.component.currentMode.pagination).toBeUndefined()
+
+			fixture.component.setPagination(50)
+			await fixture.updateComplete
+
+			expect(fixture.component.pagination?.toString()).toBe('50')
+			expect(fixture.component.hasUnsavedChanges).toBeTrue()
+		})
+
+		it('should not report unsaved changes when a parameter is set to an empty value', async () => {
+			await selectCleanMode()
+
+			fixture.component.parameters = { ...fixture.component.parameters, keyword: '' }
+			await fixture.updateComplete
+
+			expect(fixture.component.hasUnsavedChanges).toBeFalse()
+		})
 	})
 
 	// Modes persisted before columns were split into definitions and modifications stored a full
@@ -692,10 +878,12 @@ describe('ModdableDataGrid', () => {
 			await selectLegacyMode()
 
 			const column = document.createElement('mo-data-grid-column-text') as any
+			column.slot = 'column'
 			column.dataSelector = 'score'
 			column.heading = 'Score'
 			fixture.component.appendChild(column)
-			await new Promise(r => setTimeout(r))
+			await new Promise(r => setTimeout(r, 20))
+			await column.updateComplete
 			await fixture.updateComplete
 
 			expect(fixture.component.columns.map(c => c.dataSelector)).toEqual(['id', 'firstName', 'lastName', 'age', 'score' as any])

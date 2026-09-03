@@ -20,11 +20,11 @@ describe('DataGridSortingController', () => {
 	]
 
 	describe('enabled', () => {
-		it('should be true when no sorting is defined', () => {
+		it('should be false when no sorting is defined', () => {
 			expect(controller.enabled).toBeFalse()
 		})
 
-		it('should be false when sorting is defined', () => {
+		it('should be true when sorting is defined', () => {
 			controller.set({ selector: 'id', strategy: DataGridSortingStrategy.Descending })
 			expect(controller.enabled).toBeTrue()
 		})
@@ -101,6 +101,38 @@ describe('DataGridSortingController', () => {
 				{ selector: 'name', strategy: DataGridSortingStrategy.Descending, rank: 2 },
 			])
 		})
+
+		it('should replace the current sorting when a strategy is forced without a modifier', () => {
+			controller.set([
+				{ selector: 'id', strategy: DataGridSortingStrategy.Descending },
+				{ selector: 'name', strategy: DataGridSortingStrategy.Ascending },
+			])
+
+			controller.toggle('name', DataGridSortingStrategy.Descending)
+
+			expect(controller.get()).toEqual([{ selector: 'name', strategy: DataGridSortingStrategy.Descending, rank: 1 }])
+		})
+
+		it('should switch an existing descending sorting to ascending with a modifier held', () => {
+			controller.set({ selector: 'id', strategy: DataGridSortingStrategy.Descending })
+			window.dispatchEvent(new KeyboardEvent('keydown', { ctrlKey: true }))
+
+			controller.toggle('id')
+
+			expect(controller.get()).toEqual([{ selector: 'id', strategy: DataGridSortingStrategy.Ascending, rank: 1 }])
+		})
+
+		it('should remove the sorting with a modifier held once toggled past ascending', () => {
+			controller.set([
+				{ selector: 'id', strategy: DataGridSortingStrategy.Ascending },
+				{ selector: 'name', strategy: DataGridSortingStrategy.Descending },
+			])
+			window.dispatchEvent(new KeyboardEvent('keydown', { ctrlKey: true }))
+
+			controller.toggle('id')
+
+			expect(controller.get()).toEqual([{ selector: 'name', strategy: DataGridSortingStrategy.Descending, rank: 1 }])
+		})
 	})
 
 	describe('toSorted', () => {
@@ -127,6 +159,20 @@ describe('DataGridSortingController', () => {
 					jasmine.objectContaining({ name: 'Darlene' }),
 					{ id: 3, name: 'Clarke' },
 				])
+			})
+
+			it('should treat missing values as greatest, as they compare as Infinity', () => {
+				const withMissingValues = () => [
+					{ id: 2, name: 'Second' },
+					{ id: undefined as unknown as number, name: 'Missing' },
+					{ id: 1, name: 'First' },
+				]
+
+				controller.set({ selector: 'id', strategy: DataGridSortingStrategy.Ascending })
+				expect(controller.toSorted(withMissingValues()).map(d => d.name)).toEqual(['First', 'Second', 'Missing'])
+
+				controller.set({ selector: 'id', strategy: DataGridSortingStrategy.Descending })
+				expect(controller.toSorted(withMissingValues()).map(d => d.name)).toEqual(['Missing', 'Second', 'First'])
 			})
 		})
 
@@ -158,6 +204,18 @@ describe('DataGridSortingController', () => {
 					{ id: 3, name: 'Clarke' },
 				])
 			})
+		})
+	})
+
+	describe('toSortedBy', () => {
+		it('should sort by the extractor\'s result, as records wrap the data they are sorted by', () => {
+			controller.set({ selector: 'name', strategy: DataGridSortingStrategy.Ascending })
+			const names = data.map(d => d.name)
+
+			const sorted = controller.toSortedBy(data.map(d => ({ data: d })), record => record.data)
+
+			expect(sorted.map(record => record.data.name)).toEqual(['Clarke', 'Darlene', 'Darlene', 'Elliot', 'Harry'])
+			expect(controller.toSortedBy(data.map(d => ({ data: d })), record => record as any).map(record => record.data.name)).toEqual(names)
 		})
 	})
 })

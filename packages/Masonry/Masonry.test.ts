@@ -1,3 +1,4 @@
+import { html } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { Masonry } from './Masonry.js'
 
@@ -67,6 +68,63 @@ describe('Masonry', () => {
 			fixture.component.columns = 4
 			await fixture.updateComplete
 			expect(fixture.component.hasAttribute('horizontal')).toBeFalse()
+		})
+	})
+
+	describe('grid fallback', () => {
+		const laidOutFixture = new ComponentTestFixture<Masonry>(html`
+			<mo-masonry style='width: 300px; height: 200px'>
+				<div id='item-0' style='width: 50px; height: 50px'></div>
+				<div id='item-1' style='width: 50px; height: 50px'></div>
+				<div id='item-2' style='width: 50px; height: 50px'></div>
+				<div id='item-3' style='width: 50px; height: 50px'></div>
+			</mo-masonry>
+		`)
+
+		const rect = (index: number) => laidOutFixture.component.querySelector(`#item-${index}`)!.getBoundingClientRect()
+
+		const guarded = Masonry.supported ? xit : it
+
+		guarded('should align items in rows across the defined column lanes', async () => {
+			laidOutFixture.component.columns = 3
+
+			await laidOutFixture.updateComplete
+
+			expect(rect(1).left).toBeGreaterThan(rect(0).left)
+			expect(rect(3).top).toBeGreaterThanOrEqual(rect(0).bottom)
+			expect(rect(3).left).toBe(rect(0).left)
+		})
+
+		guarded('should flow a horizontal masonry sideways', async () => {
+			laidOutFixture.component.rows = 2
+
+			await laidOutFixture.updateComplete
+
+			expect(laidOutFixture.component.hasAttribute('horizontal')).toBeTrue()
+			expect(rect(1).top).toBeGreaterThanOrEqual(rect(0).bottom)
+			expect(rect(2).left).toBeGreaterThanOrEqual(rect(0).right)
+			expect(rect(2).top).toBe(rect(0).top)
+		})
+	})
+
+	describe('native packing', () => {
+		const packedFixture = new ComponentTestFixture<Masonry>(html`
+			<mo-masonry columns='2' style='width: 200px'>
+				<div id='item-0' style='height: 100px'></div>
+				<div id='item-1' style='height: 20px'></div>
+				<div id='item-2' style='height: 20px'></div>
+			</mo-masonry>
+		`)
+
+		const rect = (index: number) => packedFixture.component.querySelector(`#item-${index}`)!.getBoundingClientRect()
+
+		const guarded = Masonry.supported ? it : xit
+
+		guarded('should pack a short item into the shortest lane instead of its natural row', async () => {
+			await packedFixture.updateComplete
+
+			expect(rect(2).left).toBe(rect(1).left)
+			expect(rect(2).top).toBeLessThan(rect(0).bottom)
 		})
 	})
 

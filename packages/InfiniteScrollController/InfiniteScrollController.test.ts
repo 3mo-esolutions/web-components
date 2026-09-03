@@ -13,19 +13,20 @@ class InfiniteScrollTestComponent extends Component {
 
 	total = 1000
 	chunkSize = 5
-	/** Simulates an endless stream - one whose loads cannot report the end - when set to `false`. */
 	reportsEnd = true
 	shallFail = false
 	shallLoadNothing = false
+	suspended = false
+	gate?: Promise<void>
 	loadCount = 0
 	concurrentLoadCount = 0
 	maxConcurrentLoadCount = 0
 
-	/** The promise of the chunk which is currently being loaded, settling before the controller does. */
 	lastLoad?: Promise<boolean | void>
 
 	readonly controller = new InfiniteScrollController(this, host => ({
 		get container() { return host.container },
+		get disabled() { return host.suspended },
 		fetchNext: () => host.lastLoad = host.fetchNext(),
 	}))
 
@@ -35,6 +36,7 @@ class InfiniteScrollTestComponent extends Component {
 		this.maxConcurrentLoadCount = Math.max(this.maxConcurrentLoadCount, this.concurrentLoadCount)
 		try {
 			await Promise.resolve()
+			await this.gate
 			if (this.shallFail) {
 				throw new Error('Loading the next chunk failed')
 			}
@@ -75,7 +77,7 @@ class InfiniteScrollTestComponent extends Component {
 const settle = async (component: InfiniteScrollTestComponent) => {
 	for (let i = 0; i < 20; i++) {
 		await component.updateComplete
-		await new Promise(resolve => requestAnimationFrame(resolve))
+		await new Promise(resolve => setTimeout(resolve, 10))
 	}
 	await component.updateComplete
 }
@@ -210,7 +212,7 @@ describe('InfiniteScrollController', () => {
 		fixture.component.controller.reset()
 		// Reset right after the chunk itself has settled, while the controller is still measuring it.
 		fixture.component.shallFail = true
-		await new Promise(resolve => requestAnimationFrame(resolve))
+		await new Promise(resolve => setTimeout(resolve, 10))
 		await fixture.component.lastLoad?.catch(() => undefined)
 		fixture.component.shallFail = false
 		fixture.component.controller.reset()
@@ -252,8 +254,69 @@ describe('InfiniteScrollController', () => {
 		const itemCount = fixture.component.itemCount
 
 		fixture.component.renderRoot.querySelector<HTMLElement>('#container')!.style.height = `${containerHeight * 3}px`
+		fixture.component.controller.reset()
 		await settle(fixture.component)
 
 		expect(fixture.component.itemCount).toBeGreaterThan(itemCount)
+	})
+
+	it('should not load anything while disabled and resume once enabled', async () => {
+		fixture.component.suspended = true
+		fixture.component.controller.reset()
+		await settle(fixture.component)
+
+		expect(fixture.component.loadCount).toBe(0)
+		expect(fixture.component.itemCount).toBe(0)
+
+		fixture.component.suspended = false
+		fixture.component.controller.reset()
+		await settle(fixture.component)
+
+		expect(fixture.component.itemCount).toBe(10)
+	})
+
+	it('should report pending while a chunk is loading', async () => {
+		let openTheGate = () => { }
+		fixture.component.gate = new Promise<void>(resolve => openTheGate = resolve)
+		fixture.component.controller.reset()
+
+		await new Promise(resolve => setTimeout(resolve, 50))
+
+		expect(fixture.component.controller.pending).toBeTrue()
+		expect(fixture.component.loadCount).toBe(1)
+		expect(fixture.component.itemCount).toBe(0)
+
+		fixture.component.gate = undefined
+		openTheGate()
+		await settle(fixture.component)
+
+		expect(fixture.component.controller.pending).toBeFalse()
+		expect(fixture.component.itemCount).toBe(10)
+	})
+
+	it('should scroll the container back to the start via scrollToStart()', async () => {
+		await settle(fixture.component)
+		fixture.component.container.scrollTop = fixture.component.container.scrollHeight
+		expect(fixture.component.container.scrollTop).toBeGreaterThan(0)
+
+		fixture.component.controller.scrollToStart()
+		await new Promise(resolve => setTimeout(resolve, 50))
+
+		expect(fixture.component.container.scrollTop).toBe(0)
+	})
+
+	it('should stop fetching after the host is disconnected', async () => {
+		await settle(fixture.component)
+		const loadCount = fixture.component.loadCount
+		const container = fixture.component.container
+
+		fixture.component.remove()
+
+		container.scrollTop = container.scrollHeight
+		container.dispatchEvent(new Event('scroll'))
+		fixture.component.controller.reset()
+		await settle(fixture.component)
+
+		expect(fixture.component.loadCount).toBe(loadCount)
 	})
 })

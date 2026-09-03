@@ -46,7 +46,7 @@ class SelectableListTestFixture extends ComponentTestFixture<SelectableList> {
 	}
 }
 
-describe('List', () => {
+describe('SelectableList', () => {
 	describe('single selection', () => {
 		const fixture = new SelectableListTestFixture({ selectability: SelectableListSelectability.Single })
 
@@ -156,6 +156,30 @@ describe('List', () => {
 			await fixture.updateComplete
 
 			expect(fixture.selectedIndices).toEqual([0, 1, 2])
+		})
+	})
+
+	describe('programmatic value', () => {
+		const fixture = new SelectableListTestFixture({ selectability: SelectableListSelectability.Multiple })
+
+		const resolvedIndices = () => fixture.items
+			.map((item, index) => fixture.component.selectabilityController.isSelected(item) ? index : undefined)
+			.filter(index => index !== undefined)
+
+		it('should resolve an assigned value to its items without announcing a change', async () => {
+			fixture.component.value = [0, 2]
+			await fixture.updateComplete
+
+			expect(resolvedIndices()).toEqual([0, 2])
+			expect(fixture.dispatchedSelectedIndices).toBeUndefined()
+		})
+
+		it('should resolve out-of-range indices to nothing rather than failing', async () => {
+			fixture.component.value = [42]
+			await fixture.updateComplete
+
+			expect(resolvedIndices()).toEqual([])
+			expect(fixture.selectedIndices).toEqual([])
 		})
 	})
 })

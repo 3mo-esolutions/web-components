@@ -1,5 +1,5 @@
 import { component, html } from '@a11d/lit'
-import { NotificationComponent } from '@a11d/lit-application'
+import { DialogActionKey, NotificationComponent } from '@a11d/lit-application'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { type FetchableDialogComponentParameters } from '@3mo/fetchable-dialog'
 import { EntityDialogComponent } from './index.js'
@@ -33,6 +33,8 @@ describe('EntityDialogComponent', () => {
 		fetchSpy.calls.reset()
 		saveSpy.calls.reset()
 	})
+
+	afterEach(() => new Promise(resolve => setTimeout(resolve, 50)))
 
 	const expectHeadingToBe = async (heading: string) => {
 		await fixture.component.fetcherController.taskComplete
@@ -89,6 +91,8 @@ describe('EntityDialogComponent', () => {
 	describe('the success notification', () => {
 		const fixture = new ComponentTestFixture(() => new DialogTest({ id: 10, parentId: 99 }))
 
+		afterEach(() => new Promise(resolve => setTimeout(resolve, 50)))
+
 		const notifySuccessAndGetOpenAction = () => {
 			const notifySuccessSpy = spyOn(NotificationComponent, 'notifySuccess')
 			const confirmSpy = spyOn(DialogTest.prototype, 'confirm')
@@ -116,6 +120,38 @@ describe('EntityDialogComponent', () => {
 			expect(confirmationHandler).toHaveBeenCalledTimes(1)
 			const reopenedDialog = confirmSpy.calls.mostRecent().object as DialogTest
 			expect(reopenedDialog[EntityDialogComponent.confirmationHandler]).toBe(confirmationHandler)
+		})
+
+		it('should not notify success when the dialog is cancelled', async () => {
+			const notifySuccessSpy = spyOn(NotificationComponent, 'notifySuccess')
+			const confirmation = fixture.component.confirm()
+
+			await fixture.component['handleAction'](DialogActionKey.Cancellation)
+
+			await expectAsync(confirmation).toBeRejected()
+			expect(notifySuccessSpy).not.toHaveBeenCalled()
+		})
+	})
+
+	describe('Ctrl+S shortcut', () => {
+		const pressCtrlS = async () => {
+			window.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyS', ctrlKey: true }))
+			await new Promise(resolve => setTimeout(resolve))
+		}
+
+		it('should trigger the primary action on Ctrl/Cmd+S', async () => {
+			await pressCtrlS()
+
+			expect(saveSpy).toHaveBeenCalledOnceWith(entity)
+		})
+
+		it('should not trigger the primary action when preventPrimaryOnCtrlS is set', async () => {
+			fixture.component.dialogElement.preventPrimaryOnCtrlS = true
+			await fixture.updateComplete
+
+			await pressCtrlS()
+
+			expect(saveSpy).not.toHaveBeenCalled()
 		})
 	})
 })

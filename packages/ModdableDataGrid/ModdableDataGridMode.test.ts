@@ -1,4 +1,5 @@
 import { DataGridSortingStrategy } from '@3mo/data-grid'
+import { Localizer } from '@3mo/localization'
 import { ModdableDataGridMode, ModdableDataGridModeColumn } from './ModdableDataGridMode.js'
 import { equals } from '@a11d/equals'
 
@@ -70,6 +71,29 @@ describe('ModdableDataGridMode', () => {
 			mode3.parameters!.parameter5 = false
 			expect(mode3[equals](mode2)).toBe(false)
 		})
+
+		it('should treat a single unranked sorting definition as equal to its ranked normalized form', () => {
+			const unranked = new ModdableDataGridMode({
+				id: '9b5d0b93-00fc-4384-aef2-4ee2b3aecbd4',
+				name: 'Test',
+				sorting: { selector: 'test', strategy: DataGridSortingStrategy.Ascending } as any,
+			})
+			const ranked = unranked.with({
+				sorting: [{ selector: 'test', strategy: DataGridSortingStrategy.Ascending, rank: 1 }] as any,
+			})
+
+			expect(unranked[equals](ranked)).toBe(true)
+			expect(ranked[equals](unranked)).toBe(true)
+		})
+
+		it('should treat an absent sorting as equal to an empty one', () => {
+			const absent = new ModdableDataGridMode({ id: '9b5d0b93-00fc-4384-aef2-4ee2b3aecbd4', name: 'Test' })
+			const empty = absent.with({ sorting: [] })
+
+			expect(absent.sorting).toBeUndefined()
+			expect(absent[equals](empty)).toBe(true)
+			expect(empty[equals](absent)).toBe(true)
+		})
 	})
 
 	describe('constructor', () => {
@@ -105,6 +129,35 @@ describe('ModdableDataGridMode', () => {
 			expect((mode.parameters!.dateRange as unknown as DateTimeRange)!.start).toBeInstanceOf(Date)
 			expect((mode.parameters!.dateRange as unknown as DateTimeRange)!.end).toBeInstanceOf(Date)
 			expect(mode.parameters!.dateRange).toEqual(new DateTimeRange(new DateTime('2021-01-01T00:00:00.000Z'), new DateTime('2021-01-02T00:00:00.000Z')) as any)
+		})
+	})
+
+	describe('copy', () => {
+		beforeEach(() => Localizer.languages.current = 'en')
+
+		it('should assign a new id and derive the name with the localized Copy suffix', () => {
+			const mode = new ModdableDataGridMode({
+				id: '9b5d0b93-00fc-4384-aef2-4ee2b3aecbd4',
+				name: 'Test',
+				parameters: { parameter1: 'Test' } as any,
+			})
+
+			const copy = mode.copy()
+
+			expect(copy.name).toBe('Test - Copy')
+			expect(copy.id).toBeTruthy()
+			expect(copy.id).not.toBe(mode.id)
+			expect(copy.parameters).toEqual(mode.parameters!)
+			expect(copy.parameters).not.toBe(mode.parameters!)
+		})
+
+		it('should use the given name over the derived one', () => {
+			const mode = new ModdableDataGridMode({ id: '9b5d0b93-00fc-4384-aef2-4ee2b3aecbd4', name: 'Test' })
+
+			const copy = mode.copy('Renamed')
+
+			expect(copy.name).toBe('Renamed')
+			expect(copy.id).not.toBe(mode.id)
 		})
 	})
 

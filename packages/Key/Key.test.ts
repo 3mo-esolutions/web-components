@@ -1,12 +1,29 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { html } from '@a11d/lit'
 import { type Key } from './Key.js'
-// eslint-disable-next-line no-duplicate-imports
-import './Key.js'
 
 describe('Key', () => {
 	const displayedKeysOf = (component: Key) => [...component.renderRoot.querySelectorAll('kbd')].map(kbd => kbd.textContent?.trim())
 	const separatorsOf = (component: Key) => [...component.renderRoot.querySelectorAll('.separator')].map(separator => separator.textContent?.trim())
+
+	const accessibilityFixture = new ComponentTestFixture<Key>(html`<mo-key platform='other'>Meta+K</mo-key>`)
+
+	it('should hide the visual keycaps and the slot from assistive technology and expose only the speakable label', () => {
+		const component = accessibilityFixture.component
+		const slot = component.renderRoot.querySelector('slot')!
+		const chords = [...component.renderRoot.querySelectorAll('.chord')]
+		const label = component.renderRoot.querySelector('.screen-reader-only')!
+
+		expect(slot.hasAttribute('hidden')).toBe(true)
+		expect(getComputedStyle(slot).display).toBe('none')
+
+		expect(chords.length).toBeGreaterThan(0)
+		expect(chords.map(chord => chord.getAttribute('aria-hidden'))).toEqual(chords.map(() => 'true'))
+
+		expect(label.textContent).toBe(component.label)
+		expect(getComputedStyle(label).display).not.toBe('none')
+		expect(label.getBoundingClientRect().width).toBeLessThanOrEqual(1)
+	})
 
 	describe('on apple platforms', () => {
 		const fixture = new ComponentTestFixture<Key>(html`<mo-key platform='apple'>Shift+Meta+P</mo-key>`)

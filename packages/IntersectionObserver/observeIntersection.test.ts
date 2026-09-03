@@ -1,4 +1,4 @@
-import { component, Component, html, query, state } from '@a11d/lit'
+import { component, Component, html, query, render, state } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { observeIntersection } from './observeIntersection.js'
 
@@ -26,17 +26,22 @@ interface FakeIntersectionObserver {
 }
 
 describe('observeIntersection', () => {
-	const fixture = new ComponentTestFixture(() => new ObserveIntersectionTestComponent)
-
 	let currentObserver: FakeIntersectionObserver
+	let originalIntersectionObserver: typeof IntersectionObserver
 
-	beforeAll(() => {
+	beforeEach(() => {
+		originalIntersectionObserver = window.IntersectionObserver
 		window.IntersectionObserver = class FakeIntersectionObserver {
 			constructor(readonly callback: IntersectionObserverCallback) { currentObserver = this }
 			observe = jasmine.createSpy('observe')
+			unobserve = jasmine.createSpy('unobserve')
 			disconnect = jasmine.createSpy('disconnect')
 		} as unknown as typeof IntersectionObserver
 	})
+
+	afterEach(() => window.IntersectionObserver = originalIntersectionObserver)
+
+	const fixture = new ComponentTestFixture(() => new ObserveIntersectionTestComponent)
 
 	it('should register an IntersectionObserver on the element', () => {
 		expect(currentObserver.observe).toHaveBeenCalledOnceWith(fixture.component.elementWithObserver)
@@ -58,5 +63,26 @@ describe('observeIntersection', () => {
 		await fixture.updateComplete
 
 		expect(currentObserver.disconnect).toHaveBeenCalledTimes(wasCalledTimes + 1)
+	})
+
+	it('should observe the element again when the directive is reconnected', () => {
+		const container = document.createElement('div')
+		document.body.appendChild(container)
+		try {
+			const part = render(html`<div ${observeIntersection(jasmine.createSpy())}></div>`, container)
+			const element = container.firstElementChild!
+			const observerWhileConnected = currentObserver
+			expect(observerWhileConnected.observe).toHaveBeenCalledOnceWith(element)
+
+			part.setConnected(false)
+			expect(observerWhileConnected.disconnect).toHaveBeenCalledTimes(1)
+
+			part.setConnected(true)
+
+			expect(currentObserver).not.toBe(observerWhileConnected)
+			expect(currentObserver.observe).toHaveBeenCalledOnceWith(element)
+		} finally {
+			container.remove()
+		}
 	})
 })

@@ -59,7 +59,23 @@ describe('Grid', () => {
 					setPropertyValue(property, '  11*   ')
 					expect(fixture.component.style.getPropertyValue(cssProperty)).toBe('11fr')
 				})
+
+				it('should convert asterisks inside a mixed track template', () => {
+					setPropertyValue(property, '2* 100px *')
+					expect(fixture.component.style.getPropertyValue(cssProperty)).toBe('2fr 100px 1fr')
+
+					setPropertyValue(property, 'min-content 3* auto 12*')
+					expect(fixture.component.style.getPropertyValue(cssProperty)).toBe('min-content 3fr auto 12fr')
+				})
 			}
 		})
 	}
+
+	it('should tunnel the "autoFlow" property to CSS property "grid-auto-flow"', () => {
+		fixture.component.autoFlow = 'column'
+		expect(fixture.component.style.getPropertyValue('grid-auto-flow')).toBe('column')
+
+		fixture.component.style.setProperty('grid-auto-flow', 'row')
+		expect(fixture.component.autoFlow).toBe('row')
+	})
 })

@@ -1,6 +1,7 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { type Checkbox } from './Checkbox.js'
 import { html } from '@a11d/lit'
+import './index.js'
 
 class CheckboxTestFixture extends ComponentTestFixture<Checkbox> {
 	get mdCheckbox() {
@@ -52,8 +53,36 @@ describe('Checkbox', () => {
 		})
 	})
 
+	describe('label', () => {
+		const labelled = new CheckboxTestFixture(html`<mo-checkbox label='Accept terms'></mo-checkbox>`)
+		const unlabelled = new CheckboxTestFixture(html`<mo-checkbox></mo-checkbox>`)
+
+		it('should render its label text', () => {
+			expect(labelled.component.renderRoot.querySelector('label')?.textContent?.trim()).toBe('Accept terms')
+		})
+
+		it('should render no label element when the label is empty', () => {
+			expect(unlabelled.component.renderRoot.querySelector('label')).toBeNull()
+			expect(unlabelled.mdCheckbox).not.toBeUndefined()
+		})
+
+		it('should associate the label with the md-checkbox', () => {
+			const label = labelled.component.renderRoot.querySelector('label')!
+			expect([...labelled.mdCheckbox!.labels]).toContain(label)
+		})
+
+		it('should toggle when its label is clicked', async () => {
+			labelled.component.renderRoot.querySelector('label')!.click()
+			await labelled.component.updateComplete
+
+			labelled.expectSelected()
+		})
+	})
+
 	describe('selection', () => {
 		describe('via selection property', () => {
+			const programmaticFixture = new CheckboxTestFixture(html`<mo-checkbox></mo-checkbox>`)
+
 			describe('true', () => {
 				const fixtureHtml = new CheckboxTestFixture(html`<mo-checkbox selected></mo-checkbox>`)
 				it('should handle html binding', () => fixtureHtml.expectSelected())
@@ -82,6 +111,17 @@ describe('Checkbox', () => {
 
 				const fixtureLitProperty = new CheckboxTestFixture(html`<mo-checkbox .selected=${'indeterminate'}></mo-checkbox>`)
 				it('should handle property binding', () => fixtureLitProperty.expectIndeterminate())
+			})
+
+			it('should not dispatch "change" when "selected" is set programmatically', async () => {
+				const spy = jasmine.createSpy('change')
+				programmaticFixture.component.addEventListener('change', spy)
+
+				programmaticFixture.component.selected = true
+				await programmaticFixture.component.updateComplete
+
+				programmaticFixture.expectSelected()
+				expect(spy).not.toHaveBeenCalled()
 			})
 		})
 
@@ -123,6 +163,44 @@ describe('Checkbox', () => {
 					await fixture.component.updateComplete
 					fixture.expectIndeterminate()
 					expect(fixture.component.change.dispatch).toHaveBeenCalledWith('indeterminate')
+				})
+			})
+
+			describe('via user click', () => {
+				const clickFixture = new CheckboxTestFixture(html`<mo-checkbox></mo-checkbox>`)
+				const indeterminateFixture = new CheckboxTestFixture(html`<mo-checkbox selected='indeterminate'></mo-checkbox>`)
+
+				it('should select and dispatch "change" exactly once when the md-checkbox is clicked', async () => {
+					const spy = jasmine.createSpy('change')
+					clickFixture.component.addEventListener('change', spy)
+
+					clickFixture.mdCheckbox!.click()
+					await clickFixture.component.updateComplete
+
+					clickFixture.expectSelected()
+					expect(spy).toHaveBeenCalledTimes(1)
+					expect(spy.calls.mostRecent().args[0].detail).toBe(true)
+				})
+
+				it('should deselect when clicked while selected', async () => {
+					clickFixture.component.selected = true
+					await clickFixture.component.updateComplete
+					await clickFixture.mdCheckbox!.updateComplete
+
+					clickFixture.mdCheckbox!.click()
+					await clickFixture.component.updateComplete
+
+					clickFixture.expectNotSelected()
+				})
+
+				it('should become selected when clicked while indeterminate', async () => {
+					indeterminateFixture.expectIndeterminate()
+					await indeterminateFixture.mdCheckbox!.updateComplete
+
+					indeterminateFixture.mdCheckbox!.click()
+					await indeterminateFixture.component.updateComplete
+
+					indeterminateFixture.expectSelected()
 				})
 			})
 		})

@@ -58,6 +58,7 @@ class SelectabilityListTest extends Component {
 	rendered?: ReadonlyArray<Person>
 	strategy = SelectabilityStrategy.Replace
 	stamping = SelectabilityStamping.Full
+	interaction = SelectabilityInteraction.Auto
 	itemRole = 'option'
 	hostRole = 'listbox'
 	disabledIds: ReadonlyArray<number> = []
@@ -73,6 +74,7 @@ class SelectabilityListTest extends Component {
 			get items() { return component.items },
 			get strategy() { return component.strategy },
 			get stamping() { return component.stamping },
+			get interaction() { return component.interaction },
 			handleChange: change => component.changes.push(change),
 		})
 	}
@@ -455,6 +457,7 @@ describe('SelectabilityController', () => {
 
 	describe('bulk operations', () => {
 		const fixture = create()
+		const emptyFixture = create({ items: [] })
 
 		it('report none, some and all', () => {
 			const { controller } = fixture.component
@@ -478,6 +481,11 @@ describe('SelectabilityController', () => {
 			controller.select(people[0]!)
 			controller.toggleAll()
 			expect(controller.allState).toBe(SelectabilityAllState.None)
+		})
+
+		it('reports none for an empty universe, since all requires at least one item', () => {
+			// A tri-state select-all reading `all` here would show itself checked over nothing.
+			expect(emptyFixture.component.controller.allState).toBe(SelectabilityAllState.None)
 		})
 	})
 
@@ -730,6 +738,25 @@ describe('SelectabilityController', () => {
 			click(items[0]!)
 			click(items[2]!, { shiftKey: true })
 			expect(fixture.component.selectedIds).toEqual([1, 2, 3])
+		})
+	})
+
+	// A component with its own opinions about what a click means drives every selection itself; the
+	// controller keeps the rules and the modifier snapshot, and nothing else.
+	describe('with manual interaction', () => {
+		const fixture = createList({ interaction: SelectabilityInteraction.Manual })
+
+		it('never turns the host’s clicks into a selection itself — the host drives select', () => {
+			click(fixture.component.itemElements[2]!)
+			expect(fixture.component.selectedIds).toEqual([])
+
+			fixture.component.controller.select(people[2]!)
+			expect(fixture.component.selectedIds).toEqual([3])
+		})
+
+		it('never turns ctrl+A into selectAll itself', () => {
+			fixture.component.dispatchEvent(new KeyboardEvent('keydown', { key: 'a', ctrlKey: true, bubbles: true, composed: true }))
+			expect(fixture.component.selectedIds).toEqual([])
 		})
 	})
 

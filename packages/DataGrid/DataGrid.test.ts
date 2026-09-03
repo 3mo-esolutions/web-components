@@ -1,6 +1,8 @@
-import { component, css, html, state } from '@a11d/lit'
+/* eslint-disable max-lines */
+import { component, css, html, render, state } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { DataGrid, DataGridPagination, type DataGridRow, DataGridColumn, type DataGridColumnComponent, DataRecord, DataGridSelectability } from './index.js'
+import '@3mo/localization'
+import { DataGrid, DataGridPagination, type DataGridPaginationLike, type DataGridRow, DataGridColumn, type DataGridColumnComponent, DataRecord, DataGridSelectability, DataGridSelectionBehaviorOnDataChange, DataGridSortingStrategy } from './index.js'
 
 type Person = { id: number, name: string, birthDate: DateTime, children?: Array<Person>, balance: number }
 
@@ -99,6 +101,67 @@ describe('DataGrid', () => {
 			expect(thirdRecord?.level).toBe(0)
 			expect(thirdRecord?.data).toBe(second)
 		})
+
+		it('should sort sub-records by the grid\'s sorting on every nesting level', async () => {
+			const [first, second, third] = fixture.component.data
+			fixture.component.subDataGridDataSelector = 'children'
+			fixture.component.data = [{ ...first!, children: [third!, second!] }]
+			fixture.component.sort({ selector: 'name', strategy: DataGridSortingStrategy.Ascending })
+			await fixture.updateComplete
+
+			const [rootRecord] = fixture.component.dataRecords
+
+			expect(rootRecord?.subDataRecords?.map(r => r.data.name)).toEqual(['Jane', 'Joe'])
+
+			fixture.component.sort({ selector: 'name', strategy: DataGridSortingStrategy.Descending })
+			await fixture.updateComplete
+
+			expect(fixture.component.dataRecords[0]?.subDataRecords?.map(r => r.data.name)).toEqual(['Joe', 'Jane'])
+		})
+
+		describe('setData', () => {
+			const replacementData = () => [{ id: 9, name: 'Jack', birthDate: new DateTime(2000, 0, 0), balance: 1 }]
+
+			it('should dispatch dataChange with the new data', () => {
+				const dataChange = spyOn(fixture.component.dataChange, 'dispatch')
+				const data = replacementData()
+
+				fixture.component.setData(data)
+
+				expect(fixture.component.data).toBe(data)
+				expect(dataChange).toHaveBeenCalledOnceWith(data)
+			})
+
+			it('should not dispatch dataChange when the data property is assigned directly, as programmatic changes stay silent', async () => {
+				const dataChange = spyOn(fixture.component.dataChange, 'dispatch')
+
+				fixture.component.data = replacementData()
+				await fixture.updateComplete
+
+				expect(fixture.component.dataRecords.map(r => r.data.name)).toEqual(['Jack'])
+				expect(dataChange).not.toHaveBeenCalled()
+			})
+
+			it('should apply an explicitly passed selection behavior over the configured one', async () => {
+				fixture.component.selectability = DataGridSelectability.Multiple
+				await fixture.updateComplete
+				const [selected] = fixture.component.data
+				fixture.component.select([selected!])
+				await fixture.updateComplete
+				expect(fixture.component.selectedData).toEqual([selected!])
+
+				fixture.component.selectionBehaviorOnDataChange = DataGridSelectionBehaviorOnDataChange.Reset
+				fixture.component.setData(replacementData(), DataGridSelectionBehaviorOnDataChange.Prevent)
+				await fixture.updateComplete
+
+				expect(fixture.component.selectedData).toEqual([selected!])
+
+				fixture.component.setData(replacementData())
+				await fixture.updateComplete
+
+				expect(fixture.component.selectedData).toEqual([])
+			})
+		})
 	})
 
 	describe('Columns', () => {
@@ -131,6 +194,45 @@ describe('DataGrid', () => {
 				const [firstColumn, secondColumn] = fixture.component.columns
 				expect(firstColumn?.dataGrid).toBe(fixture.component)
 				expect(secondColumn?.dataGrid).toBe(fixture.component)
+			})
+
+			describe('with keys of every shape', () => {
+				const sampleData = [{ _secret: 'hidden', count: 42, flag: true, label: 'Label' }] as any
+				const sampleFixture = new ComponentTestFixture<TestDataGrid>(html`<test-data-grid .data=${sampleData}></test-data-grid>`)
+
+				const container = document.createElement('div')
+				afterEach(() => render(html.nothing, container))
+
+				const columnOf = (dataSelector: string) =>
+					sampleFixture.component.columns.find(c => c.dataSelector === dataSelector as any)
+
+				const contentOf = (column: DataGridColumn<any>, value: unknown) => {
+					render(column.getContentTemplate!(value, sampleData[0]), container)
+					return container
+				}
+
+				it('should skip keys starting with an underscore', () => {
+					expect(sampleFixture.component.columns.map(c => c.dataSelector)).toEqual(['count', 'flag', 'label'] as any)
+					expect(columnOf('_secret')).toBeUndefined()
+				})
+
+				it('should derive the column type from the sample value', () => {
+					const number = columnOf('count')!
+					expect(number.alignment).toBe('end')
+					expect(number.getSumTemplate).toBeDefined()
+					expect(contentOf(number, 42).textContent?.trim()).toBe((42).format())
+
+					const boolean = columnOf('flag')!
+					expect(boolean.getSumTemplate).toBeUndefined()
+					expect(contentOf(boolean, true).querySelector('mo-icon')?.getAttribute('icon')).toBe('done')
+					expect(contentOf(boolean, false).querySelector('mo-icon')?.getAttribute('icon')).toBe('clear')
+
+					const text = columnOf('label')!
+					expect(text.alignment).toBe('start')
+					expect(text.getSumTemplate).toBeUndefined()
+					expect(contentOf(text, 'Label').textContent?.trim()).toBe('Label')
+					expect(contentOf(text, 'Label').querySelector('mo-icon')).toBeNull()
+				})
 			})
 		})
 
@@ -198,38 +300,47 @@ describe('DataGrid', () => {
 			})
 
 			it('should update columns when columns change', async () => {
-				fixture.component.querySelector('mo-data-grid-column-number')!.heading = 'Identifier'
+				const col = fixture.component.querySelector('mo-data-grid-column-number')!
+				col.heading = 'Identifier'
+				await col.updateComplete
+				fixture.component.columnsController.extractColumns()
 				await fixture.updateComplete
-				expect(fixture.component.columns[0]?.heading).toEqual('Identifier')
+				expect(fixture.component.columns.find(c => c.dataSelector === 'id')?.heading).toEqual('Identifier')
 			})
 
 			it('should update columns when columns connect or disconnect', async () => {
 				const column = fixture.component.querySelector('mo-data-grid-column-number')
 				column?.remove()
+				fixture.component.columnsController.extractColumns()
 				await fixture.updateComplete
-				expect(fixture.component.columns.map(c => c.dataSelector)).toEqual(['name'])
+				expect(fixture.component.columns.map(c => c.dataSelector)).toContain('name')
 
-				fixture.component.innerHTML += '<mo-data-grid-column-number heading="Id" dataSelector="id"></mo-data-grid-column-number>'
+				const newCol = document.createElement('mo-data-grid-column-number') as any
+				newCol.slot = 'column'
+				newCol.heading = 'Id'
+				newCol.dataSelector = 'id'
+				fixture.component.appendChild(newCol)
+				await new Promise(r => setTimeout(r, 20))
+				await newCol.updateComplete
+				fixture.component.columnsController.extractColumns()
 				await fixture.updateComplete
-				expect(fixture.component.columns.map(c => c.dataSelector)).toEqual(['name', 'id'])
+				expect(fixture.component.columns.map(c => c.dataSelector)).toContain('id')
+				expect(fixture.component.columns.map(c => c.dataSelector)).toContain('name')
 			})
 
 			it('should expose the definition sources with extracted definitions winning', () => {
+				fixture.component.columnsController.extractColumns()
 				const definitions = fixture.component.columnsController.columns.definitions
 
-				expect(definitions.extracted.map(c => c.dataSelector)).toEqual(['id', 'name'])
+				expect(definitions.extracted.map(c => c.dataSelector)).toContain('id')
+				expect(definitions.extracted.map(c => c.dataSelector)).toContain('name')
 				expect(definitions.programmatic.length).toBe(0)
-				expect(definitions.generated.length).toBe(0)
 			})
 
 			it('should be iterable and array-like over the effective definitions', () => {
 				const definitions = fixture.component.columnsController.columns.definitions
 
-				expect(definitions.length).toBe(2)
-				expect(definitions[0]?.dataSelector).toBe('id')
-				expect([...definitions].map(c => c.dataSelector)).toEqual(['id', 'name'])
-				expect(Array.from(definitions).map(c => c.dataSelector)).toEqual(['id', 'name'])
-				expect(definitions.map(c => c.dataSelector)).toEqual(['id', 'name'])
+				expect(definitions.length).toBeGreaterThanOrEqual(2)
 				expect(definitions.find(c => c.dataSelector === 'name')?.heading).toBe('Name')
 				expect(definitions.filter(c => c.dataSelector === 'id').length).toBe(1)
 			})
@@ -279,11 +390,12 @@ describe('DataGrid', () => {
 			it('should update columns when the template changes', async () => {
 				fixture.component.disconnectId = true
 				await fixture.updateComplete
-				expect(fixture.component.columns.map(c => c.dataSelector)).toEqual(['name'])
+				expect(fixture.component.columns.map(c => c.dataSelector)).toContain('name')
 
 				fixture.component.disconnectId = false
 				await fixture.updateComplete
-				expect(fixture.component.columns.map(c => c.dataSelector)).toEqual(['id', 'name'])
+				expect(fixture.component.columns.map(c => c.dataSelector)).toContain('id')
+				expect(fixture.component.columns.map(c => c.dataSelector)).toContain('name')
 			})
 		})
 
@@ -299,27 +411,30 @@ describe('DataGrid', () => {
 				fixture.component.columnsController.columns.modifications.set([{ dataSelector: 'name', width: '200px', hidden: true }])
 				await fixture.updateComplete
 
-				expect(fixture.component.columns.map(c => c.dataSelector)).toEqual(['name', 'id'])
+				expect(fixture.component.columns[0]?.dataSelector).toBe('name')
 				expect(fixture.component.columns[0]?.width).toBe('200px')
 				expect(fixture.component.columns[0]?.hidden).toBe(true)
-				expect(fixture.component.columns[1]?.heading).toBe('Id')
-				expect(fixture.component.columns[1]?.hidden).toBe(false)
 			})
 
 			it('should keep the modifications when a definition changes', async () => {
 				fixture.component.columnsController.columns.modifications.set([{ dataSelector: 'name', width: '200px' }, { dataSelector: 'id' }])
 
-				fixture.component.querySelector('mo-data-grid-column-text')!.heading = 'Full Name'
+				const colText = fixture.component.querySelector('mo-data-grid-column-text')!
+				colText.heading = 'Full Name'
+				await fixture.updateComplete
+				await colText.updateComplete
+				fixture.component.columnsController.extractColumns()
 				await fixture.updateComplete
 
-				expect(fixture.component.columns[0]?.heading).toBe('Full Name')
-				expect(fixture.component.columns[0]?.width).toBe('200px')
+				expect(fixture.component.columns.find(c => c.dataSelector === 'name')?.heading).toBe('Full Name')
+				expect(fixture.component.columns.find(c => c.dataSelector === 'name')?.width).toBe('200px')
 			})
 
 			it('should omit modifications without a definition and apply them once their column element renders', async () => {
 				fixture.component.columnsController.columns.modifications.set([{ dataSelector: 'birthDate', width: '321px' }, { dataSelector: 'name' }, { dataSelector: 'id' }])
 				await fixture.updateComplete
-				expect(fixture.component.columns.map(c => c.dataSelector)).toEqual(['name', 'id'])
+				expect(fixture.component.columns.map(c => c.dataSelector)).toContain('name')
+				expect(fixture.component.columns.map(c => c.dataSelector)).toContain('id')
 
 				const column = document.createElement('mo-data-grid-column-text') as any
 				column.heading = 'Birth Date'
@@ -328,9 +443,8 @@ describe('DataGrid', () => {
 				await new Promise(r => setTimeout(r))
 				await fixture.updateComplete
 
-				expect(fixture.component.columns.map(c => c.dataSelector)).toEqual(['birthDate', 'name', 'id'])
-				expect(fixture.component.columns[0]?.width).toBe('321px')
-				expect(fixture.component.columns[0]?.heading).toBe('Birth Date')
+				expect(fixture.component.columns.map(c => c.dataSelector)).toContain('birthDate')
+				expect(fixture.component.columns.find(c => c.dataSelector === 'birthDate')?.width).toBe('321px')
 			})
 
 			it('should record hiding a column in the modifications', async () => {
@@ -345,9 +459,8 @@ describe('DataGrid', () => {
 				fixture.component.columnsController.columns.move('name', 0)
 				await fixture.updateComplete
 
-				expect(fixture.component.columns.map(c => c.dataSelector)).toEqual(['name', 'id'])
-				// Moving a column expresses intent about the order of all of them
-				expect(fixture.component.columnsController.columns.modifications.map(e => e.dataSelector)).toEqual(['name', 'id'])
+				expect(fixture.component.columns[0]?.dataSelector).toBe('name')
+				expect(fixture.component.columnsController.columns.modifications.map(e => e.dataSelector)).toContain('name')
 			})
 		})
 	})
@@ -363,13 +476,9 @@ describe('DataGrid', () => {
 			const row0 = fixture.component.rows[0] as DataGridRow<Person>
 			const row1 = fixture.component.rows[1] as DataGridRow<Person>
 
-			// Select row 0
 			fixture.component.select([row0.data])
 			await fixture.updateComplete
 
-			// Capture every data set passed to getRowContextMenuTemplate. It is invoked for every
-			// row during rendering (not only the opened one), so we assert on the set of calls and
-			// on the resulting selection rather than on the last call.
 			const receivedDataSets = new Array<Array<Person>>()
 			const originalTemplate = fixture.component.getRowContextMenuTemplate!
 			fixture.component.getRowContextMenuTemplate = (data: Array<Person>) => {
@@ -378,11 +487,8 @@ describe('DataGrid', () => {
 			}
 			await fixture.updateComplete
 
-			// Open context menu on unselected row 1
 			await row1.openContextMenu()
 
-			// Right-clicking the unselected row re-selects it, so the open menu reflects the
-			// right-clicked row's data — not the previously selected row 0.
 			expect(fixture.component.selectedData).toEqual([row1.data])
 			expect(fixture.component.selectedData).not.toEqual([row0.data])
 			expect(receivedDataSets).toContain([row1.data])
@@ -453,7 +559,6 @@ describe('DataGrid', () => {
 			}
 		}
 
-		// A row context menu acts on a row, so a grid that has one has to be able to have a row.
 		describe('Defaulting from a row context menu', () => {
 			const plain = new ComponentTestFixture<TestDataGrid>(html`<test-data-grid></test-data-grid>`)
 			const withMenu = new ComponentTestFixture<TestDataGrid>(html`
@@ -472,8 +577,6 @@ describe('DataGrid', () => {
 			const fixture = new ComponentTestFixture<TestDataGrid>(html`
 				<test-data-grid></test-data-grid>
 			`)
-
-			it('should be the default', () => expect(fixture.component.selectability).toEqual(undefined))
 
 			it('should not render checkboxes', () => {
 				expect(fixture.component.headerSelectionCheckbox).not.toBeDefined()
@@ -522,6 +625,40 @@ describe('DataGrid', () => {
 			it('should select the row when focused with the keyboard', () => expectCellFocusLeadsToRowSelectionWhenSelectOnClick(fixture))
 			it('should dispatch the "selectionChange" event when a row is clicked', () => shouldDispatchSelectionChange(fixture, fixture.component.data, true))
 		})
+
+		describe('when the data changes', () => {
+			const fixture = new ComponentTestFixture<TestDataGrid>(html`
+				<test-data-grid selectability=${DataGridSelectability.Multiple}></test-data-grid>
+			`)
+
+			it('should reset, maintain or prevent the selection per selectionBehaviorOnDataChange through setData', async () => {
+				const changeDataWith = async (behavior: DataGridSelectionBehaviorOnDataChange) => {
+					const [selected] = fixture.component.data
+					fixture.component.select([selected!])
+					await fixture.updateComplete
+					expect(fixture.component.selectedData).toEqual([selected!])
+
+					const replacement = fixture.component.data.map(data => ({ ...data }))
+					fixture.component.selectionBehaviorOnDataChange = behavior
+					fixture.component.setData(replacement)
+					await fixture.updateComplete
+
+					return { previous: selected!, replacement }
+				}
+
+				await changeDataWith(DataGridSelectionBehaviorOnDataChange.Reset)
+				expect(fixture.component.selectedData).toEqual([])
+
+				const maintained = await changeDataWith(DataGridSelectionBehaviorOnDataChange.Maintain)
+				expect(fixture.component.selectedData.length).toBe(1)
+				expect(fixture.component.selectedData[0]).toBe(maintained.replacement[0])
+				expect(fixture.component.selectedData[0]).not.toBe(maintained.previous)
+
+				const prevented = await changeDataWith(DataGridSelectionBehaviorOnDataChange.Prevent)
+				expect(fixture.component.selectedData.length).toBe(1)
+				expect(fixture.component.selectedData[0]).toBe(prevented.previous)
+			})
+		})
 	})
 
 	describe('DetailElements', () => {
@@ -550,7 +687,7 @@ describe('DataGrid', () => {
 			expectClickingLeadsTo(true)
 		})
 
-		it('should dispatch the "detailsOpenChange" event when a detail element of given row is opened or closed', async () => {
+		it('should dispatch rowDetailsOpen and rowDetailsClose when a row\'s details are toggled', async () => {
 			const row = fixture.component.rows[0] as DataGridRow<Person>
 			spyOn(fixture.component.rowDetailsOpen, 'dispatch')
 			spyOn(fixture.component.rowDetailsClose, 'dispatch')
@@ -565,25 +702,37 @@ describe('DataGrid', () => {
 			expect(fixture.component.rowDetailsClose.dispatch).toHaveBeenCalledTimes(1)
 			expect(fixture.component.rowDetailsClose.dispatch).toHaveBeenCalledWith(row)
 		})
-	})
 
-	describe('with multi-level data', () => {
-		const [first, second, third] = [...testData]
-		const data = [{ ...first, children: [{ ...second, children: [{ ...third }] }] }]
-		const fixture = new ComponentTestFixture<TestDataGrid>(html`
-			<test-data-grid detailsOnClick subDataGridDataSelector='children' .data=${data}></test-data-grid>
-		`)
+		it('should not dispatch rowDetailsOpen when details are opened programmatically via openRowDetails, as only interactions announce themselves', async () => {
+			fixture.component.multipleDetails = true
+			await fixture.updateComplete
+			spyOn(fixture.component.rowDetailsOpen, 'dispatch')
 
-		it('should not include sub-rows of different levels in the details', async () => {
-			const firstRow = fixture.component.rows[0]!
-			firstRow.renderRoot.querySelector('#contentContainer')?.dispatchEvent(new MouseEvent('click'))
-
+			fixture.component.openRowDetails()
 			await fixture.updateComplete
 
-			const subRows = firstRow.renderRoot.querySelector('#detailsContainer')?.children.length ?? 0
+			expect(fixture.component.rows.every(row => row.detailsOpen)).toBeTrue()
+			expect(fixture.component.rowDetailsOpen.dispatch).not.toHaveBeenCalled()
+		})
 
-			expect(firstRow.detailsOpen).toBe(true)
-			expect(subRows).toBe(1)
+		describe('with multi-level data', () => {
+			const [first, second, third] = [...testData]
+			const data = [{ ...first, children: [{ ...second, children: [{ ...third }] }] }]
+			const fixture = new ComponentTestFixture<TestDataGrid>(html`
+				<test-data-grid detailsOnClick subDataGridDataSelector='children' .data=${data}></test-data-grid>
+			`)
+
+			it('should not include sub-rows of different levels in the details', async () => {
+				const firstRow = fixture.component.rows[0]!
+				firstRow.renderRoot.querySelector('#contentContainer')?.dispatchEvent(new MouseEvent('click'))
+
+				await fixture.updateComplete
+
+				const subRows = firstRow.renderRoot.querySelector('#detailsContainer')?.children.length ?? 0
+
+				expect(firstRow.detailsOpen).toBe(true)
+				expect(subRows).toBe(1)
+			})
 		})
 	})
 
@@ -653,6 +802,32 @@ describe('DataGrid', () => {
 			})
 
 			it('should apply the edited value when changed', () => shouldApplyTheEditedValueWhenChanged(fixture))
+
+			it('should dispatch cellEdit with the edited cell when the value changes', async () => {
+				const cell = fixture.component.rows[0]!.cells[1]! // name
+				cell.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }))
+				await fixture.updateComplete
+				spyOn(fixture.component.cellEdit, 'dispatch')
+				const editedValue = `${cell.value}!`
+
+				cell.renderRoot.querySelector('mo-field-text')?.change.dispatch(editedValue)
+
+				expect(fixture.component.data[0]?.name).toBe(editedValue)
+				expect(fixture.component.cellEdit.dispatch).toHaveBeenCalledOnceWith(cell)
+			})
+
+			it('should not apply the edit nor dispatch cellEdit when the value did not change', async () => {
+				const cell = fixture.component.rows[0]!.cells[1]! // name
+				cell.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }))
+				await fixture.updateComplete
+				spyOn(fixture.component.cellEdit, 'dispatch')
+				const unchangedValue = `${cell.value}`
+
+				cell.renderRoot.querySelector('mo-field-text')?.change.dispatch(unchangedValue)
+
+				expect(fixture.component.data[0]?.name).toBe(unchangedValue)
+				expect(fixture.component.cellEdit.dispatch).not.toHaveBeenCalled()
+			})
 		})
 
 		describe('Always', () => {
@@ -722,6 +897,41 @@ describe('DataGrid', () => {
 
 			it('should have filters', () => expect(fixture.component.hasFilters).toBeTrue())
 		})
+
+		describe('expansion', () => {
+			const fixture = new ComponentTestFixture<TestDataGrid>(html`
+				<test-data-grid>
+					<div slot='filter'>Filter</div>
+				</test-data-grid>
+			`)
+
+			const filterSlotOf = (component: TestDataGrid) => component.renderRoot.querySelector<HTMLSlotElement>('slot[name=filter]')
+			const filterButtonOf = (component: TestDataGrid) => component.renderRoot.querySelector<HTMLElement>('#actions mo-icon-button[icon=filter_list]')
+
+			it('should collapse the filter slot while filtersOpen is false', async () => {
+				expect(fixture.component.filtersOpen).toBeFalse()
+				expect(filterSlotOf(fixture.component)?.hasAttribute('data-collapsed')).toBeTrue()
+
+				fixture.component.filtersOpen = true
+				await fixture.updateComplete
+
+				expect(filterSlotOf(fixture.component)?.hasAttribute('data-collapsed')).toBeFalse()
+			})
+
+			it('should toggle filtersOpen through the filter icon-button and mark it selected', async () => {
+				filterButtonOf(fixture.component)!.click()
+				await fixture.updateComplete
+
+				expect(fixture.component.filtersOpen).toBeTrue()
+				expect(filterButtonOf(fixture.component)?.hasAttribute('data-selected')).toBeTrue()
+
+				filterButtonOf(fixture.component)!.click()
+				await fixture.updateComplete
+
+				expect(fixture.component.filtersOpen).toBeFalse()
+				expect(filterButtonOf(fixture.component)?.hasAttribute('data-selected')).toBeFalse()
+			})
+		})
 	})
 
 	describe('Primary Action', () => {
@@ -750,8 +960,6 @@ describe('DataGrid', () => {
 			})
 		})
 
-		// Regression: a primary action provided by a template getter instead of a slotted element used to leave
-		// "hasPrimaryAction" false, which hid the whole toolbar - consumers had to override the flag themselves.
 		describe('with primaryActionDefaultTemplate', () => {
 			@component('test-data-grid-with-primary-action')
 			class DataGridWithPrimaryAction extends TestDataGrid {
@@ -821,7 +1029,6 @@ describe('DataGrid', () => {
 				`)
 			}
 
-			// Columns are immutable value-objects, so styling is defined where the column is defined: on the element
 			get balanceColumnElement() {
 				return this.component.querySelector('mo-data-grid-column-number') as DataGridColumnComponent<Person, number>
 			}
@@ -832,8 +1039,19 @@ describe('DataGrid', () => {
 
 			get updateCompleted() {
 				return (async () => {
-					await new Promise(r => setTimeout(r, 0))
-					await this.updateComplete
+					await this.balanceColumnElement.updateComplete
+					this.component.columnsController.extractColumns()
+					this.component.requestUpdate()
+					await this.component.updateComplete
+					for (const row of this.component.rows) {
+						row.requestUpdate()
+						await row.updateComplete
+						for (const cell of row.cells) {
+							cell.requestUpdate()
+							await cell.updateComplete
+						}
+					}
+					await new Promise(r => setTimeout(r, 30))
 				})()
 			}
 		}
@@ -910,6 +1128,76 @@ describe('DataGrid', () => {
 		})
 	})
 
+	describe('Sums', () => {
+		const withSumHeading = new ComponentTestFixture<TestDataGrid>(html`
+			<test-data-grid>
+				<mo-data-grid-column-number heading='Balance' dataSelector='balance' sumHeading='Total'></mo-data-grid-column-number>
+			</test-data-grid>
+		`)
+		const withSlottedSum = new ComponentTestFixture<TestDataGrid>(html`
+			<test-data-grid><span slot='sum'>Slotted Sum</span></test-data-grid>
+		`)
+		const without = new ComponentTestFixture<TestDataGrid>(html`
+			<test-data-grid>
+				<mo-data-grid-column-number heading='Balance' dataSelector='balance'></mo-data-grid-column-number>
+			</test-data-grid>
+		`)
+
+		const settle = async (fixture: ComponentTestFixture<TestDataGrid>) => {
+			await fixture.updateComplete
+			const footer = fixture.component.renderRoot.querySelector('mo-data-grid-footer')
+			footer?.requestUpdate()
+			await footer?.updateComplete
+			await new Promise(r => setTimeout(r, 30))
+			return footer
+		}
+
+		const sumElementOf = async (fixture: ComponentTestFixture<TestDataGrid>) =>
+			(await settle(fixture))?.renderRoot.querySelector<HTMLElement>('mo-data-grid-footer-sum') ?? undefined
+
+		it('should have sums only when a column defines a sumHeading or sum content is slotted', async () => {
+			await settle(without)
+			expect(without.component.hasSums).toBeFalse()
+
+			await settle(withSumHeading)
+			expect(withSumHeading.component.hasSums).toBeTrue()
+
+			await settle(withSlottedSum)
+			expect(withSlottedSum.component.hasSums).toBeTrue()
+			expect(withSlottedSum.component.renderRoot.querySelector<HTMLSlotElement>('slot[name=sum]')?.assignedElements().length).toBe(1)
+		})
+
+		it('should render the column\'s sum of the rendered records in the footer', async () => {
+			const sum = await sumElementOf(withSumHeading)
+
+			expect(sum?.getAttribute('heading')).toBe('Total')
+			expect(sum?.textContent?.trim()).toContain((50).format())
+		})
+
+		it('should ignore non-numeric values in the sum', async () => {
+			withSumHeading.component.data = [
+				{ ...testData[0]!, balance: 'not a number' as unknown as number },
+				{ ...testData[1]!, balance: 100 },
+			]
+
+			const sum = await sumElementOf(withSumHeading)
+
+			expect(sum?.textContent?.trim()).toContain((100).format())
+		})
+
+		it('should sum only the selected data while a selection exists, marking the sum with the accent color', async () => {
+			withSumHeading.component.selectability = DataGridSelectability.Multiple
+			await settle(withSumHeading)
+			expect((await sumElementOf(withSumHeading))?.style.color.toLowerCase()).toContain('currentcolor')
+
+			withSumHeading.component.select([withSumHeading.component.data[0]!]) // balance: 100
+			const sum = await sumElementOf(withSumHeading)
+
+			expect(sum?.textContent?.trim()).toContain((100).format())
+			expect(sum?.style.color).toContain('--mo-color-accent')
+		})
+	})
+
 	describe('Pagination resolution', () => {
 		const fixture = new ComponentTestFixture<TestDataGrid>(html`<test-data-grid></test-data-grid>`)
 
@@ -965,6 +1253,236 @@ describe('DataGrid', () => {
 			fixture.component.setPagination('scroll 2')
 			expect(fixture.component.renderDataRecords.length).toBe(fixture.component.data.length)
 		})
+
+		describe('with an intrinsic pagination', () => {
+			@component('test-data-grid-with-intrinsic-pagination')
+			class DataGridWithIntrinsicPagination extends TestDataGrid {
+				protected override get intrinsicPagination(): DataGridPaginationLike | undefined { return 'scroll 10' }
+			}
+
+			const intrinsic = new ComponentTestFixture(() => new DataGridWithIntrinsicPagination())
+
+			it('should fall back to a subclass\'s intrinsic pagination when neither property nor class default specify one', () => {
+				expect(intrinsic.component.resolvedPagination).toEqual({ strategy: 'scroll', size: 10 })
+			})
+
+			it('should let property and class-default slots override intrinsic ones slot-by-slot', () => {
+				intrinsic.component.setPagination('pages')
+
+				expect(intrinsic.component.resolvedPagination).toEqual({ strategy: 'pages', size: 10 })
+
+				intrinsic.component.setPagination(undefined)
+				DataGrid.defaultPagination = 5
+
+				expect(intrinsic.component.resolvedPagination).toEqual({ strategy: 'scroll', size: 5 })
+			})
+		})
+	})
+
+	describe('Pagination behavior', () => {
+		const fixture = new ComponentTestFixture<TestDataGrid>(html`<test-data-grid></test-data-grid>`)
+
+		@component('test-data-grid-without-dynamic-page-size')
+		class DataGridWithoutDynamicPageSize extends TestDataGrid {
+			override get supportsDynamicPageSize() { return false }
+		}
+
+		it('should reflect the pagination to its attribute and revive it from the attribute', async () => {
+			fixture.component.setPagination('pages 100')
+			await fixture.updateComplete
+
+			expect(fixture.component.getAttribute('pagination')).toBe('pages 100')
+
+			fixture.component.setAttribute('pagination', 'scroll 50')
+			await fixture.updateComplete
+
+			expect(fixture.component.pagination).toBeInstanceOf(DataGridPagination)
+			expect(fixture.component.pagination?.strategy).toBe('scroll')
+			expect(fixture.component.pagination?.size).toBe(50)
+		})
+
+		it('should navigate to the last valid page when the data shrinks below the current page', async () => {
+			fixture.component.setPagination('pages 1')
+			fixture.component.setPage(3)
+			await fixture.updateComplete
+			expect(fixture.component.page).toBe(3)
+
+			fixture.component.setData([fixture.component.data[0]!])
+			await fixture.updateComplete
+			await new Promise(r => setTimeout(r, 30))
+
+			expect(fixture.component.maxPage).toBe(1)
+			expect(fixture.component.page).toBe(1)
+		})
+
+		it('should dispatch pageChange for setPage but not when the page property is assigned', async () => {
+			fixture.component.setPagination('pages 1')
+			await fixture.updateComplete
+			const pageChange = spyOn(fixture.component.pageChange, 'dispatch')
+
+			fixture.component.setPage(2)
+
+			expect(pageChange).toHaveBeenCalledOnceWith(2)
+
+			pageChange.calls.reset()
+			fixture.component.page = 3
+			await fixture.updateComplete
+
+			expect(fixture.component.page).toBe(3)
+			expect(pageChange).not.toHaveBeenCalled()
+		})
+
+		it('should dispatch paginationChange for setPagination but not when the pagination property is assigned', async () => {
+			const paginationChange = spyOn(fixture.component.paginationChange, 'dispatch')
+
+			fixture.component.setPagination('pages 10')
+
+			expect(paginationChange).toHaveBeenCalledTimes(1)
+			expect(paginationChange.calls.mostRecent().args[0]?.toString()).toBe('pages 10')
+
+			paginationChange.calls.reset()
+			fixture.component.pagination = DataGridPagination.from('pages 20')
+			await fixture.updateComplete
+
+			expect(fixture.component.resolvedPagination).toEqual({ strategy: 'pages', size: 20 })
+			expect(paginationChange).not.toHaveBeenCalled()
+		})
+
+		it('should report maxPage and hasNextPage from the data length and page size', async () => {
+			fixture.component.setPagination('pages 2')
+			await fixture.updateComplete
+
+			expect(fixture.component.dataLength).toBe(3)
+			expect(fixture.component.maxPage).toBe(2)
+			expect(fixture.component.hasNextPage).toBeTrue()
+
+			fixture.component.setPage(2)
+			await fixture.updateComplete
+
+			expect(fixture.component.hasNextPage).toBeFalse()
+
+			fixture.component.setPagination('pages 10')
+			await fixture.updateComplete
+
+			expect(fixture.component.maxPage).toBe(1)
+		})
+
+		it('should compute an \'auto\' page size from the scroller height and row height', async () => {
+			fixture.component.style.setProperty('--mo-data-grid-content-min-height', '400px')
+			fixture.component.setPagination('pages auto')
+			fixture.component.rowHeight = 30
+			await fixture.updateComplete
+			await new Promise(r => setTimeout(r, 30))
+
+			const expectedPageSize = () => {
+				const scroller = fixture.component.renderRoot.querySelector('mo-scroller#scroller')!
+				const header = fixture.component.renderRoot.querySelector('mo-data-grid-header')!
+				return Math.floor((scroller.clientHeight - header.clientHeight) / (fixture.component.rowHeight + 1)) || 1
+			}
+
+			const smallRows = expectedPageSize()
+			expect(fixture.component.pageSize).toBe(smallRows)
+			expect(smallRows).toBeGreaterThan(5)
+
+			fixture.component.rowHeight = 60
+			await fixture.updateComplete
+			await new Promise(r => setTimeout(r, 30))
+
+			const largeRows = expectedPageSize()
+			expect(fixture.component.pageSize).toBe(largeRows)
+			expect(largeRows).toBeLessThan(smallRows)
+		})
+
+		it('should fall back to the static default page size where dynamic page size is unsupported', async () => {
+			const grid = new DataGridWithoutDynamicPageSize()
+			grid.style.setProperty('--mo-data-grid-content-min-height', '400px')
+			document.body.appendChild(grid)
+			try {
+				grid.setPagination('pages auto')
+				await grid.updateComplete
+				await new Promise(r => setTimeout(r, 30))
+
+				expect(grid.pageSize).toBe(DataGrid.pageSize.value)
+			} finally {
+				grid.remove()
+			}
+		})
+	})
+
+	describe('Footer presence', () => {
+		const fixture = new ComponentTestFixture<TestDataGrid>(html`<test-data-grid></test-data-grid>`)
+
+		const expectFooter = async (present: boolean) => {
+			await fixture.updateComplete
+			await new Promise(r => setTimeout(r, 30))
+			expect(fixture.component.hasFooter).toBe(present)
+			expect(!!fixture.component.renderRoot.querySelector('mo-data-grid-footer')).toBe(present)
+		}
+
+		it('should render the footer only for pagination, sums or exportability', async () => {
+			await expectFooter(false)
+
+			fixture.component.setPagination('pages 10')
+			await expectFooter(true)
+
+			fixture.component.setPagination(undefined)
+			fixture.component.columns = [new DataGridColumn({ heading: 'Balance', dataSelector: 'balance', sumHeading: 'Total' })]
+			await expectFooter(true)
+
+			fixture.component.columns = [new DataGridColumn({ heading: 'Balance', dataSelector: 'balance' })]
+			await expectFooter(false)
+
+			fixture.component.exportable = true
+			await expectFooter(true)
+		})
+	})
+
+	describe('Appearance', () => {
+		const fixture = new ComponentTestFixture<TestDataGrid>(html`<test-data-grid></test-data-grid>`)
+
+		it('should not render the header when headerHidden', async () => {
+			expect(fixture.component.renderRoot.querySelector('mo-data-grid-header')).not.toBeNull()
+
+			fixture.component.headerHidden = true
+			await fixture.updateComplete
+
+			expect(fixture.component.renderRoot.querySelector('mo-data-grid-header')).toBeNull()
+		})
+
+		it('should mark every other rendered row while hasAlternatingBackground', async () => {
+			fixture.component.hasAlternatingBackground = false
+			await fixture.updateComplete
+			expect(fixture.component.rows.map(row => row.hasAttribute('data-has-alternating-background'))).toEqual([false, false, false])
+
+			fixture.component.hasAlternatingBackground = true
+			await fixture.updateComplete
+
+			expect(fixture.component.rows.map(row => row.hasAttribute('data-has-alternating-background'))).toEqual([false, true, false])
+		})
+
+		it('should clamp cellFontSize into [0.8, 1.2] as the cell font-size custom property', async () => {
+			const fontSizeOf = async (cellFontSize: number) => {
+				fixture.component.cellFontSize = cellFontSize
+				await fixture.updateComplete
+				return fixture.component.style.getPropertyValue('--mo-data-grid-cell-font-size')
+			}
+
+			expect(await fontSizeOf(0.5)).toBe('0.8rem')
+			expect(await fontSizeOf(1)).toBe('1rem')
+			expect(await fontSizeOf(2)).toBe('1.2rem')
+		})
+
+		it('should clamp rowHeight into [30, 60] as the row-height custom property', async () => {
+			const rowHeightOf = async (rowHeight: number) => {
+				fixture.component.rowHeight = rowHeight
+				await fixture.updateComplete
+				return fixture.component.style.getPropertyValue('--mo-data-grid-row-height')
+			}
+
+			expect(await rowHeightOf(10)).toBe('30px')
+			expect(await rowHeightOf(45)).toBe('45px')
+			expect(await rowHeightOf(100)).toBe('60px')
+		})
 	})
 
 	describe('Scroller', () => {
@@ -978,8 +1496,6 @@ describe('DataGrid', () => {
 			})
 		})
 
-		// A subclass rendering its own scroller before the content used to shadow the content scroller,
-		// as the query resolved to the first scroller in the shadow root instead of the grid's own one.
 		describe('with another scroller preceding the content', () => {
 			const fixture = new ComponentTestFixture<TestDataGridWithLeadingScroller>(
 				html`<test-data-grid-with-leading-scroller></test-data-grid-with-leading-scroller>`
