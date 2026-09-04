@@ -103,9 +103,11 @@ describe('Tooltip', () => {
 		/** Headless Firefox delivers no focus events at all for a programmatic `focus()` — the
 		 * element does become `document.activeElement`, but neither `focus` nor `focusin` arrives —
 		 * so the events a real focus would raise have to be dispatched alongside it. Both are
-		 * idempotent for the controller, so the real ones Chrome does fire change nothing. */
-		function focusAnchor() {
-			fixture.component.focus({ preventScroll: true })
+		 * idempotent for the controller, so the real ones Chrome does fire change nothing.
+		 * Whether the focus counts as keyboard-driven is the platform's `:focus-visible` verdict,
+		 * which synthetic key events cannot influence, so it is requested explicitly. */
+		function focusAnchor(focusVisible = false) {
+			fixture.component.focus({ preventScroll: true, focusVisible } as FocusOptions)
 			fixture.component.dispatchEvent(new FocusEvent('focus', { composed: true }))
 			fixture.component.dispatchEvent(new FocusEvent('focusin', { bubbles: true, composed: true }))
 		}
@@ -117,8 +119,10 @@ describe('Tooltip', () => {
 		}
 
 		function focusByKeyboard() {
-			document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }))
-			focusAnchor()
+			focusAnchor(true)
+			if (!fixture.component.matches(':focus-visible')) {
+				pending('The platform did not apply the requested focus visibility, as headless Firefox does not in an inactive window')
+			}
 		}
 
 		it('should open and dispatch openChange when the anchor receives keyboard focus', () => {
@@ -151,6 +155,54 @@ describe('Tooltip', () => {
 		})
 	})
 
+	describe('anchor clicks and taps', () => {
+		// The inner popover would otherwise treat a click on its anchor as a request to open, which a
+		// touch tap concludes with — leaving the tooltip stuck open with no interest behind it.
+		function spyOnOpenChange() {
+			const spy = jasmine.createSpy('openChange')
+			fixture.component.tooltip.addEventListener<any>('openChange', (e: CustomEvent<boolean>) => spy(e.detail))
+			return spy
+		}
+
+		const touch = (type: string, target: EventTarget = fixture.component) =>
+			target.dispatchEvent(new PointerEvent(type, { pointerType: 'touch', bubbles: true, composed: true }))
+
+		it('should not open when the anchor is clicked', async () => {
+			const openChange = spyOnOpenChange()
+
+			fixture.component.click()
+			await settle()
+
+			expect(fixture.component.tooltip.open).toBe(false)
+			expect(fixture.component.tooltipPopover.matches(':popover-open')).toBe(false)
+			expect(openChange).not.toHaveBeenCalled()
+		})
+
+		it('should end a touch tap closed, including the compatibility click concluding it', async () => {
+			touch('pointerenter')
+			touch('pointerdown')
+			await settle()
+			touch('pointerup', document)
+			touch('pointerleave')
+			fixture.component.click()
+			await settle()
+
+			expect(fixture.component.tooltip.open).toBe(false)
+			expect(fixture.component.tooltipPopover.matches(':popover-open')).toBe(false)
+		})
+
+		it('should open while held on touch and close on release', async () => {
+			touch('pointerenter')
+			touch('pointerdown')
+			await settle()
+			expect(fixture.component.tooltip.open).toBe(true)
+
+			touch('pointerup', document)
+			await settle()
+			expect(fixture.component.tooltip.open).toBe(false)
+		})
+	})
+
 	describe('placement', () => {
 		it('should forward placement to the underlying popover so the tooltip settles on the requested side of the anchor', async () => {
 			fixture.component.tooltipPlacement = TooltipPlacement.InlineEnd
@@ -168,6 +220,51 @@ describe('Tooltip', () => {
 			const anchorRect = fixture.component.getBoundingClientRect()
 			const popoverRect = fixture.component.tooltipPopover.getBoundingClientRect()
 			expect(popoverRect.left).toBeGreaterThanOrEqual(anchorRect.right - 1)
+		})
+	})
+
+	describe('platform interest invokers', () => {
+		const fixture = new ComponentTestFixture<Tooltip>(html`<mo-tooltip>Content</mo-tooltip>`)
+
+		const dispatchInterest = (type: 'interest' | 'loseinterest', source: HTMLElement) => {
+			const event = new Event(type) as Event & { source?: HTMLElement }
+			event.source = source
+			fixture.component.dispatchEvent(event)
+		}
+
+		it('should open on interest and tether to the invoker showing it', async () => {
+			const invoker = document.createElement('button')
+			document.body.appendChild(invoker)
+
+			dispatchInterest('interest', invoker)
+			await fixture.updateComplete
+
+			expect(fixture.component.open).toBe(true)
+			expect(fixture.component.anchorElement).toBe(invoker)
+
+			dispatchInterest('loseinterest', invoker)
+			await fixture.updateComplete
+
+			expect(fixture.component.open).toBe(false)
+
+			invoker.remove()
+		})
+
+		it('should not override an assigned anchor', async () => {
+			const anchor = document.createElement('button')
+			const invoker = document.createElement('button')
+			document.body.append(anchor, invoker)
+			fixture.component.anchor = anchor
+			await fixture.updateComplete
+
+			dispatchInterest('interest', invoker)
+			await fixture.updateComplete
+
+			expect(fixture.component.anchorElement).toBe(anchor)
+
+			fixture.component.anchor = undefined
+			anchor.remove()
+			invoker.remove()
 		})
 	})
 })

@@ -20,6 +20,30 @@ export const Tooltip: StoryObj = {
 	`
 }
 
+/* eslint-disable @html-eslint/use-baseline */
+
+export const PlatformInterest: StoryObj = {
+	render: () => {
+		const supported = 'interestForElement' in HTMLButtonElement.prototype
+		return html`
+			<mo-flex gap='1rem' alignItems='start'>
+				<mo-card>
+					A tooltip tracks interest in its anchor itself, but also honors the interest events of a
+					native <code>interestfor</code> invoker, leaving the gesture and timing semantics —
+					including the <code>interest-delay</code> CSS properties, hover persistence and the
+					touch and keyboard affordances — to the platform where it supports them.
+					${!supported ? html`<br><br><strong>Interest invokers are not supported in this browser.</strong>` : ''}
+				</mo-card>
+
+				<button interestfor='story-tooltip-interest' style='interest-delay: 0.3s 0.2s'>
+					Hover or focus me
+				</button>
+				<mo-tooltip id='story-tooltip-interest'>Shown by the browser</mo-tooltip>
+			</mo-flex>
+		`
+	}
+}
+
 export const Rich: StoryObj = {
 	render: () => html`
 		<h3>Hover or focus on the following elements to see their tooltip</h3>

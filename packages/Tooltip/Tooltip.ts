@@ -1,12 +1,6 @@
-import { component, css, property, html, Component, state, bind, ifDefined, event, type PropertyValues } from '@a11d/lit'
-import { type FocusMethod, FocusController } from '@3mo/focus-controller'
-import { PointerController } from '@3mo/pointer-controller'
-import { PopoverFloatingUiPositionController } from '@3mo/popover'
+import { component, css, property, html, Component, state, bind, eventListener, ifDefined, event, type PropertyValues } from '@a11d/lit'
+import { PopoverFloatingUiPositionController, PopoverInterestController } from '@3mo/popover'
 import { type TooltipPlacement } from './TooltipPlacement.js'
-
-function targetAnchor(this: Tooltip) {
-	return this.anchor || []
-}
 
 /**
  * @element mo-tooltip
@@ -21,34 +15,38 @@ export class Tooltip extends Component {
 	@event({ bubbles: true }) readonly openChange!: EventDispatcher<boolean>
 
 	@property() placement?: TooltipPlacement
-	@property({ type: Object }) anchor?: HTMLElement
+	@property({ type: Object, updated(this: Tooltip) { this.interestController.resubscribe() } }) anchor?: HTMLElement
 
 	@property({ type: Boolean, reflect: true }) rich = false
 
 	@state() open = false
 
-	protected lastFocusMethod?: FocusMethod
-	protected readonly anchorFocusController = new FocusController(this, {
-		target: targetAnchor,
-		handleChange: (_, __, method) => {
-			this.lastFocusMethod = method
-			this.openIfApplicable()
-		},
+	protected readonly interestController = new PopoverInterestController(this, {
+		anchor: () => this.anchor || [],
+		handleChange: interested => this.setOpen(interested),
 	})
 
-	private openIfApplicable = () => {
-		if (this.pointerController.type === 'touch') {
-			this.setOpen(this.anchorPointerController.press)
-			return
+	/**
+	 * A tooltip is not a popover element itself, so the platform has no default action to run for it.
+	 * Honoring the interest events nonetheless lets a native `interestfor` invoker drive the tooltip
+	 * declaratively, in which case the invoker also becomes the element to tether to. The tooltip's
+	 * own interest tracking naturally stands down, as it only ever tracks an assigned `anchor`,
+	 * thereby leaving the gesture and timing semantics — including the `interest-delay`
+	 * CSS properties — to the platform.
+	 */
+	@eventListener('interest')
+	@eventListener('loseinterest')
+	protected handleInterestChange(e: Event & { readonly source?: Element | null }) {
+		if (e.source instanceof HTMLElement) {
+			this.invoker = e.source
 		}
-
-		if (this.lastFocusMethod === 'keyboard' && this.anchorFocusController.focused) {
-			this.setOpen(true)
-			return
-		}
-
-		this.setOpen(this.pointerController.hover || this.anchorPointerController.hover)
+		this.setOpen(e.type === 'interest')
 	}
+
+	@state() private invoker?: HTMLElement
+
+	/** The element the tooltip is tethered to: its assigned anchor, or the native invoker showing interest. */
+	get anchorElement() { return this.anchor ?? this.invoker }
 
 	private setOpen(open: boolean) {
 		if (this.open !== open) {
@@ -57,23 +55,12 @@ export class Tooltip extends Component {
 		}
 	}
 
-	protected readonly pointerController = new PointerController(this, {
-		handleHoverChange: this.openIfApplicable,
-		handlePressChange: this.openIfApplicable,
-	})
-
-	protected readonly anchorPointerController = new PointerController(this, {
-		target: targetAnchor,
-		handleHoverChange: this.openIfApplicable,
-		handlePressChange: this.openIfApplicable,
-	})
-
 	protected override firstUpdated(props: PropertyValues) {
 		super.firstUpdated(props)
 		this.updateComplete.then(async () => {
 			const popover = this.renderRoot.querySelector('mo-popover')
-			const { shift } = await import('@floating-ui/dom')
 			if (popover?.positionController instanceof PopoverFloatingUiPositionController) {
+				const { shift } = await import('@floating-ui/dom')
 				popover.positionController.addMiddleware(shift({ crossAxis: true, padding: 4 }))
 			}
 		})
@@ -111,11 +98,16 @@ export class Tooltip extends Component {
 		`
 	}
 
+	// The popover's open state is driven entirely by the interest controller;
+	// it must never self-open on anchor clicks or "Enter" key-downs.
+	private readonly preventSelfOpen = () => false
+
 	protected override get template() {
 		return html`
 			<mo-popover mode='hint'
 				?open=${bind(this, 'open')}
-				.anchor=${this.anchor}
+				.anchor=${this.anchorElement}
+				.shouldOpen=${this.preventSelfOpen}
 				placement=${ifDefined(this.placement)}
 				alignment='center'
 			>
