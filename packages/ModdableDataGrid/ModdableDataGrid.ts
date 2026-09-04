@@ -61,6 +61,8 @@ export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataG
 				--mo-card-body-padding: 0;
 				border-radius: 0 0 var(--mo-border-radius) var(--mo-border-radius);
 				height: 100%;
+				/* Follows the modebar appearing above, which squares off the card's upper corners. */
+				transition: border-radius var(--mo-duration-quick, 250ms) ease;
 			}
 
 			:host(:not([hasModebar])) mo-card {
@@ -78,6 +80,21 @@ export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataG
 				padding: 6px 12px;
 
 				white-space: nowrap;
+
+				interpolate-size: allow-keywords;
+				overflow: clip;
+				transition-property: height, min-height, padding-block, opacity, content-visibility;
+				transition-duration: var(--mo-duration-quick, 250ms);
+				transition-timing-function: ease;
+				transition-behavior: allow-discrete;
+
+				&[data-collapsed] {
+					height: 0;
+					min-height: 0;
+					padding-block: 0;
+					opacity: 0;
+					content-visibility: hidden;
+				}
 			}
 
 			:host([data-reordering]) mo-moddable-data-grid-chip:not([data-reorderability=dragging]) {
@@ -156,8 +173,8 @@ export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataG
 	}
 
 	protected get modebarTemplate() {
-		return !this.hasModebar ? html.nothing : html`
-			<mo-flex id='modebar' direction='horizontal'>
+		return html`
+			<mo-flex id='modebar' direction='horizontal' ?data-collapsed=${!this.hasModebar}>
 				<mo-flex ${style({ flexGrow: '1', minWidth: '0' })} direction='horizontal' alignItems='center' gap='14px'>
 					<div ${style({ position: 'relative', width: '100%', height: '100%' })}>
 						<mo-scroller ${style({ position: 'absolute', inset: '0', overflowY: 'hidden', display: 'flex', alignItems: 'center' })}>
