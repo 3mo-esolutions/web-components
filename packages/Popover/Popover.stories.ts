@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite'
-import { Component, css, html } from '@a11d/lit'
+import { Component, css, html, property, state, style } from '@a11d/lit'
 import p from './package.json'
-import { PopoverAlignment, PopoverPlacement, type PopoverContainer } from './index.js'
+import { PopoverAlignment, PopoverPlacement, popover, type PopoverContainer } from './index.js'
+import '@3mo/chip'
 
 export default {
 	title: 'Layout & Containment / Popover',
@@ -70,6 +71,160 @@ export const Target: StoryObj = {
 				</mo-button>
 				<mo-popover slot='popover' target='icon-button'>${content}</mo-popover>
 			</mo-popover-container>
+		`
+	}
+}
+
+export const Lazy: StoryObj = {
+	render: () => html`<mo-story-popover-lazy></mo-story-popover-lazy>`
+}
+
+const clock = (date: Date) => date.toLocaleTimeString(undefined, { hour12: false })
+
+/**
+ * Ages from freshly built to settled, so that a popover materialized by an interaction is
+ * distinguishable from one merely re-opened with the instance it already has.
+ */
+class StoryPopoverLazyDetails extends Component {
+	@property({ type: Object }) pageRenderedAt = new Date()
+
+	private readonly createdAt = new Date()
+	@state() private settled = false
+
+	override connected() {
+		setTimeout(() => this.settled = true, 2000)
+	}
+
+	protected override get template() {
+		const seconds = Math.round((this.createdAt.getTime() - this.pageRenderedAt.getTime()) / 1000)
+		return html`
+			<mo-flex gap='0.5rem'>
+				<div>Built at <strong>${clock(this.createdAt)}</strong>, ${seconds} seconds after the page rendered.</div>
+				<div ${style({ padding: '0.4rem 0.6rem', borderRadius: 'var(--mo-border-radius)', color: '#101010', backgroundColor: this.settled ? '#7FCDCD' : '#F7CAC9' })}>
+					${this.settled ? '✅ Settled — re-opening keeps this instance' : '⌛ Just built by the interaction opening it'}
+				</div>
+			</mo-flex>
+		`
+	}
+}
+
+customElements.define('mo-story-popover-lazy-details', StoryPopoverLazyDetails)
+
+class StoryPopoverLazy extends Component {
+	private static readonly anchorsCount = 100
+
+	private readonly renderedAt = new Date()
+	@state() private materializedCount = 0
+
+	private readonly observer = new MutationObserver(() => this.countMaterialized())
+
+	override connectedCallback() {
+		super.connectedCallback()
+		this.updateComplete.then(() => this.observer.observe(this.renderRoot, { childList: true, subtree: true }))
+	}
+
+	override disconnectedCallback() {
+		this.observer.disconnect()
+		super.disconnectedCallback()
+	}
+
+	private countMaterialized() {
+		this.materializedCount = this.renderRoot.querySelectorAll('mo-popover').length
+	}
+
+	static override get styles() {
+		return css`
+			#anchors {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.4rem;
+			}
+
+			code {
+				background: var(--mo-color-transparent-gray-3);
+				padding: 0.1rem 0.3rem;
+				border-radius: var(--mo-border-radius);
+			}
+		`
+	}
+
+	protected override get template() {
+		return html`
+			<mo-flex gap='1rem'>
+				<mo-card>
+					<mo-flex gap='0.5rem'>
+						<div>
+							<strong>${this.materializedCount}</strong> of ${StoryPopoverLazy.anchorsCount} popovers exist in the DOM.
+							The page itself rendered at <strong>${clock(this.renderedAt)}</strong>.
+						</div>
+						<div>
+							Every chip declares its popover through
+							<code>\${popover(() => html\`…\`, { trigger: 'click' })}</code>,
+							which renders nothing until the chip is clicked. Each popover therefore reports the moment
+							it was built rather than the moment the page was, and stays red for two seconds afterwards.
+							Re-opening a chip shows the same settled instance, as the popover keeps triggering itself
+							once it exists.
+						</div>
+					</mo-flex>
+				</mo-card>
+
+				<div id='anchors'>
+					${new Array(StoryPopoverLazy.anchorsCount).fill(undefined).map((_, index) => html`
+						<mo-chip
+							${popover(() => html`
+								<mo-popover>
+									<mo-card heading='Popover ${index + 1}'>
+										<mo-story-popover-lazy-details .pageRenderedAt=${this.renderedAt}></mo-story-popover-lazy-details>
+									</mo-card>
+								</mo-popover>
+							`, { trigger: 'click' })}
+						>${index + 1}</mo-chip>
+					`)}
+				</div>
+			</mo-flex>
+		`
+	}
+}
+
+customElements.define('mo-story-popover-lazy', StoryPopoverLazy)
+
+/* eslint-disable @html-eslint/use-baseline */
+
+export const PlatformInvokers: StoryObj = {
+	render: ({ placement, alignment }) => {
+		const commandsSupported = 'commandForElement' in HTMLButtonElement.prototype
+		return html`
+			<mo-flex gap='1rem' alignItems='start'>
+				<mo-card>
+					A popover is a native popover element, which is why the platform's own invoker buttons
+					drive it without any wiring by this library: they toggle it, tether it as their implicit
+					anchor and wire up the corresponding ARIA attributes and focus behavior themselves.
+				</mo-card>
+
+				<button popovertarget='story-popover-popovertarget'>
+					Toggle via "popovertarget"
+				</button>
+				<mo-popover id='story-popover-popovertarget' placement=${placement} alignment=${alignment}>
+					<mo-card heading='popovertarget'>
+						Opened by the browser. No anchor was assigned to this popover.
+					</mo-card>
+				</mo-popover>
+
+				${!commandsSupported ? html`
+					<mo-card heading='commandfor'>
+						The Invoker Commands API is not supported in this browser.
+					</mo-card>
+				` : html`
+					<button commandfor='story-popover-commandfor' command='toggle-popover'>
+						Toggle via "commandfor"
+					</button>
+					<mo-popover id='story-popover-commandfor' placement=${placement} alignment=${alignment}>
+						<mo-card heading='commandfor'>
+							Opened by the browser. No anchor was assigned to this popover.
+						</mo-card>
+					</mo-popover>
+				`}
+			</mo-flex>
 		`
 	}
 }

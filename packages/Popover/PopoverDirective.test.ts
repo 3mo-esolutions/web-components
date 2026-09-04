@@ -1,6 +1,7 @@
 import { Component, component, event, html, query, ref, render, state } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { popover } from './PopoverDirective.js'
+import { type Popover } from './Popover.js'
 import './index.js'
 
 @component('test-directive-popover')
@@ -174,6 +175,146 @@ describe('popover directive', () => {
 			second.setOpen(true)
 
 			expect(second.parentElement).toBe(getPopoverHosts()[0]!)
+		})
+	})
+})
+
+describe('popover directive lazy triggers', () => {
+	describe('lazy "click" trigger', () => {
+		@component('test-lazy-click-popover')
+		class LazyClickPopover extends Component {
+			@query('button') readonly button!: HTMLButtonElement
+
+			protected override get template() {
+				return html`<button ${popover(() => html`<mo-popover>Content</mo-popover>`, { trigger: 'click' })}>Anchor</button>`
+			}
+		}
+
+		const fixture = new ComponentTestFixture(() => new LazyClickPopover)
+
+		const queryMaterializedPopover = () => fixture.component.renderRoot
+			.querySelector('mo-popover-host')
+			?.querySelector<Popover>('mo-popover')
+			?? undefined
+
+		it('should not materialize the popover before the first interaction', () => {
+			expect(queryMaterializedPopover()).toBeUndefined()
+		})
+
+		it('should materialize and open the popover on the first anchor click', async () => {
+			fixture.component.button.click()
+			await new Promise(r => setTimeout(r))
+
+			const popoverElement = queryMaterializedPopover()
+
+			expect(popoverElement).toBeDefined()
+			expect(popoverElement?.open).toBe(true)
+			expect(popoverElement?.textContent?.trim()).toBe('Content')
+		})
+
+		it('should materialize and open the popover on "Enter" key-down on the anchor', async () => {
+			fixture.component.button.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }))
+			await new Promise(r => setTimeout(r))
+
+			expect(queryMaterializedPopover()?.open).toBe(true)
+		})
+
+		// A real click runs a microtask checkpoint between its listeners, so the popover updates — and starts
+		// listening for light dismissal — mid-propagation; flushing the update from an ancestor reproduces that
+		it('should stay open when the click which materialized it keeps propagating', async () => {
+			const flushPendingUpdate = () => queryMaterializedPopover()?.['performUpdate']()
+			fixture.component.addEventListener('click', flushPendingUpdate)
+
+			fixture.component.button.click()
+			fixture.component.removeEventListener('click', flushPendingUpdate)
+			await new Promise(r => setTimeout(r, 20))
+
+			expect(queryMaterializedPopover()?.open).toBe(true)
+			expect(queryMaterializedPopover()?.matches(':popover-open')).toBe(true)
+		})
+
+		it('should hand trigger handling over to the materialized popover', async () => {
+			fixture.component.button.click()
+			await new Promise(r => setTimeout(r))
+			const popoverElement = queryMaterializedPopover()
+			expect(popoverElement?.open).toBe(true)
+
+			fixture.component.button.click()
+			await new Promise(r => setTimeout(r))
+			expect(popoverElement?.open).toBe(false)
+
+			fixture.component.button.click()
+			await new Promise(r => setTimeout(r))
+			expect(popoverElement?.open).toBe(true)
+			expect(queryMaterializedPopover()).toBe(popoverElement)
+		})
+	})
+
+	describe('lazy "contextmenu" trigger', () => {
+		@component('test-lazy-context-menu-popover')
+		class LazyContextMenuPopover extends Component {
+			@query('button') readonly button!: HTMLButtonElement
+
+			protected override get template() {
+				return html`<button ${popover(() => html`<mo-popover>Context</mo-popover>`, { trigger: 'contextmenu' })}>Anchor</button>`
+			}
+		}
+
+		const fixture = new ComponentTestFixture(() => new LazyContextMenuPopover)
+
+		const queryMaterializedPopover = () => fixture.component.renderRoot
+			.querySelector('mo-popover-host')
+			?.querySelector<Popover>('mo-popover')
+			?? undefined
+
+		it('should not materialize the popover before the first interaction', () => {
+			expect(queryMaterializedPopover()).toBeUndefined()
+		})
+
+		it('should materialize and open the popover on the first context-menu interaction preventing the native menu', async () => {
+			const event = new MouseEvent('contextmenu', { bubbles: true, cancelable: true })
+			fixture.component.button.dispatchEvent(event)
+			await new Promise(r => setTimeout(r))
+
+			expect(event.defaultPrevented).toBe(true)
+			expect(queryMaterializedPopover()?.open).toBe(true)
+		})
+	})
+
+	describe('lazy "interest" trigger', () => {
+		@component('test-lazy-interest-popover')
+		class LazyInterestPopover extends Component {
+			@query('button') readonly button!: HTMLButtonElement
+
+			protected override get template() {
+				return html`<button ${popover(() => html`<mo-popover>Interest</mo-popover>`, { trigger: 'interest', label: 'Interest' })}>Anchor</button>`
+			}
+		}
+
+		const fixture = new ComponentTestFixture(() => new LazyInterestPopover)
+
+		const queryMaterializedPopover = () => fixture.component.renderRoot
+			.querySelector('mo-popover-host')
+			?.querySelector<Popover>('mo-popover')
+			?? undefined
+
+		it('should apply the label to the anchor without materializing the popover', () => {
+			expect(fixture.component.button.getAttribute('aria-label')).toBe('Interest')
+			expect(queryMaterializedPopover()).toBeUndefined()
+		})
+
+		it('should materialize the popover on the first pointer-enter', async () => {
+			fixture.component.button.dispatchEvent(new PointerEvent('pointerenter'))
+			await new Promise(r => setTimeout(r))
+
+			expect(queryMaterializedPopover()).toBeDefined()
+		})
+
+		it('should materialize the popover on the first focus-in', async () => {
+			fixture.component.button.dispatchEvent(new FocusEvent('focusin', { bubbles: true }))
+			await new Promise(r => setTimeout(r))
+
+			expect(queryMaterializedPopover()).toBeDefined()
 		})
 	})
 })

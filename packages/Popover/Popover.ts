@@ -41,13 +41,13 @@ export class Popover extends Component {
 
 	@property({ reflect: true, updated(this: Popover) { this.popover = this.mode } }) mode: PopoverMode = 'auto'
 	@property({ type: Array }) coordinates?: PopoverCoordinates
-	@property({ type: Object }) anchor?: HTMLElement
+	@property({ type: Object, updated(this: Popover) { this.anchorUpdated() } }) anchor?: HTMLElement
 	@property() target?: string
 	@property({ reflect: true }) placement = PopoverPlacement.BlockEnd
 	@property({ reflect: true }) alignment = PopoverAlignment.Start
 	@property({ type: Number }) offset?: number
 	@property({ type: Boolean, reflect: true, updated(this: Popover) { this.openUpdated() } }) open = false
-	@property({ type: Object }) shouldOpen?: (e: Event) => boolean
+	@property({ type: Object, noAccessor: true }) shouldOpen?: (e: Event) => boolean
 
 	readonly positionController = PopoverCssAnchorPositionController.supported
 		? new PopoverCssAnchorPositionController(this)
@@ -55,7 +55,40 @@ export class Popover extends Component {
 
 	@query('[part=arrow]') readonly arrowElement?: HTMLElement
 
+	// Bound synchronously, as a gap after an anchor or open change would miss the very interaction causing it
+	private readonly handleAnchorClick = (e: Event) => this.handleClick(e)
+	private readonly handleAnchorKeyDownEvent = (e: Event) => this.handleAnchorKeyDown(e as KeyboardEvent)
+	private readonly handleDocumentClick = (e: Event) => this.handleClick(e)
+
+	private subscribedAnchor?: HTMLElement
+	protected anchorUpdated() {
+		this.subscribedAnchor?.removeEventListener('click', this.handleAnchorClick)
+		this.subscribedAnchor?.removeEventListener('keydown', this.handleAnchorKeyDownEvent)
+		this.subscribedAnchor = this.anchor
+		this.subscribedAnchor?.addEventListener('click', this.handleAnchorClick)
+		this.subscribedAnchor?.addEventListener('keydown', this.handleAnchorKeyDownEvent)
+	}
+
+	override connectedCallback() {
+		super.connectedCallback()
+		this.anchorUpdated()
+	}
+
+	override disconnectedCallback() {
+		super.disconnectedCallback()
+		this.subscribedAnchor?.removeEventListener('click', this.handleAnchorClick)
+		this.subscribedAnchor?.removeEventListener('keydown', this.handleAnchorKeyDownEvent)
+		this.subscribedAnchor = undefined
+		document.removeEventListener('click', this.handleDocumentClick)
+	}
+
 	protected openUpdated() {
+		if (this.open) {
+			document.addEventListener('click', this.handleDocumentClick)
+		} else {
+			document.removeEventListener('click', this.handleDocumentClick)
+		}
+
 		if (this.isConnected && this.open !== this.matches(':popover-open')) {
 			if (this.open) {
 				// The source establishes the implicit anchor used for native anchor positioning
@@ -74,6 +107,8 @@ export class Popover extends Component {
 	@eventListener('toggle')
 	protected handleToggle(e: ToggleEvent) {
 		const open = e.newState === 'open'
+		// Follows platform-driven toggles too: "Esc" light dismissal and native invoker buttons
+		this.open = open
 		this.openChange.dispatch(open)
 		if (this.mode !== 'hint' && !open) {
 			const target = this.target ? this.anchor?.closest(`#${this.target}`) : this.anchor
@@ -83,10 +118,6 @@ export class Popover extends Component {
 		}
 	}
 
-	@eventListener({
-		target(this: Popover) { return this.anchor ?? [] },
-		type: 'keydown'
-	})
 	protected handleAnchorKeyDown(e: KeyboardEvent) {
 		if (this.open === false && e.key === 'Enter') {
 			(e as any)[Popover.isSyntheticClickEvent] = true
@@ -97,8 +128,22 @@ export class Popover extends Component {
 		}
 	}
 
-	@eventListener({ target: document, type: 'click' })
+	/**
+	 * Marks an interaction as handled, so that one opening the popover from outside — still propagating
+	 * towards the document as the light-dismiss listener appears — does not dismiss it right away.
+	 */
+	consumeInteraction(event: Event) {
+		this.lastHandledClickEvent = event
+	}
+
+	private lastHandledClickEvent?: Event
 	protected handleClick(e: Event, preventDefault = false) {
+		if (this.lastHandledClickEvent === e) {
+			// Reaches this handler through both the anchor and, while open, the document listener
+			return
+		}
+		this.lastHandledClickEvent = e
+
 		if (this.mode === 'manual') {
 			return
 		}
@@ -114,9 +159,10 @@ export class Popover extends Component {
 
 		const shouldOpen = this.shouldOpen ?? Popover.shouldOpen.bind(this)
 		if (this.open === false && shouldOpen(e)) {
-			e.stopPropagation()
+			// Stopping propagation here, on the anchor, would cut off handlers further up, e.g. a parent menu's auto-close
 			if (preventDefault) {
 				e.preventDefault()
+				e.stopPropagation()
 			}
 			this.open = true
 		}

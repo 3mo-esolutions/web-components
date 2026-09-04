@@ -123,6 +123,75 @@ describe('Popover', () => {
 		})
 	})
 
+	describe('platform invoker interoperability', () => {
+		@component('test-native-invoker-popover')
+		class NativeInvokerPopover extends Component {
+			@query('button') readonly button!: HTMLButtonElement
+			@query('mo-popover') readonly popoverElement!: Popover
+
+			/* eslint-disable @html-eslint/use-baseline */
+			protected override get template() {
+				return html`
+					<button popovertarget='p'>Toggle</button>
+					<mo-popover id='p'>Content</mo-popover>
+				`
+			}
+		}
+
+		const fixture = new ComponentTestFixture(() => new NativeInvokerPopover)
+
+		it('should be togglable by a native "popovertarget" invoker button, keeping the "open" property in sync', async () => {
+			fixture.component.button.click()
+			await new Promise(r => setTimeout(r, 20))
+
+			expect(fixture.component.popoverElement.matches(':popover-open')).toBe(true)
+			expect(fixture.component.popoverElement.open).toBe(true)
+			expect(getComputedStyle(fixture.component.popoverElement).display).not.toBe('none')
+
+			fixture.component.button.click()
+			await new Promise(r => setTimeout(r, 20))
+
+			expect(fixture.component.popoverElement.matches(':popover-open')).toBe(false)
+			expect(fixture.component.popoverElement.open).toBe(false)
+		})
+
+		it('should be togglable by a native "commandfor" invoker button, keeping the "open" property in sync', async () => {
+			if (!('commandForElement' in fixture.component.button)) {
+				pending('Invoker Commands API is not supported in this browser')
+				return
+			}
+
+			fixture.component.button.removeAttribute('popovertarget')
+			fixture.component.button.setAttribute('commandfor', 'p')
+			fixture.component.button.setAttribute('command', 'toggle-popover')
+
+			fixture.component.button.click()
+			await new Promise(r => setTimeout(r, 20))
+
+			expect(fixture.component.popoverElement.matches(':popover-open')).toBe(true)
+			expect(fixture.component.popoverElement.open).toBe(true)
+		})
+
+		it('should sync the "open" property when hidden natively (e.g. "Esc" light dismiss) and stay reopenable', async () => {
+			const popover = fixture.component.popoverElement
+			popover.open = true
+			await fixture.updateComplete
+			await new Promise(r => setTimeout(r, 20))
+			expect(popover.matches(':popover-open')).toBe(true)
+
+			popover.hidePopover()
+			await new Promise(r => setTimeout(r, 20))
+
+			expect(popover.open).toBe(false)
+
+			popover.open = true
+			await fixture.updateComplete
+			await new Promise(r => setTimeout(r, 20))
+
+			expect(popover.matches(':popover-open')).toBe(true)
+		})
+	})
+
 	describe('light-dismiss', () => {
 		const fixture1 = new ComponentTestFixture(() => new GenericPopover)
 		const fixture2 = new ComponentTestFixture(() => new GenericPopover)
@@ -226,6 +295,7 @@ describe('Popover', () => {
 	describe('shouldOpen', () => {
 		const fixture = new ComponentTestFixture(() => new GenericPopover)
 
+		// Closed popovers listen on their anchor, not on the document
 		it('should consult the custom shouldOpen predicate instead of the default anchor check', async () => {
 			const shouldOpen = jasmine.createSpy('shouldOpen').and.returnValue(false)
 			fixture.component.popoverElement.shouldOpen = shouldOpen
@@ -238,7 +308,7 @@ describe('Popover', () => {
 
 			shouldOpen.and.returnValue(true)
 
-			document.body.dispatchEvent(new MouseEvent('click', { bubbles: true, composed: true }))
+			fixture.component.click()
 			await fixture.updateComplete
 
 			expect(fixture.component.popoverElement.open).toBe(true)
