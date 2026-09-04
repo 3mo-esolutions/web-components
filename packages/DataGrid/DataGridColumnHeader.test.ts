@@ -40,6 +40,7 @@ describe('DataGridColumnHeader', () => {
 		new DataGridColumn<Person>({ heading: 'Age', dataSelector: 'age', alignment: 'end', ...column })
 
 	const contentOf = (columnHeader: DataGridColumnHeader) => columnHeader.renderRoot.querySelector<HTMLElement>('#content')!
+	const areaOf = (columnHeader: DataGridColumnHeader) => columnHeader.renderRoot.querySelector<HTMLElement>('#reorderable-area')!
 	const sortOf = (columnHeader: DataGridColumnHeader) => columnHeader.renderRoot.querySelector('#sort')
 	const separatorOf = (columnHeader: DataGridColumnHeader) => columnHeader.renderRoot.querySelector('mo-data-grid-header-separator')!
 
@@ -54,6 +55,34 @@ describe('DataGridColumnHeader', () => {
 			expect(contentOf(age!).textContent?.trim()).toBe('Age')
 			expect(contentOf(age!).style.textAlign).toBe('end')
 			expect(age!.renderRoot.querySelector('#container')?.getAttribute('direction')).toBe('horizontal-reversed')
+		})
+	})
+
+	describe('Description', () => {
+		const describedColumn = (column: Partial<DataGridColumn<Person>> = {}) =>
+			nameColumn({ description: 'The name of the person', ...column })
+
+		it('should anchor the tooltip to the whole cell rather than to the heading text', async () => {
+			const [name] = await withColumns(describedColumn())
+
+			expect(areaOf(name!).getAttribute('aria-label')).toBe('The name of the person')
+			expect(contentOf(name!).hasAttribute('aria-label')).toBeFalse()
+		})
+
+		it('should let the anchor cover the padding around the heading text', async () => {
+			const [name] = await withColumns(describedColumn())
+			const area = areaOf(name!).getBoundingClientRect()
+			const content = contentOf(name!).getBoundingClientRect()
+
+			expect(parseFloat(getComputedStyle(areaOf(name!)).paddingInlineStart)).toBeGreaterThan(0)
+			expect(area.left).toBeLessThanOrEqual(content.left)
+			expect(area.right).toBeGreaterThanOrEqual(content.right)
+		})
+
+		it('should not anchor a tooltip for a column without a description', async () => {
+			const [name] = await withColumns(nameColumn())
+
+			expect(areaOf(name!).hasAttribute('aria-label')).toBeFalse()
 		})
 	})
 

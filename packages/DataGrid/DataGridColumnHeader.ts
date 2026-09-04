@@ -204,7 +204,7 @@ export class DataGridColumnHeader extends Component {
 		const additionalItems = this.column.getMenuItemsTemplate?.()
 
 		return html`
-			<div id='reorderable-area'>
+			<div id='reorderable-area' ${!this.column.description || this.menuOpen ? html.nothing : tooltip(this.column.description)}>
 				<div id='drag-indicator'>
 					<mo-icon icon='drag_indicator'></mo-icon>
 				</div>
@@ -230,10 +230,7 @@ export class DataGridColumnHeader extends Component {
 
 	private get contentTemplate() {
 		return html`
-			<div id='content'
-				${style({ textAlign: this.column.alignment })}
-				${!this.column.description ? html.nothing : tooltip(this.column.description)}
-			>${this.column.heading}</div>
+			<div id='content' ${style({ textAlign: this.column.alignment })}>${this.column.heading}</div>
 		`
 	}
 
