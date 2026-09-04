@@ -202,10 +202,16 @@ describe('SwipeabilityController', () => {
 		expect(ends[0]?.detent).toBe(100)
 	})
 
-	it('should damp a pull beyond the outermost detents rather than clamp it', () => {
+	it('should not let the surface leave the span of its detents', () => {
 		swipe([-30])
 
-		expect(moves[0]).toBe(-10)
+		expect(moves[0]).toBe(0)
+	})
+
+	it('should clamp a pull beyond the outermost detent', () => {
+		swipe([260])
+
+		expect(moves[0]).toBe(200)
 	})
 
 	it('should leave a gesture which runs across its axis to whatever scrolls there', () => {

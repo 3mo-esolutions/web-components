@@ -62,7 +62,7 @@ export class Navigation extends Component {
 	static override get styles() {
 		return css`
 			mo-drawer {
-				--mdc-drawer-width: 292px;
+				--mo-drawer-width: 292px;
 			}
 
 			:host([mobileNavigation]) #navbar-navigations {

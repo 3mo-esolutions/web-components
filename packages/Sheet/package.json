@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/sheet",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "An edge-anchored modal sheet web component built on the native dialog element",
 	"repository": {
 		"type": "git",

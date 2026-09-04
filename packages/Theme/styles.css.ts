@@ -107,20 +107,6 @@ RootCssInjector.inject(css`
 
 		--mo-color-accent-transparent: color-mix(in srgb, var(--mo-color-accent), transparent 75%);
 
-		/* Override Material Web Components variables */
-		--mdc-icon-font: Material Icons Sharp !important;
-		--mdc-theme-primary: var(--mo-color-accent) !important;
-		--mdc-theme-on-primary: var(--mo-color-on-accent) !important;
-		--mdc-theme-secondary: var(--mo-color-accent) !important;
-		--mdc-theme-on-secondary: var(--mo-color-on-accent) !important;
-		--mdc-theme-text-secondary-on-background: var(--mo-color-gray) !important;
-		--mdc-theme-surface: var(--mo-color-surface) !important;
-		--mdc-theme-text-primary-on-dark: var(--mo-color-surface) !important;
-		--mdc-theme-on-surface: color-mix(in srgb, var(--mo-color-foreground), transparent 16%) !important;
-		--mdc-theme-text-disabled-on-light: var(--mo-color-gray-transparent) !important;
-		--mdc-theme-text-hint-on-background: color-mix(in srgb, var(--mo-color-foreground), transparent 16%) !important;
-		--mdc-theme-text-icon-on-background: var(--mo-color-gray) !important;
-		--mdc-theme-text-primary-on-background: var(--mo-color-foreground) !important;
 		/* Override Material Design variables */
 		--md-sys-color-primary: var(--mo-color-accent);
 		--md-sys-color-primary-container: var(--mo-color-accent-transparent);

@@ -262,7 +262,7 @@ describe('SheetController', () => {
 			expect(host.open).toBe(false)
 		})
 
-		it('should refuse a gesture which begins in content still able to scroll away from the exit', async () => {
+		it('should refuse a gesture which begins in content still able to scroll away from the exit', () => {
 			const scroller = document.createElement('div')
 			scroller.id = 'scroller'
 			Object.assign(scroller.style, { blockSize: '50px', overflow: 'auto' })
@@ -310,7 +310,7 @@ describe('SheetController', () => {
 				expect(event?.defaultPrevented).toBe(false)
 			})
 
-			it('should leave the gesture to content which can still scroll the way the finger goes', async () => {
+			it('should leave the gesture to content which can still scroll the way the finger goes', () => {
 				const scroller = document.createElement('div')
 				Object.assign(scroller.style, { blockSize: '50px', overflow: 'auto' })
 				scroller.innerHTML = '<div style="block-size: 400px"></div>'
@@ -328,7 +328,7 @@ describe('SheetController', () => {
 			})
 		})
 
-		it('should leave a gesture across its own axis to whatever scrolls there', async () => {
+		it('should leave a gesture across its own axis to whatever scrolls there', () => {
 			handle().dispatchEvent(pointer('pointerdown', 0))
 			const across = new PointerEvent('pointermove', { clientX: 40, clientY: 6, pointerId: 1, isPrimary: true, bubbles: true })
 			window.dispatchEvent(across)

@@ -37,8 +37,8 @@ export type SwipeabilityControllerOptions = {
  * It measures and decides only - placing and animating the surface is the caller's, which is what
  * lets one surface be moved by a transform, another by a scroll position, and a third by layout.
  * A release commits to the next detent once it has covered a fraction of the way there, or on the
- * strength of a flick, and returns to where it started when the flick reverses. Pulling beyond the
- * outermost detents is damped rather than clamped.
+ * strength of a flick, and returns to where it started when the flick reverses. The surface never
+ * leaves the span of its detents: there is nothing out there for it to occupy.
  *
  * The first movement decides whose gesture it is: the browser's if it runs across the axis or if
  * something beneath the finger can still scroll that way, otherwise the surface's - claimed by
@@ -64,7 +64,6 @@ export class SwipeabilityController<THost extends ReactiveControllerHost = React
 	static readonly deadZone = 4
 	static readonly threshold = 0.25
 	static readonly velocityThreshold = 400
-	static readonly damping = 3
 	/** Sampling window (ms) for velocity calculation. */
 	static readonly velocityWindow = 100
 	static readonly velocityMinimumInterval = 20
@@ -214,15 +213,7 @@ export class SwipeabilityController<THost extends ReactiveControllerHost = React
 	private offsetOf(along: number) {
 		const offset = (this.origin?.detent ?? 0) + along * this.sign
 		const detents = this.detents
-		const lowest = detents[0] ?? 0
-		const highest = detents.at(-1) ?? 0
-		if (offset < lowest) {
-			return lowest - (lowest - offset) / SwipeabilityController.damping
-		}
-		if (offset > highest) {
-			return highest + (offset - highest) / SwipeabilityController.damping
-		}
-		return offset
+		return Math.min(Math.max(offset, detents[0] ?? 0), detents.at(-1) ?? 0)
 	}
 
 	private handleTouchMove(event: TouchEvent) {

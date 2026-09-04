@@ -133,16 +133,16 @@ export class Sheet extends Component {
 				&[data-placement=block-end] #panel {
 					--_travel: 0 var(--mo-sheet-travel-size);
 					inset-block-end: 0;
-					border-start-start-radius: var(--mo-sheet-border-radius, 1rem);
-					border-start-end-radius: var(--mo-sheet-border-radius, 1rem);
+					border-start-start-radius: var(--mo-sheet-border-radius, var(--mo-border-radius));
+					border-start-end-radius: var(--mo-sheet-border-radius, var(--mo-border-radius));
 					padding-block-end: env(safe-area-inset-bottom);
 				}
 
 				&[data-placement=block-start] #panel {
 					--_travel: 0 calc(-1 * var(--mo-sheet-travel-size));
 					inset-block-start: 0;
-					border-end-start-radius: var(--mo-sheet-border-radius, 1rem);
-					border-end-end-radius: var(--mo-sheet-border-radius, 1rem);
+					border-end-start-radius: var(--mo-sheet-border-radius, var(--mo-border-radius));
+					border-end-end-radius: var(--mo-sheet-border-radius, var(--mo-border-radius));
 					padding-block-start: env(safe-area-inset-top);
 				}
 
@@ -166,15 +166,15 @@ export class Sheet extends Component {
 				&[data-placement=inline-start] #panel {
 					--_travel: calc(-1 * var(--mo-sheet-travel-size)) 0;
 					inset-inline-start: 0;
-					border-start-end-radius: var(--mo-sheet-border-radius, 1rem);
-					border-end-end-radius: var(--mo-sheet-border-radius, 1rem);
+					border-start-end-radius: var(--mo-sheet-border-radius, var(--mo-border-radius));
+					border-end-end-radius: var(--mo-sheet-border-radius, var(--mo-border-radius));
 				}
 
 				&[data-placement=inline-end] #panel {
 					--_travel: var(--mo-sheet-travel-size) 0;
 					inset-inline-end: 0;
-					border-start-start-radius: var(--mo-sheet-border-radius, 1rem);
-					border-end-start-radius: var(--mo-sheet-border-radius, 1rem);
+					border-start-start-radius: var(--mo-sheet-border-radius, var(--mo-border-radius));
+					border-end-start-radius: var(--mo-sheet-border-radius, var(--mo-border-radius));
 				}
 
 				&:dir(rtl) {

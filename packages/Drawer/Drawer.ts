@@ -1,77 +1,40 @@
-import { Component, component, css, event, eventListener, html, property } from '@a11d/lit'
-import { Drawer as MwcDrawer } from '@material/mwc-drawer'
+import { component, css } from '@a11d/lit'
+import { Sheet, type SheetPlacement } from '@3mo/sheet'
 
 /**
+ * A navigation panel which comes in from the side. It is a sheet anchored to an inline edge, and
+ * therefore modal: the page behind it is inert until it is dismissed by the Escape key, a click on
+ * the backdrop, or a swipe.
+ *
  * @element mo-drawer
  *
- * @attr open - Whether the drawer is open
+ * @attr open - Whether the drawer is open.
+ * @attr placement - The edge the drawer is anchored to. Defaults to `inline-start`.
+ * @attr label - The accessible name of the drawer.
  *
- * @slot - Content of the drawer
+ * @slot - Content of the drawer.
  *
- * @fires openChange - When the drawer is opened or closed
+ * @cssprop --mo-drawer-width - The width of the drawer. Defaults to `256px`.
+ *
+ * @fires openChange - Dispatched with the new state whenever the drawer opens or closes.
+ * @fires requestClose - Dispatched with the source before the drawer closes itself. Cancelable to keep it open.
  */
 @component('mo-drawer')
-export class Drawer extends Component {
-	@event() readonly openChange!: EventDispatcher<boolean>
+export class Drawer extends Sheet {
+	override placement: SheetPlacement = 'inline-start'
 
-	@property({ type: Boolean, reflect: true }) open = false
+	static override get styles() {
+		return css`
+			${super.styles}
 
-	protected override get template() {
-		return html`
-			<mwc-drawer
-				type='modal'
-				?open=${this.open}
-				@MDCDrawer:opened=${() => this.setOpen(true)}
-				@MDCDrawer:closed=${() => this.setOpen(false)}
-				@MDCDrawer:nav=${() => this.setOpen(!this.open)}
-			>
-				<slot></slot>
-			</mwc-drawer>
+			:host {
+				/* "--mdc-drawer-width" sized the drawer while it was a Material one, and is read as a
+				   fallback so that consumers which still set it are not left behind. */
+				--mo-sheet-size: var(--mo-drawer-width, var(--mdc-drawer-width, 256px));
+			}
 		`
 	}
-
-	private setOpen(open: boolean) {
-		this.open = open
-		this.openChange.dispatch(open)
-	}
-
-	@eventListener({ target: window, type: 'keydown' })
-	protected handleKeyDown(event: KeyboardEvent) {
-		if (event.key === 'Escape' && this.open) {
-			this.setOpen(false)
-		}
-	}
 }
-
-MwcDrawer.elementStyles.push(css`
-	:host {
-		position: relative;
-		color: var(--mo-color-foreground)  !important;
-	}
-
-	.mdc-drawer {
-		background-color: var(--mo-color-surface);
-		top: 0;
-	}
-
-	.mdc-drawer__header {
-		display: none;
-	}
-
-	.mdc-drawer__content {
-		scrollbar-color: rgba(128, 128, 128, 0.75) transparent;
-		scrollbar-width: thin;
-	}
-
-	.mdc-drawer__content::-webkit-scrollbar {
-		width: 5px;
-		height: 5px;
-	}
-
-	.mdc-drawer__content::-webkit-scrollbar-thumb {
-		background: rgba(128, 128, 128, 0.75);
-	}
-` as any)
 
 declare global {
 	interface HTMLElementTagNameMap {
