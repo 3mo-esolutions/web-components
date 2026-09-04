@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/swipeability",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"description": "A controller which drags a surface along one axis between rest positions, deferring to whatever scrolls beneath it",
 	"repository": {
 		"type": "git",

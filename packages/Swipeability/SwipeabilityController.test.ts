@@ -1,5 +1,5 @@
 import { type ReactiveController } from '@a11d/lit'
-import { SwipeabilityController, type SwipeabilityAxis, type SwipeabilityDirection } from './SwipeabilityController.js'
+import { SwipeabilityController, type SwipeabilityAxis, type SwipeabilityDirection, type SwipeabilityPointerType } from './SwipeabilityController.js'
 
 class FakeHost {
 	private readonly controllers = new Set<ReactiveController>()
@@ -22,6 +22,7 @@ describe('SwipeabilityController', () => {
 	let direction: SwipeabilityDirection
 	let threshold: number | undefined
 	let disabled: boolean
+	let pointerTypes: Array<SwipeabilityPointerType> | undefined
 
 	beforeEach(() => {
 		surface = document.createElement('div')
@@ -36,6 +37,7 @@ describe('SwipeabilityController', () => {
 		direction = 'end'
 		threshold = undefined
 		disabled = false
+		pointerTypes = undefined
 		host = new FakeHost()
 		controller = new SwipeabilityController(host, {
 			get surface() { return surface },
@@ -45,6 +47,7 @@ describe('SwipeabilityController', () => {
 			get detent() { return detent },
 			get threshold() { return threshold },
 			get disabled() { return disabled },
+			get pointerTypes() { return pointerTypes },
 			handleSwipeStart: () => starts++,
 			handleSwipe: offset => moves.push(offset),
 			handleSwipeEnd: (chosen, offset) => ends.push({ detent: chosen, offset }),
@@ -176,6 +179,20 @@ describe('SwipeabilityController', () => {
 		swipe([20])
 
 		expect(moves[0]).toBe(20)
+	})
+
+	it('should only be swiped by a kind of pointer it accepts', () => {
+		pointerTypes = ['touch']
+
+		const mouse = new PointerEvent('pointerdown', { clientX: 0, clientY: 0, pointerId: 1, isPrimary: true, pointerType: 'mouse', bubbles: true })
+		surface.dispatchEvent(mouse)
+		window.dispatchEvent(pointer('pointermove', 60, 100))
+		expect(moves).toEqual([])
+
+		const finger = new PointerEvent('pointerdown', { clientX: 0, clientY: 0, pointerId: 1, isPrimary: true, pointerType: 'touch', bubbles: true })
+		surface.dispatchEvent(finger)
+		window.dispatchEvent(pointer('pointermove', 60, 200))
+		expect(moves).toEqual([60])
 	})
 
 	it('should stop at the detent between the two it swipes across', () => {

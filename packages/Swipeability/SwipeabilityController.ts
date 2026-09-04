@@ -6,6 +6,8 @@ export type SwipeabilityDirection = 'start' | 'end'
 
 export type SwipeabilityState = 'idle' | 'swiping'
 
+export type SwipeabilityPointerType = 'mouse' | 'pen' | 'touch'
+
 export type SwipeabilityControllerOptions = {
 	readonly surface?: HTMLElement | undefined
 	readonly axis: SwipeabilityAxis
@@ -16,6 +18,8 @@ export type SwipeabilityControllerOptions = {
 	/** The rest position the surface currently sits at. Defaults to the last settled detent. */
 	readonly detent?: number
 	readonly disabled?: boolean
+	/** The kinds of pointer which may start a gesture. Defaults to all of them. */
+	readonly pointerTypes?: Array<SwipeabilityPointerType>
 	/** Fraction of the way to the next detent past which a release commits to it. Defaults to 0.25. */
 	readonly threshold?: number
 	/** Speed which commits to the next detent however short the gesture, in px/s. Defaults to 400. */
@@ -147,6 +151,11 @@ export class SwipeabilityController<THost extends ReactiveControllerHost = React
 
 	private handlePointerDown(event: PointerEvent) {
 		if (this.options.disabled || this.origin || !event.isPrimary || (event.pointerType === 'mouse' && event.button !== 0)) {
+			return
+		}
+		// Read off the very event which starts the gesture, so a device with both a finger and a mouse
+		// answers each of them on its own terms.
+		if (this.options.pointerTypes && !this.options.pointerTypes.includes(event.pointerType as SwipeabilityPointerType)) {
 			return
 		}
 		this.origin = {
