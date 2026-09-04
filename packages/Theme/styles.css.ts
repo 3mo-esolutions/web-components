@@ -73,6 +73,7 @@ RootCssInjector.inject(css`
 		--mo-color-transparent-gray-2: color-mix(in srgb, var(--mo-color-foreground), transparent calc(100% - var(--mo-color-transparent-gray-alpha) * 2)); /* 8% */
 		--mo-color-transparent-gray-3: color-mix(in srgb, var(--mo-color-foreground), transparent calc(100% - var(--mo-color-transparent-gray-alpha) * 3)); /* 12% */
 		--mo-color-transparent-gray: var(--mo-color-transparent-gray-1);
+		--mo-color-scrim: light-dark(rgb(0 0 0 / 0.32), rgb(0 0 0 / 0.5));
 		--mo-color-surface-container-high: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-foreground) 4%);
 		--mo-color-surface-container-highest: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-foreground) 8%);
 		--mo-color-green: rgb(93, 170, 96);
