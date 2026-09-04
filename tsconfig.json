@@ -343,6 +343,9 @@
 			"path": "./packages/Swap"
 		},
 		{
+			"path": "./packages/Swipeability"
+		},
+		{
 			"path": "./packages/Switch"
 		},
 		{
