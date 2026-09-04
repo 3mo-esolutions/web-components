@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/data-grid",
-	"version": "0.36.0",
+	"version": "0.36.1",
 	"description": "A data grid web component",
 	"repository": {
 		"type": "git",
@@ -40,10 +40,10 @@
 		"@3mo/reorderability": "x",
 		"@3mo/selectability": "x",
 		"@3mo/localization": "x",
-		"@3mo/popover": ">=0.10.x",
+		"@3mo/popover": ">=0.11.0",
 		"@3mo/menu": ">=0.11.0",
-		"@3mo/context-menu": "x",
-		"@3mo/tooltip": "x",
+		"@3mo/context-menu": ">=0.7.0",
+		"@3mo/tooltip": ">=0.11.0",
 		"@3mo/anchor": "x",
 		"@3mo/number-fields": "x",
 		"@3mo/tab": "x",

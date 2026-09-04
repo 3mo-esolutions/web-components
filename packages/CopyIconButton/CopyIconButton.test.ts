@@ -143,8 +143,7 @@ describe('CopyIconButton', () => {
 			}
 		}
 
-		// Disabled: requires idle callback scheduling not reachable under test bundle load
-		xit('should name the button "Copy" by default', async () => {
+		it('should name the button "Copy" by default', async () => {
 			await settle(fixture.component)
 
 			expect(getLabelOf(fixture.component)).toBe('Copy')
@@ -153,8 +152,7 @@ describe('CopyIconButton', () => {
 		describe('with a label', () => {
 			const labelled = new ComponentTestFixture<CopyIconButton>(html`<mo-copy-icon-button label='Copy API key'></mo-copy-icon-button>`)
 
-			// Disabled: requires idle callback scheduling not reachable under test bundle load
-			xit('should name the button after it', async () => {
+			it('should name the button after it', async () => {
 				await settle(labelled.component)
 
 				expect(getLabelOf(labelled.component)).toBe('Copy API key')

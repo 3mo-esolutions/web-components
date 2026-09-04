@@ -559,6 +559,50 @@ describe('DataGrid', () => {
 			}
 		}
 
+		describe('Row context menu laziness', () => {
+			// The template is the consumer's code and may do anything — fetch, construct dialogs, resolve
+			// translations — so the grid must not evaluate it speculatively for rows nobody has right-clicked.
+			const template = jasmine.createSpy('getRowContextMenuTemplate').and.callFake(getRowContextMenuTemplate)
+
+			beforeEach(() => template.calls.reset())
+
+			const fixture = new ComponentTestFixture<TestDataGrid>(html`
+				<test-data-grid .getRowContextMenuTemplate=${template}></test-data-grid>
+			`)
+
+			const settle = () => new Promise(resolve => setTimeout(resolve, 50))
+
+			it('should not evaluate the template while no row has been right-clicked', async () => {
+				await fixture.updateComplete
+				await settle()
+
+				expect(fixture.component.rows.length).toBeGreaterThan(0)
+				expect(template).not.toHaveBeenCalled()
+			})
+
+			it('should offer the context menu button and the right-click trigger without evaluating the template', async () => {
+				await fixture.updateComplete
+				await settle()
+				const row = fixture.component.rows[0] as DataGridRow<Person>
+
+				expect(row.renderRoot.querySelector('#contextMenuIconButton')).not.toBeNull()
+				expect(template).not.toHaveBeenCalled()
+			})
+
+			it('should evaluate the template first when a row is right-clicked, with that row\'s data', async () => {
+				await fixture.updateComplete
+				await settle()
+				const row = fixture.component.rows[0] as DataGridRow<Person>
+
+				await row.openContextMenu()
+
+				expect(template).toHaveBeenCalled()
+				expect(template.calls.argsFor(0)[0]).toEqual([row.data])
+
+				await row.closeContextMenu()
+			})
+		})
+
 		describe('Defaulting from a row context menu', () => {
 			const plain = new ComponentTestFixture<TestDataGrid>(html`<test-data-grid></test-data-grid>`)
 			const withMenu = new ComponentTestFixture<TestDataGrid>(html`

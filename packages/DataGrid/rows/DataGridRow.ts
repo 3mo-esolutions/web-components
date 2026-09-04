@@ -262,11 +262,11 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				@click=${(e: MouseEvent) => this.handleContentClick(e)}
 				@dblclick=${() => this.handleContentDoubleClick()}
 				@auxclick=${(e: PointerEvent) => e.button !== 1 ? void 0 : this.handleContentMiddleClick()}
-				${this.contextMenuTemplate === html.nothing ? html.nothing : popover(() => html`
+				${!this.dataGrid.hasContextMenu ? html.nothing : popover(() => html`
 					<mo-context-menu @openChange=${(e: CustomEvent<boolean>) => this.handleContextMenuOpenChange(e.detail)}>
 						${this.contextMenuTemplate}
 					</mo-context-menu>
-				`)}
+				`, { trigger: 'contextmenu' })}
 			>
 				${this.rowTemplate}
 			</mo-grid>
@@ -417,6 +417,9 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			// We need this only for testing environments, but should not be necessary.
 			this.handleContextMenuOpenChange(true)
 
+			// The context menu is materialized lazily on the first interaction,
+			// so its first render might still be pending at this point.
+			await ContextMenu.openInstance?.updateComplete
 			await this.updateComplete
 		}
 	}
