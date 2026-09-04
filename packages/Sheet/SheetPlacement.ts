@@ -1,0 +1,1 @@
+export type SheetPlacement = 'block-end' | 'block-start' | 'inline-start' | 'inline-end'

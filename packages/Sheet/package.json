@@ -1,0 +1,38 @@
+{
+	"name": "@3mo/sheet",
+	"version": "0.1.0",
+	"description": "An edge-anchored modal sheet web component built on the native dialog element",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/3mo-esolutions/web-components"
+	},
+	"keywords": [
+		"lit",
+		"web-component",
+		"sheet",
+		"bottom-sheet",
+		"side-sheet",
+		"drawer",
+		"dialog"
+	],
+	"author": "3MO GmbH",
+	"license": "MIT",
+	"homepage": "https://www.3mo.de",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"customElements": "dist/custom-elements.json",
+	"files": [
+		"dist"
+	],
+	"dependencies": {
+		"@a11d/lit": "x",
+		"tslib": "x",
+		"@3mo/theme": "x",
+		"@3mo/localization": "x",
+		"@3mo/swipeability": "x"
+	},
+	"devDependencies": {
+		"@a11d/lit-testing": "x"
+	}
+}
