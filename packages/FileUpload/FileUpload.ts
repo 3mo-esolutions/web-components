@@ -60,10 +60,11 @@ export class FileUpload<TResult, TMultiple extends boolean = false> extends Comp
 	}
 
 	uploadSelection(override?: FileUploadSelection<TMultiple>) {
-		if (Array.isArray(override) ? !override.length : !override) {
+		const selection = override ?? this.selection
+		if (Array.isArray(selection) ? !selection.length : !selection) {
 			throw new Error('No file selected')
 		}
-		return this.executeUpload(() => this.upload(override ?? this.selection))
+		return this.executeUpload(() => this.upload(selection))
 	}
 
 	protected setIsUploading(isUploading: boolean) {

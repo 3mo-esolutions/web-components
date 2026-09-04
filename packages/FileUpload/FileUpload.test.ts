@@ -103,6 +103,17 @@ describe('FileUpload', () => {
 				expect(fixture.component.change.dispatch).toHaveBeenCalledWith('result')
 			})
 
+			it('should upload the current selection when no override is passed', async () => {
+				const file = createFile('a.txt')
+				const upload = jasmine.createSpy('upload').and.resolveTo('result')
+				fixture.component.upload = upload
+				fixture.select(file)
+
+				await fixture.component.uploadSelection()
+
+				expect(upload).toHaveBeenCalledWith(file)
+			})
+
 			it('should throw when no file is selected', () => {
 				expect(() => fixture.component.uploadSelection()).toThrowError('No file selected')
 			})
@@ -178,6 +189,18 @@ describe('FileUpload', () => {
 			await new Promise<void>(resolve => setTimeout(resolve))
 
 			expect(upload).not.toHaveBeenCalled()
+		})
+
+		it('should upload the selection as soon as it is made', async () => {
+			const file = createFile('a.txt')
+			const upload = jasmine.createSpy('upload').and.resolveTo('result')
+			fixture.component.upload = upload
+			fixture.component.uploadOnSelection = true
+
+			fixture.select(file)
+			await new Promise<void>(resolve => setTimeout(resolve))
+
+			expect(upload).toHaveBeenCalledWith(file)
 		})
 	})
 })
