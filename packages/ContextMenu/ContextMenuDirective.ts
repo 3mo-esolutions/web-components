@@ -5,4 +5,4 @@ export const contextMenu = (content: () => HTMLTemplateResult) => popover(() => 
 	<mo-context-menu>
 		${content()}
 	</mo-context-menu>
-`)
+`, { trigger: 'contextmenu' })

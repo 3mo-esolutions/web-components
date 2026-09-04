@@ -39,14 +39,31 @@ export class ContextMenu extends Menu {
 		super.firstUpdated(props)
 		this.updateComplete.then(async () => {
 			const popover = this.renderRoot.querySelector('mo-popover')
-			const { shift } = await import('@floating-ui/dom')
 			if (popover?.positionController instanceof PopoverFloatingUiPositionController) {
+				const { shift } = await import('@floating-ui/dom')
 				popover.positionController.addMiddleware(shift({ crossAxis: true, padding: 4 }))
 			}
 		})
 	}
 
-	@eventListener({ target: document, type: 'click' })
+	// Being a "manual" popover, light dismissal is handled here rather than by the popover itself.
+	// The document-level listener only exists while the context menu is open.
+	private readonly handleDocumentClick = (e: Event) => this.handleClick(e as PointerEvent)
+
+	override disconnectedCallback() {
+		super.disconnectedCallback()
+		document.removeEventListener('click', this.handleDocumentClick)
+	}
+
+	protected override openUpdated() {
+		super.openUpdated()
+		if (this.open) {
+			document.addEventListener('click', this.handleDocumentClick)
+		} else {
+			document.removeEventListener('click', this.handleDocumentClick)
+		}
+	}
+
 	protected handleClick(e: PointerEvent) {
 		if (this.open && e.composedPath().includes(this) === false) {
 			e.stopPropagation()
