@@ -99,7 +99,7 @@ export class Menu extends Component {
 
 	@query('mo-selectable-list') readonly list!: ListElement & SelectableList
 
-	get items() { return this.list.items as Array<ListItem & HTMLElement> }
+	get items() { return (this.list?.items ?? []) as Array<ListItem & HTMLElement> }
 
 	openWith(e: MouseEvent | PopoverCoordinates) {
 		if (e instanceof MouseEvent) {
