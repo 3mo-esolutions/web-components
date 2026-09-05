@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/pointer-controller",
-	"version": "1.4.0",
+	"version": "1.5.0",
 	"description": "A controller that tracks the pointer state of a web component.",
 	"repository": {
 		"type": "git",
