@@ -8,6 +8,10 @@ export class FieldTextArea extends FieldText {
 		return literal`textarea`
 	}
 
+	protected override get elementClosingTag() {
+		return literal`</textarea>`
+	}
+
 	static override get styles() {
 		return css`
 			${super.styles}
