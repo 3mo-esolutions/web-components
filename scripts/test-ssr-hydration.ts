@@ -44,6 +44,12 @@ window.addEventListener('unhandledrejection', event => globalErrors.push(String(
 
 const results: Record<string, { status: string, error?: string }> = {}
 
+// A component whose update never settles would stall the whole run, so every wait is bounded.
+const settled = (promise: Promise<unknown> | undefined) => Promise.race([
+	promise ?? Promise.resolve(),
+	new Promise((_, reject) => setTimeout(() => reject(new Error('update did not settle')), 3000)),
+])
+
 for (const [tag, template] of Object.entries(templates)) {
 	const container = document.querySelector('[data-tag="' + tag + '"]')!
 	const element = container.querySelector(tag) as (HTMLElement & { updateComplete?: Promise<unknown>, requestUpdate?: () => void }) | null
@@ -54,11 +60,11 @@ for (const [tag, template] of Object.entries(templates)) {
 		}
 		hydrate(template(), container)
 		element.removeAttribute('defer-hydration')
-		await element.updateComplete
+		await settled(element.updateComplete)
 		// Second client-side render pass: catches components that hydrate but then
 		// break on their first real update.
 		element.requestUpdate?.()
-		await element.updateComplete
+		await settled(element.updateComplete)
 		results[tag] = element.shadowRoot ? { status: 'hydrated' } : { status: 'no-shadow-root' }
 	} catch (error) {
 		results[tag] = { status: 'hydration-error', error: String(error instanceof Error ? error.message : error).slice(0, 300) }
