@@ -1,4 +1,4 @@
-import 'requestidlecallback-polyfill'
+import { isServer } from '@a11d/lit'
 import '@3mo/theme'
 import '@3mo/flex'
 import '@3mo/grid'
@@ -22,6 +22,11 @@ import '@3mo/menu'
 import '@3mo/heading'
 import '@3mo/circular-progress'
 import '@3mo/select-field'
+
+if (isServer === false) {
+	void import('requestidlecallback-polyfill')
+}
+
 export * from '@3mo/reorderability'
 // import '@3mo/focus-ring'
 import './types.js'

@@ -1,4 +1,4 @@
-import { property, component, Component, html, css, query, type PropertyValues, event, style, literal, staticHtml, type HTMLTemplateResult, repeat, eventListener } from '@a11d/lit'
+import { property, component, Component, html, css, query, type PropertyValues, event, style, literal, staticHtml, type HTMLTemplateResult, repeat, eventListener, isServer } from '@a11d/lit'
 import { LocalStorage } from '@a11d/local-storage'
 import { InstanceofAttributeController } from '@3mo/instanceof-attribute-controller'
 import { SlotController } from '@3mo/slot-controller'
@@ -323,7 +323,8 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}
 
 	get hasSums() {
-		const hasSums = !!this.columns.find(c => c.sumHeading) || !!this.querySelector('* [slot="sum"]') || !!this.renderRoot?.querySelector('slot[name="sum"] > *')
+		const hasSums = !!this.columns.find(c => c.sumHeading)
+			|| (isServer === false && (!!this.querySelector('* [slot="sum"]') || !!this.renderRoot?.querySelector('slot[name="sum"] > *')))
 		this.toggleAttribute('hasSums', hasSums)
 		return hasSums
 	}
