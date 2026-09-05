@@ -253,6 +253,9 @@
 			"path": "./packages/localization"
 		},
 		{
+			"path": "./packages/Navigability"
+		},
+		{
 			"path": "./packages/Masonry"
 		},
 		{
