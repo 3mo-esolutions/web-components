@@ -1,4 +1,4 @@
-import { html, css, property, style, component, Component } from '@a11d/lit'
+import { html, css, property, style, component, Component, isServer } from '@a11d/lit'
 import { Localizer } from '@3mo/localization'
 
 Localizer.dictionaries.add('de', {
@@ -100,7 +100,7 @@ export class SplitPageHost extends Component {
 	}
 
 	private get contentToolbarTemplate() {
-		const icon = getComputedStyle(this).direction === 'rtl' ? 'arrow_forward' : 'arrow_back'
+		const icon = isServer === false && getComputedStyle(this).direction === 'rtl' ? 'arrow_forward' : 'arrow_back'
 		return html`
 			<mo-flex id='contentToolbar' gap='6px' alignItems='center' direction='horizontal'>
 				<mo-icon-button icon=${icon} @click=${() => new (this.constructor as any)().navigate()}></mo-icon-button>
