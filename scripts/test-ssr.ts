@@ -46,6 +46,20 @@ for (const tag of manifest.tags) {
 }
 const tags = [...tagsByName.values()]
 
+// Consumers import a package, not one of its files, and only the entry point establishes the
+// module order the package is written for. Deep imports are therefore not representative and
+// would report unrelated circular import failures as missing SSR support.
+function entryPointOf(tag: ManifestTag) {
+	let directory = Path.dirname(tag.path)
+	while (directory.includes('packages')) {
+		if (FileSystem.existsSync(`${directory}/package.json`) && FileSystem.existsSync(`${directory}/index.ts`)) {
+			return `${directory}/index.ts`
+		}
+		directory = Path.dirname(directory)
+	}
+	return tag.path
+}
+
 function isDeclaredSsr(tag: ManifestTag) {
 	try {
 		const source = FileSystem.readFileSync(tag.path, 'utf-8')
@@ -65,7 +79,7 @@ for (const directory of [entriesDirectory, bundlesDirectory, outputDirectory]) {
 }
 
 for (const tag of tags) {
-	const modulePath = Path.relative(entriesDirectory, tag.path).replace(/\\/g, '/').replace(/\.ts$/, '')
+	const modulePath = Path.relative(entriesDirectory, entryPointOf(tag)).replace(/\\/g, '/').replace(/\.ts$/, '')
 	const entry = [
 		...(mode === 'shim' ? ['import \'@lit-labs/ssr/lib/install-global-dom-shim.js\''] : []),
 		`import '${modulePath}'`,
