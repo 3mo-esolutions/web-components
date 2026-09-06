@@ -29,7 +29,7 @@ export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataG
 
 	@event() readonly modeChange!: EventDispatcher<ModdableDataGridMode<TData, TParameters> | void>
 
-	@property({ type: Object }) modesAdapter = new ModdableDataGrid.defaultAdapter() as ModdableDataGridModesAdapter<TData, TParameters>
+	@property({ type: Object }) modesAdapter = new ModdableDataGrid.defaultAdapter() as unknown as ModdableDataGridModesAdapter<TData, TParameters>
 
 	@queryAll('mo-moddable-data-grid-chip') readonly modeChips!: Array<ModdableDataGridChip<TData, TParameters>>
 

@@ -120,11 +120,11 @@ export class DataGridColumnsController<TData> extends Controller {
 				const columnElement = document.createElement(getDefaultColumnElement(KeyPath.get(sampleData, key as any)))
 				columnElement.heading = key.replace(/([A-Z])/g, ' $1').charAt(0).toUpperCase() + key.replace(/([A-Z])/g, ' $1').slice(1)
 				columnElement.dataSelector = key
-				columnElement.dataGrid = this.host as DataGrid<unknown, any>
+				columnElement.dataGrid = this.host as unknown as DataGrid<unknown, any>
 				const column = columnElement.column
 				columnElement.remove()
 				return column
-			}) as Array<DataGridColumn<TData>>
+			}) as unknown as Array<DataGridColumn<TData>>
 	}
 
 	setColumnWidth(column: keyof typeof this.columnWidths, widthInPixels: number) {

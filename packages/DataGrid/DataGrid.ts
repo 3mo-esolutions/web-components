@@ -10,7 +10,7 @@ import { DataGridColumnsController } from './DataGridColumnsController/index.js'
 import { DataGridSelectability, DataGridSelectionBehaviorOnDataChange, DataGridSelectionController } from './DataGridSelectionController.js'
 import { DataGridSortingController, type DataGridRankedSortDefinition, type DataGridSorting } from './DataGridSortingController.js'
 import { DataGridDetailsController } from './DataGridDetailsController.js'
-import { type DataGridColumn, DataGridCsvController, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, DataGridContextMenuController, DataGridReorderabilityController, type DataGridReorderChange } from './index.js'
+import { type DataGridColumn, DataGridCsvController, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, DataGridContextMenuController, DataGridNavigabilityController, DataGridReorderabilityController, type DataGridReorderChange } from './index.js'
 import { DataRecord } from './DataRecord.js'
 import { DataGridToolbarElementStyles } from './DataGridToolbarElementStyles.js'
 import { DataGridPagination, type DataGridPaginationLike, type DataGridPaginationSize, type DataGridPaginationStrategy } from './DataGridPagination.js'
@@ -402,6 +402,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	readonly detailsController = new DataGridDetailsController(this)
 	readonly csvController = new DataGridCsvController<TData>(this)
 	readonly reorderabilityController = new DataGridReorderabilityController(this)
+	readonly navigabilityController = new DataGridNavigabilityController<TData, TDetailsElement>(this)
 
 	readonly rowIntersectionObserver?: IntersectionObserver
 

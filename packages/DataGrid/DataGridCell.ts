@@ -22,12 +22,11 @@ export class DataGridCell<TValue extends KeyPath.ValueOf<TData>, TData = any, TD
 
 	@state() private editing = false
 
+	override readonly role = 'gridcell'
+
 	get dataGrid() { return this.row.dataGrid }
 	get data() { return this.row.data }
 	get dataSelector() { return this.column.dataSelector }
-
-	private get cellIndex(): number { return this.row.cells.indexOf(this) }
-	private get rowIndex(): number { return this.dataGrid.rows.indexOf(this.row) }
 
 	private get valueTextContent() { return this.renderRoot.textContent?.trim() || '' }
 
@@ -73,7 +72,7 @@ export class DataGridCell<TValue extends KeyPath.ValueOf<TData>, TData = any, TD
 				event.stopPropagation()
 				this.setEditing(false)
 				await this.updateComplete
-				this.focusCell(event, this)
+				this.dataGrid.navigabilityController.focusCell(this, event)
 				break
 			case 'c':
 				if (this.isEditing === false && (event.ctrlKey || event.metaKey)) {
@@ -82,20 +81,10 @@ export class DataGridCell<TValue extends KeyPath.ValueOf<TData>, TData = any, TD
 					NotificationComponent.notifySuccess(t('Copied to clipboard'))
 				}
 				break
-			case 'Tab':
-			case 'ArrowRight':
-				this.focusCell(event, this.row.cells.at(this.cellIndex === this.dataGrid.visibleColumns.length - 1 ? 0 : this.cellIndex + 1))
-				break
-			case 'ArrowLeft':
-				this.focusCell(event, this.row.cells.at(this.cellIndex === 0 ? this.dataGrid.visibleColumns.length - 1 : this.cellIndex - 1))
-				break
-			case 'ArrowUp':
-				this.focusCell(event, this.dataGrid.rows.at(this.rowIndex === 0 ? this.dataGrid.rows.length - 1 : this.rowIndex - 1)?.cells.at(this.cellIndex))
-				break
-			case 'ArrowDown':
-				this.focusCell(event, this.dataGrid.rows.at(this.rowIndex === this.dataGrid.rows.length - 1 ? 0 : this.rowIndex + 1)?.cells.at(this.cellIndex))
-				break
 			default:
+				if (this.isEditing === false) {
+					this.dataGrid.navigabilityController.handleKeyDown(event, this)
+				}
 				break
 		}
 	}
@@ -108,17 +97,6 @@ export class DataGridCell<TValue extends KeyPath.ValueOf<TData>, TData = any, TD
 		await this.updateComplete
 		if (value) {
 			this.renderRoot.querySelector<HTMLElement>('[autofocus]')?.focus()
-		}
-	}
-
-	private focusCell(event: KeyboardEvent, cell?: DataGridCell<any, TData, TDetailsElement>) {
-		if (cell && this.isEditing === false) {
-			event.preventDefault()
-			cell.focus()
-			this.setEditing(false)
-			if (this.dataGrid.selectOnClick) {
-				this.dataGrid.selectionController.select(cell.row.data, { selected: true, event })
-			}
 		}
 	}
 
@@ -170,7 +148,7 @@ export class DataGridCell<TValue extends KeyPath.ValueOf<TData>, TData = any, TD
 		if (this.isEditing) {
 			this.removeAttribute('tabindex')
 		} else {
-			this.setAttribute('tabindex', '-1')
+			this.setAttribute('tabindex', this.dataGrid.navigabilityController.isTabStop(this) ? '0' : '-1')
 		}
 		this.toggleAttribute('data-sticky', this.column.sticky !== undefined)
 		this.style.insetInline = this.column.stickyColumnInsetInline
