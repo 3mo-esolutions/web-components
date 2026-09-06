@@ -64,6 +64,26 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		return this.dataGrid.detailsController.hasDetail(this.dataRecord)
 	}
 
+	private stampAria() {
+		this.role = 'row'
+		const node = this.dataRecord.node
+		this.setAttribute('aria-level', String(this.level + 1))
+		if (node) {
+			this.setAttribute('aria-setsize', String(node.setSize))
+			this.setAttribute('aria-posinset', String(node.position + 1))
+		}
+		if (this.hasDetails) {
+			this.setAttribute('aria-expanded', String(this.detailsOpen))
+		} else {
+			this.removeAttribute('aria-expanded')
+		}
+		if (this.dataGrid.hasSelection) {
+			this.setAttribute('aria-selected', String(this.selected))
+		} else {
+			this.removeAttribute('aria-selected')
+		}
+	}
+
 	static override get styles() {
 		return css`
 			:host {
@@ -257,6 +277,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		this.style.setProperty('--_level', this.level.toString())
 		this.toggleAttribute('selected', this.dataRecord.isSelected)
 		this.toggleAttribute('detailsOpen', this.dataRecord.detailsOpen)
+		this.stampAria()
 		return !this.isIntersecting ? html.nothing : html`
 			<mo-grid id='contentContainer' columns='subgrid'
 				@click=${(e: MouseEvent) => this.handleContentClick(e)}

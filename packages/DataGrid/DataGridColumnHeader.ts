@@ -22,6 +22,8 @@ export class DataGridColumnHeader extends Component {
 	@property({ type: Object }) column!: DataGridColumn<unknown>
 	@property({ type: Boolean, reflect: true }) menuOpen = false
 
+	override readonly role = 'columnheader'
+
 	static override get styles() {
 		return css`
 			:host {

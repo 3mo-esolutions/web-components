@@ -1,4 +1,4 @@
-import { property, component, Component, html, css, query, type PropertyValues, event, style, literal, staticHtml, type HTMLTemplateResult, queryAll, repeat, eventListener } from '@a11d/lit'
+import { property, component, Component, html, css, query, type PropertyValues, event, style, literal, staticHtml, type HTMLTemplateResult, repeat, eventListener } from '@a11d/lit'
 import { LocalStorage } from '@a11d/local-storage'
 import { InstanceofAttributeController } from '@3mo/instanceof-attribute-controller'
 import { SlotController } from '@3mo/slot-controller'
@@ -10,8 +10,9 @@ import { DataGridColumnsController } from './DataGridColumnsController/index.js'
 import { DataGridSelectability, DataGridSelectionBehaviorOnDataChange, DataGridSelectionController } from './DataGridSelectionController.js'
 import { DataGridSortingController, type DataGridRankedSortDefinition, type DataGridSorting } from './DataGridSortingController.js'
 import { DataGridDetailsController } from './DataGridDetailsController.js'
-import { type DataGridColumn, DataGridCsvController, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, DataGridContextMenuController, DataGridNavigabilityController, DataGridReorderabilityController, type DataGridReorderChange } from './index.js'
-import { DataRecord } from './DataRecord.js'
+import { type DataGridColumn, DataGridCsvController, DataGridRecordsController, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, DataGridContextMenuController, DataGridNavigabilityController, DataGridReorderabilityController, type DataGridReorderChange } from './index.js'
+import { type HierarchyNode } from '@3mo/hierarchy'
+import { type DataRecord } from './DataRecord.js'
 import { DataGridToolbarElementStyles } from './DataGridToolbarElementStyles.js'
 import { DataGridPagination, type DataGridPaginationLike, type DataGridPaginationSize, type DataGridPaginationStrategy } from './DataGridPagination.js'
 
@@ -170,8 +171,13 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	@query('mo-data-grid-header') private readonly header?: DataGridHeader<TData>
 	@query('mo-scroller#scroller') protected readonly scroller?: Scroller
-	@queryAll('[mo-data-grid-row]') readonly rows!: Array<DataGridRow<TData, TDetailsElement>>
 	@query('mo-data-grid-footer') private readonly footer?: DataGridFooter<TData>
+
+	get rows(): Array<DataGridRow<TData, TDetailsElement>> {
+		const flatten = (rows: Iterable<DataGridRow<TData, TDetailsElement>>): Array<DataGridRow<TData, TDetailsElement>> =>
+			[...rows].flatMap(row => [row, ...flatten(row.subRows)])
+		return flatten(this.renderRoot?.querySelectorAll<DataGridRow<TData, TDetailsElement>>('[mo-data-grid-row]') ?? [])
+	}
 
 	setPage(page: number) {
 		this.page = page
@@ -186,6 +192,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	setData(data: Array<TData>, selectionBehavior = this.selectionBehaviorOnDataChange) {
 		this.data = data
 		this.selectionController.handleItemsChange(selectionBehavior)
+		this.detailsController.handleItemsChange()
 		this.dataChange.dispatch(data)
 	}
 
@@ -403,6 +410,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	readonly csvController = new DataGridCsvController<TData>(this)
 	readonly reorderabilityController = new DataGridReorderabilityController(this)
 	readonly navigabilityController = new DataGridNavigabilityController<TData, TDetailsElement>(this)
+	readonly recordsController = new DataGridRecordsController<TData>(this)
 
 	readonly rowIntersectionObserver?: IntersectionObserver
 
@@ -413,6 +421,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		if (this.hasContextMenu && this.selectability === undefined) {
 			this.selectability = DataGridSelectability.Single
 		}
+		this.role = this.subDataGridDataSelector ? 'treegrid' : 'grid'
 	}
 
 	protected override updated(...parameters: Parameters<Component['updated']>) {
@@ -440,7 +449,10 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	protected override firstUpdated(props: PropertyValues) {
 		super.firstUpdated(props)
-		this.cellEdit.subscribe(() => this.requestUpdate())
+		this.cellEdit.subscribe(() => {
+			this.recordsController.invalidate()
+			this.requestUpdate()
+		})
 		this.setPage(1)
 	}
 
@@ -669,11 +681,12 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			})
 			.reduce((acc, v) => acc + v.length, 0)
 
-		const getLongestContent = (column: DataGridColumn<TData>) => {
-			return this.dataRecords
-				.map(dr => column.getContentTemplate?.(KeyPath.get(dr.data, column.dataSelector), dr.data) ?? html.nothing)
-				.reduce((longest, current) => (getLength(current) > getLength(longest)) || false ? current : longest, html.nothing)
-		}
+		const records = this.dataRecords
+		const maxLevel = records.reduce((max, record) => Math.max(max, record.level), 0)
+
+		const getLongestContent = (column: DataGridColumn<TData>) => this.recordsController.longestContentOf(column.dataSelector ?? column, () => records
+			.map(record => column.getContentTemplate?.(KeyPath.get(record.data, column.dataSelector), record.data) ?? html.nothing)
+			.reduce((longest, current) => (getLength(current) > getLength(longest)) || false ? current : longest, html.nothing as HTMLTemplateResult | typeof html.nothing))
 
 		return html`
 			<style>
@@ -698,7 +711,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 			</style>
 			<div id='size-anchor'>
 				${this.visibleColumns.map(column => html`
-					<div style='--_max-level: ${Math.max(...this.dataRecords.map(dr => dr.level))}'>
+					<div style='--_max-level: ${maxLevel}'>
 						${getLongestContent(column)}
 					</div>
 				`)}
@@ -783,19 +796,17 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		this.rows.forEach(row => row.cells.forEach(cell => cell.handlePointerDown(event)))
 	}
 
-	protected getFlattenedData(values = this.data) {
-		return this.sortingController
-			.toSortedBy(values.map(data => new DataRecord(this, { data, level: 0 })), ({ data }) => data)
-			.flatMap(r => r.flattenedRecords)
+
+	recordOf(node: HierarchyNode<TData>): DataRecord<TData> {
+		return this.recordsController.recordOf(node)
+	}
+
+	protected getFlattenedData(values = this.data): Array<DataRecord<TData>> {
+		return this.recordsController.recordsOf(values)
 	}
 
 	get dataRecords(): Array<DataRecord<TData>> {
-		return this.getFlattenedData()
-			.map((record, index) => {
-				// @ts-expect-error index is initialized here
-				record.index = index
-				return record
-			})
+		return this.recordsController.records
 	}
 
 	get renderDataRecords() {

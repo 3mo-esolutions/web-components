@@ -152,4 +152,36 @@ describe('DataGridNavigabilityController', () => {
 		expect(row.cells.length).toBe(2)
 		expect(row.shadowRoot!.activeElement).toBe(row.cells[0]!)
 	})
+
+	describe('with sub rows', () => {
+		type Nested = { id: number, name: string, sub?: Array<Nested> }
+
+		const nested: Array<Nested> = [
+			{ id: 1, name: 'Alice', sub: [{ id: 11, name: 'Alice Jr' }] },
+			{ id: 2, name: 'Bob' },
+		]
+
+		const subFixture = new ComponentTestFixture<DataGrid<Nested>>(html`
+			<mo-data-grid .data=${nested} subDataGridDataSelector='sub'>
+				<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
+			</mo-data-grid>
+		`)
+
+		it('should walk into the sub rows of an open row, which live in that row\'s own shadow root', async () => {
+			subFixture.component.detailsController.open(subFixture.component.dataRecords[0]!)
+			await subFixture.updateComplete
+			await new Promise(r => setTimeout(r, 30))
+			for (const row of subFixture.component.rows) {
+				row.requestUpdate()
+				await row.updateComplete
+			}
+			const rows = subFixture.component.rows
+			expect(rows.map(row => row.level)).toEqual([0, 1, 0])
+
+			rows[0]!.cells[0]!.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', cancelable: true }))
+
+			expect(subFixture.component.navigabilityController.row.index).toBe(1)
+			expect(rows[1]!.shadowRoot!.activeElement).toBe(rows[1]!.cells[0]!)
+		})
+	})
 })

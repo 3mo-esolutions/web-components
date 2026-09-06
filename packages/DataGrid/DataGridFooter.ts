@@ -34,8 +34,8 @@ export class DataGridFooter<TData> extends Component {
 			if (value === true) {
 				await this.updateComplete
 				await new Promise(r => requestAnimationFrame(r))
-				this.pageNumberField.focus()
-				this.pageNumberField.select()
+				this.pageNumberField?.focus()
+				this.pageNumberField?.select()
 			}
 		}
 	}) private manualPagination = false

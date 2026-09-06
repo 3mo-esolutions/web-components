@@ -113,21 +113,27 @@ export class DataGridSortingController<TData> {
 			return data
 		}
 
-		return data.sort((a, b) => {
-			for (const definition of sorting) {
-				const { selector, strategy } = definition
-				const aValue = KeyPath.get(extractor(a), selector) ?? Infinity as any
-				const bValue = KeyPath.get(extractor(b), selector) ?? Infinity as any
+		return data.sort((a, b) => this.compareBy(extractor(a), extractor(b), sorting))
+	}
 
-				if (aValue < bValue) {
-					return strategy === DataGridSortingStrategy.Ascending ? -1 : 1
-				} else if (aValue > bValue) {
-					return strategy === DataGridSortingStrategy.Ascending ? 1 : -1
-				}
-				// If values are equal, continue to the next level of sorting
+	compare(a: TData, b: TData) {
+		return this.compareBy(a, b, this.get())
+	}
+
+	private compareBy(a: TData, b: TData, sorting: ReadonlyArray<DataGridSortingDefinition<TData>>) {
+		for (const definition of sorting) {
+			const { selector, strategy } = definition
+			const aValue = KeyPath.get(a, selector) ?? Infinity as any
+			const bValue = KeyPath.get(b, selector) ?? Infinity as any
+
+			if (aValue < bValue) {
+				return strategy === DataGridSortingStrategy.Ascending ? -1 : 1
+			} else if (aValue > bValue) {
+				return strategy === DataGridSortingStrategy.Ascending ? 1 : -1
 			}
+			// If values are equal, continue to the next level of sorting
+		}
 
-			return 0 // Items are equal in all sorting criteria
-		})
+		return 0 // Items are equal in all sorting criteria
 	}
 }

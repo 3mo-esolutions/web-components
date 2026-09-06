@@ -31,6 +31,8 @@ export class DataGridHeader<TData> extends Component {
 	@property({ type: Object }) dataGrid!: DataGrid<TData, any>
 	@property({ type: Boolean, reflect: true }) overlayOpen = false
 
+	override readonly role = 'row'
+
 	@queryAll('mo-data-grid-column-header') private readonly columnHeaders!: Array<DataGridColumnHeader>
 
 	readonly reorderabilityController = new ReorderabilityController(this, {

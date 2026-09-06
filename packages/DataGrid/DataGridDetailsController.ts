@@ -1,38 +1,66 @@
-import { html, type HTMLTemplateResult } from '@a11d/lit'
-import { type DataRecord } from './index.js'
+import { html, type HTMLTemplateResult, type ReactiveControllerHost } from '@a11d/lit'
+import { ExpandabilityController, ExpandabilityAllState } from '@3mo/expandability'
+import { type DataRecord } from './DataRecord.js'
+import { DataGridSelectionController } from './DataGridSelectionController.js'
 
-interface DetailedComponent<TData> {
+interface DetailedComponent<TData> extends ReactiveControllerHost {
 	readonly hasDefaultRowElements: boolean
 	readonly dataRecords: Array<DataRecord<TData>>
 	readonly getRowDetailsTemplate?: (data: TData) => HTMLTemplateResult
 	readonly multipleDetails?: boolean
 	readonly hasDataDetail?: (data: TData) => boolean
-	readonly requestUpdate?: () => void
 }
 
-export class DataGridDetailsController<TData> {
-	private openRecords = new Array<DataRecord<TData>>()
-
-	constructor(readonly host: DetailedComponent<TData>) { }
-
-	private get supportsMultiple() {
-		return !!this.host.multipleDetails
+export class DataGridDetailsController<TData> extends ExpandabilityController<DataRecord<TData>, DetailedComponent<TData>> {
+	constructor(override readonly host: DetailedComponent<TData>) {
+		super(host, {
+			get items() { return controller.detailedRecords },
+			key: record => DataGridSelectionController.keyOf(record.data),
+			isExpandable: record => controller.hasDetail(record),
+			get multiple() { return !!host.multipleDetails },
+			ancestorsOf: record => controller.ancestorsOf(record),
+			stamping: false,
+		})
+		const controller = this
 	}
+
+	private memo = { template: undefined as unknown, hasDataDetail: undefined as unknown, answers: new WeakMap<DataRecord<TData>, boolean>(), records: undefined as ReadonlyArray<DataRecord<TData>> | undefined, detailed: new Array<DataRecord<TData>>() }
 
 	get hasDetails() {
-		return this.detailedData.length > 0
-	}
-
-	private get detailedData() {
-		return this.host.dataRecords.filter(data => this.hasDetail(data))
+		return this.detailedRecords.length > 0
 	}
 
 	hasDetail(record: DataRecord<TData>) {
+		const { answers } = this.forget()
+		let hasDetail = answers.get(record)
+		if (hasDetail === undefined) {
+			answers.set(record, hasDetail = this.deriveDetail(record))
+		}
+		return hasDetail
+	}
+
+	private get detailedRecords() {
+		const memo = this.forget()
+		const records = this.host.dataRecords
+		if (memo.records !== records) {
+			memo.records = records
+			memo.detailed = records.filter(record => this.hasDetail(record))
+		}
+		return memo.detailed
+	}
+
+	private forget() {
+		const { getRowDetailsTemplate, hasDataDetail } = this.host
+		if (this.memo.template !== getRowDetailsTemplate || this.memo.hasDataDetail !== hasDataDetail) {
+			this.memo = { template: getRowDetailsTemplate, hasDataDetail, answers: new WeakMap(), records: undefined, detailed: [] }
+		}
+		return this.memo
+	}
+
+	private deriveDetail(record: DataRecord<TData>) {
 		if (this.host.hasDefaultRowElements === false) {
-			// We make the assumption that custom rows don't use
-			// the `getRowDetailsTemplate` and implement their own way of showing details.
-			// If they do use it, they should also override `hasDataDetail`
-			// to return false for the records that don't have details.
+			// Custom rows are assumed to show their details their own way
+			// a row that uses the template nevertheless should also answer `hasDataDetail`.
 			return this.host.hasDataDetail?.(record.data) ?? false
 		}
 
@@ -41,48 +69,36 @@ export class DataGridDetailsController<TData> {
 		return record.hasSubData || hasDetailsTemplate && included
 	}
 
+	private ancestorsOf(record: DataRecord<TData>): ReadonlyArray<DataRecord<TData>> {
+		const ancestors = record.node?.ancestors
+		return this.host.dataRecords.filter(candidate => ancestors
+			? !!candidate.node && ancestors.includes(candidate.node)
+			: candidate.subDataRecords?.some(sub => sub.data === record.data))
+	}
+
 	get areAllOpen() {
-		return this.openRecords.length === this.detailedData.length
+		return this.allState === ExpandabilityAllState.All
 	}
 
 	open(record: DataRecord<TData>) {
-		if (this.hasDetail(record)) {
-			this.openRecords = [
-				...this.supportsMultiple
-					? this.openRecords
-					: this.openRecords.filter(r => r.subDataRecords?.some(subRecord => subRecord.data === record.data)),
-				record
-			]
-			this.host.requestUpdate?.()
-		}
+		return this.expand(record)
 	}
 
 	openAll() {
-		if (this.supportsMultiple) {
-			this.openRecords = this.detailedData
-			this.host.requestUpdate?.()
+		if (this.host.multipleDetails) {
+			this.expandAll()
 		}
 	}
 
 	close(record: DataRecord<TData>) {
-		this.openRecords = this.openRecords.filter(r => r.data !== record.data)
-		this.host.requestUpdate?.()
+		this.collapse(record)
 	}
 
 	closeAll() {
-		this.openRecords = []
-		this.host.requestUpdate?.()
+		this.collapseAll()
 	}
 
-	toggle(data: DataRecord<TData>) {
-		if (this.isOpen(data)) {
-			this.close(data)
-		} else {
-			this.open(data)
-		}
-	}
-
-	toggleAll() {
+	override toggleAll() {
 		if (this.areAllOpen) {
 			this.closeAll()
 		} else {
@@ -91,6 +107,6 @@ export class DataGridDetailsController<TData> {
 	}
 
 	isOpen(record: DataRecord<TData>) {
-		return this.openRecords.map(r => r.data).includes(record.data)
+		return this.isExpanded(record)
 	}
 }

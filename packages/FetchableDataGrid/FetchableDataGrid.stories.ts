@@ -164,3 +164,38 @@ export const NoFilters: StoryObj = {
 		</mo-fetchable-data-grid>
 	`
 }
+type Department = { id: number, name: string, headcount: number, teams?: Array<Department> }
+
+const departments = (): Array<Department> => [
+	{
+		id: 1, name: 'Engineering', headcount: 24, teams: [
+			{ id: 11, name: 'Platform', headcount: 9, teams: [{ id: 111, name: 'Build', headcount: 4 }, { id: 112, name: 'Runtime', headcount: 5 }] },
+			{ id: 12, name: 'Product', headcount: 15 },
+		]
+	},
+	{ id: 2, name: 'Sales', headcount: 11, teams: [{ id: 21, name: 'Inbound', headcount: 6 }] },
+	{ id: 3, name: 'Support', headcount: 7 },
+]
+
+export const SilentRefetchKeepsRowsOpen: StoryObj = {
+	name: 'Silent refetch keeps sub rows open',
+	args: { silentFetch: true, autoRefetch: 5 },
+	argTypes: {
+		silentFetch: { control: 'boolean' },
+		autoRefetch: { control: { type: 'number', min: 0 } },
+	},
+	render: ({ silentFetch, autoRefetch }) => html`
+		<mo-fetchable-data-grid style='height: 500px; flex: 1'
+			subDataGridDataSelector='teams'
+			multipleDetails
+			?silentFetch=${silentFetch}
+			autoRefetch=${autoRefetch || undefined}
+			.parameters=${{}}
+			.fetch=${async () => { await wait(600); return departments() }}
+		>
+			<mo-data-grid-column-text heading='Department' dataSelector='name'></mo-data-grid-column-text>
+			<mo-data-grid-column-number heading='Headcount' dataSelector='headcount'></mo-data-grid-column-number>
+			<span slot='toolbar'>Open a department and a team, then refetch — the same rows stay open.</span>
+		</mo-fetchable-data-grid>
+	`
+}
