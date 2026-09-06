@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/selectability",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"description": "A controller that makes items selectable, single or multiple, with range and modifier gestures, keyed identity and ARIA",
 	"repository": {
 		"type": "git",

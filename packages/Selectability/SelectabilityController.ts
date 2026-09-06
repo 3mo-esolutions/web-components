@@ -173,6 +173,9 @@ export class SelectabilityController<T, TItemOptions extends SelectabilityItemOp
 		strategy?: SelectabilityStrategy
 		/** Defaults to `full` — see {@link SelectabilityStamping}. */
 		stamping?: SelectabilityStamping
+		/** Which ARIA state full stamping writes. Defaults to what the item's role calls for; a tree of
+		 * checkboxes says `checked` on its `treeitem`s, which the role alone would not. */
+		ariaState?: 'selected' | 'checked'
 		/** A shared registry to adopt — the owner declares the item directive once per element and
 		 * every controller reading the registry acts on it. Absent, the controller creates its own.
 		 * Read once, and expected to live on this controller's own host. */
@@ -496,9 +499,10 @@ export class SelectabilityController<T, TItemOptions extends SelectabilityItemOp
 			const role = element.role ?? element.getAttribute('role') ?? ''
 			// A role that has no selected state gets no attribute: an aria-selected the role does not
 			// allow is read as a broken control rather than an unselected one.
-			const attribute = SelectabilityController.selectedRoles.includes(role) ? 'aria-selected'
-				: SelectabilityController.checkedRoles.includes(role) ? 'aria-checked'
-					: undefined
+			const attribute = this.options.ariaState ? `aria-${this.options.ariaState}`
+				: SelectabilityController.selectedRoles.includes(role) ? 'aria-selected'
+					: SelectabilityController.checkedRoles.includes(role) ? 'aria-checked'
+						: undefined
 			if (attribute) {
 				element.setAttribute(attribute, String(selected))
 			}
