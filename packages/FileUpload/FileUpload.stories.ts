@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite'
 import { html } from '@a11d/lit'
 import { type FileUpload as FileUploadC } from './FileUpload.js'
+import { fileDrop } from './fileDrop.js'
 import p from './package.json'
 import '.'
 
@@ -31,5 +32,19 @@ export const Multiple: StoryObj = {
 			.upload=${(files: Array<File>) => alert(`Upload files ${files.map(file => file.name).join(', ')}`)}
 		></mo-file-upload>
 		<mo-button type='outlined' @click=${openExplorer}>Select multiple files</mo-button>
+	`
+}
+
+export const Drop: StoryObj = {
+	render: () => html`
+		<style>
+			mo-field-text-area[dragover] {
+				outline: 2px dashed var(--mo-color-accent);
+				outline-offset: 4px;
+			}
+		</style>
+		<mo-field-text-area label='Message'
+			${fileDrop({ multiple: true, handleDrop: files => alert(`Attach ${files.map(file => file.name).join(', ')}`) })}
+		></mo-field-text-area>
 	`
 }

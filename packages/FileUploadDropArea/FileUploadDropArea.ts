@@ -1,5 +1,5 @@
 import { html, eventListener, css, component, query, Component, property, event, literal, staticHtml, ifDefined } from '@a11d/lit'
-import { type FileUpload, type FileUploadSelection } from '@3mo/file-upload'
+import { FileDropController, type FileUpload, type FileUploadSelection } from '@3mo/file-upload'
 
 /**
  * @element mo-file-upload-drop-area
@@ -8,7 +8,7 @@ import { type FileUpload, type FileUploadSelection } from '@3mo/file-upload'
  *
  * @attr upload - The mandatory upload function that is called when the user selects one or more files.
  * @attr multiple - Whether multiple files can be selected at once.
- * @attr accept - The file types that are accepted for upload, specified as a string containing a comma-separated list of MIME types or file extensions.
+ * @attr accept - The file types that are accepted for upload, specified as a string containing a comma-separated list of MIME types or file extensions. Dropped files are filtered by it, too.
  *
  * @fires change - Dispatched when the uploading process results in success or failure. The event detail is the result of the upload, either the result of the upload function or undefined if the upload failed.
  * @fires uploadingChange - Dispatched when the uploading process starts or ends. The event detail is true if the uploading process has started, false otherwise.
@@ -27,6 +27,12 @@ export class FileUploadDropArea<TResult, TMultiple extends boolean = false> exte
 	@query('mo-file-upload') protected readonly uploadElement!: FileUpload<TResult, TMultiple>
 
 	protected readonly fileUploadElementTag = literal`mo-file-upload`
+
+	protected readonly fileDrop = new FileDropController<TMultiple>(this, () => ({
+		multiple: this.multiple as TMultiple,
+		accept: this.accept,
+		handleDrop: selection => this.uploadSelection(selection),
+	}))
 
 	openExplorer(...parameters: Parameters<FileUpload<TResult, TMultiple>['openExplorer']>) {
 		return this.uploadElement.openExplorer(...parameters)
@@ -50,7 +56,7 @@ export class FileUploadDropArea<TResult, TMultiple extends boolean = false> exte
 				transition: 250ms;
 			}
 
-			:host([drag]) {
+			:host([dragover]) {
 				border-color: var(--mo-color-accent);
 				background: var(--mo-color-accent-transparent);
 			}
@@ -84,34 +90,6 @@ export class FileUploadDropArea<TResult, TMultiple extends boolean = false> exte
 	@eventListener('click')
 	protected handleClick() {
 		this.openExplorer()
-	}
-
-	@eventListener('dragover')
-	protected handleDragOver(e: DragEvent) {
-		e.preventDefault()
-		this.toggleAttribute('drag', true)
-	}
-
-	@eventListener('dragleave')
-	protected handleDragLeave(e: DragEvent) {
-		e.preventDefault()
-		this.toggleAttribute('drag', false)
-	}
-
-	@eventListener('drop')
-	protected async handleDrop(e: DragEvent) {
-		// Prevent file from being opened in the browser as it is the default behavior
-		e.preventDefault()
-
-		this.toggleAttribute('drag', false)
-
-		const files = Array.from(e.dataTransfer?.items ?? [])
-			.filter(item => item.kind === 'file')
-			.map(item => item.getAsFile())
-			.filter(file => !!file) as Array<File>
-
-		const selection = this.multiple ? files : files[0]
-		await this.uploadSelection(selection as FileUploadSelection<TMultiple>)
 	}
 }
 

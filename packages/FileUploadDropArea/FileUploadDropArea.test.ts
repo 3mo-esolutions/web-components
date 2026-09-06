@@ -98,27 +98,54 @@ describe('FileUploadDropArea', () => {
 	describe('drag and drop', () => {
 		const single = createFixture()
 		const multiple = createFixture({ multiple: true })
+		const filtered = createFixture({ accept: '.csv' })
 
-		it('should set the "drag" attribute on dragover and remove it on dragleave', () => {
-			single.component.dispatchEvent(createDragEvent('dragover'))
-			expect(single.component.hasAttribute('drag')).toBeTrue()
+		it('should stamp the "dragover" attribute on dragenter and remove it on dragleave', () => {
+			single.component.dispatchEvent(createDragEvent('dragenter', createDataTransfer(createFile('a.txt'))))
+			expect(single.component.hasAttribute('dragover')).toBeTrue()
 
-			single.component.dispatchEvent(createDragEvent('dragleave'))
-			expect(single.component.hasAttribute('drag')).toBeFalse()
+			single.component.dispatchEvent(createDragEvent('dragleave', createDataTransfer(createFile('a.txt'))))
+			expect(single.component.hasAttribute('dragover')).toBeFalse()
 		})
 
-		it('should remove the "drag" attribute on drop', async () => {
-			single.component.dispatchEvent(createDragEvent('dragover'))
-			expect(single.component.hasAttribute('drag')).toBeTrue()
+		it('should keep the "dragover" attribute while the pointer crosses slotted children', () => {
+			const dataTransfer = createDataTransfer(createFile('a.txt'))
+			const child = single.component.appendChild(document.createElement('span'))
+
+			single.component.dispatchEvent(createDragEvent('dragenter', dataTransfer))
+			child.dispatchEvent(createDragEvent('dragenter', dataTransfer))
+			single.component.dispatchEvent(createDragEvent('dragleave', dataTransfer))
+
+			expect(single.component.hasAttribute('dragover')).toBeTrue()
+
+			child.dispatchEvent(createDragEvent('dragleave', dataTransfer))
+
+			expect(single.component.hasAttribute('dragover')).toBeFalse()
+			child.remove()
+		})
+
+		it('should ignore a drag that carries no files', () => {
+			const dragover = createDragEvent('dragover', createDataTransfer('some text'))
+
+			single.component.dispatchEvent(createDragEvent('dragenter', createDataTransfer('some text')))
+			single.component.dispatchEvent(dragover)
+
+			expect(single.component.hasAttribute('dragover')).toBeFalse()
+			expect(dragover.defaultPrevented).toBeFalse()
+		})
+
+		it('should remove the "dragover" attribute on drop', async () => {
+			single.component.dispatchEvent(createDragEvent('dragenter', createDataTransfer(createFile('a.txt'))))
+			expect(single.component.hasAttribute('dragover')).toBeTrue()
 
 			single.component.dispatchEvent(createDragEvent('drop', createDataTransfer(createFile('a.txt'))))
 			await settle()
 
-			expect(single.component.hasAttribute('drag')).toBeFalse()
+			expect(single.component.hasAttribute('dragover')).toBeFalse()
 		})
 
 		it('should prevent the browser\'s default open-file behavior on dragover and drop', async () => {
-			const dragover = createDragEvent('dragover')
+			const dragover = createDragEvent('dragover', createDataTransfer(createFile('a.txt')))
 			single.component.dispatchEvent(dragover)
 			expect(dragover.defaultPrevented).toBeTrue()
 
@@ -150,6 +177,13 @@ describe('FileUploadDropArea', () => {
 			await settle()
 
 			expect((multiple.selection as Array<File>).map(file => file.name)).toEqual(['a.txt'])
+		})
+
+		it('should not upload a dropped file that accept rejects', async () => {
+			filtered.component.dispatchEvent(createDragEvent('drop', createDataTransfer(createFile('a.txt'))))
+			await settle()
+
+			expect(filtered.upload).not.toHaveBeenCalled()
 		})
 	})
 })

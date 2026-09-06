@@ -21,7 +21,7 @@ export const FileUploadDropArea: StoryObj = {
 				transition: 250ms;
 			}
 
-			mo-file-upload-drop-area[drag] * {
+			mo-file-upload-drop-area[dragover] * {
 				color: var(--mo-color-accent) !important;
 			}
 
@@ -50,7 +50,7 @@ export const Multiple: StoryObj = {
 				transition: 250ms;
 			}
 
-			mo-file-upload-drop-area[drag] * {
+			mo-file-upload-drop-area[dragover] * {
 				color: var(--mo-color-accent) !important;
 			}
 
