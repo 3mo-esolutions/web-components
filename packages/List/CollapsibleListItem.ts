@@ -113,19 +113,21 @@ export class CollapsibleListItem extends Component {
 		`
 	}
 
-	@eventListener({ target: window, type: 'keydown' })
-	handleItemKeyDown(event: KeyboardEvent) {
-		if (!this[listItem]?.hasAttribute('focused')) {
+	/** The list re-dispatches its keys to every item; only the summary's own, while it holds the cursor, are of interest. */
+	@eventListener('listKeyDown')
+	protected handleListKeyDown(event: CustomEvent<KeyboardEvent>) {
+		const summary = this[listItem]
+		if (event.target !== summary || !summary?.hasAttribute('focused')) {
 			return
 		}
 
-		if (event.key === 'ArrowRight') {
-			event.stopPropagation()
+		if (event.detail.key === 'ArrowRight') {
+			event.detail.preventDefault()
 			this.open = true
 		}
 
-		if (event.key === 'ArrowLeft') {
-			event.stopPropagation()
+		if (event.detail.key === 'ArrowLeft') {
+			event.detail.preventDefault()
 			this.open = false
 		}
 	}

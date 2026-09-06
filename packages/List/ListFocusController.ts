@@ -1,5 +1,6 @@
 import { EventListenerController, Controller, type ReactiveControllerHost, type ReactiveElement } from '@a11d/lit'
 import { FocusController } from '@3mo/focus-controller'
+import { NavigabilityController } from '@3mo/navigability'
 import { listItem } from './extensions.js'
 
 export interface VirtualizedListItem {
@@ -24,12 +25,25 @@ export interface ListElement extends HTMLElement {
 	readonly defaultFocusedItemIndex?: number
 }
 
+type ListFocusHost = ReactiveControllerHost & ReactiveElement & ListElement
+
 export class ListFocusController extends Controller {
 	private static forceFocusedListsQueue = new Set<ListFocusController>()
 
-	constructor(protected override readonly host: ReactiveControllerHost & ReactiveElement & ListElement) {
+	constructor(protected override readonly host: ListFocusHost) {
 		super(host)
 	}
+
+	readonly navigability = new NavigabilityController<number, ListFocusHost>(this.host, host => ({
+		get items() { return Array.from({ length: host.itemsLength ?? host.items.length }, (_, index) => index) },
+		isNavigable: index => this.isFocusable(this.getItem(index)),
+		getElement: index => this.getItem(index),
+		keyboardTarget: null,
+		focus: 'activedescendant',
+		stamping: false,
+		wrap: true,
+		handleChange: () => this.updateFocus(),
+	}))
 
 	private get items() { return this.host.items }
 
@@ -49,16 +63,13 @@ export class ListFocusController extends Controller {
 		this.focusedItemIndex = this.getRenderedItemIndex(item)
 	}
 
-	private _focusedItemIndex?: number
-	get focusedItemIndex() { return this._focusedItemIndex }
+	get focusedItemIndex() { return this.navigability.index }
 	set focusedItemIndex(value) {
-		if (value !== undefined) {
-			// An empty list has no index to land on — without this the modulo yields NaN, which no
-			// item ever matches and which no later traversal can recover from.
-			value = this.itemsLength === 0 ? undefined : value % this.itemsLength
+		if (value === undefined || this.itemsLength === 0) {
+			this.navigability.clear()
+		} else {
+			this.navigability.goTo(value % this.itemsLength)
 		}
-
-		this._focusedItemIndex = value
 		this.updateFocus()
 	}
 
@@ -66,26 +77,28 @@ export class ListFocusController extends Controller {
 	private get focused() { return this._focused }
 	private set focused(value) {
 		this._focused = value
+		if (value && this.focusedItemIndex !== undefined) {
+			this.getItem(this.focusedItemIndex)?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
+		}
 		this.updateFocus()
 	}
 
 	private updateFocus() {
-		if (this.focused && this.focusedItemIndex !== undefined) {
-			const item = this.getItem(this.focusedItemIndex)
-			item?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
-		}
-
+		const index = this.focusedItemIndex
 		for (const item of this.items) {
 			item.toggleAttribute('focused',
 				this.focused
-				&& this.focusedItemIndex !== undefined
-				&& this.getRenderedItemIndex(item) === this.focusedItemIndex
+				&& index !== undefined
+				&& this.getRenderedItemIndex(item) === index
 				&& this.isFocusable(item)
 			)
 		}
 	}
 
-	private isFocusable(item: ListItem | VirtualizedListItem) {
+	private isFocusable(item: ListItem | VirtualizedListItem | undefined) {
+		if (!item) {
+			return false
+		}
 		const isVirtualizedListItem = item instanceof Element === false && 'scrollIntoView' in item
 		return isVirtualizedListItem || (
 			item instanceof Element
@@ -132,41 +145,6 @@ export class ListFocusController extends Controller {
 		ListFocusController.forceFocusedListsQueue.delete(this)
 	}
 
-	private focusFirstItem() {
-		this.focusTraversal(0, 'forward')
-	}
-
-	private focusLastItem() {
-		this.focusTraversal(this.itemsLength - 1, 'backward')
-	}
-
-	private focusNextItem() {
-		this.focusTraversal((this.focusedItemIndex ?? -1) + 1, 'forward')
-	}
-
-	private focusPreviousItem() {
-		this.focusTraversal((this.focusedItemIndex ?? 0) - 1, 'backward')
-	}
-
-	private focusTraversal(index: number, direction: 'forward' | 'backward') {
-		let breakSafe = 0
-		while (true) {
-			if (breakSafe >= this.itemsLength) {
-				break
-			}
-			index %= this.itemsLength
-
-			const item = this.getItem(index)
-			if (item && this.isFocusable(item)) {
-				this.focusedItemIndex = index
-				break
-			}
-			index = direction === 'forward' ? index + 1 : index - 1
-			index = index < 0 ? this.itemsLength - 1 : index
-			breakSafe++
-		}
-	}
-
 	private _keyboardFocus = false
 	get keyboardFocus() { return this._keyboardFocus }
 	set keyboardFocus(value) {
@@ -183,7 +161,7 @@ export class ListFocusController extends Controller {
 				if (focused) {
 					this.handleFocusIn()
 					if (this.keyboardFocus && this.focusedItemIndex === undefined) {
-						this.focusFirstItem()
+						this.navigability.goFirst({ method: 'keyboard' })
 					}
 				} else {
 					this.handleFocusOut()
@@ -202,7 +180,7 @@ export class ListFocusController extends Controller {
 		type: 'pointerdown',
 		listener: (event: PointerEvent) => {
 			const item = event.composedPath().find(item => !!(item as Element)[listItem])
-			this.focusedItemIndex = this.getRenderedItemIndex(item as ListItem)
+			this.focusedItemIndex = item ? this.getRenderedItemIndex(item as HTMLElement) : undefined
 		}
 	})
 
@@ -214,39 +192,8 @@ export class ListFocusController extends Controller {
 				return
 			}
 
-			let prevent = false
-
-			switch (event.key) {
-				case 'Down':
-				case 'ArrowDown':
-					this.keyboardFocus = true
-					this.focusNextItem()
-					prevent = true
-					break
-				case 'Up':
-				case 'ArrowUp':
-					this.keyboardFocus = true
-					this.focusPreviousItem()
-					prevent = true
-					break
-				case 'Home':
-				case 'PageUp':
-					this.keyboardFocus = true
-					this.focusFirstItem()
-					prevent = true
-					break
-				case 'End':
-				case 'PageDown':
-					this.keyboardFocus = true
-					this.focusLastItem()
-					prevent = true
-					break
-				default:
-					break
-			}
-
-			if (prevent) {
-				event.preventDefault()
+			if (this.navigability.handleKeyDown(event)) {
+				this.keyboardFocus = true
 				event.stopPropagation()
 			}
 

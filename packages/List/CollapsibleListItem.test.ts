@@ -89,7 +89,12 @@ describe('CollapsibleListItem', () => {
 
 		const summaryItem = () => fixture.component.querySelector('mo-list-item:not([slot])')!
 
-		const keyDown = (key: string) => window.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true }))
+		// What the list dispatches to its items for every key it sees.
+		const keyDown = (key: string) => summaryItem().dispatchEvent(new CustomEvent('listKeyDown', {
+			detail: new KeyboardEvent('keydown', { key, cancelable: true }),
+			bubbles: true,
+			composed: true,
+		}))
 
 		it('should open on ArrowRight and close on ArrowLeft while its item is focused', async () => {
 			summaryItem().toggleAttribute('focused', true)
