@@ -16,6 +16,7 @@ export interface INavigation {
 	getItemContentTemplate(open: boolean): HTMLTemplateResult
 	getMenuItemTemplate(options?: NavigationTemplateOptions): HTMLTemplateResult
 	getListItemTemplate(options?: NavigationTemplateOptions): HTMLTemplateResult
+	getTreeItemTemplate(options?: NavigationTemplateOptions): HTMLTemplateResult
 }
 
 type NavigationOptions = {
@@ -67,6 +68,15 @@ export class NavigationLink implements INavigation {
 				${options?.iconHidden ? html.nothing : this.iconTemplate}
 				${this.label}
 			</mo-navigation-list-item>
+		`
+	}
+
+	getTreeItemTemplate(options?: NavigationTemplateOptions) {
+		return this.hidden ? html.nothing : html`
+			<mo-navigation-tree-item ${this.routerLink(options?.navigationInvocationHandler)}
+				icon=${ifDefined(options?.iconHidden ? undefined : this.icon)}
+				?data-separator=${!!this.hasSeparator}
+			>${this.label}</mo-navigation-tree-item>
 		`
 	}
 
@@ -131,6 +141,15 @@ export class NavigationGroup implements INavigation {
 				</mo-list-item>
 				${this.children?.map(child => child.getListItemTemplate({ ...options, slot: 'details', iconHidden: true }))}
 			</mo-collapsible-list-item>
+		`
+	}
+
+	getTreeItemTemplate(options?: NavigationTemplateOptions) {
+		return this.hidden ? html.nothing : html`
+			<mo-navigation-tree-item
+				icon=${ifDefined(options?.iconHidden ? undefined : this.icon)}
+				?data-separator=${!!this.hasSeparator}
+			>${this.label}${this.children.map(child => child.getTreeItemTemplate({ ...options, iconHidden: true }))}</mo-navigation-tree-item>
 		`
 	}
 }

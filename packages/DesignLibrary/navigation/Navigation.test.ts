@@ -6,8 +6,9 @@ import '@3mo/icon-button'
 import '@3mo/flex'
 import '../ApplicationLogo.js'
 import './NavigationItem.js'
+import type { Tree } from '@3mo/tree'
 import { Navigation } from './Navigation.js'
-import { NavigationLink } from './INavigation.js'
+import { NavigationLink, type INavigation } from './INavigation.js'
 
 const settle = async (component: Navigation) => {
 	for (let i = 0; i < 5; i++) {
@@ -177,8 +178,8 @@ describe('Navigation', () => {
 		})
 
 		const drawer = () => fixture.component.renderRoot.querySelector('mo-drawer')!
-		const list = () => fixture.component.renderRoot.querySelector<HTMLElement>('mo-drawer mo-list')!
-		const listItems = () => fixture.component.renderRoot.querySelectorAll<HTMLElement>('mo-drawer mo-navigation-list-item')
+		const list = () => fixture.component.renderRoot.querySelector<Tree>('mo-drawer mo-tree')!
+		const listItems = () => list().querySelectorAll<HTMLElement>('mo-navigation-tree-item')
 
 		it('should open when the menu button is clicked', async () => {
 			fixture.component.menuButton!.click()
@@ -189,11 +190,14 @@ describe('Navigation', () => {
 			expect(drawer().open).toBeTrue()
 		})
 
-		it('should render a list item for each navigation', () => {
+		it('should render a tree item for each navigation', async () => {
+			await list().updateComplete
+
 			expect(listItems().length).toBe(2)
+			expect([...listItems()].map(item => item.getAttribute('role'))).toEqual(['treeitem', 'treeitem'])
 		})
 
-		it('should move focus to the navigation list when opened', async () => {
+		it('should move focus to the navigation tree when opened', async () => {
 			const focusSpy = spyOn(list(), 'focus')
 
 			fixture.component.drawerOpen = true
@@ -216,6 +220,7 @@ describe('Navigation', () => {
 		it('should close when a navigation is invoked', async () => {
 			fixture.component.drawerOpen = true
 			await fixture.updateComplete
+			await list().updateComplete
 
 			listItems()[0]!.click()
 			await fixture.updateComplete

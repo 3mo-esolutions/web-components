@@ -1,7 +1,9 @@
 import { Component, bind, component, css, eventListener, html, property, type PropertyValues, query, queryAll, repeat, style } from '@a11d/lit'
 import { Key } from '@a11d/lit-application'
 import { OverflowController } from '@3mo/overflow-controller'
-import type { INavigation } from './INavigation.js'
+import { TreeItem, type Tree } from '@3mo/tree'
+import { type INavigation } from './INavigation.js'
+import './NavigationTreeItem.js'
 
 /**
  * @attr navigations - The navigations to display in the navigation-bar and the drawer.
@@ -26,7 +28,7 @@ export class Navigation extends Component {
 	}) drawerOpen = false
 	@property({ type: Boolean, reflect: true }) mobileNavigation = false
 
-	@query('mo-drawer mo-list') private readonly drawerNavigationList?: HTMLElement
+	@query('mo-drawer mo-tree') private readonly drawerNavigationList?: Tree
 	@query('#navbar-navigations') private readonly navigationsContainer?: HTMLElement
 	@queryAll('#navbar-navigations mo-navigation-item') readonly navigationItems!: Array<HTMLElement>
 	@query('mo-icon-button[icon=menu]') readonly menuButton?: HTMLElement
@@ -104,14 +106,13 @@ export class Navigation extends Component {
 				text-overflow: ellipsis;
 			}
 
-			mo-collapsible-list-item:has(mo-navigation-list-item[slot=details][data-router-selected])::part(summary) {
-				color: color-mix(in srgb, var(--mo-color-accent), var(--mo-color-foreground) 25%);
+			mo-tree {
+				padding-block: 8px;
 			}
 
-			mo-navigation-list-item[slot=details], mo-collapsible-list-item[slot=details] > mo-list-item {
-				padding-inline-start: 56px;
-				height: 40px;
-				font-size: 0.875rem;
+			/* The section a page sits in reads as current too, which is what a group of rows is for. */
+			mo-navigation-tree-item:has([data-router-selected])::part(row) {
+				color: var(--mo-color-accent);
 			}
 		`
 	}
@@ -150,12 +151,19 @@ export class Navigation extends Component {
 					<mo-flex direction='horizontal' alignItems='center' style='padding: 24px'>
 						<slot name='drawer-heading'>${manifest?.short_name}</slot>
 					</mo-flex>
-					<mo-list ${style({ flex: '1' })}>
-						${this.navigations.map(navigation => navigation.getListItemTemplate({ navigationInvocationHandler: () => this.drawerOpen = false }))}
-					</mo-list>
+					<mo-tree ${style({ flex: '1' })} @navigationSelected=${this.handleNavigationSelected}>
+						${repeat(this.navigations, n => n, navigation => navigation.getTreeItemTemplate({ navigationInvocationHandler: () => this.drawerOpen = false }))}
+					</mo-tree>
 				</mo-flex>
 			</mo-drawer>
 		`
+	}
+
+	/** The router marked a row as the current page: its ancestors open so that it can be seen. */
+	private readonly handleNavigationSelected = (event: Event) => {
+		if (event.target instanceof TreeItem) {
+			(event.currentTarget as Tree).reveal(event.target)
+		}
 	}
 }
 
