@@ -1,5 +1,5 @@
 import { component, event, eventListener, property, queryAsync } from '@a11d/lit'
-import { Selectability, SelectabilityController, SelectabilityInteraction, SelectabilityStamping } from '@3mo/selectability'
+import { Selectability, SelectabilityController, SelectabilityInteraction } from '@3mo/selectability'
 import { List } from './List.js'
 
 export class SelectionListItemChangeEvent<T> extends CustomEvent<T> {
@@ -47,7 +47,7 @@ export class SelectableList extends List {
 				component.change.dispatch(component.value)
 			},
 			interaction: SelectabilityInteraction.Manual,
-			stamping: SelectabilityStamping.None,
+			stamping: false,
 		})
 	}
 

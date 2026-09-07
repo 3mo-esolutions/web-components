@@ -1,7 +1,7 @@
 import { component, Component, css, html, ifDefined } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { IndexabilityController } from '@3mo/indexability'
-import { Selectability, SelectabilityBehaviorOnItemsChange, SelectabilityController, type SelectabilityChange, type SelectabilityItemOptions, SelectabilityAllState, SelectabilityInteraction, SelectabilityStamping, SelectabilityStrategy } from './SelectabilityController.js'
+import { Selectability, SelectabilityBehaviorOnItemsChange, SelectabilityController, type SelectabilityChange, type SelectabilityItemOptions, SelectabilityAllState, SelectabilityInteraction, SelectabilityStrategy } from './SelectabilityController.js'
 
 type Person = { readonly id: number, readonly name: string }
 
@@ -41,7 +41,7 @@ class SelectabilityTest extends Component {
 				}
 			},
 			interaction: SelectabilityInteraction.Manual,
-			stamping: SelectabilityStamping.None,
+			stamping: false,
 		})
 	}
 
@@ -57,7 +57,7 @@ class SelectabilityListTest extends Component {
 	/** The window actually rendered — the rest of the universe exists without an element. */
 	rendered?: ReadonlyArray<Person>
 	strategy = SelectabilityStrategy.Replace
-	stamping = SelectabilityStamping.Full
+	stamping = true
 	interaction = SelectabilityInteraction.Auto
 	itemRole = 'option'
 	hostRole = 'listbox'
@@ -180,9 +180,6 @@ describe('SelectabilityController', () => {
 			expect(SelectabilityAllState.None).toBe('none')
 			expect(SelectabilityAllState.Some).toBe('some')
 			expect(SelectabilityAllState.All).toBe('all')
-			expect(SelectabilityStamping.Full).toBe('full')
-			expect(SelectabilityStamping.Data).toBe('data')
-			expect(SelectabilityStamping.None).toBe('none')
 		})
 	})
 
@@ -791,8 +788,7 @@ describe('SelectabilityController', () => {
 		const fixture = createList()
 		const checkboxFixture = createList({ itemRole: 'menuitemcheckbox', hostRole: 'menu' })
 		const rolelessFixture = createList({ itemRole: '' })
-		const dataFixture = createList({ stamping: SelectabilityStamping.Data })
-		const noneFixture = createList({ stamping: SelectabilityStamping.None })
+		const noneFixture = createList({ stamping: false })
 
 		it('marks every item, selected or not', () => {
 			click(fixture.component.itemElements[1]!)
@@ -828,18 +824,12 @@ describe('SelectabilityController', () => {
 			expect(fixture.component.hasAttribute('aria-multiselectable')).toBe(false)
 		})
 
-		it('leaves ARIA to the host when asked for the attribute alone', () => {
-			click(dataFixture.component.itemElements[1]!)
-			const item = dataFixture.component.itemElements[1]!
-			expect(item.dataset.selectability).toBe('selected')
-			expect(item.hasAttribute('aria-selected')).toBe(false)
-			expect(dataFixture.component.hasAttribute('aria-multiselectable')).toBe(false)
-		})
-
-		it('writes nothing at all when asked for none', () => {
+		it('writes nothing at all with stamping off', () => {
 			click(noneFixture.component.itemElements[1]!)
 			expect(noneFixture.component.selectedIds).toEqual([2])
 			expect(noneFixture.component.itemElements[1]!.dataset.selectability).toBeUndefined()
+			expect(noneFixture.component.itemElements[1]!.hasAttribute('aria-selected')).toBe(false)
+			expect(noneFixture.component.hasAttribute('aria-multiselectable')).toBe(false)
 		})
 
 		it('follows an element handed a different datum, as a virtualized window does', async () => {

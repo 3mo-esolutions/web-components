@@ -9,8 +9,8 @@ export enum Selectability {
 export enum SelectabilityBehaviorOnItemsChange {
 	/** Drops the selection entirely. */
 	Reset = 'reset',
-	/** Re-resolves the selection against the new items by key, so the same items stay selected
-	 * across a refetch that hands back equal-but-not-identical instances. */
+	/** Re-resolves the selection against the new items by key, so the same items stay selected across a
+	 * refetch that hands back equal-but-not-identical instances. */
 	Maintain = 'maintain',
 	/** Leaves the selection exactly as it is, items no longer present included. */
 	Prevent = 'prevent',
@@ -18,56 +18,36 @@ export enum SelectabilityBehaviorOnItemsChange {
 
 /** Who turns an event into a selection. */
 export enum SelectabilityInteraction {
-	/** The controller listens on the host and resolves an activation to the item it landed on through
-	 * the registry — see {@link SelectabilityStrategy} for what it then makes of it. */
+	/** The controller, resolving an activation through the registry — see {@link SelectabilityStrategy}. */
 	Auto = 'auto',
-	/** Every interaction is the host's to drive through {@link SelectabilityController.select}, which is
-	 * what a component with its own opinions about what a click means wants. Note the controller still
-	 * watches the host for modifier state, so shift-clicking a control that reports itself with a
-	 * plain event keeps working. */
+	/** The host, through {@link SelectabilityController.select}. Modifier state is still watched, so
+	 * shift-clicking a control that reports itself with a plain event keeps working. */
 	Manual = 'manual',
 }
 
 /**
- * What a PLAIN activation means, where the controller wires itself up ({@link
- * SelectabilityInteraction.Auto}) — the only thing that differs between the members. Modifiers are
- * read either way: ctrl/meta preserves the rest, shift extends from the anchor. And neither is
- * consulted in single selectability, where an activation can only mean "this one".
+ * What a PLAIN activation means under {@link SelectabilityInteraction.Auto}. Modifiers are read either
+ * way, and neither is consulted in single selectability.
  */
 export enum SelectabilityStrategy {
-	/** The desktop convention: the selection becomes this item alone. For lists whose items are rows
-	 * to be picked. */
+	/** The selection becomes this item alone. */
 	Replace = 'replace',
-	/** The item is added or removed, as though it carried a checkbox. For lists whose items ARE
-	 * checkboxes, and for multi-selects. */
+	/** The item is added or removed, as though it carried a checkbox. */
 	Toggle = 'toggle',
 }
 
-/** How much of the SELECTABLE items the selection covers — a tri-state select-all control reads this
- * rather than comparing counts, so unselectable items cannot make {@link All} unreachable. */
+/** How much of the SELECTABLE items the selection covers, so that unselectable ones cannot make
+ * {@link All} unreachable. */
 export enum SelectabilityAllState {
-	/** Not one of them is selected. */
 	None = 'none',
-	/** Some are, some are not — what a tri-state control shows as indeterminate. */
+	/** What a tri-state control shows as indeterminate. */
 	Some = 'some',
-	/** Every one of them is selected, and there is at least one. */
 	All = 'all',
 }
 
-/** What is written onto the registered item elements. */
-export enum SelectabilityStamping {
-	/** `data-selectability`, plus the ARIA state the item's role calls for, plus
-	 * `aria-multiselectable` on the host. The default: a selection nothing announces is a bug. */
-	Full = 'full',
-	/** The data attribute alone, for hosts that own their own ARIA. */
-	Data = 'data',
-	/** Nothing, for hosts that reflect selection themselves. */
-	None = 'none',
-}
-
 export interface SelectabilityItemOptions<T> extends IndexabilityItemOptions<T> {
-	/** Required here, unlike the registry at large: an item that cannot say WHAT it renders cannot
-	 * take part in a selection. */
+	/** Required here, unlike the registry at large: an item that cannot say WHAT it renders cannot take
+	 * part in a selection. */
 	readonly data: T
 }
 
@@ -77,21 +57,16 @@ export type SelectabilityAnchor<T> = {
 }
 
 export type SelectabilitySelectOptions = {
-	/** The state to put the item in. Left out, a preserving select toggles and anything else selects —
-	 * and a range follows its anchor regardless. */
+	/** Left out, a preserving select toggles and anything else selects; a range follows its anchor. */
 	readonly selected?: boolean
 	/** Keep the rest of the selection: a checkbox, or a ctrl/meta activation. Multiple only. */
 	readonly preserve?: boolean
 	/** Apply to the whole run between the anchor and this item. Multiple only. */
 	readonly range?: boolean
-	/** The interaction's real event, from which `shiftKey` implies `range` and `ctrlKey`/`metaKey`
-	 * imply `preserve`. Explicit flags win over it.
-	 *
-	 * Pass the event that CARRIES the modifiers, which is not always the one at hand: a control's
-	 * `change` is a plain CustomEvent, and the synthetic click that Enter/Space activation
-	 * synthesises has no modifier state at all. Passing either is still right — the controller then
-	 * falls back on the modifiers of the last real input to reach the host, which is exactly what
-	 * shift-clicking a checkbox depends on. */
+	/** The interaction's real event, from which `shiftKey` implies `range` and `ctrlKey`/`metaKey` imply
+	 * `preserve`; explicit flags win. Pass the event that CARRIES the modifiers where there is one — a
+	 * control's `change` and a synthesised click have none, and the controller then falls back on the
+	 * last real input to reach the host, which is what shift-clicking a checkbox depends on. */
 	readonly event?: Event
 }
 
@@ -110,54 +85,39 @@ const noModifiers: SelectabilityModifiers = { shift: false, ctrl: false, meta: f
  *
  * ```ts
  * readonly selectability = new SelectabilityController<Person>(this, {
- *   selectability: Selectability.Multiple,          // settled once — a plain value
- *   get items() { return component.people },        // changes — read on every access
+ *   selectability: Selectability.Multiple,
+ *   get items() { return component.people },
  *   handleChange: ({ selection }) => this.selectionChange.dispatch([...selection]),
  * })
  * ```
  *
- * Every option is read LAZILY, so a value that varies with the host is passed as a getter and one
- * that never varies is passed as itself. A getter needs the host captured (`component` above): its
- * `this` is the options object, not the component — which is also why the callbacks are arrows.
+ * Every option is read lazily, so a value that varies with the host is passed as a getter — whose
+ * `this` is the options object, which is also why the callbacks are arrows.
  *
- * The controller stores no selection of its own unless asked to. Where the host already has a
- * reactive property for it — and a grid or a field always does — it passes that property as
- * `selection` and commits the controller's answer in `handleChange`, so the selection lives in
- * exactly ONE place. That is not a stylistic preference: a controller that mirrored the host's
- * property would have to fence the two writes against each other, which is how selection code grows
- * timers that "break the loop".
+ * The controller stores no selection of its own unless asked to: a host with a reactive property for it
+ * passes that as `selection` and commits the answer in `handleChange`, so the selection lives in exactly
+ * one place and neither side has to fence the other's writes.
  *
- * Identity is a `key`, not a reference. Everything — membership, ranges, de-duplication, and
- * re-resolving a selection onto refetched data — compares by it, so a selection survives its items
- * being replaced by equal ones, and `maintain` needs no special machinery.
- *
- * Selection is NOT tied to what is rendered. `items` is the owner's full, ordered universe — every
- * page of it, sorted as the owner sorts — so a range spans items that were never rendered, and a
- * selected item that scrolled out of a virtualized window stays selected. The registry
- * ({@link IndexabilityController}) covers the other half: resolving an event to the item it landed
- * on, and stamping state onto the elements that happen to exist.
- *
- * What it deliberately does NOT do: draw anything (no checkboxes, no columns, no counters), manage
- * focus (that is the list's roving-focus concern, which it composes with rather than replaces), or
- * decide when a menu closes.
+ * Identity is a `key`, not a reference, so a selection survives its items being replaced by equal ones.
+ * And it is not tied to what is rendered: `items` is the owner's full ordered universe, so a range spans
+ * items that were never rendered. The registry ({@link IndexabilityController}) covers the other half —
+ * resolving an event to the item it landed on, and stamping state onto the elements that exist.
  */
 export class SelectabilityController<T, TItemOptions extends SelectabilityItemOptions<T> = SelectabilityItemOptions<T>> extends Controller implements EventListenerObject {
 	private static readonly selectedRoles = ['option', 'row', 'treeitem', 'gridcell', 'tab', 'columnheader', 'rowheader']
 	private static readonly checkedRoles = ['menuitemcheckbox', 'menuitemradio', 'checkbox', 'radio', 'switch']
 	private static readonly multiselectableRoles = ['listbox', 'grid', 'treegrid', 'tree', 'tablist']
 
-	/** The item registry — the rendered half of the story, adopted or its own.
-	 * See {@link IndexabilityController}. */
 	readonly indexability: IndexabilityController<T, TItemOptions>
 
 	constructor(override readonly host: ReactiveElement, readonly options: {
-		/** `undefined` turns selection off: every operation becomes a no-op, and the selection is
-		 * dropped as it goes off. Read lazily, so hosts pass a getter onto their own property. */
+		/** `undefined` turns selection off: every operation becomes a no-op, and the selection is dropped
+		 * as it goes off. */
 		selectability?: Selectability
-		/** The owner's FULL ordered universe — not merely what is rendered. Defaults to the registry's
+		/** The owner's FULL ordered universe, not merely what is rendered. Defaults to the registry's
 		 * data, which is right for a list that renders all of itself and wrong for anything paged. */
 		items?: ReadonlyArray<T>
-		/** Identity. Defaults to the item itself, i.e. reference identity. */
+		/** Identity. Defaults to reference identity. */
 		key?: (item: T) => unknown
 		isSelectable?: (item: T) => boolean
 		/** The host's own selection property. Given, the host owns the state and must commit the
@@ -167,18 +127,19 @@ export class SelectabilityController<T, TItemOptions extends SelectabilityItemOp
 		handleChange?: (change: SelectabilityChange<T>) => void
 		/** What {@link handleItemsChange} does by default. Defaults to `reset`. */
 		behaviorOnItemsChange?: SelectabilityBehaviorOnItemsChange
-		/** Who turns an event into a selection. Defaults to {@link SelectabilityInteraction.Auto}. */
+		/** Defaults to {@link SelectabilityInteraction.Auto}. */
 		interaction?: SelectabilityInteraction
-		/** What a plain activation means, where the controller wires itself up. Defaults to `replace`. */
+		/** Defaults to `replace`. */
 		strategy?: SelectabilityStrategy
-		/** Defaults to `full` — see {@link SelectabilityStamping}. */
-		stamping?: SelectabilityStamping
-		/** Which ARIA state full stamping writes. Defaults to what the item's role calls for; a tree of
-		 * checkboxes says `checked` on its `treeitem`s, which the role alone would not. */
+		/** Whether `data-selectability`, the ARIA state the item's role calls for and the host's
+		 * `aria-multiselectable` are written onto the elements. Defaults to `true` — a selection nothing
+		 * announces is a bug; off, for a host that reflects the selection itself. */
+		stamping?: boolean
+		/** Which ARIA state to write. Defaults to what the item's role calls for; a tree of checkboxes
+		 * says `checked` on its `treeitem`s, which the role alone would not. */
 		ariaState?: 'selected' | 'checked'
-		/** A shared registry to adopt — the owner declares the item directive once per element and
-		 * every controller reading the registry acts on it. Absent, the controller creates its own.
-		 * Read once, and expected to live on this controller's own host. */
+		/** A shared registry to adopt, so that an item declares itself once however many controllers
+		 * read it. Read once, and expected to live on this controller's own host. */
 		indexability?: IndexabilityController<T, TItemOptions>
 	} = {}) {
 		super(host)
@@ -220,7 +181,7 @@ export class SelectabilityController<T, TItemOptions extends SelectabilityItemOp
 		if (selectability !== this.lastSelectability) {
 			this.lastSelectability = selectability
 			if (!selectability) {
-				// Selection went off: a selection nothing can act on is a trap, so it goes with it.
+				// A selection nothing can act on is a trap, so it goes off with the selectability.
 				this.internalAnchor = undefined
 				this.commit([])
 				return
@@ -268,10 +229,10 @@ export class SelectabilityController<T, TItemOptions extends SelectabilityItemOp
 
 	private get interaction() { return this.options.interaction ?? SelectabilityInteraction.Auto }
 	private get strategy() { return this.options.strategy ?? SelectabilityStrategy.Replace }
-	private get stamping() { return this.options.stamping ?? SelectabilityStamping.Full }
+	private get stamping() { return this.options.stamping ?? true }
 	private get behaviorOnItemsChange() { return this.options.behaviorOnItemsChange ?? SelectabilityBehaviorOnItemsChange.Reset }
 
-	/** Registers an item: `<li ${controller.item({ index, data })}>`. See {@link IndexabilityController.item}. */
+	/** Registers an item: `<li ${controller.item({ index, data })}>`. */
 	get item(): (options: TItemOptions) => DirectiveResult { return this.indexability.item }
 
 	get selectability() { return this.options.selectability }
@@ -286,21 +247,17 @@ export class SelectabilityController<T, TItemOptions extends SelectabilityItemOp
 	get selectableItems(): ReadonlyArray<T> { return this.items.filter(item => this.isSelectable(item)) }
 
 	get selection(): ReadonlyArray<T> { return this.options.selection ?? this.internalSelection }
-	/** Replaces the selection outright — the assignment counterpart to {@link select}, which
-	 * interprets a gesture instead. This is not a back door: the assignment runs through the same
-	 * constraints and change notification as everything else, and only the gesture layer (anchor,
-	 * modifiers) is not involved. What is read back is therefore not necessarily what was assigned:
-	 * unselectable items are dropped, keys de-duplicated, and single selectability capped to one.
-	 * A no-op while selection is off. */
+	/** Replaces the selection outright — the assignment counterpart to {@link select}. It runs through
+	 * the same constraints, so what is read back is not necessarily what was assigned: unselectable items
+	 * are dropped, keys de-duplicated, and single selectability capped to one. */
 	set selection(items: ReadonlyArray<T>) {
 		if (this.enabled) {
 			this.commit(items)
 		}
 	}
 
-	/** Where a range extends FROM, and in which direction: an anchor left deselected makes the next
-	 * range subtract. Set by every {@link select}; dropped by the bulk operations and the assignment,
-	 * which have no "last item". */
+	/** Where a range extends FROM, and in which direction: an anchor left deselected makes the next range
+	 * subtract. Set by every {@link select}; dropped by the bulk operations and the assignment. */
 	get anchor() { return this.internalAnchor }
 
 	get allState(): SelectabilityAllState {
@@ -318,7 +275,6 @@ export class SelectabilityController<T, TItemOptions extends SelectabilityItemOp
 
 	isSelected(item: T) { return this.selectedKeys.has(this.keyOf(item)) }
 
-	/** Keyed off the selection's identity, so an array assigned from outside invalidates it. */
 	private get selectedKeys(): ReadonlySet<unknown> {
 		const selection = this.selection
 		if (this.keyCache?.selection !== selection) {
@@ -328,20 +284,16 @@ export class SelectabilityController<T, TItemOptions extends SelectabilityItemOp
 	}
 
 	/**
-	 * THE interaction. Everything a pointer or a key does to a selection comes through here, and the
-	 * flags say what the gesture MEANT rather than what should happen — the rules are this
-	 * controller's to keep, which is the whole point of there being one of it. Despite the name, the
-	 * OUTCOME follows the gesture: a preserving select with `selected: false` deselects, and a range
-	 * from a deselected anchor removes the run.
+	 * THE interaction: the flags say what the gesture MEANT, and the outcome follows from it.
 	 *
 	 * | gesture | multiple | single |
 	 * |---|---|---|
 	 * | plain | replaces the selection with this item | the same |
 	 * | preserving (a checkbox, ctrl/meta) | adds or removes, leaving the rest | degrades to plain |
-	 * | range (shift) | applies the anchor's state to the whole run between it and this item | degrades to plain |
+	 * | range (shift) | applies the anchor's state to the run between it and this item | degrades to plain |
 	 *
-	 * A range whose anchor no longer resolves degrades rather than guessing, and the run is taken over
-	 * the SELECTABLE items, so unselectable ones are stepped over rather than dragged in.
+	 * A range whose anchor no longer resolves degrades rather than guessing, and its run is taken over the
+	 * selectable items, so unselectable ones are stepped over rather than dragged in.
 	 */
 	select(item: T, options?: SelectabilitySelectOptions) {
 		if (!this.enabled || !this.isSelectable(item)) {
@@ -365,8 +317,24 @@ export class SelectabilityController<T, TItemOptions extends SelectabilityItemOp
 		this.commit(next)
 	}
 
-	/** The inclusive run between the anchor and `item`, in either direction — or nothing, when there
-	 * is no anchor or it has left the universe (a data change under a stale anchor). */
+	/**
+	 * A cursor moved onto an item, in a host that has one. With Shift held, the selection extends to it as
+	 * a range; otherwise nothing happens, which is what an unmodified arrow means. One line at the host is
+	 * the whole wiring, and this controller stays unaware of what moved the cursor:
+	 *
+	 * ```ts
+	 * handleChange: change => this.selectability.follow(change.item, change.event)
+	 * ```
+	 */
+	follow(item: T | undefined, event?: Event) {
+		const modifiers = (event ? SelectabilityController.modifiersOf(event) : undefined) ?? this.modifiers
+		if (item !== undefined && modifiers.shift) {
+			this.select(item, { range: true, event })
+		}
+	}
+
+	/** The inclusive run between the anchor and `item`, in either direction — or nothing, when there is no
+	 * anchor or it has left the universe. */
 	private runTo(item: T) {
 		const anchor = this.anchor
 		if (!anchor) {
@@ -424,8 +392,8 @@ export class SelectabilityController<T, TItemOptions extends SelectabilityItemOp
 		}
 	}
 
-	/** Re-resolves selection and anchor onto the new items by key, so both point at the instances
-	 * that now exist rather than at the ones that were replaced. */
+	/** Re-resolves selection and anchor onto the new items by key, so both point at the instances that
+	 * now exist rather than at the ones that were replaced. */
 	private maintain() {
 		const items = this.items
 		const resolve = (item: T) => {
@@ -441,12 +409,8 @@ export class SelectabilityController<T, TItemOptions extends SelectabilityItemOp
 		this.commit(items.filter(item => keys.has(this.keyOf(item))))
 	}
 
-	/**
-	 * The one place a candidate selection becomes the selection: unselectable items dropped, keys
-	 * de-duplicated, and single selectability capped to one. Every operation goes through it, so the
-	 * rules hold however the selection was arrived at — and so that giving items a notion of GROUP
-	 * (a list mixing checkboxes with radios) later means partitioning here, and nowhere else.
-	 */
+	/** The one place a candidate selection becomes the selection, so that the rules hold however it was
+	 * arrived at: unselectable items dropped, keys de-duplicated, single selectability capped to one. */
 	private constrain(items: ReadonlyArray<T>) {
 		const seen = new Set<unknown>()
 		const constrained = new Array<T>()
@@ -463,9 +427,9 @@ export class SelectabilityController<T, TItemOptions extends SelectabilityItemOp
 	private commit(next: ReadonlyArray<T>) {
 		const selection = this.constrain(next)
 		const previous = this.selection
-		// Compared by IDENTITY rather than by key: `maintain` re-resolves the same keys onto the
-		// instances that now exist, and a selection still pointing at the replaced ones is stale even
-		// though nothing joined or left it.
+		// Compared by IDENTITY rather than by key: `maintain` re-resolves the same keys onto the instances
+		// that now exist, and a selection still pointing at the replaced ones is stale even though nothing
+		// joined or left it.
 		if (selection.length === previous.length && selection.every((item, index) => item === previous[index])) {
 			return
 		}
@@ -480,7 +444,7 @@ export class SelectabilityController<T, TItemOptions extends SelectabilityItemOp
 	}
 
 	private stamp() {
-		if (this.stamping !== SelectabilityStamping.None) {
+		if (this.stamping) {
 			const keys = this.selectedKeys
 			for (const item of this.indexability.items) {
 				this.stampItem(item, keys)
@@ -490,28 +454,26 @@ export class SelectabilityController<T, TItemOptions extends SelectabilityItemOp
 	}
 
 	private stampItem({ element, options }: IndexabilityItem<T, TItemOptions>, keys: ReadonlySet<unknown>) {
-		if (this.stamping === SelectabilityStamping.None) {
+		if (!this.stamping) {
 			return
 		}
 		const selected = keys.has(this.keyOf(options.data))
 		element.dataset.selectability = selected ? 'selected' : 'unselected'
-		if (this.stamping === SelectabilityStamping.Full) {
-			const role = element.role ?? element.getAttribute('role') ?? ''
-			// A role that has no selected state gets no attribute: an aria-selected the role does not
-			// allow is read as a broken control rather than an unselected one.
-			const attribute = this.options.ariaState ? `aria-${this.options.ariaState}`
-				: SelectabilityController.selectedRoles.includes(role) ? 'aria-selected'
-					: SelectabilityController.checkedRoles.includes(role) ? 'aria-checked'
-						: undefined
-			if (attribute) {
-				element.setAttribute(attribute, String(selected))
-			}
+		const role = element.role ?? element.getAttribute('role') ?? ''
+		// A role that has no selected state gets no attribute: an aria-selected the role does not allow is
+		// read as a broken control rather than an unselected one.
+		const attribute = this.options.ariaState ? `aria-${this.options.ariaState}`
+			: SelectabilityController.selectedRoles.includes(role) ? 'aria-selected'
+				: SelectabilityController.checkedRoles.includes(role) ? 'aria-checked'
+					: undefined
+		if (attribute) {
+			element.setAttribute(attribute, String(selected))
 		}
 	}
 
 	private stampHost() {
 		const role = this.host.role ?? this.host.getAttribute('role') ?? ''
-		if (this.stamping === SelectabilityStamping.Full && SelectabilityController.multiselectableRoles.includes(role)) {
+		if (SelectabilityController.multiselectableRoles.includes(role)) {
 			this.host.toggleAttribute('aria-multiselectable', this.multiple)
 		}
 	}

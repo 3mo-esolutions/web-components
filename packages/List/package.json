@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/list",
-	"version": "0.10.1",
+	"version": "0.10.2",
 	"description": "Lists are continuous, vertical indexes of text and images.",
 	"repository": {
 		"type": "git",
@@ -23,7 +23,7 @@
 		"dist"
 	],
 	"dependencies": {
-		"@3mo/selectability": "x",
+		"@3mo/selectability": ">=0.3.0",
 		"@3mo/navigability": "x",
 		"@a11d/lit": "x",
 		"tslib": "x",

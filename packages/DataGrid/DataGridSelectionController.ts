@@ -1,4 +1,4 @@
-import { type Selectability, SelectabilityBehaviorOnItemsChange, SelectabilityController, SelectabilityInteraction, SelectabilityStamping } from '@3mo/selectability'
+import { type Selectability, SelectabilityBehaviorOnItemsChange, SelectabilityController, SelectabilityInteraction } from '@3mo/selectability'
 import type { ReactiveElement } from '@a11d/lit'
 import type { DataRecord } from './DataRecord.js'
 
@@ -34,7 +34,7 @@ export class DataGridSelectionController<TData> extends SelectabilityController<
 	constructor(override readonly host: SelectableComponent<TData>) {
 		super(host, {
 			interaction: SelectabilityInteraction.Manual,
-			stamping: SelectabilityStamping.None,
+			stamping: false,
 			get selectability() { return host.selectability },
 			get items() { return host.dataRecords.map(record => record.data) },
 			get selection() { return host.selectedData },
