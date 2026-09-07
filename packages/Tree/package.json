@@ -1,0 +1,42 @@
+{
+	"name": "@3mo/tree",
+	"version": "0.1.0",
+	"description": "A tree view: a hierarchy to browse, select from and act on, driven by data and built on the navigability, expandability and selectability controllers",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/3mo-esolutions/web-components"
+	},
+	"keywords": [
+		"lit",
+		"web-component",
+		"tree",
+		"tree-view",
+		"hierarchy",
+		"aria"
+	],
+	"author": "3MO GmbH",
+	"license": "MIT",
+	"homepage": "https://www.3mo.de",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"customElements": "dist/custom-elements.json",
+	"files": [
+		"dist"
+	],
+	"dependencies": {
+		"@a11d/lit": "x",
+		"@3mo/theme": "x",
+		"@3mo/icon": "x",
+		"@3mo/indexability": "x",
+		"@3mo/navigability": "x",
+		"@3mo/expandability": "x",
+		"@3mo/selectability": "x",
+		"@3mo/slot-controller": "x",
+		"@3mo/hierarchy": "x",
+		"tslib": "x"
+	},
+	"devDependencies": {
+		"@a11d/lit-testing": "x"
+	}
+}

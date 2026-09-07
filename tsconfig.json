@@ -385,6 +385,9 @@
 			"path": "./packages/Hierarchy"
 		},
 		{
+			"path": "./packages/Tree"
+		},
+		{
 			"path": "./packages/VirtualizedList"
 		},
 		{
