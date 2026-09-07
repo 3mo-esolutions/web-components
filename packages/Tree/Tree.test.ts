@@ -103,6 +103,17 @@ describe('Tree', () => {
 		expect(fixture.component.value).toEqual([])
 	})
 
+	it('should keep the openChange of its own rows inside itself, so that an ancestor binding an open state of its own is not toggled by them', async () => {
+		const heard = new Array<boolean>()
+		fixture.component.parentElement!.addEventListener('openChange', (event: Event) => heard.push((event as CustomEvent<boolean>).detail))
+
+		click(item('documents'), 'indicator')
+		await fixture.updateComplete
+
+		expect(item('documents').open).toBe(false)
+		expect(heard).toEqual([])
+	})
+
 	it('should follow an item opened by whoever else holds it', async () => {
 		item('taxes').open = true
 		await new Promise(resolve => setTimeout(resolve))

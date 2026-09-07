@@ -110,6 +110,10 @@ export class Tree extends Component {
 	@eventListener('openChange')
 	protected handleItemOpenChange(event: Event) {
 		if (event.target instanceof TreeItem && this.allItems.includes(event.target)) {
+			// A row of this tree opening is the tree's business and nobody else's, the way the platform
+			// keeps a `details` element's `toggle` to itself: an `openChange` allowed to travel on reaches
+			// every ancestor which two-way binds an `open` of its own, and closes it.
+			event.stopPropagation()
 			this.openItemsCache = undefined
 			this.requestUpdate()
 		}
