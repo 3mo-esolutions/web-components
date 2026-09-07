@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/indexability",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"description": "A controller that tracks a host's rendered items through a single element-part directive",
 	"repository": {
 		"type": "git",

@@ -131,7 +131,7 @@ describe('IndexabilityController', () => {
 
 			component.swapped = true
 			await cacheFixture.update()
-			expect(component.controller.items).toEqual([]) // put aside, and deregistered with it
+			expect(component.controller.items).toEqual([]) // put aside, and unregistered with it
 
 			component.swapped = false
 			await cacheFixture.update()

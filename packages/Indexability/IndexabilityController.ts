@@ -35,9 +35,10 @@ export interface IndexabilityObserver<TData = unknown, TItemOptions extends Inde
  * <div ${this.indexabilityController.item({ index, data })}>
  * ```
  *
- * The `item` element-part directive is the whole registration story — an item registers on render and
- * deregisters when lit drops it, so nothing has to be queried and no identity attributes are needed in
- * the DOM. That is all this controller does. It owns no gesture, no state and no styling; it is the
+ * The `item` element-part directive is the registration story for a host that renders its own items — an
+ * item registers on render and unregisters itself when lit drops it, so nothing has to be queried and no identity
+ * attributes are needed in the DOM. A host whose items are light-DOM children it cannot put a directive on
+ * calls {@link register} and {@link unregister} instead. That is all this controller does. It owns no gesture, no state and no styling; it is the
  * substrate the controllers that DO own those build on, so that an item declares itself once no matter
  * how many interactions it takes part in:
  *
@@ -115,7 +116,7 @@ export class IndexabilityController<TData = unknown, TItemOptions extends Indexa
 		return undefined
 	}
 
-	private addItem(element: HTMLElement, options: TItemOptions) {
+	register(element: HTMLElement, options: TItemOptions) {
 		this.optionsByItems.set(element, options)
 		const item = { element, options }
 		for (const observer of this.observers) {
@@ -123,7 +124,7 @@ export class IndexabilityController<TData = unknown, TItemOptions extends Indexa
 		}
 	}
 
-	private deleteItem(element: HTMLElement) {
+	unregister(element: HTMLElement) {
 		this.optionsByItems.delete(element)
 		for (const observer of this.observers) {
 			observer.handleItemRemoved?.(element)
@@ -156,16 +157,16 @@ export class IndexabilityController<TData = unknown, TItemOptions extends Indexa
 			override update(part: ElementPart, [options]: [TItemOptions]) {
 				this.part = part
 				this.options = options
-				controller.addItem(part.element as HTMLElement, options)
+				controller.register(part.element as HTMLElement, options)
 				return noChange
 			}
 
 			override disconnected() {
-				controller.deleteItem(this.part!.element as HTMLElement)
+				controller.unregister(this.part!.element as HTMLElement)
 			}
 
 			override reconnected() {
-				controller.addItem(this.part!.element as HTMLElement, this.options!)
+				controller.register(this.part!.element as HTMLElement, this.options!)
 			}
 		})
 	}
