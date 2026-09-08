@@ -136,6 +136,9 @@
 			"path": "./packages/Drawer"
 		},
 		{
+			"path": "./packages/ElementInternals"
+		},
+		{
 			"path": "./packages/EmptyState"
 		},
 		{

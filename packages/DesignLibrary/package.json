@@ -127,6 +127,7 @@
 		"@3mo/screen-size": "x",
 		"@3mo/focus-ring": "x",
 		"@3mo/command-palette": "x",
+		"@3mo/element-internals": "x",
 		"@3mo/indexability": "x",
 		"@3mo/selectability": "x",
 		"@3mo/infinite-scroll-controller": "x",

@@ -1,0 +1,35 @@
+{
+	"name": "@3mo/element-internals",
+	"version": "0.1.0",
+	"description": "Shared element internals for custom elements, and a controller which makes one take part in forms",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/3mo-esolutions/web-components"
+	},
+	"keywords": [
+		"lit",
+		"web-component",
+		"controller",
+		"element-internals",
+		"form",
+		"form-associated",
+		"validation"
+	],
+	"author": "3MO GmbH",
+	"license": "MIT",
+	"homepage": "https://www.3mo.de",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"customElements": "dist/custom-elements.json",
+	"files": [
+		"dist"
+	],
+	"dependencies": {
+		"@a11d/lit": "x",
+		"tslib": "x"
+	},
+	"devDependencies": {
+		"@a11d/lit-testing": "x"
+	}
+}
