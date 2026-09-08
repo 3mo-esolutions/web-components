@@ -28,6 +28,9 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	get selected() { return this.dataRecord.isSelected }
 	get detailsOpen() { return this.dataRecord.detailsOpen }
 
+	private dataBeforeUpdate: unknown = Symbol()
+	private hasEverOpenedDetails = false
+
 	get detailsElement() {
 		return this.renderRoot.querySelector('#detailsContainer')?.firstElementChild as TDetailsElement as TDetailsElement | undefined
 	}
@@ -49,6 +52,19 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 
 	protected override disconnected() {
 		this.dataGrid.rowIntersectionObserver?.unobserve?.(this)
+	}
+
+	protected override willUpdate(...parameters: Parameters<Component['willUpdate']>) {
+		// The data instead of the record, as the grid hands out a new record for the same data on every render.
+		if (this.data !== this.dataBeforeUpdate) {
+			// A recycled row picks up the state of its new data instead of keeping the previous one's details.
+			this.hasEverOpenedDetails = this.hasDetails && this.detailsOpen
+			this.dataBeforeUpdate = this.data
+		} else if (this.hasDetails && this.detailsOpen) {
+			this.hasEverOpenedDetails = true
+		}
+
+		super.willUpdate(...parameters)
 	}
 
 	override updated(...parameters: Parameters<Component['updated']>) {
@@ -243,6 +259,32 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				grid-template-columns: subgrid;
 				grid-column: -1 / 1;
 
+				interpolate-size: allow-keywords;
+				/*
+					"clip" instead of "hidden", as the latter would make this a scroll container, to which the
+					sticky cells of nested rows would then anchor instead of to the grid's own scroller.
+				*/
+				overflow: clip;
+				align-content: start;
+				transition:
+					height var(--mo-duration-quick, 250ms) ease,
+					opacity var(--mo-duration-quick, 250ms) ease,
+					content-visibility var(--mo-duration-quick, 250ms) allow-discrete;
+
+				/* The details are rendered only while open, hence they animate in from the state they are inserted with. */
+				@starting-style {
+					height: 0;
+					opacity: 0;
+				}
+
+				/* Hidden and skipped from rendering when collapsed, but remains in the DOM to avoid re-instantiation overhead. */
+				&[data-collapsed] {
+					height: 0;
+					opacity: 0;
+					content-visibility: hidden;
+					pointer-events: none;
+				}
+
 				&:empty {
 					display: none;
 				}
@@ -250,6 +292,9 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				& > * {
 					grid-column: data / -1;
 					box-sizing: border-box;
+					/* Sized by itself, as the row's height is a definite one while it animates - which would squeeze the details into scrolling. */
+					height: auto;
+					align-self: start;
 					padding-inline: var(--mo-data-grid-cell-padding);
 					padding-block: 1rem;
 
@@ -291,7 +336,9 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			>
 				${this.rowTemplate}
 			</mo-grid>
-			<slot id='detailsContainer'>${this.detailsOpen ? this.detailsTemplate : html.nothing}</slot>
+			<slot id='detailsContainer' ?data-collapsed=${this.hasDetails && !this.detailsOpen}>
+				${this.hasDetails && this.hasEverOpenedDetails ? this.detailsTemplate : html.nothing}
+			</slot>
 		`
 	}
 

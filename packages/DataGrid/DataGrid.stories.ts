@@ -35,23 +35,89 @@ export default {
 	package: p,
 } as Meta
 
+type Generation = 'any' | 'adult' | 'young'
+
 class Person {
-	private static get people() {
-		return [
-			new Person({ id: 1, balance: 200, name: 'Octavia Blake', birthDate: new DateTime('2007-06-17'), address: '112 Rue de Elm, 1265 Paris, France' }),
-			new Person({ id: 2, balance: 450, name: 'Charmaine Diyoza', birthDate: new DateTime('2001-06-30'), address: '1234 Elm Street, Springfield, IL 62701, USA' }),
-			new Person({ id: 3, balance: -50, name: 'Clarke Griffin', birthDate: new DateTime('2008-10-13'), address: '7234 Elmstraße, 21001 Berlin, Deutschland' }),
-			new Person({ id: 4, balance: -150, name: 'Elliot Alderson', birthDate: new DateTime('1986-09-17'), address: '9692 Elm Street, Springfield, NSW 62701, Australia' }),
-			new Person({ id: 5, balance: 450, name: 'Arya Stark', birthDate: new DateTime('2002-03-29'), address: '7792 Elm Street, London, England' }),
-			new Person({ id: 6, balance: 500, name: 'Darlene Alderson', birthDate: new DateTime('1990-11-05'), address: '1232 Elm Street, "P-432"' }),
-			new Person({ id: 7, balance: 0, name: 'Max Caufield', birthDate: new DateTime('1995-09-21'), address: '1232 Elm Street, "P-432"' }),
-		]
+	private static readonly firstNames = [
+		'Octavia', 'Bellamy', 'Clarke', 'Raven', 'Murphy', 'Lexa', 'Indra', 'Echo', 'Madi', 'Charmaine',
+		'Elliot', 'Darlene', 'Angela', 'Tyrell', 'Dominique', 'Arya', 'Sansa', 'Brienne', 'Davos', 'Tormund',
+		'Max', 'Chloe', 'Warren', 'Victoria', 'Malcolm', 'Zoe', 'Kaylee', 'Inara', 'River', 'Jean-Luc',
+		'Beverly', 'Geordi', 'Deanna', 'Kiki', 'Sophie', 'Howl', 'Chihiro', 'Ashitaka', 'Nausicaä', 'Ursula',
+		'Esmeralda', 'Rincewind', 'Tiffany', 'Moist',
+	]
+
+	private static readonly lastNames = [
+		'Blake', 'Griffin', 'Reyes', 'Woods', 'Kane', 'Diyoza', 'Alderson', 'Wellick', 'Moss', 'Stark',
+		'Tarth', 'Seaworth', 'Giantsbane', 'Caulfield', 'Price', 'Marsh', 'Graham', 'Chase', 'Reynolds', 'Washburne',
+		'Frye', 'Serra', 'Tam', 'Picard', 'Crusher', 'Laforge', 'Troi', 'Rozhenko', 'Ogino', 'Hayashi',
+		'Kusanagi', 'Okonkwo', 'Weatherwax', 'Lipwig', 'Vimes',
+	]
+
+	private static readonly locations = [
+		['Elm Street', '62701 Springfield, USA'],
+		['Rue des Lilas', '75011 Paris, France'],
+		['Bahnhofstraße', '10119 Berlin, Deutschland'],
+		['Baker Street', 'NW1 6XE London, England'],
+		['Vasagatan', '111 20 Stockholm, Sverige'],
+		['Prinsengracht', '1015 Amsterdam, Nederland'],
+		['Gran Vía', '28013 Madrid, España'],
+		['Via del Corso', '00186 Roma, Italia'],
+		['Nyhavn', '1051 København, Danmark'],
+		['Kärntner Straße', '1010 Wien, Österreich'],
+		['Sannomiya-dori', '650-0021 Kōbe, Japan'],
+		['Balogun Street', '101241 Lagos, Nigeria'],
+		['Queen Street West', 'M5V 2T6 Toronto, Canada'],
+		['Flinders Lane', '3000 Melbourne, Australia'],
+	] as ReadonlyArray<readonly [street: string, city: string]>
+
+	private static readonly agesByGeneration: Record<Generation, Array<number>> = {
+		any: [16, 27, 34, 52, 71, 13, 45, 22, 39, 61, 17, 30, 44, 25, 58, 68, 19, 36, 48, 23],
+		adult: [34, 41, 52, 38, 46, 61, 44, 57, 49, 36],
+		young: [16, 13, 21, 8, 17, 11, 19, 6, 22, 14],
 	}
 
-	static generate(count: number) {
-		return new Array(count)
-			.fill(0)
-			.map((_, i) => this.people[i % this.people.length])
+	private static count = 0
+
+	/**
+	 * Every person is an instance of its own, as a grid keys selection and details by identity: the same object
+	 * in two rows would select and expand both of them at once. Generate into a constant rather than into a
+	 * template, so that a re-render does not hand the grid new identities either.
+	 */
+	static generate(count: number, generation: Generation = 'any') {
+		return Array.from({ length: count }, () => Person.next(generation))
+	}
+
+	/** Three generations of distinct people, for the sub-row and export demos. */
+	static generateFamilies(count: number) {
+		return Array.from({ length: count }, (_, family) => Person.next('adult',
+			Array.from({ length: 2 + family % 2 }, (_, child) => Person.next('young', Person.generate(child % 3, 'young')))
+		))
+	}
+
+	private static next(generation: Generation, children?: Array<Person>) {
+		const index = Person.count++
+		const ages = Person.agesByGeneration[generation]
+		const age = ages[index % ages.length]!
+		return new Person({
+			id: 1001 + index,
+			name: `${Person.firstNames[index % Person.firstNames.length]} ${Person.lastNames[index % Person.lastNames.length]}`,
+			birthDate: Person.birthDate(age, index * 53 % 360),
+			address: Person.address(index),
+			balance: index % 7 === 3 ? 0 : (index * 137 % 41 - 12) * 75,
+			children,
+		})
+	}
+
+	private static address(index: number) {
+		const [street, city] = Person.locations[index * 5 % Person.locations.length]!
+		return `${1 + index * 37 % 240} ${street}, ${city}`
+	}
+
+	private static birthDate(yearsAgo: number, daysAgo: number) {
+		const date = new Date()
+		date.setFullYear(date.getFullYear() - yearsAgo)
+		date.setDate(date.getDate() - daysAgo)
+		return new DateTime(date.toISOString().slice(0, 10))
 	}
 
 	readonly id!: number
@@ -60,7 +126,6 @@ class Person {
 	readonly address!: string
 	readonly children?: Array<Person>
 	readonly balance!: number
-
 
 	constructor(init?: Partial<Person>) {
 		Object.assign(this, init)
@@ -71,19 +136,12 @@ class Person {
 	}
 }
 
-
 const fivePeople = Person.generate(5)
 const twentyPeople = Person.generate(20)
+const fiftyPeople = Person.generate(50)
 const hundredPeople = Person.generate(100)
 const thousandPeople = Person.generate(1000)
-
-const fivePeopleWithChildren = fivePeople.map(p => new Person({
-	...p,
-	children: Person.generate(Math.floor(Math.random() * 10) + 1).map(c => new Person({
-		...c,
-		children: Person.generate(Math.floor(Math.random() * 5) + 1) as any,
-	}))!
-}))
+const fiveFamilies = Person.generateFamilies(5)
 
 const columnsTemplate = html`
 	<mo-data-grid-column-number hidden nonEditable heading='ID' dataSelector='id'></mo-data-grid-column-number>
@@ -184,7 +242,7 @@ export const StickyColumns: StoryObj = {
 export const Sums: StoryObj = {
 	render: () => html`
 		<mo-data-grid
-			.data=${Person.generate(50)}
+			.data=${fiftyPeople}
 			selectability='multiple'
 			style='height: 500px; --mo-data-grid-footer-background: var(--mo-color-transparent-gray-3)'
 			selectOnClick
@@ -249,13 +307,12 @@ export const Details_SubDataGrid: StoryObj = {
 	},
 	render: ({ multipleDetails, detailsOnClick }) => html`
 		<mo-data-grid style='height: 500px'
-			.data=${fivePeople}
+			.data=${fiveFamilies}
 			selectability='multiple'
 			?multipleDetails=${multipleDetails}
 			?detailsOnClick=${detailsOnClick}
-			.hasDataDetail=${(p: Person) => p.age >= 18}
-			.getRowDetailsTemplate=${() => html`
-				<mo-data-grid .data=${Person.generate(5)}>
+			.getRowDetailsTemplate=${(p: Person) => html`
+				<mo-data-grid .data=${p.children}>
 					${columnsTemplate}
 				</mo-data-grid>
 			`}
@@ -276,7 +333,7 @@ export const Details_SubRows: StoryObj = {
 			selectability='multiple'
 			?multipleDetails=${multipleDetails}
 			?detailsOnClick=${detailsOnClick}
-			.data=${fivePeopleWithChildren}
+			.data=${fiveFamilies}
 			subDataGridDataSelector='children'
 		>
 			${columnsTemplate}
@@ -370,7 +427,7 @@ export const PrimaryActionWithSplitButton: StoryObj = {
 
 export const Exportable: StoryObj = {
 	render: () => html`
-		<mo-data-grid exportable subDataGridDataSelector='children' pagination='auto' .data=${fivePeopleWithChildren} style='height: 500px'>
+		<mo-data-grid exportable subDataGridDataSelector='children' pagination='auto' .data=${fiveFamilies} style='height: 500px'>
 			${columnsTemplate}
 		</mo-data-grid>
 	`

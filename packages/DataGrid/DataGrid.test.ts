@@ -78,7 +78,7 @@ describe('DataGrid', () => {
 		it('should extract records out of nested data', async () => {
 			const [first, second, third] = fixture.component.data
 			fixture.component.subDataGridDataSelector = 'children'
-			fixture.component.data = [{ ...first, children: [third!] }, second!]
+			fixture.component.data = [{ ...first!, children: [third!] }, second!]
 			const firstWithChildren = fixture.component.data[0]
 
 			await fixture.updateComplete
@@ -206,7 +206,7 @@ describe('DataGrid', () => {
 				const columnOf = (dataSelector: string) =>
 					sampleFixture.component.columns.find(c => c.dataSelector === dataSelector as any)
 
-				const contentOf = (column: DataGridColumn<any>, value: unknown) => {
+				const contentOf = (column: DataGridColumn<Person>, value: unknown) => {
 					render(column.getContentTemplate!(value, sampleData[0]), container)
 					return container
 				}
@@ -745,6 +745,49 @@ describe('DataGrid', () => {
 			await fixture.updateComplete
 			expect(fixture.component.rowDetailsClose.dispatch).toHaveBeenCalledTimes(1)
 			expect(fixture.component.rowDetailsClose.dispatch).toHaveBeenCalledWith(row)
+		})
+
+		describe('details lifecycle', () => {
+			const row = () => fixture.component.rows[0] as DataGridRow<Person>
+			const detailsContainer = () => row().renderRoot.querySelector('#detailsContainer')!
+			const toggle = async () => {
+				row().renderRoot.querySelector('#detailsExpanderIconButton')?.dispatchEvent(new MouseEvent('click'))
+				await fixture.updateComplete
+				await row().updateComplete
+			}
+
+			it('should keep the details rendered in the DOM after closing', async () => {
+				expect(detailsContainer().children.length).toBe(0)
+
+				await toggle()
+				expect(row().detailsOpen).toBe(true)
+				expect(detailsContainer().children.length).toBe(1)
+				expect(detailsContainer().hasAttribute('data-collapsed')).toBe(false)
+
+				await toggle()
+				expect(row().detailsOpen).toBe(false)
+				// Remains rendered in the DOM, collapsed via CSS
+				expect(detailsContainer().children.length).toBe(1)
+				expect(detailsContainer().hasAttribute('data-collapsed')).toBe(true)
+			})
+
+			it('should drop details when the row is recycled for un-opened data', async () => {
+				await toggle()
+				expect(detailsContainer().children.length).toBe(1)
+
+				await toggle()
+				expect(row().detailsOpen).toBe(false)
+				expect(detailsContainer().children.length).toBe(1)
+
+				row().dataRecord = new DataRecord(fixture.component, {
+					index: 0,
+					level: 0,
+					data: { id: 999, name: 'Recycled Person', birthDate: new DateTime(2000, 0, 0), balance: 0 },
+				})
+				await row().updateComplete
+
+				expect(detailsContainer().children.length).toBe(0)
+			})
 		})
 
 		it('should not dispatch rowDetailsOpen when details are opened programmatically via openRowDetails, as only interactions announce themselves', async () => {
