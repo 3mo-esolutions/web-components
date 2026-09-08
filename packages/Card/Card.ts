@@ -69,6 +69,8 @@ export class Card extends Component {
 			}
 
 			slot[name=media] {
+				flex-shrink: 0;
+
 				&[data-empty] {
 					display: none;
 				}
@@ -85,12 +87,19 @@ export class Card extends Component {
 			}
 
 			slot[name=header] {
+				flex-shrink: 0;
+
 				&[data-empty] {
 					display: none;
 				}
 
+				/*
+					A header already provides the spacing above the body. Only the default value is altered
+					here instead of the padding itself, so that this selector's higher specificity does not
+					beat the paddings which subclasses such as "mo-collapsible-card" animate.
+				*/
 				&:not([data-empty]) ~ slot:not([name]) {
-					padding: var(--mo-card-body-padding, 0rem 1rem 1rem 1rem);
+					--_body-padding-default: 0rem 1rem 1rem 1rem;
 				}
 
 				display: flex;
@@ -124,13 +133,21 @@ export class Card extends Component {
 					display: none;
 				}
 
-				padding: var(--mo-card-body-padding, 1rem);
+				padding: var(--mo-card-body-padding, var(--_body-padding-default, 1rem));
 				display: block;
-				flex: 1;
+				/*
+					"flex-basis: auto" instead of the "flex: 1" shorthand's "0%", as a flex item whose basis is
+					a definite length ignores its "height" for main-axis sizing, which would make the height
+					animation of subclasses such as "mo-collapsible-card" a no-op. Layout stays the same, as the
+					siblings do not shrink either way.
+				*/
+				flex: 1 1 auto;
 				min-height: 0;
 			}
 
 			slot[name=footer] {
+				flex-shrink: 0;
+
 				&[data-empty] { display: none; }
 				display: block;
 				padding: var(--mo-card-footer-padding, 0.5rem);

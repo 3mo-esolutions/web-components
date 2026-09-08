@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite'
-import { html, style } from '@a11d/lit'
+import { css, html, style } from '@a11d/lit'
 import p from './package.json'
+import { CollapsibleCard as CollapsibleCardComponent } from './CollapsibleCard.js'
+import '../Line/index.js'
 import './index.js'
 
 export default {
@@ -41,3 +43,54 @@ export const CollapsibleCard: StoryObj = {
 		</mo-collapsible-card>
 	`
 }
+
+export const WithFixedHeight: StoryObj = {
+	name: 'With a fixed height',
+	render: ({ type, heading, subHeading, content }) => html`
+		<mo-collapsible-card type=${type} heading=${heading} subHeading=${subHeading} ${style({ width: '400px', height: '500px' })}>
+			${content}
+			<mo-button slot='footer'>Read more</mo-button>
+		</mo-collapsible-card>
+	`
+}
+
+export const WithFooterAndSlottedContent: StoryObj = {
+	name: 'With an element between the header and the body',
+	parameters: {
+		docs: {
+			description: {
+				story: 'Subclasses may render additional elements into the card, e.g. a line between the header and the body. Those keep their place while the body collapses.',
+			}
+		}
+	},
+	render: ({ type, heading, subHeading, content }) => html`
+		<story-collapsible-card-with-line type=${type} heading=${heading} subHeading=${subHeading} ${style({ width: '400px' })}>
+			${content}
+			<mo-button slot='footer'>Read more</mo-button>
+		</story-collapsible-card-with-line>
+	`
+}
+
+/** How consuming applications extend the card: an extra element in front of the body, and a body which lays its content out itself. */
+class StoryCollapsibleCardWithLine extends CollapsibleCardComponent {
+	static override get styles() {
+		return css`
+			${super.styles}
+
+			slot:not([name]) {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+				gap: 0.875rem;
+			}
+		`
+	}
+
+	protected override get bodyTemplate() {
+		return html`
+			${this.collapsed ? html.nothing : html`<mo-line></mo-line>`}
+			${super.bodyTemplate}
+		`
+	}
+}
+
+customElements.define('story-collapsible-card-with-line', StoryCollapsibleCardWithLine)

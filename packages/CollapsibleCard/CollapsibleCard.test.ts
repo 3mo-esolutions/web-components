@@ -52,24 +52,33 @@ describe('CollapsibleCard', () => {
 	})
 
 	describe('Body', () => {
-		it('should not render the body while collapsed', async () => {
-			fixture.component.collapsed = true
+		const bodySlot = () => fixture.component.renderRoot.querySelector<HTMLSlotElement>('slot:not([name])')!
+		// Shortened, so that the settled state can be awaited without slowing the suite down. Transitions are not sampled mid-flight.
+		const settle = async () => {
+			fixture.component.style.setProperty('--mo-collapsible-card-transition-duration', '30ms')
 			await fixture.update()
+			await new Promise(resolve => setTimeout(resolve, 120))
+		}
 
-			expect(fixture.component.renderRoot.querySelector('slot:not([name])')).toBeNull()
+		it('should keep the body rendered while collapsed, so that it can animate, but hidden and without height', async () => {
+			fixture.component.collapsed = true
+			await settle()
+
+			expect(bodySlot()).not.toBeNull()
+			expect(getComputedStyle(bodySlot()).height).toBe('0px')
+			expect(getComputedStyle(bodySlot()).contentVisibility).toBe('hidden')
 		})
 
-		it('should render the body again once expanded', async () => {
+		it('should show the body again once expanded', async () => {
 			fixture.component.collapsed = true
-			await fixture.update()
-			expect(fixture.component.renderRoot.querySelector('slot:not([name])')).toBeNull()
+			await settle()
 
 			fixture.component.collapsed = false
-			await fixture.update()
+			await settle()
 
-			const bodySlot = fixture.component.renderRoot.querySelector<HTMLSlotElement>('slot:not([name])')!
-			expect(bodySlot).not.toBeNull()
-			expect(bodySlot.assignedNodes().map(node => node.textContent?.trim())).toEqual(['Body'])
+			expect(getComputedStyle(bodySlot()).contentVisibility).toBe('visible')
+			expect(parseFloat(getComputedStyle(bodySlot()).height)).toBeGreaterThan(0)
+			expect(bodySlot().assignedNodes().map(node => node.textContent?.trim())).toEqual(['Body'])
 		})
 	})
 

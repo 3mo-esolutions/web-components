@@ -8,7 +8,7 @@ import '../ApplicationLogo.js'
 import './NavigationItem.js'
 import type { Tree } from '@3mo/tree'
 import { Navigation } from './Navigation.js'
-import { NavigationLink, type INavigation } from './INavigation.js'
+import { NavigationLink } from './INavigation.js'
 
 const settle = async (component: Navigation) => {
 	for (let i = 0; i < 5; i++) {

@@ -61,6 +61,11 @@ RootCssInjector.inject(css`
 		--mo-font-family-mono: ui-monospace, 'Cascadia Mono', 'Segoe UI Mono', 'SF Mono', Menlo, Consolas, 'Roboto Mono', 'DejaVu Sans Mono', monospace;
 		--mo-border-radius: 4px;
 
+		--mo-duration-quick: 250ms;
+		@media (prefers-reduced-motion: reduce) {
+			--mo-duration-quick: 0s;
+		}
+
 		/* Shadows */
 		--mo-shadow: color-mix(in srgb, var(--mo-shadow-base) 40%, transparent) 0 1px 2px 0, color-mix(in srgb, var(--mo-shadow-base) 20%, transparent) 0 1px 3px 1px;
 		--mo-shadow-deep: 0px 5px 5px -3px color-mix(in srgb, var(--mo-shadow-base) 20%, transparent), 0px 8px 10px 1px color-mix(in srgb, var(--mo-shadow-base) 14%, transparent), 0px 3px 14px 2px color-mix(in srgb, var(--mo-shadow-base) 12%, transparent);
