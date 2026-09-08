@@ -28,10 +28,16 @@ export class FabGroup extends Component {
 			#fabs {
 				margin-bottom: calc(56px + 16px);
 				display: block;
+				transition: visibility 0s;
 			}
 
 			:host(:not([open])) #fabs {
 				visibility: collapse;
+				pointer-events: none;
+				transition: visibility 0s var(--mo-fab-group-transition-duration, 250ms);
+				@media (prefers-reduced-motion: reduce) {
+					transition: none;
+				}
 			}
 
 			mo-fab {
