@@ -2,6 +2,9 @@ import { Component, component, css, html, property, query } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { PopoverAlignment, PopoverCssAnchorPositionController, PopoverPlacement, type Popover, type PopoverMode } from './index.js'
 
+/** A popover slides in from the side of its anchor, so where it sits is only final once it has arrived. */
+const finishEntry = (popover: Popover) => popover.getAnimations().forEach(animation => animation.finish())
+
 describe('Popover', () => {
 	@component('test-generic-popover')
 	class GenericPopover extends Component {
@@ -316,7 +319,7 @@ describe('Popover', () => {
 	})
 
 	describe('positioning', () => {
-		const fixture = new ComponentTestFixture<HTMLDivElement>(html`
+		const fixture = new ComponentTestFixture(html`
 			<div>
 				<div id='anchor' style='position: fixed; inset-block-start: 50%; inset-inline-start: 50%; width: 20px; height: 20px'></div>
 				<mo-popover style='width: 40px; height: 20px'>Popover</mo-popover>
@@ -333,6 +336,7 @@ describe('Popover', () => {
 			popover().open = true
 			await popover().updateComplete
 			await new Promise(r => setTimeout(r, 100))
+			finishEntry(popover())
 			return { anchorRect: anchor().getBoundingClientRect(), popoverRect: popover().getBoundingClientRect() }
 		}
 
@@ -386,6 +390,7 @@ describe('Popover', () => {
 				popover.open = true
 				await popover.updateComplete
 				await new Promise(r => setTimeout(r, 100))
+				finishEntry(popover)
 
 				const anchorRect = anchorHost.anchorElement.getBoundingClientRect()
 				const popoverRect = popover.getBoundingClientRect()
@@ -407,6 +412,7 @@ describe('Popover', () => {
 			fixture.component.open = true
 			await fixture.updateComplete
 			await new Promise(r => setTimeout(r, 100))
+			finishEntry(fixture.component)
 			return fixture.component.getBoundingClientRect()
 		}
 
@@ -423,6 +429,7 @@ describe('Popover', () => {
 			fixture.component.coordinates = [250, 300]
 			await fixture.updateComplete
 			await new Promise(r => setTimeout(r, 100))
+			finishEntry(fixture.component)
 
 			const rect = fixture.component.getBoundingClientRect()
 			expect(Math.abs(rect.left - 250)).toBeLessThanOrEqual(1)

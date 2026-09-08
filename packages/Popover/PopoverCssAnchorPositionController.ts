@@ -54,6 +54,11 @@ export class PopoverCssAnchorPositionController extends Controller {
 		}
 	}
 
+	/**
+	 * Along with the position areas, the entry offsets a popover starts its animation from: only the edge which a
+	 * position area pins to the anchor takes a margin into account, which lets one that flipped to the opposite side
+	 * enter from there without being told. Engines positioning a popover by its insets instead only fade it in.
+	 */
 	static get styles() {
 		const getPositionArea = (placement: PopoverPlacement, alignment: PopoverAlignment) => {
 			const flippedAxis = placement.includes('block') ? 'inline' : 'block'
@@ -78,10 +83,14 @@ export class PopoverCssAnchorPositionController extends Controller {
 
 			:host([placement^=block]) {
 				position-try: normal flip-block, flip-inline, flip-block flip-inline;
+				--_starting-margin-block: calc(-1 * var(--_starting-distance));
+				--_starting-margin-inline: 0;
 			}
 
 			:host([placement^=inline]) {
 				position-try: normal flip-inline, flip-block, flip-block flip-inline;
+				--_starting-margin-block: 0;
+				--_starting-margin-inline: calc(-1 * var(--_starting-distance));
 			}
 		`
 	}

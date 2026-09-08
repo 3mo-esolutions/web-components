@@ -176,12 +176,19 @@ export class Popover extends Component {
 				padding: 0;
 				border: 1px solid var(--mo-color-transparent-gray-3);
 				overflow: unset;
-				transition: opacity 125ms, transform 125ms, display 0ms allow-discrete;
+				--_starting-duration: min(125ms, var(--mo-duration-quick, 250ms));
+				--_starting-distance: 0.25rem;
+				transition: opacity var(--_starting-duration), margin var(--_starting-duration), display 0ms allow-discrete;
 			}
 
 			:host([open]) {
 				opacity: 1;
-				@starting-style { opacity: 0; }
+
+				@starting-style {
+					opacity: 0;
+					margin-block: var(--_starting-margin-block);
+					margin-inline: var(--_starting-margin-inline);
+				}
 			}
 
 			:host(:not([open])) {

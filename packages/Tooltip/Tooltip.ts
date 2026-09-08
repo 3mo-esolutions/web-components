@@ -71,11 +71,10 @@ export class Tooltip extends Component {
 			mo-popover {
 				border-radius: var(--mo-toolbar-border-radius, var(--mo-border-radius));
 				transition-duration: 175ms;
-				transition-property: opacity, transform;
 				padding: 0.3125rem 0.5rem;
 				font-size: var(--mo-tooltip-font-size, 0.82rem);
 				background: var(--_tooltip-default-background);
-				transition-property: opacity, transform;
+				transition-property: opacity, margin;
 				line-height: 1;
 
 				&::part(arrow) {

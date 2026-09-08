@@ -216,6 +216,8 @@ describe('Tooltip', () => {
 			await fixture.component.tooltip.updateComplete
 			await opened
 			await settle()
+			// The popover slides in from the side of its anchor, so its position is only final once it has arrived.
+			await Promise.allSettled(fixture.component.tooltipPopover.getAnimations().map(a => a.finished))
 
 			const anchorRect = fixture.component.getBoundingClientRect()
 			const popoverRect = fixture.component.tooltipPopover.getBoundingClientRect()
