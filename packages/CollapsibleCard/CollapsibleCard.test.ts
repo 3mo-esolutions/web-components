@@ -57,7 +57,9 @@ describe('CollapsibleCard', () => {
 		const settle = async () => {
 			fixture.component.style.setProperty('--mo-collapsible-card-transition-duration', '30ms')
 			await fixture.update()
-			await new Promise(resolve => setTimeout(resolve, 120))
+			// The transitions themselves rather than a delay, which the rest of the suite starves of its main thread.
+			const animations = [...fixture.component.getAnimations(), ...bodySlot().getAnimations()]
+			await Promise.all(animations.map(animation => animation.finished.catch(() => undefined)))
 		}
 
 		it('should keep the body rendered while collapsed, so that it can animate, but hidden and without height', async () => {
