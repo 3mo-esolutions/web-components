@@ -1,5 +1,6 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { Option, type FieldSelect } from './index.js'
+import type { Value } from './SelectValueController.js'
 import { html } from '@a11d/lit'
 import { PopoverAlignment, PopoverPlacement } from '@3mo/popover'
 import { computePosition } from '@floating-ui/dom'
@@ -332,6 +333,27 @@ describe('FieldSelect', () => {
 		`)
 
 		afterEach(() => closeMenu(fixture.component))
+
+		const pressInput = (component: FieldSelect<Person>) => {
+			const event = new MouseEvent('mousedown', { bubbles: true, composed: true, cancelable: true })
+			const input = component.searchInputElement ?? component.valueInputElement
+			input.dispatchEvent(event)
+			return event
+		}
+
+		// The press only has to reach the field; where it lands must not become a caret, because focusing
+		// turns the same input into the search one and selects the whole of it.
+		it('should take the whole text rather than a caret when pressed unfocused', async () => {
+			await settle(fixture.component)
+
+			expect(pressInput(fixture.component).defaultPrevented).toBeTrue()
+		})
+
+		it('should place the caret normally when pressed while already focused', async () => {
+			await focusIn(fixture.component)
+
+			expect(pressInput(fixture.component).defaultPrevented).toBeFalse()
+		})
 
 		it('should render the search input only when focused', async () => {
 			expect(fixture.component.searchInputElement).toBeUndefined()
@@ -729,6 +751,28 @@ describe('FieldSelect', () => {
 				expect(fixture.component.index).toEqual([1, 3])
 			})
 
+			it('should dispatch each event with the whole selection', async () => {
+				await click(1)
+				const { changeSpy, dataChangeSpy, indexChangeSpy } = spyOnChangeEvents()
+
+				await click(3)
+
+				expect(changeSpy).toHaveBeenCalledOnceWith([people[1]!.id, people[3]!.id])
+				expect(dataChangeSpy).toHaveBeenCalledOnceWith([people[1]!, people[3]!])
+				expect(indexChangeSpy).toHaveBeenCalledOnceWith([1, 3])
+			})
+
+			it('should dispatch each event with the whole selection after a range', async () => {
+				await click(1)
+				const { changeSpy, dataChangeSpy, indexChangeSpy } = spyOnChangeEvents()
+
+				await click(3, { shift: true })
+
+				expect(changeSpy).toHaveBeenCalledOnceWith([1, 2, 3].map(i => people[i]!.id))
+				expect(dataChangeSpy).toHaveBeenCalledOnceWith([1, 2, 3].map(i => people[i]!))
+				expect(indexChangeSpy).toHaveBeenCalledOnceWith([1, 2, 3])
+			})
+
 			it('should remove an option clicked again', async () => {
 				await click(1)
 				await click(3)
@@ -751,6 +795,209 @@ describe('FieldSelect', () => {
 				await click(3, { shift: true })
 				expect(fixture.component.index).toEqual([0])
 			})
+		})
+	})
+
+	describe('value, index and data', () => {
+		it('should derive index and data from a value set as an attribute', async () => {
+			fixture.component.setAttribute('value', '2')
+			await settle(fixture.component)
+
+			expect(fixture.component.value).toBe(2)
+			expect(fixture.component.index).toBe(2)
+			expect(fixture.component.data).toBe(people[2]!)
+		})
+
+		it('should normalize a numeric string value to the option\'s number value', async () => {
+			fixture.component.value = '3'
+			await settle(fixture.component)
+
+			expect(fixture.component.value as Value).toBe(3)
+			expect(fixture.component.index).toBe(3)
+		})
+
+		it('should let the last written of value, index and data win', async () => {
+			fixture.component.value = 1
+			await settle(fixture.component)
+			expect(fixture.component.index).toBe(1)
+
+			fixture.component.index = 2
+			await settle(fixture.component)
+			expect(fixture.component.value).toBe(2)
+
+			fixture.component.data = people[3]!
+			await settle(fixture.component)
+			expect(fixture.component.value).toBe(3)
+			expect(fixture.component.index).toBe(3)
+		})
+
+		it('should clear index and data when the value is set to undefined', async () => {
+			fixture.component.value = 1
+			await settle(fixture.component)
+
+			fixture.component.value = undefined
+			await settle(fixture.component)
+
+			expect(fixture.component.index).toBeUndefined()
+			expect(fixture.component.data).toBeUndefined()
+			expect(fixture.component.selectedOptions.length).toBe(0)
+			expect(fixture.component.valueInputElement.value).toBe('')
+		})
+
+		it('should stay settled when the same value is written again', async () => {
+			fixture.component.value = 1
+			await settle(fixture.component)
+			const { changeSpy, dataChangeSpy, indexChangeSpy } = spyOnChangeEvents()
+
+			fixture.component.value = 1
+			await settle(fixture.component)
+
+			expect(fixture.component.index).toBe(1)
+			expect(fixture.component.data).toBe(people[1]!)
+			expect(changeSpy).not.toHaveBeenCalled()
+			expect(dataChangeSpy).not.toHaveBeenCalled()
+			expect(indexChangeSpy).not.toHaveBeenCalled()
+		})
+
+		it('should keep the value and re-derive the index when the options are reordered', async () => {
+			fixture.component.value = 1
+			await settle(fixture.component)
+			expect(fixture.component.index).toBe(1)
+
+			const option = fixture.component.options[1]!
+			fixture.component.insertBefore(option, fixture.component.firstElementChild)
+			await settle(fixture.component)
+
+			expect(fixture.component.value).toBe(1)
+			expect(fixture.component.data).toBe(people[1]!)
+			expect(fixture.component.index).toBe(0)
+		})
+
+		it('should keep the index and re-derive the value when the options are reordered after an index was set', async () => {
+			fixture.component.index = 1
+			await settle(fixture.component)
+			expect(fixture.component.value).toBe(1)
+
+			const option = fixture.component.options[1]!
+			fixture.component.insertBefore(option, fixture.component.firstElementChild)
+			await settle(fixture.component)
+
+			expect(fixture.component.index).toBe(1)
+			expect(fixture.component.value).toBe(0)
+		})
+
+		it('should shift the indices by the default option', async () => {
+			fixture.component.default = 'Select...'
+			await settle(fixture.component)
+
+			fixture.component.value = 1
+			await settle(fixture.component)
+
+			expect(fixture.component.index).toBe(2)
+			expect(fixture.component.data).toBe(people[1]!)
+		})
+
+		it('should select an option carrying neither value nor data by index', async () => {
+			const option = new Option<Person>()
+			option.textContent = 'Bare'
+			fixture.component.appendChild(option)
+			await settle(fixture.component)
+
+			fixture.component.index = people.length
+			await settle(fixture.component)
+
+			expect(option.selected).toBeTrue()
+			expect(fixture.component.valueInputElement.value).toBe('Bare')
+		})
+
+		it('should resolve a value against an option whose value arrives later', async () => {
+			const option = new Option<Person>()
+			option.textContent = 'Late'
+			fixture.component.appendChild(option)
+			fixture.component.value = 99
+			await settle(fixture.component)
+			expect(option.selected).toBeFalse()
+
+			option.value = '99'
+			await settle(fixture.component)
+
+			expect(option.selected).toBeTrue()
+			expect(fixture.component.data).toBeUndefined()
+		})
+	})
+
+	describe('switching between single and multiple', () => {
+		it('should pluralize value, index and data when multiple is turned on', async () => {
+			fixture.component.value = 1
+			await settle(fixture.component)
+
+			fixture.component.multiple = true
+			await settle(fixture.component)
+
+			expect(fixture.component.value as Value).toEqual([1])
+			expect(fixture.component.index).toEqual([1])
+			expect(fixture.component.data).toEqual([people[1]!])
+		})
+
+		it('should keep only the first selection when multiple is turned off', async () => {
+			fixture.component.multiple = true
+			fixture.component.value = [1, 3]
+			await settle(fixture.component)
+
+			fixture.component.multiple = false
+			await settle(fixture.component)
+
+			expect(fixture.component.value as Value).toBe(1)
+			expect(fixture.component.index).toBe(1)
+			expect(fixture.component.data).toBe(people[1]!)
+			expect(fixture.component.selectedOptions.length).toBe(1)
+		})
+	})
+
+	describe('selecting through the menu', () => {
+		const click = async (index: number) => {
+			fixture.component.options[index]!.click()
+			await settle(fixture.component)
+		}
+
+		beforeEach(() => settle(fixture.component))
+
+		it('should replace the selection when another option is clicked in single mode', async () => {
+			await click(1)
+			expect(fixture.component.index).toBe(1)
+
+			const { changeSpy, dataChangeSpy, indexChangeSpy } = spyOnChangeEvents()
+			await click(3)
+
+			expect(fixture.component.index).toBe(3)
+			expect(fixture.component.selectedOptions.length).toBe(1)
+			expect(changeSpy).toHaveBeenCalledOnceWith(3)
+			expect(dataChangeSpy).toHaveBeenCalledOnceWith(people[3]!)
+			expect(indexChangeSpy).toHaveBeenCalledOnceWith(3)
+		})
+
+		it('should not dispatch anything when the selected option is clicked again in single mode', async () => {
+			await click(1)
+			const { changeSpy, dataChangeSpy, indexChangeSpy } = spyOnChangeEvents()
+
+			await click(1)
+
+			expect(fixture.component.index).toBe(1)
+			expect(changeSpy).not.toHaveBeenCalled()
+			expect(dataChangeSpy).not.toHaveBeenCalled()
+			expect(indexChangeSpy).not.toHaveBeenCalled()
+		})
+
+		it('should keep the selection resolved after the option list has been re-indexed', async () => {
+			await click(2)
+			expect(fixture.component.index).toBe(2)
+
+			fixture.component.menu!.list.itemsChange.dispatch(fixture.component.listItems)
+			await settle(fixture.component)
+
+			expect(fixture.component.index).toBe(2)
+			expect(fixture.component.value).toBe(2)
+			expect(fixture.component.data).toBe(people[2]!)
 		})
 	})
 })

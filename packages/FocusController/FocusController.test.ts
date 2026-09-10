@@ -109,6 +109,21 @@ describe('FocusController', () => {
 			expectFocused(true, false, 'programmatic')
 		})
 
+		it('should be programmatic when the visible focus is on an element outside the target', () => {
+			const outsider = document.body.appendChild(document.createElement('input'))
+			try {
+				outsider.focus()
+				if (!outsider.matches(':focus-visible')) {
+					pending('The platform did not treat the outside input as focus-visible')
+				}
+				fixture.component.dispatchEvent(new FocusEvent('focusin'))
+
+				expectFocused(true, false, 'programmatic')
+			} finally {
+				outsider.remove()
+			}
+		})
+
 		it('should be pointer when losing focus after a pointer interaction within the target', () => {
 			focusWith(true)
 			fixture.component.dispatchEvent(new PointerEvent('pointerdown'))

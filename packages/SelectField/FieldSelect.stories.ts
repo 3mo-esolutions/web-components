@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite'
-import { html } from '@a11d/lit'
+import { Component, component, css, html, property, state } from '@a11d/lit'
 import p from './package.json'
 import './index.js'
 
@@ -30,18 +30,87 @@ export const Select: StoryObj = {
 	`
 }
 
+type LoggedEvent = { readonly name: string, readonly detail: string, readonly ordinal: number }
+
+@component('story-free-input-events')
+class StoryFreeInputEvents extends Component {
+	@property({ type: Boolean }) multiple = false
+	@property() defaultText = ''
+
+	@state() private log = new Array<LoggedEvent>()
+
+	private record(name: string, detail: unknown) {
+		const text = detail === undefined ? 'undefined' : JSON.stringify(detail, (key, value) => key === 'phone' ? undefined : value)
+		this.log = [{ name, detail: text, ordinal: (this.log[0]?.ordinal ?? 0) + 1 }, ...this.log].slice(0, 10)
+	}
+
+	static override get styles() {
+		return css`
+			:host { display: flex; gap: 1.5rem; align-items: flex-start; flex-wrap: wrap; }
+			.readout { display: flex; flex-direction: column; gap: 0.5rem; min-width: 22rem; flex: 1; }
+			h4 { margin: 0; color: var(--mo-color-gray); font-size: small; text-transform: uppercase; letter-spacing: 0.05em; }
+			.hint { color: var(--mo-color-gray); font-size: small; line-height: 1.5; max-width: 30rem; }
+			ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.25rem; font-size: small; }
+			li { display: flex; gap: 0.5rem; align-items: baseline; font-family: monospace; }
+			.ordinal { color: var(--mo-color-gray); min-width: 1.5rem; text-align: end; }
+			.name { min-width: 7rem; }
+			.name[data-event=input] { color: var(--mo-color-gray); }
+			.name:not([data-event=input]) { color: var(--mo-color-accent); }
+			.detail { overflow-wrap: anywhere; }
+			.empty { color: var(--mo-color-gray); font-size: small; }
+		`
+	}
+
+	protected override get template() {
+		return html`
+			<mo-card style='width: 300px; flex: 0 0 auto'>
+				<mo-field-select label='Countries' searchable freeInput
+					?multiple=${this.multiple}
+					default=${this.defaultText}
+					.value=${this.multiple ? ['DE'] : 'DE'}
+					@input=${(e: CustomEvent<unknown>) => this.record('input', e.detail)}
+					@change=${(e: CustomEvent<unknown>) => this.record('change', e.detail)}
+					@dataChange=${(e: CustomEvent<unknown>) => this.record('dataChange', e.detail)}
+					@indexChange=${(e: CustomEvent<unknown>) => this.record('indexChange', e.detail)}
+				>
+					${countries.map(country => html`
+						<mo-option value=${country.code} .data=${country}>
+							<img width='25px' src=${`https://flagcdn.com/h40/${country.code.toLowerCase()}.png`}>
+							${country.label}
+						</mo-option>
+					`)}
+				</mo-field-select>
+			</mo-card>
+
+			<div class='readout'>
+				<h4>Events</h4>
+				<p class='hint'>
+					Type a few letters and watch only <code>input</code> arrive, carrying the raw text.
+					Pick an option and <code>change</code>, <code>dataChange</code> and <code>indexChange</code>
+					follow together with the resolved value, its datum and its position.
+					Type something no option matches and <code>change</code> stays silent.
+				</p>
+				${!this.log.length ? html`<span class='empty'>Nothing yet.</span>` : html`
+					<ol>
+						${this.log.map(entry => html`
+							<li>
+								<span class='ordinal'>${entry.ordinal}</span>
+								<span class='name' data-event=${entry.name}>${entry.name}</span>
+								<span class='detail'>${entry.detail}</span>
+							</li>
+						`)}
+					</ol>
+				`}
+			</div>
+		`
+	}
+}
+
+StoryFreeInputEvents
+
 export const FreeInput: StoryObj = {
 	render: ({ multiple, defaultText }) => html`
-		<mo-card style='max-width: 300px'>
-			<mo-field-select label='Countries' searchable freeInput ?multiple=${multiple} default=${defaultText} .value=${multiple ? ['DE'] : 'DE'}>
-				${countries.map(country => html`
-					<mo-option value=${country.code} .data=${country}>
-						<img width='25px' src=${`https://flagcdn.com/h40/${country.code.toLowerCase()}.png`}>
-						${country.label}
-					</mo-option>
-				`)}
-			</mo-field-select>
-		</mo-card>
+		<story-free-input-events ?multiple=${multiple} defaultText=${defaultText}></story-free-input-events>
 	`
 }
 
@@ -104,30 +173,6 @@ export const WithSubGridLayout: StoryObj = {
 					</mo-option>
 				`)}
 			</mo-field-select>
-		</mo-card>
-	`
-}
-
-export const CloseMenuWhenNotInViewport: StoryObj = {
-	render: ({ searchable, multiple, defaultText }) => html`
-		<mo-card style='max-width: 300px'>
-			<span style='color: var(--mo-color-red)'>Open the menu and scroll the page to see the menu close automatically when it's not in the viewport</span>
-			<mo-field-select label='Countries' ?searchable=${searchable} ?multiple=${multiple} default=${defaultText} .value=${multiple ? [] : 'DE'}>
-				${countries.map(country => html`
-					<mo-option value=${country.code} .data=${country}>
-						<img width='25px' src=${`https://flagcdn.com/h40/${country.code.toLowerCase()}.png`}>
-						${country.label}
-					</mo-option>
-				`)}
-			</mo-field-select>
-			Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem accusamus laborum beatae sit sunt aliquam quam repellendus. Sapiente sunt officia, incidunt nulla similique nobis ut quae eius sequi adipisci tempora.
-			Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam velit ducimus, beatae libero, eos aspernatur doloremque ut, cum quis possimus dolorem pariatur reprehenderit voluptates nulla laudantium dolore illum voluptas fugit.
-			Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia nulla unde nam laudantium quasi, tenetur incidunt sit quibusdam ut optio dolor illum hic nobis quas assumenda corrupti. Expedita, aliquid corrupti?
-			Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem accusamus laborum beatae sit sunt aliquam quam repellendus. Sapiente sunt officia, incidunt nulla similique nobis ut quae eius sequi adipisci tempora.
-			Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam velit ducimus, beatae libero, eos aspernatur doloremque ut, cum quis possimus dolorem pariatur reprehenderit voluptates nulla laudantium dolore illum voluptas fugit.
-			Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia nulla unde nam laudantium quasi, tenetur incidunt sit quibusdam ut optio dolor illum hic nobis quas assumenda corrupti. Expedita, aliquid corrupti?
-			Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem accusamus laborum beatae sit sunt aliquam quam repellendus. Sapiente sunt officia, incidunt nulla similique nobis ut quae eius sequi adipisci tempora.
-			Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam velit ducimus, beatae libero, eos aspernatur doloremque ut, cum quis possimus dolorem pariatur reprehenderit voluptates nulla laudantium dolore illum voluptas fugit.
 		</mo-card>
 	`
 }

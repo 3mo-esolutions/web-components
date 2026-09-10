@@ -214,6 +214,33 @@ describe('FieldFetchableSelect', () => {
 			expect(deferredFixture.component.valueInputElement.value).toBe('Banana')
 		})
 
+		it('should keep the selection when a re-fetch reorders the data', async () => {
+			resolveFetch([...fruits])
+			await waitUntil(() => deferredFixture.component.valueInputElement.value === 'Banana')
+			fetchSpy.and.callFake(() => Promise.resolve([...fruits].reverse()))
+
+			await deferredFixture.component.requestFetch()
+			await settle(deferredFixture.component)
+
+			expect(deferredFixture.component.data).toBe('Banana')
+			expect(deferredFixture.component.valueInputElement.value).toBe('Banana')
+		})
+
+		it('should keep a clicked option selected when a re-fetch reorders the data', async () => {
+			resolveFetch([...fruits])
+			await waitUntil(() => deferredFixture.component.options.length === fruits.length)
+			deferredFixture.component.options[2]!.click()
+			await settle(deferredFixture.component)
+			expect(deferredFixture.component.data).toBe('Cherry')
+			fetchSpy.and.callFake(() => Promise.resolve([...fruits].reverse()))
+
+			await deferredFixture.component.requestFetch()
+			await settle(deferredFixture.component)
+
+			expect(deferredFixture.component.data).toBe('Cherry')
+			expect(deferredFixture.component.valueInputElement.value).toBe('Cherry')
+		})
+
 		it('should keep the selection when a re-fetch returns the same data', async () => {
 			resolveFetch([...fruits])
 			await waitUntil(() => deferredFixture.component.valueInputElement.value === 'Banana')
@@ -312,6 +339,25 @@ describe('FieldFetchableSelect', () => {
 			await waitUntil(() => isNoResultsHintVisible(searchFixture.component))
 
 			expect(isNoResultsHintVisible(searchFixture.component)).toBeTrue()
+		})
+
+		it('should restore a clicked selection once the option re-enters the fetched window', async () => {
+			fetchSpy.and.callFake(parameters => Promise.resolve(parameters?.keyword ? ['Banana bread'] : [...fruits]))
+			await waitUntil(() => searchFixture.component.options.length === fruits.length)
+			searchFixture.component.options[2]!.click()
+			await settle(searchFixture.component)
+			expect(searchFixture.component.data).toBe('Cherry')
+
+			await focusIn(searchFixture.component)
+			await type(searchFixture.component, 'ban')
+			await waitUntil(() => searchFixture.component.options.length === 1)
+
+			await type(searchFixture.component, '')
+			await waitUntil(() => searchFixture.component.options.length === fruits.length)
+			await settle(searchFixture.component)
+
+			expect(searchFixture.component.data).toBe('Cherry')
+			expect(searchFixture.component.options[2]!.selected).toBeTrue()
 		})
 
 		it('should filter the already-fetched options locally when searchParameters is not set', async () => {

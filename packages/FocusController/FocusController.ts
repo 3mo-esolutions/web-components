@@ -95,7 +95,10 @@ export class FocusController extends Controller {
 
 	private handleFocusIn(e: FocusEvent) {
 		this.bubbled = e.target !== this.host
-		this.method = this.interaction === 'pointer' ? 'pointer' : FocusController.focusVisible ? 'keyboard' : 'programmatic'
+		// A text input matches ":focus-visible" whenever it is focused, so the document at large cannot
+		// answer this - only what actually took the focus, which is not always the host.
+		const receiver = e.target instanceof Element ? e.target : this.host
+		this.method = this.interaction === 'pointer' ? 'pointer' : FocusController.focusVisibleWithin(receiver) ? 'keyboard' : 'programmatic'
 		this.interaction = undefined
 		this.focused = true
 	}

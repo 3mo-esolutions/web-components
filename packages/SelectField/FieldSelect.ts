@@ -49,19 +49,11 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 	@property() menuAlignment?: PopoverAlignment
 	@property() menuPlacement?: PopoverPlacement
 	@property({ type: Boolean, reflect: true }) open = false
-	@property({ type: String, bindingDefault: true, updated(this: FieldSelect<T>) { this.valueController.value = this.value } }) value: Value
-	@property({ type: Number, updated(this: FieldSelect<T>) { this.valueController.index = this.index } }) index: Index
-	@property({ type: Object, updated(this: FieldSelect<T>) { this.valueController.data = this.data } }) data: Data<T>
+	@property({ type: String, bindingDefault: true, updated(this: FieldSelect<T>) { this.valueController.accept('value') } }) value: Value
+	@property({ type: Number, updated(this: FieldSelect<T>) { this.valueController.accept('index') } }) index: Index
+	@property({ type: Object, updated(this: FieldSelect<T>) { this.valueController.accept('data') } }) data: Data<T>
 
 	@state() protected searchString?: string
-	@state({
-		updated(this: FieldSelect<T>, value: number, oldValue: number) {
-			if (value && value !== oldValue) {
-				this.valueController.sync()
-				this.requestValueUpdate()
-			}
-		}
-	}) protected [FieldSelectValueController.requestSyncKey] = 0
 
 	@query('input#value') readonly valueInputElement!: HTMLInputElement
 	@query('input#search') readonly searchInputElement?: HTMLInputElement
@@ -184,35 +176,29 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 	}
 
 	protected override get inputTemplate() {
-		return this.searching ? this.searchInputTemplate : this.valueInputTemplate
-	}
-
-	private get valueInputTemplate() {
 		return html`
 			<input
 				part='input'
-				id='value'
+				id=${this.searching ? 'search' : 'value'}
 				type='text'
 				autocomplete='off'
-				readonly
-				value=${this.valueToInputValue(this.value) || ''}
-			>
-		`
-	}
-
-	private get searchInputTemplate() {
-		return html`
-			<input
-				part='input'
-				id='search'
-				type='text'
-				autocomplete='off'
-				?readonly=${!this.searchable}
+				?readonly=${!this.searching || !this.searchable}
 				?disabled=${this.disabled}
-				.value=${live(this.searchString || '')}
+				.value=${live(this.searching ? this.searchString || '' : this.valueToInputValue(this.value) || '')}
+				@mousedown=${(e: MouseEvent) => this.handleInputMouseDown(e)}
 				@input=${(e: Event) => { this.handleInput((e.target as HTMLInputElement).value, e) }}
 			>
 		`
+	}
+
+	// Focusing turns this input into the search one and selects all of it. The browser places a caret on
+	// mouse-up, after that, so a press which is only meant to reach the field would undo the selection.
+	private handleInputMouseDown(e: MouseEvent) {
+		if (this.searchable && !this.searching) {
+			e.preventDefault()
+			const input = e.target as HTMLInputElement
+			input.focus()
+		}
 	}
 
 	protected override get endSlotTemplate() {
@@ -287,17 +273,14 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 	}
 
 	requestValueUpdate() {
-		this.options.forEach(o => o.selected = o.index !== undefined && this.valueController.menuValue.includes(o.index))
+		this.options.forEach(o => o.selected = this.valueController.isSelected(o))
 		this.searchString ??= this.valueToInputValue(this.value) || undefined
 	}
 
 	protected valueToInputValue(value: Value) {
-		const valueArray = value instanceof Array ? value : value === undefined ? undefined : [value]
-		return !valueArray || valueArray.length === 0
-			? this.reflectDefault ? this.default ?? '' : ''
-			: this.options
-				.filter(o => valueArray.some(v => o.valueMatches(v)))
-				.map(o => o.text).join(', ')
+		const text = this.valueController.selection.map(o => o.text).join(', ')
+		const empty = value === undefined || (value instanceof Array && value.length === 0)
+		return text || (empty && this.reflectDefault ? this.default ?? '' : '')
 	}
 
 	protected override async handleFocus(bubbled: boolean, method: FocusMethod) {
@@ -316,7 +299,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 	}
 
 	protected handleSelection(menuValue: Array<number>) {
-		this.valueController.menuValue = menuValue
+		this.valueController.selectFromMenu(menuValue)
 		this.change.dispatch(this.value)
 		this.dataChange.dispatch(this.data)
 		this.indexChange.dispatch(this.index)
@@ -332,6 +315,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 			option.index = this.listItems.indexOf(option)
 			option.multiple = this.multiple
 		}
+		this.valueController.handleItemsChange()
 	}
 
 	override setCustomValidity(error: string) { error }
