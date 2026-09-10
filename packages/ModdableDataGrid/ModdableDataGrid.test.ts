@@ -778,6 +778,15 @@ describe('ModdableDataGrid', () => {
 			expect(fixture.component.hasUnsavedChanges).toBeFalse()
 		}
 
+		it('should report no unsaved changes for a mode whose columns an adapter returns as null', async () => {
+			const mode = fixture.component.currentMode.with({ id: 'null-columns', name: 'Null columns', columns: null as never })
+			fixture.component.modesAdapter.modes = [mode]
+			await fixture.component.modesController.set(mode)
+			await fixture.updateComplete
+
+			expect(fixture.component.hasUnsavedChanges).toBeFalse()
+		})
+
 		it('should report no unsaved changes after a column is moved and moved back', async () => {
 			await selectCleanMode()
 			const [first] = fixture.component.columns

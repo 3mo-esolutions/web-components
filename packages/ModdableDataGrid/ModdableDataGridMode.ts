@@ -81,7 +81,12 @@ export class ModdableDataGridMode<TData, TDataFetcherParameters extends Fetchabl
 	constructor(init?: Partial<ModdableDataGridMode<TData, TDataFetcherParameters>>) {
 		Object.assign(this, structuredClone(init))
 		this.pagination = DataGridPagination.from(this.pagination)?.toString()
-		if (this.columns) {
+		// A mode expressing no intent about the columns has none. An adapter storing modes as JSON can
+		// only transport that absence as null, which nothing composing the columns can handle, so it
+		// is normalized back into an absence here — where every adapter hands over what it stored.
+		if (this.columns === null) {
+			delete this.columns
+		} else if (this.columns) {
 			this.columns = init?.columns?.map(c => new ModdableDataGridModeColumn<TData>(c))
 		}
 		if (this.parameters) {

@@ -97,6 +97,12 @@ describe('ModdableDataGridMode', () => {
 	})
 
 	describe('constructor', () => {
+		it('should treat columns given as null as absent', () => {
+			const mode = new ModdableDataGridMode({ name: 'Test', columns: null as never })
+
+			expect(Object.keys(mode)).not.toContain('columns')
+		})
+
 		it('should convert date strings to Date objects', () => {
 			const mode = new ModdableDataGridMode({
 				name: 'Test',
