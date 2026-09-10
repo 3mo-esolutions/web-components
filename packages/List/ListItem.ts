@@ -11,6 +11,8 @@ import './ListItemRipple.js'
  * @attr preventClickOnSpace - Whether the list item should prevent click on space
  *
  * @slot - Default slot for content
+ * @slot start - Slot for content at the start
+ * @slot end - Slot for content at the end
  */
 @component('mo-list-item')
 export class ListItem extends Component {
@@ -32,10 +34,11 @@ export class ListItem extends Component {
 				user-select: none;
 				padding-inline: 1rem;
 				padding-block: 0.48em;
-				display: flex;
-				gap: 1rem;
 				align-items: center;
 				min-height: 3rem;
+				/* For list-items without a list */
+				display: flex;
+				gap: 16px;
 			}
 
 			:host([disabled]) {
@@ -45,6 +48,19 @@ export class ListItem extends Component {
 
 			:host(:focus) {
 				outline: none;
+			}
+
+			slot[name=start], slot:not([name]), slot[name=end] {
+				display: inline-flex;
+			}
+
+			slot:not([name]) {
+				/* For list-items without a list */
+				flex: 1;
+			}
+
+			slot[name=end] {
+				justify-content: end;
 			}
 		`
 	}
@@ -61,15 +77,18 @@ export class ListItem extends Component {
 		return html`
 			${!this.focusRingActive ? html.nothing : html`<mo-focus-ring inward visible></mo-focus-ring>`}
 			<mo-list-item-ripple ?focused=${this.rippleActive} ?disabled=${this.disabled} ?preventClickOnSpace=${this.preventClickOnSpace}></mo-list-item-ripple>
-			${this.iconTemplate}
+			<slot name='start'>${this.startSlotDefaultContent}</slot>
 			<slot></slot>
+			<slot name='end'>${this.endSlotDefaultContent}</slot>
 		`
 	}
 
-	protected get iconTemplate() {
-		return !this.icon ? html.nothing : html`
-			<mo-icon part='icon' style='opacity: 0.66' icon=${this.icon}></mo-icon>
-		`
+	protected get startSlotDefaultContent() {
+		return html.nothing
+	}
+
+	protected get endSlotDefaultContent() {
+		return html.nothing
 	}
 }
 
