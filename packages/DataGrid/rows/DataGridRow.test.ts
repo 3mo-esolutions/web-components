@@ -161,40 +161,90 @@ describe('DataGridRow', () => {
 	})
 
 	describe('Virtualization', () => {
-		it('should render nothing while not intersecting the scroller\'s expanded viewport', async () => {
+		const hide = (row: DataGridRow<Person>) => fixture.component.virtualizationController.hide(row)
+
+		it('should render no cells while not intersecting the scroller\'s expanded viewport', async () => {
 			const row = getRow(0)
-			expect(row.renderRoot.querySelector('#contentContainer')).not.toBeNull()
+			expect(row.renderRoot.querySelector('mo-data-grid-cell')).not.toBeNull()
 
-			row.isIntersecting = false
-			await row.updateComplete
+			await hide(row)
 
-			expect(row.renderRoot.querySelector('#contentContainer')).toBeNull()
 			expect(row.renderRoot.querySelector('mo-data-grid-cell')).toBeNull()
 		})
 
-		it('should render the first 25 rows eagerly on connect, as the observer has not reported yet', async () => {
+		it('should keep the strip and the details container while not intersecting, so that the row keeps its place', async () => {
 			const row = getRow(0)
-			row.isIntersecting = false
-			await row.updateComplete
-			expect(row.renderRoot.querySelector('#contentContainer')).toBeNull()
+			const strip = row.content
 
-			const parent = row.parentElement!
-			row.remove()
-			parent.appendChild(row)
-			await row.updateComplete
+			await hide(row)
 
-			expect(row.index).toBeLessThan(25)
-			expect(row.isIntersecting).toBeTrue()
-			expect(row.renderRoot.querySelector('#contentContainer')).not.toBeNull()
+			expect(row.content).toBe(strip)
+			expect(row.renderRoot.querySelector('#detailsContainer')).not.toBeNull()
+			expect(getComputedStyle(strip).minBlockSize).toBe(`${fixture.component.rowHeight + 1}px`)
 		})
 
-		it('should unobserve itself on disconnect', () => {
+		it('should keep its sub rows while not intersecting, as they are rows of their own', async () => {
 			const row = getRow(0)
-			const unobserve = spyOn(fixture.component.rowIntersectionObserver!, 'unobserve')
+			row.toggleDetails()
+			await settle()
+			expect(row.subRows.length).toBe(1)
+
+			await hide(row)
+
+			expect(row.subRows.length).toBe(1)
+		})
+
+		it('should keep its height while not intersecting, so that the rows below it do not move', async () => {
+			const row = getRow(0)
+			const height = row.getBoundingClientRect().height
+
+			await hide(row)
+
+			expect(row.getBoundingClientRect().height).toBe(height)
+		})
+
+		it('should stop subgridding the grid\'s columns while not intersecting, as every subgrid of them is measured again whenever any row changes', async () => {
+			const row = getRow(0)
+			expect(getComputedStyle(row.content).gridTemplateColumns).not.toBe('none')
+
+			await hide(row)
+
+			expect(getComputedStyle(row.content).gridTemplateColumns).toBe('none')
+		})
+
+		it('should not lay out the grid\'s columns at all while it has neither cells nor details', async () => {
+			const row = getRow(1)
+			expect(row.dataRecord.hasDetails).toBeFalse()
+
+			await hide(row)
+
+			expect(getComputedStyle(row).gridTemplateColumns).toBe('none')
+		})
+
+		it('should render a row it has not decided about yet, as the observer only reports after the first paint', async () => {
+			const row = getRow(0)
+			expect(row.isRendered).toBeTrue()
+
+			await hide(row)
+			expect(row.isRendered).toBeFalse()
+			expect(row.renderRoot.querySelector('mo-data-grid-cell')).toBeNull()
+
+			await fixture.component.virtualizationController.reveal(row)
+
+			expect(row.isRendered).toBeTrue()
+			expect(row.renderRoot.querySelector('mo-data-grid-cell')).not.toBeNull()
+		})
+
+		it('should register the part holding its cells rather than itself, and unregister it when dropped', () => {
+			const row = getRow(0)
+			const strip = row.content
+			const registered = () => fixture.component.virtualizationController.indexability.items.map(item => item.element)
+			expect(registered()).toContain(strip)
+			expect(registered()).not.toContain(row)
 
 			row.remove()
 
-			expect(unobserve).toHaveBeenCalledOnceWith(row)
+			expect(registered()).not.toContain(strip)
 		})
 	})
 

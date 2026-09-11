@@ -142,7 +142,7 @@ describe('DataGridNavigabilityController', () => {
 	it('should render a row that has scrolled out of view before moving focus into it', async () => {
 		await settle()
 		const row = fixture.component.rows[1]!
-		row.isIntersecting = false
+		fixture.component.virtualizationController.hide(row)
 		await row.updateComplete
 		expect(row.cells.length).toBe(0)
 

@@ -1,4 +1,4 @@
-import { css, property, Component, html, query, queryAll, type HTMLTemplateResult, LitElement, live, style, unsafeCSS } from '@a11d/lit'
+import { css, property, Component, html, isServer, query, queryAll, type HTMLTemplateResult, LitElement, live, style, unsafeCSS } from '@a11d/lit'
 import { equals } from '@a11d/equals'
 import { DirectionsByLanguage, Localizer } from '@3mo/localization'
 import { popover } from '@3mo/popover'
@@ -17,8 +17,6 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	@queryAll('mo-data-grid-cell') readonly cells!: Array<DataGridCell<any, TData, TDetailsElement>>
 	@queryAll('[mo-data-grid-row]') readonly subRows!: Array<DataGridRow<TData, TDetailsElement>>
 	@query('#contentContainer') readonly content!: HTMLElement
-
-	@property({ type: Boolean }) isIntersecting = true
 
 	@property({ type: Object }) dataRecord!: DataRecord<TData>
 	get dataGrid() { return this.dataRecord.dataGrid }
@@ -39,19 +37,12 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		return this.cells.find(cell => cell.column[equals](column))
 	}
 
-	override connected() {
-		if ((this.index ?? 0) < 25) {
-			this.isIntersecting = true
-		}
+	get isRendered() {
+		return isServer || this.dataGrid.virtualizationController.isRendered(this)
 	}
 
 	protected override initialized() {
 		this.toggleAttribute('mo-data-grid-row', true)
-		this.dataGrid.rowIntersectionObserver?.observe(this)
-	}
-
-	protected override disconnected() {
-		this.dataGrid.rowIntersectionObserver?.unobserve?.(this)
 	}
 
 	protected override willUpdate(...parameters: Parameters<Component['willUpdate']>) {
@@ -69,7 +60,6 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 
 	override updated(...parameters: Parameters<Component['updated']>) {
 		this.cells.forEach(cell => cell.requestUpdate())
-		this.subRows.forEach(subRow => subRow.requestUpdate())
 		if (this.detailsElement instanceof LitElement) {
 			this.detailsElement.requestUpdate()
 		}
@@ -201,6 +191,8 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 			#contentContainer {
 				grid-column: -1 / 1;
 				border-block-end: var(--mo-data-grid-border);
+				box-sizing: border-box;
+				min-block-size: var(--_strip-height, calc(var(--mo-data-grid-row-height) + 1px));
 			}
 
 			#contextMenuIconButtonContainer {
@@ -256,8 +248,14 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 
 			#detailsContainer {
 				display: grid;
-				grid-template-columns: subgrid;
+				/* Subgrids the grid's tracks only where there are details to align to them, as every
+				   subgrid of those tracks is measured again whenever any row of the grid changes. */
+				grid-template-columns: none;
 				grid-column: -1 / 1;
+
+				&[data-has-details] {
+					grid-template-columns: subgrid;
+				}
 
 				interpolate-size: allow-keywords;
 				/*
@@ -322,9 +320,12 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		this.style.setProperty('--_level', this.level.toString())
 		this.toggleAttribute('selected', this.dataRecord.isSelected)
 		this.toggleAttribute('detailsOpen', this.dataRecord.detailsOpen)
+		const isRendered = this.isRendered
+		this.toggleAttribute('data-subgrid', isRendered || this.hasDetails)
 		this.stampAria()
-		return !this.isIntersecting ? html.nothing : html`
-			<mo-grid id='contentContainer' columns='subgrid'
+		return html`
+			<mo-grid id='contentContainer' columns=${isRendered ? 'subgrid' : 'none'}
+				${this.dataGrid.virtualizationController.cells(this)}
 				@click=${(e: MouseEvent) => this.handleContentClick(e)}
 				@dblclick=${() => this.handleContentDoubleClick()}
 				@auxclick=${(e: PointerEvent) => e.button !== 1 ? void 0 : this.handleContentMiddleClick()}
@@ -334,9 +335,9 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 					</mo-context-menu>
 				`, { trigger: 'contextmenu' })}
 			>
-				${this.rowTemplate}
+				${!isRendered ? html.nothing : this.rowTemplate}
 			</mo-grid>
-			<slot id='detailsContainer' ?data-collapsed=${this.hasDetails && !this.detailsOpen}>
+			<slot id='detailsContainer' ?data-has-details=${this.hasDetails} ?data-collapsed=${this.hasDetails && !this.detailsOpen}>
 				${this.hasDetails && this.hasEverOpenedDetails ? this.detailsTemplate : html.nothing}
 			</slot>
 		`

@@ -148,8 +148,7 @@ export class DataGridNavigabilityController<TData, TDetailsElement extends Eleme
 	}
 
 	private async revealAndFocus(row: DataGridRow<TData, TDetailsElement>, column: DataGridColumn<TData>, event: Event) {
-		row.isIntersecting = true
-		await row.updateComplete
+		await this.host.virtualizationController.reveal(row)
 		const cell = row.getCell(column)
 		if (cell) {
 			this.focusCell(cell, event)

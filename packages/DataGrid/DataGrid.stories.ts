@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite'
-import { html, style, type HTMLTemplateResult } from '@a11d/lit'
+import { html, ref, style, type HTMLTemplateResult } from '@a11d/lit'
 import p from './package.json'
 import { DataGridEditability, DataGridSelectionBehaviorOnDataChange, DataGridSelectability, DataGridSortingStrategy, DataGridColumnText, type DataGridColumnMenuItems, type DataGridReorderChange } from './index.js'
 import { DialogAlert } from '../StandardDialogs/index.js'
@@ -94,6 +94,11 @@ class Person {
 		))
 	}
 
+	/** A page of parents with many children each — a products page whose rows all open into their variants. */
+	static generateLargeFamilies(count: number, childrenPerFamily: number) {
+		return Array.from({ length: count }, () => Person.next('adult', Person.generate(childrenPerFamily, 'young')))
+	}
+
 	private static next(generation: Generation, children?: Array<Person>) {
 		const index = Person.count++
 		const ages = Person.agesByGeneration[generation]
@@ -142,6 +147,7 @@ const fiftyPeople = Person.generate(50)
 const hundredPeople = Person.generate(100)
 const thousandPeople = Person.generate(1000)
 const fiveFamilies = Person.generateFamilies(5)
+const twentyFiveLargeFamilies = Person.generateLargeFamilies(25, 40)
 
 const columnsTemplate = html`
 	<mo-data-grid-column-number hidden nonEditable heading='ID' dataSelector='id'></mo-data-grid-column-number>
@@ -366,6 +372,31 @@ export const Virtualization: StoryObj = {
 	render: () => html`
 		<mo-flex gap='10px'>
 			<mo-data-grid exportable .data=${thousandPeople} selectability='multiple' style='height: 500px' pagination='100000'>
+				${columnsTemplate}
+			</mo-data-grid>
+		</mo-flex>
+	`
+}
+
+export const Virtualization_SubRows: StoryObj = {
+	name: 'Virtualization - Sub Rows',
+	render: () => html`
+		<mo-flex gap='10px'>
+			<div>
+				A page of 25 rows which all open into 40 sub rows each — the shape of a products page with every product's variants expanded.
+				Scroll through it and watch the scrollbar and the rows around the viewport.
+			</div>
+			<mo-data-grid style='height: 500px'
+				selectability='multiple'
+				multipleDetails
+				detailsOnClick
+				subDataGridDataSelector='children'
+				.data=${twentyFiveLargeFamilies}
+				.getRowContextMenuTemplate=${() => html`
+					<mo-context-menu-item icon='edit'>Edit</mo-context-menu-item>
+				`}
+				${ref(element => (element as HTMLElementTagNameMap['mo-data-grid'] | undefined)?.openRowDetails())}
+			>
 				${columnsTemplate}
 			</mo-data-grid>
 		</mo-flex>

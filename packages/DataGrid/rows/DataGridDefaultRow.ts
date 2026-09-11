@@ -8,10 +8,13 @@ export class DataGridDefaultRow<TData, TDetailsElement extends Element | undefin
 			${super.styles}
 
 			:host {
-				display: grid;
-				grid-template-columns: subgrid;
 				grid-column: -1 / 1;
 				min-height: var(--mo-data-grid-row-height);
+			}
+
+			:host([data-subgrid]) {
+				display: grid;
+				grid-template-columns: subgrid;
 			}
 
 			mo-flex {

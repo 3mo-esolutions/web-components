@@ -10,6 +10,7 @@ import { DataGridColumnsController } from './DataGridColumnsController/index.js'
 import { DataGridSelectability, DataGridSelectionBehaviorOnDataChange, DataGridSelectionController } from './DataGridSelectionController.js'
 import { DataGridSortingController, type DataGridRankedSortDefinition, type DataGridSorting } from './DataGridSortingController.js'
 import { DataGridDetailsController } from './DataGridDetailsController.js'
+import { DataGridVirtualizationController } from './DataGridVirtualizationController.js'
 import { type DataGridColumn, DataGridCsvController, DataGridRecordsController, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, DataGridContextMenuController, DataGridNavigabilityController, DataGridReorderabilityController, type DataGridReorderChange } from './index.js'
 import { type HierarchyNode } from '@3mo/hierarchy'
 import { type DataRecord } from './DataRecord.js'
@@ -411,11 +412,14 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	readonly reorderabilityController = new DataGridReorderabilityController(this)
 	readonly navigabilityController = new DataGridNavigabilityController<TData, TDetailsElement>(this)
 	readonly recordsController = new DataGridRecordsController<TData>(this)
-
-	readonly rowIntersectionObserver?: IntersectionObserver
+	readonly virtualizationController = new DataGridVirtualizationController(this)
 
 	protected override willUpdate(...parameters: Parameters<Component['willUpdate']>) {
 		super.willUpdate(...parameters)
+		const [properties] = parameters
+		if (properties.has('data') || properties.has('page')) {
+			this.virtualizationController.handleItemsChange()
+		}
 		// A row context menu acts on a row, so the grid has to be able to have one — a default the
 		// selection controller used to apply by writing to its own host as it was read.
 		if (this.hasContextMenu && this.selectability === undefined) {
@@ -428,15 +432,6 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		this.header?.requestUpdate()
 		this.footer?.requestUpdate()
 		this.rows.forEach(row => row.requestUpdate())
-		// @ts-expect-error rowIntersectionObserver is initialized once here
-		this.rowIntersectionObserver ??= new IntersectionObserver(entries => {
-			entries.forEach(({ target, isIntersecting, rootBounds }) => {
-				// Skip if rootBounds is null/zero (happens during resize/zoom)
-				if (rootBounds && (rootBounds.width !== 0 || rootBounds.height !== 0)) {
-					(target as DataGridRow<TData>).isIntersecting = isIntersecting
-				}
-			})
-		}, { root: this.scroller, rootMargin: '400px 0px' })
 		this.navigateToLastValidPageIfNeeded()
 		return super.updated(...parameters)
 	}
@@ -645,6 +640,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				<mo-scroller id='scroller'
 					${style({ flex: '1 0 var(--mo-data-grid-content-min-height, var(--_content-min-height-default))' })}
 					${observeResize(([e]) => this.style.setProperty('--_content-height', `${e?.contentRect.height ?? 0}px`))}
+					${this.virtualizationController.root()}
 				>
 					<mo-grid id='content' autoRows='min-content' columns='var(--mo-data-grid-columns)'>
 						${this.headerTemplate}
