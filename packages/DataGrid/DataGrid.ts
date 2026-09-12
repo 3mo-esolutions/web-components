@@ -640,7 +640,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				<mo-scroller id='scroller'
 					${style({ flex: '1 0 var(--mo-data-grid-content-min-height, var(--_content-min-height-default))' })}
 					${observeResize(([e]) => this.style.setProperty('--_content-height', `${e?.contentRect.height ?? 0}px`))}
-					${this.virtualizationController.root()}
+					${this.virtualizationController.root.ref()}
 				>
 					<mo-grid id='content' autoRows='min-content' columns='var(--mo-data-grid-columns)'>
 						${this.headerTemplate}

@@ -1,4 +1,4 @@
-import { AsyncDirective, Controller, directive, noChange, PartType, type DirectiveResult, type ElementPart, type PartInfo, type ReactiveControllerHost, type ReactiveElement } from '@a11d/lit'
+import { Controller, ElementRef, type DirectiveResult, type ReactiveControllerHost, type ReactiveElement } from '@a11d/lit'
 import { IndexabilityController, type IndexabilityItemOptions } from '@3mo/indexability'
 
 /** All this controller needs of a row: to be re-rendered, and to know its place in the owner's data. */
@@ -24,7 +24,7 @@ interface VirtualizableRowOptions extends IndexabilityItemOptions {
  * readonly virtualization = new DataGridVirtualizationController(this)
  *
  * protected override get template() {
- *   return html`<mo-scroller ${this.virtualization.root()}>${this.rowsTemplate}</mo-scroller>`
+ *   return html`<mo-scroller ${this.virtualization.root.ref()}>${this.rowsTemplate}</mo-scroller>`
  * }
  * ```
  *
@@ -125,39 +125,11 @@ export class DataGridVirtualizationController extends Controller {
 		this.setRoot(undefined)
 	}
 
-	private _root?: () => DirectiveResult
-	get root() {
-		const controller = this
-		return this._root ??= directive(class extends AsyncDirective {
-			// Public: a directive class is part of the emitted declaration, which cannot expose private members.
-			part?: ElementPart
-
-			constructor(partInfo: PartInfo) {
-				super(partInfo)
-				if (partInfo.type !== PartType.ELEMENT) {
-					throw new Error('This directive can only be used on an element')
-				}
-			}
-
-			override render() {
-				return noChange
-			}
-
-			override update(part: ElementPart) {
-				this.part = part
-				controller.setRoot(part.element)
-				return noChange
-			}
-
-			override disconnected() {
-				controller.setRoot(undefined)
-			}
-
-			override reconnected() {
-				controller.setRoot(this.part!.element)
-			}
-		}) as () => DirectiveResult
-	}
+	/** The root the parts are measured against. */
+	readonly root = new ElementRef<Element>({
+		updated: element => this.setRoot(element),
+		disconnected: () => this.setRoot(undefined),
+	})
 
 	private _cells?: (row: VirtualizableRow) => DirectiveResult
 	get cells() {

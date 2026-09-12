@@ -51,9 +51,9 @@ describe('SheetController', () => {
 		host = new FakeHost()
 		controller = new SheetController(host, { autofocusTarget: () => container.querySelector<HTMLElement>('[autofocus]') })
 		render(html`
-			<dialog ${controller.dialog()}>
-				<div id='panel' ${controller.panel()}>
-					<button id='handle' ${controller.handle()}></button>
+			<dialog ${controller.dialog.ref()}>
+				<div id='panel' ${controller.panel.ref()}>
+					<button id='handle' ${controller.handle.ref()}></button>
 					<input autofocus>
 				</div>
 			</dialog>

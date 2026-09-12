@@ -64,7 +64,7 @@ export class Toolbar extends Component {
 
 	protected get paneTemplate() {
 		return html`
-			<mo-toolbar-pane part='pane' ${this.toolbarController.pane()}>
+			<mo-toolbar-pane part='pane' ${this.toolbarController.pane.ref()}>
 				<slot name=${this.toolbarController.paneSlotName}></slot>
 			</mo-toolbar-pane>
 		`

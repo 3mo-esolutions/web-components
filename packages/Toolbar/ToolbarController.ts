@@ -1,38 +1,16 @@
-import { type ElementPart, AsyncDirective, Controller, type ReactiveControllerHost, directive, html } from '@a11d/lit'
+import { Controller, ElementRef, type ReactiveControllerHost } from '@a11d/lit'
 import { OverflowController } from '@3mo/overflow-controller'
 import { SlotController } from '@3mo/slot-controller'
-
-const generatePaneDirective = (controller: ToolbarController) => directive(class ToolbarPaneDirective extends AsyncDirective {
-	pane?: Element
-
-	render() { return html.nothing }
-
-	override update(part: ElementPart) {
-		this.pane = part.element
-		controller.paneElement = this.pane
-		return super.update(part, [])
-	}
-
-	override disconnected() {
-		if (controller.paneElement === this.pane) {
-			controller.paneElement = undefined
-		}
-	}
-
-	override reconnected() {
-		controller.paneElement = this.pane
-	}
-})
 
 /**
  * Moves the host's items between a pane slot and an overflow slot, so that items which do not fit
  * the pane render wherever the overflow slot is projected into - usually an overflow menu. Being
  * plain slot reassignments of one and the same element, the items keep their state and listeners.
  *
- * The measured pane is designated by rendering the @see pane directive on it:
+ * The measured pane is designated where it stands:
  *
  * ```html
- * <mo-toolbar-pane ${this.toolbarController.pane()}>
+ * <mo-toolbar-pane ${this.toolbarController.pane.ref()}>
  *     <slot name=${this.toolbarController.paneSlotName}></slot>
  * </mo-toolbar-pane>
  * ```
@@ -46,9 +24,7 @@ export class ToolbarController extends Controller {
 
 	readonly overflowController: OverflowController<HTMLElement>
 
-	paneElement?: Element
-
-	readonly pane = generatePaneDirective(this)
+	readonly pane = new ElementRef<Element>()
 
 	constructor(
 		protected override readonly host: ReactiveControllerHost & Element & { readonly slotController?: SlotController },
@@ -60,7 +36,7 @@ export class ToolbarController extends Controller {
 		super(host)
 		const controller = this
 		this.overflowController = new OverflowController<HTMLElement>(host, {
-			get container() { return controller.paneElement },
+			get container() { return controller.pane.value },
 			get items() {
 				return [...controller.host.children].filter((child): child is HTMLElement =>
 					child instanceof HTMLElement && (child.slot === controller.paneSlotName || child.slot === controller.overflowContentSlotName))

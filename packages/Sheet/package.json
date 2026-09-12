@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/sheet",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"description": "An edge-anchored modal sheet web component built on the native dialog element",
 	"repository": {
 		"type": "git",
@@ -26,7 +26,7 @@
 		"dist"
 	],
 	"dependencies": {
-		"@a11d/lit": "x",
+		"@a11d/lit": ">=0.13.0",
 		"tslib": "x",
 		"@3mo/theme": "x",
 		"@3mo/localization": "x",

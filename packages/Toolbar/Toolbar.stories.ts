@@ -104,11 +104,11 @@ class StoryCustomToolbar extends Component {
 	protected override get template() {
 		return html`
 			<div style='display: flex; width: 100%; gap: 5px'>
-				<mo-toolbar-pane ${this.leftToolbarController.pane()} style='flex: 1 1;'>
+				<mo-toolbar-pane ${this.leftToolbarController.pane.ref()} style='flex: 1 1;'>
 					<slot name=${this.leftToolbarController.paneSlotName}></slot>
 				</mo-toolbar-pane>
 				<mo-button style='flex: 0 0 auto' @click=${() => this.open = !this.open}>Overflow</mo-button>
-				<mo-toolbar-pane ${this.rightToolbarController.pane()} style='flex: 1 1; direction: rtl'>
+				<mo-toolbar-pane ${this.rightToolbarController.pane.ref()} style='flex: 1 1; direction: rtl'>
 					<slot name=${this.rightToolbarController.paneSlotName}></slot>
 				</mo-toolbar-pane>
 			</div>

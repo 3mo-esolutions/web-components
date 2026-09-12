@@ -231,3 +231,102 @@ describe('OverflowController', () => {
 		expect(fixture.component.controller.hasOverflow).toBeFalse()
 	})
 })
+@component('overflow-declarative-test-component')
+class OverflowDeclarativeTestComponent extends Component {
+	@property({ type: Number }) containerWidth = 300
+	@property({ type: Number }) itemCount = 5
+	@property({ type: Number }) pinnedIndex = -1
+
+	readonly controller = new OverflowController<HTMLElement>(this, {
+		handleChange: (item, overflows) => item.toggleAttribute('data-overflows', overflows),
+	})
+
+	get overflowedItems() { return this.controller.items.filter(item => item.hasAttribute('data-overflows')) }
+
+	static override get styles() {
+		return css`
+			#container {
+				display: flex;
+				overflow: clip;
+			}
+
+			.item {
+				flex: 0 0 auto;
+				width: ${itemWidth}px;
+				height: 10px;
+			}
+
+			.item[data-overflows] {
+				display: none;
+			}
+		`
+	}
+
+	protected override get template() {
+		return html`
+			<div id='container' ${this.controller.container()} ${style({ width: `${this.containerWidth}px` })}>
+				${new Array(this.itemCount).fill(undefined).map((_, index) => html`
+					<div class='item' data-index=${index} ${this.controller.item({ pinned: index === this.pinnedIndex })}></div>
+				`)}
+			</div>
+		`
+	}
+}
+
+describe('OverflowController declared through directives', () => {
+	const fixture = new ComponentTestFixture(() => new OverflowDeclarativeTestComponent())
+
+	const settleDeclarative = async (component: OverflowDeclarativeTestComponent) => {
+		for (let i = 0; i < 10; i++) {
+			await component.updateComplete
+			await new Promise(resolve => setTimeout(resolve, 10))
+		}
+		await component.updateComplete
+	}
+
+	beforeEach(() => settleDeclarative(fixture.component))
+
+	it('should take the container from the element the directive is rendered on', () => {
+		expect(fixture.component.controller.containerElement).toBe(fixture.component.renderRoot.querySelector('#container') ?? undefined)
+	})
+
+	it('should register the items in the order they are rendered in', () => {
+		expect(fixture.component.controller.items.map(item => item.dataset.index)).toEqual(['0', '1', '2', '3', '4'])
+	})
+
+	it('should overflow the items which do not fit from the end', async () => {
+		fixture.component.containerWidth = itemWidth * 3 + 10
+
+		await settleDeclarative(fixture.component)
+
+		expect(fixture.component.overflowedItems.map(item => item.dataset.index)).toEqual(['3', '4'])
+	})
+
+	it('should never overflow an item declared as pinned', async () => {
+		fixture.component.pinnedIndex = 4
+		fixture.component.containerWidth = itemWidth * 3 + 10
+
+		await settleDeclarative(fixture.component)
+
+		expect(fixture.component.overflowedItems.map(item => item.dataset.index)).toEqual(['2', '3'])
+	})
+
+	it('should forget an item which is no longer rendered', async () => {
+		fixture.component.itemCount = 3
+
+		await settleDeclarative(fixture.component)
+
+		expect(fixture.component.controller.items.map(item => item.dataset.index)).toEqual(['0', '1', '2'])
+	})
+
+	it('should judge items which are rendered later', async () => {
+		fixture.component.containerWidth = itemWidth * 3 + 10
+		await settleDeclarative(fixture.component)
+		expect(fixture.component.overflowedItems.length).toBe(2)
+
+		fixture.component.itemCount = 7
+		await settleDeclarative(fixture.component)
+
+		expect(fixture.component.overflowedItems.map(item => item.dataset.index)).toEqual(['3', '4', '5', '6'])
+	})
+})

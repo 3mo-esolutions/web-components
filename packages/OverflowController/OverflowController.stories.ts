@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite'
-import { Component, css, html, property, query } from '@a11d/lit'
+import { Component, css, html, property } from '@a11d/lit'
 import p from './package.json'
 import { OverflowController } from './OverflowController.js'
 
@@ -16,15 +16,10 @@ class StoryOverflow extends Component {
 
 	@property({ type: Array }) pinned = new Array<string>()
 
-	@query('#container') private readonly container!: HTMLElement
-
-	protected readonly overflowController = new OverflowController(this, host => ({
-		get container() { return host.container },
-		get items() { return [...host.renderRoot?.querySelectorAll('.item') ?? []] },
+	protected readonly overflowController = new OverflowController(this, {
 		reservedSize: StoryOverflow.badgeSize,
-		isPinned: item => item.hasAttribute('data-pinned'),
 		handleChange: (item, overflows) => item.toggleAttribute('data-overflows', overflows),
-	}))
+	})
 
 	static override get styles() {
 		return css`
@@ -78,9 +73,9 @@ class StoryOverflow extends Component {
 	protected override get template() {
 		const { overflowingItems, hasOverflow } = this.overflowController
 		return html`
-			<div id='container'>
+			<div id='container' ${this.overflowController.container()}>
 				${actions.map(action => html`
-					<span class='item' ?data-pinned=${this.pinned.includes(action)}>${action}</span>
+					<span class='item' ?data-pinned=${this.pinned.includes(action)} ${this.overflowController.item({ pinned: this.pinned.includes(action) })}>${action}</span>
 				`)}
 				${!hasOverflow ? html.nothing : html`<span id='badge'>+${overflowingItems.size}</span>`}
 			</div>
@@ -110,7 +105,7 @@ export const PinnedItems: StoryObj = {
 	parameters: {
 		docs: {
 			description: {
-				story: 'Items for which the `pinned` option returns `true` never overflow: they keep their place while the flexible items around them come and go. Here, "Save As…" and "Delete" are pinned.'
+				story: 'Items declared with `pinned` never overflow: they keep their place while the flexible items around them come and go. Here, "Save As…" and "Delete" are pinned.'
 			}
 		}
 	},

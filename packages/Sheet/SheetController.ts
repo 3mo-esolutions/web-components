@@ -1,6 +1,5 @@
-import { Controller, type ReactiveControllerHost } from '@a11d/lit'
+import { Controller, ElementRef, type ReactiveControllerHost } from '@a11d/lit'
 import { SwipeabilityController, type SwipeabilityAxis, type SwipeabilityDirection } from '@3mo/swipeability'
-import { part } from './part.js'
 import { SheetMotionController } from './SheetMotionController.js'
 import type { SheetPlacement } from './SheetPlacement.js'
 
@@ -20,21 +19,19 @@ export type SheetControllerOptions = {
  * Manages modal sheet behavior, reconciling host `open` state with the native dialog,
  * coordinating open/close transitions, cancelable `requestClose` events, and swipe gestures.
  */
-export class SheetController extends Controller {
-	readonly dialog = part<HTMLDialogElement>({
-		listeners: {
-			cancel: event => this.handleCancel(event),
-			close: () => this.handleClose(),
-			click: event => this.handleClick(event),
-		}
+export class SheetController extends Controller implements EventListenerObject {
+	private static readonly dialogEventTypes = ['cancel', 'close', 'click']
+
+	readonly dialog = new ElementRef<HTMLDialogElement>({
+		updated: element => this.listen(element, SheetController.dialogEventTypes, 'addEventListener'),
+		disconnected: element => this.listen(element, SheetController.dialogEventTypes, 'removeEventListener'),
 	})
 
-	readonly panel = part<HTMLElement>()
+	readonly panel = new ElementRef<HTMLElement>()
 
-	readonly handle = part<HTMLElement>({
-		listeners: {
-			click: () => this.requestClose('handle'),
-		}
+	readonly handle = new ElementRef<HTMLElement>({
+		updated: element => this.listen(element, ['click'], 'addEventListener'),
+		disconnected: element => this.listen(element, ['click'], 'removeEventListener'),
 	})
 
 	readonly motion: SheetMotionController
@@ -46,15 +43,15 @@ export class SheetController extends Controller {
 		super(host)
 		const controller = this
 		this.motion = new SheetMotionController(host, {
-			get dialog() { return controller.dialog.element },
-			get panel() { return controller.panel.element },
+			get dialog() { return controller.dialog.value },
+			get panel() { return controller.panel.value },
 			get placement() { return controller.host.placement },
 		})
 		this.swipe = new SwipeabilityController(host, {
 			// A sheet leaves the way its placement names, which is the axis and direction of that name.
 			get axis() { return controller.host.placement.split('-')[0] as SwipeabilityAxis },
 			get direction() { return controller.host.placement.split('-')[1] as SwipeabilityDirection },
-			get surface() { return controller.panel.element },
+			get surface() { return controller.panel.value },
 			get detents() { return [0, controller.motion.travelSize] },
 			// A sheet is only ever swiped from fully open: dismissing it closes the dialog outright.
 			detent: 0,
@@ -65,8 +62,23 @@ export class SheetController extends Controller {
 		})
 	}
 
+	// Idempotent for one and the same listener, so re-declaring the element on every render costs nothing.
+	private listen(element: Element, types: ReadonlyArray<string>, method: 'addEventListener' | 'removeEventListener') {
+		for (const type of types) {
+			element[method](type, this)
+		}
+	}
+
+	handleEvent(event: Event) {
+		switch (event.type) {
+			case 'cancel': return this.handleCancel(event)
+			case 'close': return this.handleClose()
+			case 'click': return this.handleClick(event)
+		}
+	}
+
 	override hostUpdated() {
-		const dialog = this.dialog.element
+		const dialog = this.dialog.value
 		if (dialog) {
 			dialog.dataset.placement = this.host.placement
 		}
@@ -77,7 +89,6 @@ export class SheetController extends Controller {
 	}
 
 	private async handleSwipeEnd(detent: number) {
-		// Exit motion continues from current gesture release position.
 		if (detent > 0 && this.requestClose('gesture')) {
 			return
 		}
@@ -93,7 +104,7 @@ export class SheetController extends Controller {
 	}
 
 	private async reconcile() {
-		const dialog = this.dialog.element
+		const dialog = this.dialog.value
 		if (!dialog) {
 			return
 		}
@@ -133,7 +144,9 @@ export class SheetController extends Controller {
 	}
 
 	private handleClick(event: Event) {
-		if (event.composedPath()[0] === this.dialog.element) {
+		if (event.currentTarget === this.handle.value) {
+			this.requestClose('handle')
+		} else if (event.composedPath()[0] === this.dialog.value) {
 			this.requestClose('backdrop')
 		}
 	}

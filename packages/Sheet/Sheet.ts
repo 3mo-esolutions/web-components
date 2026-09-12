@@ -236,8 +236,8 @@ export class Sheet extends Component {
 
 	protected override get template() {
 		return html`
-			<dialog part='dialog' aria-label=${ifDefined(this.label)} ${this.controller.dialog()}>
-				<div id='panel' part='panel' ${this.controller.panel()}>
+			<dialog part='dialog' aria-label=${ifDefined(this.label)} ${this.controller.dialog.ref()}>
+				<div id='panel' part='panel' ${this.controller.panel.ref()}>
 					<slot name='handle'>${this.handleTemplate}</slot>
 					<div id='content' part='content'>
 						<slot></slot>
@@ -250,7 +250,7 @@ export class Sheet extends Component {
 
 	protected get handleTemplate() {
 		return html`
-			<button part='handle' aria-label=${t('Close')} ${this.controller.handle()}></button>
+			<button part='handle' aria-label=${t('Close')} ${this.controller.handle.ref()}></button>
 		`
 	}
 

@@ -1,52 +1,41 @@
-import { Controller, isServer, type ReactiveControllerHost } from '@a11d/lit'
+import { Controller, ElementRef, ElementRefs, isServer, type DirectiveResult, type ReactiveControllerHost } from '@a11d/lit'
+
+export type OverflowItemOptions = {
+	/** Keeps the item in the container even while the items around it overflow. */
+	readonly pinned?: boolean
+}
 
 export interface OverflowControllerOptions<TItem extends Element = Element> {
-	/**
-	 * The container laying the items out in a single line along its inline axis, clipping those which
-	 * do not fit. It is re-read before every measurement, so it shall be provided as a getter whenever
-	 * the container renders late or gets replaced.
-	 */
-	readonly container: Element | null | undefined
-	/**
-	 * All overflow candidates in visual order - including those currently overflowing, wherever they
-	 * live in the meantime. Re-read before every measurement. Items overflow from the end of this list.
-	 */
-	readonly items: ReadonlyArray<TItem>
+	/** The single-line container clipping what does not fit. Re-read per measurement; left out when @see container designates it. */
+	readonly container?: Element | null
+	/** Every overflow candidate in visual order. Re-read per measurement; left out when @see item registers them. */
+	readonly items?: ReadonlyArray<TItem>
 	/** Suspends the controller as long as this is `true`. */
 	readonly disabled?: boolean
-	/**
-	 * The inline space to set aside as soon as at least one item overflows - usually the width of the
-	 * anchor opening the overflow menu. An anchor which instead occupies its space permanently, like
-	 * the toolbar's ever-present overflow icon-button, needs no reservation.
-	 */
+	/** Inline space to set aside as soon as anything overflows — usually the anchor which opens the overflow menu. */
 	readonly reservedSize?: number
-	/**
-	 * Exempts an item from overflowing. It keeps occupying space in the container even when
-	 * the remaining items overflow around it.
-	 */
+	/** Exempts an item from overflowing. Answered by the item's own `pinned` when left out. */
 	isPinned?(item: TItem): boolean
-	/**
-	 * Applies an item's verdict - e.g. by reassigning it to another slot, or by toggling an attribute
-	 * CSS hides it by. Called when the verdict changes, and once for every newly encountered item
-	 * whose verdict disagrees with @see overflowingItems - so a freshly added item always ends up
-	 * where the verdict says, no matter where it started out.
-	 */
+	/** Applies an item's verdict. Called when one changes, and once per newly encountered item. */
 	handleChange?(item: TItem, overflows: boolean): void
 }
 
-/**
- * Layout wobbles at the border of fitting and overflowing are absorbed by granting the last fitting
- * item this much of an overhang, which the clipping container swallows invisibly.
- */
+/** Overhang granted at the border of fitting, which the container clips, so that layout wobbles do not flip a verdict. */
 const tolerance = 0.5
 
 /**
- * A controller which watches a single-line container and determines which of its items fit and which
- * overflow - the "Priority+" pattern of toolbars and menu bars. It only decides *what* overflows;
- * where overflowing items go (an overflow menu, hidden via CSS, ...) is entirely up to the host.
+ * Decides which of a single-line container's items fit and which overflow — the "Priority+" pattern.
+ * Where the overflowing ones go is entirely the host's business.
  *
- * Options are usually provided as a factory, whose host parameter enables getter-backed,
- * lazily-read options right in a field initializer:
+ * A host which renders its own items declares them where they stand:
+ *
+ * ```html
+ * <div ${this.overflowController.container()}>
+ *     ${this.actions.map(action => html`<button ${this.overflowController.item()}>${action}</button>`)}
+ * </div>
+ * ```
+ *
+ * A host whose items are light-DOM children it cannot put a directive on passes them as options instead:
  *
  * ```ts
  * readonly overflowController = new OverflowController(this, host => ({
@@ -56,17 +45,10 @@ const tolerance = 0.5
  * }))
  * ```
  *
- * Fitting is decided by arithmetic over measured item sizes rather than by moving items around to
- * probe the layout: items are measured while they are laid out in the container, and keep their last
- * known size once they overflow. A container resize therefore never causes overflowed items to flash
- * back in for re-measurement - only the items whose verdict actually changes are touched. As the
- * sizes are summed up instead of compared to coordinates, right-to-left containers need no special
- * treatment. Measurements are batched to one per microtask and run before paint, so verdicts never
- * appear a frame late.
- *
- * Items are assumed not to shrink below the measured size (e.g. `flex: 0 0 auto`), margins are not
- * accounted for - spacing shall be provided by the container's `gap` - and a container hidden
- * e.g. via `display: none` overflows all of its items while preserving their known sizes.
+ * Verdicts come from arithmetic over measured sizes, never from moving items to probe the layout, so an
+ * overflowed item never flashes back in to be re-measured and right-to-left needs no special treatment.
+ * Items are assumed not to shrink below their measured size (e.g. `flex: 0 0 auto`), spacing is taken
+ * from the container's `gap` rather than from margins, and a container without layout overflows everything.
  *
  * @ssr false
  */
@@ -75,25 +57,49 @@ export class OverflowController<TItem extends Element = Element, THost extends R
 
 	constructor(
 		protected override readonly host: THost,
-		options: OverflowControllerOptions<TItem> | ((host: THost) => OverflowControllerOptions<TItem>)
+		options: OverflowControllerOptions<TItem> | ((host: THost) => OverflowControllerOptions<TItem>) = {}
 	) {
 		super(host)
 		this.options = typeof options === 'function' ? options(host) : options
 	}
 
+	/** The container, designated by @see container or by hand. */
+	private readonly containerRef = new ElementRef<Element>({ updated: () => this.requestMeasurement() })
+
+	/** The candidates, registered by @see item or by hand, in the order they were first declared. */
+	private readonly itemRefs = new ElementRefs<TItem, OverflowItemOptions | undefined>({
+		updated: () => this.requestMeasurement(),
+		disconnected: () => this.requestMeasurement(),
+	})
+
+	/** Designates the element it is rendered on as the container. */
+	readonly container = (): DirectiveResult => this.containerRef.ref()
+
+	/** Registers the element it is rendered on as an overflow candidate. */
+	readonly item = (options?: OverflowItemOptions): DirectiveResult => this.itemRefs.ref(options)
+
 	private _overflowingItems = new Set<TItem>()
-	/** The items which do not fit the container, in visual order. */
+	/** The items which do not fit the container. */
 	get overflowingItems(): ReadonlySet<TItem> { return this._overflowingItems }
 
-	/** Whether at least one item overflows the container. */
+	/** Whether at least one item does not fit the container. */
 	get hasOverflow() { return this._overflowingItems.size > 0 }
 
 	/** Whether the given item does not fit the container. */
 	overflows(item: TItem) { return this._overflowingItems.has(item) }
 
-	/** The last known inline sizes, keyed by item. Overflowed items retain the size they last had in the container. */
+	/** The container being measured, however it was given. */
+	get containerElement() { return this.options.container ?? this.containerRef.value }
+
+	/** The overflow candidates, however they were given. */
+	get items(): ReadonlyArray<TItem> { return this.options.items ?? [...this.itemRefs] }
+
+	private isPinned(item: TItem) {
+		return this.options.isPinned?.(item) ?? this.itemRefs.get(item)?.pinned ?? false
+	}
+
+	/** Overflowed items retain the size they last had in the container. */
 	private readonly sizes = new WeakMap<TItem, number>()
-	/** Items which have received a verdict before, distinguishing transitions from first encounters. */
 	private readonly known = new WeakSet<TItem>()
 
 	private connected = false
@@ -119,7 +125,7 @@ export class OverflowController<TItem extends Element = Element, THost extends R
 		this.observedItems.clear()
 	}
 
-	/** Schedules a measurement - at most one per microtask, running before the next paint. */
+	/** Schedules a measurement, at most one per microtask, running before the next paint. */
 	requestMeasurement() {
 		if (this.connected === false || this.scheduled || isServer) {
 			return
@@ -132,8 +138,7 @@ export class OverflowController<TItem extends Element = Element, THost extends R
 	}
 
 	private get observer() {
-		// Measuring in the next frame keeps the writes out of the observer's own delivery loop, whose
-		// notifications would otherwise stay undelivered and surface as a global error.
+		// Measuring a frame later keeps the writes out of the observer's delivery loop, which would otherwise error.
 		return this.resizeObserver ??= new ResizeObserver(() => requestAnimationFrame(() => this.requestMeasurement()))
 	}
 
@@ -142,22 +147,21 @@ export class OverflowController<TItem extends Element = Element, THost extends R
 			return
 		}
 
-		const container = this.options.container ?? undefined
-		this.observeContainer(container)
+		const container = this.containerElement
+		this.observeContainer(container ?? undefined)
 
-		if (container === undefined || this.options.disabled === true) {
+		if (!container || this.options.disabled === true) {
 			return
 		}
 
-		const items = this.options.items
+		const items = this.items
 
-		// Reads first, writes last - one layout pass, no thrashing:
+		// Reads first, writes last — one layout pass, no thrashing:
 
 		for (const item of items) {
 			if (this._overflowingItems.has(item) === false) {
 				const size = item.getBoundingClientRect().width
-				// A zero size means the item has no layout right now - e.g. in a hidden container -
-				// so the last size it had while visible remains the better estimate.
+				// Zero means no layout right now, so the last known size remains the better estimate.
 				if (size > 0) {
 					this.sizes.set(item, size)
 				}
@@ -176,7 +180,7 @@ export class OverflowController<TItem extends Element = Element, THost extends R
 		let pinnedCount = 0
 		let pinnedSize = 0
 		for (const item of items) {
-			if (this.options.isPinned?.(item)) {
+			if (this.isPinned(item)) {
 				pinnedCount++
 				pinnedSize += this.sizes.get(item) ?? 0
 			} else {
@@ -190,9 +194,7 @@ export class OverflowController<TItem extends Element = Element, THost extends R
 			sizeUpTo[index + 1] = sizeUpTo[index]! + (this.sizes.get(item) ?? 0)
 		}
 
-		// The largest number of flexible items which fit alongside all pinned ones, leaving room
-		// for the reservation whenever at least one item has to overflow. Never-measured items
-		// count as zero and fit optimistically - once laid out, the next pass measures them for real.
+		// Never-measured items count as zero and fit optimistically; the next pass measures them for real.
 		let fitting = budget <= 0 ? 0 : flexible.length
 		while (fitting > 0) {
 			const total = pinnedSize
@@ -219,8 +221,7 @@ export class OverflowController<TItem extends Element = Element, THost extends R
 			}
 		}
 
-		// Only laid-out items are observed: their size changes shall re-measure,
-		// whereas an overflowed item's home (e.g. a closed menu) is none of our business.
+		// Only laid-out items are observed; an overflowed item's home is none of our business.
 		this.observeItems(items.filter(item => overflowing.has(item) === false))
 
 		if (changed) {
