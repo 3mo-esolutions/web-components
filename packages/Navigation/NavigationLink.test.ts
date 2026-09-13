@@ -1,17 +1,15 @@
 import { html, render, type HTMLTemplateResult } from '@a11d/lit'
 import { NavigationStrategy } from '@a11d/lit-application'
 import '@a11d/metadata'
-import '@3mo/list'
-import '@3mo/menu'
-import '@3mo/line'
-import '@3mo/icon'
-import './NavigationItem.js'
-import { NavigationGroup, NavigationLink } from './INavigation.js'
+import './index.js'
+import { NavigationGroup } from './NavigationGroup.js'
+import { NavigationLink } from './NavigationLink.js'
 
 class TestNavigationTarget {
+	matchedUrl = false
 	constructor(readonly parameters?: object) { }
-	get url() { return undefined }
-	urlMatches() { return false }
+	get url() { return { path: '/home' } }
+	urlMatches() { return this.matchedUrl }
 	navigate() { }
 }
 
@@ -66,41 +64,41 @@ describe('NavigationLink', () => {
 		}
 	})
 
-	describe('hidden', () => {
-		for (const method of ['getItemTemplate', 'getMenuItemTemplate', 'getListItemTemplate'] as const) {
-			it(`should render nothing when hidden (${method})`, () => {
-				const link = createNavigationLink({ label: 'Home', hidden: true })
+	it('should report the icon, the hidden state and the separator of its options', () => {
+		const link = createNavigationLink({ label: 'Home', icon: 'home', hidden: true, hasSeparator: true })
 
-				expect(link[method]()).toBe(html.nothing)
-			})
-		}
+		expect(link.icon).toBe('home')
+		expect(link.hidden).toBeTrue()
+		expect(link.hasSeparator).toBeTrue()
+		expect(createNavigationLink({ label: 'Home' }).hidden).toBeFalse()
 	})
 
-	describe('templates', () => {
-		for (const method of ['getMenuItemTemplate', 'getListItemTemplate'] as const) {
-			it(`should render a leading separator line when hasSeparator is set (${method})`, () => {
-				const withSeparator = createNavigationLink({ label: 'Home', hasSeparator: true })
-				const withoutSeparator = createNavigationLink({ label: 'Home' })
+	it('should be current while the router matches its component\'s url', () => {
+		const component = new TestNavigationTarget
+		const link = new NavigationLink({ component } as any)
 
-				expect(renderTemplate(withSeparator[method]()).firstElementChild?.localName).toBe('mo-line')
-				expect(renderTemplate(withoutSeparator[method]()).querySelector('mo-line')).toBeNull()
-			})
-		}
+		expect(link.current).toBeFalse()
 
-		it('should render the icon in the list template unless iconHidden is requested', () => {
-			const link = createNavigationLink({ label: 'Home', icon: 'home' })
+		component.matchedUrl = true
 
-			expect(renderTemplate(link.getListItemTemplate()).querySelector('mo-icon[icon=home]')).not.toBeNull()
-			expect(renderTemplate(link.getListItemTemplate({ iconHidden: true })).querySelector('mo-icon')).toBeNull()
+		expect(link.current).toBeTrue()
+	})
+
+	describe('link', () => {
+		it('should make the element it is applied to a link to its component', () => {
+			const link = new NavigationLink({ component: new TestNavigationTarget } as any)
+			const container = renderTemplate(html`<button ${link.link()}>Home</button>`)
+
+			expect(container.querySelector('button')!.getAttribute('href')).toBe('/home')
 		})
 
 		it('should invoke both its own and the caller\'s invocation handlers on navigation', () => {
 			const ownInvocationHandler = jasmine.createSpy('invocationHandler')
-			const callerInvocationHandler = jasmine.createSpy('navigationInvocationHandler')
+			const callerInvocationHandler = jasmine.createSpy('callerInvocationHandler')
 			const link = createNavigationLink({ label: 'Home', invocationHandler: ownInvocationHandler })
-			const container = renderTemplate(link.getListItemTemplate({ navigationInvocationHandler: callerInvocationHandler }))
+			const container = renderTemplate(html`<button ${link.link({ invocationHandler: callerInvocationHandler })}>Home</button>`)
 
-			container.querySelector<HTMLElement>('mo-navigation-list-item')!.click()
+			container.querySelector('button')!.click()
 
 			expect(ownInvocationHandler).toHaveBeenCalledTimes(1)
 			expect(callerInvocationHandler).toHaveBeenCalledTimes(1)
@@ -109,8 +107,6 @@ describe('NavigationLink', () => {
 })
 
 describe('NavigationGroup', () => {
-	afterEach(removeRenderedTemplates)
-
 	const createGroup = (options: object) => new NavigationGroup({ label: 'More', children: [], ...options } as any)
 
 	describe('hidden', () => {
@@ -147,37 +143,26 @@ describe('NavigationGroup', () => {
 		})
 	})
 
-	describe('templates', () => {
-		const children = () => [
-			createNavigationLink({ label: 'Settings', icon: 'settings' }),
-			createNavigationLink({ label: 'About', icon: 'info' }),
-		]
+	describe('current', () => {
+		it('should not be current while none of its children is', () => {
+			expect(createGroup({ children: [createNavigationLink({ label: 'Home' })] }).current).toBeFalse()
+		})
 
-		for (const method of ['getItemTemplate', 'getMenuItemTemplate', 'getListItemTemplate'] as const) {
-			it(`should render nothing when hidden (${method})`, () => {
-				const group = createGroup({ hidden: true, children: children() })
-
-				expect(group[method]()).toBe(html.nothing)
+		it('should be current while one of its children is', () => {
+			const component = new TestNavigationTarget
+			component.matchedUrl = true
+			const group = createGroup({
+				children: [
+					createNavigationLink({ label: 'Home' }),
+					new NavigationLink({ component } as any),
+				]
 			})
-		}
 
-		it('should render a nested menu item with its children in the submenu slot', () => {
-			const group = createGroup({ children: children() })
-
-			const nestedMenuItem = renderTemplate(group.getMenuItemTemplate()).querySelector('mo-nested-menu-item')!
-
-			expect(nestedMenuItem).not.toBeNull()
-			expect(nestedMenuItem.querySelectorAll('mo-navigation-menu-item[slot=submenu]').length).toBe(2)
+			expect(group.current).toBeTrue()
 		})
+	})
 
-		it('should render a collapsible list item with its children as icon-less details items', () => {
-			const group = createGroup({ children: children() })
-
-			const collapsibleListItem = renderTemplate(group.getListItemTemplate()).querySelector('mo-collapsible-list-item')!
-
-			expect(collapsibleListItem).not.toBeNull()
-			expect(collapsibleListItem.querySelectorAll('mo-navigation-list-item[slot=details]').length).toBe(2)
-			expect(collapsibleListItem.querySelectorAll('mo-navigation-list-item[slot=details] mo-icon').length).toBe(0)
-		})
+	it('should not offer a link of its own', () => {
+		expect((createGroup({ children: [] }) as { link?: unknown }).link).toBeUndefined()
 	})
 })

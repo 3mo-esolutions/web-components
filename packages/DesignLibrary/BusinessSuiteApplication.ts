@@ -1,8 +1,8 @@
-import { css, html, ifDefined } from '@a11d/lit'
+import { css, html, ifDefined, type HTMLTemplateResult } from '@a11d/lit'
 import { Application, PwaHelper } from '@a11d/lit-application'
 import { Localizer } from '@3mo/localization'
 import { Icon, IconVariant } from '@3mo/icon'
-import { Authentication, BusinessSuiteAuthenticationDialogComponent, type INavigation, type User } from './index.js'
+import { Authentication, BusinessSuiteAuthenticationDialogComponent, type INavigation, type NavigationPresentation, type User } from './index.js'
 
 Icon.defaultVariant = IconVariant.Sharp
 
@@ -13,6 +13,7 @@ Localizer.dictionaries.add('de', {
 	'Expand': 'Erweitern',
 	'Collapse': 'Reduzieren',
 	'Loading': 'Lädt',
+	'Navigation': 'Navigation',
 })
 
 export abstract class BusinessSuiteApplication extends Application {
@@ -58,14 +59,34 @@ export abstract class BusinessSuiteApplication extends Application {
 	protected override get bodyTemplate() {
 		return html`
 			${this.navigationTemplate}
-			${super.bodyTemplate}
+			${this.topLayerTemplate}
 		`
 	}
 
+	/** Whether the application is presented with its navigation around the page, rather than with the page alone. */
+	protected get navigationShown() {
+		return window.locationbar.visible
+	}
+
+	/** Which presentations the navigation may take, most preferred first. */
+	protected get navigationPresentations(): Array<NavigationPresentation> {
+		return ['bar', 'drawer']
+	}
+
+	protected get navigationHeading(): string | HTMLTemplateResult | undefined {
+		return manifest?.short_name
+	}
+
 	protected get navigationTemplate() {
-		return !window.locationbar.visible ? html.nothing : html`
-			<mo-navigation .navigations=${this.navigations}>
+		return !this.navigationShown ? this.pageHostTemplate : html`
+			<mo-navigation
+				.navigations=${this.navigations}
+				.presentations=${this.navigationPresentations}
+				.heading=${this.navigationHeading}
+			>
+				<mo-application-logo slot='logo'></mo-application-logo>
 				${this.navigationContentTemplate}
+				${this.pageHostTemplate}
 			</mo-navigation>
 		`
 	}
@@ -78,7 +99,7 @@ export abstract class BusinessSuiteApplication extends Application {
 
 	private get userAvatarTemplate() {
 		return !Authentication.hasAuthenticator() ? html.nothing : html`
-			<mo-user-avatar slot='navbar-end'
+			<mo-user-avatar slot='end'
 				name=${ifDefined((BusinessSuiteAuthenticationDialogComponent.authenticatedUserStorage.value as User)?.name)}
 				email=${ifDefined((BusinessSuiteAuthenticationDialogComponent.authenticatedUserStorage.value as User)?.email)}
 				style='color: var(--mo-color-on-accent); margin-inline-end: 0.875rem'

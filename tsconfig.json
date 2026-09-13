@@ -262,6 +262,9 @@
 			"path": "./packages/Navigability"
 		},
 		{
+			"path": "./packages/Navigation"
+		},
+		{
 			"path": "./packages/Masonry"
 		},
 		{

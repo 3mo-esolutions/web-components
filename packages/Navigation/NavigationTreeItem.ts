@@ -2,24 +2,16 @@ import { component, css, property } from '@a11d/lit'
 import { TreeItem } from '@3mo/tree'
 
 /**
- * A row of the navigation drawer's tree. The router marks the row of the current page with
- * `data-router-selected`, which this item styles and reports upwards, so that the tree can reveal it.
+ * A row of a navigation tree: a destination, or a group of them which opens.
  *
  * @element mo-navigation-tree-item
  *
- * @fires navigationSelected - Dispatched when the router marks this item as the current page.
+ * @attr data-current - Whether this row, or a row nested in it, is the page being shown.
+ * @attr data-separator - Whether a divider parts this row from the one before it.
  */
 @component('mo-navigation-tree-item')
 export class NavigationTreeItem extends TreeItem {
-	@property({
-		type: Boolean,
-		attribute: 'data-router-selected',
-		updated(this: NavigationTreeItem, selected: boolean) {
-			if (selected) {
-				this.dispatchEvent(new CustomEvent('navigationSelected', { bubbles: true, composed: true }))
-			}
-		}
-	}) routerSelected = false
+	@property({ type: Boolean, reflect: true, attribute: 'data-current' }) current = false
 
 	static override get styles() {
 		return css`
@@ -29,7 +21,6 @@ export class NavigationTreeItem extends TreeItem {
 				/* A child's label lines up under its parent's, the first step clearing the parent's icon. */
 				padding-inline: calc(12px + var(--mo-tree-level, 0) * 16px + min(var(--mo-tree-level, 0), 1) * 14px) 8px;
 				min-block-size: 28px;
-				/* Rows breathe by the space between them rather than by their own height. */
 				margin: 1px 8px;
 				border-radius: var(--mo-border-radius);
 				font-size: 0.875rem;
@@ -38,7 +29,6 @@ export class NavigationTreeItem extends TreeItem {
 				background-image: none;
 			}
 
-			/* A row of the top level heads a section, and carries the weight of one. */
 			:host(:not([slot=children])) [part=row] {
 				min-block-size: 34px;
 				font-weight: 500;
@@ -75,9 +65,17 @@ export class NavigationTreeItem extends TreeItem {
 				border-block-start: none;
 			}
 
-			:host([data-router-selected]) [part=row] {
-				background-color: var(--mo-color-accent-transparent);
-				color: var(--mo-color-accent);
+			:host([data-current]) [part=row] {
+				color: var(--mo-color-on-selected);
+			}
+
+			:host([aria-current]) [part=row] {
+				background-color: var(--mo-color-selected);
+				color: var(--mo-color-on-selected);
+
+				slot[name=start] mo-icon {
+					opacity: 1;
+				}
 			}
 
 			[part=indicator] {
@@ -97,8 +95,7 @@ export class NavigationTreeItem extends TreeItem {
 			}
 
 			/* One line for the whole nested block, drawn by the outermost group alone: a deeper one would lay
-			   a second over it, and two of the same translucent grey read as a brighter stripe. It runs down
-			   the centre of the icon of the row it belongs to. */
+			   a second over it, and two of the same translucent grey read as a brighter stripe. */
 			:host(:not([slot=children])) [part=group] > div {
 				background-image: linear-gradient(var(--mo-color-transparent-gray-3) 0 0);
 				background-size: 1px 100%;
