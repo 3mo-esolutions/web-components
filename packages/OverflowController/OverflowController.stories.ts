@@ -44,8 +44,8 @@ class StoryOverflow extends Component {
 				background: var(--mo-color-transparent-gray-1);
 
 				&[data-pinned] {
-					background: var(--mo-color-accent-transparent);
-					color: var(--mo-color-accent);
+					background: var(--mo-color-selected);
+					color: var(--mo-color-on-selected);
 				}
 
 				&[data-overflows] {

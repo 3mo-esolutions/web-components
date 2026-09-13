@@ -112,6 +112,9 @@ RootCssInjector.inject(css`
 
 		--mo-color-accent-transparent: color-mix(in srgb, var(--mo-color-accent), transparent 75%);
 
+		--mo-color-selected: var(--mo-color-accent-transparent);
+		--mo-color-on-selected: color-mix(in srgb, var(--mo-color-accent), var(--mo-color-foreground));
+
 		/* Override Material Design variables */
 		--md-sys-color-primary: var(--mo-color-accent);
 		--md-sys-color-primary-container: var(--mo-color-accent-transparent);

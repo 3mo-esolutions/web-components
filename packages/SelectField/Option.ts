@@ -63,7 +63,8 @@ export class Option<T> extends SelectionListItem {
 			}
 
 			:host([selected]) {
-				background-color: var(--mo-color-accent-transparent);
+				background-color: var(--mo-color-selected);
+				color: var(--mo-color-on-selected);
 			}
 
 			:host([data-search-no-match]) {
