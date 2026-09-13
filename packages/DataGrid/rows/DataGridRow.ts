@@ -266,8 +266,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				align-content: start;
 				transition:
 					height var(--mo-duration-quick, 250ms) ease,
-					opacity var(--mo-duration-quick, 250ms) ease,
-					content-visibility var(--mo-duration-quick, 250ms) allow-discrete;
+					opacity var(--mo-duration-quick, 250ms) ease;
 
 				/* The details are rendered only while open, hence they animate in from the state they are inserted with. */
 				@starting-style {
@@ -277,6 +276,12 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 
 				/* Hidden and skipped from rendering when collapsed, but remains in the DOM to avoid re-instantiation overhead. */
 				&[data-collapsed] {
+					/* Only the collapsing direction transitions content-visibility, which keeps the contents
+					   rendered until the animation is over. Opening must flip it up front: contents that are
+					   skipped from rendering cannot take focus, so a discrete transition holding it hidden into
+					   the animation would swallow the keyboard's first step into freshly opened details. */
+					transition-property: height, opacity, content-visibility;
+					transition-behavior: allow-discrete;
 					height: 0;
 					opacity: 0;
 					content-visibility: hidden;

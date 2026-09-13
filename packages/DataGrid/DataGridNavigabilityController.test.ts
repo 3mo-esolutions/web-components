@@ -170,7 +170,6 @@ describe('DataGridNavigabilityController', () => {
 		it('should walk into the sub rows of an open row, which live in that row\'s own shadow root', async () => {
 			subFixture.component.detailsController.open(subFixture.component.dataRecords[0]!)
 			await subFixture.updateComplete
-			await new Promise(r => setTimeout(r, 30))
 			for (const row of subFixture.component.rows) {
 				row.requestUpdate()
 				await row.updateComplete
