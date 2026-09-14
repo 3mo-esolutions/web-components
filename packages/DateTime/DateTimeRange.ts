@@ -1,4 +1,4 @@
-import { type LanguageCode, Localizer, extractDateTimeFormatOptions } from '@3mo/localization'
+import { type LanguageCode, Localizer, extractDateTimeFormatOptions, getDateTimeFormatter } from '@3mo/localization'
 import { type DateTimeRangeParser } from './parsers/DateTimeRangeParser.js'
 import { DateTimeRangeDelimiterParser } from './index.js'
 import { type ParsingParameters, extractParsingParameters } from './extractParsingParameters.js'
@@ -32,12 +32,19 @@ export class DateTimeRange {
 		return undefined
 	}
 
+	private static readonly untilDelimiters = new Map<LanguageCode, string | undefined>()
+
 	private static getUntilDelimiter(language: LanguageCode = Localizer.languages.current) {
-		const parts = Intl.DateTimeFormat(language).formatRangeToParts(
+		if (DateTimeRange.untilDelimiters.has(language)) {
+			return DateTimeRange.untilDelimiters.get(language)
+		}
+		const parts = getDateTimeFormatter(language).formatRangeToParts(
 			new Date('2010-01-01T00:00:00.000Z'),
 			new Date('2020-01-01T00:00:00.000Z')
 		)
-		return parts.find(part => part.source === 'shared')?.value.trim()
+		const delimiter = parts.find(part => part.source === 'shared')?.value.trim()
+		DateTimeRange.untilDelimiters.set(language, delimiter)
+		return delimiter
 	}
 
 	private static sort(start?: DateTime, end?: DateTime) {
@@ -117,21 +124,18 @@ export class DateTimeRange {
 
 		const [language, explicitOptions] = extractDateTimeFormatOptions(this.calendarId, this.timeZoneId, options, defaultOptions)
 
-		const delimiter = DateTimeRange.getUntilDelimiter(language)
-
-		if (!this.end) {
-			return formatter(this.start as DateTime, ...options) + delimiter?.trimEnd()
-		}
-
-		if (!this.start) {
-			return delimiter?.trimStart() + formatter(this.end as DateTime, ...options)
+		if (!this.end || !this.start) {
+			const delimiter = DateTimeRange.getUntilDelimiter(language)
+			return !this.end
+				? formatter(this.start as DateTime, ...options) + delimiter?.trimEnd()
+				: delimiter?.trimStart() + formatter(this.end as DateTime, ...options)
 		}
 
 		if ('week' in explicitOptions && explicitOptions.week) {
 			return formatter(this.start as DateTime, ...options) + ' – ' + formatter(this.end as DateTime, ...options)
 		}
 
-		return Intl.DateTimeFormat(language, explicitOptions).formatRange(this.start, this.end)
+		return getDateTimeFormatter(language, explicitOptions).formatRange(this.start, this.end)
 	}
 }
 

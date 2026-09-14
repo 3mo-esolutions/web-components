@@ -4,7 +4,12 @@ import { extractFormatOptions, type FormatOptionsWithLanguage } from './OptionsW
 type DateFormatOptions = FormatOptionsWithLanguage<Intl.DateTimeFormatOptions>
 
 // @ts-ignore The default export is the function itself
-const getFormatter = memoizeFormatConstructor(Intl.DateTimeFormat)
+const memoized = memoizeFormatConstructor(Intl.DateTimeFormat)
+
+/** Constructing a formatter costs far more than using one, so they are kept and reused. */
+export const getDateTimeFormatter = memoized as (language: string, options?: Intl.DateTimeFormatOptions) => Intl.DateTimeFormat
+
+const getFormatter = getDateTimeFormatter
 
 export function extractDateTimeFormatOptions(calendarId?: string, timeZoneId?: string, explicitOptions?: DateFormatOptions, defaultOptions?: Intl.DateTimeFormatOptions) {
 	const [language, otherExplicitOptions] = extractFormatOptions(explicitOptions)
