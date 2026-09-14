@@ -196,7 +196,8 @@ export class Navigation extends Component {
 
 			#heading {
 				margin: 2px 0 0 8px;
-				font-size: 23px;
+				font-size: 1.125rem;
+				font-weight: 500;
 				white-space: nowrap;
 				overflow: hidden;
 				text-overflow: ellipsis;

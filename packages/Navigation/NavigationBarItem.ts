@@ -1,4 +1,4 @@
-import { bind, Component, component, css, event, html, ifDefined, property, repeat } from '@a11d/lit'
+import { bind, Component, component, css, event, html, ifDefined, property, repeat, type HTMLTemplateResult } from '@a11d/lit'
 import { visibleNavigations, type INavigation } from './INavigation.js'
 import '@3mo/menu'
 
@@ -56,7 +56,7 @@ export class NavigationBarItem extends Component {
 				--mo-focus-ring-color: var(--mo-color-on-accent);
 			}
 
-			mo-navigation-menu-item {
+			mo-navigation-menu-item, mo-nested-menu-item {
 				font-size: 14px;
 				min-width: 200px;
 				&[aria-current] {
@@ -84,14 +84,23 @@ export class NavigationBarItem extends Component {
 		`
 	}
 
-	private menuItemTemplate(navigation: INavigation) {
+	private menuItemTemplate(navigation: INavigation, slot?: string): HTMLTemplateResult {
+		const children = visibleNavigations(navigation.children)
 		return html`
-			${navigation.hasSeparator !== true ? html.nothing : html`<mo-line></mo-line>`}
-			<mo-navigation-menu-item
-				icon=${ifDefined(navigation.icon)}
-				aria-current=${ifDefined(navigation.current === true ? 'page' : undefined)}
-				${navigation.link?.({ invocationHandler: () => { this.open = false; this.invoke.dispatch(navigation) } }) ?? html.nothing}
-			>${navigation.label}</mo-navigation-menu-item>
+			${navigation.hasSeparator !== true ? html.nothing : html`<mo-line slot=${ifDefined(slot)}></mo-line>`}
+			${children.length === 0 ? html`
+				<mo-navigation-menu-item slot=${ifDefined(slot)}
+					aria-current=${ifDefined(navigation.current === true ? 'page' : undefined)}
+					${navigation.link?.({ invocationHandler: () => { this.open = false; this.invoke.dispatch(navigation) } }) ?? html.nothing}
+				>${navigation.label}</mo-navigation-menu-item>
+			` : html`
+				<mo-nested-menu-item slot=${ifDefined(slot)}
+					aria-current=${ifDefined(navigation.current === true ? 'page' : undefined)}
+				>
+					${navigation.label}
+					${repeat(children, child => child, child => this.menuItemTemplate(child, 'submenu'))}
+				</mo-nested-menu-item>
+			`}
 		`
 	}
 }

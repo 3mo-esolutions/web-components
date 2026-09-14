@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/navigation",
-	"version": "0.1.0",
+	"version": "0.1.3",
 	"description": "Application navigation presented as a bar, a rail or a drawer, with an orchestrator which picks the one that fits",
 	"repository": {
 		"type": "git",
