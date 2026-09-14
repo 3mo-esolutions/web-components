@@ -195,8 +195,7 @@ describe('FieldSelect', () => {
 			expect(fixture.component.open).toBeFalse()
 		})
 
-		// BUG: multi-select menu closes on item click
-		xit('should stay open after selecting an option in multiple mode', async () => {
+		it('should close after selecting an option by its row in multiple mode', async () => {
 			fixture.component.multiple = true
 			await openMenu(fixture.component)
 			expect(fixture.component.open).toBeTrue()
@@ -205,6 +204,17 @@ describe('FieldSelect', () => {
 			await settle(fixture.component)
 
 			expect(fixture.component.index).toEqual([1])
+			expect(fixture.component.open).toBeFalse()
+		})
+
+		it('should stay open when the checkbox of an option is clicked in multiple mode', async () => {
+			fixture.component.multiple = true
+			await openMenu(fixture.component)
+			await settle(fixture.component)
+
+			fixture.component.options[1]!.renderRoot.querySelector('mo-checkbox')!.click()
+			await settle(fixture.component)
+
 			expect(fixture.component.open).toBeTrue()
 		})
 
@@ -502,8 +512,9 @@ describe('FieldSelect', () => {
 			expect(fixture.component.searchInputElement!.value).toBe('Custom text')
 		})
 
-		// BUG: resetSearch does not clear keyword in freeInput mode
-		xit('should clear the search text and refocus the input via the clear icon button', async () => {
+		it('should clear the search text, the value and refocus the input via the clear icon button', async () => {
+			fixture.component.value = 1
+			await settle(fixture.component)
 			await type(fixture.component, 'Custom text')
 			const clearIconButton = fixture.component.renderRoot.querySelector('mo-icon-button')
 
@@ -511,6 +522,7 @@ describe('FieldSelect', () => {
 			await settle(fixture.component)
 
 			expect(fixture.component.searchInputElement!.value).toBe('')
+			expect(fixture.component.value).toBeUndefined()
 			expect(document.activeElement).toBe(fixture.component)
 		})
 

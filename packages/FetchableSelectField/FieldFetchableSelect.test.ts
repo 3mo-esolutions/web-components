@@ -1,7 +1,7 @@
 import { html } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { type FieldFetchableSelect } from './index.js'
-import '.'
+import './FieldFetchableSelect.js'
 
 type SearchParameters = { page?: number, keyword?: string }
 type FetchableSelect = FieldFetchableSelect<any, SearchParameters>
@@ -276,6 +276,17 @@ describe('FieldFetchableSelect', () => {
 			await settle(searchFixture.component)
 
 			expect(fetchSpy).toHaveBeenCalledOnceWith({ page: 1, keyword: 'ban' })
+		})
+
+		it('should pass the query as typed, without lower-casing it', async () => {
+			await settle(searchFixture.component)
+			await focusIn(searchFixture.component)
+			fetchSpy.calls.reset()
+
+			await type(searchFixture.component, 'BaN')
+			await settle(searchFixture.component)
+
+			expect(fetchSpy).toHaveBeenCalledOnceWith({ keyword: 'BaN' })
 		})
 
 		it('should coalesce consecutive keystrokes into a single throttled fetch', async () => {

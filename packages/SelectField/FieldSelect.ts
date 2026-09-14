@@ -211,9 +211,8 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 
 	private get clearIconButtonTemplate() {
 		const clear = () => {
-			this.resetSearch()
+			this.handleSelection([])
 			this.searchInputElement?.focus()
-			this.searchInputElement?.select()
 		}
 		return !this.searching || !this.hasSearchInput ? html.nothing : html`
 			<mo-icon-button tabindex='-1' dense slot='end' icon='cancel'
@@ -328,7 +327,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 	override reportValidity() { }
 
 	protected get searchKeyword() {
-		return this.searchString?.toLowerCase().trim() || ''
+		return this.searchString?.trim() || ''
 	}
 
 	protected override async handleInput(value: Value, e?: Event | undefined) {
