@@ -322,6 +322,9 @@
 			"path": "./packages/Selectability"
 		},
 		{
+			"path": "./packages/SelectionGroup"
+		},
+		{
 			"path": "./packages/SelectField"
 		},
 		{

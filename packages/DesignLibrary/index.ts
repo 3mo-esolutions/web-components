@@ -102,6 +102,7 @@ export * from '@3mo/command-palette'
 export * from '@3mo/element-internals'
 export * from '@3mo/indexability'
 export * from '@3mo/selectability'
+export * from '@3mo/selection-group'
 export * from '@3mo/infinite-scroll-controller'
 // Only the element and its type: "@3mo/key"'s "Key" class would collide with the keyboard "Key" of
 // "@a11d/lit-application", which is the one applications already build on.
