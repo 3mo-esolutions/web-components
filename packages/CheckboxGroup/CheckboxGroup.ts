@@ -65,9 +65,9 @@ export class CheckboxGroup extends Checkbox {
 
 	protected override get template() {
 		return html`
-			<mo-flex>
+			<mo-flex gap='0.875rem'>
 				${super.template}
-				<mo-flex direction=${this.direction} ${style({ flex: '1' })}>
+				<mo-flex gap='0.875rem' direction=${this.direction} ${style({ flex: '1' })}>
 					<slot @slotchange=${() => this.handleSlotChange()}></slot>
 				</mo-flex>
 			</mo-flex>
