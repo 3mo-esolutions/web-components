@@ -61,6 +61,7 @@ class SelectabilityListTest extends Component {
 	interaction = SelectabilityInteraction.Auto
 	itemRole = 'option'
 	hostRole = 'listbox'
+	ariaState?: 'selected' | 'checked'
 	disabledIds: ReadonlyArray<number> = []
 
 	readonly changes = new Array<SelectabilityChange<Person>>()
@@ -75,6 +76,7 @@ class SelectabilityListTest extends Component {
 			get strategy() { return component.strategy },
 			get stamping() { return component.stamping },
 			get interaction() { return component.interaction },
+			get ariaState() { return component.ariaState },
 			handleChange: change => component.changes.push(change),
 		})
 	}
@@ -784,6 +786,114 @@ describe('SelectabilityController', () => {
 		})
 	})
 
+	/**
+	 * The ARIA half of stamping, which is a promise to assistive technology rather than a styling hook.
+	 * Two rules hold whatever the role: exactly one of the three attributes at a time, and none at all
+	 * once there is no selection left to announce.
+	 */
+	describe('the announced state', () => {
+		const optionFixture = createList()
+		const checkableFixture = createList({ itemRole: 'menuitemcheckbox', hostRole: 'menu' })
+		const buttonFixture = createList({ itemRole: 'button', hostRole: 'toolbar' })
+		const rolelessFixture = createList({ itemRole: '' })
+		const overriddenFixture = createList({ itemRole: 'treeitem', hostRole: 'tree', ariaState: 'checked' })
+
+		const states = (element: HTMLElement) => ({
+			selected: element.getAttribute('aria-selected'),
+			checked: element.getAttribute('aria-checked'),
+			pressed: element.getAttribute('aria-pressed'),
+		})
+
+		it('says selected on a role whose family is selection', () => {
+			click(optionFixture.component.itemElements[1]!)
+
+			expect(states(optionFixture.component.itemElements[1]!)).toEqual({ selected: 'true', checked: null, pressed: null })
+			expect(states(optionFixture.component.itemElements[0]!)).toEqual({ selected: 'false', checked: null, pressed: null })
+		})
+
+		it('says checked on a role whose family is checking', () => {
+			click(checkableFixture.component.itemElements[1]!)
+
+			expect(states(checkableFixture.component.itemElements[1]!)).toEqual({ selected: null, checked: 'true', pressed: null })
+		})
+
+		// A button is in neither family, so it was announced as nothing at all — the gap that left a set of
+		// plain buttons carrying no state for a screen reader to read.
+		it('says pressed on a button, which is in neither family', () => {
+			click(buttonFixture.component.itemElements[1]!)
+
+			expect(states(buttonFixture.component.itemElements[1]!)).toEqual({ selected: null, checked: null, pressed: 'true' })
+			expect(states(buttonFixture.component.itemElements[0]!)).toEqual({ selected: null, checked: null, pressed: 'false' })
+		})
+
+		it('says nothing at all about a role in no family', () => {
+			click(rolelessFixture.component.itemElements[1]!)
+
+			expect(states(rolelessFixture.component.itemElements[1]!)).toEqual({ selected: null, checked: null, pressed: null })
+			expect(rolelessFixture.component.itemElements[1]!.dataset.selectability).toBe('selected')
+		})
+
+		it('says what the host asked for over what the role would have called for', () => {
+			click(overriddenFixture.component.itemElements[1]!)
+
+			expect(states(overriddenFixture.component.itemElements[1]!)).toEqual({ selected: null, checked: 'true', pressed: null })
+		})
+
+		// The one a host switching patterns hits: a set that was a radio group and becomes a set of toggles
+		// would otherwise announce both states at once.
+		it('keeps exactly one of the three when the role changes underneath it', async () => {
+			click(optionFixture.component.itemElements[1]!)
+			expect(states(optionFixture.component.itemElements[1]!)).toEqual({ selected: 'true', checked: null, pressed: null })
+
+			optionFixture.component.itemRole = 'button'
+			await optionFixture.update()
+
+			expect(states(optionFixture.component.itemElements[1]!)).toEqual({ selected: null, checked: null, pressed: 'true' })
+		})
+
+		it('keeps exactly one of the three when the host changes what it asks for', async () => {
+			click(overriddenFixture.component.itemElements[1]!)
+
+			overriddenFixture.component.ariaState = 'selected'
+			await overriddenFixture.update()
+
+			expect(states(overriddenFixture.component.itemElements[1]!)).toEqual({ selected: 'true', checked: null, pressed: null })
+		})
+
+		it('announces nothing once selection is switched off', async () => {
+			click(optionFixture.component.itemElements[1]!)
+
+			optionFixture.component.selectability = undefined
+			await optionFixture.update()
+
+			expect(states(optionFixture.component.itemElements[1]!)).toEqual({ selected: null, checked: null, pressed: null })
+			expect(states(optionFixture.component.itemElements[0]!)).toEqual({ selected: null, checked: null, pressed: null })
+		})
+
+		// The case a committed selection cannot clear on its own: nothing is selected, so switching
+		// selectability off changes no selection and commits nothing — and every item was nonetheless left
+		// announcing an unselected state it can no longer take.
+		it('announces nothing once selection is switched off, even with nothing selected', async () => {
+			expect(optionFixture.component.itemElements[0]!.getAttribute('aria-selected')).toBe('false')
+
+			optionFixture.component.selectability = undefined
+			await optionFixture.update()
+
+			expect(optionFixture.component.itemElements.every(element => !element.hasAttribute('aria-selected'))).toBe(true)
+		})
+
+		it('announces the state again when selection is switched back on', async () => {
+			optionFixture.component.selectability = undefined
+			await optionFixture.update()
+
+			optionFixture.component.selectability = Selectability.Multiple
+			await optionFixture.update()
+			click(optionFixture.component.itemElements[1]!)
+
+			expect(states(optionFixture.component.itemElements[1]!)).toEqual({ selected: 'true', checked: null, pressed: null })
+		})
+	})
+
 	describe('stamping', () => {
 		const fixture = createList()
 		const checkboxFixture = createList({ itemRole: 'menuitemcheckbox', hostRole: 'menu' })
@@ -830,6 +940,17 @@ describe('SelectabilityController', () => {
 			expect(noneFixture.component.itemElements[1]!.dataset.selectability).toBeUndefined()
 			expect(noneFixture.component.itemElements[1]!.hasAttribute('aria-selected')).toBe(false)
 			expect(noneFixture.component.hasAttribute('aria-multiselectable')).toBe(false)
+		})
+
+		it('leaves the styling hook in place when selection goes off, unlike the ARIA', async () => {
+			click(fixture.component.itemElements[1]!)
+
+			fixture.component.selectability = undefined
+			await fixture.update()
+
+			// Deliberately asymmetric: `data-selectability` is a styling contract a consumer may key off,
+			// and saying "unselected" about something unselectable is not a lie. An `aria-selected` is.
+			expect(fixture.component.itemElements[1]!.dataset.selectability).toBe('unselected')
 		})
 
 		it('follows an element handed a different datum, as a virtualized window does', async () => {

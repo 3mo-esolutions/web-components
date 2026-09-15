@@ -106,7 +106,10 @@ const noModifiers: SelectabilityModifiers = { shift: false, ctrl: false, meta: f
 export class SelectabilityController<T, TItemOptions extends SelectabilityItemOptions<T> = SelectabilityItemOptions<T>> extends Controller implements EventListenerObject {
 	private static readonly selectedRoles = ['option', 'row', 'treeitem', 'gridcell', 'tab', 'columnheader', 'rowheader']
 	private static readonly checkedRoles = ['menuitemcheckbox', 'menuitemradio', 'checkbox', 'radio', 'switch']
+	/** A button is neither selected nor checked: a toggle says `pressed`. */
+	private static readonly pressedRoles = ['button']
 	private static readonly multiselectableRoles = ['listbox', 'grid', 'treegrid', 'tree', 'tablist']
+	private static readonly stateAttributes = ['aria-selected', 'aria-checked', 'aria-pressed']
 
 	readonly indexability: IndexabilityController<T, TItemOptions>
 
@@ -184,10 +187,11 @@ export class SelectabilityController<T, TItemOptions extends SelectabilityItemOp
 				// A selection nothing can act on is a trap, so it goes off with the selectability.
 				this.internalAnchor = undefined
 				this.commit([])
-				return
 			}
 		}
-		// Catches a selection assigned from outside, which need not have re-rendered the items.
+		// Catches a selection assigned from outside, which need not have re-rendered the items — and the
+		// state left on the items by a selectability that has since been switched off, which an already
+		// empty selection would not have committed anything to clear.
 		this.stamp()
 	}
 
@@ -461,11 +465,21 @@ export class SelectabilityController<T, TItemOptions extends SelectabilityItemOp
 		element.dataset.selectability = selected ? 'selected' : 'unselected'
 		const role = element.role ?? element.getAttribute('role') ?? ''
 		// A role that has no selected state gets no attribute: an aria-selected the role does not allow is
-		// read as a broken control rather than an unselected one.
-		const attribute = this.options.ariaState ? `aria-${this.options.ariaState}`
-			: SelectabilityController.selectedRoles.includes(role) ? 'aria-selected'
-				: SelectabilityController.checkedRoles.includes(role) ? 'aria-checked'
-					: undefined
+		// read as a broken control rather than an unselected one. Neither does anything once selection is
+		// off, where a state left behind announces a control that can no longer be selected at all.
+		const attribute = !this.enabled ? undefined
+			: this.options.ariaState ? `aria-${this.options.ariaState}`
+				: SelectabilityController.selectedRoles.includes(role) ? 'aria-selected'
+					: SelectabilityController.checkedRoles.includes(role) ? 'aria-checked'
+						: SelectabilityController.pressedRoles.includes(role) ? 'aria-pressed'
+							: undefined
+		// Exactly one of the three at a time: an item whose role changed with the pattern around it would
+		// otherwise go on announcing the state it carried under the old one.
+		for (const stale of SelectabilityController.stateAttributes) {
+			if (stale !== attribute) {
+				element.removeAttribute(stale)
+			}
+		}
 		if (attribute) {
 			element.setAttribute(attribute, String(selected))
 		}
