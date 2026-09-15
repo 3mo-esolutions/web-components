@@ -1,4 +1,4 @@
-import { css, html, style, unsafeCSS, Component, component, property, query, eventListener } from '@a11d/lit'
+import { css, html, unsafeCSS, Component, component, property, query } from '@a11d/lit'
 import { type FetchableDataGridParametersType } from '@3mo/fetchable-data-grid'
 import { ReorderabilityState } from '@3mo/reorderability'
 import { tooltip } from '@3mo/tooltip'
@@ -59,44 +59,31 @@ export class ModdableDataGridChip<TData, TParameters extends FetchableDataGridPa
 				}
 			}
 
-			mo-chip {
-				height: 30px;
-				--mo-chip-background-color: color-mix(in srgb, var(--mo-color-foreground), transparent 85%);
+			/* A view chip has to read as an object in a bar full of them, so it keeps a fill — which stands
+			   in for the border rather than doubling it. Scoped to the unselected state on purpose: an outer
+			   rule beats the chip's own selected one too, and would take the accent with it. */
+			mo-chip:not([selected]) {
+				outline-color: transparent;
+				background: var(--mo-color-transparent-gray-3);
 			}
 
-			:host([selected]) mo-chip {
-				--mo-chip-background-color: var(--mo-color-accent);
-				--mo-chip-foreground-color: var(--mo-color-on-accent);
-				font-weight: 500;
-			}
-
-			:host(:hover:not([selected])) mo-chip {
-				--mo-chip-background-color: color-mix(
-					in srgb,
-					color-mix(in srgb, var(--mo-color-foreground), transparent 85%),
-					color-mix(in srgb, var(--mo-color-accent), transparent 75%)
-				);
-			}
-
+			/* A selected archived view keeps the shape and gives up the accent. */
 			:host([selected][data-archived]) mo-chip {
-				--mo-chip-background-color: color-mix(
-					in srgb,
-					color-mix(in srgb, var(--mo-color-foreground), transparent 45%),
-					color-mix(in srgb, var(--mo-color-accent), transparent 25%)
-				);
+				background: var(--mo-color-transparent-gray-3);
+				color: var(--mo-color-gray);
 			}
 
 			#changed {
-				margin-inline-end: 5px;
+				margin-inline-end: 0.25rem;
 			}
 
 			mo-icon-button {
-				font-size: 18px;
+				font-size: 1.125rem;
 			}
 
 			:host([selected]:not([readOnly])) mo-icon-button:not([data-no-border])::before {
 				content: '';
-				border-inline-start: 1px solid rgba(255, 255, 255, 0.4);
+				border-inline-start: 1px solid color-mix(in srgb, currentColor, transparent 70%);
 				height: 70%;
 				margin: 0 2px;
 			}
@@ -109,13 +96,13 @@ export class ModdableDataGridChip<TData, TParameters extends FetchableDataGridPa
 
 	protected override get template() {
 		return html`
-			<mo-chip>
+			<mo-chip selectable ?selected=${this.selected} @requestSelect=${this.handleRequestSelect}>
 				<span id='title'>
 					${this.mode.archived ? `[${this.mode.name}]` : this.mode.name}
 				</span>
 
 				${!this.selected ? html.nothing : html`
-					<mo-flex slot='end' direction='horizontal' ${style({ margin: '0 -4px 0 4px' })}>
+					<mo-flex slot='action' direction='horizontal'>
 						${!this.dataGrid.hasUnsavedChanges ? this.contextMenuTemplate : html`
 							<span id='changed'>*</span>
 							<mo-icon-button dense icon='undo' ${tooltip(t('Discard changes'))} @click=${() => this.discard()}></mo-icon-button>
@@ -207,11 +194,12 @@ export class ModdableDataGridChip<TData, TParameters extends FetchableDataGridPa
 		return this.mode.delete(this.dataGrid)
 	}
 
-	@eventListener('click')
-	protected async handleClick(e: PointerEvent) {
-		if (e.composedPath().includes(this.renderRoot.querySelector('mo-flex')!)) {
-			return
-		}
+	protected async handleRequestSelect(e: CustomEvent<boolean>) {
+		// The grid's own controller owns which mode is selected, including the confirmation which can veto
+		// the switch — so the chip is refused and the answer comes from a render, rather than corrected
+		// after it has already announced a state it may not get to keep.
+		e.preventDefault()
+		e.stopPropagation()
 
 		if (this.dataGrid.mode?.id === this.mode.id) {
 			this.dataGrid.modesController.set(undefined)

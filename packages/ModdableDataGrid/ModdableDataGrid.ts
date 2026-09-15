@@ -74,10 +74,13 @@ export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataG
 			}
 
 			#modebar {
+				--_padding-block: 6px;
 				border-radius: var(--mo-border-radius) var(--mo-border-radius) 0 0;
 				background-color: var(--mo-color-surface-container-low);
-				min-height: 40px;
-				padding: 6px 12px;
+				/* The bar clips its content, so it has to leave a chip its full height — any less and the
+				   chip's outline is cut off at the top and bottom. */
+				min-height: calc(2rem + var(--_padding-block) * 2);
+				padding: var(--_padding-block) 12px;
 
 				white-space: nowrap;
 
@@ -184,13 +187,7 @@ export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataG
 										.dataGrid=${this}
 										.mode=${mode}
 										?selected=${this.mode?.id === mode.id}
-										${this.modesReorderabilityController.item({
-											index,
-											// A chip is a button carrying buttons, so a press on its label and one on its
-											// actions resolve to the very same element: only excluding the actions can
-											// tell them apart, and a handle confining the drag to the label cannot.
-											excluded: 'mo-icon-button, mo-popover-container',
-										})}
+										${this.modesReorderabilityController.item({ index, excluded: 'mo-icon-button, mo-popover-container' })}
 									></mo-moddable-data-grid-chip>
 								`)}
 							</mo-flex>

@@ -1,7 +1,7 @@
 {
 	"name": "@3mo/chip",
-	"version": "0.3.0",
-	"description": "A chip web-component based on Material Web Components.",
+	"version": "0.4.0",
+	"description": "A chip web-component with selection, removal and a chip set built on the selection group.",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/3mo-esolutions/web-components"
@@ -9,8 +9,9 @@
 	"keywords": [
 		"lit",
 		"web-component",
-		"material",
-		"chip"
+		"chip",
+		"tag",
+		"filter"
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
@@ -26,6 +27,16 @@
 		"@a11d/lit": "x",
 		"tslib": "x",
 		"@3mo/theme": "x",
-		"@3mo/button": "x"
+		"@3mo/localization": "x",
+		"@3mo/focus-ring": "x",
+		"@3mo/icon": "x",
+		"@3mo/slot-controller": "x",
+		"@3mo/disabled-property": "x",
+		"@3mo/selectability": "x",
+		"@3mo/selection-group": "x",
+		"@material/web": "1.x"
+	},
+	"devDependencies": {
+		"@a11d/lit-testing": "x"
 	}
 }

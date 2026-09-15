@@ -128,7 +128,7 @@ export const RichValues: StoryObj = {
 			</mo-key-value>
 
 			<mo-key-value key='License'>
-				<mo-chip>MIT</mo-chip>
+				<mo-chip readonly>MIT</mo-chip>
 			</mo-key-value>
 
 			<mo-key-value key='Coverage'>

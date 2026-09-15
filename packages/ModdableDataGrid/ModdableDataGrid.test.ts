@@ -1,4 +1,4 @@
-import { component, DataGrid, DataGridSortingStrategy, DialogAlert, DialogDeletion, GenericDialog, html } from '@3mo/del'
+import { type Chip, component, DataGrid, DataGridSortingStrategy, DialogAlert, DialogDeletion, GenericDialog, html } from '@3mo/del'
 import { DialogMode, ModdableDataGrid, type ModdableDataGridChip, ModdableDataGridMode, ModdableDataGridModeColumn, type ModdableDataGridModesAdapter } from './index.js'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { faker } from '@faker-js/faker'
@@ -184,8 +184,13 @@ class ModdableDataGridTestFixture extends ComponentTestFixture<ModdableDataGridS
 		return this.modeChips.find(chip => chip.selected)
 	}
 
+	// A chip is activated where a user activates it: the button inside it, not the wrapper around it.
+	activateChip(chip: ModdableDataGridChip<User, Parameters>) {
+		chip.renderRoot.querySelector<Chip>('mo-chip')!.actionElement.click()
+	}
+
 	async selectChip(chip: ModdableDataGridChip<User, Parameters>) {
-		chip.dispatchEvent(new MouseEvent('click'))
+		this.activateChip(chip)
 		await new Promise(r => setTimeout(r))
 	}
 }
@@ -279,7 +284,7 @@ describe('ModdableDataGrid', () => {
 		it('should select the associated mode when a chip is clicked', async () => {
 			fixture.expectModeToBeSelected('default')
 
-			fixture.modeChips[0]!.dispatchEvent(new MouseEvent('click'))
+			fixture.activateChip(fixture.modeChips[0]!)
 			await fixture.updateComplete
 
 			fixture.expectModeToBeSelected('1')
@@ -544,7 +549,7 @@ describe('ModdableDataGrid', () => {
 			it('should apply pre-selected mode on initialization', () => fixture.expectModeToBeSelected('2'))
 
 			it('should reset to the "default" mode when clicking the pre-selected mode', async () => {
-				fixture.selectedModeChip?.dispatchEvent(new MouseEvent('click'))
+				fixture.activateChip(fixture.selectedModeChip!)
 
 				await fixture.updateComplete
 
