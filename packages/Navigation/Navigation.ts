@@ -1,4 +1,4 @@
-import { bind, Component, component, css, eventListener, html, ifDefined, isServer, property, query, state, type HTMLTemplateResult, type PropertyValues } from '@a11d/lit'
+import { bind, Component, component, css, eventListener, html, isServer, property, query, state, type HTMLTemplateResult, type PropertyValues } from '@a11d/lit'
 import { type INavigation } from './INavigation.js'
 import { type NavigationPresentation } from './NavigationPresentation.js'
 import './NavigationBar.js'
@@ -63,6 +63,13 @@ export class Navigation extends Component {
 	override disconnectedCallback() {
 		this.resizeObserver?.disconnect()
 		super.disconnectedCallback()
+	}
+
+	/* The bar measures its verdict a frame after the layout that changed it, so it is taken when the bar says
+	   so — reading it on a resize alone takes the answer to the size the shell had before. */
+	@eventListener('overflowChange')
+	protected handleOverflowChange() {
+		this.requestUpdate()
 	}
 
 	@eventListener({ target: window, type: 'keydown' })
@@ -290,7 +297,7 @@ export class Navigation extends Component {
 		return this.presentation !== 'drawer' ? html.nothing : html`
 			<mo-navigation-drawer
 				?open=${bind(this, 'drawerOpen')}
-				heading=${ifDefined(this.heading)}
+				.heading=${this.heading}
 				.navigations=${this.navigations}
 			></mo-navigation-drawer>
 		`

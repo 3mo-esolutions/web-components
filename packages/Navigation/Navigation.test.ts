@@ -1,3 +1,4 @@
+import { html } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import './index.js'
 import { fakeNavigation as navigation } from './fakeNavigation.test.js'
@@ -49,6 +50,18 @@ describe('Navigation', () => {
 			spyOnProperty(fixture.component.navigationBar!, 'hasOverflow', 'get').and.returnValue(true)
 
 			fixture.component.requestUpdate()
+			await fixture.component.updateComplete
+
+			expect(fixture.component.presentation).toBe('drawer')
+		})
+
+		it('should take the bar verdict when the bar reaches it, since nothing else resized', async () => {
+			await settle(fixture.component)
+			const bar = fixture.component.navigationBar!
+			spyOnProperty(bar, 'hasOverflow', 'get').and.returnValue(true)
+
+			bar.requestUpdate()
+			await bar.updateComplete
 			await fixture.component.updateComplete
 
 			expect(fixture.component.presentation).toBe('drawer')
@@ -139,6 +152,14 @@ describe('Navigation', () => {
 
 			expect(fixture.component.presentation).toBe('bar')
 			expect(fixture.component.menuButton).toBeNull()
+		})
+
+		it('should hand the heading over as a template rather than as an attribute', async () => {
+			fixture.component.heading = html`<span>Kasse</span>`
+			await settle(fixture.component)
+
+			const drawer = fixture.component.renderRoot.querySelector('mo-navigation-drawer')!
+			expect(drawer.renderRoot.textContent).toContain('Kasse')
 		})
 	})
 
