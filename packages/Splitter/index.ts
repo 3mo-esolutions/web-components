@@ -1,3 +1,4 @@
+import '@3mo/flex'
 export * from './Splitter.js'
 export * from './SplitterItem.js'
 export * from './SplitterResizerHost.js'

@@ -1,5 +1,6 @@
 import '@3mo/localization'
 import '@3mo/field'
+import '@3mo/icon'
 export * from './FieldText.js'
 export * from './FieldPassword.js'
 export * from './FieldSearch.js'

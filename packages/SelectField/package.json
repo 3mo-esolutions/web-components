@@ -32,7 +32,9 @@
 		"@3mo/menu": ">=0.13.x",
 		"@3mo/list": "x",
 		"@3mo/line": "x",
-		"@3mo/selectability": "x"
+		"@3mo/selectability": "x",
+		"@3mo/icon": "x",
+		"@3mo/checkbox": "x"
 	},
 	"devDependencies": {
 		"@a11d/lit-testing": "x"

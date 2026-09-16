@@ -44,6 +44,11 @@
 		"@3mo/tooltip": "x",
 		"@3mo/localization": "x",
 		"@3mo/context-menu": "x",
-		"localforage": "1.x"
+		"localforage": "1.x",
+		"@3mo/text-fields": "x",
+		"@3mo/checkbox": "x",
+		"@3mo/button": "x",
+		"@3mo/menu": "x",
+		"@3mo/line": "x"
 	}
 }

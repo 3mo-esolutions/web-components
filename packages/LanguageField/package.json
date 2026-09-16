@@ -31,6 +31,7 @@
 		"@3mo/select-field": "x",
 		"@3mo/field-pair": "x",
 		"@3mo/dialog": "x",
-		"@3mo/localization": "x"
+		"@3mo/localization": "x",
+		"@3mo/grid": "x"
 	}
 }

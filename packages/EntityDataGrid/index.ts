@@ -1,3 +1,6 @@
 import '@3mo/fab'
 import '@3mo/context-menu'
+import '@3mo/loading-button'
+import '@3mo/icon'
+import '@3mo/data-grid'
 export * from './EntityDataGrid.js'

@@ -30,7 +30,8 @@
 		"@3mo/flex": "x",
 		"@3mo/dialog": "x",
 		"@3mo/localization": "x",
-		"@3mo/text-fields": "x"
+		"@3mo/text-fields": "x",
+		"@3mo/loading-button": "x"
 	},
 	"devDependencies": {
 		"@a11d/lit-testing": "x"

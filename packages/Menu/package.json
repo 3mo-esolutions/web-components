@@ -29,7 +29,8 @@
 		"@3mo/popover": ">=0.10.x",
 		"@3mo/list": ">=0.9.1",
 		"@3mo/disabled-property": "x",
-		"@3mo/slot-controller": "x"
+		"@3mo/slot-controller": "x",
+		"@3mo/icon": "x"
 	},
 	"devDependencies": {
 		"@a11d/lit-testing": "x"

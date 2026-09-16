@@ -31,6 +31,9 @@
 		"@3mo/entity-dialog": ">=0.6.1",
 		"@3mo/fetchable-data-grid": ">=0.6.1",
 		"@3mo/fetchable-dialog": "x",
-		"@3mo/tooltip": "x"
+		"@3mo/tooltip": "x",
+		"@3mo/loading-button": "x",
+		"@3mo/icon": "x",
+		"@3mo/data-grid": "x"
 	}
 }

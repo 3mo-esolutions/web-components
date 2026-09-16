@@ -1,5 +1,6 @@
 import '@3mo/popover'
 import '@3mo/theme'
+import '@3mo/icon'
 export * from './MenuPlacement.js'
 export * from './MenuAlignment.js'
 export * from './MenuItem.js'
