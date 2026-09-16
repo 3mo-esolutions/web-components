@@ -1,6 +1,7 @@
-import { component, html } from '@a11d/lit'
+import { component, html, ifDefined } from '@a11d/lit'
 import { DialogActionKey, NotificationComponent } from '@a11d/lit-application'
 import { ComponentTestFixture } from '@a11d/lit-testing'
+import '@a11d/metadata'
 import { type FetchableDialogComponentParameters } from '@3mo/fetchable-dialog'
 import { EntityDialogComponent } from './index.js'
 
@@ -153,5 +154,53 @@ describe('EntityDialogComponent', () => {
 
 			expect(saveSpy).not.toHaveBeenCalled()
 		})
+	})
+})
+
+class LabeledEntity { }
+const labeledEntity = new LabeledEntity
+
+@component('mo-dialog-entity-labeled-test')
+@label('Labeled Dialog')
+class LabeledDialogTest extends EntityDialogComponent<LabeledEntity, FetchableDialogComponentParameters & { readonly heading?: string }> {
+	protected entity = labeledEntity
+	protected fetch = () => labeledEntity
+	protected save = () => { }
+	protected delete = undefined
+
+	protected override get template() {
+		return html`
+			<mo-entity-dialog heading=${ifDefined(this.parameters.heading)}></mo-entity-dialog>
+		`
+	}
+}
+
+describe('EntityDialogComponent with a @label decorated class', () => {
+	let parameters: FetchableDialogComponentParameters & { readonly heading?: string }
+	const fixture = new ComponentTestFixture(() => new LabeledDialogTest(parameters))
+
+	afterEach(() => new Promise(resolve => setTimeout(resolve, 50)))
+
+	const expectHeadingToBe = async (heading: string) => {
+		await fixture.component.fetcherController.taskComplete
+		expect(fixture.component.dialogElement['dialogHeading'].toString()).toBe(heading)
+	}
+
+	describe('in creation mode', () => {
+		beforeAll(() => parameters = {})
+
+		it('should prefer the entity heading over the label', () => expectHeadingToBe('Create Entity'))
+	})
+
+	describe('in edit mode', () => {
+		beforeAll(() => parameters = { id: 10 })
+
+		it('should prefer the entity heading over the label', () => expectHeadingToBe('Edit Entity'))
+	})
+
+	describe('with an explicitly set heading', () => {
+		beforeAll(() => parameters = { id: 10, heading: 'Explicit Heading' })
+
+		it('should prefer the explicit heading over both the entity heading and the label', () => expectHeadingToBe('Explicit Heading'))
 	})
 })

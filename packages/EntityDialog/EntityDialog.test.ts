@@ -52,6 +52,15 @@ describe('EntityDialog', () => {
 		expect(secondaryButton()?.textContent?.trim()).toBe('Delete')
 	})
 
+	it('should use the entity heading for the page heading when bound to a window', async () => {
+		fixture.component['boundToWindow'] = true
+		resolvers[0]?.(new Entity)
+		await waitUntil(() => fixture.component.fetcherController.pending === false)
+		await fixture.updateComplete
+
+		expect(fixture.component.renderRoot.querySelector('mo-page')?.heading).toBe('Edit Invoice')
+	})
+
 	it('should disable the action buttons while the fetch is pending', async () => {
 		fixture.component.delete = () => Promise.resolve()
 		await waitUntil(() => fixture.component.fetcherController.pending)

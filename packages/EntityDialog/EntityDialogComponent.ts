@@ -59,7 +59,9 @@ export abstract class EntityDialogComponent<
 	}
 
 	protected override firstUpdated(props: PropertyValues<this>) {
+		const explicitHeading = this.dialogElement.heading
 		super.firstUpdated(props)
+		this.dialogElement.heading = explicitHeading
 		this.dialogElement.save = () => this.save(this.entity)
 		if (this.delete && this.parameters.id) {
 			this.dialogElement.delete = () => this.delete?.(this.entity)
