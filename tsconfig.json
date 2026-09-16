@@ -319,6 +319,9 @@
 			"path": "./packages/Section"
 		},
 		{
+			"path": "./packages/SegmentedInput"
+		},
+		{
 			"path": "./packages/Selectability"
 		},
 		{
