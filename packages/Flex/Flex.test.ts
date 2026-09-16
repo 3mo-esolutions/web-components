@@ -1,5 +1,6 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { type Flex } from './Flex.js'
+import './index.js'
 
 describe('Flex', () => {
 	const fixture = new ComponentTestFixture<Flex>('mo-flex')

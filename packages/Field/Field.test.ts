@@ -1,6 +1,7 @@
 import { html } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { type Field } from './Field.js'
+import './index.js'
 
 describe('Field', () => {
 	const fixture = new ComponentTestFixture<Field>(html`<mo-field label='Label'></mo-field>`)

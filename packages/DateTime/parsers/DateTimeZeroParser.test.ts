@@ -1,5 +1,6 @@
 import { DateTimeZeroParser } from './DateTimeZeroParser.js'
 import { expectDateTimesEquals } from '../expectDateTimesEquals.test.js'
+import '../index.js'
 
 describe('DateTimeZeroParser', () => {
 	it('should return now for zero', () => {

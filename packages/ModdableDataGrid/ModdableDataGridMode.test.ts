@@ -1,5 +1,5 @@
 import { DataGridSortingStrategy } from '@3mo/data-grid'
-import { Localizer } from '@3mo/localization'
+import { Localizer, type LanguageCode } from '@3mo/localization'
 import { ModdableDataGridMode, ModdableDataGridModeColumn } from './ModdableDataGridMode.js'
 import { equals } from '@a11d/equals'
 
@@ -139,7 +139,14 @@ describe('ModdableDataGridMode', () => {
 	})
 
 	describe('copy', () => {
-		beforeEach(() => Localizer.languages.current = 'en')
+		let language: LanguageCode
+
+		beforeEach(() => {
+			language = Localizer.languages.current
+			Localizer.languages.current = 'en'
+		})
+
+		afterEach(() => Localizer.languages.current = language)
 
 		it('should assign a new id and derive the name with the localized Copy suffix', () => {
 			const mode = new ModdableDataGridMode({

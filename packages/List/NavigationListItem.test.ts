@@ -1,6 +1,7 @@
 import { html } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { type NavigationListItem } from './NavigationListItem.js'
+import './index.js'
 
 describe('NavigationListItem', () => {
 	const fixture = new ComponentTestFixture<NavigationListItem>(html`

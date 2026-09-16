@@ -1,5 +1,6 @@
 import { DateTimeOperationParser } from './DateTimeOperationParser.js'
 import { expectDateTimesEquals } from '../expectDateTimesEquals.test.js'
+import '../index.js'
 
 const testNumbers = [-7, -1, 1, 7]
 

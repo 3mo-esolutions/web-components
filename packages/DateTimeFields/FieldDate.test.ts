@@ -2,6 +2,7 @@ import { html } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { type FieldDate } from './FieldDate.js'
 import { FieldDateTimePrecision } from './FieldDateTimePrecision.js'
+import './index.js'
 
 describe('FieldDate', () => {
 	const fixture = new ComponentTestFixture<FieldDate>(html`

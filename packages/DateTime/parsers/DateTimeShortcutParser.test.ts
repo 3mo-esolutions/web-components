@@ -1,5 +1,6 @@
 import { DateTimeShortcutParser } from './DateTimeShortcutParser.js'
 import { expectDateTimesEquals } from '../expectDateTimesEquals.test.js'
+import '../index.js'
 
 describe('DateTimeShortcutParser', () => {
 	it('should return undefined for invalid input', () => {

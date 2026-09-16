@@ -1,5 +1,6 @@
 import { DateTimeLocalParser } from './DateTimeLocalParser.js'
 import { expectDateTimesEquals } from '../expectDateTimesEquals.test.js'
+import '../index.js'
 
 describe('DateTimeLocalParser', () => {
 	it('should return undefined for invalid input', () => {

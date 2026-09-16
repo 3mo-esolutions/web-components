@@ -1,4 +1,5 @@
 import './Array.format.js'
+import '../LocalizableString.js'
 
 describe('Array', () => {
 	const array = ['foo', 'bar', 'baz']

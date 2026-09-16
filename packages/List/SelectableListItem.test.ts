@@ -1,6 +1,8 @@
 import { html } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { type SelectableListItem, type SelectionListItemChangeEvent } from './index.js'
+import { type SelectableListItem } from './SelectableListItem.js'
+import { type SelectionListItemChangeEvent } from './SelectableList.js'
+import './index.js'
 
 describe('SelectableListItem', () => {
 	const fixture = new ComponentTestFixture<SelectableListItem>(html`

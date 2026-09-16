@@ -1,4 +1,5 @@
 import { Currency } from './Currency.js'
+import './index.js'
 
 describe('Number', () => {
 	it('.format()', () => {

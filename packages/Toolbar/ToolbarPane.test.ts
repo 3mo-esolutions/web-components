@@ -1,6 +1,7 @@
 import { html } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { type ToolbarPane } from './ToolbarPane.js'
+import './index.js'
 
 describe('ToolbarPane', () => {
 	const fixture = new ComponentTestFixture<ToolbarPane>(html`

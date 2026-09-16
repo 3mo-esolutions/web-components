@@ -8,6 +8,15 @@ import '@3mo/date-time'
 import '../index.js'
 
 describe('Calendar', () => {
+	// The rendered grid follows the language's calendar system and first day of week, so every
+	// expectation here needs a known language rather than whatever a neighbouring suite left behind.
+	let ambientLanguage: LanguageCode
+	beforeEach(() => {
+		ambientLanguage = Localizer.languages.current
+		Localizer.languages.current = 'de'
+	})
+	afterEach(() => Localizer.languages.current = ambientLanguage)
+
 	const fixture = new ComponentTestFixture<Calendar>(html`<mo-calendar .precision=${FieldDateTimePrecision.Day}></mo-calendar>`)
 
 	const query = <T extends Element>(selector: string) => fixture.component.renderRoot.querySelector<T>(selector)

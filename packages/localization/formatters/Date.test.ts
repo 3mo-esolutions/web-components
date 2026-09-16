@@ -1,3 +1,5 @@
+import './index.js'
+
 describe('Date', () => {
 	const date = new Date('2020-01-01 00:00:00.000')
 

@@ -1,6 +1,9 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { html } from '@a11d/lit'
-import { type CollapsibleListItem, type List, type SelectableList } from './index.js'
+import { type CollapsibleListItem } from './CollapsibleListItem.js'
+import { type List } from './List.js'
+import { type SelectableList } from './SelectableList.js'
+import './index.js'
 
 const keyDown = (key: string, options?: KeyboardEventInit) => {
 	const event = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...options })

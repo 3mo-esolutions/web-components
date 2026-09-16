@@ -1,4 +1,5 @@
 import { type LanguageCode } from '../LanguageCode.js'
+import './String.toNumber.js'
 
 /** Languages whose CLDR `minimumGroupingDigits` is 2, so that four-digit numbers render ungrouped. */
 const minimumGroupingDigitsTwoLanguages: Array<LanguageCode> = ['es', 'it', 'pl', 'hu', 'bg', 'et', 'lv', 'sl', 'sq', 'be', 'hy', 'ka']

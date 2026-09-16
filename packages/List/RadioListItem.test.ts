@@ -1,6 +1,8 @@
 import { html } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { type RadioListItem, type SelectionListItemChangeEvent } from './index.js'
+import { type RadioListItem } from './RadioListItem.js'
+import { type SelectionListItemChangeEvent } from './SelectableList.js'
+import './index.js'
 
 describe('RadioListItem', () => {
 	const fixture = new ComponentTestFixture<RadioListItem>(html`

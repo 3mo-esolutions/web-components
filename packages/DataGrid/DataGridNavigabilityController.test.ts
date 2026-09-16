@@ -1,6 +1,7 @@
 import { html } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { type DataGrid } from './index.js'
+import { type DataGrid } from './DataGrid.js'
+import './index.js'
 
 type Person = { id: number, name: string, age: number }
 

@@ -1,6 +1,7 @@
 import { html } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { type MenuItem } from './MenuItem.js'
+import './index.js'
 
 describe('MenuItem', () => {
 	const fixture = new ComponentTestFixture<MenuItem>(html`

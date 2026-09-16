@@ -1,5 +1,6 @@
 import { Currency, type CurrencyCode } from './Currency.js'
 import { Localizer } from '../Localizer.js'
+import './index.js'
 
 describe('Currency', () => {
 	it('should expose a static instance for every code', () => {

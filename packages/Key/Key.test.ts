@@ -1,6 +1,7 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { html } from '@a11d/lit'
 import { type Key } from './Key.js'
+import './index.js'
 
 describe('Key', () => {
 	const displayedKeysOf = (component: Key) => [...component.renderRoot.querySelectorAll('kbd')].map(kbd => kbd.textContent?.trim())

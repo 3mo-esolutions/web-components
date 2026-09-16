@@ -1,6 +1,7 @@
 import { html } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { type FieldTime } from './FieldTime.js'
+import './index.js'
 
 describe('FieldTime', () => {
 	const fixture = new ComponentTestFixture<FieldTime>(html`

@@ -2,6 +2,7 @@ import { html, property, event, Component, type HTMLTemplateResult, state, css, 
 import { SlotController } from '@3mo/slot-controller'
 import { FocusController, type FocusMethod } from '@3mo/focus-controller'
 import { InstanceofAttributeController } from '@3mo/instanceof-attribute-controller'
+import './Field.js'
 
 /**
  * @attr value - The field's value
