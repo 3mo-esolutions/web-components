@@ -27,7 +27,7 @@ export class DataGridColumnCurrency<TData> extends DataGridColumnNumberBase<TDat
 	}
 
 	override getContentTemplate(value: number | undefined, data: TData) {
-		return html`${this.getNumber(value)?.formatAsCurrency(this.getCurrency(data)) ?? html.nothing}`
+		return html`${this.getNumber(value)?.formatAsCurrency(this.getCurrency(data), this.formatOptions) ?? html.nothing}`
 	}
 
 	override getEditContentTemplate(value: number | undefined, data: TData) {

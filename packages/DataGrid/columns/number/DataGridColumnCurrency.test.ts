@@ -92,14 +92,15 @@ describe('DataGridColumnCurrency', () => {
 		expect(text).not.toBe(normalize((1234.5).formatAsCurrency(Currency.USD)))
 	})
 
-	// Pins current behaviour: cell content ignores formatOptions
-	it('should ignore the format options in its cell content', () => {
+	it('should format the cell content with the format options', () => {
 		const column = new DataGridColumnCurrency<Item>()
 		column.currency = Currency.USD
-		column.formatOptions = { minimumFractionDigits: 4 }
+		column.formatOptions = { maximumFractionDigits: 2 }
 
-		render(column.getContentTemplate(1234.5, datum), container)
+		render(column.getContentTemplate(1234.56789, datum), container)
+		const text = normalize(container.textContent!)
 
-		expect(normalize(container.textContent!)).toBe(normalize((1234.5).formatAsCurrency(Currency.USD)))
+		expect(text).toBe(normalize((1234.56789).formatAsCurrency(Currency.USD, { maximumFractionDigits: 2 })))
+		expect(text).not.toBe(normalize((1234.56789).formatAsCurrency(Currency.USD)))
 	})
 })
