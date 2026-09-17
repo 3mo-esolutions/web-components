@@ -26,6 +26,21 @@ export const Tab: StoryObj = {
 	`
 }
 
+export const WithPanels: StoryObj = {
+	args: { value: 'overview' },
+	render: ({ value }) => html`
+		<mo-tabs value=${value} style='height: 250px'>
+			<mo-tab value='overview'>Overview</mo-tab>
+			<mo-tab value='flights'>Flights</mo-tab>
+			<mo-tab value='trips'>Trips</mo-tab>
+
+			<mo-tab-panel value='overview'>Everything at a glance.</mo-tab-panel>
+			<mo-tab-panel value='flights'>The flights which are booked.</mo-tab-panel>
+			<mo-tab-panel value='trips'>The trips they belong to.</mo-tab-panel>
+		</mo-tabs>
+	`
+}
+
 export const WithIcons: StoryObj = {
 	render: ({ value }) => html`
 		<mo-tab-bar value=${value} style='height: 60px'>

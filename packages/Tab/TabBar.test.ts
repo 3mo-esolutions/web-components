@@ -68,6 +68,17 @@ class BindingHost extends Component {
 	}
 }
 
+@component('mo-test-tab-bar-forwarding-host')
+class ForwardingHost extends Component {
+	get tabBar() { return this.renderRoot.querySelector('mo-tab-bar')! }
+
+	protected override get template() {
+		return html`<mo-tab-bar>
+				<slot></slot>
+			</mo-tab-bar>`
+	}
+}
+
 describe('TabBar', () => {
 	describe('tabs', () => {
 		const fixture = new TabBarTestFixture({ tabs: ['a', 'b'] })
@@ -77,6 +88,21 @@ describe('TabBar', () => {
 			await fixture.component.updateComplete
 
 			expect(fixture.component.tabs.map(tab => tab.value)).toEqual(['a', 'b'])
+		})
+	})
+
+	describe('tabs handed over through a slot of another element', () => {
+		const fixture = new ComponentTestFixture<ForwardingHost>(html`
+			<mo-test-tab-bar-forwarding-host>
+				<mo-tab value='a'>A</mo-tab>
+				<mo-tab value='b'>B</mo-tab>
+			</mo-test-tab-bar-forwarding-host>
+		`)
+
+		it('should be found through the forwarding slot rather than being mistaken for it', async () => {
+			await flush()
+
+			expect(fixture.component.tabBar.tabs.map(tab => tab.value)).toEqual(['a', 'b'])
 		})
 	})
 
@@ -200,6 +226,23 @@ describe('TabBar', () => {
 
 			expect(fixture.component.value).toBe('b')
 			expect(fixture.mdTabs.activeTab).toBe(fixture.tabByValue('b')!)
+			expect(fixture.changeEvents).toEqual([])
+		})
+	})
+
+	describe('tabs arriving one at a time, as they do while the markup around them is parsed', () => {
+		const fixture = new TabBarTestFixture({ value: 'b', tabs: [] })
+
+		it('should not leave an earlier tab standing in for the one the value names', async () => {
+			await flush()
+
+			fixture.component.append(createTab('a'))
+			await flush()
+			fixture.component.append(createTab('b'))
+			await flush()
+
+			expect(fixture.mdTabs.activeTab).toBe(fixture.tabByValue('b')!)
+			expect(fixture.component.value).toBe('b')
 			expect(fixture.changeEvents).toEqual([])
 		})
 	})

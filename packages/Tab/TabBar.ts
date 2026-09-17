@@ -31,7 +31,12 @@ export class TabBar extends Component {
 		this.syncActiveTab()
 	}
 
-	get tabs() { return [...this.children].filter((c): c is Tab => c instanceof Tab) }
+	get tabs() {
+		// Flattened, so that a bar which is handed its tabs through a slot of its own - as "mo-tabs" does - sees them too.
+		const slot = this.shadowRoot?.querySelector('slot')
+		const elements = slot ? slot.assignedElements({ flatten: true }) : [...this.children]
+		return elements.filter((c): c is Tab => c instanceof Tab)
+	}
 
 	static override get styles() {
 		return css`
@@ -56,15 +61,16 @@ export class TabBar extends Component {
 
 	private get activeTab() { return this.tabs.find(tab => tab.value === this.value) }
 
-	private slotChangesTimes = 0
 	private slotChange = async () => {
-		if (this.slotChangesTimes++ === 0) {
-			await Promise.all([
-				this.updateComplete,
-				this.tabsElement.updateComplete,
-				...this.tabs.map(tab => tab.updateComplete)
-			])
-			this.syncActiveTab()
+		await Promise.all([
+			this.updateComplete,
+			this.tabsElement.updateComplete,
+			...this.tabs.map(tab => tab.updateComplete)
+		])
+		// Every change counts, as a slot fills one tab at a time while the markup around it is parsed.
+		this.syncActiveTab()
+		// A bar which was given a value keeps it, as the tab it names may still be on its way in.
+		if (this.value === undefined) {
 			this.dispatchChange()
 		}
 	}
