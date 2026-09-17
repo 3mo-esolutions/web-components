@@ -1,6 +1,7 @@
 import { component, Component, html } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { fileDrop, FileDropController, type FileDropOptions } from './fileDrop.js'
+import { type Mock } from 'vitest'
 
 function createFile(name: string, type = 'text/plain') {
 	return new File(['content'], name, { type })
@@ -40,7 +41,7 @@ class FileDropTestComponent extends Component {
 
 @component('file-drop-controller-test-component')
 class FileDropControllerTestComponent extends Component {
-	readonly handleDrop = jasmine.createSpy('handleDrop')
+	readonly handleDrop = vi.fn()
 	readonly fileDrop = new FileDropController(this, { handleDrop: this.handleDrop })
 }
 
@@ -52,7 +53,7 @@ describe('FileDropController', () => {
 
 		fixture.component.dispatchEvent(createDragEvent('drop', file))
 
-		expect(fixture.component.handleDrop).toHaveBeenCalledOnceWith(file)
+		expect(fixture.component.handleDrop).toHaveBeenCalledExactlyOnceWith(file)
 	})
 
 	it('should stamp the host while files are dragged over it', () => {
@@ -60,12 +61,12 @@ describe('FileDropController', () => {
 
 		fixture.component.dispatchEvent(createDragEvent('dragenter', file))
 
-		expect(fixture.component.hasAttribute('dragover')).toBeTrue()
-		expect(fixture.component.fileDrop.dragover).toBeTrue()
+		expect(fixture.component.hasAttribute('dragover')).toBe(true)
+		expect(fixture.component.fileDrop.dragover).toBe(true)
 
 		fixture.component.dispatchEvent(createDragEvent('dragleave', file))
 
-		expect(fixture.component.hasAttribute('dragover')).toBeFalse()
+		expect(fixture.component.hasAttribute('dragover')).toBe(false)
 	})
 
 	it('should stop listening while the host is disconnected', () => {
@@ -86,12 +87,12 @@ describe('FileDropController', () => {
 describe('fileDrop', () => {
 	const fixture = new ComponentTestFixture(() => new FileDropTestComponent())
 
-	let handleDrop: jasmine.Spy
-	let handleDragoverChange: jasmine.Spy
+	let handleDrop: Mock<(selection: Array<File> | File) => void>
+	let handleDragoverChange: Mock<(dragover: boolean) => void>
 
 	beforeEach(() => {
-		handleDrop = jasmine.createSpy('handleDrop')
-		handleDragoverChange = jasmine.createSpy('handleDragoverChange')
+		handleDrop = vi.fn()
+		handleDragoverChange = vi.fn()
 	})
 
 	const use = async (options?: Partial<FileDropOptions<boolean>>) => {
@@ -107,12 +108,12 @@ describe('fileDrop', () => {
 
 			target.dispatchEvent(createDragEvent('dragenter', file))
 
-			expect(target.hasAttribute('dragover')).toBeTrue()
-			expect(handleDragoverChange).toHaveBeenCalledOnceWith(true)
+			expect(target.hasAttribute('dragover')).toBe(true)
+			expect(handleDragoverChange).toHaveBeenCalledExactlyOnceWith(true)
 
 			target.dispatchEvent(createDragEvent('dragleave', file))
 
-			expect(target.hasAttribute('dragover')).toBeFalse()
+			expect(target.hasAttribute('dragover')).toBe(false)
 			expect(handleDragoverChange).toHaveBeenCalledWith(false)
 		})
 
@@ -124,12 +125,12 @@ describe('fileDrop', () => {
 			child.dispatchEvent(createDragEvent('dragenter', file))
 			target.dispatchEvent(createDragEvent('dragleave', file))
 
-			expect(target.hasAttribute('dragover')).toBeTrue()
-			expect(handleDragoverChange).toHaveBeenCalledOnceWith(true)
+			expect(target.hasAttribute('dragover')).toBe(true)
+			expect(handleDragoverChange).toHaveBeenCalledExactlyOnceWith(true)
 
 			child.dispatchEvent(createDragEvent('dragleave', file))
 
-			expect(target.hasAttribute('dragover')).toBeFalse()
+			expect(target.hasAttribute('dragover')).toBe(false)
 		})
 
 		it('should stamp the element it is placed on, not the host', async () => {
@@ -137,7 +138,7 @@ describe('fileDrop', () => {
 
 			component.target.dispatchEvent(createDragEvent('dragenter', createFile('a.txt')))
 
-			expect(component.hasAttribute('dragover')).toBeFalse()
+			expect(component.hasAttribute('dragover')).toBe(false)
 		})
 
 		it('should ignore drags that carry no files', async () => {
@@ -147,8 +148,8 @@ describe('fileDrop', () => {
 			target.dispatchEvent(createTextDragEvent('dragenter'))
 			target.dispatchEvent(dragover)
 
-			expect(target.hasAttribute('dragover')).toBeFalse()
-			expect(dragover.defaultPrevented).toBeFalse()
+			expect(target.hasAttribute('dragover')).toBe(false)
+			expect(dragover.defaultPrevented).toBe(false)
 			expect(handleDragoverChange).not.toHaveBeenCalled()
 		})
 
@@ -158,7 +159,7 @@ describe('fileDrop', () => {
 
 			target.dispatchEvent(event)
 
-			expect(event.defaultPrevented).toBeTrue()
+			expect(event.defaultPrevented).toBe(true)
 		})
 	})
 
@@ -171,8 +172,8 @@ describe('fileDrop', () => {
 
 			target.dispatchEvent(event)
 
-			expect(event.defaultPrevented).toBeTrue()
-			expect(target.hasAttribute('dragover')).toBeFalse()
+			expect(event.defaultPrevented).toBe(true)
+			expect(target.hasAttribute('dragover')).toBe(false)
 		})
 
 		it('should hand over the first file when several are dropped', async () => {
@@ -181,7 +182,7 @@ describe('fileDrop', () => {
 
 			target.dispatchEvent(createDragEvent('drop', first, createFile('b.txt')))
 
-			expect(handleDrop).toHaveBeenCalledOnceWith(first)
+			expect(handleDrop).toHaveBeenCalledExactlyOnceWith(first)
 		})
 
 		it('should hand over all files when multiple is set', async () => {
@@ -190,7 +191,7 @@ describe('fileDrop', () => {
 
 			target.dispatchEvent(createDragEvent('drop', ...files))
 
-			expect(handleDrop).toHaveBeenCalledOnceWith(files)
+			expect(handleDrop).toHaveBeenCalledExactlyOnceWith(files)
 		})
 
 		for (const { accept, expected } of [
@@ -205,7 +206,7 @@ describe('fileDrop', () => {
 
 				target.dispatchEvent(createDragEvent('drop', ...files))
 
-				expect((handleDrop.calls.mostRecent().args[0] as Array<File>).map(file => file.name)).toEqual(expected)
+				expect((handleDrop.mock.lastCall![0] as Array<File>).map(file => file.name)).toEqual(expected)
 			})
 		}
 
@@ -218,7 +219,7 @@ describe('fileDrop', () => {
 		})
 
 		it('should use the options of the latest render', async () => {
-			const first = jasmine.createSpy('first')
+			const first = vi.fn()
 			await use({ handleDrop: first })
 			await use()
 

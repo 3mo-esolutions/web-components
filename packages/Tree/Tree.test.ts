@@ -40,7 +40,7 @@ describe('Tree', () => {
 	})
 
 	it('should hold the selection as the value of the item, and write it back onto the item', async () => {
-		const change = spyOn(fixture.component.change, 'dispatch')
+		const change = vi.spyOn(fixture.component.change, 'dispatch').mockReturnValue(undefined)
 
 		click(item('taxes'), 'row')
 		await fixture.updateComplete
@@ -65,7 +65,7 @@ describe('Tree', () => {
 	})
 
 	it('should close the item it belongs to, which reports it itself', async () => {
-		const openChange = spyOn(item('documents').openChange, 'dispatch')
+		const openChange = vi.spyOn(item('documents').openChange, 'dispatch').mockReturnValue(undefined)
 
 		click(item('documents'), 'indicator')
 		await fixture.updateComplete
@@ -144,7 +144,7 @@ describe('Tree', () => {
 	})
 
 	it('should click the item on Enter, which is its default action', async () => {
-		const click = spyOn(item('readme'), 'click').and.callThrough()
+		const click = vi.spyOn(item('readme'), 'click')
 		fixture.component.controller.navigability.goTo(item('readme'))
 
 		fixture.component.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }))

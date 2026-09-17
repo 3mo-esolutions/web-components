@@ -83,7 +83,7 @@ describe('FieldComponent', () => {
 	describe('events', () => {
 		it('should dispatch input with the typed value and stop the inner event\'s propagation', () => {
 			const inputs = eventDetails<string>('input')
-			const propagated = jasmine.createSpy('propagated')
+			const propagated = vi.fn()
 			fixture.component.renderRoot.addEventListener('input', propagated)
 
 			fixture.component.inputElement.dispatchEvent(new CustomEvent('input', { detail: 'Typed', bubbles: true }))
@@ -124,25 +124,25 @@ describe('FieldComponent', () => {
 		it('should mark the inner mo-field populated while it holds a value', async () => {
 			fixture.component.value = undefined
 			await fixture.updateComplete
-			expect(field().populated).toBeFalse()
+			expect(field().populated).toBe(false)
 
 			fixture.component.value = 'Test'
 			await fixture.updateComplete
 
-			expect(field().populated).toBeTrue()
+			expect(field().populated).toBe(true)
 		})
 
 		it('should mark the inner mo-field active while focused', async () => {
-			expect(field().active).toBeFalse()
+			expect(field().active).toBe(false)
 
 			fixture.component.dispatchEvent(new FocusEvent('focusin'))
 			await fixture.updateComplete
-			expect(field().active).toBeTrue()
+			expect(field().active).toBe(true)
 
 			fixture.component.dispatchEvent(new FocusEvent('focusout'))
 			await fixture.updateComplete
 
-			expect(field().active).toBeFalse()
+			expect(field().active).toBe(false)
 		})
 	})
 
@@ -163,22 +163,22 @@ describe('FieldComponent', () => {
 		})
 
 		it('should reflect a failing validity as the inner mo-field\'s invalid state', async () => {
-			expect(field().invalid).toBeFalse()
+			expect(field().invalid).toBe(false)
 
 			fixture.component.setCustomValidity('Invalid')
 			fixture.component.value = 'Test'
 			await settle()
 
-			expect(field().invalid).toBeTrue()
+			expect(field().invalid).toBe(true)
 		})
 
 		it('should account for setCustomValidity in checkValidity', async () => {
 			fixture.component.setCustomValidity('Invalid')
-			expect(await fixture.component.checkValidity()).toBeFalse()
+			expect(await fixture.component.checkValidity()).toBe(false)
 
 			fixture.component.setCustomValidity('')
 
-			expect(await fixture.component.checkValidity()).toBeTrue()
+			expect(await fixture.component.checkValidity()).toBe(true)
 		})
 	})
 })

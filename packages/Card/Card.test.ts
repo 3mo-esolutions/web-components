@@ -20,7 +20,7 @@ describe('Card', () => {
 	}
 
 	function testSlotRendersIfPropertyIsSet(toBeRenderSlotName: string, property: keyof Card) {
-		it(`should render slot "${toBeRenderSlotName}" if property "${property}" is set`, async () => {
+		it(`should render slot "${toBeRenderSlotName}" if property "${String(property)}" is set`, async () => {
 			(fixture.component as any)[property] = 'test'
 
 			await fixture.update()

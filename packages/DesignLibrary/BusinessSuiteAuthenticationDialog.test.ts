@@ -5,6 +5,7 @@ import { type LoadingButton } from '@3mo/loading-button'
 import '@3mo/loading-button-dialog-adapter'
 import '@3mo/flex'
 import { type BusinessSuiteAuthenticationDialog } from './BusinessSuiteAuthenticationDialog.js'
+import './index.js'
 
 describe('BusinessSuiteAuthenticationDialog', () => {
 	const fixture = new ComponentTestFixture<BusinessSuiteAuthenticationDialog>(html`
@@ -17,13 +18,13 @@ describe('BusinessSuiteAuthenticationDialog', () => {
 	const primaryButton = () => fixture.component.querySelector<LoadingButton>('mo-loading-button')!
 
 	it('should dispatch pageHeadingChange when the heading changes', async () => {
-		const pageHeadingChange = jasmine.createSpy('pageHeadingChange')
+		const pageHeadingChange = vi.fn()
 		fixture.component.addEventListener<any>('pageHeadingChange', (e: CustomEvent<string>) => pageHeadingChange(e.detail))
 
 		fixture.component.heading = 'Sign in'
 		await fixture.updateComplete
 
-		expect(pageHeadingChange).toHaveBeenCalledOnceWith('Sign in')
+		expect(pageHeadingChange).toHaveBeenCalledExactlyOnceWith('Sign in')
 	})
 
 	it('should only be displayed while open', async () => {
@@ -43,29 +44,29 @@ describe('BusinessSuiteAuthenticationDialog', () => {
 	})
 
 	it('should invoke handleAction with the primary key when the primary action is clicked', () => {
-		const handleAction = jasmine.createSpy('handleAction')
+		const handleAction = vi.fn()
 		fixture.component.handleAction = handleAction
 
 		primaryButton().click()
 
-		expect(handleAction).toHaveBeenCalledOnceWith(DialogActionKey.Primary)
+		expect(handleAction).toHaveBeenCalledExactlyOnceWith(DialogActionKey.Primary)
 	})
 
 	it('should reflect executingAction as the loading state of a slotted loading button', async () => {
 		fixture.component.executingAction = DialogActionKey.Primary
 		await fixture.updateComplete
 
-		expect(primaryButton().loading).toBeTrue()
+		expect(primaryButton().loading).toBe(true)
 
 		fixture.component.executingAction = undefined
 		await fixture.updateComplete
 
-		expect(primaryButton().loading).toBeFalse()
+		expect(primaryButton().loading).toBe(false)
 	})
 
 	it('should keep the guarded dialog contract flags', () => {
-		expect(fixture.component.preventCancellationOnEscape).toBeTrue()
-		expect(fixture.component.primaryOnEnter).toBeTrue()
+		expect(fixture.component.preventCancellationOnEscape).toBe(true)
+		expect(fixture.component.primaryOnEnter).toBe(true)
 	})
 
 	it('should render its own top layer so notifications surface above the backdrop', () => {

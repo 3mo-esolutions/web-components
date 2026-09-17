@@ -4,6 +4,7 @@ import { Application, DialogActionKey, DialogCancelledError, DialogComponent, ty
 import { type MdDialog } from '@material/web/dialog/dialog.js'
 import { Dialog, DialogSize } from './Dialog.js'
 import './index.js'
+import { type Mock } from 'vitest'
 
 @NotificationComponent.defaultComponent()
 @component('test-fake-notification')
@@ -157,7 +158,7 @@ describe('Dialog', () => {
 	})
 
 	describe('action handling', () => {
-		let handleAction: jasmine.Spy
+		let handleAction: Mock<(key: DialogActionKey) => void | Promise<void>>
 
 		const fixture = new ComponentTestFixture<Dialog>(html`
 			<mo-dialog>
@@ -167,31 +168,31 @@ describe('Dialog', () => {
 		`)
 
 		beforeEach(() => {
-			handleAction = jasmine.createSpy('handleAction')
+			handleAction = vi.fn()
 			fixture.component.handleAction = handleAction
 		})
 
 		it('should call handleAction with Primary when a click occurs in the primaryAction slot', () => {
 			fixture.component.querySelector<HTMLElement>('#primary')!.click()
 
-			expect(handleAction).toHaveBeenCalledOnceWith(DialogActionKey.Primary)
+			expect(handleAction).toHaveBeenCalledExactlyOnceWith(DialogActionKey.Primary)
 		})
 
 		it('should call handleAction with Secondary when a click occurs in the secondaryAction slot', () => {
 			fixture.component.querySelector<HTMLElement>('#secondary')!.click()
 
-			expect(handleAction).toHaveBeenCalledOnceWith(DialogActionKey.Secondary)
+			expect(handleAction).toHaveBeenCalledExactlyOnceWith(DialogActionKey.Secondary)
 		})
 
 		it('should call handleAction with Cancellation when the close icon-button is clicked', () => {
 			fixture.component.cancellationActionElement!.click()
 
-			expect(handleAction).toHaveBeenCalledOnceWith(DialogActionKey.Cancellation)
+			expect(handleAction).toHaveBeenCalledExactlyOnceWith(DialogActionKey.Cancellation)
 		})
 
 		describe('executing action adapters', () => {
-			let primaryAdapter: jasmine.Spy
-			let secondaryAdapter: jasmine.Spy
+			let primaryAdapter: Mock<(actionElement: HTMLElement, isExecuting: boolean) => void>
+			let secondaryAdapter: Mock<(actionElement: HTMLElement, isExecuting: boolean) => void>
 
 			const adapterFixture = new ComponentTestFixture<Dialog>(html`
 				<mo-dialog>
@@ -201,8 +202,8 @@ describe('Dialog', () => {
 			`)
 
 			beforeEach(() => {
-				primaryAdapter = jasmine.createSpy('primaryAdapter')
-				secondaryAdapter = jasmine.createSpy('secondaryAdapter')
+				primaryAdapter = vi.fn()
+				secondaryAdapter = vi.fn()
 				Dialog.executingActionAdaptersByComponent.set(TestPrimaryActionElement, primaryAdapter)
 				Dialog.executingActionAdaptersByComponent.set(TestSecondaryActionElement, secondaryAdapter)
 			})
@@ -218,7 +219,7 @@ describe('Dialog', () => {
 				adapterFixture.component.executingAction = DialogActionKey.Primary
 				await adapterFixture.updateComplete
 
-				expect(primaryAdapter).toHaveBeenCalledOnceWith(primaryElement, true)
+				expect(primaryAdapter).toHaveBeenCalledExactlyOnceWith(primaryElement, true)
 
 				adapterFixture.component.executingAction = undefined
 				await adapterFixture.updateComplete
@@ -233,8 +234,8 @@ describe('Dialog', () => {
 				adapterFixture.component.executingAction = DialogActionKey.Primary
 				await adapterFixture.updateComplete
 
-				expect(primaryAdapter).toHaveBeenCalledOnceWith(primaryElement, true)
-				expect(secondaryAdapter).toHaveBeenCalledOnceWith(secondaryElement, false)
+				expect(primaryAdapter).toHaveBeenCalledExactlyOnceWith(primaryElement, true)
+				expect(secondaryAdapter).toHaveBeenCalledExactlyOnceWith(secondaryElement, false)
 			})
 		})
 	})
@@ -321,7 +322,7 @@ describe('Dialog', () => {
 
 		it('should focus the first [autofocus] element when opened', async () => {
 			const input = fixture.component.querySelector('input')!
-			const focus = spyOn(input, 'focus')
+			const focus = vi.spyOn(input, 'focus').mockReturnValue(undefined)
 
 			fixture.component.open = true
 			await fixture.updateComplete
@@ -353,7 +354,7 @@ describe('Dialog', () => {
 
 			fixture.component.primaryActionElement!.click()
 
-			await expectAsync(confirmationPromise).toBeResolvedTo('primary result')
+			await expect(confirmationPromise).resolves.toEqual('primary result')
 		})
 
 		it('should reject confirm() with DialogCancelledError when the cancellation action is triggered', async () => {
@@ -361,7 +362,7 @@ describe('Dialog', () => {
 
 			fixture.component.cancellationActionElement!.click()
 
-			await expectAsync(confirmationPromise).toBeRejectedWithError(DialogCancelledError)
+			await expect(confirmationPromise).rejects.toThrow(DialogCancelledError)
 		})
 
 		it('should keep the dialog open after the primary action when manualClose is set', async () => {
@@ -384,7 +385,7 @@ describe('Dialog', () => {
 
 			fixture.component.cancellationActionElement!.click()
 
-			await expectAsync(confirmationPromise).toBeRejectedWithError(DialogCancelledError)
+			await expect(confirmationPromise).rejects.toThrow(DialogCancelledError)
 			expect(dialogElement.open).toBe(false)
 			expect(fixture.component.isConnected).toBe(false)
 		})
@@ -396,11 +397,11 @@ describe('Dialog', () => {
 
 			window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }))
 
-			await expectAsync(confirmationPromise).toBeResolvedTo('primary result')
+			await expect(confirmationPromise).resolves.toEqual('primary result')
 		})
 
 		it('should not execute the primary action on Enter when primaryOnEnter is not set', async () => {
-			const action = jasmine.createSpy('action').and.returnValue('primary result')
+			const action = vi.fn().mockReturnValue('primary result')
 			fixture.component.action = action
 			fixture.component.confirm().catch(() => void 0)
 			await untilTopLayerIsOwned()
@@ -418,7 +419,7 @@ describe('Dialog', () => {
 
 			window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
 
-			await expectAsync(confirmationPromise).toBeRejectedWithError(DialogCancelledError)
+			await expect(confirmationPromise).rejects.toThrow(DialogCancelledError)
 		})
 
 		it('should not cancel on Escape when blocking', async () => {
@@ -447,7 +448,7 @@ describe('Dialog', () => {
 
 			resolveAction('async result')
 
-			await expectAsync(confirmationPromise).toBeResolvedTo('async result')
+			await expect(confirmationPromise).resolves.toEqual('async result')
 			expect(fixture.component.dialogElement.executingAction).toBeUndefined()
 		})
 	})

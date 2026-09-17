@@ -4,7 +4,7 @@ import { PointerHoverController } from './PointerHoverController.js'
 
 @component('pointer-hover-controller-test-component')
 class PointerHoverControllerTestComponent extends Component {
-	readonly spy = jasmine.createSpy()
+	readonly spy = vi.fn()
 
 	readonly pointerHoverController = new PointerHoverController(this, {
 		handleHoverChange: this.spy
@@ -54,28 +54,28 @@ describe('PointerHoverController', () => {
 	})
 
 	it('should not listen on the document', async () => {
-		const added = spyOn(document, 'addEventListener').and.callThrough()
+		const added = vi.spyOn(document, 'addEventListener')
 		const component = document.body.appendChild(new PointerHoverControllerTestComponent())
 		await component.updateComplete
 		await new Promise(resolve => setTimeout(resolve))
 
-		expect(added.calls.allArgs().map(([type]) => type).filter(type => String(type).startsWith('pointer'))).toEqual([])
+		expect(added.mock.calls.map(([type]) => type).filter(type => String(type).startsWith('pointer'))).toEqual([])
 		component.remove()
 	})
 
 	describe('refresh', () => {
 		it('should adopt a ":hover" match without clearing a reported hover otherwise', async () => {
-			const matches = spyOn(fixture.component, 'matches').and.returnValue(false)
+			const matches = vi.spyOn(fixture.component, 'matches').mockReturnValue(false)
 
 			await fixture.component.pointerHoverController.refresh()
 			expect(fixture.component.pointerHoverController.hover).toBe(false)
 			expect(fixture.component.spy).not.toHaveBeenCalled()
 
-			matches.and.returnValue(true)
+			matches.mockReturnValue(true)
 			await fixture.component.pointerHoverController.refresh()
 			expectHover(true)
 
-			matches.and.returnValue(false)
+			matches.mockReturnValue(false)
 			await fixture.component.pointerHoverController.refresh()
 			expect(fixture.component.pointerHoverController.hover).toBe(true)
 			expect(fixture.component.spy).toHaveBeenCalledTimes(1)

@@ -91,7 +91,7 @@ describe('FormAssociationController', () => {
 			form.append(derived)
 			await derived.updateComplete
 
-			expect(entries()).toContain(['derived', 'inherited'])
+			expect(entries()).toContainEqual(['derived', 'inherited'])
 		})
 
 		it('is required - a controller on an undeclared host says so', () => {

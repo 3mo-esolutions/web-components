@@ -13,11 +13,11 @@ describe('KeyboardController', () => {
 
 	for (const { modifier, init } of modifiers) {
 		it(`should report ${modifier} as pressed on keydown`, () => {
-			expect(KeyboardController[modifier]).toBeFalse()
+			expect(KeyboardController[modifier]).toBe(false)
 
 			window.dispatchEvent(new KeyboardEvent('keydown', init))
 
-			expect(KeyboardController[modifier]).toBeTrue()
+			expect(KeyboardController[modifier]).toBe(true)
 		})
 	}
 
@@ -27,7 +27,7 @@ describe('KeyboardController', () => {
 
 			window.dispatchEvent(new KeyboardEvent('keyup'))
 
-			expect(KeyboardController[modifier]).toBeFalse()
+			expect(KeyboardController[modifier]).toBe(false)
 		})
 	}
 

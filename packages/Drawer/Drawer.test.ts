@@ -27,13 +27,13 @@ describe('Drawer', () => {
 	})
 
 	it('should reflect the open attribute', async () => {
-		expect(fixture.component.open).toBeFalse()
+		expect(fixture.component.open).toBe(false)
 
 		fixture.component.open = true
 		await fixture.updateComplete
 
-		expect(fixture.component.hasAttribute('open')).toBeTrue()
-		expect(fixture.component.dialogElement.matches(':modal')).toBeTrue()
+		expect(fixture.component.hasAttribute('open')).toBe(true)
+		expect(fixture.component.dialogElement.matches(':modal')).toBe(true)
 	})
 
 	it('should close on Escape', async () => {
@@ -44,7 +44,7 @@ describe('Drawer', () => {
 		fixture.component.dialogElement.dispatchEvent(new Event('cancel', { cancelable: true }))
 		await hasClosed
 
-		expect(fixture.component.open).toBeFalse()
+		expect(fixture.component.open).toBe(false)
 	})
 
 	it('should still be sized by the Material width it used to have', async () => {

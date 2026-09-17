@@ -17,8 +17,8 @@ const query = '(min-width: 1234px)'
 
 @component('media-query-controller-test-component')
 class TestComponent extends Component {
-	readonly matches = new Array<boolean>()
-	readonly controller = new MediaQueryController(this, query, matches => this.matches.push(matches))
+	readonly observedMatches = new Array<boolean>()
+	readonly controller = new MediaQueryController(this, query, observedMatches => this.observedMatches.push(observedMatches))
 }
 
 describe('MediaQueryController', () => {
@@ -41,24 +41,24 @@ describe('MediaQueryController', () => {
 
 	it('should expose whether the query currently matches', () => {
 		expect(mediaQueryList.media).toBe(query)
-		expect(component.controller.matches).toBeFalse()
+		expect(component.controller.matches).toBe(false)
 
 		mediaQueryList.matches = true
 
-		expect(component.controller.matches).toBeTrue()
+		expect(component.controller.matches).toBe(true)
 	})
 
 	it('should invoke the callback and request a host update when the match state changes', () => {
-		spyOn(component, 'requestUpdate')
+		vi.spyOn(component, 'requestUpdate').mockReturnValue(undefined)
 
 		mediaQueryList.change(true)
 
-		expect(component.matches).toEqual([true])
+		expect(component.observedMatches).toEqual([true])
 		expect(component.requestUpdate).toHaveBeenCalled()
 
 		mediaQueryList.change(false)
 
-		expect(component.matches).toEqual([true, false])
+		expect(component.observedMatches).toEqual([true, false])
 	})
 
 	it('should stop reacting to changes after the host is disconnected', () => {
@@ -66,6 +66,6 @@ describe('MediaQueryController', () => {
 
 		mediaQueryList.change(true)
 
-		expect(component.matches).toEqual([])
+		expect(component.observedMatches).toEqual([])
 	})
 })

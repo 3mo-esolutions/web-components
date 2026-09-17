@@ -4,7 +4,7 @@ describe('Downloader', () => {
 	const clickedAnchor = () => {
 		let anchor: HTMLAnchorElement | undefined
 		let wasConnected: boolean | undefined
-		spyOn(HTMLAnchorElement.prototype, 'click').and.callFake(function (this: HTMLAnchorElement) {
+		vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function (this: HTMLAnchorElement) {
 			anchor = this
 			wasConnected = this.isConnected
 		})
@@ -21,7 +21,7 @@ describe('Downloader', () => {
 
 		expect(clicked.element).toBeInstanceOf(HTMLAnchorElement)
 		expect(clicked.element.href).toBe('https://example.com/file.pdf')
-		expect(clicked.wasConnected).toBeTrue()
+		expect(clicked.wasConnected).toBe(true)
 	})
 
 	it('should set the download attribute to the given file name', () => {
@@ -37,8 +37,8 @@ describe('Downloader', () => {
 
 		Downloader.download('https://example.com/file.pdf', 'invoice.pdf')
 
-		expect(clicked.wasConnected).toBeTrue()
-		expect(clicked.element.isConnected).toBeFalse()
-		expect(document.body.contains(clicked.element)).toBeFalse()
+		expect(clicked.wasConnected).toBe(true)
+		expect(clicked.element.isConnected).toBe(false)
+		expect(document.body.contains(clicked.element)).toBe(false)
 	})
 })

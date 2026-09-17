@@ -40,7 +40,7 @@ describe('Scroller', () => {
 	})
 
 	it('should re-dispatch its scroll events on window', async () => {
-		const handler = jasmine.createSpy('scroll')
+		const handler = vi.fn()
 		window.addEventListener('scroll', handler)
 
 		try {

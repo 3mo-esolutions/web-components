@@ -36,7 +36,7 @@ describe('LinearProgress', () => {
 	})
 
 	// BUG: reverse property is not applied
-	xit('should reverse the direction of the progress when "reverse" is set', async () => {
+	it.skip('should reverse the direction of the progress when "reverse" is set', async () => {
 		expect(getComputedStyle(fixture.component).transform).toBe('none')
 
 		fixture.component.reverse = true

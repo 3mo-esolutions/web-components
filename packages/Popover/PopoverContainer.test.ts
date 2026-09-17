@@ -1,8 +1,8 @@
 import { html } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { PopoverAlignment, PopoverPlacement, type PopoverContainer } from '.'
+import { PopoverAlignment, PopoverPlacement, type PopoverContainer } from './index.js'
 // eslint-disable-next-line no-duplicate-imports
-import '.'
+import './index.js'
 
 describe('PopoverContainer', () => {
 	const fixture = new ComponentTestFixture<PopoverContainer>(html`

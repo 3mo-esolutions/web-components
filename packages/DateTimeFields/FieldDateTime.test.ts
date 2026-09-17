@@ -48,7 +48,7 @@ describe('FieldDateTime', () => {
 
 	describe('calendar selection', () => {
 		it('should dispatch change event when a given date is selected in the calendar', () => {
-			spyOn(fixture.component.change, 'dispatch')
+			vi.spyOn(fixture.component.change, 'dispatch').mockReturnValue(undefined)
 			const date = new DateTime('2025-01-01')
 			// @ts-expect-error Using UTC to avoid timezone issues in tests
 			date.timeZone = 'UTC'
@@ -124,7 +124,7 @@ describe('FieldDateTime', () => {
 			await fixture.updateComplete
 			const hourList = list('mo-hour-list')!
 			const picked = fixture.component.navigationDate.with({ hour: 9 })
-			spyOn(fixture.component.change, 'dispatch')
+			vi.spyOn(fixture.component.change, 'dispatch').mockReturnValue(undefined)
 
 			hourList.dispatchEvent(new CustomEvent('navigate', { detail: picked }))
 			await fixture.updateComplete
@@ -171,12 +171,12 @@ describe('FieldDateTime', () => {
 		it('should dispatch input with the parsed value while typing', async () => {
 			plainFixture.component.shortcutReferenceDate = utc('2020-06-10T00:00:00')
 			await plainFixture.updateComplete
-			spyOn(plainFixture.component.input, 'dispatch')
+			vi.spyOn(plainFixture.component.input, 'dispatch').mockReturnValue(undefined)
 
 			input().value = '+1'
 			input().dispatchEvent(new Event('input'))
 
-			const dispatched = (plainFixture.component.input.dispatch as jasmine.Spy).calls.mostRecent().args[0] as DateTime
+			const dispatched = vi.mocked(plainFixture.component.input.dispatch).mock.lastCall![0] as DateTime
 			expect(dispatched.valueOf()).toBe(utc('2020-06-11T00:00:00').valueOf())
 			expect(plainFixture.component.value).toBeUndefined()
 		})
@@ -188,8 +188,8 @@ describe('FieldDateTime', () => {
 			plainFixture.component.dispatchEvent(new FocusEvent('focusin', { bubbles: true }))
 			await plainFixture.updateComplete
 			const clearButton = plainFixture.component.renderRoot.querySelector<HTMLElement>('mo-icon-button[icon=cancel]')!
-			spyOn(plainFixture.component.input, 'dispatch')
-			spyOn(plainFixture.component.change, 'dispatch')
+			vi.spyOn(plainFixture.component.input, 'dispatch').mockReturnValue(undefined)
+			vi.spyOn(plainFixture.component.change, 'dispatch').mockReturnValue(undefined)
 
 			clearButton.click()
 			await plainFixture.updateComplete
@@ -213,7 +213,7 @@ describe('FieldDateTime', () => {
 		const preset = (label: string) => presets().find(item => item.textContent!.trim() === label)
 
 		it('should apply the preset\'s value and dispatch change when a preset is clicked', () => {
-			spyOn(fixture.component.change, 'dispatch')
+			vi.spyOn(fixture.component.change, 'dispatch').mockReturnValue(undefined)
 
 			preset(String(t('Today')))!.click()
 

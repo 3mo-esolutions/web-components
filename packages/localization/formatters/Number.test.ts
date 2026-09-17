@@ -9,10 +9,10 @@ describe('Number', () => {
 
 	it('.formatToParts()', () => {
 		const parts = 1234.56.formatToParts({ language: 'de' })
-		expect(parts).toEqual(jasmine.arrayContaining([
-			jasmine.objectContaining({ type: 'integer', value: '1234' }),
-			jasmine.objectContaining({ type: 'decimal', value: ',' }),
-			jasmine.objectContaining({ type: 'fraction', value: '56' }),
+		expect(parts).toEqual(expect.arrayContaining([
+			expect.objectContaining({ type: 'integer', value: '1234' }),
+			expect.objectContaining({ type: 'decimal', value: ',' }),
+			expect.objectContaining({ type: 'fraction', value: '56' }),
 		]))
 	})
 

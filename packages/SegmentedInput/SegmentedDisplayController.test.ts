@@ -85,7 +85,7 @@ describe('SegmentedDisplayController', () => {
 			expect(input().inputMode).toBe('numeric')
 			expect(input().getAttribute('autocomplete')).toBe('one-time-code')
 			expect(input().getAttribute('aria-label')).toBe('Verification code')
-			expect(input().spellcheck).toBeFalse()
+			expect(input().spellcheck).toBe(false)
 		})
 
 		it('should take the autocomplete and input mode from the options', async () => {
@@ -98,9 +98,9 @@ describe('SegmentedDisplayController', () => {
 		it('should reflect disabled, readonly, required and invalid', async () => {
 			await setUp({ disabled: true, readonly: true, required: true, invalid: true })
 
-			expect(input().disabled).toBeTrue()
-			expect(input().readOnly).toBeTrue()
-			expect(input().required).toBeTrue()
+			expect(input().disabled).toBe(true)
+			expect(input().readOnly).toBe(true)
+			expect(input().required).toBe(true)
 			expect(input().getAttribute('aria-invalid')).toBe('true')
 		})
 	})
@@ -116,8 +116,8 @@ describe('SegmentedDisplayController', () => {
 			await enter('123')
 
 			expect(texts()).toEqual(['1', '2', '3', '·', '·', '·'])
-			expect(cell('cell-0').hasAttribute('data-placeholder')).toBeFalse()
-			expect(cell('cell-3').hasAttribute('data-placeholder')).toBeTrue()
+			expect(cell('cell-0').hasAttribute('data-placeholder')).toBe(false)
+			expect(cell('cell-3').hasAttribute('data-placeholder')).toBe(true)
 		})
 
 		it('should mask the value when asked to', async () => {
@@ -146,14 +146,14 @@ describe('SegmentedDisplayController', () => {
 			input().dispatchEvent(new FocusEvent('focus'))
 			await enter('12')
 
-			expect(cell('cell-2').hasAttribute('data-active')).toBeTrue()
-			expect(cell('cell-1').hasAttribute('data-active')).toBeFalse()
+			expect(cell('cell-2').hasAttribute('data-active')).toBe(true)
+			expect(cell('cell-1').hasAttribute('data-active')).toBe(false)
 		})
 
 		it('should mark no cell while the input is not focused', async () => {
 			await enter('12')
 
-			expect(cells().some(element => element.hasAttribute('data-active'))).toBeFalse()
+			expect(cells().some(element => element.hasAttribute('data-active'))).toBe(false)
 		})
 	})
 
@@ -234,15 +234,15 @@ describe('SegmentedDisplayController', () => {
 			controller().select(3)
 
 			expect(input().selectionStart).toBe(3)
-			expect(cell('cell-3').hasAttribute('data-active')).toBeTrue()
+			expect(cell('cell-3').hasAttribute('data-active')).toBe(true)
 		})
 
 		it('should report a complete value', async () => {
-			expect(controller().isComplete).toBeFalse()
+			expect(controller().isComplete).toBe(false)
 
 			await enter('123456')
 
-			expect(controller().isComplete).toBeTrue()
+			expect(controller().isComplete).toBe(true)
 		})
 	})
 })

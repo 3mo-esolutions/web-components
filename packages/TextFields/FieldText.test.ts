@@ -43,8 +43,8 @@ describe('FieldText', () => {
 		it('should proxy change event', () => expectInputEventTunnelsToField(fixture, 'change', 'test'))
 
 		it('should not dispatch input or change when the value is assigned programmatically', async () => {
-			const input = jasmine.createSpy('input')
-			const change = jasmine.createSpy('change')
+			const input = vi.fn()
+			const change = vi.fn()
 			fixture.component.addEventListener('input', input)
 			fixture.component.addEventListener('change', change)
 

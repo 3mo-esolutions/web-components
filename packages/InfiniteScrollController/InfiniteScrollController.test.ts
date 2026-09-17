@@ -166,7 +166,7 @@ describe('InfiniteScrollController', () => {
 
 		expect(fixture.component.loadCount).toBe(1)
 		expect(fixture.component.controller.error).toBeInstanceOf(Error)
-		expect(fixture.component.controller.pending).toBeFalse()
+		expect(fixture.component.controller.pending).toBe(false)
 	})
 
 	it('should not retry a failed chunk on scroll or resize but only on reset', async () => {
@@ -282,7 +282,7 @@ describe('InfiniteScrollController', () => {
 
 		await new Promise(resolve => setTimeout(resolve, 50))
 
-		expect(fixture.component.controller.pending).toBeTrue()
+		expect(fixture.component.controller.pending).toBe(true)
 		expect(fixture.component.loadCount).toBe(1)
 		expect(fixture.component.itemCount).toBe(0)
 
@@ -290,7 +290,7 @@ describe('InfiniteScrollController', () => {
 		openTheGate()
 		await settle(fixture.component)
 
-		expect(fixture.component.controller.pending).toBeFalse()
+		expect(fixture.component.controller.pending).toBe(false)
 		expect(fixture.component.itemCount).toBe(10)
 	})
 

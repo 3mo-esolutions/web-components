@@ -290,27 +290,27 @@ describe('SheetController', () => {
 				return event
 			}
 
-			it('should claim a gesture which runs along its axis', () => {
+			it('should claim a gesture which runs along its axis', context => {
 				handle().dispatchEvent(pointer('pointerdown', 0))
 				const event = touch(handle(), 0, 40)
 				if (!event) {
-					pending('the engine has no touch events')
+					context.skip('the engine has no touch events')
 				}
 
 				expect(event?.defaultPrevented).toBe(true)
 			})
 
-			it('should leave a gesture which runs across its axis to the browser', () => {
+			it('should leave a gesture which runs across its axis to the browser', context => {
 				handle().dispatchEvent(pointer('pointerdown', 0))
 				const event = touch(handle(), 60, 3)
 				if (!event) {
-					pending('the engine has no touch events')
+					context.skip('the engine has no touch events')
 				}
 
 				expect(event?.defaultPrevented).toBe(false)
 			})
 
-			it('should leave the gesture to content which can still scroll the way the finger goes', () => {
+			it('should leave the gesture to content which can still scroll the way the finger goes', context => {
 				const scroller = document.createElement('div')
 				Object.assign(scroller.style, { blockSize: '50px', overflow: 'auto' })
 				scroller.innerHTML = '<div style="block-size: 400px"></div>'
@@ -320,7 +320,7 @@ describe('SheetController', () => {
 				scroller.dispatchEvent(pointer('pointerdown', 0))
 				const event = touch(scroller, 0, 40)
 				if (!event) {
-					pending('the engine has no touch events')
+					context.skip('the engine has no touch events')
 				}
 
 				expect(event?.defaultPrevented).toBe(false)

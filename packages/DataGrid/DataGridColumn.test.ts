@@ -1,6 +1,6 @@
 import { PureEventDispatcher } from '@a11d/lit'
 import { equals } from '@a11d/equals'
-import { DataGridColumn } from './DataGridColumn'
+import { DataGridColumn } from './DataGridColumn.js'
 import { DataGridSortingController, DataGridSortingStrategy } from './DataGridSortingController.js'
 
 type Person = { id: number, name: string }
@@ -55,7 +55,7 @@ describe('DataGridColumn', () => {
 
 			expect(column1[equals](column2)).toBe(true)
 
-			column1.dataSelector = 'name2' as any
+			;(column1 as any).dataSelector = 'name2'
 			expect(column1[equals](column2)).toBe(false)
 		})
 
@@ -67,8 +67,8 @@ describe('DataGridColumn', () => {
 			expect(column1[equals](column2)).toBe(true)
 			expect(column1[equals](column3)).toBe(false)
 
-			column2.description = 'Description'
-			column3.description = 'Description Changed'
+			;(column2 as any).description = 'Description'
+			;(column3 as any).description = 'Description Changed'
 			expect(column1[equals](column2)).toBe(false)
 			expect(column2[equals](column3)).toBe(false)
 			expect(column1[equals](column3)).toBe(false)
@@ -81,8 +81,8 @@ describe('DataGridColumn', () => {
 			sortingController,
 			getSorting: () => sortingController.get(),
 			visibleColumns: columns,
-			requestUpdate: jasmine.createSpy('requestUpdate'),
-			columnsController: { columns: { modify: jasmine.createSpy('modify') } },
+			requestUpdate: vi.fn(),
+			columnsController: { columns: { modify: vi.fn() } },
 		}
 		columns.forEach(column => column.dataGrid = dataGrid as any)
 		return dataGrid
@@ -136,7 +136,7 @@ describe('DataGridColumn', () => {
 
 			column.toggleSticky('start')
 
-			expect(dataGrid.columnsController.columns.modify).toHaveBeenCalledOnceWith('name', { sticky: 'start' })
+			expect(dataGrid.columnsController.columns.modify).toHaveBeenCalledExactlyOnceWith('name', { sticky: 'start' })
 		})
 
 		it('should pin the column as not sticky (null) when toggling its current stickiness off, so a sticky definition stays overridden', () => {
@@ -145,7 +145,7 @@ describe('DataGridColumn', () => {
 
 			column.toggleSticky('start')
 
-			expect(dataGrid.columnsController.columns.modify).toHaveBeenCalledOnceWith('name', { sticky: null })
+			expect(dataGrid.columnsController.columns.modify).toHaveBeenCalledExactlyOnceWith('name', { sticky: null })
 		})
 	})
 
@@ -158,17 +158,17 @@ describe('DataGridColumn', () => {
 
 		it('should return undefined when column is not sticky', () => {
 			const [column] = createColumnsWithDataGrid(new DataGridColumn<Person>({ heading: 'A' }))
-			expect(column.stickyEdge).toBeUndefined()
+			expect(column!.stickyEdge).toBeUndefined()
 		})
 
 		it('should return undefined when dataGrid is not set', () => {
 			const column = new DataGridColumn<Person>({ heading: 'A', sticky: 'start' })
-			expect(column.stickyEdge).toBeUndefined()
+			expect(column!.stickyEdge).toBeUndefined()
 		})
 
 		it('should return "start end" for sticky="both"', () => {
 			const [column] = createColumnsWithDataGrid(new DataGridColumn<Person>({ heading: 'A', sticky: 'both' }))
-			expect(column.stickyEdge).toBe('start end')
+			expect(column!.stickyEdge).toBe('start end')
 		})
 
 		it('should return "end" for the last sticky="start" column', () => {
@@ -177,9 +177,9 @@ describe('DataGridColumn', () => {
 				new DataGridColumn<Person>({ heading: 'B', sticky: 'start' }),
 				new DataGridColumn<Person>({ heading: 'C' })
 			)
-			expect(col1.stickyEdge).toBeUndefined()
-			expect(col2.stickyEdge).toBe('end')
-			expect(col3.stickyEdge).toBeUndefined()
+			expect(col1!.stickyEdge).toBeUndefined()
+			expect(col2!.stickyEdge).toBe('end')
+			expect(col3!.stickyEdge).toBeUndefined()
 		})
 
 		it('should return "start" for the first sticky="end" column', () => {
@@ -188,9 +188,9 @@ describe('DataGridColumn', () => {
 				new DataGridColumn<Person>({ heading: 'B', sticky: 'end' }),
 				new DataGridColumn<Person>({ heading: 'C', sticky: 'end' })
 			)
-			expect(col1.stickyEdge).toBeUndefined()
-			expect(col2.stickyEdge).toBe('start')
-			expect(col3.stickyEdge).toBeUndefined()
+			expect(col1!.stickyEdge).toBeUndefined()
+			expect(col2!.stickyEdge).toBe('start')
+			expect(col3!.stickyEdge).toBeUndefined()
 		})
 
 		it('should return "end" when there is only one sticky="start" column', () => {
@@ -198,8 +198,8 @@ describe('DataGridColumn', () => {
 				new DataGridColumn<Person>({ heading: 'A', sticky: 'start' }),
 				new DataGridColumn<Person>({ heading: 'B' })
 			)
-			expect(col1.stickyEdge).toBe('end')
-			expect(col2.stickyEdge).toBeUndefined()
+			expect(col1!.stickyEdge).toBe('end')
+			expect(col2!.stickyEdge).toBeUndefined()
 		})
 
 		it('should return "start" when there is only one sticky="end" column', () => {
@@ -207,8 +207,8 @@ describe('DataGridColumn', () => {
 				new DataGridColumn<Person>({ heading: 'A' }),
 				new DataGridColumn<Person>({ heading: 'B', sticky: 'end' })
 			)
-			expect(col1.stickyEdge).toBeUndefined()
-			expect(col2.stickyEdge).toBe('start')
+			expect(col1!.stickyEdge).toBeUndefined()
+			expect(col2!.stickyEdge).toBe('start')
 		})
 	})
 })

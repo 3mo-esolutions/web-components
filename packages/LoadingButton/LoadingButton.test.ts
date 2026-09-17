@@ -75,7 +75,7 @@ describe('LoadingButton', () => {
 		})
 
 		it('should invoke a click listener exactly once per click', async () => {
-			const spy = jasmine.createSpy('click').and.returnValue(Promise.resolve())
+			const spy = vi.fn().mockReturnValue(Promise.resolve())
 			fixture.component.addEventListener('click', spy)
 
 			clickInternalButton()

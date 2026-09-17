@@ -11,7 +11,7 @@ describe('FieldColor', () => {
 	const colorPicker = () => fixture.component.renderRoot.querySelector('mo-color-picker') as ColorPicker
 
 	const detailSpyFor = (type: 'input' | 'change') => {
-		const spy = jasmine.createSpy(`${type} detail`)
+		const spy = vi.fn()
 		fixture.component.addEventListener(type, (e: Event) => spy((e as CustomEvent<Color | undefined>).detail))
 		return spy
 	}
@@ -42,7 +42,7 @@ describe('FieldColor', () => {
 				fixture.component.inputElement.dispatchEvent(new Event(type))
 
 				expect(spy).toHaveBeenCalledTimes(1)
-				expect(spy.calls.mostRecent().args[0].hex).toBe('#0C2238')
+				expect(spy.mock.lastCall![0].hex).toBe('#0C2238')
 			})
 		}
 
@@ -56,11 +56,11 @@ describe('FieldColor', () => {
 			fixture.component.inputElement.dispatchEvent(new Event('change'))
 
 			expect(fixture.component.value).toBeUndefined()
-			expect(spy).toHaveBeenCalledOnceWith(null)
+			expect(spy).toHaveBeenCalledExactlyOnceWith(null)
 		})
 
 		it('should not dispatch input or change when the value is assigned programmatically', async () => {
-			const spy = jasmine.createSpy('dispatch')
+			const spy = vi.fn()
 			fixture.component.addEventListener('input', spy)
 			fixture.component.addEventListener('change', spy)
 
@@ -92,23 +92,23 @@ describe('FieldColor', () => {
 		})
 
 		// BUG: FieldColor.ts picker handlers swapped
-		xit('should dispatch input with the live color while the picker emits input', () => {
+		it.skip('should dispatch input with the live color while the picker emits input', () => {
 			const spy = detailSpyFor('input')
 
 			emitFromColorPicker('input', '#00ff00')
 
 			expect(spy).toHaveBeenCalledTimes(1)
-			expect(spy.calls.mostRecent().args[0].hex).toBe('#00FF00')
+			expect(spy.mock.lastCall![0].hex).toBe('#00FF00')
 			expect(fixture.component.value).toBeUndefined()
 		})
 
-		xit('should commit the value and dispatch change when the picker emits change', () => {
+		it.skip('should commit the value and dispatch change when the picker emits change', () => {
 			const spy = detailSpyFor('change')
 
 			emitFromColorPicker('change', '#00ff00')
 
 			expect(spy).toHaveBeenCalledTimes(1)
-			expect(spy.calls.mostRecent().args[0].hex).toBe('#00FF00')
+			expect(spy.mock.lastCall![0].hex).toBe('#00FF00')
 			expect(fixture.component.value?.hex).toBe('#00FF00')
 		})
 	})

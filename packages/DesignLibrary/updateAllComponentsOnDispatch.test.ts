@@ -19,7 +19,7 @@ describe('updateAllComponentsOnDispatch', () => {
 	afterEach(() => element.remove())
 
 	it('should request an update of connected components when the dispatcher fires', () => {
-		const requestUpdate = spyOn(element, 'requestUpdate')
+		const requestUpdate = vi.spyOn(element, 'requestUpdate').mockReturnValue(undefined)
 
 		dispatcher.dispatch()
 
@@ -27,7 +27,7 @@ describe('updateAllComponentsOnDispatch', () => {
 	})
 
 	it('should stop updating a component after it disconnects', () => {
-		const requestUpdate = spyOn(element, 'requestUpdate')
+		const requestUpdate = vi.spyOn(element, 'requestUpdate').mockReturnValue(undefined)
 		element.remove()
 
 		dispatcher.dispatch()

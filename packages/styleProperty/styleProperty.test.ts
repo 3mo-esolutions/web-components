@@ -20,43 +20,43 @@ describe('styleProperty', () => {
 	const fixture = new ComponentTestFixture(() => new TestComponent)
 
 	it('should handle property with same name as style key', () => {
-		spyOn(fixture.component, 'requestUpdate')
+		vi.spyOn(fixture.component, 'requestUpdate').mockReturnValue(undefined)
 
 		fixture.component.gap = '10px'
 
 		expect(fixture.component.style.gap).toBe('10px')
 		expect(fixture.component.gap).toBe('10px')
-		expect(fixture.component.requestUpdate).toHaveBeenCalledOnceWith('gap', '')
+		expect(fixture.component.requestUpdate).toHaveBeenCalledExactlyOnceWith('gap', '')
 	})
 
 	it('should handle property with custom style key', () => {
-		spyOn(fixture.component, 'requestUpdate')
+		vi.spyOn(fixture.component, 'requestUpdate').mockReturnValue(undefined)
 
 		fixture.component.withCustomKey = 'center'
 
 		expect(fixture.component.style.alignItems).toBe('center')
 		expect(fixture.component.withCustomKey).toBe('center')
-		expect(fixture.component.requestUpdate).toHaveBeenCalledOnceWith('withCustomKey', '')
+		expect(fixture.component.requestUpdate).toHaveBeenCalledExactlyOnceWith('withCustomKey', '')
 	})
 
 	it('should handle property with custom converter', () => {
-		spyOn(fixture.component, 'requestUpdate')
+		vi.spyOn(fixture.component, 'requestUpdate').mockReturnValue(undefined)
 
 		fixture.component.withCustomConverter = '*'
 
 		expect(fixture.component.style.width).toBe('100%')
 		expect(fixture.component.withCustomConverter).toBe('*')
-		expect(fixture.component.requestUpdate).toHaveBeenCalledOnceWith('withCustomConverter', '')
+		expect(fixture.component.requestUpdate).toHaveBeenCalledExactlyOnceWith('withCustomConverter', '')
 	})
 
 	it('should handle property with custom CSS property as style key', () => {
-		spyOn(fixture.component, 'requestUpdate')
+		vi.spyOn(fixture.component, 'requestUpdate').mockReturnValue(undefined)
 
 		fixture.component.withCustomProperty = '10px'
 
 		expect(fixture.component.style.getPropertyValue('--custom-property')).toBe('10px')
 		expect(fixture.component.withCustomProperty).toBe('10px')
-		expect(fixture.component.requestUpdate).toHaveBeenCalledOnceWith('withCustomProperty', '')
+		expect(fixture.component.requestUpdate).toHaveBeenCalledExactlyOnceWith('withCustomProperty', '')
 	})
 
 	it('should read back a style set directly on the element, as the property holds no state of its own', () => {

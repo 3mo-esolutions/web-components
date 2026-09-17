@@ -40,7 +40,7 @@ describe('BusinessSuiteAuthenticationDialogComponent', () => {
 	beforeEach(() => {
 		storedUserBeforeTest = storage.value
 		component = new TestAuthenticationDialogComponent
-		spyOn(NotificationComponent, 'notifySuccess').and.resolveTo()
+		vi.spyOn(NotificationComponent, 'notifySuccess').mockResolvedValue()
 	})
 
 	afterEach(() => storage.value = storedUserBeforeTest)
@@ -58,7 +58,7 @@ describe('BusinessSuiteAuthenticationDialogComponent', () => {
 	describe('unauthenticate', () => {
 		it('should clear the persisted user', async () => {
 			storage.value = account
-			spyOn(component, 'confirm').and.resolveTo(account)
+			vi.spyOn(component, 'confirm').mockResolvedValue(account)
 
 			await component.unauthenticate()
 
@@ -68,22 +68,22 @@ describe('BusinessSuiteAuthenticationDialogComponent', () => {
 
 	describe('resetPassword', () => {
 		it('should notify with an info message once the reset request succeeds', async () => {
-			const notifyInfo = spyOn(NotificationComponent, 'notifyInfo').and.resolveTo()
+			const notifyInfo = vi.spyOn(NotificationComponent, 'notifyInfo').mockResolvedValue()
 
 			await component.resetPassword()
 
 			expect(notifyInfo).toHaveBeenCalledTimes(1)
-			expect(String(notifyInfo.calls.mostRecent().args[0]))
+			expect(String(notifyInfo.mock.lastCall![0]))
 				.toBe(String(t('Password reset instructions have been sent to your email address')))
 		})
 
 		it('should notify the error message and rethrow when the reset request fails', async () => {
-			const notifyError = spyOn(NotificationComponent, 'notifyError').and.resolveTo()
+			const notifyError = vi.spyOn(NotificationComponent, 'notifyError').mockResolvedValue()
 			component.passwordResetError = new Error('The mail server is unreachable')
 
-			await expectAsync(component.resetPassword()).toBeRejectedWithError('The mail server is unreachable')
+			await expect(component.resetPassword()).rejects.toThrow('The mail server is unreachable')
 
-			expect(notifyError).toHaveBeenCalledOnceWith('The mail server is unreachable')
+			expect(notifyError).toHaveBeenCalledExactlyOnceWith('The mail server is unreachable')
 		})
 	})
 
@@ -95,7 +95,7 @@ describe('BusinessSuiteAuthenticationDialogComponent', () => {
 			observer = new TestStorageObserver
 			document.body.appendChild(observer)
 			await observer.updateComplete
-			const requestUpdate = spyOn(observer, 'requestUpdate')
+			const requestUpdate = vi.spyOn(observer, 'requestUpdate').mockReturnValue(undefined)
 
 			storage.value = { name: 'Jane Doe' }
 

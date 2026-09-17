@@ -4,7 +4,7 @@ import { observeResize } from './observeResize.js'
 
 @component('observe-resize-test-component')
 class ObserveResizeTestComponent extends Component {
-	readonly callback = jasmine.createSpy<ResizeObserverCallback>('callback')
+	readonly callback = vi.fn<ResizeObserverCallback>()
 
 	@query('div') readonly element!: HTMLDivElement
 
@@ -29,10 +29,10 @@ describe('observeResize', () => {
 		}
 	}
 
-	const entryOfLastCall = () => fixture.component.callback.calls.mostRecent().args[0][0]
+	const entryOfLastCall = () => fixture.component.callback.mock.lastCall![0][0]
 
 	it('should invoke the callback with the element\'s entry when it is laid out and when it resizes', async () => {
-		await until(() => fixture.component.callback.calls.count() > 0)
+		await until(() => fixture.component.callback.mock.calls.length > 0)
 
 		expect(entryOfLastCall()?.target).toBe(fixture.component.element)
 		expect(entryOfLastCall()?.contentRect.width).toBe(50)
@@ -46,13 +46,13 @@ describe('observeResize', () => {
 
 	it('should disconnect the observer when the directive part is disconnected', async () => {
 		const element = fixture.component.element
-		await until(() => fixture.component.callback.calls.count() > 0)
+		await until(() => fixture.component.callback.mock.calls.length > 0)
 
 		fixture.component.shallRender = false
 		await fixture.updateComplete
 		await tick()
 
-		const callCount = fixture.component.callback.calls.count()
+		const callCount = fixture.component.callback.mock.calls.length
 		element.style.width = '200px'
 		document.body.append(element)
 		await tick()

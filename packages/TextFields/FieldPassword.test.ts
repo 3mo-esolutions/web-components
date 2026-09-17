@@ -46,7 +46,7 @@ describe('FieldPassword', () => {
 
 	describe('reveal', () => {
 		it('should render a password-type input by default', () => {
-			expect(fixture.component.reveal).toBeFalse()
+			expect(fixture.component.reveal).toBe(false)
 			expect(fixture.component.inputElement.type).toBe('password')
 		})
 
@@ -61,12 +61,12 @@ describe('FieldPassword', () => {
 			revealIconButton().click()
 			await fixture.updateComplete
 
-			expect(fixture.component.reveal).toBeTrue()
+			expect(fixture.component.reveal).toBe(true)
 
 			revealIconButton().click()
 			await fixture.updateComplete
 
-			expect(fixture.component.reveal).toBeFalse()
+			expect(fixture.component.reveal).toBe(false)
 		})
 
 		it('should reflect the reveal state in the icon-button\'s icon and title', async () => {

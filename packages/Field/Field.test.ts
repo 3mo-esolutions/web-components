@@ -32,12 +32,12 @@ describe('Field', () => {
 
 		for (const property of ['readonly', 'disabled', 'required', 'dense', 'populated', 'invalid', 'active'] as const) {
 			it(`should reflect ${property} as an attribute`, async () => {
-				expect(fixture.component.hasAttribute(property)).toBeFalse()
+				expect(fixture.component.hasAttribute(property)).toBe(false)
 
 				fixture.component[property] = true
 				await fixture.updateComplete
 
-				expect(fixture.component.hasAttribute(property)).toBeTrue()
+				expect(fixture.component.hasAttribute(property)).toBe(true)
 			})
 		}
 	})

@@ -83,7 +83,7 @@ describe('Alert', () => {
 		})
 
 		it('should toggle the "open" property and dispatch the "openChange" when clicked', async () => {
-			const openChangeSpy = spyOn(fixture.component.openChange, 'dispatch')
+			const openChangeSpy = vi.spyOn(fixture.component.openChange, 'dispatch').mockReturnValue(undefined)
 			fixture.component.collapsible = true
 			fixture.component.heading = 'Test'
 			await fixture.updateComplete
@@ -101,7 +101,7 @@ describe('Alert', () => {
 		})
 
 		it('should not dispatch "openChange" for a programmatically set "open", as only the interaction reports', async () => {
-			const handler = jasmine.createSpy('openChange')
+			const handler = vi.fn()
 			fixture.component.addEventListener('openChange', handler)
 			fixture.component.collapsible = true
 			fixture.component.heading = 'Test'

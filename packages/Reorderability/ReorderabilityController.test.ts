@@ -443,7 +443,7 @@ describe('ReorderabilityController', () => {
 		const fixture = create({ scrollable: true, items: [0, 1, 2, 3, 4, 5] })
 
 		// Disabled: requires real pointer input for rAF paint
-		xit('scrolls a scrollable ancestor while dragging within its edge zone', () => {
+		it.skip('scrolls a scrollable ancestor while dragging within its edge zone', () => {
 			const { scroller } = fixture.component
 			const items = fixture.component.itemElements
 			const maximumScroll = scroller.scrollHeight - scroller.clientHeight
@@ -461,7 +461,7 @@ describe('ReorderabilityController', () => {
 		})
 
 		// Disabled: requires real pointer input for release resolution
-		xit('resolves the drop in content coordinates after auto-scrolling', () => {
+		it.skip('resolves the drop in content coordinates after auto-scrolling', () => {
 			const { scroller } = fixture.component
 			const items = fixture.component.itemElements
 			const maximumScroll = scroller.scrollHeight - scroller.clientHeight
@@ -533,8 +533,8 @@ describe('ReorderabilityController', () => {
 	describe('on touch', () => {
 		const fixture = create()
 
-		beforeEach(() => jasmine.clock().install())
-		afterEach(() => jasmine.clock().uninstall())
+		beforeEach(() => vi.useFakeTimers())
+		afterEach(() => vi.useRealTimers())
 
 		it('a swipe before the press-and-hold lands keeps scrolling — no drag', () => {
 			const items = fixture.component.itemElements
@@ -542,16 +542,16 @@ describe('ReorderabilityController', () => {
 			dispatch(items[0]!, 'pointerdown', { clientX: x, clientY: y, pointerType: 'touch' })
 			dispatch(items[0]!, 'pointermove', { clientX: x, clientY: y + 50, pointerType: 'touch' })
 			dispatch(items[0]!, 'pointerup', { clientX: x, clientY: y + 50, buttons: 0, pointerType: 'touch' })
-			jasmine.clock().tick(600)
+			vi.advanceTimersByTime(600)
 			expect(fixture.component.reorders).toEqual([])
 		})
 
 		// Disabled: requires real pointer input for rAF paint
-		xit('a landed hold lifts the item, and the drag then commits like any other', () => {
+		it.skip('a landed hold lifts the item, and the drag then commits like any other', () => {
 			const items = fixture.component.itemElements
 			const { x, y } = center(items[0]!)
 			dispatch(items[0]!, 'pointerdown', { clientX: x, clientY: y, pointerType: 'touch' })
-			jasmine.clock().tick(600)
+			vi.advanceTimersByTime(600)
 			expect(items[0]!.dataset.reorderability).toBe(ReorderabilityState.Dragging)
 			const to = center(items[2]!)
 			dispatch(items[0]!, 'pointermove', { clientX: to.x, clientY: to.y, pointerType: 'touch' })

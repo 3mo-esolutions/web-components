@@ -43,7 +43,7 @@ export class IndexedDbAdapter<TData, TParameters extends FetchableDataGridParame
 		return await localForage.getItem<ModeId>(`${dataGridKey}.Mode`) ?? undefined
 	}
 
-	async setSelectedId(dataGridKey: DataGridKey, modeId: ModeId) {
+	async setSelectedId(dataGridKey: DataGridKey, modeId: ModeId | undefined) {
 		await localForage.setItem(`${dataGridKey}.Mode`, modeId)
 	}
 }

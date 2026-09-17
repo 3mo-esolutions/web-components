@@ -22,7 +22,7 @@ describe('DataGridColumnText', () => {
 
 	it('should edit through a text field which applies on change', () => {
 		const column = new DataGridColumnText<Item>()
-		const handleEdit = jasmine.createSpy('handleEdit')
+		const handleEdit = vi.fn()
 		column.dataGrid = { handleEdit } as any
 
 		render(column.getEditContentTemplate('Alice', datum), container)
@@ -33,7 +33,7 @@ describe('DataGridColumnText', () => {
 		field.dispatchEvent(new CustomEvent('change', { detail: 'Bob' }))
 
 		expect(handleEdit).toHaveBeenCalledTimes(1)
-		const [data, , value] = handleEdit.calls.mostRecent().args
+		const [data, , value] = handleEdit.mock.lastCall!
 		expect(data).toBe(datum)
 		expect(value).toBe('Bob')
 	})

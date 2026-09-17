@@ -19,7 +19,7 @@ describe('Slider', () => {
 	const mdSlider = () => fixture.component.renderRoot.querySelector<MdSlider>('md-slider')!
 
 	const spyOnEvent = (type: 'input' | 'change') => {
-		const spy = jasmine.createSpy(type)
+		const spy = vi.fn()
 		fixture.component.addEventListener(type, spy)
 		return spy
 	}
@@ -59,7 +59,7 @@ describe('Slider', () => {
 
 			expect(fixture.component.value).toBe(42)
 			expect(spy).toHaveBeenCalledTimes(1)
-			expect(spy.calls.mostRecent().args[0].detail).toBe(42)
+			expect(spy.mock.lastCall![0].detail).toBe(42)
 		})
 
 		it('should update the value and dispatch a single change event carrying the number when the internal slider commits', async () => {
@@ -71,7 +71,7 @@ describe('Slider', () => {
 
 			expect(fixture.component.value).toBe(42)
 			expect(spy).toHaveBeenCalledTimes(1)
-			expect(spy.calls.mostRecent().args[0].detail).toBe(42)
+			expect(spy.mock.lastCall![0].detail).toBe(42)
 		})
 	})
 

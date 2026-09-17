@@ -4,7 +4,7 @@ import { PointerTypeController } from './PointerTypeController.js'
 
 @component('pointer-type-controller-test-component')
 class PointerTypeControllerTestComponent extends Component {
-	readonly spy = jasmine.createSpy()
+	readonly spy = vi.fn()
 
 	readonly pointerTypeController = new PointerTypeController(this, {
 		handleTypeChange: this.spy

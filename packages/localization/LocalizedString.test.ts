@@ -41,7 +41,7 @@ describe('LocalizedString', () => {
 	})
 
 	it('should handle missing localization gracefully', () => {
-		spyOn(console, 'warn')
+		vi.spyOn(console, 'warn').mockReturnValue(undefined)
 
 		const key = 'Missing key'
 

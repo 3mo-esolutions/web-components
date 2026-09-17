@@ -1,5 +1,7 @@
 import { html } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
+import { type Checkbox } from '@3mo/checkbox'
+import { type IconButton } from '@3mo/icon-button'
 import '@3mo/select-field'
 import { type DataGrid, DataGridSelectability, type DataGridHeader } from './index.js'
 
@@ -30,7 +32,7 @@ describe('DataGridHeader', () => {
 	}
 
 	describe('Selection checkbox', () => {
-		const checkboxOf = (header: DataGridHeader<Person>) => header.renderRoot.querySelector('.selection mo-checkbox')
+		const checkboxOf = (header: DataGridHeader<Person>) => header.renderRoot.querySelector<Checkbox>('.selection mo-checkbox')
 
 		it('should render only for multiple selectability', async () => {
 			expect(checkboxOf(await settle())).not.toBeNull()
@@ -44,13 +46,13 @@ describe('DataGridHeader', () => {
 		})
 
 		it('should be indeterminate while only part of the data is selected', async () => {
-			expect(checkboxOf(await settle())?.selected).toBeFalse()
+			expect(checkboxOf(await settle())?.selected).toBe(false)
 
 			fixture.component.select([testData[0]!])
 			expect(checkboxOf(await settle())?.selected).toBe('indeterminate')
 
 			fixture.component.selectAll()
-			expect(checkboxOf(await settle())?.selected).toBeTrue()
+			expect(checkboxOf(await settle())?.selected).toBe(true)
 		})
 
 		it('should select all data when checked and deselect all from the indeterminate state', async () => {
@@ -72,13 +74,13 @@ describe('DataGridHeader', () => {
 	})
 
 	describe('Details expander', () => {
-		const expanderOf = (header: DataGridHeader<Person>) => header.renderRoot.querySelector('.details mo-icon-button')
+		const expanderOf = (header: DataGridHeader<Person>) => header.renderRoot.querySelector<IconButton>('.details mo-icon-button')
 
 		it('should render the toggle-all button only with multipleDetails', async () => {
 			fixture.component.getRowDetailsTemplate = () => html`<div>Details</div>`
 			const header = await settle()
 
-			expect(fixture.component.hasDetails).toBeTrue()
+			expect(fixture.component.hasDetails).toBe(true)
 			expect(header.renderRoot.querySelector('.details')).not.toBeNull()
 			expect(expanderOf(header)).toBeNull()
 
@@ -96,14 +98,14 @@ describe('DataGridHeader', () => {
 			expanderOf(header)!.click()
 			header = await settle()
 
-			expect(fixture.component.allRowDetailsOpen).toBeTrue()
-			expect(fixture.component.rows.every(row => row.detailsOpen)).toBeTrue()
+			expect(fixture.component.allRowDetailsOpen).toBe(true)
+			expect(fixture.component.rows.every(row => row.detailsOpen)).toBe(true)
 			expect(expanderOf(header)?.getAttribute('icon')).toBe('unfold_less')
 
 			expanderOf(header)!.click()
 			header = await settle()
 
-			expect(fixture.component.rows.some(row => row.detailsOpen)).toBeFalse()
+			expect(fixture.component.rows.some(row => row.detailsOpen)).toBe(false)
 			expect(expanderOf(header)?.getAttribute('icon')).toBe('unfold_more')
 		})
 	})
@@ -131,7 +133,7 @@ describe('DataGridHeader', () => {
 	})
 
 	describe('Column settings menu', () => {
-		const columnCheckboxesOf = (header: DataGridHeader<Person>) => [...header.renderRoot.querySelectorAll('mo-popover mo-checkbox')]
+		const columnCheckboxesOf = (header: DataGridHeader<Person>) => [...header.renderRoot.querySelectorAll<Checkbox>('mo-popover mo-checkbox')]
 
 		it('should list every column with the visible ones checked', async () => {
 			const header = await settle()
@@ -151,15 +153,15 @@ describe('DataGridHeader', () => {
 			ageCheckbox.change.dispatch(false)
 			await settle()
 
-			expect(fixture.component.columns.find(c => c.dataSelector === 'age')?.hidden).toBeTrue()
-			expect(fixture.component.columnsController.columns.modifications.get('age')?.hidden).toBeTrue()
+			expect(fixture.component.columns.find(c => c.dataSelector === 'age')?.hidden).toBe(true)
+			expect(fixture.component.columnsController.columns.modifications.get('age')?.hidden).toBe(true)
 			expect(fixture.component.visibleColumns.map(c => c.dataSelector)).toEqual(['name'])
 
 			columnCheckboxesOf(await settle())[1]!.change.dispatch(true)
 			await settle()
 
-			expect(fixture.component.columns.find(c => c.dataSelector === 'age')?.hidden).toBeFalse()
-			expect(fixture.component.columnsController.columns.modifications.get('age')?.hidden).toBeFalse()
+			expect(fixture.component.columns.find(c => c.dataSelector === 'age')?.hidden).toBe(false)
+			expect(fixture.component.columnsController.columns.modifications.get('age')?.hidden).toBe(false)
 		})
 
 		it('should bind font size and row height to the grid', async () => {
@@ -196,8 +198,8 @@ describe('DataGridHeader', () => {
 			const items = header.reorderabilityController.indexability.items
 
 			expect(items.length).toBe(2)
-			expect(items[0]?.options.disabled).toBeTrue()
-			expect(items[1]?.options.disabled).toBeFalse()
+			expect(items[0]?.options.disabled).toBe(true)
+			expect(items[1]?.options.disabled).toBe(false)
 			expect(items[0]?.options.handle).toBe('#reorderable-area')
 		})
 	})
@@ -205,12 +207,12 @@ describe('DataGridHeader', () => {
 	describe('Lifecycle', () => {
 		it('should re-render on the grid\'s dataChange and unsubscribe when disconnected, as a leaked subscription would update a dead header', async () => {
 			const header = await settle()
-			const requestUpdate = spyOn(header, 'requestUpdate')
+			const requestUpdate = vi.spyOn(header, 'requestUpdate').mockReturnValue(undefined)
 
 			fixture.component.dataChange.dispatch(testData)
 			expect(requestUpdate).toHaveBeenCalled()
 
-			requestUpdate.calls.reset()
+			requestUpdate.mockClear()
 			header.remove()
 			fixture.component.dataChange.dispatch(testData)
 

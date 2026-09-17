@@ -2,6 +2,7 @@ import { html } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { Color } from '@3mo/color'
 import { type ColorPicker } from './ColorPicker.js'
+import './index.js'
 
 describe('ColorPicker', () => {
 	const fixture = new ComponentTestFixture<ColorPicker>(html`
@@ -14,8 +15,8 @@ describe('ColorPicker', () => {
 	})
 
 	it('should dispatch input and change events with Color value', () => {
-		const inputSpy = spyOn(fixture.component.input, 'dispatch')
-		const changeSpy = spyOn(fixture.component.change, 'dispatch')
+		const inputSpy = vi.spyOn(fixture.component.input, 'dispatch').mockReturnValue(undefined)
+		const changeSpy = vi.spyOn(fixture.component.change, 'dispatch').mockReturnValue(undefined)
 
 		const input = fixture.component.renderRoot.querySelector('input')!
 		input.value = '#00ff00'

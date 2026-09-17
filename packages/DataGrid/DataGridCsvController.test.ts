@@ -1,12 +1,13 @@
-import { DataGridColumn } from './DataGridColumn'
-import { DataGridCsvController } from './DataGridCsvController'
-import { DataRecord } from './DataRecord'
+import { DataGridColumn } from './DataGridColumn.js'
+import { DataGridCsvController } from './DataGridCsvController.js'
+import { DataRecord } from './DataRecord.js'
+import './index.js'
 
 type Person = { id: number, name: string, age: number, birthDate: DateTime }
 
 describe('DataGridCsvController', () => {
 	let controller: DataGridCsvController<Person>
-	const requestUpdate = jasmine.createSpy('requestUpdate')
+	const requestUpdate = vi.fn()
 
 	let csvData: Array<DataRecord<Person>>
 
@@ -43,7 +44,7 @@ describe('DataGridCsvController', () => {
 					*generateCsvHeading() { yield 'Birth Date' },
 					*generateCsvValue(value, data) {
 						data
-						yield value.toISOString().split('T')[0]
+						yield value.toISOString().split('T')[0]!
 					},
 				}),
 			],
@@ -63,7 +64,7 @@ describe('DataGridCsvController', () => {
 
 	describe('generateCsv', () => {
 		it('should generate csv from data', async () => {
-			spyOn(DataGridCsvController, 'download')
+			vi.spyOn(DataGridCsvController, 'download').mockResolvedValue(undefined)
 
 			await controller.generateCsv()
 
@@ -72,7 +73,7 @@ describe('DataGridCsvController', () => {
 
 		it('should be able to handle nested data', async () => {
 			csvData[1] = new DataRecord(undefined!, { data: { name: 'Jane', age: 25, birthDate: new DateTime('1991-01-01') } as Person, index: 1, level: 1 })
-			spyOn(DataGridCsvController, 'download')
+			vi.spyOn(DataGridCsvController, 'download').mockResolvedValue(undefined)
 
 			await controller.generateCsv()
 

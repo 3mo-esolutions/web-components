@@ -1,6 +1,7 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { type Dialog, DialogSize } from '@3mo/dialog'
 import { DialogPrompt } from './DialogPrompt.js'
+import './index.js'
 
 describe('DialogPrompt', () => {
 	const fixture = new ComponentTestFixture(() => new DialogPrompt(parameters))
@@ -70,7 +71,7 @@ describe('DialogPrompt', () => {
 				fixture.component.inputElement.value = 'New value'
 				fixture.component.inputElement.dispatchEvent(new CustomEvent('input', { detail: 'New value' }))
 				fixture.component.primaryActionElement?.dispatchEvent(new MouseEvent('click', { bubbles: true }))
-				await expectAsync(confirmPromise).toBeResolvedTo('New value')
+				await expect(confirmPromise).resolves.toEqual('New value')
 			})
 		})
 	}

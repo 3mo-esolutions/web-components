@@ -21,14 +21,14 @@ describe('FieldPair', () => {
 
 	it('should reflect mode and reversed as attributes', async () => {
 		expect(fixture.component.getAttribute('mode')).toBe(FieldPairMode.Attach)
-		expect(fixture.component.hasAttribute('reversed')).toBeFalse()
+		expect(fixture.component.hasAttribute('reversed')).toBe(false)
 
 		fixture.component.mode = FieldPairMode.Overlay
 		fixture.component.reversed = true
 		await fixture.updateComplete
 
 		expect(fixture.component.getAttribute('mode')).toBe(FieldPairMode.Overlay)
-		expect(fixture.component.hasAttribute('reversed')).toBeTrue()
+		expect(fixture.component.hasAttribute('reversed')).toBe(true)
 	})
 
 	describe('slot order', () => {

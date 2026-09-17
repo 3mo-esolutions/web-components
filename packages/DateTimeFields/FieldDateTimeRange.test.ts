@@ -16,7 +16,7 @@ describe('FieldDateTimeRange', () => {
 
 	describe('start/end selection', () => {
 		it('should dispatch change event when a given date is selected in the calendar', () => {
-			spyOn(fixture.component.change, 'dispatch')
+			vi.spyOn(fixture.component.change, 'dispatch').mockReturnValue(undefined)
 			const date = new DateTime('2025-01-01')
 			// @ts-expect-error Using UTC to avoid timezone issues in tests
 			date.timeZone = 'UTC'
@@ -112,7 +112,7 @@ describe('FieldDateTimeRange', () => {
 		const preset = (label: string) => presets().find(item => item.textContent!.trim() === label)
 
 		it('should apply the preset range and dispatch change when a preset is clicked', () => {
-			spyOn(fixture.component.change, 'dispatch')
+			vi.spyOn(fixture.component.change, 'dispatch').mockReturnValue(undefined)
 
 			preset(String(t('This week')))!.click()
 

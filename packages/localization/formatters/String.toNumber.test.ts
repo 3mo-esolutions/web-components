@@ -31,8 +31,8 @@ describe('String.toNumber()', () => {
 	})
 
 	it('should not allow -0 and return 0 instead', () => {
-		expect(Object.is('-0'.toNumber('en'), 0)).toBeTrue()
-		expect(Object.is('-0'.toNumber('de'), 0)).toBeTrue()
+		expect(Object.is('-0'.toNumber('en'), 0)).toBe(true)
+		expect(Object.is('-0'.toNumber('de'), 0)).toBe(true)
 	})
 
 	// Regression: the group separator used to be probed with `formatToParts(1000)`. Languages whose

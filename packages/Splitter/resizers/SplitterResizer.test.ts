@@ -6,12 +6,23 @@ import '../index.js'
 
 type Direction = 'horizontal' | 'horizontal-reversed' | 'vertical' | 'vertical-reversed'
 
-const settle = (milliseconds = 400) => new Promise(resolve => setTimeout(resolve, milliseconds))
+/**
+ * Both resizers transition every property they change, and a frame the runner has backgrounded does
+ * not advance transitions at all — so waiting out a duration proves nothing. These expectations are
+ * about the settled state, which applies at once with the transition switched off.
+ */
+const settled = async (resizer: SplitterResizer) => {
+	resizer.style.transition = 'none'
+	await resizer.updateComplete
+}
 
 const idleColor = 'rgb(10, 20, 30)'
 const activeColor = 'rgb(1, 2, 3)'
 
 const hostSize = 200
+
+/** The resizers are sized in rem, which is not 16px everywhere. */
+const rem = () => parseFloat(getComputedStyle(document.documentElement).fontSize)
 
 describe('SplitterResizerKnob', () => {
 	const fixture = new ComponentTestFixture<SplitterResizerHost>(html`
@@ -23,10 +34,11 @@ describe('SplitterResizerKnob', () => {
 	const knob = () => fixture.component.resizerElement as SplitterResizer
 
 	const orient = async (direction: Direction) => {
+		await settled(knob())
+		knob().hostHover = false
+		knob().hostResizing = false
 		knob().hostDirection = direction
-		await knob().updateComplete
-		// The knob transitions "all" over 200ms — only the settled box is meaningful.
-		await settle()
+		await settled(knob())
 		return knob().getBoundingClientRect()
 	}
 
@@ -41,8 +53,8 @@ describe('SplitterResizerKnob', () => {
 		it(`should orient itself across the splitter axis (${direction} → 2rem of ${breadth})`, async () => {
 			const rect = await orient(direction)
 
-			expect(rect[breadth]).toBeCloseTo(32, -1)
-			expect(rect[breadth === 'width' ? 'height' : 'width']).toBeCloseTo(6, 0)
+			expect(rect[breadth]).toBeCloseTo(2 * rem(), -1)
+			expect(rect[breadth === 'width' ? 'height' : 'width']).toBeCloseTo(0.375 * rem(), 0)
 		})
 	}
 
@@ -51,14 +63,12 @@ describe('SplitterResizerKnob', () => {
 		expect(getComputedStyle(knob()).backgroundColor).toBe(idleColor)
 
 		knob().hostHover = true
-		await knob().updateComplete
-		await settle()
+		await settled(knob())
 		expect(getComputedStyle(knob()).backgroundColor).toBe(activeColor)
 
 		knob().hostHover = false
 		knob().hostResizing = true
-		await knob().updateComplete
-		await settle()
+		await settled(knob())
 		expect(getComputedStyle(knob()).backgroundColor).toBe(activeColor)
 	})
 })
@@ -73,9 +83,11 @@ describe('SplitterResizerLine', () => {
 	const line = () => fixture.component.resizerElement as SplitterResizer
 
 	const orient = async (direction: Direction) => {
+		await settled(line())
+		line().hostHover = false
+		line().hostResizing = false
 		line().hostDirection = direction
-		await line().updateComplete
-		await settle()
+		await settled(line())
 		return line().getBoundingClientRect()
 	}
 
@@ -91,7 +103,7 @@ describe('SplitterResizerLine', () => {
 			const rect = await orient(direction)
 
 			expect(rect[breadth]).toBeCloseTo(hostSize, -1)
-			expect(rect[breadth === 'width' ? 'height' : 'width']).toBeCloseTo(2, 0)
+			expect(rect[breadth === 'width' ? 'height' : 'width']).toBeCloseTo(0.125 * rem(), 0)
 		})
 	}
 
@@ -100,14 +112,12 @@ describe('SplitterResizerLine', () => {
 		expect(getComputedStyle(line()).backgroundColor).toBe(idleColor)
 
 		line().hostHover = true
-		await line().updateComplete
-		await settle()
+		await settled(line())
 		expect(getComputedStyle(line()).backgroundColor).toBe(activeColor)
 
 		line().hostHover = false
 		line().hostResizing = true
-		await line().updateComplete
-		await settle()
+		await settled(line())
 		expect(getComputedStyle(line()).backgroundColor).toBe(activeColor)
 	})
 })

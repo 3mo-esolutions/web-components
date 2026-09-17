@@ -6,7 +6,7 @@ describe('Anchor', () => {
 
 	const getAnchorElement = () => fixture.component.renderRoot.querySelector('a') as HTMLAnchorElement
 
-	for (const [key, value] of new Map<keyof Anchor, string>([
+	for (const [key, value] of new Map<Extract<keyof Anchor, string>, string>([
 		['href', 'https://www.3mo.de/'],
 		['target', '_blank'],
 		['download', 'download'],
@@ -60,7 +60,7 @@ describe('Anchor', () => {
 
 	describe('when no href is set', () => {
 		it('should prevent link navigation and call click event handlers', () => {
-			const spy = jasmine.createSpy()
+			const spy = vi.fn()
 			fixture.component.addEventListener('click', spy)
 			fixture.component.dispatchEvent(new MouseEvent('click'))
 			expect(spy).toHaveBeenCalled()
@@ -68,7 +68,7 @@ describe('Anchor', () => {
 		})
 
 		it('should dispatch click event when auxiliary clicked', () => {
-			const spy = jasmine.createSpy()
+			const spy = vi.fn()
 			fixture.component.addEventListener('click', spy)
 			fixture.component.dispatchEvent(new MouseEvent('auxclick'))
 			expect(spy).toHaveBeenCalled()

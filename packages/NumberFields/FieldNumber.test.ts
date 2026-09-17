@@ -46,7 +46,7 @@ describe('FieldNumber', () => {
 
 	for (const { property, value } of [{ property: 'value', value: 5 }, { property: 'min', value: 0 }, { property: 'max', value: 100 }, { property: 'step', value: 0.5 }] as const) {
 		it(`should reflect ${property} as a host attribute`, async () => {
-			expect(fixture.component.hasAttribute(property)).toBeFalse()
+			expect(fixture.component.hasAttribute(property)).toBe(false)
 
 			Object.assign(fixture.component, { [property]: value })
 			await fixture.updateComplete
@@ -60,8 +60,8 @@ describe('FieldNumber', () => {
 		it('should proxy change event', () => expectInputEventTunnelsToField(fixture, 'change', '5', 5))
 
 		it('should not dispatch input or change when the value is assigned programmatically', async () => {
-			const input = jasmine.createSpy('input')
-			const change = jasmine.createSpy('change')
+			const input = vi.fn()
+			const change = vi.fn()
 			fixture.component.addEventListener('input', input)
 			fixture.component.addEventListener('change', change)
 
@@ -83,21 +83,21 @@ describe('FieldNumber', () => {
 		for (const localizedLanguage of languages) {
 			it(`should parse the localized input string into a number on change in "${localizedLanguage}"`, async () => {
 				Localizer.languages.current = localizedLanguage
-				const change = jasmine.createSpy('change')
+				const change = vi.fn()
 				fixture.component.addEventListener('change', (e: Event) => change((e as CustomEvent<number | undefined>).detail))
 
 				await commit((1234.56).format(localizedLanguage, { useGrouping: true }))
 
-				expect(change).toHaveBeenCalledOnceWith(1234.56)
+				expect(change).toHaveBeenCalledExactlyOnceWith(1234.56)
 				expect(fixture.component.value).toBe(1234.56)
 			})
 		}
 
 		it('should dispatch undefined for an empty or unparseable input', async () => {
-			spyOn(fixture.component.change, 'dispatch')
+			vi.spyOn(fixture.component.change, 'dispatch').mockReturnValue(undefined)
 
 			await commit('')
-			expect(fixture.component.change.dispatch).toHaveBeenCalledOnceWith(undefined)
+			expect(fixture.component.change.dispatch).toHaveBeenCalledExactlyOnceWith(undefined)
 
 			await commit('not a number')
 			expect(fixture.component.change.dispatch).toHaveBeenCalledTimes(2)
@@ -119,14 +119,14 @@ describe('FieldNumber', () => {
 
 		it('should not reformat the displayed string while typing', async () => {
 			const typed = (1234.56).format(Localizer.languages.current, { useGrouping: true })
-			const input = jasmine.createSpy('input')
+			const input = vi.fn()
 			fixture.component.addEventListener('input', (e: Event) => input((e as CustomEvent<number | undefined>).detail))
 
 			fixture.component.inputElement.value = typed
 			fixture.component.inputElement.dispatchEvent(new Event('input'))
 			await fixture.updateComplete
 
-			expect(input).toHaveBeenCalledOnceWith(1234.56)
+			expect(input).toHaveBeenCalledExactlyOnceWith(1234.56)
 			expect(fixture.component.inputElement.value).toBe(typed)
 		})
 
@@ -158,21 +158,21 @@ describe('FieldNumber', () => {
 		})
 
 		it('should not clamp while typing, so input dispatches the raw number', async () => {
-			const input = jasmine.createSpy('input')
+			const input = vi.fn()
 			fixture.component.addEventListener('input', (e: Event) => input((e as CustomEvent<number | undefined>).detail))
 
 			fixture.component.inputElement.value = (150).format()
 			fixture.component.inputElement.dispatchEvent(new Event('input'))
 			await fixture.updateComplete
 
-			expect(input).toHaveBeenCalledOnceWith(150)
+			expect(input).toHaveBeenCalledExactlyOnceWith(150)
 			expect(fixture.component.value).toBeUndefined()
 		})
 	})
 
 	describe('selectOnFocus', () => {
 		it('should select the whole input text on focus', async () => {
-			expect(fixture.component.selectOnFocus).toBeTrue()
+			expect(fixture.component.selectOnFocus).toBe(true)
 			fixture.component.value = 1234.56
 			await fixture.updateComplete
 

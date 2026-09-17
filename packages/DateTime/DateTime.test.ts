@@ -169,23 +169,23 @@ describe('DateTime', () => {
 	describe('comparison', () => {
 		it('equals() should return true only for the same date', () => {
 			const dateTime = new DateTime('2020-01-01T00:00:00')
-			expect(dateTime.equals(new DateTime('2020-01-01T00:00:00'))).toBeTrue()
-			expect(dateTime.equals(new DateTime('2020-01-01T01:00:00.001'))).toBeFalse()
-			expect(dateTime.equals(new DateTime('2020-01-02'))).toBeFalse()
+			expect(dateTime.equals(new DateTime('2020-01-01T00:00:00'))).toBe(true)
+			expect(dateTime.equals(new DateTime('2020-01-01T01:00:00.001'))).toBe(false)
+			expect(dateTime.equals(new DateTime('2020-01-02'))).toBe(false)
 		})
 
 		it('isBefore() should return true only for a date before the current date', () => {
 			const dateTime = new DateTime('2020-01-01')
-			expect(dateTime.isBefore(new DateTime('2019-12-31'))).toBeFalse()
-			expect(dateTime.isBefore(new DateTime('2020-01-01'))).toBeFalse()
-			expect(dateTime.isBefore(new DateTime('2020-01-02'))).toBeTrue()
+			expect(dateTime.isBefore(new DateTime('2019-12-31'))).toBe(false)
+			expect(dateTime.isBefore(new DateTime('2020-01-01'))).toBe(false)
+			expect(dateTime.isBefore(new DateTime('2020-01-02'))).toBe(true)
 		})
 
 		it('isAfter() should return true only for a date after the current date', () => {
 			const dateTime = new DateTime('2020-01-01')
-			expect(dateTime.isAfter(new DateTime('2019-12-31'))).toBeTrue()
-			expect(dateTime.isAfter(new DateTime('2020-01-01'))).toBeFalse()
-			expect(dateTime.isAfter(new DateTime('2020-01-02'))).toBeFalse()
+			expect(dateTime.isAfter(new DateTime('2019-12-31'))).toBe(true)
+			expect(dateTime.isAfter(new DateTime('2020-01-01'))).toBe(false)
+			expect(dateTime.isAfter(new DateTime('2020-01-02'))).toBe(false)
 		})
 
 		it('should treat two DateTimes of the same instant in different time zones as equal', () => {
@@ -194,7 +194,7 @@ describe('DateTime', () => {
 			const tehran = DateTime.from(instant, 'gregory', 'Asia/Tehran')
 
 			expect(utc.hour).not.toBe(tehran.hour)
-			expect(utc.equals(tehran)).toBeTrue()
+			expect(utc.equals(tehran)).toBe(true)
 		})
 	})
 
@@ -217,20 +217,20 @@ describe('DateTime', () => {
 	describe('arithmetic', () => {
 		it('add() should return a DateTime with the given amount added', () => {
 			const dateTime = new DateTime('2020-01-01')
-			expect(dateTime.add({ days: 1 }).equals(new DateTime('2020-01-02'))).toBeTrue()
-			expect(dateTime.add({ days: -1 }).equals(new DateTime('2019-12-31'))).toBeTrue()
+			expect(dateTime.add({ days: 1 }).equals(new DateTime('2020-01-02'))).toBe(true)
+			expect(dateTime.add({ days: -1 }).equals(new DateTime('2019-12-31'))).toBe(true)
 		})
 
 		it('subtract() should return a DateTime with the given amount subtracted', () => {
 			const dateTime = new DateTime('2020-01-01')
-			expect(dateTime.subtract({ days: 1 }).equals(new DateTime('2019-12-31'))).toBeTrue()
-			expect(dateTime.subtract({ days: -1 }).equals(new DateTime('2020-01-02'))).toBeTrue()
+			expect(dateTime.subtract({ days: 1 }).equals(new DateTime('2019-12-31'))).toBe(true)
+			expect(dateTime.subtract({ days: -1 }).equals(new DateTime('2020-01-02'))).toBe(true)
 		})
 
 		it('round() should return a DateTime rounded to the given precision', () => {
 			const dateTime = new DateTime('2020-01-01T12:30:30.500')
-			expect(dateTime.round('second').equals(new DateTime('2020-01-01T12:30:31'))).toBeTrue()
-			expect(dateTime.round('minute').equals(new DateTime('2020-01-01T12:31'))).toBeTrue()
+			expect(dateTime.round('second').equals(new DateTime('2020-01-01T12:30:31'))).toBe(true)
+			expect(dateTime.round('minute').equals(new DateTime('2020-01-01T12:31'))).toBe(true)
 		})
 
 		it('should preserve the wall-clock hour when adding days across a DST boundary', () => {
@@ -267,11 +267,11 @@ describe('DateTime', () => {
 			expect(dayStart.hour).toBe(0)
 			expect(dayStart.minute).toBe(0)
 			expect(dayEnd.valueOf() - dayStart.valueOf()).toBe(24 * 60 * 60 * 1000 - 1)
-			expect(dayRange.includes(dayStart)).toBeTrue()
-			expect(dayRange.includes(dateTime)).toBeTrue()
-			expect(dayRange.includes(dayEnd)).toBeTrue()
-			expect(dayRange.includes(dayStart.subtract({ milliseconds: 1 }))).toBeFalse()
-			expect(dayRange.includes(dayEnd.add({ milliseconds: 1 }))).toBeFalse()
+			expect(dayRange.includes(dayStart)).toBe(true)
+			expect(dayRange.includes(dateTime)).toBe(true)
+			expect(dayRange.includes(dayEnd)).toBe(true)
+			expect(dayRange.includes(dayStart.subtract({ milliseconds: 1 }))).toBe(false)
+			expect(dayRange.includes(dayEnd.add({ milliseconds: 1 }))).toBe(false)
 		})
 
 		it('should return weekStart/weekEnd respecting the locale\'s day-of-week numbering', () => {

@@ -39,7 +39,7 @@ describe('ThemeController', () => {
 	})
 
 	it('should request a host update when the accent changes', () => {
-		const requestUpdate = spyOn(fixture.component, 'requestUpdate')
+		const requestUpdate = vi.spyOn(fixture.component, 'requestUpdate').mockReturnValue(undefined)
 
 		Theme.accent.value = 'rgb(12, 34, 56)'
 
@@ -47,7 +47,7 @@ describe('ThemeController', () => {
 	})
 
 	it('should request a host update when the background changes', () => {
-		const requestUpdate = spyOn(fixture.component, 'requestUpdate')
+		const requestUpdate = vi.spyOn(fixture.component, 'requestUpdate').mockReturnValue(undefined)
 
 		Theme.background.value = Background.Dark
 
@@ -56,7 +56,7 @@ describe('ThemeController', () => {
 
 	it('should unsubscribe from both when the host disconnects', () => {
 		fixture.component.remove()
-		const requestUpdate = spyOn(fixture.component, 'requestUpdate')
+		const requestUpdate = vi.spyOn(fixture.component, 'requestUpdate').mockReturnValue(undefined)
 
 		Theme.accent.value = 'rgb(12, 34, 56)'
 		Theme.background.value = Background.Dark

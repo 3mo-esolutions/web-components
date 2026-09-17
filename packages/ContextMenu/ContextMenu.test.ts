@@ -99,8 +99,8 @@ describe('ContextMenu', () => {
 			fixture.component.dispatchEvent(event)
 			await fixture.component.menu.updateComplete
 
-			expect(fixture.component.menu.open).toBeTrue()
-			expect(event.defaultPrevented).toBeTrue()
+			expect(fixture.component.menu.open).toBe(true)
+			expect(event.defaultPrevented).toBe(true)
 			expect(getPopover(fixture.component.menu).coordinates).toEqual([160, 180])
 		})
 
@@ -114,12 +114,12 @@ describe('ContextMenu', () => {
 		it('should close any other open context menu when opening, so only one is ever open', async () => {
 			const extra = await createExtraContextMenu()
 			await open(fixture.component.menu)
-			expect(fixture.component.menu.open).toBeTrue()
+			expect(fixture.component.menu.open).toBe(true)
 
 			await open(extra, [200, 220])
 
-			expect(fixture.component.menu.open).toBeFalse()
-			expect(extra.open).toBeTrue()
+			expect(fixture.component.menu.open).toBe(false)
+			expect(extra.open).toBe(true)
 		})
 
 		it('should report itself as ContextMenu.openInstance while open', async () => {
@@ -135,7 +135,7 @@ describe('ContextMenu', () => {
 
 			await open(fixture.component.menu, [300, 320])
 
-			expect(fixture.component.menu.open).toBeTrue()
+			expect(fixture.component.menu.open).toBe(true)
 			expect(getPopover(fixture.component.menu).coordinates).toEqual([300, 320])
 		})
 	})
@@ -146,7 +146,7 @@ describe('ContextMenu', () => {
 
 			document.body.dispatchEvent(new MouseEvent('click', { bubbles: true, composed: true }))
 
-			expect(fixture.component.menu.open).toBeFalse()
+			expect(fixture.component.menu.open).toBe(false)
 		})
 
 		it('should stay open for an inside click that lands on no item', async () => {
@@ -155,7 +155,7 @@ describe('ContextMenu', () => {
 			const list = fixture.component.menu.renderRoot.querySelector('mo-selectable-list')!
 			list.dispatchEvent(new MouseEvent('click', { bubbles: true, composed: true }))
 
-			expect(fixture.component.menu.open).toBeTrue()
+			expect(fixture.component.menu.open).toBe(true)
 		})
 
 		it('should close through close()', async () => {
@@ -163,7 +163,7 @@ describe('ContextMenu', () => {
 
 			fixture.component.menu.close()
 
-			expect(fixture.component.menu.open).toBeFalse()
+			expect(fixture.component.menu.open).toBe(false)
 		})
 	})
 })

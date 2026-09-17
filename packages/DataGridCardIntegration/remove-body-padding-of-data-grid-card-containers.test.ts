@@ -13,7 +13,7 @@ describe('remove-body-padding-of-data-grid-card-containers', () => {
 		`)
 
 		// BUG: card.slotController uninitialized during addInitializer
-		xit('should zero the body padding so the grid spans the card edge-to-edge', async () => {
+		it.skip('should zero the body padding so the grid spans the card edge-to-edge', async () => {
 			await fixture.component.querySelector('mo-data-grid')!.updateComplete
 			await fixture.component.updateComplete
 			await new Promise(resolve => setTimeout(resolve, 50))
@@ -31,7 +31,7 @@ describe('remove-body-padding-of-data-grid-card-containers', () => {
 		`)
 
 		// BUG: card.slotController uninitialized during addInitializer
-		xit('should keep a 1rem top padding while the grid has a toolbar and the card renders no header', async () => {
+		it.skip('should keep a 1rem top padding while the grid has a toolbar and the card renders no header', async () => {
 			await fixture.component.querySelector('mo-data-grid')!.updateComplete
 			await fixture.component.updateComplete
 			await new Promise(resolve => setTimeout(resolve, 50))
@@ -49,7 +49,7 @@ describe('remove-body-padding-of-data-grid-card-containers', () => {
 		`)
 
 		// BUG: card.slotController uninitialized during addInitializer
-		xit('should not pad the top when the card has a header', async () => {
+		it.skip('should not pad the top when the card has a header', async () => {
 			await fixture.component.querySelector('mo-data-grid')!.updateComplete
 			await fixture.component.updateComplete
 			await new Promise(resolve => setTimeout(resolve, 50))
@@ -66,7 +66,7 @@ describe('remove-body-padding-of-data-grid-card-containers', () => {
 		`)
 
 		// BUG: card.slotController uninitialized during addInitializer
-		xit('should keep a 1rem bottom padding while the grid shares the body with other slotted content', async () => {
+		it.skip('should keep a 1rem bottom padding while the grid shares the body with other slotted content', async () => {
 			await fixture.component.querySelector('mo-data-grid')!.updateComplete
 			await fixture.component.updateComplete
 			await new Promise(resolve => setTimeout(resolve, 50))
@@ -82,7 +82,7 @@ describe('remove-body-padding-of-data-grid-card-containers', () => {
 		`)
 
 		// BUG: card.slotController uninitialized during addInitializer
-		xit('should be left untouched', async () => {
+		it.skip('should be left untouched', async () => {
 			await fixture.component.querySelector('mo-data-grid')!.updateComplete
 			await fixture.component.updateComplete
 			await new Promise(resolve => setTimeout(resolve, 50))

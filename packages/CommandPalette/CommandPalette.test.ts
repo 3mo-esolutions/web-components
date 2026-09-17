@@ -16,9 +16,9 @@ class TestDataSource extends CommandPaletteDataSource<string> {
 	override readonly order: number
 	override readonly icon = 'search' as CommandPaletteData['icon']
 
-	readonly fetchSpy = jasmine.createSpy('fetch')
-	readonly searchSpy = jasmine.createSpy('search')
-	readonly commandSpy = jasmine.createSpy('command')
+	readonly fetchSpy = vi.fn()
+	readonly searchSpy = vi.fn()
+	readonly commandSpy = vi.fn()
 
 	constructor(private readonly options: TestDataSourceOptions) {
 		super()
@@ -153,11 +153,11 @@ describe('CommandPalette', () => {
 
 			palette.renderRoot.querySelector('mo-card')!.dispatchEvent(new MouseEvent('click', { bubbles: true, composed: true }))
 
-			expect(palette.matches(':popover-open')).toBeTrue()
+			expect(palette.matches(':popover-open')).toBe(true)
 
 			palette.dispatchEvent(new MouseEvent('click', { bubbles: true }))
 
-			expect(palette.matches(':popover-open')).toBeFalse()
+			expect(palette.matches(':popover-open')).toBe(false)
 		})
 	})
 
@@ -184,8 +184,8 @@ describe('CommandPalette', () => {
 			palette.keyword = 'match'
 			await until(() => labels().join(',') === 'Alpha match,Beta match')
 
-			expect(a.searchSpy).toHaveBeenCalledOnceWith('match')
-			expect(b.searchSpy).toHaveBeenCalledOnceWith('match')
+			expect(a.searchSpy).toHaveBeenCalledExactlyOnceWith('match')
+			expect(b.searchSpy).toHaveBeenCalledExactlyOnceWith('match')
 		})
 
 		it('should highlight the matched part of the labels', async () => {
@@ -283,8 +283,8 @@ describe('CommandPalette', () => {
 
 			items()[0]!.click()
 
-			expect(source.commandSpy).toHaveBeenCalledOnceWith('Alpha')
-			expect(palette.matches(':popover-open')).toBeFalse()
+			expect(source.commandSpy).toHaveBeenCalledExactlyOnceWith('Alpha')
+			expect(palette.matches(':popover-open')).toBe(false)
 		})
 
 		it('should offer the sources\' new-item commands as buttons, skipping sources that decline', async () => {

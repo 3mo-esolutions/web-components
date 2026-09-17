@@ -197,7 +197,7 @@ describe('ExpandabilityController', () => {
 	describe('lazy loading', () => {
 		it('should load the children before opening, once, and stamp the loading state meanwhile', async () => {
 			let resolve!: () => void
-			const load = jasmine.createSpy('load').and.callFake(() => new Promise<void>(r => resolve = r))
+			const load = vi.fn(() => new Promise<void>(r => resolve = r))
 			fixture.component.load = load
 
 			const expanding = controller().expand(section(2))
@@ -221,7 +221,7 @@ describe('ExpandabilityController', () => {
 		it('should stay collapsed and stamp failed when loading rejects', async () => {
 			fixture.component.load = () => Promise.reject(new Error('offline'))
 
-			await expectAsync(controller().expand(section(2))).toBeRejected()
+			await expect(controller().expand(section(2))).rejects.toThrow()
 
 			expect(controller().isExpanded(section(2))).toBe(false)
 			expect(controller().stateOf(section(2))).toBe('failed')

@@ -14,7 +14,7 @@ describe('FieldToggleableDateTimeRange', () => {
 
 	it('should default the precision to day with time excluded', () => {
 		expect(fixture.component.precision).toBe(FieldDateTimePrecision.Day)
-		expect(fixture.component.includeTime).toBeFalse()
+		expect(fixture.component.includeTime).toBe(false)
 		expect(list('mo-hour-list')).toBeNull()
 	})
 

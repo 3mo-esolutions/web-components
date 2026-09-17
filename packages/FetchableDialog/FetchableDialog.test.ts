@@ -45,7 +45,7 @@ describe('FetchableDialog', () => {
 		resolvers[0]!('first')
 		await waitUntil(() => fixture.component.fetcherController.value === 'first')
 
-		const replacement = jasmine.createSpy('fetch').and.returnValue(Promise.resolve('second'))
+		const replacement = vi.fn().mockReturnValue(Promise.resolve('second'))
 		fixture.component.fetch = replacement
 		await waitUntil(() => fixture.component.fetcherController.value === 'second')
 

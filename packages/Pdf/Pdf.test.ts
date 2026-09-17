@@ -32,22 +32,22 @@ describe('Pdf', () => {
 		expect(viewer()!.getAttribute('type')).toBe('application/pdf')
 	})
 
-	it('should reflect loading and drop it once the viewer fires load', async () => {
+	it('should reflect loading and drop it once the viewer fires load', async context => {
 		if (!supportsLoading) {
-			pending('The platform does not support telling a loading pdf viewer from a loaded one')
+			context.skip('The platform does not support telling a loading pdf viewer from a loaded one')
 			return
 		}
 
 		fixture.component.source = 'https://example.com/test.pdf'
 		await fixture.updateComplete
 
-		expect(fixture.component.hasAttribute('loading')).toBeTrue()
+		expect(fixture.component.hasAttribute('loading')).toBe(true)
 		expect(fixture.component.renderRoot.querySelector('mo-circular-progress')).not.toBeNull()
 
 		viewer()!.dispatchEvent(new Event('load'))
 		await fixture.updateComplete
 
-		expect(fixture.component.hasAttribute('loading')).toBeFalse()
+		expect(fixture.component.hasAttribute('loading')).toBe(false)
 		expect(fixture.component.renderRoot.querySelector('mo-circular-progress')).toBeNull()
 	})
 })

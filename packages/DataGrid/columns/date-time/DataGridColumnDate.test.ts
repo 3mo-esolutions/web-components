@@ -50,7 +50,7 @@ describe('DataGridColumnDate', () => {
 
 		expect(field.value?.getTime()).toBe(date.getTime())
 		expect(field.precision).toBe(FieldDateTimePrecision.Month)
-		expect(field.pickerHidden).toBeTrue()
+		expect(field.pickerHidden).toBe(true)
 	})
 
 	it('should leave the picker of the edit field visible by default', () => {
@@ -58,6 +58,6 @@ describe('DataGridColumnDate', () => {
 
 		render(column.getEditContentTemplate(date, datum), container)
 
-		expect(container.querySelector('mo-field-date')!.pickerHidden).toBeFalse()
+		expect(container.querySelector('mo-field-date')!.pickerHidden).toBe(false)
 	})
 })

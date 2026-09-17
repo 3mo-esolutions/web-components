@@ -10,11 +10,11 @@ describe('LocalizerController', () => {
 	const fixture = new ComponentTestFixture<TestLocalizerController>(html`<test-localizer-controller></test-localizer-controller>`)
 
 	it('should be attached to every ReactiveElement automatically', () => {
-		expect(LocalizerController.connectedComponents.has(fixture.component)).toBeTrue()
+		expect(LocalizerController.connectedComponents.has(fixture.component)).toBe(true)
 	})
 
 	it('should request an update of connected components when the language changes', () => {
-		const requestUpdate = spyOn(fixture.component, 'requestUpdate')
+		const requestUpdate = vi.spyOn(fixture.component, 'requestUpdate').mockReturnValue(undefined)
 
 		Localizer.languages.change.dispatch(Localizer.languages.current)
 
@@ -23,11 +23,11 @@ describe('LocalizerController', () => {
 
 	it('should stop updating a component after it disconnects', () => {
 		fixture.component.remove()
-		const requestUpdate = spyOn(fixture.component, 'requestUpdate')
+		const requestUpdate = vi.spyOn(fixture.component, 'requestUpdate').mockReturnValue(undefined)
 
 		Localizer.languages.change.dispatch(Localizer.languages.current)
 
-		expect(LocalizerController.connectedComponents.has(fixture.component)).toBeFalse()
+		expect(LocalizerController.connectedComponents.has(fixture.component)).toBe(false)
 		expect(requestUpdate).not.toHaveBeenCalled()
 	})
 })

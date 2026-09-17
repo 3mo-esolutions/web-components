@@ -40,15 +40,15 @@ describe('DataGridColumnBoolean', () => {
 
 	it('should apply a checkbox edit through the grid', () => {
 		const column = new DataGridColumnBoolean<Item>()
-		const handleEdit = jasmine.createSpy('handleEdit')
+		const handleEdit = vi.fn()
 		column.dataGrid = { handleEdit } as any
 
 		render(column.getEditContentTemplate(false, datum), container)
 		container.querySelector('mo-checkbox')!.dispatchEvent(new CustomEvent('change', { detail: true }))
 
 		expect(handleEdit).toHaveBeenCalledTimes(1)
-		const [data, , value] = handleEdit.calls.mostRecent().args
+		const [data, , value] = handleEdit.mock.lastCall!
 		expect(data).toBe(datum)
-		expect(value).toBeTrue()
+		expect(value).toBe(true)
 	})
 })

@@ -55,7 +55,7 @@ describe('FieldSearch', () => {
 		})
 
 		it('should focus the input when the search icon is clicked', () => {
-			spyOn(fixture.component, 'focus')
+			vi.spyOn(fixture.component, 'focus').mockResolvedValue(undefined)
 
 			searchIcon()!.click()
 
@@ -79,8 +79,8 @@ describe('FieldSearch', () => {
 		it('should clear the value and dispatch input and change with an empty string when the clear button is clicked', async () => {
 			fixture.component.value = 'query'
 			await fixture.updateComplete
-			const input = jasmine.createSpy('input')
-			const change = jasmine.createSpy('change')
+			const input = vi.fn()
+			const change = vi.fn()
 			fixture.component.addEventListener('input', (e: Event) => input((e as CustomEvent<string>).detail))
 			fixture.component.addEventListener('change', (e: Event) => change((e as CustomEvent<string>).detail))
 
@@ -88,8 +88,8 @@ describe('FieldSearch', () => {
 			await fixture.updateComplete
 
 			expect(fixture.component.value).toBe('')
-			expect(input).toHaveBeenCalledOnceWith('')
-			expect(change).toHaveBeenCalledOnceWith('')
+			expect(input).toHaveBeenCalledExactlyOnceWith('')
+			expect(change).toHaveBeenCalledExactlyOnceWith('')
 			expect(clearButton()).toBeNull()
 		})
 
@@ -98,8 +98,8 @@ describe('FieldSearch', () => {
 			fixture.component.inputElement.dispatchEvent(new Event('input'))
 			await fixture.updateComplete
 			expect(fixture.component.value).toBeUndefined()
-			const input = jasmine.createSpy('input')
-			const change = jasmine.createSpy('change')
+			const input = vi.fn()
+			const change = vi.fn()
 			fixture.component.addEventListener('input', input)
 			fixture.component.addEventListener('change', change)
 

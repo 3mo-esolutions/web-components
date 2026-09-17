@@ -12,7 +12,7 @@ describe('Switch', () => {
 	const labelElement = () => fixture.component.renderRoot.querySelector('label')
 
 	const spyOnChange = () => {
-		const spy = jasmine.createSpy('change')
+		const spy = vi.fn()
 		fixture.component.addEventListener('change', spy)
 		return spy
 	}
@@ -94,14 +94,14 @@ describe('Switch', () => {
 
 			expect(fixture.component.selected).toBe(true)
 			expect(spy).toHaveBeenCalledTimes(1)
-			expect(spy.calls.mostRecent().args[0].detail).toBe(true)
+			expect(spy.mock.lastCall![0].detail).toBe(true)
 
 			mdSwitch().click()
 			await fixture.updateComplete
 
 			expect(fixture.component.selected).toBe(false)
 			expect(spy).toHaveBeenCalledTimes(2)
-			expect(spy.calls.mostRecent().args[0].detail).toBe(false)
+			expect(spy.mock.lastCall![0].detail).toBe(false)
 		})
 
 		it('should not dispatch "change" when "selected" is set programmatically', async () => {
@@ -117,7 +117,7 @@ describe('Switch', () => {
 		// `handleClick` does not stop the event, so the composed md-switch click crosses the shadow
 		// boundary like any other click — the same contract as mo-radio.
 		it('should let the md-switch click reach a "click" listener on the host', async () => {
-			const clickSpy = jasmine.createSpy('click')
+			const clickSpy = vi.fn()
 			fixture.component.addEventListener('click', clickSpy)
 			const changeSpy = spyOnChange()
 
@@ -127,7 +127,7 @@ describe('Switch', () => {
 			expect(fixture.component.selected).toBe(true)
 			expect(clickSpy).toHaveBeenCalledTimes(1)
 			expect(changeSpy).toHaveBeenCalledTimes(1)
-			expect(changeSpy.calls.mostRecent().args[0].detail).toBe(true)
+			expect(changeSpy.mock.lastCall![0].detail).toBe(true)
 		})
 	})
 })

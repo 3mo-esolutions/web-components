@@ -1,8 +1,9 @@
 import { html, type HTMLTemplateResult } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { type DataGrid } from './index.js'
+import { type DataGrid } from './DataGrid.js'
 import { DataGridDetailsController } from './DataGridDetailsController.js'
 import type { DataRecord } from './DataRecord.js'
+import './index.js'
 
 type Data = string
 
@@ -20,7 +21,7 @@ const dataRecords = [
 ] as Array<DataRecord<Data>>
 
 class FakeHost {
-	readonly requestUpdate = jasmine.createSpy('requestUpdate')
+	readonly requestUpdate = vi.fn()
 	readonly updateComplete = Promise.resolve(true)
 	addController() { }
 	removeController() { }
@@ -69,7 +70,7 @@ describe('DataGridDetailsController', () => {
 		})
 
 		it('should evaluate the details template once per record, as it runs application code', () => {
-			const getRowDetailsTemplate = jasmine.createSpy('getRowDetailsTemplate').and.returnValue(html`<p></p>`)
+			const getRowDetailsTemplate = vi.fn().mockReturnValue(html`<p></p>`)
 			create(new FakeHost(true, dataRecords, true, getRowDetailsTemplate))
 
 			controller.hasDetails

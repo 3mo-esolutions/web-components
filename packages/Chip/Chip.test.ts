@@ -36,11 +36,11 @@ describe('Chip', () => {
 		it('should focus the primary action', () => {
 			fixture.component.focus()
 
-			expect(fixture.component.renderRoot.activeElement).toBe(fixture.component.actionElement)
+			expect(fixture.component.shadowRoot!.activeElement).toBe(fixture.component.actionElement)
 		})
 
 		it('should not dispatch change when clicked while not selectable', () => {
-			const change = jasmine.createSpy('change')
+			const change = vi.fn()
 			fixture.component.addEventListener('change', change)
 
 			fixture.component.actionElement.click()
@@ -154,7 +154,7 @@ describe('Chip', () => {
 		})
 
 		it('should not let a press on the remove button reach the host', () => {
-			const click = jasmine.createSpy('click')
+			const click = vi.fn()
 			fixture.component.addEventListener('click', click)
 
 			removeButton(fixture)!.click()
@@ -164,7 +164,7 @@ describe('Chip', () => {
 
 		for (const key of ['Backspace', 'Delete']) {
 			it(`should request removal on ${key}`, () => {
-				const requestRemove = jasmine.createSpy('requestRemove')
+				const requestRemove = vi.fn()
 				fixture.component.addEventListener('requestRemove', requestRemove)
 
 				keyDown(fixture.component.actionElement, key)
@@ -177,10 +177,10 @@ describe('Chip', () => {
 			fixture.component.focus()
 
 			keyDown(fixture.component.actionElement, 'ArrowRight')
-			expect(fixture.component.renderRoot.activeElement).toBe(removeButton(fixture)!)
+			expect(fixture.component.shadowRoot!.activeElement).toBe(removeButton(fixture)!)
 
 			keyDown(removeButton(fixture)!, 'ArrowLeft')
-			expect(fixture.component.renderRoot.activeElement).toBe(fixture.component.actionElement)
+			expect(fixture.component.shadowRoot!.activeElement).toBe(fixture.component.actionElement)
 		})
 
 		it('should let an arrow key at its edge through to the group', () => {
@@ -227,7 +227,7 @@ describe('Chip', () => {
 		})
 
 		it('should not request removal by keyboard', () => {
-			const requestRemove = jasmine.createSpy('requestRemove')
+			const requestRemove = vi.fn()
 			fixture.component.addEventListener('requestRemove', requestRemove)
 
 			keyDown(fixture.component.actionElement, 'Delete')

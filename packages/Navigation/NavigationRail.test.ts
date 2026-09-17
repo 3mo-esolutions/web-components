@@ -31,8 +31,8 @@ describe('NavigationRail', () => {
 	})
 
 	it('should mark the item of the navigation the page belongs to', () => {
-		expect(fixture.component.items[1]!.current).toBeTrue()
-		expect(fixture.component.items[0]!.current).toBeFalse()
+		expect(fixture.component.items[1]!.current).toBe(true)
+		expect(fixture.component.items[0]!.current).toBe(false)
 	})
 
 	describe('while overlaid', () => {

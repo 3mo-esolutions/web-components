@@ -22,9 +22,9 @@ class TestLanguageField extends LanguageField<string, TestLanguage> {
 describe('LanguageField', () => {
 	function createTest(languages: Array<TestLanguage>, selectedLanguage?: TestLanguage) {
 		const fieldTemplateCalls = new Array<LanguageFieldTemplateParameter<string, TestLanguage>>()
-		const languagesFetch = jasmine.createSpy('languagesFetch')
-		const languageChange = jasmine.createSpy('languageChange')
-		const change = jasmine.createSpy('change')
+		const languagesFetch = vi.fn()
+		const languageChange = vi.fn()
+		const change = vi.fn()
 
 		const fieldTemplate = (parameters: LanguageFieldTemplateParameter<string, TestLanguage>): HTMLTemplateResult => {
 			fieldTemplateCalls.push(parameters)
@@ -37,9 +37,9 @@ describe('LanguageField', () => {
 
 		const fixture = new ComponentTestFixture<TestLanguageField>(() => {
 			fieldTemplateCalls.length = 0
-			languagesFetch.calls.reset()
-			languageChange.calls.reset()
-			change.calls.reset()
+			languagesFetch.mockClear()
+			languageChange.mockClear()
+			change.mockClear()
 
 			const component = new TestLanguageField()
 			component.languagesToFetch = languages
@@ -76,7 +76,7 @@ describe('LanguageField', () => {
 
 		it('should fetch languages on first render and dispatch languagesFetch with them', () => {
 			expect(multilingual.component.languages).toEqual([english, german])
-			expect(multilingual.languagesFetch).toHaveBeenCalledOnceWith([english, german])
+			expect(multilingual.languagesFetch).toHaveBeenCalledExactlyOnceWith([english, german])
 		})
 
 		it('should select the first language and dispatch languageChange when none is preselected', () => {
@@ -105,7 +105,7 @@ describe('LanguageField', () => {
 		})
 
 		it('should render the field alone with the "single" attribute when only one language exists', () => {
-			expect(single.component.hasAttribute('single')).toBeTrue()
+			expect(single.component.hasAttribute('single')).toBe(true)
 			expect(single.query('mo-field-pair')).toBeNull()
 			expect(single.query('input')).not.toBeNull()
 		})
@@ -113,7 +113,7 @@ describe('LanguageField', () => {
 		it('should render the field and the language selector inside a mo-field-pair when multiple languages exist', () => {
 			const fieldPair = multilingual.query('mo-field-pair')!
 
-			expect(multilingual.component.hasAttribute('single')).toBeFalse()
+			expect(multilingual.component.hasAttribute('single')).toBe(false)
 			expect(fieldPair).not.toBeNull()
 			expect(fieldPair.querySelector('input')).not.toBeNull()
 			expect(fieldPair.querySelector('mo-field-select[slot=attachment]')).not.toBeNull()
@@ -147,7 +147,7 @@ describe('LanguageField', () => {
 			multilingual.component.handleFieldChange(english, 'Hello')
 
 			expect(multilingual.component.value.get(1)).toBe('Hello')
-			expect(multilingual.change).toHaveBeenCalledOnceWith(multilingual.component.value)
+			expect(multilingual.change).toHaveBeenCalledExactlyOnceWith(multilingual.component.value)
 		})
 
 		it('should honor a custom valueKey', () => {
@@ -212,7 +212,7 @@ describe('LanguageField', () => {
 		})
 
 		it('should open the language-field dialog when the dialog icon-button is clicked', async () => {
-			const confirm = spyOn(DialogLanguageField.prototype as any, 'confirm').and.resolveTo(undefined)
+			const confirm = vi.spyOn(DialogLanguageField.prototype as any, 'confirm').mockResolvedValue(undefined)
 
 			multilingual.query<HTMLElement>('[part=dialog-icon-button]')!.click()
 
@@ -224,7 +224,7 @@ describe('LanguageField', () => {
 	it('should delegate focus() to the rendered field', () => {
 		const field = multilingual.component.fieldElement
 		expect(field).toBeInstanceOf(HTMLInputElement)
-		const focus = spyOn(field, 'focus')
+		const focus = vi.spyOn(field, 'focus').mockReturnValue(undefined)
 
 		multilingual.component.focus()
 

@@ -7,7 +7,6 @@ import { computePosition } from '@floating-ui/dom'
 import { closeWhenOutOfViewport } from './closeWhenOutOfViewport.js'
 import { sameInlineSize } from './sameInlineSize.js'
 import '@3mo/date-time'
-import '.'
 
 type Person = { id: number, name: string, birthDate: DateTime }
 
@@ -104,9 +103,9 @@ describe('FieldSelect', () => {
 	const getDefaultOption = () => fixture.component.listItems.find(i => i.getAttribute('value') === '')
 
 	function spyOnChangeEvents(component: FieldSelect<unknown> = fixture.component) {
-		const changeSpy = jasmine.createSpy('change')
-		const dataChangeSpy = jasmine.createSpy('dataChange')
-		const indexChangeSpy = jasmine.createSpy('indexChange')
+		const changeSpy = vi.fn()
+		const dataChangeSpy = vi.fn()
+		const indexChangeSpy = vi.fn()
 		component.change.subscribe(changeSpy)
 		component.dataChange.subscribe(dataChangeSpy)
 		component.indexChange.subscribe(indexChangeSpy)
@@ -182,29 +181,29 @@ describe('FieldSelect', () => {
 			await Promise.race([opened, tick(300)])
 			await settle(fixture.component)
 
-			expect(fixture.component.open).toBeTrue()
+			expect(fixture.component.open).toBe(true)
 		})
 
 		it('should close after selecting an option in single mode', async () => {
 			await openMenu(fixture.component)
-			expect(fixture.component.open).toBeTrue()
+			expect(fixture.component.open).toBe(true)
 
 			fixture.component.options[1]!.click()
 			await settle(fixture.component)
 
-			expect(fixture.component.open).toBeFalse()
+			expect(fixture.component.open).toBe(false)
 		})
 
 		it('should close after selecting an option by its row in multiple mode', async () => {
 			fixture.component.multiple = true
 			await openMenu(fixture.component)
-			expect(fixture.component.open).toBeTrue()
+			expect(fixture.component.open).toBe(true)
 
 			fixture.component.options[1]!.click()
 			await settle(fixture.component)
 
 			expect(fixture.component.index).toEqual([1])
-			expect(fixture.component.open).toBeFalse()
+			expect(fixture.component.open).toBe(false)
 		})
 
 		it('should stay open when the checkbox of an option is clicked in multiple mode', async () => {
@@ -215,7 +214,7 @@ describe('FieldSelect', () => {
 			fixture.component.options[1]!.renderRoot.querySelector('mo-checkbox')!.click()
 			await settle(fixture.component)
 
-			expect(fixture.component.open).toBeTrue()
+			expect(fixture.component.open).toBe(true)
 		})
 
 		for (const [property, attribute, value] of [
@@ -237,23 +236,23 @@ describe('FieldSelect', () => {
 
 			for (const key of ['ArrowDown', 'ArrowUp', 'Home', 'End']) {
 				it(`should open when a navigation key is pressed on the field (${key})`, async () => {
-					expect(fixture.component.open).toBeFalse()
+					expect(fixture.component.open).toBe(false)
 
 					fixture.component.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }))
 					await settle(fixture.component)
 
-					expect(fixture.component.open).toBeTrue()
+					expect(fixture.component.open).toBe(true)
 				})
 			}
 
 			it('should close when Tab is pressed while open', async () => {
 				await openMenu(fixture.component)
-				expect(fixture.component.open).toBeTrue()
+				expect(fixture.component.open).toBe(true)
 
 				fixture.component.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true }))
 				await settle(fixture.component)
 
-				expect(fixture.component.open).toBeFalse()
+				expect(fixture.component.open).toBe(false)
 			})
 		})
 
@@ -280,7 +279,7 @@ describe('FieldSelect', () => {
 
 				const popover = getPopover(fixture.component)!
 				const option = fixture.component.options[selectedIndex]!
-				expect(option.selected).toBeTrue()
+				expect(option.selected).toBe(true)
 				expect(popover.scrollTop).toBeGreaterThan(0)
 				expect(option.getBoundingClientRect().top).toBeGreaterThanOrEqual(popover.getBoundingClientRect().top)
 				expect(option.getBoundingClientRect().bottom).toBeLessThanOrEqual(popover.getBoundingClientRect().bottom)
@@ -314,7 +313,7 @@ describe('FieldSelect', () => {
 
 			it('should close the menu when the field is scrolled out of the viewport', async () => {
 				await openMenu(fixture.component)
-				expect(fixture.component.open).toBeTrue()
+				expect(fixture.component.open).toBe(true)
 				const outOfViewportAnchor = document.createElement('div')
 				outOfViewportAnchor.style.cssText = 'position: fixed; left: 0px; top: -2000px; width: 100px; height: 20px;'
 				document.body.appendChild(outOfViewportAnchor)
@@ -327,7 +326,7 @@ describe('FieldSelect', () => {
 					await tick(100)
 					await settle(fixture.component)
 
-					expect(fixture.component.open).toBeFalse()
+					expect(fixture.component.open).toBe(false)
 				} finally {
 					outOfViewportAnchor.remove()
 				}
@@ -356,13 +355,13 @@ describe('FieldSelect', () => {
 		it('should take the whole text rather than a caret when pressed unfocused', async () => {
 			await settle(fixture.component)
 
-			expect(pressInput(fixture.component).defaultPrevented).toBeTrue()
+			expect(pressInput(fixture.component).defaultPrevented).toBe(true)
 		})
 
 		it('should place the caret normally when pressed while already focused', async () => {
 			await focusIn(fixture.component)
 
-			expect(pressInput(fixture.component).defaultPrevented).toBeFalse()
+			expect(pressInput(fixture.component).defaultPrevented).toBe(false)
 		})
 
 		it('should render the search input only when focused', async () => {
@@ -385,23 +384,23 @@ describe('FieldSelect', () => {
 
 		it('should keep the menu open while typing', async () => {
 			await focusIn(fixture.component)
-			expect(fixture.component.open).toBeFalse()
+			expect(fixture.component.open).toBe(false)
 
 			await type(fixture.component, 'j')
-			expect(fixture.component.open).toBeTrue()
+			expect(fixture.component.open).toBe(true)
 
 			await type(fixture.component, 'jo')
-			expect(fixture.component.open).toBeTrue()
+			expect(fixture.component.open).toBe(true)
 		})
 
 		it('should show the no-results hint when no option matches the keyword', async () => {
 			await focusIn(fixture.component)
-			expect(isNoResultsHintVisible(fixture.component)).toBeFalse()
+			expect(isNoResultsHintVisible(fixture.component)).toBe(false)
 
 			await type(fixture.component, 'zzz')
 
 			expect(visibleOptionTexts(fixture.component)).toEqual([])
-			expect(isNoResultsHintVisible(fixture.component)).toBeTrue()
+			expect(isNoResultsHintVisible(fixture.component)).toBe(true)
 		})
 
 		it('should not show the no-results hint when a default option exists', async () => {
@@ -410,7 +409,7 @@ describe('FieldSelect', () => {
 
 			await type(fixture.component, 'zzz')
 
-			expect(isNoResultsHintVisible(fixture.component)).toBeFalse()
+			expect(isNoResultsHintVisible(fixture.component)).toBe(false)
 		})
 
 		it('should restore the full option list and the selected value\'s text on blur', async () => {
@@ -493,12 +492,12 @@ describe('FieldSelect', () => {
 		})
 
 		it('should dispatch input with the typed text', async () => {
-			const inputSpy = jasmine.createSpy('input')
+			const inputSpy = vi.fn()
 			fixture.component.input.subscribe(inputSpy)
 
 			await type(fixture.component, 'Custom text')
 
-			expect(inputSpy).toHaveBeenCalledOnceWith('Custom text')
+			expect(inputSpy).toHaveBeenCalledExactlyOnceWith('Custom text')
 		})
 
 		it('should keep the typed text on blur instead of resetting to the selected value', async () => {
@@ -532,7 +531,7 @@ describe('FieldSelect', () => {
 			await type(fixture.component, 'zzz')
 
 			expect(visibleOptionTexts(fixture.component)).toEqual([])
-			expect(isNoResultsHintVisible(fixture.component)).toBeFalse()
+			expect(isNoResultsHintVisible(fixture.component)).toBe(false)
 		})
 	})
 
@@ -545,7 +544,7 @@ describe('FieldSelect', () => {
 
 			expect(fixture.component.options[1]!.selected).toBe(true)
 			expect(indexChangeSpy).toHaveBeenCalledWith(1)
-			expect(changeSpy).toHaveBeenCalledOnceWith(1)
+			expect(changeSpy).toHaveBeenCalledExactlyOnceWith(1)
 			expect(dataChangeSpy).toHaveBeenCalledWith(people[1])
 		})
 
@@ -600,7 +599,7 @@ describe('FieldSelect', () => {
 			await waitUntil(() => option.selected)
 			await settle(fixture.component)
 
-			expect(option.selected).toBeTrue()
+			expect(option.selected).toBe(true)
 			expect(fixture.component.valueInputElement.value).toBe('Late option')
 			expect(changeSpy).not.toHaveBeenCalled()
 		})
@@ -769,9 +768,9 @@ describe('FieldSelect', () => {
 
 				await click(3)
 
-				expect(changeSpy).toHaveBeenCalledOnceWith([people[1]!.id, people[3]!.id])
-				expect(dataChangeSpy).toHaveBeenCalledOnceWith([people[1]!, people[3]!])
-				expect(indexChangeSpy).toHaveBeenCalledOnceWith([1, 3])
+				expect(changeSpy).toHaveBeenCalledExactlyOnceWith([people[1]!.id, people[3]!.id])
+				expect(dataChangeSpy).toHaveBeenCalledExactlyOnceWith([people[1]!, people[3]!])
+				expect(indexChangeSpy).toHaveBeenCalledExactlyOnceWith([1, 3])
 			})
 
 			it('should dispatch each event with the whole selection after a range', async () => {
@@ -780,9 +779,9 @@ describe('FieldSelect', () => {
 
 				await click(3, { shift: true })
 
-				expect(changeSpy).toHaveBeenCalledOnceWith([1, 2, 3].map(i => people[i]!.id))
-				expect(dataChangeSpy).toHaveBeenCalledOnceWith([1, 2, 3].map(i => people[i]!))
-				expect(indexChangeSpy).toHaveBeenCalledOnceWith([1, 2, 3])
+				expect(changeSpy).toHaveBeenCalledExactlyOnceWith([1, 2, 3].map(i => people[i]!.id))
+				expect(dataChangeSpy).toHaveBeenCalledExactlyOnceWith([1, 2, 3].map(i => people[i]!))
+				expect(indexChangeSpy).toHaveBeenCalledExactlyOnceWith([1, 2, 3])
 			})
 
 			it('should remove an option clicked again', async () => {
@@ -918,7 +917,7 @@ describe('FieldSelect', () => {
 			fixture.component.index = people.length
 			await settle(fixture.component)
 
-			expect(option.selected).toBeTrue()
+			expect(option.selected).toBe(true)
 			expect(fixture.component.valueInputElement.value).toBe('Bare')
 		})
 
@@ -928,12 +927,12 @@ describe('FieldSelect', () => {
 			fixture.component.appendChild(option)
 			fixture.component.value = 99
 			await settle(fixture.component)
-			expect(option.selected).toBeFalse()
+			expect(option.selected).toBe(false)
 
 			option.value = '99'
 			await settle(fixture.component)
 
-			expect(option.selected).toBeTrue()
+			expect(option.selected).toBe(true)
 			expect(fixture.component.data).toBeUndefined()
 		})
 	})
@@ -983,9 +982,9 @@ describe('FieldSelect', () => {
 
 			expect(fixture.component.index).toBe(3)
 			expect(fixture.component.selectedOptions.length).toBe(1)
-			expect(changeSpy).toHaveBeenCalledOnceWith(3)
-			expect(dataChangeSpy).toHaveBeenCalledOnceWith(people[3]!)
-			expect(indexChangeSpy).toHaveBeenCalledOnceWith(3)
+			expect(changeSpy).toHaveBeenCalledExactlyOnceWith(3)
+			expect(dataChangeSpy).toHaveBeenCalledExactlyOnceWith(people[3]!)
+			expect(indexChangeSpy).toHaveBeenCalledExactlyOnceWith(3)
 		})
 
 		it('should not dispatch anything when the selected option is clicked again in single mode', async () => {

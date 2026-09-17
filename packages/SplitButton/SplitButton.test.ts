@@ -28,7 +28,7 @@ describe('SplitButton', () => {
 		})
 
 		it('should prevent click event', () => {
-			const spy = jasmine.createSpy()
+			const spy = vi.fn()
 			fixture.component.addEventListener('click', () => spy())
 
 			fixture.component.renderRoot.querySelector('mo-button')?.click()
@@ -43,7 +43,7 @@ describe('SplitButton', () => {
 		})
 
 		it('should stop propagation of click event on any menu-item', () => {
-			const spy = jasmine.createSpy()
+			const spy = vi.fn()
 			fixture.component.addEventListener('click', () => spy())
 
 			fixture.component.querySelector('mo-list-item')?.click()

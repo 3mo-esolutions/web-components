@@ -24,8 +24,8 @@ describe('DialogMode', () => {
 
 	const createDataGridStub = () => {
 		const modesController = {
-			save: jasmine.createSpy('save').and.callFake((mode: ModdableDataGridMode<unknown, Parameters>) => Promise.resolve(mode)),
-			delete: jasmine.createSpy('delete').and.returnValue(Promise.resolve()),
+			save: vi.fn((mode: ModdableDataGridMode<unknown, Parameters>) => Promise.resolve(mode)),
+			delete: vi.fn().mockReturnValue(Promise.resolve()),
 		}
 		const dataGrid = {
 			get currentMode() {
@@ -56,14 +56,14 @@ describe('DialogMode', () => {
 	it('should refuse to save without a name', async () => {
 		const { dataGrid, modesController } = createDataGridStub()
 		const dialog = new DialogMode<unknown, Parameters>({ dataGrid })
-		const notifyErrorSpy = spyOn(NotificationComponent, 'notifyError')
+		const notifyErrorSpy = vi.spyOn(NotificationComponent, 'notifyError').mockResolvedValue(undefined)
 		await open(dialog)
 
-		await expectAsync(dialog['handleAction'](DialogActionKey.Primary)).toBeRejectedWithError('Please enter a valid name!')
+		await expect(dialog['handleAction'](DialogActionKey.Primary)).rejects.toThrow('Please enter a valid name!')
 
 		expect(modesController.save).not.toHaveBeenCalled()
-		expect(notifyErrorSpy).toHaveBeenCalledOnceWith('Please enter a valid name!')
-		expect(dialog.isConnected).toBeTrue()
+		expect(notifyErrorSpy).toHaveBeenCalledExactlyOnceWith('Please enter a valid name!')
+		expect(dialog.isConnected).toBe(true)
 	})
 
 	it('should save the grid\'s current state merged with the edited fields and resolve with the saved mode', async () => {
@@ -78,8 +78,8 @@ describe('DialogMode', () => {
 
 		expect(saved!.name).toBe('Edited')
 		expect(saved!.parameters).toEqual({ keyword: 'current' })
-		expect(modesController.save).toHaveBeenCalledOnceWith(saved!)
-		expect(dialog.isConnected).toBeFalse()
+		expect(modesController.save).toHaveBeenCalledExactlyOnceWith(saved!)
+		expect(dialog.isConnected).toBe(false)
 	})
 
 	it('should offer the archive checkbox and the delete action only for an existing mode', async () => {
@@ -110,7 +110,7 @@ describe('DialogMode', () => {
 
 		dialog.secondaryActionElement!.click()
 
-		await expectAsync(confirmation).toBeResolvedTo(undefined)
-		expect(modesController.delete).toHaveBeenCalledOnceWith(mode)
+		await expect(confirmation).resolves.toEqual(undefined)
+		expect(modesController.delete).toHaveBeenCalledExactlyOnceWith(mode)
 	})
 })

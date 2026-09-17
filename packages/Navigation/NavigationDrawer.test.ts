@@ -41,11 +41,11 @@ describe('NavigationDrawer', () => {
 		fixture.component.open = true
 		await fixture.updateComplete
 
-		expect(drawerElement().open).toBeTrue()
+		expect(drawerElement().open).toBe(true)
 	})
 
 	it('should dispatch openChange whenever it opens or closes', async () => {
-		const handler = jasmine.createSpy('openChange')
+		const handler = vi.fn()
 		fixture.component.addEventListener('openChange', (e: Event) => handler((e as CustomEvent<boolean>).detail))
 
 		fixture.component.open = true
@@ -64,11 +64,11 @@ describe('NavigationDrawer', () => {
 		treeItems()[0]!.click()
 		await fixture.updateComplete
 
-		expect(fixture.component.open).toBeFalse()
+		expect(fixture.component.open).toBe(false)
 	})
 
 	it('should report an invocation to whoever presented it', async () => {
-		const handler = jasmine.createSpy('invoke')
+		const handler = vi.fn()
 		fixture.component.addEventListener('invoke', handler)
 		fixture.component.open = true
 		await fixture.updateComplete
@@ -80,7 +80,7 @@ describe('NavigationDrawer', () => {
 
 	it('should hand focus to its navigations', () => {
 		const tree = fixture.component.renderRoot.querySelector('mo-navigation-tree')!
-		const focusSpy = spyOn(tree, 'focus')
+		const focusSpy = vi.spyOn(tree, 'focus').mockReturnValue(undefined)
 
 		fixture.component.focus()
 

@@ -59,7 +59,7 @@ describe('FocusController', () => {
 	})
 
 	it('should request a host update when the focus state changes', () => {
-		const requestUpdate = spyOn(fixture.component, 'requestUpdate')
+		const requestUpdate = vi.spyOn(fixture.component, 'requestUpdate').mockReturnValue(undefined)
 
 		fixture.component.dispatchEvent(new FocusEvent('focusin'))
 		expect(requestUpdate).toHaveBeenCalledTimes(1)
@@ -90,10 +90,10 @@ describe('FocusController', () => {
 			fixture.component.dispatchEvent(new FocusEvent('focusin'))
 		}
 
-		it('should be keyboard when the focus is visible', () => {
+		it('should be keyboard when the focus is visible', context => {
 			focusWith(true)
 			if (!fixture.component.matches(':focus-visible')) {
-				pending('The platform did not apply the requested focus visibility, as headless Firefox does not in an inactive window')
+				context.skip('The platform did not apply the requested focus visibility, as headless Firefox does not in an inactive window')
 			}
 			expectFocused(true, false, 'keyboard')
 		})
@@ -109,12 +109,12 @@ describe('FocusController', () => {
 			expectFocused(true, false, 'programmatic')
 		})
 
-		it('should be programmatic when the visible focus is on an element outside the target', () => {
+		it('should be programmatic when the visible focus is on an element outside the target', context => {
 			const outsider = document.body.appendChild(document.createElement('input'))
 			try {
 				outsider.focus()
 				if (!outsider.matches(':focus-visible')) {
-					pending('The platform did not treat the outside input as focus-visible')
+					context.skip('The platform did not treat the outside input as focus-visible')
 				}
 				fixture.component.dispatchEvent(new FocusEvent('focusin'))
 
@@ -176,12 +176,12 @@ describe('FocusController', () => {
 
 		it('should track the focus of the configured target instead of the host', () => {
 			fixture.component.dispatchEvent(new FocusEvent('focusin', { bubbles: true }))
-			expect(fixture.component.focusController.focused).toBeFalse()
-			expect(fixture.component.focused).toBeFalse()
+			expect(fixture.component.focusController.focused).toBe(false)
+			expect(fixture.component.focused).toBe(false)
 
 			fixture.component.focusTarget.dispatchEvent(new FocusEvent('focusin', { bubbles: true }))
-			expect(fixture.component.focusController.focused).toBeTrue()
-			expect(fixture.component.focused).toBeTrue()
+			expect(fixture.component.focusController.focused).toBe(true)
+			expect(fixture.component.focused).toBe(true)
 		})
 
 		it('should follow a changed target once resubscribed', async () => {
@@ -204,8 +204,8 @@ describe('FocusController', () => {
 		it('should set focused via focusIn()', () => {
 			fixture.component.focusController.focusIn()
 
-			expect(fixture.component.focusController.focused).toBeTrue()
-			expect(fixture.component.focused).toBeTrue()
+			expect(fixture.component.focusController.focused).toBe(true)
+			expect(fixture.component.focused).toBe(true)
 		})
 
 		it('should reset focused via focusOut()', () => {
@@ -213,8 +213,8 @@ describe('FocusController', () => {
 
 			fixture.component.focusController.focusOut()
 
-			expect(fixture.component.focusController.focused).toBeFalse()
-			expect(fixture.component.focused).toBeFalse()
+			expect(fixture.component.focusController.focused).toBe(false)
+			expect(fixture.component.focused).toBe(false)
 		})
 	})
 })

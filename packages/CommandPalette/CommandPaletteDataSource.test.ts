@@ -5,8 +5,8 @@ describe('CommandPaletteDataSource', () => {
 		override readonly name = 'Test'
 		override readonly icon = 'search' as CommandPaletteData['icon']
 
-		readonly fetchSpy = jasmine.createSpy('fetch')
-		readonly searchSpy = jasmine.createSpy('search')
+		readonly fetchSpy = vi.fn()
+		readonly searchSpy = vi.fn()
 
 		// eslint-disable-next-line require-await
 		override async fetch() {
@@ -42,13 +42,13 @@ describe('CommandPaletteDataSource', () => {
 		const first = await source.searchData('alpha')
 		const again = await source.searchData('alpha')
 
-		expect(source.searchSpy).toHaveBeenCalledOnceWith('alpha')
+		expect(source.searchSpy).toHaveBeenCalledExactlyOnceWith('alpha')
 		expect(again).toBe(first)
 
 		const other = await source.searchData('beta')
 
 		expect(source.searchSpy).toHaveBeenCalledTimes(2)
-		expect(source.searchSpy.calls.mostRecent().args).toEqual(['beta'])
+		expect(source.searchSpy.mock.lastCall).toEqual(['beta'])
 		expect(other.map(item => item.label)).toEqual(['beta result'])
 	})
 })

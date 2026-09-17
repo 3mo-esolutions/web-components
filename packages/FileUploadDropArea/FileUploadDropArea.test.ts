@@ -27,17 +27,17 @@ describe('FileUploadDropArea', () => {
 	const settle = () => new Promise<void>(resolve => setTimeout(resolve))
 
 	function createFixture<TMultiple extends boolean>({ multiple, accept }: { multiple?: TMultiple, accept?: string } = {}) {
-		const upload = jasmine.createSpy('upload').and.resolveTo('result')
+		const upload = vi.fn().mockResolvedValue('result')
 		const fixture = new ComponentTestFixture<FileUploadDropArea<string, TMultiple>>(html`
 			<mo-file-upload-drop-area .upload=${upload} ?multiple=${multiple} .accept=${accept}></mo-file-upload-drop-area>
 		`)
-		beforeEach(() => upload.calls.reset())
+		beforeEach(() => { upload.mockClear() })
 		return {
 			fixture,
 			upload,
 			get component() { return fixture.component },
 			get uploadElement() { return fixture.component.renderRoot.querySelector('mo-file-upload') as FileUpload<string, TMultiple> },
-			get selection() { return upload.calls.mostRecent().args[0] },
+			get selection() { return upload.mock.lastCall![0] },
 		}
 	}
 
@@ -46,9 +46,9 @@ describe('FileUploadDropArea', () => {
 
 		it('should render a mo-file-upload with uploadOnSelection that tunnels upload, multiple and accept', () => {
 			expect(test.uploadElement).not.toBeNull()
-			expect(test.uploadElement.uploadOnSelection).toBeTrue()
+			expect(test.uploadElement.uploadOnSelection).toBe(true)
 			expect(test.uploadElement.upload).toBe(test.component.upload)
-			expect(test.uploadElement.multiple).toBeTrue()
+			expect(test.uploadElement.multiple).toBe(true)
 			expect(test.uploadElement.accept).toBe('image/*')
 		})
 
@@ -58,12 +58,12 @@ describe('FileUploadDropArea', () => {
 			{ event: 'selectionChange', detail: 'a.txt' },
 		]) {
 			it(`should re-dispatch ${event} from the inner upload`, () => {
-				const dispatch = jasmine.createSpy(event)
+				const dispatch = vi.fn()
 				test.component.addEventListener(event, (e: Event) => dispatch((e as CustomEvent).detail))
 
 				test.uploadElement.dispatchEvent(new CustomEvent(event, { detail }))
 
-				expect(dispatch).toHaveBeenCalledOnceWith(detail)
+				expect(dispatch).toHaveBeenCalledExactlyOnceWith(detail)
 			})
 		}
 	})
@@ -78,7 +78,7 @@ describe('FileUploadDropArea', () => {
 		]) {
 			it(`should forward ${method} to the inner upload`, () => {
 				const component = test.component as any
-				const spy = spyOn(test.uploadElement as any, method)
+				const spy = vi.spyOn(test.uploadElement as any, method).mockReturnValue(undefined)
 
 				component[method](...args)
 
@@ -87,7 +87,7 @@ describe('FileUploadDropArea', () => {
 		}
 
 		it('should open the file explorer when the area is clicked', () => {
-			const spy = spyOn(test.uploadElement, 'openExplorer')
+			const spy = vi.spyOn(test.uploadElement, 'openExplorer').mockReturnValue(undefined)
 
 			test.component.click()
 
@@ -102,10 +102,10 @@ describe('FileUploadDropArea', () => {
 
 		it('should stamp the "dragover" attribute on dragenter and remove it on dragleave', () => {
 			single.component.dispatchEvent(createDragEvent('dragenter', createDataTransfer(createFile('a.txt'))))
-			expect(single.component.hasAttribute('dragover')).toBeTrue()
+			expect(single.component.hasAttribute('dragover')).toBe(true)
 
 			single.component.dispatchEvent(createDragEvent('dragleave', createDataTransfer(createFile('a.txt'))))
-			expect(single.component.hasAttribute('dragover')).toBeFalse()
+			expect(single.component.hasAttribute('dragover')).toBe(false)
 		})
 
 		it('should keep the "dragover" attribute while the pointer crosses slotted children', () => {
@@ -116,11 +116,11 @@ describe('FileUploadDropArea', () => {
 			child.dispatchEvent(createDragEvent('dragenter', dataTransfer))
 			single.component.dispatchEvent(createDragEvent('dragleave', dataTransfer))
 
-			expect(single.component.hasAttribute('dragover')).toBeTrue()
+			expect(single.component.hasAttribute('dragover')).toBe(true)
 
 			child.dispatchEvent(createDragEvent('dragleave', dataTransfer))
 
-			expect(single.component.hasAttribute('dragover')).toBeFalse()
+			expect(single.component.hasAttribute('dragover')).toBe(false)
 			child.remove()
 		})
 
@@ -130,30 +130,30 @@ describe('FileUploadDropArea', () => {
 			single.component.dispatchEvent(createDragEvent('dragenter', createDataTransfer('some text')))
 			single.component.dispatchEvent(dragover)
 
-			expect(single.component.hasAttribute('dragover')).toBeFalse()
-			expect(dragover.defaultPrevented).toBeFalse()
+			expect(single.component.hasAttribute('dragover')).toBe(false)
+			expect(dragover.defaultPrevented).toBe(false)
 		})
 
 		it('should remove the "dragover" attribute on drop', async () => {
 			single.component.dispatchEvent(createDragEvent('dragenter', createDataTransfer(createFile('a.txt'))))
-			expect(single.component.hasAttribute('dragover')).toBeTrue()
+			expect(single.component.hasAttribute('dragover')).toBe(true)
 
 			single.component.dispatchEvent(createDragEvent('drop', createDataTransfer(createFile('a.txt'))))
 			await settle()
 
-			expect(single.component.hasAttribute('dragover')).toBeFalse()
+			expect(single.component.hasAttribute('dragover')).toBe(false)
 		})
 
 		it('should prevent the browser\'s default open-file behavior on dragover and drop', async () => {
 			const dragover = createDragEvent('dragover', createDataTransfer(createFile('a.txt')))
 			single.component.dispatchEvent(dragover)
-			expect(dragover.defaultPrevented).toBeTrue()
+			expect(dragover.defaultPrevented).toBe(true)
 
 			const drop = createDragEvent('drop', createDataTransfer(createFile('a.txt')))
 			single.component.dispatchEvent(drop)
 			await settle()
 
-			expect(drop.defaultPrevented).toBeTrue()
+			expect(drop.defaultPrevented).toBe(true)
 		})
 
 		it('should upload the single dropped file by default', async () => {

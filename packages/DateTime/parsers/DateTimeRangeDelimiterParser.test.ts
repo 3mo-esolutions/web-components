@@ -14,8 +14,8 @@ describe('DateTimeRangeDelimiterParser', () => {
 
 		for (const text of [`${start} – ${end}`, `${start}–${end}`, `${start} ~ ${end}`, `${start}~${end}`]) {
 			const range = parser.parse(text)
-			expect(range?.start?.valueOf()).withContext(text).toBe(startInstant)
-			expect(range?.end?.valueOf()).withContext(text).toBe(endInstant)
+			expect(range?.start?.valueOf(), text).toBe(startInstant)
+			expect(range?.end?.valueOf(), text).toBe(endInstant)
 		}
 	})
 

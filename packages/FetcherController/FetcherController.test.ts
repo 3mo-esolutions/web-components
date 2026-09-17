@@ -4,9 +4,9 @@ import { EnqueuerError } from './Enqueuer.js'
 
 describe('FetcherController', () => {
 	const createHost = () => ({
-		addController: jasmine.createSpy('addController'),
-		removeController: jasmine.createSpy('removeController'),
-		requestUpdate: jasmine.createSpy('requestUpdate'),
+		addController: vi.fn(),
+		removeController: vi.fn(),
+		requestUpdate: vi.fn(),
 		updateComplete: Promise.resolve(true),
 	}) as unknown as ReactiveControllerHost
 
@@ -39,18 +39,18 @@ describe('FetcherController', () => {
 			const { calls, fetch } = createDeferredFetch()
 			const fetcher = new FetcherController<string>(createHost(), { fetch, autoRun: false })
 
-			expect(fetcher.pending).toBeFalse()
+			expect(fetcher.pending).toBe(false)
 
 			const run = fetcher.run()
 			await waitUntil(() => calls.length === 1)
 
-			expect(fetcher.pending).toBeTrue()
+			expect(fetcher.pending).toBe(true)
 			expect(fetcher.value).toBeUndefined()
 
 			calls[0]!.resolve('value')
 			await run
 
-			expect(fetcher.pending).toBeFalse()
+			expect(fetcher.pending).toBe(false)
 			expect(fetcher.value).toBe('value')
 		})
 	})
@@ -114,6 +114,9 @@ describe('FetcherController', () => {
 			const { calls, fetch } = createDeferredFetch()
 			const fetcher = new FetcherController<string>(createHost(), { fetch, autoRun: false, throttle: 100 })
 			const first = fetcher.run()
+			// Superseding rejects this run the moment the second starts, long before a spec asserts on
+			// it, so it carries a handler from the outset rather than surfacing as an unhandled rejection.
+			first.catch(() => undefined)
 			await waitUntil(() => calls.length === 1)
 			await settle(fetcher, calls[0]!, 'initial')
 			await first
@@ -135,6 +138,9 @@ describe('FetcherController', () => {
 			const { calls, fetch } = createDeferredFetch()
 			const fetcher = new FetcherController<string>(createHost(), { fetch, autoRun: false, throttle: 100 })
 			const first = fetcher.run()
+			// Superseding rejects this run the moment the second starts, long before a spec asserts on
+			// it, so it carries a handler from the outset rather than surfacing as an unhandled rejection.
+			first.catch(() => undefined)
 			await waitUntil(() => calls.length === 1)
 			await settle(fetcher, calls[0]!, 'initial')
 			await first
@@ -158,6 +164,9 @@ describe('FetcherController', () => {
 			const { calls, fetch } = createDeferredFetch()
 			const fetcher = new FetcherController<string>(createHost(), { fetch, autoRun: false })
 			const first = fetcher.run()
+			// Superseding rejects this run the moment the second starts, long before a spec asserts on
+			// it, so it carries a handler from the outset rather than surfacing as an unhandled rejection.
+			first.catch(() => undefined)
 			await waitUntil(() => calls.length === 1)
 			const second = fetcher.run()
 			await waitUntil(() => calls.length === 2)
@@ -183,7 +192,8 @@ describe('FetcherController', () => {
 			calls[0]!.resolve('first')
 			await second
 
-			await expectAsync(first).toBeRejectedWithError(EnqueuerError, 'The result of a promise has been discarded in favor of another one which has started afterwards.')
+			await expect(first).rejects.toBeInstanceOf(EnqueuerError)
+			await expect(first).rejects.toThrow('The result of a promise has been discarded in favor of another one which has started afterwards.')
 			expect(fetcher.value).toBe('second')
 		})
 	})

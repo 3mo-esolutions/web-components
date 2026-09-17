@@ -35,7 +35,7 @@ describe('Toolbar', () => {
 
 	it('should keep all fitting items in the pane and disable the overflow icon-button', () => {
 		expect(overflowedItems()).toEqual([])
-		expect(iconButton().disabled).toBeTrue()
+		expect(iconButton().disabled).toBe(true)
 	})
 
 	it('should move items which do not fit into the overflow slot and enable the icon-button', async () => {
@@ -44,7 +44,7 @@ describe('Toolbar', () => {
 		await settle(fixture.component)
 
 		expect(overflowedItems()).toEqual(items().slice(2))
-		expect(iconButton().disabled).toBeFalse()
+		expect(iconButton().disabled).toBe(false)
 	})
 
 	it('should move items back into the pane once they fit again', async () => {

@@ -26,8 +26,8 @@ describe('SplitterResizerHost', () => {
 	const release = (type: 'mouseup' | 'touchend' = 'mouseup') => window.dispatchEvent(new Event(type, { bubbles: true, composed: true }))
 
 	it('should dispatch "resizeStart" on mousedown and "resizeStop" on mouseup anywhere on the window', () => {
-		const start = jasmine.createSpy('resizeStart')
-		const stop = jasmine.createSpy('resizeStop')
+		const start = vi.fn()
+		const stop = vi.fn()
 		fixture.component.addEventListener('resizeStart', start)
 		fixture.component.addEventListener('resizeStop', stop)
 
@@ -41,10 +41,10 @@ describe('SplitterResizerHost', () => {
 
 	it('should start and stop resizing from touch events as well (touchstart / window touchend)', () => {
 		press('touchstart')
-		expect(fixture.component.resizing).toBeTrue()
+		expect(fixture.component.resizing).toBe(true)
 
 		release('touchend')
-		expect(fixture.component.resizing).toBeFalse()
+		expect(fixture.component.resizing).toBe(false)
 	})
 
 	it('should forward its direction to the slotted resizer ("hostDirection")', async () => {
@@ -58,18 +58,18 @@ describe('SplitterResizerHost', () => {
 
 	it('should mark the slotted resizer while resizing ("hostResizing" set on mousedown, cleared on mouseup)', () => {
 		press()
-		expect(resizer().hostResizing).toBeTrue()
+		expect(resizer().hostResizing).toBe(true)
 
 		release()
-		expect(resizer().hostResizing).toBeFalse()
+		expect(resizer().hostResizing).toBe(false)
 	})
 
 	it('should mark the slotted resizer while hovered ("hostHover" on pointerenter, cleared on pointerleave)', () => {
 		fixture.component.dispatchEvent(new PointerEvent('pointerenter'))
-		expect(resizer().hostHover).toBeTrue()
+		expect(resizer().hostHover).toBe(true)
 
 		fixture.component.dispatchEvent(new PointerEvent('pointerleave'))
-		expect(resizer().hostHover).toBeFalse()
+		expect(resizer().hostHover).toBe(false)
 	})
 
 	describe('resize cursor', () => {

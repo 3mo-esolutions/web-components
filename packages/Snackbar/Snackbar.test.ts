@@ -124,11 +124,11 @@ describe('Snackbar', () => {
 	// fifteen-second wait per case.
 	describe('auto-dismissal', () => {
 		beforeEach(() => {
-			jasmine.clock().install()
-			jasmine.clock().mockDate()
+			vi.useFakeTimers()
+			vi.setSystemTime(new Date)
 		})
 
-		afterEach(() => jasmine.clock().uninstall())
+		afterEach(() => vi.useRealTimers())
 
 		const start = async (snackbar: Snackbar, notification: Notification) => {
 			snackbar.notification = notification
@@ -142,7 +142,7 @@ describe('Snackbar', () => {
 		/** Lets the exit animation's timeout run out, so show() settles rather than staying pending —
 		 * a show() still pending when the clock is uninstalled never settles at all. */
 		const finish = async (shown: Promise<void>) => {
-			jasmine.clock().tick(500)
+			vi.advanceTimersByTime(500)
 			await settle()
 			await shown
 		}
@@ -159,11 +159,11 @@ describe('Snackbar', () => {
 				const snackbar = fixture.component
 				const { shown } = await start(snackbar, { message: 'Timed', type })
 
-				jasmine.clock().tick(duration - 100)
+				vi.advanceTimersByTime(duration - 100)
 				await settle()
 				expect(snackbar.open).toBe(true)
 
-				jasmine.clock().tick(100)
+				vi.advanceTimersByTime(100)
 				await settle()
 
 				expect(snackbar.open).toBe(false)
@@ -183,11 +183,11 @@ describe('Snackbar', () => {
 				],
 			})
 
-			jasmine.clock().tick(5_000)
+			vi.advanceTimersByTime(5_000)
 			await settle()
 			expect(snackbar.open).toBe(true) // the bare type duration would have dismissed it
 
-			jasmine.clock().tick(5_000)
+			vi.advanceTimersByTime(5_000)
 			await settle()
 
 			expect(snackbar.open).toBe(false)
@@ -198,25 +198,25 @@ describe('Snackbar', () => {
 			const snackbar = fixture.component
 			const { shown } = await start(snackbar, { message: 'Being read', type: NotificationType.Info })
 
-			jasmine.clock().tick(2_000)
+			vi.advanceTimersByTime(2_000)
 			snackbar.dispatchEvent(new PointerEvent('pointerenter'))
 			expect(SnackbarStackController.expanded).toBe(true)
 
-			jasmine.clock().tick(20_000) // far beyond the five seconds it had left
+			vi.advanceTimersByTime(20_000) // far beyond the five seconds it had left
 			await settle()
 			expect(snackbar.open).toBe(true)
 
 			snackbar.dispatchEvent(new PointerEvent('pointerleave'))
-			jasmine.clock().tick(SnackbarStackController.collapseDelay)
+			vi.advanceTimersByTime(SnackbarStackController.collapseDelay)
 			await settle()
 			expect(SnackbarStackController.expanded).toBe(false)
 
 			// The three seconds it was holding, and not a millisecond more
-			jasmine.clock().tick(2_900)
+			vi.advanceTimersByTime(2_900)
 			await settle()
 			expect(snackbar.open).toBe(true)
 
-			jasmine.clock().tick(100)
+			vi.advanceTimersByTime(100)
 			await settle()
 
 			expect(snackbar.open).toBe(false)
@@ -227,8 +227,8 @@ describe('Snackbar', () => {
 	describe('stack', () => {
 		beforeEach(async () => {
 			await nextLayoutPass()
-			jasmine.clock().install()
-			jasmine.clock().mockDate()
+			vi.useFakeTimers()
+			vi.setSystemTime(new Date)
 		})
 
 		afterEach(async () => {
@@ -238,13 +238,13 @@ describe('Snackbar', () => {
 				snackbar.close()
 			}
 			await settle()
-			jasmine.clock().tick(1_000)
+			vi.advanceTimersByTime(1_000)
 			await settle()
-			jasmine.clock().uninstall()
+			vi.useRealTimers()
 		})
 
 		const layOut = async () => {
-			jasmine.clock().tick(100)
+			vi.advanceTimersByTime(100)
 			await settle()
 		}
 

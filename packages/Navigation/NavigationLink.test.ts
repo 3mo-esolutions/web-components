@@ -68,20 +68,20 @@ describe('NavigationLink', () => {
 		const link = createNavigationLink({ label: 'Home', icon: 'home', hidden: true, hasSeparator: true })
 
 		expect(link.icon).toBe('home')
-		expect(link.hidden).toBeTrue()
-		expect(link.hasSeparator).toBeTrue()
-		expect(createNavigationLink({ label: 'Home' }).hidden).toBeFalse()
+		expect(link.hidden).toBe(true)
+		expect(link.hasSeparator).toBe(true)
+		expect(createNavigationLink({ label: 'Home' }).hidden).toBe(false)
 	})
 
 	it('should be current while the router matches its component\'s url', () => {
 		const component = new TestNavigationTarget
 		const link = new NavigationLink({ component } as any)
 
-		expect(link.current).toBeFalse()
+		expect(link.current).toBe(false)
 
 		component.matchedUrl = true
 
-		expect(link.current).toBeTrue()
+		expect(link.current).toBe(true)
 	})
 
 	describe('link', () => {
@@ -93,8 +93,8 @@ describe('NavigationLink', () => {
 		})
 
 		it('should invoke both its own and the caller\'s invocation handlers on navigation', () => {
-			const ownInvocationHandler = jasmine.createSpy('invocationHandler')
-			const callerInvocationHandler = jasmine.createSpy('callerInvocationHandler')
+			const ownInvocationHandler = vi.fn()
+			const callerInvocationHandler = vi.fn()
 			const link = createNavigationLink({ label: 'Home', invocationHandler: ownInvocationHandler })
 			const container = renderTemplate(html`<button ${link.link({ invocationHandler: callerInvocationHandler })}>Home</button>`)
 
@@ -113,11 +113,11 @@ describe('NavigationGroup', () => {
 		it('should be hidden when the hidden option is set', () => {
 			const group = createGroup({ hidden: true, children: [createNavigationLink({ label: 'Home' })] })
 
-			expect(group.hidden).toBeTrue()
+			expect(group.hidden).toBe(true)
 		})
 
 		it('should be hidden when it has no children', () => {
-			expect(createGroup({ children: [] }).hidden).toBeTrue()
+			expect(createGroup({ children: [] }).hidden).toBe(true)
 		})
 
 		it('should be hidden when all children are hidden', () => {
@@ -128,7 +128,7 @@ describe('NavigationGroup', () => {
 				]
 			})
 
-			expect(group.hidden).toBeTrue()
+			expect(group.hidden).toBe(true)
 		})
 
 		it('should be visible while at least one child is visible', () => {
@@ -139,13 +139,13 @@ describe('NavigationGroup', () => {
 				]
 			})
 
-			expect(group.hidden).toBeFalse()
+			expect(group.hidden).toBe(false)
 		})
 	})
 
 	describe('current', () => {
 		it('should not be current while none of its children is', () => {
-			expect(createGroup({ children: [createNavigationLink({ label: 'Home' })] }).current).toBeFalse()
+			expect(createGroup({ children: [createNavigationLink({ label: 'Home' })] }).current).toBe(false)
 		})
 
 		it('should be current while one of its children is', () => {
@@ -158,7 +158,7 @@ describe('NavigationGroup', () => {
 				]
 			})
 
-			expect(group.current).toBeTrue()
+			expect(group.current).toBe(true)
 		})
 	})
 

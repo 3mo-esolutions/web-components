@@ -2,6 +2,7 @@ import { html } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { ContextMenu } from '@3mo/context-menu'
 import { type FetchableDataGridRefetchIconButton } from './FetchableDataGridRefetchIconButton.js'
+import './index.js'
 
 describe('FetchableDataGridRefetchIconButton', () => {
 	const tick = () => new Promise(resolve => setTimeout(resolve))
@@ -45,14 +46,14 @@ describe('FetchableDataGridRefetchIconButton', () => {
 
 	it('should mark itself and its icon as fetching while a fetch is pending', async () => {
 		const grid = () => fixture.component.renderRoot.querySelector('mo-grid')
-		expect(grid()?.hasAttribute('data-fetching')).toBeFalse()
-		expect(iconButton().hasAttribute('data-selected')).toBeFalse()
+		expect(grid()?.hasAttribute('data-fetching')).toBe(false)
+		expect(iconButton().hasAttribute('data-selected')).toBe(false)
 
 		fixture.component.fetching = true
 		await fixture.updateComplete
 
-		expect(grid()?.hasAttribute('data-fetching')).toBeTrue()
-		expect(iconButton().hasAttribute('data-selected')).toBeTrue()
+		expect(grid()?.hasAttribute('data-fetching')).toBe(true)
+		expect(iconButton().hasAttribute('data-selected')).toBe(true)
 	})
 
 	describe('auto-refetch options menu', () => {
@@ -82,7 +83,7 @@ describe('FetchableDataGridRefetchIconButton', () => {
 		afterEach(() => ContextMenu.openInstance?.close())
 
 		// Disabled: Firefox timeout when awaiting lazy context menu
-		xit('should offer Off and the predefined intervals (parameterized over 5, 10, 30, 60 seconds)', async () => {
+		it.skip('should offer Off and the predefined intervals (parameterized over 5, 10, 30, 60 seconds)', async () => {
 			const menu = await openMenu()
 
 			const texts = menu.items.map(item => item.textContent?.trim() ?? '')
@@ -94,7 +95,7 @@ describe('FetchableDataGridRefetchIconButton', () => {
 		})
 
 		// Disabled: Firefox timeout when awaiting lazy context menu
-		xit('should dispatch autoRefetchChange with the chosen interval and mark it selected', async () => {
+		it.skip('should dispatch autoRefetchChange with the chosen interval and mark it selected', async () => {
 			const dispatched = new Array<unknown>()
 			fixture.component.addEventListener('autoRefetchChange', event => dispatched.push((event as CustomEvent).detail ?? undefined))
 			const menu = await openMenu()
@@ -110,7 +111,7 @@ describe('FetchableDataGridRefetchIconButton', () => {
 		})
 
 		// Disabled: Firefox timeout when awaiting lazy context menu
-		xit('should turn auto-refetch off and dispatch autoRefetchChange with undefined via the Off option', async () => {
+		it.skip('should turn auto-refetch off and dispatch autoRefetchChange with undefined via the Off option', async () => {
 			fixture.component.autoRefetch = 10
 			await fixture.updateComplete
 			const dispatched = new Array<unknown>()

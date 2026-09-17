@@ -116,3 +116,6 @@ dist
 
 # Misc
 .DS_Store
+
+# Vitest failure screenshots and traces
+.vitest

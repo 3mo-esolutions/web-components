@@ -1,5 +1,6 @@
 import { Component, component, html, query, type HTMLTemplateResult } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
+import { type TestContext } from 'vitest'
 import { TooltipPlacement } from './TooltipPlacement.js'
 import { tooltip } from './TooltipDirective.js'
 import { type Tooltip } from './Tooltip.js'
@@ -45,20 +46,20 @@ describe('tooltip directive', () => {
 	/** Raises keyboard focus interest on the anchor. Headless Firefox delivers no focus events for a
 	 * programmatic focus(), so they are dispatched alongside; whether the focus counts as keyboard-driven
 	 * is the platform's ":focus-visible" verdict, requested explicitly. */
-	function raiseInterest(fixture: ComponentTestFixture<TestTooltipDirectiveHost>) {
+	function raiseInterest(fixture: ComponentTestFixture<TestTooltipDirectiveHost>, context: TestContext) {
 		const anchor = fixture.component.anchorElement
 		anchor.focus({ preventScroll: true, focusVisible: true } as FocusOptions)
 		if (!anchor.matches(':focus-visible')) {
-			pending('The platform did not apply the requested focus visibility, as headless Firefox does not in an inactive window')
+			context.skip('The platform did not apply the requested focus visibility, as headless Firefox does not in an inactive window')
 		}
 		anchor.dispatchEvent(new FocusEvent('focus', { composed: true }))
 		anchor.dispatchEvent(new FocusEvent('focusin', { bubbles: true, composed: true }))
 	}
 
-	async function open(fixture: ComponentTestFixture<TestTooltipDirectiveHost>) {
+	async function open(fixture: ComponentTestFixture<TestTooltipDirectiveHost>, context: TestContext) {
 		await fixture.component.updateComplete
 		await until(() => {
-			raiseInterest(fixture)
+			raiseInterest(fixture, context)
 			return !!fixture.component.tooltip
 		}, 'the directive has created and opened its tooltip')
 		const element = fixture.component.tooltip!
@@ -76,23 +77,23 @@ describe('tooltip directive', () => {
 		}
 	})
 
-	it('should lazily create a mo-tooltip anchored to the decorated element', async () => {
+	it('should lazily create a mo-tooltip anchored to the decorated element', async context => {
 		expect(plain.component.tooltip).toBeNull()
 
-		const element = await open(plain)
+		const element = await open(plain, context)
 
 		expect(element.anchor).toBe(plain.component.anchorElement)
-		expect(element.open).toBeTrue()
+		expect(element.open).toBe(true)
 	})
 
-	it('should render the given string or template content into the tooltip', async () => {
-		expect((await open(plain)).textContent?.trim()).toBe('Directive tooltip')
+	it('should render the given string or template content into the tooltip', async context => {
+		expect((await open(plain, context)).textContent?.trim()).toBe('Directive tooltip')
 
-		expect((await open(templated)).querySelector('span')?.textContent).toBe('Rich directive')
+		expect((await open(templated, context)).querySelector('span')?.textContent).toBe('Rich directive')
 	})
 
-	it('should apply the given placement', async () => {
-		const element = await open(placed)
+	it('should apply the given placement', async context => {
+		const element = await open(placed, context)
 
 		expect(element.placement).toBe(TooltipPlacement.BlockStart)
 		expect(element.renderRoot.querySelector('mo-popover')!.placement).toBe(TooltipPlacement.BlockStart)
@@ -176,10 +177,10 @@ describe('tooltip directive lazy materialization', () => {
 		expect(tooltipElement?.open).toBe(false)
 	})
 
-	it('should open the tooltip on keyboard focus', async () => {
+	it('should open the tooltip on keyboard focus', async context => {
 		fixture.component.button.focus({ preventScroll: true, focusVisible: true } as FocusOptions)
 		if (!fixture.component.button.matches(':focus-visible')) {
-			pending('The platform did not apply the requested focus visibility, as headless Firefox does not in an inactive window')
+			context.skip('The platform did not apply the requested focus visibility, as headless Firefox does not in an inactive window')
 		}
 		fixture.component.button.dispatchEvent(new FocusEvent('focusin', { bubbles: true }))
 

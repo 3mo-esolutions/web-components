@@ -45,7 +45,7 @@ describe('Popover', () => {
 		})
 
 		it('should toggle and dispatch openChange event when open changes', async () => {
-			const openChangeSpy = jasmine.createSpy()
+			const openChangeSpy = vi.fn()
 			generic.component.popoverElement.addEventListener<any>('openChange', (e: CustomEvent<boolean>) => openChangeSpy(e.detail))
 
 			generic.component.popoverElement.open = true
@@ -94,7 +94,7 @@ describe('Popover', () => {
 		})
 
 		it('should return focus to the anchor when closed', async () => {
-			spyOn(generic.component!, 'focus')
+			vi.spyOn(generic.component!, 'focus').mockReturnValue(undefined)
 			generic.component.popoverElement.open = true
 
 			await generic.updateComplete
@@ -109,7 +109,7 @@ describe('Popover', () => {
 		})
 
 		it('should not return focus to the anchor when a hint popover closes', async () => {
-			spyOn(generic.component!, 'focus')
+			vi.spyOn(generic.component!, 'focus').mockReturnValue(undefined)
 			generic.component.popoverElement.mode = 'hint'
 			generic.component.popoverElement.open = true
 
@@ -158,9 +158,9 @@ describe('Popover', () => {
 			expect(fixture.component.popoverElement.open).toBe(false)
 		})
 
-		it('should be togglable by a native "commandfor" invoker button, keeping the "open" property in sync', async () => {
+		it('should be togglable by a native "commandfor" invoker button, keeping the "open" property in sync', async context => {
 			if (!('commandForElement' in fixture.component.button)) {
-				pending('Invoker Commands API is not supported in this browser')
+				context.skip('Invoker Commands API is not supported in this browser')
 				return
 			}
 
@@ -300,7 +300,7 @@ describe('Popover', () => {
 
 		// Closed popovers listen on their anchor, not on the document
 		it('should consult the custom shouldOpen predicate instead of the default anchor check', async () => {
-			const shouldOpen = jasmine.createSpy('shouldOpen').and.returnValue(false)
+			const shouldOpen = vi.fn().mockReturnValue(false)
 			fixture.component.popoverElement.shouldOpen = shouldOpen
 
 			fixture.component.click()
@@ -309,7 +309,7 @@ describe('Popover', () => {
 			expect(shouldOpen).toHaveBeenCalled()
 			expect(fixture.component.popoverElement.open).toBe(false)
 
-			shouldOpen.and.returnValue(true)
+			shouldOpen.mockReturnValue(true)
 
 			fixture.component.click()
 			await fixture.updateComplete
@@ -436,7 +436,7 @@ describe('Popover', () => {
 			expect(Math.abs(rect.top - 300)).toBeLessThanOrEqual(1)
 		})
 
-		const guarded = PopoverCssAnchorPositionController.supported ? it : xit
+		const guarded = PopoverCssAnchorPositionController.supported ? it : it.skip
 
 		guarded('should remove its virtual anchor from the document when disconnected', async () => {
 			const virtualAnchors = () => document.querySelectorAll('mo-popover-virtual-anchor').length

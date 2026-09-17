@@ -26,7 +26,7 @@ describe('Throttler', () => {
 	})
 
 	it('should resolve only the first and the last call of a concurrent burst, leaving intermediate calls pending', async () => {
-		jasmine.clock().install()
+		vi.useFakeTimers()
 		try {
 			const throttler = new Throttler(100)
 			const settled = [false, false, false]
@@ -37,20 +37,20 @@ describe('Throttler', () => {
 
 			expect(settled).toEqual([true, false, false])
 
-			jasmine.clock().tick(100)
+			vi.advanceTimersByTime(100)
 			await Promise.resolve()
 			await Promise.resolve()
 
 			expect(settled).toEqual([true, false, true])
 
 			// The intermediate call's timer has been cleared by its successor, so it never settles.
-			jasmine.clock().tick(10_000)
+			vi.advanceTimersByTime(10_000)
 			await Promise.resolve()
 			await Promise.resolve()
 
 			expect(settled).toEqual([true, false, true])
 		} finally {
-			jasmine.clock().uninstall()
+			vi.useRealTimers()
 		}
 	})
 

@@ -1,12 +1,13 @@
 import { Component, component, html, query, state } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { observeMutation } from './observeMutation.js'
+import { type MockInstance } from 'vitest'
 
 @component('observe-mutation-test-component')
 class ObserveMutationTestComponent extends Component {
-	readonly childListCallback = jasmine.createSpy<MutationCallback>('childListCallback')
-	readonly attributesCallback = jasmine.createSpy<MutationCallback>('attributesCallback')
-	readonly slotCallback = jasmine.createSpy<MutationCallback>('slotCallback')
+	readonly childListCallback = vi.fn<MutationCallback>()
+	readonly attributesCallback = vi.fn<MutationCallback>()
+	readonly slotCallback = vi.fn<MutationCallback>()
 
 	@query('div#child-list') readonly childListElement!: HTMLDivElement
 	@query('div#attributes') readonly attributesElement!: HTMLDivElement
@@ -27,7 +28,7 @@ describe('observeMutation', () => {
 
 	const tick = () => new Promise(resolve => setTimeout(resolve, 10))
 
-	const recordsOfLastCall = (callback: jasmine.Spy<MutationCallback>) => callback.calls.mostRecent().args[0]
+	const recordsOfLastCall = (callback: MockInstance<MutationCallback>) => callback.mock.lastCall![0]
 
 	it('should invoke the callback when a child is added to the element', async () => {
 		const child = document.createElement('span')
@@ -58,7 +59,7 @@ describe('observeMutation', () => {
 	})
 
 	it('should invoke the callback on slotchange when used on a slot element', async () => {
-		const callCount = fixture.component.slotCallback.calls.count()
+		const callCount = fixture.component.slotCallback.mock.calls.length
 
 		fixture.component.append(document.createElement('span'))
 		await tick()
@@ -74,7 +75,7 @@ describe('observeMutation', () => {
 		await fixture.updateComplete
 		await tick()
 
-		const callCount = fixture.component.childListCallback.calls.count()
+		const callCount = fixture.component.childListCallback.mock.calls.length
 		element.append(document.createElement('span'))
 		await tick()
 

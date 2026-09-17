@@ -1,5 +1,5 @@
 import '@3mo/date-time'
-import { FieldDateTimePrecision } from './FieldDateTimePrecision'
+import { FieldDateTimePrecision } from './FieldDateTimePrecision.js'
 
 describe('FieldDateTimePrecision', () => {
 	describe('parse', () => {
@@ -20,12 +20,12 @@ describe('FieldDateTimePrecision', () => {
 
 	describe('formatOptions', () => {
 		it('should return the correct format options for each precision', () => {
-			expect(FieldDateTimePrecision.Year.formatOptions).toEqual(jasmine.objectContaining({ year: 'numeric', hourCycle: 'h23' }))
-			expect(FieldDateTimePrecision.Month.formatOptions).toEqual(jasmine.objectContaining({ year: 'numeric', month: '2-digit', hourCycle: 'h23' }))
-			expect(FieldDateTimePrecision.Day.formatOptions).toEqual(jasmine.objectContaining({ year: 'numeric', month: '2-digit', day: '2-digit', hourCycle: 'h23' }))
-			expect(FieldDateTimePrecision.Hour.formatOptions).toEqual(jasmine.objectContaining({ year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', hourCycle: 'h23' }))
-			expect(FieldDateTimePrecision.Minute.formatOptions).toEqual(jasmine.objectContaining({ year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }))
-			expect(FieldDateTimePrecision.Second.formatOptions).toEqual(jasmine.objectContaining({ year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' }))
+			expect(FieldDateTimePrecision.Year.formatOptions).toEqual(expect.objectContaining({ year: 'numeric', hourCycle: 'h23' }))
+			expect(FieldDateTimePrecision.Month.formatOptions).toEqual(expect.objectContaining({ year: 'numeric', month: '2-digit', hourCycle: 'h23' }))
+			expect(FieldDateTimePrecision.Day.formatOptions).toEqual(expect.objectContaining({ year: 'numeric', month: '2-digit', day: '2-digit', hourCycle: 'h23' }))
+			expect(FieldDateTimePrecision.Hour.formatOptions).toEqual(expect.objectContaining({ year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', hourCycle: 'h23' }))
+			expect(FieldDateTimePrecision.Minute.formatOptions).toEqual(expect.objectContaining({ year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }))
+			expect(FieldDateTimePrecision.Second.formatOptions).toEqual(expect.objectContaining({ year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' }))
 		})
 	})
 

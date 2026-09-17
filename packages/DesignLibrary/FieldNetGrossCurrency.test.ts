@@ -2,6 +2,7 @@ import { ComponentTestFixture } from '@a11d/lit-testing'
 import { Currency } from '@3mo/localization'
 import { expectFieldPropertyTunnelsToInput } from '../Field/InputFieldComponent.test.js'
 import { type FieldNetGrossCurrency } from './FieldNetGrossCurrency.js'
+import './index.js'
 
 describe('FieldNetGrossCurrency', () => {
 	const fixture = new ComponentTestFixture<FieldNetGrossCurrency>('mo-field-net-gross-currency')
@@ -11,7 +12,7 @@ describe('FieldNetGrossCurrency', () => {
 	const symbolElement = () => fixture.component.renderRoot.querySelector('mo-flex[slot=end] > div')!
 
 	const spyOnChange = () => {
-		const change = jasmine.createSpy('change')
+		const change = vi.fn()
 		fixture.component.addEventListener<any>('change', (e: CustomEvent<NetGrossCurrency>) => change(e.detail))
 		return change
 	}
@@ -33,12 +34,12 @@ describe('FieldNetGrossCurrency', () => {
 		})
 
 		it('should adopt the gross flag from an assigned value tuple', async () => {
-			expect(fixture.component.isGross).toBeFalse()
+			expect(fixture.component.isGross).toBe(false)
 
 			fixture.component.value = [50, true]
 			await fixture.updateComplete
 
-			expect(fixture.component.isGross).toBeTrue()
+			expect(fixture.component.isGross).toBe(true)
 		})
 
 		for (const [description, text, amount] of [
@@ -52,21 +53,21 @@ describe('FieldNetGrossCurrency', () => {
 				fixture.component.inputElement.dispatchEvent(new Event('change'))
 
 				expect(change).toHaveBeenCalledTimes(1)
-				expect(change.calls.mostRecent().args[0][0]).toBe(amount)
+				expect(change.mock.lastCall![0][0]).toBe(amount)
 			})
 		}
 	})
 
 	describe('net/gross switcher', () => {
 		it('should mark the button of the active side as selected', async () => {
-			expect(button('N').hasAttribute('data-selected')).toBeTrue()
-			expect(button('B').hasAttribute('data-selected')).toBeFalse()
+			expect(button('N').hasAttribute('data-selected')).toBe(true)
+			expect(button('B').hasAttribute('data-selected')).toBe(false)
 
 			fixture.component.value = [100, true]
 			await fixture.updateComplete
 
-			expect(button('N').hasAttribute('data-selected')).toBeFalse()
-			expect(button('B').hasAttribute('data-selected')).toBeTrue()
+			expect(button('N').hasAttribute('data-selected')).toBe(false)
+			expect(button('B').hasAttribute('data-selected')).toBe(true)
 		})
 
 		for (const [side, isGross] of [['B', false], ['N', true]] as const) {
@@ -78,7 +79,7 @@ describe('FieldNetGrossCurrency', () => {
 				button(side).click()
 
 				expect(change).toHaveBeenCalledTimes(1)
-				expect(change.calls.mostRecent().args[0][0]).toBe(100)
+				expect(change.mock.lastCall![0][0]).toBe(100)
 			})
 		}
 

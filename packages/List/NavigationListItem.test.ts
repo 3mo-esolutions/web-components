@@ -9,10 +9,10 @@ describe('NavigationListItem', () => {
 	`)
 
 	it('should return selected based on data-router-selected attribute', () => {
-		expect(fixture.component.selected).toBeFalse()
+		expect(fixture.component.selected).toBe(false)
 
 		fixture.component.setAttribute('data-router-selected', '')
 
-		expect(fixture.component.selected).toBeTrue()
+		expect(fixture.component.selected).toBe(true)
 	})
 })

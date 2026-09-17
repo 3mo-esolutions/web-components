@@ -7,7 +7,7 @@ describe('Enqueuer', () => {
 
 		const promiseResult = enqueuer.enqueue(promise)
 
-		await expectAsync(promiseResult).toBeResolvedTo('result')
+		await expect(promiseResult).resolves.toEqual('result')
 	})
 
 	it('should reject a superseded enqueue with an EnqueuerError carrying the discarded result', async () => {
@@ -47,6 +47,6 @@ describe('Enqueuer', () => {
 
 		expect(secondResult).toBe('second')
 		await new Promise(resolve => setTimeout(resolve, 20))
-		expect(firstSettled).toBeFalse()
+		expect(firstSettled).toBe(false)
 	})
 })

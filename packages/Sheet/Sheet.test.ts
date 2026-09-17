@@ -41,7 +41,7 @@ describe('Sheet', () => {
 	})
 
 	it('should not dispatch openChange for the state it is rendered with', async () => {
-		const openChange = jasmine.createSpy('openChange')
+		const openChange = vi.fn()
 		fixture.component.addEventListener('openChange', openChange)
 		await fixture.updateComplete
 

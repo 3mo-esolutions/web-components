@@ -274,7 +274,7 @@ describe('TreeController', () => {
 		})
 
 		it('should click the item on Enter', () => {
-			const clicked = spyOn(item('Documents'), 'click')
+			const clicked = vi.spyOn(item('Documents'), 'click').mockReturnValue(undefined)
 
 			press('Enter')
 

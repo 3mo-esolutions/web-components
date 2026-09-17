@@ -1,10 +1,11 @@
 import { component, Component, html, query, render, state } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { observeIntersection } from './observeIntersection.js'
+import { type MockInstance } from 'vitest'
 
 @component('observe-intersection-test-component')
 class ObserveIntersectionTestComponent extends Component {
-	readonly callback = jasmine.createSpy()
+	readonly callback = vi.fn()
 
 	@query('div#with-observer') readonly elementWithObserver!: HTMLDivElement
 	@query('div#without-observer') readonly elementWithoutObserver!: HTMLDivElement
@@ -20,8 +21,8 @@ class ObserveIntersectionTestComponent extends Component {
 }
 
 interface FakeIntersectionObserver {
-	readonly observe: jasmine.Spy
-	readonly disconnect: jasmine.Spy
+	readonly observe: MockInstance
+	readonly disconnect: MockInstance
 	readonly callback: IntersectionObserverCallback
 }
 
@@ -33,9 +34,9 @@ describe('observeIntersection', () => {
 		originalIntersectionObserver = window.IntersectionObserver
 		window.IntersectionObserver = class FakeIntersectionObserver {
 			constructor(readonly callback: IntersectionObserverCallback) { currentObserver = this }
-			observe = jasmine.createSpy('observe')
-			unobserve = jasmine.createSpy('unobserve')
-			disconnect = jasmine.createSpy('disconnect')
+			observe = vi.fn()
+			unobserve = vi.fn()
+			disconnect = vi.fn()
 		} as unknown as typeof IntersectionObserver
 	})
 
@@ -44,7 +45,7 @@ describe('observeIntersection', () => {
 	const fixture = new ComponentTestFixture(() => new ObserveIntersectionTestComponent)
 
 	it('should register an IntersectionObserver on the element', () => {
-		expect(currentObserver.observe).toHaveBeenCalledOnceWith(fixture.component.elementWithObserver)
+		expect(currentObserver.observe).toHaveBeenCalledExactlyOnceWith(fixture.component.elementWithObserver)
 		expect(currentObserver.observe).not.toHaveBeenCalledWith(fixture.component.elementWithoutObserver)
 	})
 
@@ -57,7 +58,7 @@ describe('observeIntersection', () => {
 	})
 
 	it('should disconnect the observer when the element is disconnected', async () => {
-		const wasCalledTimes = currentObserver.disconnect.calls.count()
+		const wasCalledTimes = currentObserver.disconnect.mock.calls.length
 
 		fixture.component.shallRender = false
 		await fixture.updateComplete
@@ -69,10 +70,10 @@ describe('observeIntersection', () => {
 		const container = document.createElement('div')
 		document.body.appendChild(container)
 		try {
-			const part = render(html`<div ${observeIntersection(jasmine.createSpy())}></div>`, container)
+			const part = render(html`<div ${observeIntersection(vi.fn())}></div>`, container)
 			const element = container.firstElementChild!
 			const observerWhileConnected = currentObserver
-			expect(observerWhileConnected.observe).toHaveBeenCalledOnceWith(element)
+			expect(observerWhileConnected.observe).toHaveBeenCalledExactlyOnceWith(element)
 
 			part.setConnected(false)
 			expect(observerWhileConnected.disconnect).toHaveBeenCalledTimes(1)
@@ -80,7 +81,7 @@ describe('observeIntersection', () => {
 			part.setConnected(true)
 
 			expect(currentObserver).not.toBe(observerWhileConnected)
-			expect(currentObserver.observe).toHaveBeenCalledOnceWith(element)
+			expect(currentObserver.observe).toHaveBeenCalledExactlyOnceWith(element)
 		} finally {
 			container.remove()
 		}

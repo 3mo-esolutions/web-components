@@ -35,7 +35,7 @@ for (const variant of variants) {
 			await fixture.updateComplete
 		}
 		const dispatched = (dispatcher: 'change' | 'navigate') =>
-			(fixture.component[dispatcher].dispatch as jasmine.Spy).calls.mostRecent().args[0] as DateTime
+			vi.mocked(fixture.component[dispatcher].dispatch).mock.lastCall![0] as DateTime
 
 		it('should render one item per unit', () => {
 			expect(items().length).toBe(variant.count)
@@ -54,7 +54,7 @@ for (const variant of variants) {
 		it('should dispatch change with the value carrying the picked unit when an item is selected', async () => {
 			fixture.component.value = navigationDate
 			await settle()
-			spyOn(fixture.component.change, 'dispatch')
+			vi.spyOn(fixture.component.change, 'dispatch').mockReturnValue(undefined)
 
 			items()[7]!.click()
 
@@ -62,7 +62,7 @@ for (const variant of variants) {
 		})
 
 		it('should base the change on the current instant when no value is set', () => {
-			spyOn(fixture.component.change, 'dispatch')
+			vi.spyOn(fixture.component.change, 'dispatch').mockReturnValue(undefined)
 
 			items()[7]!.click()
 
@@ -102,7 +102,7 @@ for (const variant of variants) {
 				await settle()
 				items()[9]!.scrollIntoView({ block: 'center', behavior: 'instant' })
 				await new Promise(resolve => setTimeout(resolve, 150))
-				spyOn(fixture.component.navigate, 'dispatch')
+				vi.spyOn(fixture.component.navigate, 'dispatch').mockReturnValue(undefined)
 
 				scroller().dispatchEvent(new MouseEvent('mouseenter'))
 				scroller().dispatchEvent(new Event('scrollend'))
@@ -112,7 +112,11 @@ for (const variant of variants) {
 
 			it('should not dispatch navigate on programmatic scrolling', async () => {
 				await settle()
-				spyOn(fixture.component.navigate, 'dispatch')
+				// A scroller the real pointer happens to rest on reads as user-driven, and leaving it is debounced.
+				scroller().dispatchEvent(new MouseEvent('mouseenter'))
+				scroller().dispatchEvent(new MouseEvent('mouseleave'))
+				await new Promise(resolve => setTimeout(resolve, 150))
+				vi.spyOn(fixture.component.navigate, 'dispatch').mockReturnValue(undefined)
 
 				items()[20]!.scrollIntoView({ block: 'center', behavior: 'instant' })
 				await new Promise(resolve => setTimeout(resolve, 250))

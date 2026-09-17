@@ -39,10 +39,10 @@ describe('AccordionItem', () => {
 		expect(summary().textContent).toContain('Shipping')
 	})
 
-	it('should let the browser interpolate the height of the content, which is what animates it', () => {
+	it('should let the browser interpolate the height of the content, which is what animates it', context => {
 		if (CSS.supports('interpolate-size', 'allow-keywords') === false) {
 			// A browser which cannot interpolate a size keyword opens at once, which is the intended way for it to fall short.
-			pending('"interpolate-size" is not supported')
+			context.skip('"interpolate-size" is not supported')
 		}
 
 		expect(getComputedStyle(fixture.component.detailsElement).getPropertyValue('interpolate-size')).toBe('allow-keywords')
@@ -72,7 +72,7 @@ describe('AccordionItem', () => {
 	})
 
 	it('should dispatch "openChange" with the new state, but not for the state it is rendered with', async () => {
-		const handler = jasmine.createSpy('openChange')
+		const handler = vi.fn()
 		fixture.component.addEventListener('openChange', handler)
 
 		expect(handler).not.toHaveBeenCalled()
@@ -81,7 +81,7 @@ describe('AccordionItem', () => {
 		await fixture.updateComplete
 
 		expect(handler).toHaveBeenCalledTimes(1)
-		expect(handler.calls.mostRecent().args[0].detail).toBe(true)
+		expect(handler.mock.lastCall![0].detail).toBe(true)
 	})
 
 	it('should give the "heading" slot precedence over the "heading" attribute', () => {
@@ -158,7 +158,7 @@ describe('Accordion', () => {
 	})
 
 	it('should adopt the value of the item which opens and dispatch "change" once', async () => {
-		const handler = jasmine.createSpy('change')
+		const handler = vi.fn()
 		fixture.component.addEventListener('change', handler)
 
 		item('payment').open = true
@@ -166,7 +166,7 @@ describe('Accordion', () => {
 
 		expect(fixture.component.value).toBe('payment')
 		expect(handler).toHaveBeenCalledTimes(1)
-		expect(handler.calls.mostRecent().args[0].detail).toBe('payment')
+		expect(handler.mock.lastCall![0].detail).toBe('payment')
 	})
 
 	it('should open the item its value names', async () => {
@@ -182,7 +182,7 @@ describe('Accordion', () => {
 	})
 
 	it('should not dispatch "change" for a value it was given itself', async () => {
-		const handler = jasmine.createSpy('change')
+		const handler = vi.fn()
 		fixture.component.addEventListener('change', handler)
 
 		fixture.component.value = 'payment'

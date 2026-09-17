@@ -30,26 +30,26 @@ describe('SplitPageHost', () => {
 	}
 
 	it('should reflect "isContentOpen" as an attribute', async () => {
-		expect(fixture.component.hasAttribute('isContentOpen')).toBeFalse()
+		expect(fixture.component.hasAttribute('isContentOpen')).toBe(false)
 
 		fixture.component.isContentOpen = true
 		await fixture.updateComplete
 
-		expect(fixture.component.hasAttribute('isContentOpen')).toBeTrue()
+		expect(fixture.component.hasAttribute('isContentOpen')).toBe(true)
 
 		fixture.component.isContentOpen = false
 		await fixture.updateComplete
 
-		expect(fixture.component.hasAttribute('isContentOpen')).toBeFalse()
+		expect(fixture.component.hasAttribute('isContentOpen')).toBe(false)
 	})
 
 	it('should open the content once "contentPageHeading" is set', async () => {
-		expect(fixture.component.isContentOpen).toBeFalse()
+		expect(fixture.component.isContentOpen).toBe(false)
 
 		fixture.component.contentPageHeading = 'Reports'
 		await fixture.updateComplete
 
-		expect(fixture.component.isContentOpen).toBeTrue()
+		expect(fixture.component.isContentOpen).toBe(true)
 	})
 
 	it('should adopt the heading a hosted page announces and open the content', async () => {
@@ -57,7 +57,7 @@ describe('SplitPageHost', () => {
 		await fixture.updateComplete
 
 		expect(fixture.component.contentPageHeading).toBe('Reports')
-		expect(fixture.component.isContentOpen).toBeTrue()
+		expect(fixture.component.isContentOpen).toBe(true)
 	})
 
 	it('should render the current heading in the content toolbar', async () => {
@@ -79,9 +79,9 @@ describe('SplitPageHost', () => {
 	})
 
 	describe('above the 900px breakpoint', () => {
-		it('should place the sidebar beside the content', async () => {
+		it('should place the sidebar beside the content', async context => {
 			if (isBelowBreakpoint()) {
-				pending('the viewport is below the 900px breakpoint')
+				context.skip('the viewport is below the 900px breakpoint')
 			}
 			await settle()
 
@@ -90,9 +90,9 @@ describe('SplitPageHost', () => {
 			expect(sidebar().getBoundingClientRect().right).toBeLessThanOrEqual(content().getBoundingClientRect().left + 1)
 		})
 
-		it('should size the sidebar via "--mo-split-page-host-sidebar-width"', async () => {
+		it('should size the sidebar via "--mo-split-page-host-sidebar-width"', async context => {
 			if (isBelowBreakpoint()) {
-				pending('the viewport is below the 900px breakpoint')
+				context.skip('the viewport is below the 900px breakpoint')
 			}
 			fixture.component.style.setProperty('--mo-split-page-host-sidebar-width', '250px')
 			await settle()
@@ -100,9 +100,9 @@ describe('SplitPageHost', () => {
 			expect(sidebar().getBoundingClientRect().width).toBeCloseTo(250, -1)
 		})
 
-		it('should not show the content toolbar', () => {
+		it('should not show the content toolbar', context => {
 			if (isBelowBreakpoint()) {
-				pending('the viewport is below the 900px breakpoint')
+				context.skip('the viewport is below the 900px breakpoint')
 			}
 
 			expect(getComputedStyle(contentToolbar()).display).toBe('none')
@@ -110,9 +110,9 @@ describe('SplitPageHost', () => {
 	})
 
 	describe('below the 900px breakpoint', () => {
-		it('should show only the sidebar while no content is open', async () => {
+		it('should show only the sidebar while no content is open', async context => {
 			if (!isBelowBreakpoint()) {
-				pending('the viewport is above the 900px breakpoint')
+				context.skip('the viewport is above the 900px breakpoint')
 			}
 			await settle()
 
@@ -120,9 +120,9 @@ describe('SplitPageHost', () => {
 			expect(sidebar().getBoundingClientRect().width).toBeCloseTo(width, -1)
 		})
 
-		it('should show only the content once it is open', async () => {
+		it('should show only the content once it is open', async context => {
 			if (!isBelowBreakpoint()) {
-				pending('the viewport is above the 900px breakpoint')
+				context.skip('the viewport is above the 900px breakpoint')
 			}
 
 			await open()
@@ -131,9 +131,9 @@ describe('SplitPageHost', () => {
 			expect(content().getBoundingClientRect().width).toBeCloseTo(width, -1)
 		})
 
-		it('should show the content toolbar with the back button', async () => {
+		it('should show the content toolbar with the back button', async context => {
 			if (!isBelowBreakpoint()) {
-				pending('the viewport is above the 900px breakpoint')
+				context.skip('the viewport is above the 900px breakpoint')
 			}
 
 			await open()

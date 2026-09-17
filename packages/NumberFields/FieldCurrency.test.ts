@@ -81,7 +81,7 @@ describe('FieldCurrency', () => {
 		})
 
 		it('should focus the input when the symbol is clicked', () => {
-			spyOn(fixture.component, 'focus')
+			vi.spyOn(fixture.component, 'focus').mockResolvedValue(undefined)
 
 			symbolElement().click()
 

@@ -66,7 +66,7 @@ describe('popover directive', () => {
 		afterEach(() => container.remove())
 
 		// Disabled: requires idle callback scheduling not reachable under test bundle load
-		xit('should create the popover lazily on idle rather than during render', async () => {
+		it.skip('should create the popover lazily on idle rather than during render', async () => {
 			let templateCalls = 0
 			const template = () => {
 				templateCalls++
@@ -101,19 +101,19 @@ describe('popover directive', () => {
 		})
 
 		// Disabled: requires idle callback scheduling not reachable under test bundle load
-		xit('should set the directive\'s element as the popover\'s anchor', () => {
+		it.skip('should set the directive\'s element as the popover\'s anchor', () => {
 			expect(fixture.component.created[0]!.anchor).toBe(fixture.component.anchorElement)
 		})
 
 		// Disabled: requires idle callback scheduling not reachable under test bundle load
-		xit('should not attach the popover to the document until it opens for the first time', () => {
+		it.skip('should not attach the popover to the document until it opens for the first time', () => {
 			expect(fixture.component.created.length).toBe(1)
-			expect(fixture.component.created[0]!.isConnected).toBeFalse()
+			expect(fixture.component.created[0]!.isConnected).toBe(false)
 			expect(getPopoverHosts().length).toBe(0)
 		})
 
 		// Disabled: requires idle callback scheduling not reachable under test bundle load
-		xit('should append the popover to a mo-popover-host in the anchor\'s root when it opens', () => {
+		it.skip('should append the popover to a mo-popover-host in the anchor\'s root when it opens', () => {
 			const created = fixture.component.created[0]!
 
 			created.setOpen(true)
@@ -123,7 +123,7 @@ describe('popover directive', () => {
 		})
 
 		// Disabled: requires idle callback scheduling not reachable under test bundle load
-		xit('should reuse a single mo-popover-host per root for subsequent popovers', async () => {
+		it.skip('should reuse a single mo-popover-host per root for subsequent popovers', async () => {
 			fixture.component.second = true
 			await fixture.updateComplete
 			await until(() => fixture.component.created.length > 1, 'the second directive has created its popover')
@@ -134,11 +134,11 @@ describe('popover directive', () => {
 			}
 
 			expect(getPopoverHosts().length).toBe(1)
-			expect(fixture.component.created.every(created => created.parentElement === getPopoverHosts()[0]!)).toBeTrue()
+			expect(fixture.component.created.every(created => created.parentElement === getPopoverHosts()[0]!)).toBe(true)
 		})
 
 		// Disabled: requires idle callback scheduling not reachable under test bundle load
-		xit('should scope the host to the anchor\'s shadow root rather than the document', () => {
+		it.skip('should scope the host to the anchor\'s shadow root rather than the document', () => {
 			const documentHosts = document.body.querySelectorAll('mo-popover-host').length
 
 			fixture.component.created[0]!.setOpen(true)
@@ -148,7 +148,7 @@ describe('popover directive', () => {
 		})
 
 		// Disabled: requires idle callback scheduling not reachable under test bundle load
-		xit('should remove the popover from the host when the directive\'s element disconnects', () => {
+		it.skip('should remove the popover from the host when the directive\'s element disconnects', () => {
 			const created = fixture.component.created[0]!
 			created.setOpen(true)
 			expect(created.parentElement).toBe(getPopoverHosts()[0]!)
@@ -160,7 +160,7 @@ describe('popover directive', () => {
 		})
 
 		// Disabled: requires idle callback scheduling not reachable under test bundle load
-		xit('should re-create the popover when the directive\'s element reconnects', async () => {
+		it.skip('should re-create the popover when the directive\'s element reconnects', async () => {
 			const first = fixture.component.created[0]!
 			fixture.component.remove()
 

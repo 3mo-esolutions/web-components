@@ -47,7 +47,7 @@ describe('Navigation', () => {
 
 		it('should fall back to the drawer once they no longer fit', async () => {
 			await settle(fixture.component)
-			spyOnProperty(fixture.component.navigationBar!, 'hasOverflow', 'get').and.returnValue(true)
+			vi.spyOn(fixture.component.navigationBar!, 'hasOverflow', 'get').mockReturnValue(true)
 
 			fixture.component.requestUpdate()
 			await fixture.component.updateComplete
@@ -58,7 +58,7 @@ describe('Navigation', () => {
 		it('should take the bar verdict when the bar reaches it, since nothing else resized', async () => {
 			await settle(fixture.component)
 			const bar = fixture.component.navigationBar!
-			spyOnProperty(bar, 'hasOverflow', 'get').and.returnValue(true)
+			vi.spyOn(bar, 'hasOverflow', 'get').mockReturnValue(true)
 
 			bar.requestUpdate()
 			await bar.updateComplete
@@ -69,7 +69,7 @@ describe('Navigation', () => {
 
 		it('should keep the bar laid out while another presentation is shown, so that it can fit again', async () => {
 			await settle(fixture.component)
-			spyOnProperty(fixture.component.navigationBar!, 'hasOverflow', 'get').and.returnValue(true)
+			vi.spyOn(fixture.component.navigationBar!, 'hasOverflow', 'get').mockReturnValue(true)
 			fixture.component.requestUpdate()
 			await fixture.component.updateComplete
 
@@ -104,14 +104,14 @@ describe('Navigation', () => {
 		it('should overlay the rail\'s panel while there is no room for both it and the page', async () => {
 			await settleUntil(fixture.component, () => fixture.component.presentation === 'rail')
 
-			expect(fixture.component.navigationRail!.docked).toBeFalse()
+			expect(fixture.component.navigationRail!.docked).toBe(false)
 		})
 
 		it('should dock the rail\'s panel once there is room for both', async () => {
 			fixture.component.style.width = '900px'
 			await settleUntil(fixture.component, () => fixture.component.navigationRail?.docked === true)
 
-			expect(fixture.component.navigationRail!.docked).toBeTrue()
+			expect(fixture.component.navigationRail!.docked).toBe(true)
 		})
 
 		it('should fall back to the drawer once the page would keep no room', async () => {
@@ -131,14 +131,14 @@ describe('Navigation', () => {
 			fixture.component.menuButton!.click()
 			await fixture.updateComplete
 
-			expect(fixture.component.drawerOpen).toBeTrue()
+			expect(fixture.component.drawerOpen).toBe(true)
 		})
 
 		it('should return focus to the menu button when it closes', async () => {
 			await settle(fixture.component)
 			fixture.component.drawerOpen = true
 			await fixture.updateComplete
-			const focusSpy = spyOn(fixture.component.menuButton!, 'focus')
+			const focusSpy = vi.spyOn(fixture.component.menuButton!, 'focus').mockReturnValue(undefined)
 
 			fixture.component.drawerOpen = false
 			await fixture.updateComplete
@@ -168,7 +168,7 @@ describe('Navigation', () => {
 
 		it('should hand focus to the presentation being shown', async () => {
 			await settle(fixture.component)
-			const focusSpy = spyOn(fixture.component.navigationBar!, 'focus')
+			const focusSpy = vi.spyOn(fixture.component.navigationBar!, 'focus').mockReturnValue(undefined)
 
 			window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Alt', bubbles: true, cancelable: true, altKey: true }))
 
@@ -179,7 +179,7 @@ describe('Navigation', () => {
 			await settle(fixture.component)
 			const input = document.createElement('input')
 			document.body.appendChild(input)
-			const focusSpy = spyOn(fixture.component.navigationBar!, 'focus')
+			const focusSpy = vi.spyOn(fixture.component.navigationBar!, 'focus').mockReturnValue(undefined)
 
 			input.focus()
 			input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Alt', bubbles: true, cancelable: true, altKey: true }))

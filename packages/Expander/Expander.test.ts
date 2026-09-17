@@ -86,7 +86,7 @@ describe('Expander', () => {
 		})
 
 		it('should open when the summary is clicked and dispatch "openChange"', async () => {
-			const handler = jasmine.createSpy('openChange')
+			const handler = vi.fn()
 			fixture.component.addEventListener('openChange', handler)
 
 			await click()
@@ -94,12 +94,12 @@ describe('Expander', () => {
 			expect(fixture.component.detailsElement.open).toBe(true)
 			expect(fixture.component.open).toBe(true)
 			expect(handler).toHaveBeenCalledTimes(1)
-			expect(handler.calls.mostRecent().args[0].detail).toBe(true)
+			expect(handler.mock.lastCall![0].detail).toBe(true)
 		})
 
 		// BUG: programmatic setOpen dispatches openChange
-		xit('should not dispatch "openChange" for a programmatically set state', async () => {
-			const handler = jasmine.createSpy('openChange')
+		it.skip('should not dispatch "openChange" for a programmatically set state', async () => {
+			const handler = vi.fn()
 			fixture.component.addEventListener('openChange', handler)
 
 			fixture.component.open = true

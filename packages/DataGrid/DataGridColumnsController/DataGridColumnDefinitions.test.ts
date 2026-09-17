@@ -73,7 +73,7 @@ describe('DataGridColumnDefinitions', () => {
 
 	describe('update', () => {
 		it('should notify when a source is assigned', () => {
-			const updated = jasmine.createSpy()
+			const updated = vi.fn()
 			const definitions = new DataGridColumnDefinitions<Person>({ updated })
 
 			definitions.extracted = [column('id')]
@@ -82,7 +82,7 @@ describe('DataGridColumnDefinitions', () => {
 		})
 
 		it('should not notify while being constructed', () => {
-			const updated = jasmine.createSpy()
+			const updated = vi.fn()
 
 			new DataGridColumnDefinitions<Person>({ updated })
 
@@ -90,7 +90,7 @@ describe('DataGridColumnDefinitions', () => {
 		})
 
 		it('should compose anew and notify when updated explicitly, e.g. after the data changed', () => {
-			const updated = jasmine.createSpy()
+			const updated = vi.fn()
 			let generated = new Array<DataGridColumn<Person>>()
 			const definitions = new DataGridColumnDefinitions<Person>({ generate: () => generated, updated })
 			expect(definitions.length).toBe(0)
@@ -129,11 +129,11 @@ describe('DataGridColumnDefinitions', () => {
 			expect(definitions.findIndex(c => c.dataSelector === 'name')).toBe(1)
 			expect(definitions.filter(c => c.dataSelector === 'id').length).toBe(1)
 			expect(definitions.map(c => c.dataSelector)).toEqual(['id', 'name'])
-			expect(definitions.some(c => c.dataSelector === 'name')).toBeTrue()
-			expect(definitions.every(c => c.hidden === false)).toBeTrue()
+			expect(definitions.some(c => c.dataSelector === 'name')).toBe(true)
+			expect(definitions.every(c => c.hidden === false)).toBe(true)
 			expect(definitions.at(-1)?.dataSelector).toBe('name')
 			expect(definitions.slice(1).map(c => c.dataSelector)).toEqual(['name'])
-			expect(definitions.includes(definitions[0]!)).toBeTrue()
+			expect(definitions.includes(definitions[0]!)).toBe(true)
 			expect(definitions.indexOf(definitions[1]!)).toBe(1)
 		})
 

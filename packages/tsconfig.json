@@ -1,8 +1,10 @@
 {
 	"extends": "../tsconfig.base.json",
 	"compilerOptions": {
-		"types": ["jasmine"],
-		"noEmit": true
+		"types": ["vitest/globals"],
+		"noEmit": true,
+		"allowImportingTsExtensions": true,
+		"allowJs": true
 	},
 	"include": [
 		"**/*.test.ts"

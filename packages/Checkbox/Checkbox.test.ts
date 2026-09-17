@@ -114,7 +114,7 @@ describe('Checkbox', () => {
 			})
 
 			it('should not dispatch "change" when "selected" is set programmatically', async () => {
-				const spy = jasmine.createSpy('change')
+				const spy = vi.fn()
 				programmaticFixture.component.addEventListener('change', spy)
 
 				programmaticFixture.component.selected = true
@@ -130,7 +130,7 @@ describe('Checkbox', () => {
 
 			describe('via md-checkbox', () => {
 				it('true', async () => {
-					spyOn(fixture.component.change, 'dispatch')
+					vi.spyOn(fixture.component.change, 'dispatch').mockReturnValue(undefined)
 
 					fixture.mdCheckbox!.checked = true
 					fixture.mdCheckbox!.indeterminate = false
@@ -142,7 +142,7 @@ describe('Checkbox', () => {
 				})
 
 				it('false', async () => {
-					spyOn(fixture.component.change, 'dispatch')
+					vi.spyOn(fixture.component.change, 'dispatch').mockReturnValue(undefined)
 
 					fixture.mdCheckbox!.checked = false
 					fixture.mdCheckbox!.indeterminate = false
@@ -154,7 +154,7 @@ describe('Checkbox', () => {
 				})
 
 				it('indeterminate', async () => {
-					spyOn(fixture.component.change, 'dispatch')
+					vi.spyOn(fixture.component.change, 'dispatch').mockReturnValue(undefined)
 
 					fixture.mdCheckbox!.checked = false
 					fixture.mdCheckbox!.indeterminate = true
@@ -171,7 +171,7 @@ describe('Checkbox', () => {
 				const indeterminateFixture = new CheckboxTestFixture(html`<mo-checkbox selected='indeterminate'></mo-checkbox>`)
 
 				it('should select and dispatch "change" exactly once when the md-checkbox is clicked', async () => {
-					const spy = jasmine.createSpy('change')
+					const spy = vi.fn()
 					clickFixture.component.addEventListener('change', spy)
 
 					clickFixture.mdCheckbox!.click()
@@ -179,7 +179,7 @@ describe('Checkbox', () => {
 
 					clickFixture.expectSelected()
 					expect(spy).toHaveBeenCalledTimes(1)
-					expect(spy.calls.mostRecent().args[0].detail).toBe(true)
+					expect(spy.mock.lastCall![0].detail).toBe(true)
 				})
 
 				it('should deselect when clicked while selected', async () => {

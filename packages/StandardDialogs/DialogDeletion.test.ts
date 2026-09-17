@@ -2,6 +2,7 @@ import { ComponentTestFixture } from '@a11d/lit-testing'
 import { DialogCancelledError, NotificationComponent } from '@a11d/lit-application'
 import { DialogDeletion } from './DialogDeletion.js'
 import './index.js'
+import { type Mock } from 'vitest'
 
 describe('DialogDeletion', () => {
 	/**
@@ -60,9 +61,9 @@ describe('DialogDeletion', () => {
 	})
 
 	describe('confirmation', () => {
-		let deletionAction: jasmine.Spy
+		let deletionAction: Mock<() => void | PromiseLike<void>>
 
-		beforeEach(() => deletionAction = jasmine.createSpy('deletionAction'))
+		beforeEach(() => { deletionAction = vi.fn() })
 
 		const fixture = new ComponentTestFixture(() => new DialogDeletion({ label: 'Invoice 42', deletionAction }))
 
@@ -73,7 +74,7 @@ describe('DialogDeletion', () => {
 
 			fixture.component.primaryActionElement?.click()
 
-			await expectAsync(confirmationPromise).toBeResolved()
+			await expect(confirmationPromise).resolves.not.toThrow()
 			expect(deletionAction).toHaveBeenCalledTimes(1)
 		})
 
@@ -82,15 +83,15 @@ describe('DialogDeletion', () => {
 
 			fixture.component.cancellationActionElement?.click()
 
-			await expectAsync(confirmationPromise).toBeRejectedWithError(DialogCancelledError)
+			await expect(confirmationPromise).rejects.toThrow(DialogCancelledError)
 			expect(deletionAction).not.toHaveBeenCalled()
 		})
 	})
 
 	describe('deletion-confirmation setting', () => {
-		let deletionAction: jasmine.Spy
+		let deletionAction: Mock<() => void | PromiseLike<void>>
 
-		beforeEach(() => deletionAction = jasmine.createSpy('deletionAction'))
+		beforeEach(() => { deletionAction = vi.fn() })
 
 		it('should show the dialog when the setting is on', async () => {
 			DialogDeletion.deletionConfirmation.value = true
@@ -110,7 +111,7 @@ describe('DialogDeletion', () => {
 			DialogDeletion.deletionConfirmation.value = false
 			const dialog = new DialogDeletion({ label: 'Invoice 42', deletionAction })
 
-			await expectAsync(dialog.confirm()).toBeResolved()
+			await expect(dialog.confirm()).resolves.not.toThrow()
 
 			expect(deletionAction).toHaveBeenCalledTimes(1)
 			expect(dialog.isConnected).toBe(false)
@@ -118,13 +119,13 @@ describe('DialogDeletion', () => {
 
 		it('should notify and rethrow when deletionAction fails while the dialog is skipped', async () => {
 			DialogDeletion.deletionConfirmation.value = false
-			const notifyError = spyOn(NotificationComponent, 'notifyError').and.resolveTo()
+			const notifyError = vi.spyOn(NotificationComponent, 'notifyError').mockResolvedValue()
 			const error = new Error('Deletion failed')
 			const dialog = new DialogDeletion({ label: 'Invoice 42', deletionAction: () => { throw error } })
 
-			await expectAsync(dialog.confirm()).toBeRejectedWith(error)
+			await expect(dialog.confirm()).rejects.toEqual(error)
 
-			expect(notifyError).toHaveBeenCalledOnceWith({ message: 'Deletion failed', actions: [] })
+			expect(notifyError).toHaveBeenCalledExactlyOnceWith({ message: 'Deletion failed', actions: [] })
 		})
 	})
 })

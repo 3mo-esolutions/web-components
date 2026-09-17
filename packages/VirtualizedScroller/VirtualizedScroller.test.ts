@@ -83,14 +83,14 @@ describe('VirtualizedScroller', () => {
 			await scrollToEnd()
 
 			expect(firstRenderedIndex()).toBeGreaterThan(0)
-			expect(fixture.component.getElement(0) instanceof Element).toBeFalse()
-			expect(fixture.component.getElement(itemCount - 1) instanceof Element).toBeTrue()
+			expect(fixture.component.getElement(0) instanceof Element).toBe(false)
+			expect(fixture.component.getElement(itemCount - 1) instanceof Element).toBe(true)
 		})
 
 		// BROKEN: the component never gives its own "mo-scroller" a height, so it grows to the full
 		// virtual height instead of clipping it — nothing ever scrolls and the virtualizer's
 		// ResizeObserver loops. Every case above compensates for this in "beforeEach".
-		xit('should bound its own scroller so that it clips and scrolls the virtual content', async () => {
+		it.skip('should bound its own scroller so that it clips and scrolls the virtual content', async () => {
 			await settle()
 
 			expect(scroller().getBoundingClientRect().height).toBeCloseTo(200, -1)
@@ -132,7 +132,7 @@ describe('VirtualizedScroller', () => {
 
 			const element = fixture.component.getElement(2)
 
-			expect(element instanceof Element).toBeTrue()
+			expect(element instanceof Element).toBe(true)
 			expect((element as Element).textContent).toContain('Item 2')
 		})
 
@@ -140,7 +140,7 @@ describe('VirtualizedScroller', () => {
 			await settle()
 
 			const handle = fixture.component.getElement(itemCount - 1)!
-			expect(handle instanceof Element).toBeFalse()
+			expect(handle instanceof Element).toBe(false)
 
 			// Only the smooth path asks the virtualizer for coordinates; its default "pin" path
 			// scrolls but leaves the window empty (see report).
@@ -149,20 +149,20 @@ describe('VirtualizedScroller', () => {
 			await settle()
 
 			const element = fixture.component.getElement(itemCount - 1)
-			expect(element instanceof Element).toBeTrue()
+			expect(element instanceof Element).toBe(true)
 			expect((element as Element).textContent).toContain(`Item ${itemCount - 1}`)
 		})
 
 		// BROKEN: without "behavior: smooth" the virtualizer takes its "pin" path, which scrolls to
 		// the index but leaves the rendered window empty. This is the path ListFocusController uses.
-		xit('should bring an index out of view into view with the default scroll behavior', async () => {
+		it.skip('should bring an index out of view into view with the default scroll behavior', async () => {
 			await settle()
 
 			fixture.component.getElement(itemCount - 1)!.scrollIntoView()
 			await pollUntil(() => fixture.component.getElement(itemCount - 1) instanceof Element)
 
 			expect(fixture.component.renderedItems.length).toBeGreaterThan(0)
-			expect(fixture.component.getElement(itemCount - 1) instanceof Element).toBeTrue()
+			expect(fixture.component.getElement(itemCount - 1) instanceof Element).toBe(true)
 		})
 	})
 })

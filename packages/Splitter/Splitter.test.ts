@@ -252,7 +252,7 @@ describe('Splitter', () => {
 			await collapse(true)
 			const resizer = resizerHostsOf(fixture.component)[0]!
 
-			expect(resizer.isConnected).toBeTrue()
+			expect(resizer.isConnected).toBe(true)
 			expect(getComputedStyle(resizer).visibility).toBe('collapse')
 			expect(getComputedStyle(resizer).pointerEvents).toBe('none')
 		})
@@ -283,7 +283,7 @@ describe('Splitter', () => {
 				pressResizer(resizerHostsOf(fixture.component)[0]!)
 				await fixture.updateComplete
 
-				expect(fixture.component.hasAttribute('resizing')).toBeTrue()
+				expect(fixture.component.hasAttribute('resizing')).toBe(true)
 			})
 
 			it('should ignore pointer movement while no resize is active', async () => {
@@ -301,8 +301,8 @@ describe('Splitter', () => {
 				releasePointer()
 				await fixture.updateComplete
 
-				expect(fixture.component.hasAttribute('resizing')).toBeFalse()
-				expect(resizerHostsOf(fixture.component)[0]!.resizing).toBeFalse()
+				expect(fixture.component.hasAttribute('resizing')).toBe(false)
+				expect(resizerHostsOf(fixture.component)[0]!.resizing).toBe(false)
 			})
 
 			it('should suspend pointer interaction with pane content while resizing (computed pointer-events: none on the host)', async () => {

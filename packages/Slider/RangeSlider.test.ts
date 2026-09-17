@@ -17,7 +17,7 @@ describe('RangeSlider', () => {
 	const mdSlider = () => fixture.component.renderRoot.querySelector<MdSlider>('md-slider')!
 
 	const spyOnEvent = (type: 'input' | 'change') => {
-		const spy = jasmine.createSpy(type)
+		const spy = vi.fn()
 		fixture.component.addEventListener(type, spy)
 		return spy
 	}
@@ -28,13 +28,13 @@ describe('RangeSlider', () => {
 		})
 
 		// Broken: RangeSlider binds "valueStart"/"valueEnd" as attributes, but md-slider maps those properties to the "value-start"/"value-end" attributes, so nothing is tunneled and md-slider keeps its own 33/67 range defaults.
-		xit('should default the underlying md-slider to [0, 0]', () => {
+		it.skip('should default the underlying md-slider to [0, 0]', () => {
 			expect(mdSlider().valueStart).toBe(0)
 			expect(mdSlider().valueEnd).toBe(0)
 		})
 
 		// Broken: RangeSlider binds "valueStart"/"valueEnd" as attributes, but md-slider maps those properties to the "value-start"/"value-end" attributes, so nothing is tunneled and md-slider keeps its own 33/67 range defaults.
-		xit('should tunnel the value to valueStart and valueEnd of the underlying md-slider', async () => {
+		it.skip('should tunnel the value to valueStart and valueEnd of the underlying md-slider', async () => {
 			fixture.component.value = [20, 80]
 			await fixture.update()
 
@@ -65,7 +65,7 @@ describe('RangeSlider', () => {
 
 			expect(fixture.component.value).toEqual([20, 80])
 			expect(spy).toHaveBeenCalledTimes(1)
-			expect(spy.calls.mostRecent().args[0].detail).toEqual([20, 80])
+			expect(spy.mock.lastCall![0].detail).toEqual([20, 80])
 		})
 
 		it('should update the value and dispatch change with the [start, end] tuple when the internal slider commits', async () => {
@@ -78,7 +78,7 @@ describe('RangeSlider', () => {
 
 			expect(fixture.component.value).toEqual([20, 80])
 			expect(spy).toHaveBeenCalledTimes(1)
-			expect(spy.calls.mostRecent().args[0].detail).toEqual([20, 80])
+			expect(spy.mock.lastCall![0].detail).toEqual([20, 80])
 		})
 	})
 

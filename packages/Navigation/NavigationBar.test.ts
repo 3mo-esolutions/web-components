@@ -33,18 +33,18 @@ describe('NavigationBar', () => {
 	})
 
 	it('should mark the item of the navigation the page belongs to', () => {
-		expect(fixture.component.items[0]!.current).toBeTrue()
-		expect(fixture.component.items[1]!.current).toBeFalse()
+		expect(fixture.component.items[0]!.current).toBe(true)
+		expect(fixture.component.items[1]!.current).toBe(false)
 	})
 
 	it('should not report an overflow while the navigations fit', async () => {
 		await new Promise(resolve => setTimeout(resolve, 50))
 
-		expect(fixture.component.hasOverflow).toBeFalse()
+		expect(fixture.component.hasOverflow).toBe(false)
 	})
 
 	it('should focus its first item', () => {
-		const focusSpy = spyOn(fixture.component.items[0]!, 'focus')
+		const focusSpy = vi.spyOn(fixture.component.items[0]!, 'focus').mockReturnValue(undefined)
 
 		fixture.component.focus()
 
@@ -62,7 +62,7 @@ describe('NavigationBar', () => {
 		const nestedItems = (await dropdownOf(1))!.querySelectorAll(':scope > mo-nested-menu-item')
 
 		expect(nestedItems.length).toBe(1)
-		expect(nestedItems[0]!.textContent?.trim().startsWith('Quarterly')).toBeTrue()
+		expect(nestedItems[0]!.textContent?.trim().startsWith('Quarterly')).toBe(true)
 		expect([...nestedItems[0]!.querySelectorAll('[slot=submenu]')].map(item => item.textContent?.trim()))
 			.toEqual(['First quarter', 'Second quarter'])
 	})

@@ -1,5 +1,5 @@
 /* eslint-disable max-lines */
-import { component, css, html, render, state } from '@a11d/lit'
+import { component, css, html, render, state, type HTMLTemplateResult } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import '@3mo/localization'
 import { DataGrid, DataGridPagination, type DataGridPaginationLike, type DataGridRow, DataGridColumn, type DataGridColumnComponent, DataRecord, DataGridSelectability, DataGridSelectionBehaviorOnDataChange, DataGridSortingStrategy } from './index.js'
@@ -123,17 +123,17 @@ describe('DataGrid', () => {
 			const replacementData = () => [{ id: 9, name: 'Jack', birthDate: new DateTime(2000, 0, 0), balance: 1 }]
 
 			it('should dispatch dataChange with the new data', () => {
-				const dataChange = spyOn(fixture.component.dataChange, 'dispatch')
+				const dataChange = vi.spyOn(fixture.component.dataChange, 'dispatch').mockReturnValue(undefined)
 				const data = replacementData()
 
 				fixture.component.setData(data)
 
 				expect(fixture.component.data).toBe(data)
-				expect(dataChange).toHaveBeenCalledOnceWith(data)
+				expect(dataChange).toHaveBeenCalledExactlyOnceWith(data)
 			})
 
 			it('should not dispatch dataChange when the data property is assigned directly, as programmatic changes stay silent', async () => {
-				const dataChange = spyOn(fixture.component.dataChange, 'dispatch')
+				const dataChange = vi.spyOn(fixture.component.dataChange, 'dispatch').mockReturnValue(undefined)
 
 				fixture.component.data = replacementData()
 				await fixture.updateComplete
@@ -347,7 +347,7 @@ describe('DataGrid', () => {
 
 			it('should compose anew and update the data grid when a source is assigned', async () => {
 				const definitions = fixture.component.columnsController.columns.definitions
-				const columnsChange = jasmine.createSpy()
+				const columnsChange = vi.fn()
 				fixture.component.addEventListener('columnsChange', columnsChange)
 
 				definitions.extracted = [new DataGridColumn({ heading: 'Balance', dataSelector: 'balance' })]
@@ -491,7 +491,7 @@ describe('DataGrid', () => {
 
 			expect(fixture.component.selectedData).toEqual([row1.data])
 			expect(fixture.component.selectedData).not.toEqual([row0.data])
-			expect(receivedDataSets).toContain([row1.data])
+			expect(receivedDataSets).toContainEqual([row1.data])
 
 			await row1.closeContextMenu()
 			fixture.component.getRowContextMenuTemplate = originalTemplate
@@ -543,7 +543,7 @@ describe('DataGrid', () => {
 			shouldDispatch: boolean,
 		) => {
 			fixture.component.selectOnClick = true
-			spyOn(fixture.component.selectionChange, 'dispatch')
+			vi.spyOn(fixture.component.selectionChange, 'dispatch').mockReturnValue(undefined)
 
 			for (const person of peopleToClick) {
 				const row = fixture.component.rows.find(row => row.data === person) as DataGridRow<Person>
@@ -562,9 +562,9 @@ describe('DataGrid', () => {
 		describe('Row context menu laziness', () => {
 			// The template is the consumer's code and may do anything — fetch, construct dialogs, resolve
 			// translations — so the grid must not evaluate it speculatively for rows nobody has right-clicked.
-			const template = jasmine.createSpy('getRowContextMenuTemplate').and.callFake(getRowContextMenuTemplate)
+			const template = vi.fn<(data: Array<Person>) => HTMLTemplateResult>(getRowContextMenuTemplate)
 
-			beforeEach(() => template.calls.reset())
+			beforeEach(() => { template.mockClear() })
 
 			const fixture = new ComponentTestFixture<TestDataGrid>(html`
 				<test-data-grid .getRowContextMenuTemplate=${template}></test-data-grid>
@@ -597,7 +597,7 @@ describe('DataGrid', () => {
 				await row.openContextMenu()
 
 				expect(template).toHaveBeenCalled()
-				expect(template.calls.argsFor(0)[0]).toEqual([row.data])
+				expect(template.mock.calls.at(0)![0]).toEqual([row.data])
 
 				await row.closeContextMenu()
 			})
@@ -733,8 +733,8 @@ describe('DataGrid', () => {
 
 		it('should dispatch rowDetailsOpen and rowDetailsClose when a row\'s details are toggled', async () => {
 			const row = fixture.component.rows[0] as DataGridRow<Person>
-			spyOn(fixture.component.rowDetailsOpen, 'dispatch')
-			spyOn(fixture.component.rowDetailsClose, 'dispatch')
+			vi.spyOn(fixture.component.rowDetailsOpen, 'dispatch').mockReturnValue(undefined)
+			vi.spyOn(fixture.component.rowDetailsClose, 'dispatch').mockReturnValue(undefined)
 
 			row.renderRoot.querySelector('#detailsExpanderIconButton')?.dispatchEvent(new MouseEvent('click'))
 			await fixture.updateComplete
@@ -793,12 +793,12 @@ describe('DataGrid', () => {
 		it('should not dispatch rowDetailsOpen when details are opened programmatically via openRowDetails, as only interactions announce themselves', async () => {
 			fixture.component.multipleDetails = true
 			await fixture.updateComplete
-			spyOn(fixture.component.rowDetailsOpen, 'dispatch')
+			vi.spyOn(fixture.component.rowDetailsOpen, 'dispatch').mockReturnValue(undefined)
 
 			fixture.component.openRowDetails()
 			await fixture.updateComplete
 
-			expect(fixture.component.rows.every(row => row.detailsOpen)).toBeTrue()
+			expect(fixture.component.rows.every(row => row.detailsOpen)).toBe(true)
 			expect(fixture.component.rowDetailsOpen.dispatch).not.toHaveBeenCalled()
 		})
 
@@ -883,7 +883,7 @@ describe('DataGrid', () => {
 				expect(cell?.isEditing).toBe(true)
 
 				const event = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true })
-				spyOn(event, 'stopPropagation')
+				vi.spyOn(event, 'stopPropagation').mockReturnValue(undefined)
 				cell?.dispatchEvent(event)
 				expect(event.stopPropagation).not.toHaveBeenCalled()
 			})
@@ -894,20 +894,20 @@ describe('DataGrid', () => {
 				const cell = fixture.component.rows[0]!.cells[1]! // name
 				cell.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }))
 				await fixture.updateComplete
-				spyOn(fixture.component.cellEdit, 'dispatch')
+				vi.spyOn(fixture.component.cellEdit, 'dispatch').mockReturnValue(undefined)
 				const editedValue = `${cell.value}!`
 
 				cell.renderRoot.querySelector('mo-field-text')?.change.dispatch(editedValue)
 
 				expect(fixture.component.data[0]?.name).toBe(editedValue)
-				expect(fixture.component.cellEdit.dispatch).toHaveBeenCalledOnceWith(cell)
+				expect(fixture.component.cellEdit.dispatch).toHaveBeenCalledExactlyOnceWith(cell)
 			})
 
 			it('should not apply the edit nor dispatch cellEdit when the value did not change', async () => {
 				const cell = fixture.component.rows[0]!.cells[1]! // name
 				cell.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }))
 				await fixture.updateComplete
-				spyOn(fixture.component.cellEdit, 'dispatch')
+				vi.spyOn(fixture.component.cellEdit, 'dispatch').mockReturnValue(undefined)
 				const unchangedValue = `${cell.value}`
 
 				cell.renderRoot.querySelector('mo-field-text')?.change.dispatch(unchangedValue)
@@ -925,7 +925,7 @@ describe('DataGrid', () => {
 			it('should apply the edited value when changed', () => shouldApplyTheEditedValueWhenChanged(fixture, true))
 
 			it('should not auto-focus on any cell', async () => {
-				const spy = spyOn(HTMLElement.prototype, 'focus')
+				const spy = vi.spyOn(HTMLElement.prototype, 'focus').mockReturnValue(undefined)
 				await fixture.initialize()
 				expect(spy).not.toHaveBeenCalled()
 			})
@@ -935,7 +935,7 @@ describe('DataGrid', () => {
 	describe('Toolbar', () => {
 		describe('without', () => {
 			const fixture = new ComponentTestFixture<TestDataGrid>(html`<test-data-grid></test-data-grid>`)
-			it('should not have toolbar by default', () => expect(fixture.component.hasToolbar).toBeFalse())
+			it('should not have toolbar by default', () => expect(fixture.component.hasToolbar).toBe(false))
 		})
 
 		describe('with slotted toolbar content', () => {
@@ -944,7 +944,7 @@ describe('DataGrid', () => {
 					<div slot='toolbar'>Toolbar</div>
 				</test-data-grid>
 			`)
-			it('should have toolbar', () => expect(fixture.component.hasToolbar).toBeTrue())
+			it('should have toolbar', () => expect(fixture.component.hasToolbar).toBe(true))
 		})
 
 		describe('with toolbarDefaultTemplate', () => {
@@ -955,14 +955,14 @@ describe('DataGrid', () => {
 
 			const fixture = new ComponentTestFixture(() => new DataGridWithToolbar())
 
-			it('should have toolbar', () => expect(fixture.component.hasToolbar).toBeTrue())
+			it('should have toolbar', () => expect(fixture.component.hasToolbar).toBe(true))
 		})
 	})
 
 	describe('Filters', () => {
 		describe('without', () => {
 			const fixture = new ComponentTestFixture<TestDataGrid>(html`<test-data-grid></test-data-grid>`)
-			it('should not have filters by default', () => expect(fixture.component.hasFilters).toBeFalse())
+			it('should not have filters by default', () => expect(fixture.component.hasFilters).toBe(false))
 		})
 
 		describe('with slotted filter content', () => {
@@ -971,7 +971,7 @@ describe('DataGrid', () => {
 					<div slot='filter'>Filter</div>
 				</test-data-grid>
 			`)
-			it('should have filters', () => expect(fixture.component.hasFilters).toBeTrue())
+			it('should have filters', () => expect(fixture.component.hasFilters).toBe(true))
 		})
 
 		describe('with filterDefaultTemplate', () => {
@@ -982,7 +982,7 @@ describe('DataGrid', () => {
 
 			const fixture = new ComponentTestFixture(() => new DataGridWithFilters())
 
-			it('should have filters', () => expect(fixture.component.hasFilters).toBeTrue())
+			it('should have filters', () => expect(fixture.component.hasFilters).toBe(true))
 		})
 
 		describe('expansion', () => {
@@ -996,27 +996,27 @@ describe('DataGrid', () => {
 			const filterButtonOf = (component: TestDataGrid) => component.renderRoot.querySelector<HTMLElement>('#actions mo-icon-button[icon=filter_list]')
 
 			it('should collapse the filter slot while filtersOpen is false', async () => {
-				expect(fixture.component.filtersOpen).toBeFalse()
-				expect(filterSlotOf(fixture.component)?.hasAttribute('data-collapsed')).toBeTrue()
+				expect(fixture.component.filtersOpen).toBe(false)
+				expect(filterSlotOf(fixture.component)?.hasAttribute('data-collapsed')).toBe(true)
 
 				fixture.component.filtersOpen = true
 				await fixture.updateComplete
 
-				expect(filterSlotOf(fixture.component)?.hasAttribute('data-collapsed')).toBeFalse()
+				expect(filterSlotOf(fixture.component)?.hasAttribute('data-collapsed')).toBe(false)
 			})
 
 			it('should toggle filtersOpen through the filter icon-button and mark it selected', async () => {
 				filterButtonOf(fixture.component)!.click()
 				await fixture.updateComplete
 
-				expect(fixture.component.filtersOpen).toBeTrue()
-				expect(filterButtonOf(fixture.component)?.hasAttribute('data-selected')).toBeTrue()
+				expect(fixture.component.filtersOpen).toBe(true)
+				expect(filterButtonOf(fixture.component)?.hasAttribute('data-selected')).toBe(true)
 
 				filterButtonOf(fixture.component)!.click()
 				await fixture.updateComplete
 
-				expect(fixture.component.filtersOpen).toBeFalse()
-				expect(filterButtonOf(fixture.component)?.hasAttribute('data-selected')).toBeFalse()
+				expect(fixture.component.filtersOpen).toBe(false)
+				expect(filterButtonOf(fixture.component)?.hasAttribute('data-selected')).toBe(false)
 			})
 		})
 	})
@@ -1027,7 +1027,7 @@ describe('DataGrid', () => {
 		describe('without', () => {
 			const fixture = new ComponentTestFixture<TestDataGrid>(html`<test-data-grid></test-data-grid>`)
 
-			it('should not have a primary action by default', () => expect(fixture.component.hasPrimaryAction).toBeFalse())
+			it('should not have a primary action by default', () => expect(fixture.component.hasPrimaryAction).toBe(false))
 
 			it('should not render the toolbar', () => expect(fixture.component.renderRoot.querySelector('#toolbar')).toBeNull())
 		})
@@ -1039,7 +1039,7 @@ describe('DataGrid', () => {
 				</test-data-grid>
 			`)
 
-			it('should have a primary action', () => expect(fixture.component.hasPrimaryAction).toBeTrue())
+			it('should have a primary action', () => expect(fixture.component.hasPrimaryAction).toBe(true))
 
 			it('should render the slotted element', () => {
 				expect(fixture.component.primaryActionElements.length).toBe(1)
@@ -1058,7 +1058,7 @@ describe('DataGrid', () => {
 
 			const fixture = new ComponentTestFixture(() => new DataGridWithPrimaryAction())
 
-			it('should have a primary action without overriding "hasPrimaryAction"', () => expect(fixture.component.hasPrimaryAction).toBeTrue())
+			it('should have a primary action without overriding "hasPrimaryAction"', () => expect(fixture.component.hasPrimaryAction).toBe(true))
 
 			it('should render the toolbar', () => expect(fixture.component.renderRoot.querySelector('#toolbar')).not.toBeNull())
 
@@ -1070,7 +1070,7 @@ describe('DataGrid', () => {
 
 			it('should render the primary action visibly', () => {
 				const button = fixture.component.renderRoot.querySelector('#create') as HTMLElement
-				expect(button.checkVisibility()).toBeTrue()
+				expect(button.checkVisibility()).toBe(true)
 				expect(button.getBoundingClientRect().width).toBeGreaterThan(0)
 				expect(button.getBoundingClientRect().height).toBeGreaterThan(0)
 			})
@@ -1083,24 +1083,24 @@ describe('DataGrid', () => {
 				await fixture.updateComplete
 
 				expect(getPrimaryActionSlot(fixture.component)?.assignedElements()).toEqual([slotted])
-				expect((fixture.component.renderRoot.querySelector('#create') as HTMLElement).checkVisibility()).toBeFalse()
+				expect((fixture.component.renderRoot.querySelector('#create') as HTMLElement).checkVisibility()).toBe(false)
 
 				slotted.remove()
 				await fixture.updateComplete
-				expect((fixture.component.renderRoot.querySelector('#create') as HTMLElement).checkVisibility()).toBeTrue()
+				expect((fixture.component.renderRoot.querySelector('#create') as HTMLElement).checkVisibility()).toBe(true)
 			})
 
 			it('should hide the toolbar again when the template becomes empty', async () => {
 				fixture.component.primaryActionHidden = true
 				await fixture.updateComplete
 
-				expect(fixture.component.hasPrimaryAction).toBeFalse()
+				expect(fixture.component.hasPrimaryAction).toBe(false)
 				expect(fixture.component.renderRoot.querySelector('#toolbar')).toBeNull()
 
 				fixture.component.primaryActionHidden = false
 				await fixture.updateComplete
 
-				expect(fixture.component.hasPrimaryAction).toBeTrue()
+				expect(fixture.component.hasPrimaryAction).toBe(true)
 				expect(fixture.component.renderRoot.querySelector('#create')).not.toBeNull()
 			})
 		})
@@ -1244,13 +1244,13 @@ describe('DataGrid', () => {
 
 		it('should have sums only when a column defines a sumHeading or sum content is slotted', async () => {
 			await settle(without)
-			expect(without.component.hasSums).toBeFalse()
+			expect(without.component.hasSums).toBe(false)
 
 			await settle(withSumHeading)
-			expect(withSumHeading.component.hasSums).toBeTrue()
+			expect(withSumHeading.component.hasSums).toBe(true)
 
 			await settle(withSlottedSum)
-			expect(withSlottedSum.component.hasSums).toBeTrue()
+			expect(withSlottedSum.component.hasSums).toBe(true)
 			expect(withSlottedSum.component.renderRoot.querySelector<HTMLSlotElement>('slot[name=sum]')?.assignedElements().length).toBe(1)
 		})
 
@@ -1292,7 +1292,7 @@ describe('DataGrid', () => {
 
 		it('should not paginate a grid which specifies none', () => {
 			expect(fixture.component.resolvedPagination).toBeUndefined()
-			expect(fixture.component.hasPagination).toBeFalse()
+			expect(fixture.component.hasPagination).toBe(false)
 		})
 
 		it('should revive a pagination which is set as a string, as a mode applies it', () => {
@@ -1405,13 +1405,13 @@ describe('DataGrid', () => {
 		it('should dispatch pageChange for setPage but not when the page property is assigned', async () => {
 			fixture.component.setPagination('pages 1')
 			await fixture.updateComplete
-			const pageChange = spyOn(fixture.component.pageChange, 'dispatch')
+			const pageChange = vi.spyOn(fixture.component.pageChange, 'dispatch').mockReturnValue(undefined)
 
 			fixture.component.setPage(2)
 
-			expect(pageChange).toHaveBeenCalledOnceWith(2)
+			expect(pageChange).toHaveBeenCalledExactlyOnceWith(2)
 
-			pageChange.calls.reset()
+			pageChange.mockClear()
 			fixture.component.page = 3
 			await fixture.updateComplete
 
@@ -1420,14 +1420,14 @@ describe('DataGrid', () => {
 		})
 
 		it('should dispatch paginationChange for setPagination but not when the pagination property is assigned', async () => {
-			const paginationChange = spyOn(fixture.component.paginationChange, 'dispatch')
+			const paginationChange = vi.spyOn(fixture.component.paginationChange, 'dispatch').mockReturnValue(undefined)
 
 			fixture.component.setPagination('pages 10')
 
 			expect(paginationChange).toHaveBeenCalledTimes(1)
-			expect(paginationChange.calls.mostRecent().args[0]?.toString()).toBe('pages 10')
+			expect(paginationChange.mock.lastCall![0]?.toString()).toBe('pages 10')
 
-			paginationChange.calls.reset()
+			paginationChange.mockClear()
 			fixture.component.pagination = DataGridPagination.from('pages 20')
 			await fixture.updateComplete
 
@@ -1441,12 +1441,12 @@ describe('DataGrid', () => {
 
 			expect(fixture.component.dataLength).toBe(3)
 			expect(fixture.component.maxPage).toBe(2)
-			expect(fixture.component.hasNextPage).toBeTrue()
+			expect(fixture.component.hasNextPage).toBe(true)
 
 			fixture.component.setPage(2)
 			await fixture.updateComplete
 
-			expect(fixture.component.hasNextPage).toBeFalse()
+			expect(fixture.component.hasNextPage).toBe(false)
 
 			fixture.component.setPagination('pages 10')
 			await fixture.updateComplete

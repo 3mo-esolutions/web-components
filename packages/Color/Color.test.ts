@@ -22,7 +22,7 @@ describe('Color', () => {
 		})
 
 		// Bug: Color.ts leaves color undefined for unrecognized strings
-		xit('should handle an unrecognized color string predictably', () => {
+		it.skip('should handle an unrecognized color string predictably', () => {
 			const color = new Color('not-a-color')
 			expect(color.color).toEqual([0, 0, 0, 1])
 			expect(color.hex).toBe('#000000')
@@ -62,7 +62,7 @@ describe('Color', () => {
 
 		it('should round-trip rgb output back through the constructor to the same hex', () => {
 			for (const hex of ['#0C2238', '#FF0000', '#000000', '#0C223880']) {
-				expect(new Color(new Color(hex).rgb).hex).withContext(hex).toBe(hex)
+				expect(new Color(new Color(hex).rgb).hex, hex).toBe(hex)
 			}
 		})
 	})

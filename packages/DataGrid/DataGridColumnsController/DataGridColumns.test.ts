@@ -35,9 +35,9 @@ describe('DataGridColumns', () => {
 
 			expect(columns.map(c => c.dataSelector)).toEqual(['name', 'id', 'balance'])
 			expect(columns[0]?.width).toBe('200px')
-			expect(columns[0]?.hidden).toBeTrue()
+			expect(columns[0]?.hidden).toBe(true)
 			expect(columns[1]?.width).toBe('max-content')
-			expect(columns[1]?.hidden).toBeFalse()
+			expect(columns[1]?.hidden).toBe(false)
 		})
 
 		it('should follow the definition for fields a modification leaves undefined', () => {
@@ -48,7 +48,7 @@ describe('DataGridColumns', () => {
 
 			expect(columns[0]?.width).toBe('80px')
 			expect(columns[0]?.sticky).toBe('start')
-			expect(columns[0]?.hidden).toBeTrue()
+			expect(columns[0]?.hidden).toBe(true)
 		})
 
 		it('should let a modification pin a column as not sticky through null', () => {
@@ -95,13 +95,13 @@ describe('DataGridColumns', () => {
 
 			columns.modifications.set([{ dataSelector: 'id', hidden: true }])
 
-			expect(columns[0]?.hidden).toBeTrue()
-			expect(definition.hidden).toBeFalse()
+			expect(columns[0]?.hidden).toBe(true)
+			expect(definition.hidden).toBe(false)
 			expect(columns[0]).not.toBe(definition)
 		})
 
 		it('should prepare each composed column', () => {
-			const prepare = jasmine.createSpy()
+			const prepare = vi.fn()
 			const columns = new DataGridColumns<Person>({ prepare })
 
 			columns.definitions.extracted = [column('id'), column('name')]
@@ -117,8 +117,8 @@ describe('DataGridColumns', () => {
 
 			columns.modify('id', { hidden: true })
 
-			expect(columns.get('id')?.hidden).toBeTrue()
-			expect(columns.modifications.get('id')?.hidden).toBeTrue()
+			expect(columns.get('id')?.hidden).toBe(true)
+			expect(columns.modifications.get('id')?.hidden).toBe(true)
 		})
 
 		it('should materialize the order of all columns, as modifying one implies intent about the order', () => {
@@ -150,10 +150,10 @@ describe('DataGridColumns', () => {
 		})
 
 		it('should notify', () => {
-			const updated = jasmine.createSpy()
+			const updated = vi.fn()
 			const columns = new DataGridColumns<Person>({ updated })
 			columns.definitions.extracted = [column('id')]
-			updated.calls.reset()
+			updated.mockClear()
 
 			columns.modify('id', { hidden: true })
 
@@ -200,9 +200,9 @@ describe('DataGridColumns', () => {
 
 			expect(composed.map(c => c.dataSelector)).toEqual(['name', 'id'])
 			expect(composed[0]?.width).toBe('200px')
-			expect(composed[0]?.hidden).toBeTrue()
+			expect(composed[0]?.hidden).toBe(true)
 			expect(columns.modifications.length).toBe(0)
-			expect(columns.get('name')?.hidden).toBeFalse()
+			expect(columns.get('name')?.hidden).toBe(false)
 		})
 
 		it('should compose differently shaped modifications describing the same columns to the same result', () => {
@@ -231,7 +231,7 @@ describe('DataGridColumns', () => {
 
 	describe('update', () => {
 		it('should compose anew and notify', () => {
-			const updated = jasmine.createSpy()
+			const updated = vi.fn()
 			let generated = new Array<DataGridColumn<Person>>()
 			const columns = new DataGridColumns<Person>({ generate: () => generated, updated })
 			expect(columns.length).toBe(0)
@@ -244,7 +244,7 @@ describe('DataGridColumns', () => {
 		})
 
 		it('should not notify while being constructed', () => {
-			const updated = jasmine.createSpy()
+			const updated = vi.fn()
 
 			new DataGridColumns<Person>({ generate: () => [column('id')], updated })
 

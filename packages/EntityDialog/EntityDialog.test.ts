@@ -66,14 +66,14 @@ describe('EntityDialog', () => {
 		await waitUntil(() => fixture.component.fetcherController.pending)
 		await fixture.updateComplete
 
-		expect(primaryButton()?.hasAttribute('disabled')).toBeTrue()
-		expect(secondaryButton()?.hasAttribute('disabled')).toBeTrue()
+		expect(primaryButton()?.hasAttribute('disabled')).toBe(true)
+		expect(secondaryButton()?.hasAttribute('disabled')).toBe(true)
 
 		resolvers[0]!(new Entity)
 		await waitUntil(() => fixture.component.fetcherController.pending === false)
 		await fixture.updateComplete
 
-		expect(primaryButton()?.hasAttribute('disabled')).toBeFalse()
-		expect(secondaryButton()?.hasAttribute('disabled')).toBeFalse()
+		expect(primaryButton()?.hasAttribute('disabled')).toBe(false)
+		expect(secondaryButton()?.hasAttribute('disabled')).toBe(false)
 	})
 })

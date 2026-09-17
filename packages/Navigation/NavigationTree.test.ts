@@ -37,21 +37,21 @@ describe('NavigationTree', () => {
 
 	it('should mark the destination being shown as the current page', () => {
 		expect(itemOf('First quarter').getAttribute('aria-current')).toBe('page')
-		expect(itemOf('Second quarter').hasAttribute('aria-current')).toBeFalse()
+		expect(itemOf('Second quarter').hasAttribute('aria-current')).toBe(false)
 	})
 
 	it('should mark the sections the current page sits in without claiming to be it', () => {
-		expect(itemOf('Reports').current).toBeTrue()
-		expect(itemOf('Reports').hasAttribute('aria-current')).toBeFalse()
-		expect(itemOf('Dashboard').current).toBeFalse()
+		expect(itemOf('Reports').current).toBe(true)
+		expect(itemOf('Reports').hasAttribute('aria-current')).toBe(false)
+		expect(itemOf('Dashboard').current).toBe(false)
 	})
 
 	it('should open the ancestors of the current page so that it can be seen', async () => {
 		await fixture.updateComplete
 		await new Promise(resolve => setTimeout(resolve, 50))
 
-		expect(itemOf('Reports').open).toBeTrue()
-		expect(itemOf('Quarterly').open).toBeTrue()
+		expect(itemOf('Reports').open).toBe(true)
+		expect(itemOf('Quarterly').open).toBe(true)
 	})
 
 	describe('invoking a destination', () => {
@@ -62,13 +62,13 @@ describe('NavigationTree', () => {
 		})
 
 		it('should report the destination to whoever presented the tree', async () => {
-			const handler = jasmine.createSpy('invoke')
+			const handler = vi.fn()
 			invocationFixture.component.addEventListener('invoke', (event: Event) => handler((event as CustomEvent<INavigation>).detail))
 			await invocationFixture.updateComplete
 
 			invocationFixture.component.renderRoot.querySelector<HTMLElement>('mo-navigation-tree-item')!.click()
 
-			expect(handler).toHaveBeenCalledWith(jasmine.objectContaining({ label: 'Dashboard' }))
+			expect(handler).toHaveBeenCalledWith(expect.objectContaining({ label: 'Dashboard' }))
 		})
 	})
 })

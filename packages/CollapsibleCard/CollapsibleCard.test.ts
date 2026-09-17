@@ -12,17 +12,17 @@ describe('CollapsibleCard', () => {
 
 	describe('Expand/collapse icon-button', () => {
 		it('should collapse when clicked', () => {
-			const dispatchSpy = spyOn(fixture.component.collapse, 'dispatch')
+			const dispatchSpy = vi.spyOn(fixture.component.collapse, 'dispatch').mockReturnValue(undefined)
 			const collapsed = fixture.component.collapsed
 
 			iconButtonOf(fixture.component).click()
 
 			expect(fixture.component.collapsed).toBe(!collapsed)
-			expect(dispatchSpy).toHaveBeenCalledOnceWith(!collapsed)
+			expect(dispatchSpy).toHaveBeenCalledExactlyOnceWith(!collapsed)
 		})
 
 		it('should not collapse when disabled', () => {
-			const dispatchSpy = spyOn(fixture.component.collapse, 'dispatch')
+			const dispatchSpy = vi.spyOn(fixture.component.collapse, 'dispatch').mockReturnValue(undefined)
 			const collapsed = fixture.component.collapsed
 			fixture.component.disableCollapse = true
 
@@ -95,7 +95,7 @@ describe('CollapsibleCard', () => {
 		})
 
 		it('should not dispatch "collapse" for a programmatically set state, as only the interaction reports', async () => {
-			const spy = jasmine.createSpy('collapse')
+			const spy = vi.fn()
 			fixture.component.addEventListener('collapse', spy)
 
 			fixture.component.collapsed = true

@@ -36,7 +36,7 @@ describe('safeRound', () => {
 
 	it('should never return -0', () => {
 		expect(Math.safeRound(-0.2)).toBe(0)
-		expect(Object.is(Math.safeRound(-0.2), -0)).toBeFalse()
-		expect(Object.is(Math.safeRound(-0.004, 2), -0)).toBeFalse()
+		expect(Object.is(Math.safeRound(-0.2), -0)).toBe(false)
+		expect(Object.is(Math.safeRound(-0.004, 2), -0)).toBe(false)
 	})
 })

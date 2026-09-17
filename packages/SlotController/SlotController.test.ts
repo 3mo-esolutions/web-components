@@ -152,22 +152,22 @@ describe('SlotController', () => {
 	describe('hasAssignedNodes', () => {
 		describeBothSlotStates({
 			['should be false without assigned nodes'](fixture) {
-				expect(fixture.component.slotController.hasAssignedNodes('')).toBeFalse()
+				expect(fixture.component.slotController.hasAssignedNodes('')).toBe(false)
 			},
 
 			['should be true with an assigned element'](fixture) {
 				fixture.component.append(element('div'))
-				expect(fixture.component.slotController.hasAssignedNodes('')).toBeTrue()
+				expect(fixture.component.slotController.hasAssignedNodes('')).toBe(true)
 			},
 
 			['should be true with an assigned text node'](fixture) {
 				fixture.component.append(document.createTextNode('Hello, World!'))
-				expect(fixture.component.slotController.hasAssignedNodes('')).toBeTrue()
+				expect(fixture.component.slotController.hasAssignedNodes('')).toBe(true)
 			},
 
 			['should be false when the nodes are assigned to another slot'](fixture) {
 				fixture.component.append(element('div', 'named'))
-				expect(fixture.component.slotController.hasAssignedNodes('')).toBeFalse()
+				expect(fixture.component.slotController.hasAssignedNodes('')).toBe(false)
 			},
 		})
 	})
@@ -175,17 +175,17 @@ describe('SlotController', () => {
 	describe('hasAssignedElements', () => {
 		describeBothSlotStates({
 			['should be false without assigned nodes'](fixture) {
-				expect(fixture.component.slotController.hasAssignedElements('')).toBeFalse()
+				expect(fixture.component.slotController.hasAssignedElements('')).toBe(false)
 			},
 
 			['should be false with only assigned text nodes'](fixture) {
 				fixture.component.append(document.createTextNode('Hello, World!'))
-				expect(fixture.component.slotController.hasAssignedElements('')).toBeFalse()
+				expect(fixture.component.slotController.hasAssignedElements('')).toBe(false)
 			},
 
 			['should be true with an assigned element'](fixture) {
 				fixture.component.append(element('div'))
-				expect(fixture.component.slotController.hasAssignedElements('')).toBeTrue()
+				expect(fixture.component.slotController.hasAssignedElements('')).toBe(true)
 			},
 		})
 	})
@@ -193,31 +193,31 @@ describe('SlotController', () => {
 	describe('hasAssignedContent', () => {
 		describeBothSlotStates({
 			['should be false without assigned nodes'](fixture) {
-				expect(fixture.component.slotController.hasAssignedContent('')).toBeFalse()
+				expect(fixture.component.slotController.hasAssignedContent('')).toBe(false)
 			},
 
 			['should be false with only whitespace text nodes'](fixture) {
 				fixture.component.append(document.createTextNode(' \n\t '))
-				expect(fixture.component.slotController.hasAssignedContent('')).toBeFalse()
+				expect(fixture.component.slotController.hasAssignedContent('')).toBe(false)
 			},
 
 			['should be true with a non-whitespace text node'](fixture) {
 				fixture.component.append(document.createTextNode('Hello, World!'))
-				expect(fixture.component.slotController.hasAssignedContent('')).toBeTrue()
+				expect(fixture.component.slotController.hasAssignedContent('')).toBe(true)
 			},
 
 			['should be true with an assigned element'](fixture) {
 				const div = element('div')
 				div.textContent = 'Hello, World!'
 				fixture.component.append(div)
-				expect(fixture.component.slotController.hasAssignedContent('')).toBeTrue()
+				expect(fixture.component.slotController.hasAssignedContent('')).toBe(true)
 			},
 
 			// An element counts as content regardless of what it renders, as it may well be
 			// styled or filled by the component itself.
 			['should be true with an empty assigned element'](fixture) {
 				fixture.component.append(element('div'))
-				expect(fixture.component.slotController.hasAssignedContent('')).toBeTrue()
+				expect(fixture.component.slotController.hasAssignedContent('')).toBe(true)
 			},
 		})
 	})
@@ -250,7 +250,7 @@ describe('SlotController', () => {
 
 	describe('change detection', () => {
 		it('should request a host update on slotchange', () => {
-			const requestUpdate = spyOn(fixture.component, 'requestUpdate')
+			const requestUpdate = vi.spyOn(fixture.component, 'requestUpdate').mockReturnValue(undefined)
 
 			fixture.component.shadowRoot!.dispatchEvent(new Event('slotchange'))
 

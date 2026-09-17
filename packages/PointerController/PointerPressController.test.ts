@@ -1,10 +1,11 @@
 import { component, Component, html } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { PointerPressController } from './PointerPressController.js'
+import { type MockInstance } from 'vitest'
 
 @component('pointer-press-controller-test-component')
 class PointerPressControllerTestComponent extends Component {
-	readonly spy = jasmine.createSpy()
+	readonly spy = vi.fn()
 
 	readonly pointerPressController = new PointerPressController(this, {
 		handlePressChange: this.spy
@@ -62,9 +63,9 @@ describe('PointerPressController', () => {
 	})
 
 	it('should listen for the release on the document for the duration of the press alone', () => {
-		const added = spyOn(document, 'addEventListener').and.callThrough()
-		const removed = spyOn(document, 'removeEventListener').and.callThrough()
-		const releaseTypes = (spy: jasmine.Spy) => spy.calls.allArgs().map(([type]) => type).filter(type => type === 'pointerup' || type === 'pointercancel')
+		const added = vi.spyOn(document, 'addEventListener')
+		const removed = vi.spyOn(document, 'removeEventListener')
+		const releaseTypes = (spy: MockInstance) => spy.mock.calls.map(([type]) => type).filter(type => type === 'pointerup' || type === 'pointercancel')
 
 		expect(releaseTypes(added)).toEqual([])
 

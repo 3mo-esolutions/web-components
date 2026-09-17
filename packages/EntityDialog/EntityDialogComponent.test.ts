@@ -7,9 +7,9 @@ import { EntityDialogComponent } from './index.js'
 
 class Entity { }
 const entity = new Entity
-const fetchSpy = jasmine.createSpy().and.returnValue(Promise.resolve(entity))
-const saveSpy = jasmine.createSpy()
-const deleteSpy = jasmine.createSpy()
+const fetchSpy = vi.fn().mockReturnValue(Promise.resolve(entity))
+const saveSpy = vi.fn()
+const deleteSpy = vi.fn()
 
 @component('mo-dialog-entity-test')
 class DialogTest extends EntityDialogComponent<Entity, FetchableDialogComponentParameters & { readonly parentId?: number }> {
@@ -30,9 +30,9 @@ describe('EntityDialogComponent', () => {
 	const fixture = new ComponentTestFixture(() => new DialogTest({ id: entityId }))
 
 	beforeEach(() => {
-		deleteSpy.calls.reset()
-		fetchSpy.calls.reset()
-		saveSpy.calls.reset()
+		deleteSpy.mockClear()
+		fetchSpy.mockClear()
+		saveSpy.mockClear()
 	})
 
 	afterEach(() => new Promise(resolve => setTimeout(resolve, 50)))
@@ -63,7 +63,7 @@ describe('EntityDialogComponent', () => {
 		it('should automatically set the header using entity\'s toString()', async () => {
 			await expectHeadingToBe('Create Entity')
 
-			spyOn(entity as any, 'toString').and.returnValue('Foo "Bar"')
+			vi.spyOn(entity as any, 'toString').mockReturnValue('Foo "Bar"')
 			await expectHeadingToBe('Create Foo "Bar"')
 		})
 	})
@@ -73,7 +73,7 @@ describe('EntityDialogComponent', () => {
 
 		it('should save entity when primary-button is clicked', () => {
 			fixture.component.primaryActionElement?.click()
-			expect(saveSpy).toHaveBeenCalledOnceWith(entity)
+			expect(saveSpy).toHaveBeenCalledExactlyOnceWith(entity)
 		})
 
 		it('should delete entity when secondary-button is clicked', () => {
@@ -84,7 +84,7 @@ describe('EntityDialogComponent', () => {
 		it('should automatically set the header according to the entity label', async () => {
 			await expectHeadingToBe('Edit Entity')
 
-			spyOn(entity as any, 'toString').and.returnValue('Foo "Bar"')
+			vi.spyOn(entity as any, 'toString').mockReturnValue('Foo "Bar"')
 			await expectHeadingToBe('Edit Foo "Bar"')
 		})
 	})
@@ -95,10 +95,10 @@ describe('EntityDialogComponent', () => {
 		afterEach(() => new Promise(resolve => setTimeout(resolve, 50)))
 
 		const notifySuccessAndGetOpenAction = () => {
-			const notifySuccessSpy = spyOn(NotificationComponent, 'notifySuccess')
-			const confirmSpy = spyOn(DialogTest.prototype, 'confirm')
+			const notifySuccessSpy = vi.spyOn(NotificationComponent, 'notifySuccess').mockResolvedValue(undefined)
+			const confirmSpy = vi.spyOn(DialogTest.prototype, 'confirm').mockResolvedValue(undefined)
 			fixture.component['notifySuccess']({ id: 42 } as unknown as Entity)
-			const [, action] = notifySuccessSpy.calls.mostRecent().args as unknown as [string, { handleClick: () => PromiseLike<void> }]
+			const [, action] = notifySuccessSpy.mock.lastCall as unknown as [string, { handleClick: () => PromiseLike<void> }]
 			return { confirmSpy, open: action.handleClick }
 		}
 
@@ -107,29 +107,29 @@ describe('EntityDialogComponent', () => {
 
 			await open()
 
-			const reopenedDialog = confirmSpy.calls.mostRecent().object as DialogTest
+			const reopenedDialog = confirmSpy.mock.instances.at(-1) as DialogTest
 			expect(reopenedDialog.parameters).toEqual({ id: 42, parentId: 99 })
 		})
 
 		it('should invoke the confirmationHandler and pass it on, so the opener also refetches for re-opened dialogs', async () => {
-			const confirmationHandler = jasmine.createSpy()
+			const confirmationHandler = vi.fn()
 			fixture.component[EntityDialogComponent.confirmationHandler] = confirmationHandler
 			const { confirmSpy, open } = notifySuccessAndGetOpenAction()
 
 			await open()
 
 			expect(confirmationHandler).toHaveBeenCalledTimes(1)
-			const reopenedDialog = confirmSpy.calls.mostRecent().object as DialogTest
+			const reopenedDialog = confirmSpy.mock.instances.at(-1) as DialogTest
 			expect(reopenedDialog[EntityDialogComponent.confirmationHandler]).toBe(confirmationHandler)
 		})
 
 		it('should not notify success when the dialog is cancelled', async () => {
-			const notifySuccessSpy = spyOn(NotificationComponent, 'notifySuccess')
+			const notifySuccessSpy = vi.spyOn(NotificationComponent, 'notifySuccess').mockResolvedValue(undefined)
 			const confirmation = fixture.component.confirm()
 
 			await fixture.component['handleAction'](DialogActionKey.Cancellation)
 
-			await expectAsync(confirmation).toBeRejected()
+			await expect(confirmation).rejects.toThrow()
 			expect(notifySuccessSpy).not.toHaveBeenCalled()
 		})
 	})
@@ -143,7 +143,7 @@ describe('EntityDialogComponent', () => {
 		it('should trigger the primary action on Ctrl/Cmd+S', async () => {
 			await pressCtrlS()
 
-			expect(saveSpy).toHaveBeenCalledOnceWith(entity)
+			expect(saveSpy).toHaveBeenCalledExactlyOnceWith(entity)
 		})
 
 		it('should not trigger the primary action when preventPrimaryOnCtrlS is set', async () => {

@@ -90,7 +90,7 @@ describe('Timeline', () => {
 			await settle()
 
 			for (const timeline of [metaAttributeFixture.component, metaSlotFixture.component]) {
-				expect(timeline.hasAttribute('has-meta')).toBeTrue()
+				expect(timeline.hasAttribute('has-meta')).toBe(true)
 				expect(occupiedTracks(timeline, 'columns').length).toBe(3)
 			}
 		})
@@ -98,7 +98,7 @@ describe('Timeline', () => {
 		it('should not reserve one while no item has meta', async () => {
 			await settle()
 
-			expect(fixture.component.hasAttribute('has-meta')).toBeFalse()
+			expect(fixture.component.hasAttribute('has-meta')).toBe(false)
 			expect(occupiedTracks(fixture.component, 'columns').length).toBe(2)
 			expect(fixture.component.items[0]!.renderRoot.querySelector('slot[name=meta]')).toBeNull()
 		})

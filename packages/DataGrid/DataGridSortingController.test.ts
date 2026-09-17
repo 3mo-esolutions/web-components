@@ -1,5 +1,5 @@
 import { PureEventDispatcher } from '@a11d/lit'
-import { DataGridSortingController, DataGridSortingStrategy } from './DataGridSortingController'
+import { DataGridSortingController, DataGridSortingStrategy } from './DataGridSortingController.js'
 
 type Data = { id: number, name: string }
 
@@ -21,18 +21,18 @@ describe('DataGridSortingController', () => {
 
 	describe('enabled', () => {
 		it('should be false when no sorting is defined', () => {
-			expect(controller.enabled).toBeFalse()
+			expect(controller.enabled).toBe(false)
 		})
 
 		it('should be true when sorting is defined', () => {
 			controller.set({ selector: 'id', strategy: DataGridSortingStrategy.Descending })
-			expect(controller.enabled).toBeTrue()
+			expect(controller.enabled).toBe(true)
 		})
 
 		it('should be false after resetting, since an empty sorting array means no sorting', () => {
 			controller.set({ selector: 'id', strategy: DataGridSortingStrategy.Descending })
 			controller.reset()
-			expect(controller.enabled).toBeFalse()
+			expect(controller.enabled).toBe(false)
 		})
 	})
 
@@ -62,7 +62,7 @@ describe('DataGridSortingController', () => {
 		})
 
 		it('should dispatch sortingChange event', () => {
-			spyOn(controller.host.sortingChange!, 'dispatch')
+			vi.spyOn(controller.host.sortingChange!, 'dispatch').mockReturnValue(undefined)
 
 			controller.set({ selector: 'id', strategy: DataGridSortingStrategy.Descending })
 
@@ -142,8 +142,8 @@ describe('DataGridSortingController', () => {
 
 				expect(controller.toSorted(data)).toEqual([
 					{ id: 3, name: 'Clarke' },
-					jasmine.objectContaining({ name: 'Darlene' }),
-					jasmine.objectContaining({ name: 'Darlene' }),
+					expect.objectContaining({ name: 'Darlene' }),
+					expect.objectContaining({ name: 'Darlene' }),
 					{ id: 2, name: 'Elliot' },
 					{ id: 5, name: 'Harry' },
 				])
@@ -155,8 +155,8 @@ describe('DataGridSortingController', () => {
 				expect(controller.toSorted(data)).toEqual([
 					{ id: 5, name: 'Harry' },
 					{ id: 2, name: 'Elliot' },
-					jasmine.objectContaining({ name: 'Darlene' }),
-					jasmine.objectContaining({ name: 'Darlene' }),
+					expect.objectContaining({ name: 'Darlene' }),
+					expect.objectContaining({ name: 'Darlene' }),
 					{ id: 3, name: 'Clarke' },
 				])
 			})

@@ -3,6 +3,7 @@ import { ComponentTestFixture } from '@a11d/lit-testing'
 import { EntityDialogComponent } from '@3mo/entity-dialog'
 import { ContextMenu } from '@3mo/context-menu'
 import { EntityDataGrid } from './index.js'
+import { type MockInstance } from 'vitest'
 
 type Person = { id: number, name: string }
 
@@ -57,7 +58,7 @@ describe('EntityDataGrid', () => {
 
 		it('should not have a primary action without a "create" action', () => {
 			expect(fixture.component).toBeInstanceOf(EntityDataGrid)
-			expect(fixture.component.hasPrimaryAction).toBeFalse()
+			expect(fixture.component.hasPrimaryAction).toBe(false)
 			expect(fixture.component.renderRoot.querySelector('#toolbar')).toBeNull()
 		})
 
@@ -65,9 +66,9 @@ describe('EntityDataGrid', () => {
 			fixture.component.create = () => Promise.resolve()
 			await fixture.updateComplete
 
-			expect(fixture.component.hasPrimaryAction).toBeTrue()
+			expect(fixture.component.hasPrimaryAction).toBe(true)
 			expect(fixture.component.renderRoot.querySelector('#toolbar')).not.toBeNull()
-			expect(getCreateButton()?.checkVisibility()).toBeTrue()
+			expect(getCreateButton()?.checkVisibility()).toBe(true)
 		})
 
 		it('should hide the generated create button when "createHidden"', async () => {
@@ -75,7 +76,7 @@ describe('EntityDataGrid', () => {
 			fixture.component.createHidden = true
 			await fixture.updateComplete
 
-			expect(fixture.component.hasPrimaryAction).toBeFalse()
+			expect(fixture.component.hasPrimaryAction).toBe(false)
 			expect(getCreateButton()).toBeNull()
 		})
 
@@ -88,7 +89,7 @@ describe('EntityDataGrid', () => {
 
 			const slot = fixture.component.renderRoot.querySelector<HTMLSlotElement>('slot[name=primary-action]')
 			expect(slot?.assignedElements()).toEqual([slotted])
-			expect(getCreateButton()?.checkVisibility()).toBeTrue()
+			expect(getCreateButton()?.checkVisibility()).toBe(true)
 
 			slotted.remove()
 		})
@@ -101,7 +102,7 @@ describe('EntityDataGrid', () => {
 
 		it('should refetch when a dialog re-opened from the success notification is confirmed', async () => {
 			const dialog = { confirm: () => Promise.resolve() } as unknown as EntityDialogComponent<Person>
-			const requestFetchSpy = spyOn(fixture.component, 'requestFetch')
+			const requestFetchSpy = vi.spyOn(fixture.component, 'requestFetch').mockResolvedValue(undefined)
 
 			await fixture.component['confirmEntityDialog'](dialog)
 			await dialog[EntityDialogComponent.confirmationHandler]?.()
@@ -116,11 +117,11 @@ describe('EntityDataGrid', () => {
 		`)
 
 		let dialogParameters: Array<unknown>
-		let confirmSpy: jasmine.Spy
+		let confirmSpy: MockInstance
 
 		beforeEach(() => {
 			dialogParameters = []
-			confirmSpy = spyOn(TestDialog.prototype, 'confirm').and.callFake(function (this: TestDialog) {
+			confirmSpy = vi.spyOn(TestDialog.prototype, 'confirm').mockImplementation(function (this: TestDialog) {
 				dialogParameters.push(this.parameters)
 				return Promise.resolve(undefined)
 			})
@@ -129,13 +130,13 @@ describe('EntityDataGrid', () => {
 		const createButton = () => fixture.component.renderRoot.querySelector<HTMLElement>('mo-loading-button')
 
 		it('should invoke a functional create action and refetch afterwards', async () => {
-			const create = jasmine.createSpy('create')
+			const create = vi.fn()
 			fixture.component.create = create
 			await waitUntil(() => !!createButton())
-			const requestFetchSpy = spyOn(fixture.component, 'requestFetch')
+			const requestFetchSpy = vi.spyOn(fixture.component, 'requestFetch').mockResolvedValue(undefined)
 
 			createButton()!.click()
-			await waitUntil(() => requestFetchSpy.calls.any())
+			await waitUntil(() => requestFetchSpy.mock.calls.length > 0)
 
 			expect(create).toHaveBeenCalledTimes(1)
 			expect(requestFetchSpy).toHaveBeenCalledTimes(1)
@@ -144,7 +145,7 @@ describe('EntityDataGrid', () => {
 		it('should instantiate and confirm a dialog-class create action with empty parameters', async () => {
 			fixture.component.create = TestDialog
 			await fixture.updateComplete
-			const requestFetchSpy = spyOn(fixture.component, 'requestFetch')
+			const requestFetchSpy = vi.spyOn(fixture.component, 'requestFetch').mockResolvedValue(undefined)
 
 			await fixture.component.createAndRefetch()
 
@@ -156,7 +157,7 @@ describe('EntityDataGrid', () => {
 		it('should pass the entity id to a dialog-class edit action and refetch after it is confirmed', async () => {
 			fixture.component.edit = TestDialog
 			await fixture.updateComplete
-			const requestFetchSpy = spyOn(fixture.component, 'requestFetch')
+			const requestFetchSpy = vi.spyOn(fixture.component, 'requestFetch').mockResolvedValue(undefined)
 
 			await fixture.component.editAndRefetch({ ...jane })
 
@@ -166,7 +167,7 @@ describe('EntityDataGrid', () => {
 		})
 
 		// Disabled: Firefox timeout when awaiting lazy context menu
-		xit('should wire both create and edit when createOrEdit is set', async () => {
+		it.skip('should wire both create and edit when createOrEdit is set', async () => {
 			fixture.component.createOrEdit = TestDialog
 			await waitUntil(() => !!createButton())
 
@@ -179,16 +180,16 @@ describe('EntityDataGrid', () => {
 		})
 
 		it('should pass all selected entities to the delete action and refetch afterwards', async () => {
-			const deleteAction = jasmine.createSpy('delete')
+			const deleteAction = vi.fn()
 			fixture.component.delete = deleteAction
 			await fixture.updateComplete
-			const requestFetchSpy = spyOn(fixture.component, 'requestFetch')
+			const requestFetchSpy = vi.spyOn(fixture.component, 'requestFetch').mockResolvedValue(undefined)
 			const menu = renderRowContextMenu(fixture.component, [john, jane])
 
 			menu.querySelector<HTMLElement>('[data-test-id=delete]')!.click()
-			await waitUntil(() => requestFetchSpy.calls.any())
+			await waitUntil(() => requestFetchSpy.mock.calls.length > 0)
 
-			expect(deleteAction).toHaveBeenCalledOnceWith(john, jane)
+			expect(deleteAction).toHaveBeenCalledExactlyOnceWith(john, jane)
 			expect(requestFetchSpy).toHaveBeenCalledTimes(1)
 		})
 	})
@@ -290,8 +291,8 @@ describe('EntityDataGrid', () => {
 		}
 
 		// Disabled: Firefox timeout when awaiting lazy context menu
-		xit('should run the primary edit context-menu action on row double-click', async () => {
-			const edit = jasmine.createSpy('edit')
+		it.skip('should run the primary edit context-menu action on row double-click', async () => {
+			const edit = vi.fn()
 			fixture.component.edit = edit
 			const row = await untilTheFirstRowsContextMenuAnswers()
 			const doubleClicked = new Promise(resolve => fixture.component.addEventListener('rowDoubleClick', () => resolve(undefined), { once: true }))
@@ -299,7 +300,7 @@ describe('EntityDataGrid', () => {
 			row.content.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }))
 			await doubleClicked
 
-			expect(edit).toHaveBeenCalledOnceWith(john)
+			expect(edit).toHaveBeenCalledExactlyOnceWith(john)
 		})
 	})
 })

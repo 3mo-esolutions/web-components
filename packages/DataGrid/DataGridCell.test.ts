@@ -43,11 +43,11 @@ describe('DataGridCell', () => {
 			const cell0 = getCell(0, 0)
 			const cell1 = getCell(0, 1)
 
-			spyOn(cell1, 'focus')
+			vi.spyOn(cell1, 'focus').mockReturnValue(undefined)
 			cell0.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight' }))
 			expect(cell1.focus).toHaveBeenCalled()
 
-			spyOn(cell0, 'focus')
+			vi.spyOn(cell0, 'focus').mockReturnValue(undefined)
 			cell1.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight' }))
 			expect(cell0.focus).toHaveBeenCalledTimes(1)
 
@@ -59,11 +59,11 @@ describe('DataGridCell', () => {
 			const row0Cell0 = getCell(0, 0)
 			const row1Cell0 = getCell(1, 0)
 
-			spyOn(row1Cell0, 'focus')
+			vi.spyOn(row1Cell0, 'focus').mockReturnValue(undefined)
 			row0Cell0.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }))
 			expect(row1Cell0.focus).toHaveBeenCalled()
 
-			spyOn(row0Cell0, 'focus')
+			vi.spyOn(row0Cell0, 'focus').mockReturnValue(undefined)
 			row1Cell0.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }))
 			expect(row0Cell0.focus).toHaveBeenCalledTimes(1)
 
@@ -77,8 +77,8 @@ describe('DataGridCell', () => {
 
 			const cell0 = getCell(0, 0)
 			const cell1 = getCell(0, 1)
-			expect(cell0.isEditing).toBeTrue()
-			spyOn(cell1, 'focus')
+			expect(cell0.isEditing).toBe(true)
+			vi.spyOn(cell1, 'focus').mockReturnValue(undefined)
 
 			cell0.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight' }))
 
@@ -87,8 +87,8 @@ describe('DataGridCell', () => {
 
 		it('should activate the cell\'s click on Enter when it is not editable, as only editable cells enter edit mode', () => {
 			const cell = getCell(0, 0)
-			expect(cell.isEditing).toBeFalse()
-			spyOn(cell, 'click')
+			expect(cell.isEditing).toBe(false)
+			vi.spyOn(cell, 'click').mockReturnValue(undefined)
 
 			cell.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }))
 
@@ -96,24 +96,24 @@ describe('DataGridCell', () => {
 		})
 
 		it('should copy the cell\'s text on Ctrl+C and notify', async () => {
-			const writeText = spyOn(navigator.clipboard, 'writeText').and.returnValue(Promise.resolve())
-			spyOn(NotificationComponent, 'notifySuccess')
+			const writeText = vi.spyOn(navigator.clipboard, 'writeText').mockReturnValue(Promise.resolve())
+			vi.spyOn(NotificationComponent, 'notifySuccess').mockResolvedValue(undefined)
 
 			const cell = getCell(0, 0)
 			cell.dispatchEvent(new KeyboardEvent('keydown', { key: 'c', ctrlKey: true }))
 			await new Promise(r => setTimeout(r, 20))
 
-			expect(writeText).toHaveBeenCalledOnceWith('Alice')
+			expect(writeText).toHaveBeenCalledExactlyOnceWith('Alice')
 			expect(NotificationComponent.notifySuccess).toHaveBeenCalled()
 		})
 
 		it('should not copy while editing, as Ctrl+C then belongs to the edit field', async () => {
 			fixture.component.editability = DataGridEditability.Always
 			await settle()
-			const writeText = spyOn(navigator.clipboard, 'writeText').and.returnValue(Promise.resolve())
+			const writeText = vi.spyOn(navigator.clipboard, 'writeText').mockReturnValue(Promise.resolve())
 
 			const cell = getCell(0, 0)
-			expect(cell.isEditing).toBeTrue()
+			expect(cell.isEditing).toBe(true)
 			cell.dispatchEvent(new KeyboardEvent('keydown', { key: 'c', ctrlKey: true }))
 			await new Promise(r => setTimeout(r, 20))
 
@@ -177,18 +177,18 @@ describe('DataGridCell', () => {
 	describe('Stickiness', () => {
 		it('should reflect the column\'s stickiness, edge and inset as attributes, mirroring the header cells', async () => {
 			const cell = getCell(0, 0)
-			expect(cell.hasAttribute('data-sticky')).toBeFalse()
-			expect(cell.hasAttribute('data-sticky-edge')).toBeFalse()
+			expect(cell.hasAttribute('data-sticky')).toBe(false)
+			expect(cell.hasAttribute('data-sticky-edge')).toBe(false)
 
 			fixture.component.querySelector('mo-data-grid-column-text')!.sticky = 'start'
 			await settle()
 
 			const stickyCell = getCell(0, 0)
 			expect(stickyCell.column.sticky).toBe('start')
-			expect(stickyCell.hasAttribute('data-sticky')).toBeTrue()
+			expect(stickyCell.hasAttribute('data-sticky')).toBe(true)
 			expect(stickyCell.getAttribute('data-sticky-edge')).toBe('end')
 			expect(stickyCell.style.insetInline).toBe('0px auto')
-			expect(getCell(0, 1).hasAttribute('data-sticky')).toBeFalse()
+			expect(getCell(0, 1).hasAttribute('data-sticky')).toBe(false)
 		})
 	})
 })

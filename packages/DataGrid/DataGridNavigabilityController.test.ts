@@ -38,8 +38,8 @@ describe('DataGridNavigabilityController', () => {
 	it('should move to the first and last cell of the row with Home and End', () => {
 		const first = cell(0, 0)
 		const last = cell(0, 1)
-		spyOn(last, 'focus')
-		spyOn(first, 'focus')
+		vi.spyOn(last, 'focus').mockReturnValue(undefined)
+		vi.spyOn(first, 'focus').mockReturnValue(undefined)
 
 		press(first, 'End')
 		expect(last.focus).toHaveBeenCalledTimes(1)
@@ -51,8 +51,8 @@ describe('DataGridNavigabilityController', () => {
 	it('should move to the first and last cell of the grid with Ctrl+Home and Ctrl+End', () => {
 		const first = cell(0, 0)
 		const last = cell(2, 1)
-		spyOn(last, 'focus')
-		spyOn(first, 'focus')
+		vi.spyOn(last, 'focus').mockReturnValue(undefined)
+		vi.spyOn(first, 'focus').mockReturnValue(undefined)
 
 		press(first, 'End', { ctrlKey: true })
 		expect(last.focus).toHaveBeenCalledTimes(1)
@@ -63,8 +63,8 @@ describe('DataGridNavigabilityController', () => {
 
 	it('should leave the grid on Tab instead of moving within it, the grid being a single tab stop', () => {
 		const first = cell(0, 0)
-		spyOn(cell(0, 1), 'focus')
-		spyOn(cell(1, 0), 'focus')
+		vi.spyOn(cell(0, 1), 'focus').mockReturnValue(undefined)
+		vi.spyOn(cell(1, 0), 'focus').mockReturnValue(undefined)
 
 		expect(press(first, 'Tab').defaultPrevented).toBe(false)
 		expect(press(first, 'Tab', { shiftKey: true }).defaultPrevented).toBe(false)
@@ -101,7 +101,7 @@ describe('DataGridNavigabilityController', () => {
 
 	it('should leave a modified arrow to the application', () => {
 		const origin = cell(0, 0)
-		spyOn(cell(1, 0), 'focus')
+		vi.spyOn(cell(1, 0), 'focus').mockReturnValue(undefined)
 
 		const event = press(origin, 'ArrowDown', { ctrlKey: true })
 
@@ -132,7 +132,7 @@ describe('DataGridNavigabilityController', () => {
 		const person = people[0]!
 		fixture.component.setData([person, person, person])
 		await settle()
-		spyOn(cell(1, 0), 'focus')
+		vi.spyOn(cell(1, 0), 'focus').mockReturnValue(undefined)
 
 		press(cell(2, 0), 'ArrowUp')
 

@@ -26,12 +26,12 @@ describe('DialogAcknowledge', () => {
 	it('should return "true" if primary button is clicked', async () => {
 		const confirmationPromise = fixture.component.confirm()
 		fixture.component.primaryActionElement?.click()
-		await expectAsync(confirmationPromise).toBeResolvedTo(true)
+		await expect(confirmationPromise).resolves.toEqual(true)
 	})
 
 	it('should return "false" if secondary button is clicked', async () => {
 		const confirmationPromise = fixture.component.confirm()
 		fixture.component.secondaryActionElement?.click()
-		await expectAsync(confirmationPromise).toBeResolvedTo(false)
+		await expect(confirmationPromise).resolves.toEqual(false)
 	})
 })

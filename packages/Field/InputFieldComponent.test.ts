@@ -4,6 +4,8 @@ import { InputFieldComponent } from './InputFieldComponent.js'
 import { type FieldComponent } from './FieldComponent.js'
 
 class TestInputFieldComponent extends InputFieldComponent<string> {
+	value?: string
+
 	protected valueToInputValue(value?: string) {
 		return value ? `formatted:${value}` : ''
 	}
@@ -38,7 +40,7 @@ describe('InputFieldComponent', () => {
 			fixture.component.inputElement.dispatchEvent(new Event('input', { bubbles: true }))
 			await fixture.updateComplete
 
-			expect(fixture.component.isPopulated).toBeTrue()
+			expect(fixture.component.isPopulated).toBe(true)
 		})
 
 		it('should not mark the inner mo-field populated for an empty input string', async () => {
@@ -46,7 +48,7 @@ describe('InputFieldComponent', () => {
 			fixture.component.inputElement.dispatchEvent(new Event('input', { bubbles: true }))
 			await fixture.updateComplete
 
-			expect(fixture.component.isPopulated).toBeFalse()
+			expect(fixture.component.isPopulated).toBe(false)
 		})
 	})
 
@@ -54,20 +56,20 @@ describe('InputFieldComponent', () => {
 		it('should tunnel dense to the inner mo-field', async () => {
 			fixture.component.dense = true
 			await fixture.updateComplete
-			expect((fixture.component as any).isDense).toBeTrue()
+			expect((fixture.component as any).isDense).toBe(true)
 		})
 	})
 
 	describe('selectOnFocus', () => {
 		it('should not select the input\'s content on focus by default', () => {
-			spyOn(fixture.component, 'select')
+			vi.spyOn(fixture.component, 'select').mockResolvedValue(undefined)
 			fixture.component.selectOnFocus = false
 			fixture.component.dispatchEvent(new FocusEvent('focusin', { bubbles: true }))
 			expect(fixture.component.select).not.toHaveBeenCalled()
 		})
 
 		it('should select the input\'s whole content on focus when enabled', () => {
-			spyOn(fixture.component, 'select')
+			vi.spyOn(fixture.component, 'select').mockResolvedValue(undefined)
 			fixture.component.selectOnFocus = true
 			fixture.component.dispatchEvent(new FocusEvent('focusin', { bubbles: true }))
 			expect(fixture.component.select).toHaveBeenCalled()
@@ -76,26 +78,26 @@ describe('InputFieldComponent', () => {
 
 	describe('focus and selection methods', () => {
 		it('should focus the underlying input via focus()', async () => {
-			spyOn(fixture.component.inputElement, 'focus')
+			vi.spyOn(fixture.component.inputElement, 'focus').mockReturnValue(undefined)
 			await fixture.component.focus()
 			expect(fixture.component.inputElement.focus).toHaveBeenCalled()
 		})
 
 		it('should blur the underlying input via blur()', async () => {
-			spyOn(fixture.component.inputElement, 'blur')
+			vi.spyOn(fixture.component.inputElement, 'blur').mockReturnValue(undefined)
 			await fixture.component.blur()
 			expect(fixture.component.inputElement.blur).toHaveBeenCalled()
 		})
 
 		it('should select the input\'s text via select()', async () => {
-			spyOn(fixture.component.inputElement, 'select')
+			vi.spyOn(fixture.component.inputElement, 'select').mockReturnValue(undefined)
 			await fixture.component.select()
 			expect(fixture.component.inputElement.select).toHaveBeenCalled()
 		})
 
 		for (const method of ['setSelectionRange', 'setRangeText'] as const) {
 			it(`should forward ${method} to the input`, () => {
-				spyOn(fixture.component.inputElement, method)
+				vi.spyOn(fixture.component.inputElement, method).mockReturnValue(undefined)
 				if (method === 'setSelectionRange') {
 					fixture.component.setSelectionRange(0, 5)
 					expect(fixture.component.inputElement.setSelectionRange).toHaveBeenCalledWith(0, 5)
@@ -109,15 +111,15 @@ describe('InputFieldComponent', () => {
 
 	describe('validation', () => {
 		it('should report the input\'s native validity via checkValidity', async () => {
-			expect(await fixture.component.checkValidity()).toBeTrue()
+			expect(await fixture.component.checkValidity()).toBe(true)
 		})
 
 		it('should fail validation after setCustomValidity with a message and pass again once cleared', async () => {
 			fixture.component.setCustomValidity('Invalid value')
-			expect(await fixture.component.checkValidity()).toBeFalse()
+			expect(await fixture.component.checkValidity()).toBe(false)
 
 			fixture.component.setCustomValidity('')
-			expect(await fixture.component.checkValidity()).toBeTrue()
+			expect(await fixture.component.checkValidity()).toBe(true)
 		})
 	})
 
@@ -149,13 +151,13 @@ export const expectFieldPropertyTunnelsToInput = async (fixture: ComponentTestFi
 }
 
 export const expectInputEventTunnelsToField = (fixture: ComponentTestFixture<any>, event: string, inputValue: any, value = inputValue) => {
-	const dispatch = jasmine.createSpy('dispatch')
+	const dispatch = vi.fn()
 	fixture.component.addEventListener(event, (e: CustomEvent<any>) => dispatch(e.detail))
 
 	fixture.component.inputElement.value = inputValue
 	fixture.component.inputElement.dispatchEvent(new Event(event))
 
-	expect(dispatch).toHaveBeenCalledOnceWith(value)
+	expect(dispatch).toHaveBeenCalledExactlyOnceWith(value)
 }
 
 export async function expectSlotRendersOnlyWithAssignedContent(fixture: ComponentTestFixture<FieldComponent<unknown>>, slotName: string) {

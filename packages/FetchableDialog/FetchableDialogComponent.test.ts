@@ -7,7 +7,7 @@ import './index.js'
 type Item = { id: number, name: string }
 
 const preset = () => ({ id: 0, name: 'Preset' })
-const fetchSpy = jasmine.createSpy('fetch').and.callFake((id: EntityId) => ({ id: Number(id), name: `Item ${id}` }) as Item)
+const fetchSpy = vi.fn((id: EntityId) => ({ id: Number(id), name: `Item ${id}` }) as Item)
 
 @component('mo-fetchable-dialog-component-test')
 class DialogTest extends FetchableDialogComponent<Item> {
@@ -51,7 +51,7 @@ describe('FetchableDialogComponent', () => {
 		}
 	}
 
-	beforeEach(() => fetchSpy.calls.reset())
+	beforeEach(() => { fetchSpy.mockClear() })
 
 	afterEach(() => new Promise(resolve => setTimeout(resolve, 50)))
 
@@ -76,7 +76,7 @@ describe('FetchableDialogComponent', () => {
 		it('should fetch the entity with the given id and expose it as entity once connected', async () => {
 			await waitUntil(() => renderedName() === 'Item 7')
 
-			expect(fetchSpy).toHaveBeenCalledOnceWith(7)
+			expect(fetchSpy).toHaveBeenCalledExactlyOnceWith(7)
 			expect(fixture.component['entity']).toEqual({ id: 7, name: 'Item 7' })
 		})
 

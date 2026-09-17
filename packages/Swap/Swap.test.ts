@@ -96,7 +96,7 @@ describe('Swap', () => {
 	})
 
 	it('should not dispatch "change" for the value it starts with', async () => {
-		const handler = jasmine.createSpy('change')
+		const handler = vi.fn()
 		const swap = document.createElement('mo-swap')
 		swap.addEventListener('change', handler)
 
@@ -108,14 +108,14 @@ describe('Swap', () => {
 	})
 
 	it('should dispatch "change" with the value it switches to', async () => {
-		const handler = jasmine.createSpy('change')
+		const handler = vi.fn()
 		fixture.component.addEventListener('change', handler)
 
 		fixture.component.value = 'success'
 		await fixture.updateComplete
 
 		expect(handler).toHaveBeenCalledTimes(1)
-		expect(handler.calls.mostRecent().args[0].detail).toBe('success')
+		expect(handler.mock.lastCall![0].detail).toBe('success')
 	})
 
 	describe('flash', () => {

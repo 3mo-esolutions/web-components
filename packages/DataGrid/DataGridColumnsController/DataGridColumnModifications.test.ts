@@ -33,7 +33,7 @@ describe('DataGridColumnModifications', () => {
 	})
 
 	it('should notify when set', () => {
-		const updated = jasmine.createSpy()
+		const updated = vi.fn()
 		const modifications = new DataGridColumnModifications<Person>({ updated })
 
 		modifications.set([{ dataSelector: 'name' }])
@@ -42,7 +42,7 @@ describe('DataGridColumnModifications', () => {
 	})
 
 	it('should not notify while being constructed', () => {
-		const updated = jasmine.createSpy()
+		const updated = vi.fn()
 
 		new DataGridColumnModifications<Person>({ updated })
 
@@ -64,7 +64,7 @@ describe('DataGridColumnModifications', () => {
 		modifications.set([{ dataSelector: 'name', width: '200px' }, { dataSelector: 'id', hidden: true }])
 
 		expect(modifications.get('name')?.width).toBe('200px')
-		expect(modifications.get('id')?.hidden).toBeTrue()
+		expect(modifications.get('id')?.hidden).toBe(true)
 	})
 
 	it('should be array-like and iterable in the order intent is expressed', () => {
@@ -75,6 +75,6 @@ describe('DataGridColumnModifications', () => {
 		expect(modifications[0]?.dataSelector).toBe('name')
 		expect([...modifications].map(m => m.dataSelector)).toEqual(['name', 'id'])
 		expect(modifications.findIndex(m => m.dataSelector === 'id')).toBe(1)
-		expect(modifications.every(m => !!m.dataSelector)).toBeTrue()
+		expect(modifications.every(m => !!m.dataSelector)).toBe(true)
 	})
 })

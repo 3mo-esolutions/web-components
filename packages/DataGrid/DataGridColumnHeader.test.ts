@@ -1,5 +1,6 @@
 import { html, type HTMLTemplateResult } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
+import { type SelectableMenuItem } from '@3mo/menu'
 import { type DataGrid, DataGridColumn, type DataGridColumnHeader, DataGridSortingStrategy } from './index.js'
 
 type Person = { id: number, name: string, age: number }
@@ -66,7 +67,7 @@ describe('DataGridColumnHeader', () => {
 			const [name] = await withColumns(describedColumn())
 
 			expect(areaOf(name!).getAttribute('aria-label')).toBe('The name of the person')
-			expect(contentOf(name!).hasAttribute('aria-label')).toBeFalse()
+			expect(contentOf(name!).hasAttribute('aria-label')).toBe(false)
 		})
 
 		it('should let the anchor cover the padding around the heading text', async () => {
@@ -82,7 +83,7 @@ describe('DataGridColumnHeader', () => {
 		it('should not anchor a tooltip for a column without a description', async () => {
 			const [name] = await withColumns(nameColumn())
 
-			expect(areaOf(name!).hasAttribute('aria-label')).toBeFalse()
+			expect(areaOf(name!).hasAttribute('aria-label')).toBe(false)
 		})
 	})
 
@@ -94,19 +95,19 @@ describe('DataGridColumnHeader', () => {
 			await settle()
 
 			expect(fixture.component.getSorting()).toEqual([{ selector: 'name', strategy: DataGridSortingStrategy.Descending, rank: 1 }])
-			expect(name!.menuOpen).toBeFalse()
+			expect(name!.menuOpen).toBe(false)
 		})
 
 		it('should reflect the sorting strategy in the icon and keep it hidden while unsorted', async () => {
 			const [name] = await withColumns(nameColumn(), ageColumn())
 
-			expect(sortOf(name!)?.hasAttribute('data-preview')).toBeTrue()
+			expect(sortOf(name!)?.hasAttribute('data-preview')).toBe(true)
 			expect(getComputedStyle(sortOf(name!)!).display).toBe('none')
 
 			fixture.component.sort({ selector: 'name', strategy: DataGridSortingStrategy.Ascending })
 			await settle()
 
-			expect(sortOf(name!)?.hasAttribute('data-preview')).toBeFalse()
+			expect(sortOf(name!)?.hasAttribute('data-preview')).toBe(false)
 			expect(sortOf(name!)?.querySelector('mo-icon-button')?.getAttribute('icon')).toBe('arrow_upward')
 
 			fixture.component.sort({ selector: 'name', strategy: DataGridSortingStrategy.Descending })
@@ -134,19 +135,19 @@ describe('DataGridColumnHeader', () => {
 
 		it('should mark the active strategy\'s menu item selected and reset the sorting when it is clicked again', async () => {
 			const [name] = await withColumns(nameColumn(), ageColumn())
-			const itemOf = (icon: string) => name!.renderRoot.querySelector(`mo-selectable-menu-item[icon=${icon}]`)
+			const itemOf = (icon: string) => name!.renderRoot.querySelector<SelectableMenuItem>(`mo-selectable-menu-item[icon=${icon}]`)
 
 			fixture.component.sort({ selector: 'name', strategy: DataGridSortingStrategy.Descending })
 			await settle()
 
-			expect(itemOf('arrow_downward')?.selected).toBeTrue()
-			expect(itemOf('arrow_upward')?.selected).toBeFalse()
+			expect(itemOf('arrow_downward')?.selected).toBe(true)
+			expect(itemOf('arrow_upward')?.selected).toBe(false)
 
 			itemOf('arrow_downward')!.click()
 			await settle()
 
 			expect(fixture.component.getSorting()).toEqual([])
-			expect(itemOf('arrow_downward')?.selected).toBeFalse()
+			expect(itemOf('arrow_downward')?.selected).toBe(false)
 		})
 
 		it('should not offer sorting for a non-sortable column', async () => {
@@ -165,9 +166,9 @@ describe('DataGridColumnHeader', () => {
 			name!.renderRoot.querySelector<HTMLElement>('mo-menu-item[icon=visibility_off]')!.click()
 			await settle()
 
-			expect(fixture.component.columns.find(c => c.dataSelector === 'name')?.hidden).toBeTrue()
+			expect(fixture.component.columns.find(c => c.dataSelector === 'name')?.hidden).toBe(true)
 			expect(fixture.component.visibleColumns.map(c => c.dataSelector)).toEqual(['age'])
-			expect(fixture.component.columnsController.columns.modifications.get('name')?.hidden).toBeTrue()
+			expect(fixture.component.columnsController.columns.modifications.get('name')?.hidden).toBe(true)
 		})
 
 		it('should append the column\'s custom menu items', async () => {
@@ -197,20 +198,20 @@ describe('DataGridColumnHeader', () => {
 			expect(name!.getAttribute('data-sticky-edge')).toBe('end')
 			expect(name!.style.insetInline).toBe('0px auto')
 
-			expect(age!.hasAttribute('data-sticky')).toBeFalse()
-			expect(age!.hasAttribute('data-sticky-edge')).toBeFalse()
+			expect(age!.hasAttribute('data-sticky')).toBe(false)
+			expect(age!.hasAttribute('data-sticky-edge')).toBe(false)
 		})
 
 		it('should mark the separator of the last visible column (data-last)', async () => {
 			const [name, age] = await withColumns(nameColumn(), ageColumn())
 
-			expect(separatorOf(name!).hasAttribute('data-last')).toBeFalse()
-			expect(separatorOf(age!).hasAttribute('data-last')).toBeTrue()
+			expect(separatorOf(name!).hasAttribute('data-last')).toBe(false)
+			expect(separatorOf(age!).hasAttribute('data-last')).toBe(true)
 
 			fixture.component.columns.find(c => c.dataSelector === 'age')!.hide()
 			const [onlyName] = await settle()
 
-			expect(separatorOf(onlyName!).hasAttribute('data-last')).toBeTrue()
+			expect(separatorOf(onlyName!).hasAttribute('data-last')).toBe(true)
 		})
 	})
 })

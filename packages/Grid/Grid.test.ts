@@ -18,7 +18,9 @@ describe('Grid', () => {
 		expect(getComputedStyle(fixture.component).display).toBe('grid')
 	})
 
-	const cssPropertiesByProperty = new Map<keyof Grid, string>([
+	type StyleProperty = Extract<keyof Grid, string>
+
+	const cssPropertiesByProperty = new Map<StyleProperty, string>([
 		['rows', 'grid-template-rows'],
 		['columns', 'grid-template-columns'],
 		['autoRows', 'grid-auto-rows'],
@@ -32,7 +34,7 @@ describe('Grid', () => {
 		['alignContent', 'align-content'],
 	])
 
-	const propertiesSupportingAsterixSyntax = new Set<keyof Grid>(['rows', 'columns'])
+	const propertiesSupportingAsterixSyntax = new Set<StyleProperty>(['rows', 'columns'])
 
 	for (const [property, cssProperty] of cssPropertiesByProperty) {
 		describe(`Property "${property}"`, () => {

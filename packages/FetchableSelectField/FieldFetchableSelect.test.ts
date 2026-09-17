@@ -2,6 +2,7 @@ import { html } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { type FieldFetchableSelect } from './index.js'
 import './FieldFetchableSelect.js'
+import { type Mock } from 'vitest'
 
 type SearchParameters = { page?: number, keyword?: string }
 type FetchableSelect = FieldFetchableSelect<any, SearchParameters>
@@ -69,10 +70,10 @@ async function closeMenu(component?: FetchableSelect) {
 }
 
 describe('FieldFetchableSelect', () => {
-	let fetchSpy: jasmine.Spy<(parameters?: SearchParameters) => Promise<Array<any>>>
+	let fetchSpy: Mock<(parameters?: SearchParameters) => Promise<Array<any>>>
 
 	beforeEach(() => {
-		fetchSpy = jasmine.createSpy('fetch').and.callFake(() => Promise.resolve([...fruits]))
+		fetchSpy = vi.fn(() => Promise.resolve([...fruits]))
 	})
 
 	const fetchDelegate = (parameters?: SearchParameters) => fetchSpy(parameters)
@@ -88,52 +89,52 @@ describe('FieldFetchableSelect', () => {
 			await waitUntil(() => fixture.component.options.length === fruits.length)
 			await settle(fixture.component)
 
-			expect(fetchSpy).toHaveBeenCalledOnceWith(undefined)
+			expect(fetchSpy).toHaveBeenCalledExactlyOnceWith(undefined)
 			expect(optionTexts(fixture.component)).toEqual(fruits)
 		})
 
 		it('should dispatch dataFetch with the fetched data', async () => {
 			await settle(fixture.component)
-			const dataFetchSpy = jasmine.createSpy('dataFetch')
+			const dataFetchSpy = vi.fn()
 			fixture.component.dataFetch.subscribe(dataFetchSpy)
 
 			await fixture.component.requestFetch()
 			await settle(fixture.component)
 
-			expect(dataFetchSpy).toHaveBeenCalledOnceWith(fruits)
+			expect(dataFetchSpy).toHaveBeenCalledExactlyOnceWith(fruits)
 		})
 
 		it('should toggle the "fetching" attribute while the fetch is pending', async () => {
 			await settle(fixture.component)
-			expect(fixture.component.hasAttribute('fetching')).toBeFalse()
+			expect(fixture.component.hasAttribute('fetching')).toBe(false)
 			let resolveFetch!: (data: Array<any>) => void
-			fetchSpy.and.returnValue(new Promise<Array<any>>(resolve => resolveFetch = resolve))
+			fetchSpy.mockReturnValue(new Promise<Array<any>>(resolve => resolveFetch = resolve))
 
 			const fetching = fixture.component.requestFetch()
 			await waitUntil(() => fixture.component.hasAttribute('fetching'))
-			expect(fixture.component.hasAttribute('fetching')).toBeTrue()
+			expect(fixture.component.hasAttribute('fetching')).toBe(true)
 
 			resolveFetch([...fruits])
 			await fetching
 			await settle(fixture.component)
 
-			expect(fixture.component.hasAttribute('fetching')).toBeFalse()
+			expect(fixture.component.hasAttribute('fetching')).toBe(false)
 		})
 
 		it('should re-fetch when parameters change', async () => {
 			await settle(fixture.component)
-			fetchSpy.calls.reset()
+			fetchSpy.mockClear()
 
 			fixture.component.parameters = { page: 2 }
 			await settle(fixture.component)
 
-			expect(fetchSpy).toHaveBeenCalledOnceWith({ page: 2 })
+			expect(fetchSpy).toHaveBeenCalledExactlyOnceWith({ page: 2 })
 		})
 
 		it('should not re-fetch when parameters are replaced by a structurally equal object', async () => {
 			fixture.component.parameters = { page: 2 }
 			await settle(fixture.component)
-			fetchSpy.calls.reset()
+			fetchSpy.mockClear()
 
 			fixture.component.parameters = { page: 2 }
 			fixture.component.requestUpdate()
@@ -144,12 +145,12 @@ describe('FieldFetchableSelect', () => {
 
 		it('should re-fetch on demand via requestFetch()', async () => {
 			await settle(fixture.component)
-			fetchSpy.calls.reset()
+			fetchSpy.mockClear()
 
 			await fixture.component.requestFetch()
 			await settle(fixture.component)
 
-			expect(fetchSpy).toHaveBeenCalledOnceWith(undefined)
+			expect(fetchSpy).toHaveBeenCalledExactlyOnceWith(undefined)
 		})
 	})
 
@@ -165,7 +166,7 @@ describe('FieldFetchableSelect', () => {
 
 		it('should render fetched options through optionTemplate when provided', async () => {
 			await settle(fixture.component)
-			fetchSpy.and.resolveTo([{ code: 'DE', label: 'Germany' }, { code: 'FR', label: 'France' }])
+			fetchSpy.mockResolvedValue([{ code: 'DE', label: 'Germany' }, { code: 'FR', label: 'France' }])
 			fixture.component.optionTemplate = (data: any) => html`<mo-option value=${data.code} .data=${data}>${data.label}</mo-option>`
 
 			await fixture.component.requestFetch()
@@ -196,7 +197,7 @@ describe('FieldFetchableSelect', () => {
 		let resolveFetch!: (data: Array<any>) => void
 
 		beforeEach(() => {
-			fetchSpy.and.returnValue(new Promise<Array<any>>(resolve => resolveFetch = resolve))
+			fetchSpy.mockReturnValue(new Promise<Array<any>>(resolve => resolveFetch = resolve))
 		})
 
 		const deferredFixture = new ComponentTestFixture<FetchableSelect>(html`
@@ -217,7 +218,7 @@ describe('FieldFetchableSelect', () => {
 		it('should keep the selection when a re-fetch reorders the data', async () => {
 			resolveFetch([...fruits])
 			await waitUntil(() => deferredFixture.component.valueInputElement.value === 'Banana')
-			fetchSpy.and.callFake(() => Promise.resolve([...fruits].reverse()))
+			fetchSpy.mockImplementation(() => Promise.resolve([...fruits].reverse()))
 
 			await deferredFixture.component.requestFetch()
 			await settle(deferredFixture.component)
@@ -232,7 +233,7 @@ describe('FieldFetchableSelect', () => {
 			deferredFixture.component.options[2]!.click()
 			await settle(deferredFixture.component)
 			expect(deferredFixture.component.data).toBe('Cherry')
-			fetchSpy.and.callFake(() => Promise.resolve([...fruits].reverse()))
+			fetchSpy.mockImplementation(() => Promise.resolve([...fruits].reverse()))
 
 			await deferredFixture.component.requestFetch()
 			await settle(deferredFixture.component)
@@ -244,7 +245,7 @@ describe('FieldFetchableSelect', () => {
 		it('should keep the selection when a re-fetch returns the same data', async () => {
 			resolveFetch([...fruits])
 			await waitUntil(() => deferredFixture.component.valueInputElement.value === 'Banana')
-			fetchSpy.and.callFake(() => Promise.resolve([...fruits]))
+			fetchSpy.mockImplementation(() => Promise.resolve([...fruits]))
 
 			await deferredFixture.component.requestFetch()
 			await settle(deferredFixture.component)
@@ -270,29 +271,29 @@ describe('FieldFetchableSelect', () => {
 			searchFixture.component.parameters = { page: 1 }
 			await settle(searchFixture.component)
 			await focusIn(searchFixture.component)
-			fetchSpy.calls.reset()
+			fetchSpy.mockClear()
 
 			await type(searchFixture.component, 'ban')
 			await settle(searchFixture.component)
 
-			expect(fetchSpy).toHaveBeenCalledOnceWith({ page: 1, keyword: 'ban' })
+			expect(fetchSpy).toHaveBeenCalledExactlyOnceWith({ page: 1, keyword: 'ban' })
 		})
 
 		it('should pass the query as typed, without lower-casing it', async () => {
 			await settle(searchFixture.component)
 			await focusIn(searchFixture.component)
-			fetchSpy.calls.reset()
+			fetchSpy.mockClear()
 
 			await type(searchFixture.component, 'BaN')
 			await settle(searchFixture.component)
 
-			expect(fetchSpy).toHaveBeenCalledOnceWith({ keyword: 'BaN' })
+			expect(fetchSpy).toHaveBeenCalledExactlyOnceWith({ keyword: 'BaN' })
 		})
 
 		it('should coalesce consecutive keystrokes into a single throttled fetch', async () => {
 			await settle(searchFixture.component)
 			await focusIn(searchFixture.component)
-			fetchSpy.calls.reset()
+			fetchSpy.mockClear()
 			const input = searchFixture.component.searchInputElement!
 
 			for (const keyword of ['b', 'ba', 'ban', 'bana', 'banan']) {
@@ -303,13 +304,13 @@ describe('FieldFetchableSelect', () => {
 			await tick(700)
 			await settle(searchFixture.component)
 
-			expect(fetchSpy.calls.count()).toBe(2)
-			expect(fetchSpy.calls.first().args).toEqual([{ keyword: 'b' }])
-			expect(fetchSpy.calls.mostRecent().args).toEqual([{ keyword: 'banan' }])
+			expect(fetchSpy.mock.calls.length).toBe(2)
+			expect(fetchSpy.mock.calls[0]).toEqual([{ keyword: 'b' }])
+			expect(fetchSpy.mock.lastCall).toEqual([{ keyword: 'banan' }])
 		})
 
 		it('should render the search results instead of the initially fetched options while a keyword is present', async () => {
-			fetchSpy.and.callFake(parameters => Promise.resolve(parameters?.keyword ? ['Banana bread'] : [...fruits]))
+			fetchSpy.mockImplementation(parameters => Promise.resolve(parameters?.keyword ? ['Banana bread'] : [...fruits]))
 			await waitUntil(() => searchFixture.component.options.length === fruits.length)
 			expect(optionTexts(searchFixture.component)).toEqual(fruits)
 
@@ -321,7 +322,7 @@ describe('FieldFetchableSelect', () => {
 		})
 
 		it('should restore the initially fetched options when the keyword is cleared', async () => {
-			fetchSpy.and.callFake(parameters => Promise.resolve(parameters?.keyword ? ['Banana bread'] : [...fruits]))
+			fetchSpy.mockImplementation(parameters => Promise.resolve(parameters?.keyword ? ['Banana bread'] : [...fruits]))
 			await waitUntil(() => searchFixture.component.options.length === fruits.length)
 			await focusIn(searchFixture.component)
 			await type(searchFixture.component, 'ban')
@@ -335,7 +336,7 @@ describe('FieldFetchableSelect', () => {
 
 		it('should not show the no-results hint while a search fetch is pending', async () => {
 			let resolveSearch!: (data: Array<any>) => void
-			fetchSpy.and.callFake(parameters => parameters?.keyword
+			fetchSpy.mockImplementation(parameters => parameters?.keyword
 				? new Promise<Array<any>>(resolve => resolveSearch = resolve)
 				: Promise.resolve([...fruits]))
 			await waitUntil(() => searchFixture.component.options.length === fruits.length)
@@ -344,16 +345,16 @@ describe('FieldFetchableSelect', () => {
 			await type(searchFixture.component, 'zzz')
 			await settle(searchFixture.component)
 
-			expect(isNoResultsHintVisible(searchFixture.component)).toBeFalse()
+			expect(isNoResultsHintVisible(searchFixture.component)).toBe(false)
 
 			resolveSearch([])
 			await waitUntil(() => isNoResultsHintVisible(searchFixture.component))
 
-			expect(isNoResultsHintVisible(searchFixture.component)).toBeTrue()
+			expect(isNoResultsHintVisible(searchFixture.component)).toBe(true)
 		})
 
 		it('should restore a clicked selection once the option re-enters the fetched window', async () => {
-			fetchSpy.and.callFake(parameters => Promise.resolve(parameters?.keyword ? ['Banana bread'] : [...fruits]))
+			fetchSpy.mockImplementation(parameters => Promise.resolve(parameters?.keyword ? ['Banana bread'] : [...fruits]))
 			await waitUntil(() => searchFixture.component.options.length === fruits.length)
 			searchFixture.component.options[2]!.click()
 			await settle(searchFixture.component)
@@ -368,14 +369,14 @@ describe('FieldFetchableSelect', () => {
 			await settle(searchFixture.component)
 
 			expect(searchFixture.component.data).toBe('Cherry')
-			expect(searchFixture.component.options[2]!.selected).toBeTrue()
+			expect(searchFixture.component.options[2]!.selected).toBe(true)
 		})
 
 		it('should filter the already-fetched options locally when searchParameters is not set', async () => {
 			await waitUntil(() => fixture.component.options.length === fruits.length)
 			fixture.component.searchable = true
 			await focusIn(fixture.component)
-			fetchSpy.calls.reset()
+			fetchSpy.mockClear()
 
 			await type(fixture.component, 'ban')
 

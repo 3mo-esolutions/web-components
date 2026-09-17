@@ -58,10 +58,10 @@ const waitUntil = async (condition: () => boolean, timeoutInMilliseconds = 6000)
 }
 
 const useVirtualTime = () => {
-	beforeEach(() => jasmine.clock().install())
+	beforeEach(() => vi.useFakeTimers())
 	afterEach(async () => {
 		await flushMicrotasks()
-		jasmine.clock().uninstall()
+		vi.useRealTimers()
 	})
 }
 
@@ -74,7 +74,7 @@ const flushMicrotasks = async (turns = 6) => {
 const advance = async (milliseconds: number, stepInMilliseconds = 50) => {
 	await flushMicrotasks()
 	for (let elapsed = 0; elapsed < milliseconds; elapsed += stepInMilliseconds) {
-		jasmine.clock().tick(Math.min(stepInMilliseconds, milliseconds - elapsed))
+		vi.advanceTimersByTime(Math.min(stepInMilliseconds, milliseconds - elapsed))
 		await flushMicrotasks()
 	}
 }
@@ -82,7 +82,7 @@ const advance = async (milliseconds: number, stepInMilliseconds = 50) => {
 const advanceUntil = async (condition: () => boolean, timeoutInMilliseconds = 6000, stepInMilliseconds = 50) => {
 	await flushMicrotasks()
 	for (let elapsed = 0; elapsed < timeoutInMilliseconds && condition() === false; elapsed += stepInMilliseconds) {
-		jasmine.clock().tick(stepInMilliseconds)
+		vi.advanceTimersByTime(stepInMilliseconds)
 		await flushMicrotasks()
 	}
 	if (condition() === false) {
@@ -116,7 +116,7 @@ describe('FetchableDataGrid', () => {
 	afterEach(() => DataGrid.pageSize.value = defaultPageSize)
 
 	describe('fetch lifecycle', () => {
-		const fixture = new ComponentTestFixture<Grid>(html`
+		const fixture: ComponentTestFixture<Grid> = new ComponentTestFixture<Grid>(html`
 			<mo-fetchable-data-grid style='height: 300px'
 				.parameters=${{ search: 'lifecycle' } satisfies Parameters}
 				.fetch=${deferredFetch}
@@ -130,20 +130,20 @@ describe('FetchableDataGrid', () => {
 			await awaitPendingFetch()
 			await fixture.component.updateComplete
 
-			expect(fixture.component.hasAttribute('fetching')).toBeTrue()
+			expect(fixture.component.hasAttribute('fetching')).toBe(true)
 
 			deferredFetches[0]!.resolve(people(3))
 			await waitUntil(() => pending() === false)
 			await fixture.component.updateComplete
 
-			expect(fixture.component.hasAttribute('fetching')).toBeFalse()
+			expect(fixture.component.hasAttribute('fetching')).toBe(false)
 		})
 
 		it('should replace the content with the fetching indicator during a non-silent fetch', async () => {
 			await awaitPendingFetch()
 			await fixture.component.updateComplete
 
-			expect(fixture.component.fetcherController.silent).toBeFalse()
+			expect(fixture.component.fetcherController.silent).toBe(false)
 			expect(fixture.component.renderRoot.querySelector('#fetching-indicator')).not.toBeNull()
 			expect(fixture.component.rows.length).toBe(0)
 
@@ -210,7 +210,7 @@ describe('FetchableDataGrid', () => {
 	describe('parameters', () => {
 		useVirtualTime()
 
-		const fixture = new ComponentTestFixture<Grid>(html`
+		const fixture: ComponentTestFixture<Grid> = new ComponentTestFixture<Grid>(html`
 			<mo-fetchable-data-grid style='height: 300px'
 				.parameters=${{ search: 'params' } satisfies Parameters}
 				.fetch=${fetch}
@@ -291,7 +291,7 @@ describe('FetchableDataGrid', () => {
 	})
 
 	describe('silent fetch', () => {
-		const fixture = new ComponentTestFixture<Grid>(html`
+		const fixture: ComponentTestFixture<Grid> = new ComponentTestFixture<Grid>(html`
 			<mo-fetchable-data-grid style='height: 300px' silentFetch
 				.parameters=${{ search: 'silent' } satisfies Parameters}
 				.fetch=${deferredFetch}
@@ -312,7 +312,7 @@ describe('FetchableDataGrid', () => {
 			await waitUntil(() => deferredFetches.length === 2)
 			await fixture.component.updateComplete
 
-			expect(fixture.component.fetcherController.silent).toBeTrue()
+			expect(fixture.component.fetcherController.silent).toBe(true)
 			expect(fixture.component.renderRoot.querySelector('#fetching-indicator')).toBeNull()
 			expect(fixture.component.rows.length).toBe(3)
 
@@ -329,8 +329,8 @@ describe('FetchableDataGrid', () => {
 			await waitUntil(() => deferredFetches.length === 2)
 			await fixture.component.updateComplete
 
-			expect(fixture.component.silentFetch).toBeTrue()
-			expect(fixture.component.fetcherController.silent).toBeFalse()
+			expect(fixture.component.silentFetch).toBe(true)
+			expect(fixture.component.fetcherController.silent).toBe(false)
 			expect(fixture.component.renderRoot.querySelector('#fetching-indicator')).not.toBeNull()
 
 			deferredFetches[1]!.resolve(people(2))
@@ -365,16 +365,16 @@ describe('FetchableDataGrid', () => {
 
 			it('should not apply silentFetch while infinite-scrolling (streams restore via explicit silent requests instead)', async () => {
 				await waitUntil(() => streamingFixture.component.data.length > 0)
-				expect(streamingFixture.component.hasInfiniteScroll).toBeTrue()
+				expect(streamingFixture.component.hasInfiniteScroll).toBe(true)
 
 				const request = streamingFixture.component.requestFetch()
 
-				expect(streamingFixture.component.fetcherController.silent).toBeFalse()
+				expect(streamingFixture.component.fetcherController.silent).toBe(false)
 
 				await request
 				const silentRequest = streamingFixture.component.requestFetch({ silent: true })
 
-				expect(streamingFixture.component.fetcherController.silent).toBeTrue()
+				expect(streamingFixture.component.fetcherController.silent).toBe(true)
 
 				await silentRequest
 			})
@@ -382,11 +382,11 @@ describe('FetchableDataGrid', () => {
 	})
 
 	describe('server-side sorting', () => {
-		const fetchSpy = jasmine.createSpy('fetch').and.callFake(fetch)
+		const fetchSpy = vi.fn(fetch)
 
-		beforeEach(() => fetchSpy.calls.reset())
+		beforeEach(() => { fetchSpy.mockClear() })
 
-		const fixture = new ComponentTestFixture<Grid>(html`
+		const fixture: ComponentTestFixture<Grid> = new ComponentTestFixture<Grid>(html`
 			<mo-fetchable-data-grid style='height: 300px'
 				.parameters=${{ search: 'sorting' } satisfies Parameters}
 				.sortParameters=${sortParametersOf(() => fixture.component)}
@@ -394,18 +394,18 @@ describe('FetchableDataGrid', () => {
 			></mo-fetchable-data-grid>
 		` as any)
 
-		const parametersOfCall = (index: number) => fetchSpy.calls.all()[index]!.args[0] as Parameters
+		const parametersOfCall = (index: number) => fetchSpy.mock.calls[index]![0] as Parameters
 
 		it('should refetch with the merged sort parameters when the sorting changes', async () => {
-			await waitUntil(() => fetchSpy.calls.count() === 1)
+			await waitUntil(() => fetchSpy.mock.calls.length === 1)
 			expect(parametersOfCall(0).search).toBe('sorting')
 			expect(parametersOfCall(0).sortBy).toBeUndefined()
 
 			fixture.component.sort([{ selector: 'name', strategy: DataGridSortingStrategy.Ascending }])
 
-			await waitUntil(() => fetchSpy.calls.count() === 2)
+			await waitUntil(() => fetchSpy.mock.calls.length === 2)
 			expect(parametersOfCall(1)).toEqual({ search: 'sorting', sortBy: 'name' })
-			expect(fetchSpy.calls.count()).toBe(2)
+			expect(fetchSpy.mock.calls.length).toBe(2)
 		})
 	})
 
@@ -419,21 +419,21 @@ describe('FetchableDataGrid', () => {
 		` as any)
 
 		it('should be the default for server-side pagination', () => {
-			expect(fixture.component.hasInfiniteScroll).toBeTrue()
+			expect(fixture.component.hasInfiniteScroll).toBe(true)
 		})
 
 		it('should be opted out of by a pagination specifying the pages strategy', async () => {
 			fixture.component.setPagination('pages 25')
 			await fixture.component.updateComplete
 
-			expect(fixture.component.hasInfiniteScroll).toBeFalse()
+			expect(fixture.component.hasInfiniteScroll).toBe(false)
 		})
 
 		it('should be kept by a pagination specifying only a size', async () => {
 			fixture.component.setPagination(25)
 			await fixture.component.updateComplete
 
-			expect(fixture.component.hasInfiniteScroll).toBeTrue()
+			expect(fixture.component.hasInfiniteScroll).toBe(true)
 			expect(fixture.component.pageSize).toBe(25)
 		})
 
@@ -444,7 +444,7 @@ describe('FetchableDataGrid', () => {
 		it('should be opted out of by a context-aware application default', () => {
 			try {
 				FetchableDataGrid.defaultPagination = grid => grid.hasServerSidePagination ? 'pages' : undefined
-				expect(fixture.component.hasInfiniteScroll).toBeFalse()
+				expect(fixture.component.hasInfiniteScroll).toBe(false)
 				expect(fixture.component.pageSize).toBe(DataGrid.pageSize.value)
 			} finally {
 				FetchableDataGrid.defaultPagination = undefined
@@ -455,7 +455,7 @@ describe('FetchableDataGrid', () => {
 			fixture.component.paginationParameters = undefined
 			await fixture.component.updateComplete
 
-			expect(fixture.component.hasInfiniteScroll).toBeFalse()
+			expect(fixture.component.hasInfiniteScroll).toBe(false)
 		})
 
 		it('should replace the page navigation in the footer with a plain count, keeping the size menu', async () => {
@@ -463,7 +463,7 @@ describe('FetchableDataGrid', () => {
 			const footer = () => fixture.component.renderRoot.querySelector('mo-data-grid-footer')
 			await footer()?.updateComplete
 
-			expect(fixture.component.hasPagination).toBeTrue()
+			expect(fixture.component.hasPagination).toBe(true)
 			expect(footer()?.renderRoot.querySelector('mo-icon-button')).toBeNull()
 			expect(footer()?.renderRoot.querySelector('mo-menu')).not.toBeNull()
 
@@ -516,10 +516,13 @@ describe('FetchableDataGrid', () => {
 
 		it('should append the following pages instead of replacing the stream', async () => {
 			await waitUntil(() => fixture.component.data.length > 0)
+			// How many fetches the first paint takes depends on how much of the scroller the layout
+			// fills, so only the fetch this spec triggers is counted.
+			const fetchesBefore = fetchCount
 
 			await fixture.component.fetcherController.fetchNextPage()
 
-			expect(fetchCount).toBe(2)
+			expect(fetchCount).toBe(fetchesBefore + 1)
 			expect(fixture.component.data.length).toBe(20)
 			expect(fixture.component.data[0]?.id).toBe(1)
 			expect(fixture.component.data[10]?.id).toBe(11)
@@ -531,7 +534,7 @@ describe('FetchableDataGrid', () => {
 			await fixture.component.fetcherController.fetchNextPage()
 
 			expect(fixture.component.dataLength).toBe(100)
-			expect(fixture.component.hasNextPage).toBeTrue()
+			expect(fixture.component.hasNextPage).toBe(true)
 		})
 
 		it('should end the stream once the last page has been appended', async () => {
@@ -542,7 +545,7 @@ describe('FetchableDataGrid', () => {
 			await fixture.component.fetcherController.fetchNextPage()
 
 			expect(fixture.component.data.length).toBe(15)
-			expect(fixture.component.hasNextPage).toBeFalse()
+			expect(fixture.component.hasNextPage).toBe(false)
 		})
 
 		it('should end the stream when a page comes back empty although another one is claimed to be available', async () => {
@@ -552,7 +555,7 @@ describe('FetchableDataGrid', () => {
 			await fixture.component.fetcherController.fetchNextPage()
 
 			expect(fixture.component.data.length).toBe(10)
-			expect(fixture.component.hasNextPage).toBeFalse()
+			expect(fixture.component.hasNextPage).toBe(false)
 		})
 
 		it('should stream and end hasNextPage-shaped results all the same', async () => {
@@ -562,13 +565,13 @@ describe('FetchableDataGrid', () => {
 			await waitUntil(() => fixture.component.dataLength === undefined && fixture.component.data.length === 10)
 
 			expect(fixture.component.dataLength).toBeUndefined()
-			expect(fixture.component.hasNextPage).toBeTrue()
+			expect(fixture.component.hasNextPage).toBe(true)
 
 			const hasFurtherPage = await fixture.component.fetcherController.fetchNextPage()
 
 			expect(fixture.component.data.length).toBe(15)
-			expect(hasFurtherPage).toBeFalse()
-			expect(fixture.component.hasNextPage).toBeFalse()
+			expect(hasFurtherPage).toBe(false)
+			expect(fixture.component.hasNextPage).toBe(false)
 		})
 
 		it('should restart the stream when the parameters change', async () => {
@@ -598,7 +601,7 @@ describe('FetchableDataGrid', () => {
 		it('should scroll back to the start when the parameters change', async () => {
 			await waitUntil(() => fixture.component.data.length > 0)
 			await fixture.component.fetcherController.fetchNextPage()
-			const scrollToStart = spyOn(fixture.component.infiniteScrollController, 'scrollToStart')
+			const scrollToStart = vi.spyOn(fixture.component.infiniteScrollController, 'scrollToStart').mockReturnValue(undefined)
 
 			fixture.component.setParameters({ search: 'b' })
 			await waitUntil(() => fixture.component.data.length === 10)
@@ -622,13 +625,13 @@ describe('FetchableDataGrid', () => {
 			expect(fixture.component.data.length).toBe(30)
 			expect(fixture.component.data[0]?.id).toBe(1)
 			expect(fixture.component.data.at(-1)?.id).toBe(30)
-			expect(fixture.component.hasNextPage).toBeTrue()
+			expect(fixture.component.hasNextPage).toBe(true)
 		})
 
 		it('should keep the scroll position when refetching the same stream', async () => {
 			await waitUntil(() => fixture.component.data.length > 0)
 			await fixture.component.fetcherController.fetchNextPage()
-			const scrollToStart = spyOn(fixture.component.infiniteScrollController, 'scrollToStart')
+			const scrollToStart = vi.spyOn(fixture.component.infiniteScrollController, 'scrollToStart').mockReturnValue(undefined)
 
 			await fixture.component.requestFetch()
 
@@ -651,7 +654,7 @@ describe('FetchableDataGrid', () => {
 		it('should restore the extent on a silent refetch all the same', async () => {
 			await waitUntil(() => fixture.component.data.length > 0)
 			await fixture.component.fetcherController.fetchNextPage()
-			const scrollToStart = spyOn(fixture.component.infiniteScrollController, 'scrollToStart')
+			const scrollToStart = vi.spyOn(fixture.component.infiniteScrollController, 'scrollToStart').mockReturnValue(undefined)
 
 			await fixture.component.requestFetch({ silent: true })
 
@@ -668,7 +671,7 @@ describe('FetchableDataGrid', () => {
 
 			expect(fixture.component.data.length).toBe(20)
 			expect(fixture.component.dataLength).toBeUndefined()
-			expect(fixture.component.hasNextPage).toBeTrue()
+			expect(fixture.component.hasNextPage).toBe(true)
 		})
 
 		it('should end the stream when the restored extent reaches a shrunken total', async () => {
@@ -680,11 +683,11 @@ describe('FetchableDataGrid', () => {
 			await fixture.component.requestFetch()
 
 			expect(fixture.component.data.length).toBe(25)
-			expect(fixture.component.hasNextPage).toBeFalse()
+			expect(fixture.component.hasNextPage).toBe(false)
 		})
 
 		describe('with server-side sorting', () => {
-			const sortedFixture = new ComponentTestFixture<Grid>(html`
+			const sortedFixture: ComponentTestFixture<Grid> = new ComponentTestFixture<Grid>(html`
 				<mo-fetchable-data-grid style='height: 0px'
 					.parameters=${{ search: 'stream-sorting' } satisfies Parameters}
 					.paginationParameters=${paginationParameters}
@@ -712,7 +715,7 @@ describe('FetchableDataGrid', () => {
 		beforeEach(() => FetchableDataGrid.defaultPagination = 'pages')
 		afterEach(() => FetchableDataGrid.defaultPagination = undefined)
 
-		const fixture = new ComponentTestFixture<Grid>(html`
+		const fixture: ComponentTestFixture<Grid> = new ComponentTestFixture<Grid>(html`
 			<mo-fetchable-data-grid style='height: 300px'
 				.parameters=${{ search: 'a' } satisfies Parameters}
 				.paginationParameters=${paginationParameters}
@@ -725,13 +728,13 @@ describe('FetchableDataGrid', () => {
 			await fixture.component.updateComplete
 
 			expect(fixture.component.resolvedPagination).toEqual({ strategy: 'pages', size: 50 })
-			expect(fixture.component.hasInfiniteScroll).toBeFalse()
+			expect(fixture.component.hasInfiniteScroll).toBe(false)
 		})
 
 		it('should navigate pages explicitly', () => {
-			expect(fixture.component.hasServerSidePagination).toBeTrue()
-			expect(fixture.component.hasInfiniteScroll).toBeFalse()
-			expect(fixture.component.hasPagination).toBeTrue()
+			expect(fixture.component.hasServerSidePagination).toBe(true)
+			expect(fixture.component.hasInfiniteScroll).toBe(false)
+			expect(fixture.component.hasPagination).toBe(true)
 		})
 
 		it('should page by the persisted page size rather than by the viewport', () => {
@@ -779,7 +782,7 @@ describe('FetchableDataGrid', () => {
 	describe('infinite scrolling in a laid out grid', () => {
 		beforeEach(() => DataGrid.pageSize.value = 2)
 
-		const fixture = new ComponentTestFixture<Grid>(html`
+		const fixture: ComponentTestFixture<Grid> = new ComponentTestFixture<Grid>(html`
 			<mo-fetchable-data-grid style='height: 300px'
 				.parameters=${{ search: 'infinite-laid-out' } satisfies Parameters}
 				.paginationParameters=${paginationParameters}
@@ -807,7 +810,7 @@ describe('FetchableDataGrid', () => {
 			failFromPage = 2
 		})
 
-		const fixture = new ComponentTestFixture<Grid>(html`
+		const fixture: ComponentTestFixture<Grid> = new ComponentTestFixture<Grid>(html`
 			<mo-fetchable-data-grid style='height: 300px'
 				.parameters=${{ search: 'failing' } satisfies Parameters}
 				.paginationParameters=${paginationParameters}
@@ -862,7 +865,7 @@ describe('FetchableDataGrid', () => {
 			await fixture.component.updateComplete
 			await settle(fixture.component.requestFetch())
 			await settle(fixture.component.fetcherController.fetchNextPage())
-			const scrollToStart = spyOn(fixture.component.infiniteScrollController, 'scrollToStart')
+			const scrollToStart = vi.spyOn(fixture.component.infiniteScrollController, 'scrollToStart').mockReturnValue(undefined)
 			const fetchesBeforeTick = fetchesOf('auto-refetch').length
 			let handedOverFetchCount = 0
 			fixture.component.addEventListener('dataFetch', () => handedOverFetchCount++)
@@ -895,7 +898,7 @@ describe('FetchableDataGrid', () => {
 	describe('autoRefetch', () => {
 		useVirtualTime()
 
-		const fixture = new ComponentTestFixture<Grid>(html`
+		const fixture: ComponentTestFixture<Grid> = new ComponentTestFixture<Grid>(html`
 			<mo-fetchable-data-grid style='height: 300px'
 				.parameters=${{ search: 'auto' } satisfies Parameters}
 				.fetch=${fetch}
@@ -916,7 +919,7 @@ describe('FetchableDataGrid', () => {
 			await fixture.component.updateComplete
 
 			await advanceUntil(() => fetchesOf('auto-interval').length > fetchesBeforeTick && silentOnHandover !== undefined)
-			expect(silentOnHandover).toBeTrue()
+			expect(silentOnHandover).toBe(true)
 		})
 
 		it('should skip a tick while a fetch is still pending instead of overlapping requests', async () => {
@@ -969,7 +972,7 @@ describe('FetchableDataGrid', () => {
 	})
 
 	describe('CSV export', () => {
-		const fixture = new ComponentTestFixture<Grid>(html`
+		const fixture: ComponentTestFixture<Grid> = new ComponentTestFixture<Grid>(html`
 			<mo-fetchable-data-grid style='height: 300px'
 				.parameters=${{ search: 'export' } satisfies Parameters}
 				.fetch=${fetch}
@@ -978,19 +981,19 @@ describe('FetchableDataGrid', () => {
 
 		it('should export a plain array result in a single request without server-side pagination', async () => {
 			await waitUntil(() => fixture.component.data.length > 0)
-			const exportFetch = jasmine.createSpy('fetch').and.returnValue(Promise.resolve(people(7)))
+			const exportFetch = vi.fn().mockReturnValue(Promise.resolve(people(7)))
 			fixture.component.fetch = exportFetch
 
 			const records = await drain(fixture.component.getCsvData())
 
 			expect(exportFetch).toHaveBeenCalledTimes(1)
-			expect(exportFetch.calls.mostRecent().args[0]).toEqual({ search: 'export' })
+			expect(exportFetch.mock.lastCall![0]).toEqual({ search: 'export' })
 			expect(records.length).toBe(7)
 			expect(records.at(-1)?.data.id).toBe(7)
 		})
 
 		describe('with server-side sorting', () => {
-			const sortedFixture = new ComponentTestFixture<Grid>(html`
+			const sortedFixture: ComponentTestFixture<Grid> = new ComponentTestFixture<Grid>(html`
 				<mo-fetchable-data-grid style='height: 300px'
 					.parameters=${{ search: 'export-sorted' } satisfies Parameters}
 					.sortParameters=${() => ({ sortBy: 'name' })}
@@ -1000,20 +1003,20 @@ describe('FetchableDataGrid', () => {
 
 			it('should include the current sort parameters in the export requests', async () => {
 				await waitUntil(() => sortedFixture.component.data.length > 0)
-				const exportFetch = jasmine.createSpy('fetch').and.returnValue(Promise.resolve(people(3)))
+				const exportFetch = vi.fn().mockReturnValue(Promise.resolve(people(3)))
 				sortedFixture.component.fetch = exportFetch
 
 				const records = await drain(sortedFixture.component.getCsvData())
 
 				expect(exportFetch).toHaveBeenCalledTimes(1)
-				expect(exportFetch.calls.mostRecent().args[0]).toEqual({ search: 'export-sorted', sortBy: 'name' })
+				expect(exportFetch.mock.lastCall![0]).toEqual({ search: 'export-sorted', sortBy: 'name' })
 				expect(records.length).toBe(3)
 			})
 		})
 	})
 
 	describe('toolbar refetch button', () => {
-		const fixture = new ComponentTestFixture<Grid>(html`
+		const fixture: ComponentTestFixture<Grid> = new ComponentTestFixture<Grid>(html`
 			<mo-fetchable-data-grid style='height: 300px'
 				.parameters=${{ search: 'toolbar' } satisfies Parameters}
 				.fetch=${deferredFetch}
@@ -1027,7 +1030,7 @@ describe('FetchableDataGrid', () => {
 
 		it('should request a refetch when the toolbar button dispatches requestFetch', async () => {
 			await awaitButton()
-			const requestFetchSpy = spyOn(fixture.component, 'requestFetch')
+			const requestFetchSpy = vi.spyOn(fixture.component, 'requestFetch').mockResolvedValue(undefined)
 
 			button()!.requestFetch.dispatch()
 
@@ -1056,14 +1059,14 @@ describe('FetchableDataGrid', () => {
 			await fixture.component.updateComplete
 			await button()!.updateComplete
 
-			expect(button()!.fetching).toBeTrue()
+			expect(button()!.fetching).toBe(true)
 
 			deferredFetches[0]!.resolve(people(2))
 			await waitUntil(() => fixture.component.fetcherController.pending === false)
 			await fixture.component.updateComplete
 			await button()!.updateComplete
 
-			expect(button()!.fetching).toBeFalse()
+			expect(button()!.fetching).toBe(false)
 		})
 	})
 })

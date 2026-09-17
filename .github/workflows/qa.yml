@@ -39,4 +39,5 @@ jobs:
           node-version: 22.x
           cache: 'npm'
       - run: npm ci
+      - run: npx playwright install --with-deps chromium firefox
       - run: npm run test

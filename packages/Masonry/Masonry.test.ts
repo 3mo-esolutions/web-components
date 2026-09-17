@@ -54,20 +54,20 @@ describe('Masonry', () => {
 		it('should flow horizontally when only rows define the lanes', async () => {
 			fixture.component.rows = 3
 			await fixture.updateComplete
-			expect(fixture.component.hasAttribute('horizontal')).toBeTrue()
+			expect(fixture.component.hasAttribute('horizontal')).toBe(true)
 		})
 
 		it('should flow vertically when columns define the lanes', async () => {
 			fixture.component.columns = 4
 			await fixture.updateComplete
-			expect(fixture.component.hasAttribute('horizontal')).toBeFalse()
+			expect(fixture.component.hasAttribute('horizontal')).toBe(false)
 		})
 
 		it('should flow vertically when both are defined', async () => {
 			fixture.component.rows = 3
 			fixture.component.columns = 4
 			await fixture.updateComplete
-			expect(fixture.component.hasAttribute('horizontal')).toBeFalse()
+			expect(fixture.component.hasAttribute('horizontal')).toBe(false)
 		})
 	})
 
@@ -83,7 +83,7 @@ describe('Masonry', () => {
 
 		const rect = (index: number) => laidOutFixture.component.querySelector(`#item-${index}`)!.getBoundingClientRect()
 
-		const guarded = Masonry.supported ? xit : it
+		const guarded = Masonry.supported ? it.skip : it
 
 		guarded('should align items in rows across the defined column lanes', async () => {
 			laidOutFixture.component.columns = 3
@@ -100,7 +100,7 @@ describe('Masonry', () => {
 
 			await laidOutFixture.updateComplete
 
-			expect(laidOutFixture.component.hasAttribute('horizontal')).toBeTrue()
+			expect(laidOutFixture.component.hasAttribute('horizontal')).toBe(true)
 			expect(rect(1).top).toBeGreaterThanOrEqual(rect(0).bottom)
 			expect(rect(2).left).toBeGreaterThanOrEqual(rect(0).right)
 			expect(rect(2).top).toBe(rect(0).top)
@@ -118,7 +118,7 @@ describe('Masonry', () => {
 
 		const rect = (index: number) => packedFixture.component.querySelector(`#item-${index}`)!.getBoundingClientRect()
 
-		const guarded = Masonry.supported ? it : xit
+		const guarded = Masonry.supported ? it : it.skip
 
 		guarded('should pack a short item into the shortest lane instead of its natural row', async () => {
 			await packedFixture.updateComplete

@@ -34,8 +34,8 @@ describe('GenericEntityDialog', () => {
 
 	it('should save via the parameterized save action and resolve with its result', async () => {
 		const saved = { id: 3, name: 'Saved' }
-		const save = jasmine.createSpy('save').and.returnValue(saved)
-		spyOn(NotificationComponent, 'notifySuccess')
+		const save = vi.fn().mockReturnValue(saved)
+		vi.spyOn(NotificationComponent, 'notifySuccess').mockResolvedValue(undefined)
 		const dialog = new GenericEntityDialog<Item>({
 			entity: { id: 0, name: 'New' },
 			fetch,
@@ -49,12 +49,12 @@ describe('GenericEntityDialog', () => {
 
 		dialog.primaryActionElement!.click()
 
-		await expectAsync(confirmation).toBeResolvedTo(saved)
-		expect(save).toHaveBeenCalledOnceWith(dialog.entity)
+		await expect(confirmation).resolves.toEqual(saved)
+		expect(save).toHaveBeenCalledExactlyOnceWith(dialog.entity)
 	})
 
 	it('should wire the parameterized delete action only when an id is given', async () => {
-		const deleteAction = jasmine.createSpy('delete')
+		const deleteAction = vi.fn()
 		const parameters = {
 			entity: { id: 0, name: 'New' },
 			fetch,
@@ -74,6 +74,6 @@ describe('GenericEntityDialog', () => {
 
 		await edited.dialogElement.delete!()
 
-		expect(deleteAction).toHaveBeenCalledOnceWith(entity)
+		expect(deleteAction).toHaveBeenCalledExactlyOnceWith(entity)
 	})
 })

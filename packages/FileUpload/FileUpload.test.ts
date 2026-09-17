@@ -51,7 +51,7 @@ describe('FileUpload', () => {
 		const fixture = new FileUploadTestFixture()
 
 		it('should open the native file explorer via openExplorer()', () => {
-			const click = spyOn(fixture.input, 'click')
+			const click = vi.spyOn(fixture.input, 'click').mockReturnValue(undefined)
 
 			fixture.component.openExplorer()
 
@@ -64,7 +64,7 @@ describe('FileUpload', () => {
 
 		it('should expose and dispatch the single selected file', () => {
 			const file = createFile('a.txt')
-			spyOn(fixture.component.selectionChange, 'dispatch')
+			vi.spyOn(fixture.component.selectionChange, 'dispatch').mockReturnValue(undefined)
 
 			fixture.select(file)
 
@@ -78,7 +78,7 @@ describe('FileUpload', () => {
 
 		it('should expose and dispatch all selected files', () => {
 			const files = [createFile('a.txt'), createFile('b.txt')]
-			spyOn(fixture.component.selectionChange, 'dispatch')
+			vi.spyOn(fixture.component.selectionChange, 'dispatch').mockReturnValue(undefined)
 
 			fixture.select(...files)
 
@@ -93,9 +93,9 @@ describe('FileUpload', () => {
 
 			it('should upload the file and dispatch the result', async () => {
 				const file = createFile('a.txt')
-				const upload = jasmine.createSpy('upload').and.resolveTo('result')
+				const upload = vi.fn().mockResolvedValue('result')
 				fixture.component.upload = upload
-				spyOn(fixture.component.change, 'dispatch')
+				vi.spyOn(fixture.component.change, 'dispatch').mockReturnValue(undefined)
 
 				await fixture.component.uploadSelection(file)
 
@@ -105,7 +105,7 @@ describe('FileUpload', () => {
 
 			it('should upload the current selection when no override is passed', async () => {
 				const file = createFile('a.txt')
-				const upload = jasmine.createSpy('upload').and.resolveTo('result')
+				const upload = vi.fn().mockResolvedValue('result')
 				fixture.component.upload = upload
 				fixture.select(file)
 
@@ -124,7 +124,7 @@ describe('FileUpload', () => {
 
 			it('should upload all files in a single call', async () => {
 				const files = [createFile('a.txt'), createFile('b.txt')]
-				const upload = jasmine.createSpy('upload').and.resolveTo('result')
+				const upload = vi.fn().mockResolvedValue('result')
 				fixture.component.upload = upload
 
 				await fixture.component.uploadSelection(files)
@@ -142,38 +142,38 @@ describe('FileUpload', () => {
 		const fixture = new FileUploadTestFixture({ multiple: false })
 
 		it('should dispatch uploadingChange with true when the upload starts and false when it settles', async () => {
-			fixture.component.upload = jasmine.createSpy('upload').and.resolveTo('result')
-			const dispatch = spyOn(fixture.component.uploadingChange, 'dispatch')
+			fixture.component.upload = vi.fn().mockResolvedValue('result')
+			const dispatch = vi.spyOn(fixture.component.uploadingChange, 'dispatch').mockReturnValue(undefined)
 
 			await fixture.component.uploadSelection(createFile('a.txt'))
 
-			expect(dispatch.calls.allArgs()).toEqual([[true], [false]])
+			expect(dispatch.mock.calls).toEqual([[true], [false]])
 		})
 
 		// BUG: resetFiles fails to clear inputElement.files
-		xit('should reset the file input and dispatch selectionChange after the upload settles', async () => {
+		it.skip('should reset the file input and dispatch selectionChange after the upload settles', async () => {
 			const file = createFile('a.txt')
-			fixture.component.upload = jasmine.createSpy('upload').and.resolveTo('result')
+			fixture.component.upload = vi.fn().mockResolvedValue('result')
 			fixture.select(file)
 			expect(fixture.input.files?.length).toBe(1)
-			const dispatch = spyOn(fixture.component.selectionChange, 'dispatch')
+			const dispatch = vi.spyOn(fixture.component.selectionChange, 'dispatch').mockReturnValue(undefined)
 
 			await fixture.component.uploadSelection(file)
 
 			expect(fixture.input.files?.length).toBe(0)
-			expect(dispatch).toHaveBeenCalledOnceWith(undefined)
+			expect(dispatch).toHaveBeenCalledExactlyOnceWith(undefined)
 		})
 
 		it('should notify an error, dispatch change with undefined and rethrow when the upload fails', async () => {
 			const error = new Error('Upload failed')
-			fixture.component.upload = jasmine.createSpy('upload').and.rejectWith(error)
-			const notifyError = spyOn(NotificationComponent, 'notifyError')
-			const change = spyOn(fixture.component.change, 'dispatch')
+			fixture.component.upload = vi.fn().mockRejectedValue(error)
+			const notifyError = vi.spyOn(NotificationComponent, 'notifyError').mockResolvedValue(undefined)
+			const change = vi.spyOn(fixture.component.change, 'dispatch').mockReturnValue(undefined)
 
-			await expectAsync(fixture.component.uploadSelection(createFile('a.txt'))).toBeRejectedWith(error)
+			await expect(fixture.component.uploadSelection(createFile('a.txt'))).rejects.toEqual(error)
 
 			expect(notifyError).toHaveBeenCalled()
-			expect(change).toHaveBeenCalledOnceWith(undefined)
+			expect(change).toHaveBeenCalledExactlyOnceWith(undefined)
 		})
 	})
 
@@ -181,9 +181,9 @@ describe('FileUpload', () => {
 		const fixture = new FileUploadTestFixture({ multiple: false })
 
 		it('should not upload on selection by default', async () => {
-			const upload = jasmine.createSpy('upload').and.resolveTo('result')
+			const upload = vi.fn().mockResolvedValue('result')
 			fixture.component.upload = upload
-			expect(fixture.component.uploadOnSelection).toBeFalse()
+			expect(fixture.component.uploadOnSelection).toBe(false)
 
 			fixture.select(createFile('a.txt'))
 			await new Promise<void>(resolve => setTimeout(resolve))
@@ -193,7 +193,7 @@ describe('FileUpload', () => {
 
 		it('should upload the selection as soon as it is made', async () => {
 			const file = createFile('a.txt')
-			const upload = jasmine.createSpy('upload').and.resolveTo('result')
+			const upload = vi.fn().mockResolvedValue('result')
 			fixture.component.upload = upload
 			fixture.component.uploadOnSelection = true
 

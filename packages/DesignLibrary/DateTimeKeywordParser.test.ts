@@ -7,7 +7,7 @@ type Expectation = readonly [keyword: string, year: number, month: number, day: 
 
 const expectKeywordToParseAs = (keyword: string, year: number, month: number, day: number) => {
 	const parsed = new DateTimeKeywordParser().parse(keyword, referenceDate)
-	expect(parsed).withContext(`"${keyword}" was not parsed at all`).toBeDefined()
+	expect(parsed, `"${keyword}" was not parsed at all`).toBeDefined()
 	expect([parsed?.year, parsed?.month, parsed?.day]).toEqual([year, month, day])
 }
 

@@ -71,7 +71,7 @@ describe('Fab', () => {
 		const fixture = new ComponentTestFixture<Fab>(html`<mo-fab icon='add'>Create</mo-fab>`)
 
 		// BUG: iconAtEnd does not reflect to attribute
-		xit('should place the icon after the label when "iconAtEnd" is set', async () => {
+		it.skip('should place the icon after the label when "iconAtEnd" is set', async () => {
 			const mdFab = mdFabOf(fixture.component)
 			await mdFab.updateComplete
 			const button = mdFab.shadowRoot!.querySelector('button')!

@@ -1,6 +1,7 @@
 import { type Dialog, DialogSize } from '@3mo/dialog'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { DialogAlert } from './DialogAlert.js'
+import './index.js'
 
 describe('DialogAlert', () => {
 	const fixture = new ComponentTestFixture(() => new DialogAlert(parameters))
@@ -32,6 +33,6 @@ describe('DialogAlert', () => {
 		await fixture.component.updateComplete
 		const confirmationPromise = fixture.component.confirm()
 		fixture.component.primaryActionElement?.click()
-		await expectAsync(confirmationPromise).toBeResolved()
+		await expect(confirmationPromise).resolves.not.toThrow()
 	})
 })

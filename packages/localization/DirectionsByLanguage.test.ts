@@ -25,13 +25,13 @@ describe('DirectionsByLanguage', () => {
 
 	it('should return rtl for right-to-left languages', () => {
 		for (const language of rightToLeftLanguages) {
-			expect(DirectionsByLanguage.get(language)).withContext(language).toBe('rtl')
+			expect(DirectionsByLanguage.get(language), language).toBe('rtl')
 		}
 	})
 
 	it('should default to ltr for unknown and left-to-right languages', () => {
 		for (const language of leftToRightLanguages) {
-			expect(DirectionsByLanguage.get(language)).withContext(language).toBe('ltr')
+			expect(DirectionsByLanguage.get(language), language).toBe('ltr')
 		}
 		expect(DirectionsByLanguage.get('zz' as LanguageCode)).toBe('ltr')
 	})

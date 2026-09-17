@@ -26,7 +26,7 @@ describe('DateTimeRange', () => {
 			const range = new DateTimeRange()
 			expect(range.start).toBeUndefined()
 			expect(range.end).toBeUndefined()
-			expect(range.isInfinite).toBeTrue()
+			expect(range.isInfinite).toBe(true)
 		})
 
 		it('should construct with a start date', () => {
@@ -34,7 +34,7 @@ describe('DateTimeRange', () => {
 			const range = new DateTimeRange(start)
 			expect(range.start).toEqual(start)
 			expect(range.end).toBeUndefined()
-			expect(range.isInfinite).toBeFalse()
+			expect(range.isInfinite).toBe(false)
 		})
 
 		it('should construct with an end date', () => {
@@ -42,7 +42,7 @@ describe('DateTimeRange', () => {
 			const range = new DateTimeRange(undefined, end)
 			expect(range.start).toBeUndefined()
 			expect(range.end).toEqual(end)
-			expect(range.isInfinite).toBeFalse()
+			expect(range.isInfinite).toBe(false)
 		})
 
 		it('should construct with a start and end date', () => {
@@ -66,11 +66,11 @@ describe('DateTimeRange', () => {
 		const start = new DateTime('2020-01-02')
 		const end = new DateTime('2020-01-04')
 		const range = new DateTimeRange(start, end)
-		expect(range.includes(new DateTime('2020-01-01'))).toBeFalse()
-		expect(range.includes(new DateTime('2020-01-02'))).toBeTrue()
-		expect(range.includes(new DateTime('2020-01-03'))).toBeTrue()
-		expect(range.includes(new DateTime('2020-01-04'))).toBeTrue()
-		expect(range.includes(new DateTime('2020-01-05'))).toBeFalse()
+		expect(range.includes(new DateTime('2020-01-01'))).toBe(false)
+		expect(range.includes(new DateTime('2020-01-02'))).toBe(true)
+		expect(range.includes(new DateTime('2020-01-03'))).toBe(true)
+		expect(range.includes(new DateTime('2020-01-04'))).toBe(true)
+		expect(range.includes(new DateTime('2020-01-05'))).toBe(false)
 	})
 
 	describe('equals()', () => {
@@ -78,15 +78,15 @@ describe('DateTimeRange', () => {
 		const end = new DateTime('2020-01-04')
 
 		it('should return true for the same range', () => {
-			expect(new DateTimeRange(start, end).equals(new DateTimeRange(start, end))).toBeTrue()
-			expect(new DateTimeRange(start, undefined).equals(new DateTimeRange(start, undefined))).toBeTrue()
-			expect(new DateTimeRange(undefined, end).equals(new DateTimeRange(undefined, end))).toBeTrue()
+			expect(new DateTimeRange(start, end).equals(new DateTimeRange(start, end))).toBe(true)
+			expect(new DateTimeRange(start, undefined).equals(new DateTimeRange(start, undefined))).toBe(true)
+			expect(new DateTimeRange(undefined, end).equals(new DateTimeRange(undefined, end))).toBe(true)
 		})
 
 		it('should return false for a different range', () => {
-			expect(new DateTimeRange(start, end).equals(new DateTimeRange(start, end.add({ seconds: 1 })))).toBeFalse()
-			expect(new DateTimeRange(start, undefined).equals(new DateTimeRange(start.add({ seconds: 1 }), undefined))).toBeFalse()
-			expect(new DateTimeRange(undefined, end).equals(new DateTimeRange(undefined, end.add({ seconds: 1 })))).toBeFalse()
+			expect(new DateTimeRange(start, end).equals(new DateTimeRange(start, end.add({ seconds: 1 })))).toBe(false)
+			expect(new DateTimeRange(start, undefined).equals(new DateTimeRange(start.add({ seconds: 1 }), undefined))).toBe(false)
+			expect(new DateTimeRange(undefined, end).equals(new DateTimeRange(undefined, end.add({ seconds: 1 })))).toBe(false)
 		})
 	})
 

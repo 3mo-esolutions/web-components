@@ -47,18 +47,18 @@ describe('CheckboxGroup', () => {
 		})
 
 		it('should update the selection state when a child checkbox changes', () => {
-			const spy = spyOn(fixture.component.change, 'dispatch')
+			const spy = vi.spyOn(fixture.component.change, 'dispatch').mockReturnValue(undefined)
 
 			selectCheckbox(getCheckbox('1'), false)
 			expect(fixture.component.selected).toBe(false)
 			expect(fixture.component.change.dispatch).toHaveBeenCalledWith(false)
-			spy.calls.reset()
+			spy.mockClear()
 
 			selectCheckbox(getCheckbox('1'), true)
 			selectCheckbox(getCheckbox('2'), true)
 			expect(fixture.component.selected).toBe('indeterminate')
 			expect(fixture.component.change.dispatch).toHaveBeenCalledWith('indeterminate')
-			spy.calls.reset()
+			spy.mockClear()
 
 			selectCheckbox(getCheckbox('3'), true)
 			expect(fixture.component.selected).toBe(true)
@@ -66,7 +66,7 @@ describe('CheckboxGroup', () => {
 		})
 
 		it('should not dispatch change when a child change leaves the aggregate state unchanged', () => {
-			const spy = spyOn(fixture.component.change, 'dispatch')
+			const spy = vi.spyOn(fixture.component.change, 'dispatch').mockReturnValue(undefined)
 
 			selectCheckbox(getCheckbox('2'), true)
 
@@ -91,13 +91,13 @@ describe('CheckboxGroup', () => {
 		})
 
 		it('should dispatch change only on children whose state actually changed', () => {
-			const selectedChildDispatch = spyOn(getCheckbox('1').change, 'dispatch')
-			const unselectedChildDispatch = spyOn(getCheckbox('2').change, 'dispatch')
-			const otherUnselectedChildDispatch = spyOn(getCheckbox('3').change, 'dispatch')
+			const selectedChildDispatch = vi.spyOn(getCheckbox('1').change, 'dispatch').mockReturnValue(undefined)
+			const unselectedChildDispatch = vi.spyOn(getCheckbox('2').change, 'dispatch').mockReturnValue(undefined)
+			const otherUnselectedChildDispatch = vi.spyOn(getCheckbox('3').change, 'dispatch').mockReturnValue(undefined)
 
 			selectGroupViaCheckbox(fixture.component, false)
 
-			expect(selectedChildDispatch).toHaveBeenCalledOnceWith(false)
+			expect(selectedChildDispatch).toHaveBeenCalledExactlyOnceWith(false)
 			expect(unselectedChildDispatch).not.toHaveBeenCalled()
 			expect(otherUnselectedChildDispatch).not.toHaveBeenCalled()
 		})

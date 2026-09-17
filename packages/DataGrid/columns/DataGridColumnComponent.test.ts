@@ -45,14 +45,14 @@ describe('DataGridColumnComponent', () => {
 			expect(column.width).toBe('120px')
 			expect(column.alignment).toBe('end')
 			expect(column.sticky).toBe('start')
-			expect(column.hidden).toBeTrue()
-			expect(column.sortable).toBeFalse()
+			expect(column.hidden).toBe(true)
+			expect(column.sortable).toBe(false)
 		})
 
 		it('should derive editable only where an edit template exists, inverting a nonEditable predicate per datum', () => {
 			const withoutEditTemplate = new DataGridColumnComponent<Person, string>()
 
-			expect(withoutEditTemplate.column.editable).toBeFalse()
+			expect(withoutEditTemplate.column.editable).toBe(false)
 
 			const withEditTemplate = new DataGridColumnComponent<Person, string>()
 			withEditTemplate.getEditContentTemplate = () => html`<input>`
@@ -61,8 +61,8 @@ describe('DataGridColumnComponent', () => {
 			const editable = withEditTemplate.column.editable as Predicate<Person>
 
 			expect(typeof editable).toBe('function')
-			expect(editable({ id: 1, name: 'Alice' })).toBeFalse()
-			expect(editable({ id: 2, name: 'Bob' })).toBeTrue()
+			expect(editable({ id: 1, name: 'Alice' })).toBe(false)
+			expect(editable({ id: 2, name: 'Bob' })).toBe(true)
 		})
 
 		it('should bind the template getters to the element, so later property changes reach rendered cells', () => {

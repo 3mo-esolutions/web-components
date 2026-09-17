@@ -29,8 +29,8 @@ describe('DataGridColumnImage', () => {
 		const column = new DataGridColumnImage<Item>()
 
 		render(column.getContentTemplate(source, datum), container)
-		expect(container.querySelector('img')!.hasAttribute('title')).toBeFalse()
-		expect(container.querySelector('img')!.hasAttribute('alt')).toBeFalse()
+		expect(container.querySelector('img')!.hasAttribute('title')).toBe(false)
+		expect(container.querySelector('img')!.hasAttribute('alt')).toBe(false)
 
 		column.tooltipSelector = 'label'
 		render(column.getContentTemplate(source, datum), container)
@@ -57,7 +57,7 @@ describe('DataGridColumnImage', () => {
 		const column = new DataGridColumnImage<Item>()
 		column.dataSelector = 'img'
 
-		expect(column.column.sortable).toBeFalse()
-		expect(column.column.editable).toBeFalse()
+		expect(column.column.sortable).toBe(false)
+		expect(column.column.editable).toBe(false)
 	})
 })

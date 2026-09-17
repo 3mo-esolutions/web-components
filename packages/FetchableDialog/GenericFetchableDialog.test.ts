@@ -16,9 +16,9 @@ describe('GenericFetchableDialog', () => {
 		}
 	}
 
-	const fetchSpy = jasmine.createSpy('fetch').and.callFake((id: number | string) => ({ id: Number(id), name: `Item ${id}` }) as Item)
+	const fetchSpy = vi.fn((id: number | string) => ({ id: Number(id), name: `Item ${id}` }) as Item)
 
-	beforeEach(() => fetchSpy.calls.reset())
+	beforeEach(() => { fetchSpy.mockClear() })
 
 	afterEach(() => new Promise(resolve => setTimeout(resolve, 50)))
 
@@ -49,7 +49,7 @@ describe('GenericFetchableDialog', () => {
 		it('should fetch via the parameterized fetch when an id is given', async () => {
 			await waitUntil(() => fixture.component.entity?.name === 'Item 5')
 
-			expect(fetchSpy).toHaveBeenCalledOnceWith(5)
+			expect(fetchSpy).toHaveBeenCalledExactlyOnceWith(5)
 			expect(fixture.component.entity).toEqual({ id: 5, name: 'Item 5' })
 		})
 	})

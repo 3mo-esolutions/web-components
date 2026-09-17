@@ -117,7 +117,7 @@ describe('SegmentedInputController', () => {
 			expect(first.getAttribute('contenteditable')).toBe('plaintext-only')
 			expect(first.getAttribute('inputmode')).toBe('numeric')
 			expect(first.getAttribute('enterkeyhint')).toBe('next')
-			expect(first.hasAttribute('data-placeholder')).toBeTrue()
+			expect(first.hasAttribute('data-placeholder')).toBe(true)
 			expect(first.tabIndex).toBe(0)
 			expect(segment('segment-1').tabIndex).toBe(-1)
 		})
@@ -133,7 +133,7 @@ describe('SegmentedInputController', () => {
 		it('should hide the literals from assistive technology', () => {
 			expect(segment('literal-0').textContent).toBe('/')
 			expect(segment('literal-0').getAttribute('aria-hidden')).toBe('true')
-			expect(segment('literal-0').hasAttribute('role')).toBeFalse()
+			expect(segment('literal-0').hasAttribute('role')).toBe(false)
 		})
 
 		it('should render the placeholders while empty', () => {
@@ -160,7 +160,7 @@ describe('SegmentedInputController', () => {
 			type(segment('segment-0'), '12')
 
 			expect(host().texts.size).toBe(0)
-			expect(segment('segment-0').hasAttribute('contenteditable')).toBeFalse()
+			expect(segment('segment-0').hasAttribute('contenteditable')).toBe(false)
 			expect(segment('segment-0').tabIndex).toBe(-1)
 			expect(group().getAttribute('aria-disabled')).toBe('true')
 		})
@@ -172,7 +172,7 @@ describe('SegmentedInputController', () => {
 
 			expect(host().texts.size).toBe(0)
 			expect(segment('segment-0').getAttribute('aria-readonly')).toBe('true')
-			expect(segment('segment-0').hasAttribute('contenteditable')).toBeFalse()
+			expect(segment('segment-0').hasAttribute('contenteditable')).toBe(false)
 			expect(segment('segment-0').tabIndex).toBe(0)
 		})
 	})
@@ -183,7 +183,7 @@ describe('SegmentedInputController', () => {
 			type(segment('segment-0'), '12')
 
 			expect(segment('segment-0').textContent).toBe('12')
-			expect(segment('segment-0').hasAttribute('data-placeholder')).toBeFalse()
+			expect(segment('segment-0').hasAttribute('data-placeholder')).toBe(false)
 			expect(activeElement()).toBe(segment('segment-1'))
 			expect(segment('segment-1').tabIndex).toBe(0)
 		})
@@ -289,14 +289,14 @@ describe('SegmentedInputController', () => {
 			focus(segment('segment-0'))
 			const event = press(segment('segment-0'), 'ArrowUp')
 
-			expect(event.defaultPrevented).toBeFalse()
+			expect(event.defaultPrevented).toBe(false)
 		})
 
 		it('should leave modified keys to the host', () => {
 			focus(segment('segment-0'))
 			const event = press(segment('segment-0'), 'ArrowDown', { altKey: true })
 
-			expect(event.defaultPrevented).toBeFalse()
+			expect(event.defaultPrevented).toBe(false)
 			expect(host().steps).toEqual([])
 		})
 
@@ -307,7 +307,7 @@ describe('SegmentedInputController', () => {
 
 			press(segment('segment-0'), 'Backspace')
 			expect(segment('segment-0').textContent).toBe('##')
-			expect(host().texts.has('segment-0')).toBeFalse()
+			expect(host().texts.has('segment-0')).toBe(false)
 
 			press(segment('segment-0'), 'Backspace')
 			expect(host().moves).toEqual([-1])
@@ -333,7 +333,7 @@ describe('SegmentedInputController', () => {
 		it('should leave Tab to the browser', () => {
 			focus(segment('segment-0'))
 
-			expect(press(segment('segment-0'), 'Tab').defaultPrevented).toBeFalse()
+			expect(press(segment('segment-0'), 'Tab').defaultPrevented).toBe(false)
 		})
 
 		it('should commit on Enter and on leaving', () => {
@@ -359,7 +359,7 @@ describe('SegmentedInputController', () => {
 		it('should start at the first segment when an empty field is pressed', () => {
 			const event = pressOn(segment('segment-1'))
 
-			expect(event.defaultPrevented).toBeTrue()
+			expect(event.defaultPrevented).toBe(true)
 			expect(activeElement()).toBe(segment('segment-0'))
 		})
 
@@ -370,7 +370,7 @@ describe('SegmentedInputController', () => {
 
 			const event = pressOn(segment('segment-1'))
 
-			expect(event.defaultPrevented).toBeFalse()
+			expect(event.defaultPrevented).toBe(false)
 			expect(activeElement()).toBe(segment('segment-1'))
 		})
 
@@ -393,19 +393,19 @@ describe('SegmentedInputController', () => {
 			press(segment('segment-0'), 'Enter')
 
 			expect(host().shortcuts).toEqual(['now'])
-			expect(group().hasAttribute('data-shortcut')).toBeFalse()
+			expect(group().hasAttribute('data-shortcut')).toBe(false)
 		})
 
 		it('should hand a shortcut over after typing pauses', () => {
-			jasmine.clock().install()
+			vi.useFakeTimers()
 			try {
 				focus(segment('segment-0'))
 				type(segment('segment-0'), '+2')
-				jasmine.clock().tick(SegmentedInputController.shortcutTimeout)
+				vi.advanceTimersByTime(SegmentedInputController.shortcutTimeout)
 
 				expect(host().shortcuts).toEqual(['+2'])
 			} finally {
-				jasmine.clock().uninstall()
+				vi.useRealTimers()
 			}
 		})
 
@@ -423,7 +423,7 @@ describe('SegmentedInputController', () => {
 			focus(segment('segment-0'))
 			type(segment('segment-0'), 'now')
 
-			expect(group().hasAttribute('data-shortcut')).toBeFalse()
+			expect(group().hasAttribute('data-shortcut')).toBe(false)
 		})
 	})
 
@@ -439,20 +439,20 @@ describe('SegmentedInputController', () => {
 			return event
 		}
 
-		it('should hand the whole clipboard text to the host', async () => {
+		it('should hand the whole clipboard text to the host', async context => {
 			await setUp({ pasted: [] })
 
 			if (!paste('12/2026')) {
-				pending('Synthetic clipboard data is unsupported in this engine')
+				context.skip('Synthetic clipboard data is unsupported in this engine')
 				return
 			}
 
 			expect(host().pasted).toEqual(['12/2026'])
 		})
 
-		it('should fall back to the shortcut when the host takes no paste', () => {
+		it('should fall back to the shortcut when the host takes no paste', context => {
 			if (!paste('tomorrow')) {
-				pending('Synthetic clipboard data is unsupported in this engine')
+				context.skip('Synthetic clipboard data is unsupported in this engine')
 				return
 			}
 
@@ -462,15 +462,15 @@ describe('SegmentedInputController', () => {
 
 	describe('api', () => {
 		it('should report what is empty and complete', () => {
-			expect(controller().isEmpty).toBeTrue()
-			expect(controller().isComplete).toBeFalse()
+			expect(controller().isEmpty).toBe(true)
+			expect(controller().isComplete).toBe(false)
 
 			focus(segment('segment-0'))
 			type(segment('segment-0'), '12')
 			type(segment('segment-1'), '2026')
 
-			expect(controller().isEmpty).toBeFalse()
-			expect(controller().isComplete).toBeTrue()
+			expect(controller().isEmpty).toBe(false)
+			expect(controller().isComplete).toBe(true)
 		})
 
 		it('should report what is typed but does not yet fill the segment', () => {

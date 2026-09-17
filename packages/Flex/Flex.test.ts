@@ -47,7 +47,9 @@ describe('Flex', () => {
 		}
 	})
 
-	const cssPropertiesByProperty = new Map<keyof Flex, string>([
+	type StyleProperty = Extract<keyof Flex, string>
+
+	const cssPropertiesByProperty = new Map<StyleProperty, string>([
 		['wrap', 'flex-wrap'],
 		['gap', 'gap'],
 		['justifyItems', 'justify-items'],

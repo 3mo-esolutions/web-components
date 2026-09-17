@@ -99,14 +99,14 @@ describe('DataGridSelectionController', () => {
 		})
 
 		it('dispatches selectionChange with what is now selected', () => {
-			spyOn(fixture.component.selectionChange, 'dispatch')
+			vi.spyOn(fixture.component.selectionChange, 'dispatch').mockReturnValue(undefined)
 			fixture.component.controller.selection = [...data]
 			expect(fixture.component.selectionChange.dispatch).toHaveBeenCalledWith([...data])
 		})
 
 		it('stays quiet where nothing actually changed', () => {
 			fixture.component.controller.selection = [...data]
-			spyOn(fixture.component.selectionChange, 'dispatch')
+			vi.spyOn(fixture.component.selectionChange, 'dispatch').mockReturnValue(undefined)
 			fixture.component.controller.selection = [...data]
 			expect(fixture.component.selectionChange.dispatch).not.toHaveBeenCalled()
 		})

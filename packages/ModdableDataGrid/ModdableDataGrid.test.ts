@@ -150,9 +150,10 @@ class ModdableDataGridTestFixture extends ComponentTestFixture<ModdableDataGridS
 			// order, so sharing the instances would leak one spec's reorder into another's seed.
 			dataGrid.modesAdapter.modes = options.modes.map(m => m.clone())
 			dataGrid.modesAdapter.selectedModeId = options.selectedModeId
+			// Spied before the grid is connected, so the fetch its initialization triggers is counted.
+			vi.spyOn(dataGrid.fetcherController, 'fetch')
 			return dataGrid
 		})
-		beforeEach(() => spyOn(this.component.fetcherController, 'fetch').and.callThrough())
 	}
 
 	expectModeToBeSelected(modeId: 'default' | '1' | '2') {
@@ -210,16 +211,16 @@ describe('ModdableDataGrid', () => {
 		)
 
 		it('should be the default, as for any fetchable data grid', () => {
-			expect(fixture.component.hasInfiniteScroll).toBeTrue()
+			expect(fixture.component.hasInfiniteScroll).toBe(true)
 		})
 
 		describe('opted out of application-wide', () => {
-			beforeEach(() => ModdableDataGrid.defaultPagination = dataGrid => dataGrid.hasServerSidePagination ? 'pages' : undefined)
-			afterEach(() => ModdableDataGrid.defaultPagination = undefined)
+			beforeEach(() => { ModdableDataGrid.defaultPagination = dataGrid => dataGrid.hasServerSidePagination ? 'pages' : undefined })
+			afterEach(() => { ModdableDataGrid.defaultPagination = undefined })
 
 			it('should navigate pages explicitly instead', () => {
-				expect(fixture.component.hasInfiniteScroll).toBeFalse()
-				expect(fixture.component.hasPagination).toBeTrue()
+				expect(fixture.component.hasInfiniteScroll).toBe(false)
+				expect(fixture.component.hasPagination).toBe(true)
 				expect(fixture.component.pageSize).toBe(DataGrid.pageSize.value)
 			})
 
@@ -229,7 +230,7 @@ describe('ModdableDataGrid', () => {
 				)
 
 				it('should stream its pages', () => {
-					expect(optedInFixture.component.hasInfiniteScroll).toBeTrue()
+					expect(optedInFixture.component.hasInfiniteScroll).toBe(true)
 				})
 			})
 		})
@@ -245,12 +246,12 @@ describe('ModdableDataGrid', () => {
 
 		describe('Mode creation icon-button', () => {
 			it('should exist in the toolbar if there are no modes', () => {
-				expect(fixture.component['hasModebar']).toBeFalse()
+				expect(fixture.component['hasModebar']).toBe(false)
 				expect(fixture.addModeIconButton).not.toBeNull()
 			})
 
 			it('should open the mode dialog when clicked', () => {
-				spyOn(DialogMode.prototype, 'confirm')
+				vi.spyOn(DialogMode.prototype, 'confirm').mockResolvedValue(undefined)
 				fixture.addModeIconButton?.dispatchEvent(new MouseEvent('click'))
 				expect(DialogMode.prototype.confirm).toHaveBeenCalledTimes(1)
 			})
@@ -268,7 +269,7 @@ describe('ModdableDataGrid', () => {
 		})
 
 		it('should have a modebar if there is at least one mode', () => {
-			expect(fixture.component['hasModebar']).toBeTrue()
+			expect(fixture.component['hasModebar']).toBe(true)
 			expect(fixture.component.renderRoot.querySelector('#modebar')).not.toBeNull()
 			expect(fixture.addModeIconButton).toBeNull()
 		})
@@ -331,7 +332,7 @@ describe('ModdableDataGrid', () => {
 			fixture.component.parameters = { ...fixture.component.parameters, keyword: '' }
 			await fixture.updateComplete
 
-			spyOn(DialogAlert.prototype, 'confirm').and.callFake(() => Promise.resolve())
+			vi.spyOn(DialogAlert.prototype, 'confirm').mockImplementation(() => Promise.resolve())
 			chip.renderRoot.querySelector('mo-icon-button[icon=undo]')?.dispatchEvent(new MouseEvent('click'))
 			await new Promise(r => setTimeout(r))
 			await fixture.updateComplete
@@ -355,7 +356,7 @@ describe('ModdableDataGrid', () => {
 		})
 
 		it('should delete the mode when clicking "delete" icon-button', async () => {
-			spyOn(fixture.component.modesController, 'delete')
+			vi.spyOn(fixture.component.modesController, 'delete').mockResolvedValue(undefined)
 
 			const chip = fixture.modeChips[0]!
 			await fixture.selectChip(chip)
@@ -369,16 +370,16 @@ describe('ModdableDataGrid', () => {
 		it('should archive or unarchive a mode when "archive" icon-button is clicked', async () => {
 			const chip = fixture.modeChips[0]!
 			await fixture.selectChip(chip)
-			spyOn(chip.mode, 'archive')
+			vi.spyOn(chip.mode, 'archive').mockResolvedValue(undefined)
 
 			chip.renderRoot.querySelector('[data-test-id=archive]')!.dispatchEvent(new MouseEvent('click'))
 
-			expect(chip.mode.archive).toHaveBeenCalledOnceWith(fixture.component)
+			expect(chip.mode.archive).toHaveBeenCalledExactlyOnceWith(fixture.component)
 		})
 
 		it('should open the mode dialog when "edit" menu-item is clicked', async () => {
 			let parameters!: typeof DialogMode.prototype['parameters']
-			spyOn(DialogMode.prototype, 'confirm').and.callFake(function (this: DialogMode<unknown, any>) {
+			vi.spyOn(DialogMode.prototype, 'confirm').mockImplementation(function (this: DialogMode<unknown, any>) {
 				parameters = this.parameters
 				return Promise.resolve(undefined)
 			})
@@ -394,7 +395,7 @@ describe('ModdableDataGrid', () => {
 
 		it('should open a mode dialog to "save changes as new view" when "save as new" menu-item is clicked', async () => {
 			let parameters!: typeof DialogMode.prototype['parameters']
-			spyOn(DialogMode.prototype, 'confirm').and.callFake(function (this: DialogMode<unknown, any>) {
+			vi.spyOn(DialogMode.prototype, 'confirm').mockImplementation(function (this: DialogMode<unknown, any>) {
 				parameters = this.parameters
 				return Promise.resolve(undefined)
 			})
@@ -420,14 +421,14 @@ describe('ModdableDataGrid', () => {
 				await fixture.component.modesController.set(first)
 				await fixture.updateComplete
 				fixture.component.modesAdapter.saved.splice(0)
-				expect(fixture.component.hasUnsavedChanges).toBeFalse()
+				expect(fixture.component.hasUnsavedChanges).toBe(false)
 				return { first, second }
 			}
 
 			const changeTheView = async () => {
 				fixture.component.parameters = { ...fixture.component.parameters, keyword: 'changed' }
 				await fixture.updateComplete
-				expect(fixture.component.hasUnsavedChanges).toBeTrue()
+				expect(fixture.component.hasUnsavedChanges).toBe(true)
 			}
 
 			const chipOf = (mode: ModdableDataGridMode<User, Parameters>) =>
@@ -437,7 +438,7 @@ describe('ModdableDataGrid', () => {
 				const { second } = await seedCleanModes()
 				await changeTheView()
 				let parameters!: GenericDialog<boolean>['parameters']
-				const confirmSpy = spyOn(GenericDialog.prototype, 'confirm').and.callFake(function (this: GenericDialog<boolean>) {
+				const confirmSpy = vi.spyOn(GenericDialog.prototype, 'confirm').mockImplementation(function (this: GenericDialog<boolean>) {
 					parameters = this.parameters
 					return Promise.resolve(false)
 				})
@@ -452,7 +453,7 @@ describe('ModdableDataGrid', () => {
 			it('should save the current view onto the previous mode before switching when confirmed', async () => {
 				const { second } = await seedCleanModes()
 				await changeTheView()
-				spyOn(GenericDialog.prototype, 'confirm').and.resolveTo(true)
+				vi.spyOn(GenericDialog.prototype, 'confirm').mockResolvedValue(true)
 
 				await fixture.selectChip(chipOf(second))
 				await waitUntil(() => fixture.component.mode?.id === 'second')
@@ -466,14 +467,14 @@ describe('ModdableDataGrid', () => {
 			it('should switch without saving when declined, leaving the previous mode untouched', async () => {
 				const { second } = await seedCleanModes()
 				await changeTheView()
-				spyOn(GenericDialog.prototype, 'confirm').and.resolveTo(false)
+				vi.spyOn(GenericDialog.prototype, 'confirm').mockResolvedValue(false)
 
 				await fixture.selectChip(chipOf(second))
 				await waitUntil(() => fixture.component.mode?.id === 'second')
 
 				expect(fixture.component.modesAdapter.saved).toEqual([])
 				expect(fixture.component.modesAdapter.modes.find(mode => mode.id === 'first')?.parameters?.keyword).toBeUndefined()
-				expect(fixture.component.hasUnsavedChanges).toBeFalse()
+				expect(fixture.component.hasUnsavedChanges).toBe(false)
 			})
 		})
 
@@ -508,8 +509,8 @@ describe('ModdableDataGrid', () => {
 
 				const chip = fixture.modeChips.find(chip => chip.mode.id === '2')
 				expect(fixture.modeChips.map(chip => chip.mode.id)).toEqual(['1', '2'])
-				expect(chip!.hasAttribute('data-temporary')).toBeTrue()
-				expect(chip!.selected).toBeTrue()
+				expect(chip!.hasAttribute('data-temporary')).toBe(true)
+				expect(chip!.selected).toBe(true)
 			})
 
 			it('should deselect the archived mode when it is clicked again in the archive menu', async () => {
@@ -530,7 +531,7 @@ describe('ModdableDataGrid', () => {
 				await fixture.updateComplete
 
 				expect(fixture.modeChips.map(chip => chip.mode.id)).toEqual(['1', '2'])
-				expect(fixture.modeChips.some(chip => chip.hasAttribute('data-temporary'))).toBeFalse()
+				expect(fixture.modeChips.some(chip => chip.hasAttribute('data-temporary'))).toBe(false)
 				expect(fixture.archiveIconButton).toBeNull()
 				expect(fixture.component.modesAdapter.saved.map(mode => mode.id)).toEqual(['2'])
 			})
@@ -557,7 +558,7 @@ describe('ModdableDataGrid', () => {
 			})
 
 			it('should reset to the default mode when the selected mode is deleted', async () => {
-				spyOn(DialogDeletion.prototype, 'confirm').and.callFake(function (this: DialogDeletion) {
+				vi.spyOn(DialogDeletion.prototype, 'confirm').mockImplementation(function (this: DialogDeletion) {
 					return Promise.resolve(this.parameters.deletionAction?.call(this))
 				})
 				const selectedMode = fixture.component.mode!
@@ -724,11 +725,11 @@ describe('ModdableDataGrid', () => {
 
 		it('should surface a column rendered after a mode has been applied', async () => {
 			fixture.expectModeToBeSelected('2')
-			expect(hasColumn('score')).toBeFalse()
+			expect(hasColumn('score')).toBe(false)
 
 			await appendColumnAfterRender('score')
 
-			expect(hasColumn('score')).toBeTrue()
+			expect(hasColumn('score')).toBe(true)
 		})
 
 		it('should not let an app-provided column add unsaved changes to a selected mode', async () => {
@@ -738,12 +739,12 @@ describe('ModdableDataGrid', () => {
 			fixture.component.modesAdapter.modes = [cleanMode]
 			await fixture.component.modesController.set(cleanMode)
 			await fixture.updateComplete
-			expect(fixture.component.hasUnsavedChanges).toBeFalse()
+			expect(fixture.component.hasUnsavedChanges).toBe(false)
 
 			await appendColumnAfterRender('score')
 
-			expect(hasColumn('score')).toBeTrue()
-			expect(fixture.component.hasUnsavedChanges).toBeFalse()
+			expect(hasColumn('score')).toBe(true)
+			expect(fixture.component.hasUnsavedChanges).toBe(false)
 		})
 
 		it('should restore the saved modification of a mode column whose element renders late', async () => {
@@ -759,13 +760,13 @@ describe('ModdableDataGrid', () => {
 			fixture.component.modesAdapter.modes = [modeWithLateColumn]
 			await fixture.component.modesController.set(modeWithLateColumn)
 			await fixture.updateComplete
-			expect(hasColumn('score')).toBeFalse()
+			expect(hasColumn('score')).toBe(false)
 
 			await appendColumnAfterRender('score')
 
-			expect(hasColumn('score')).toBeTrue()
+			expect(hasColumn('score')).toBe(true)
 			expect(fixture.component.columns.find(c => (c.dataSelector as string) === 'score')?.width).toBe('321px')
-			expect(fixture.component.hasUnsavedChanges).toBeFalse()
+			expect(fixture.component.hasUnsavedChanges).toBe(false)
 		})
 	})
 
@@ -780,7 +781,7 @@ describe('ModdableDataGrid', () => {
 			fixture.component.modesAdapter.modes = [cleanMode]
 			await fixture.component.modesController.set(cleanMode)
 			await fixture.updateComplete
-			expect(fixture.component.hasUnsavedChanges).toBeFalse()
+			expect(fixture.component.hasUnsavedChanges).toBe(false)
 		}
 
 		it('should report no unsaved changes for a mode whose columns an adapter returns as null', async () => {
@@ -789,7 +790,7 @@ describe('ModdableDataGrid', () => {
 			await fixture.component.modesController.set(mode)
 			await fixture.updateComplete
 
-			expect(fixture.component.hasUnsavedChanges).toBeFalse()
+			expect(fixture.component.hasUnsavedChanges).toBe(false)
 		})
 
 		it('should report no unsaved changes after a column is moved and moved back', async () => {
@@ -798,12 +799,12 @@ describe('ModdableDataGrid', () => {
 
 			fixture.component.columnsController.columns.move(first!.dataSelector, 2)
 			await fixture.updateComplete
-			expect(fixture.component.hasUnsavedChanges).toBeTrue()
+			expect(fixture.component.hasUnsavedChanges).toBe(true)
 
 			fixture.component.columnsController.columns.move(first!.dataSelector, 0)
 			await fixture.updateComplete
 
-			expect(fixture.component.hasUnsavedChanges).toBeFalse()
+			expect(fixture.component.hasUnsavedChanges).toBe(false)
 		})
 
 		it('should report no unsaved changes after a column is hidden and shown again', async () => {
@@ -813,12 +814,12 @@ describe('ModdableDataGrid', () => {
 
 			first!.modify({ hidden: !wasHidden })
 			await fixture.updateComplete
-			expect(fixture.component.hasUnsavedChanges).toBeTrue()
+			expect(fixture.component.hasUnsavedChanges).toBe(true)
 
 			fixture.component.columnsController.columns.modify(first!.dataSelector, { hidden: wasHidden })
 			await fixture.updateComplete
 
-			expect(fixture.component.hasUnsavedChanges).toBeFalse()
+			expect(fixture.component.hasUnsavedChanges).toBe(false)
 		})
 
 		it('should report unsaved changes when the sorting changes and none once the mode\'s sorting is restored', async () => {
@@ -826,12 +827,12 @@ describe('ModdableDataGrid', () => {
 
 			fixture.component.sort([{ selector: 'age', strategy: DataGridSortingStrategy.Descending }])
 			await fixture.updateComplete
-			expect(fixture.component.hasUnsavedChanges).toBeTrue()
+			expect(fixture.component.hasUnsavedChanges).toBe(true)
 
 			fixture.component.sort([])
 			await fixture.updateComplete
 
-			expect(fixture.component.hasUnsavedChanges).toBeFalse()
+			expect(fixture.component.hasUnsavedChanges).toBe(false)
 		})
 
 		it('should report unsaved changes when the pagination changes', async () => {
@@ -842,7 +843,7 @@ describe('ModdableDataGrid', () => {
 			await fixture.updateComplete
 
 			expect(fixture.component.pagination?.toString()).toBe('50')
-			expect(fixture.component.hasUnsavedChanges).toBeTrue()
+			expect(fixture.component.hasUnsavedChanges).toBe(true)
 		})
 
 		it('should not report unsaved changes when a parameter is set to an empty value', async () => {
@@ -851,7 +852,7 @@ describe('ModdableDataGrid', () => {
 			fixture.component.parameters = { ...fixture.component.parameters, keyword: '' }
 			await fixture.updateComplete
 
-			expect(fixture.component.hasUnsavedChanges).toBeFalse()
+			expect(fixture.component.hasUnsavedChanges).toBe(false)
 		})
 	})
 
@@ -882,10 +883,10 @@ describe('ModdableDataGrid', () => {
 			const legacyMode = await selectLegacyMode()
 
 			// Every property is specified, so the snapshot wins over the column elements' declarations
-			expect(legacyMode.columns!.every(c => c.width !== undefined && c.hidden !== undefined)).toBeTrue()
+			expect(legacyMode.columns!.every(c => c.width !== undefined && c.hidden !== undefined)).toBe(true)
 			expect(fixture.component.columns.map(c => c.dataSelector)).toEqual(['id', 'firstName', 'lastName', 'age'])
 			expect(fixture.component.columns.find(c => c.dataSelector === 'lastName')?.width).toBe('200px')
-			expect(fixture.component.hasUnsavedChanges).toBeFalse()
+			expect(fixture.component.hasUnsavedChanges).toBe(false)
 		})
 
 		it('should surface a column the snapshot does not know instead of dropping it', async () => {
@@ -901,7 +902,7 @@ describe('ModdableDataGrid', () => {
 			await fixture.updateComplete
 
 			expect(fixture.component.columns.map(c => c.dataSelector)).toEqual(['id', 'firstName', 'lastName', 'age', 'score' as any])
-			expect(fixture.component.hasUnsavedChanges).toBeFalse()
+			expect(fixture.component.hasUnsavedChanges).toBe(false)
 		})
 	})
 })

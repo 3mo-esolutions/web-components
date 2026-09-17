@@ -177,10 +177,10 @@ describe('ModdableDataGridMode', () => {
 	describe('apply', () => {
 		const createDataGridMock = () => ({
 			parameters: {},
-			columnsController: { columns: { modifications: { set: jasmine.createSpy() } } },
-			sort: jasmine.createSpy(),
-			setPagination: jasmine.createSpy(),
-			setParameters: jasmine.createSpy().and.callFake(function (this: any, p: any) { this.parameters = p }),
+			columnsController: { columns: { modifications: { set: vi.fn() } } },
+			sort: vi.fn(),
+			setPagination: vi.fn(),
+			setParameters: vi.fn(function (this: any, p: any) { this.parameters = p }),
 		})
 
 		it('should not set any associated properties by reference', () => {
@@ -223,7 +223,7 @@ describe('ModdableDataGridMode', () => {
 
 			mode.apply(dataGridMock as any)
 
-			expect(dataGridMock.columnsController.columns.modifications.set.calls.mostRecent().args[0]).not.toBe(mode.columns)
+			expect(dataGridMock.columnsController.columns.modifications.set.mock.lastCall![0]).not.toBe(mode.columns)
 		})
 
 		it('should clear the columns modifications when the mode has no columns', () => {

@@ -287,21 +287,21 @@ describe('SwipeabilityController', () => {
 			return event
 		}
 
-		it('should claim a gesture which runs along its axis', () => {
+		it('should claim a gesture which runs along its axis', context => {
 			surface.dispatchEvent(pointer('pointerdown', 0))
 			const event = touchmove(surface, 40)
 			if (!event) {
-				pending('the engine has no touch events')
+				context.skip('the engine has no touch events')
 			}
 
 			expect(event?.defaultPrevented).toBe(true)
 		})
 
-		it('should leave a gesture which runs across its axis to the browser', () => {
+		it('should leave a gesture which runs across its axis to the browser', context => {
 			surface.dispatchEvent(pointer('pointerdown', 0))
 			const event = touchmove(surface, 3, 40)
 			if (!event) {
-				pending('the engine has no touch events')
+				context.skip('the engine has no touch events')
 			}
 
 			expect(event?.defaultPrevented).toBe(false)

@@ -88,7 +88,7 @@ describe('OverflowController', () => {
 
 	it('should not overflow items which fit the container', () => {
 		expect(fixture.component.overflowedItems).toEqual([])
-		expect(fixture.component.controller.hasOverflow).toBeFalse()
+		expect(fixture.component.controller.hasOverflow).toBe(false)
 	})
 
 	it('should apply the verdict of every newly encountered item once', async () => {
@@ -109,8 +109,8 @@ describe('OverflowController', () => {
 		await settle(fixture.component)
 
 		expect(fixture.component.overflowedItems).toEqual([fixture.component.items[4]!])
-		expect(fixture.component.controller.overflows(fixture.component.items[4]!)).toBeTrue()
-		expect(fixture.component.controller.hasOverflow).toBeTrue()
+		expect(fixture.component.controller.overflows(fixture.component.items[4]!)).toBe(true)
+		expect(fixture.component.controller.hasOverflow).toBe(true)
 	})
 
 	it('should bring items back once they fit again, touching only those whose verdict changed', async () => {
@@ -188,7 +188,7 @@ describe('OverflowController', () => {
 		await settle(fixture.component)
 
 		expect(fixture.component.overflowedItems).toEqual([])
-		expect(fixture.component.controller.hasOverflow).toBeFalse()
+		expect(fixture.component.controller.hasOverflow).toBe(false)
 		expect(fixture.component.updateCalls).toEqual([])
 
 		fixture.component.suspended = false
@@ -228,7 +228,7 @@ describe('OverflowController', () => {
 
 		expect(fixture.component.updateCalls).toEqual([])
 		expect(fixture.component.overflowedItems).toEqual([])
-		expect(fixture.component.controller.hasOverflow).toBeFalse()
+		expect(fixture.component.controller.hasOverflow).toBe(false)
 	})
 })
 @component('overflow-declarative-test-component')

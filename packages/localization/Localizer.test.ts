@@ -20,7 +20,7 @@ describe('Localizer', () => {
 				localStorage.setItem(storageKey, originalEntry)
 			}
 			history.replaceState(null, '', `${window.location.pathname}${originalSearch}${window.location.hash}`)
-			delete (navigator as Partial<Navigator>).language
+			delete (navigator as any).language
 			Localizer.languages.change.dispatch(Localizer.languages.current)
 		})
 
@@ -43,7 +43,7 @@ describe('Localizer', () => {
 		})
 
 		it('should persist an assigned language and dispatch a change event to subscribers', () => {
-			const handler = jasmine.createSpy('handler')
+			const handler = vi.fn()
 			Localizer.languages.change.subscribe(handler)
 
 			try {
@@ -53,7 +53,7 @@ describe('Localizer', () => {
 			}
 
 			expect(localStorage.getItem(storageKey)).toBe(JSON.stringify('de'))
-			expect(handler).toHaveBeenCalledOnceWith('de')
+			expect(handler).toHaveBeenCalledExactlyOnceWith('de')
 		})
 	})
 

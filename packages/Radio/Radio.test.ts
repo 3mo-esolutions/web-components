@@ -92,8 +92,8 @@ describe('Radio', () => {
 
 	it('should dispatch "change" event when value changes through user interaction', async () => {
 		let changed = false
-		const spy = jasmine.createSpy('change').and.callFake((e: CustomEvent<boolean>) => changed = e.detail)
-		fixture.component.addEventListener('change', spy)
+		const spy = vi.fn((e: CustomEvent<boolean>) => changed = e.detail)
+		fixture.component.addEventListener<any>('change', spy)
 		fixture.component.renderRoot.querySelector('md-radio')?.click()
 		await fixture.update()
 		expect(changed).toBe(true)
@@ -103,8 +103,8 @@ describe('Radio', () => {
 	it('should not dispatch "change" event when an already selected radio is clicked', async () => {
 		fixture.component.selected = true
 		await fixture.update()
-		const spy = jasmine.createSpy('change')
-		fixture.component.addEventListener('change', spy)
+		const spy = vi.fn()
+		fixture.component.addEventListener<any>('change', spy)
 
 		fixture.component.renderRoot.querySelector('md-radio')?.click()
 		await fixture.update()
@@ -116,8 +116,8 @@ describe('Radio', () => {
 	it('should select when its label is clicked', async () => {
 		fixture.component.label = 'test'
 		await fixture.update()
-		const spy = jasmine.createSpy('change')
-		fixture.component.addEventListener('change', spy)
+		const spy = vi.fn()
+		fixture.component.addEventListener<any>('change', spy)
 
 		fixture.component.renderRoot.querySelector('label')?.click()
 		await fixture.update()
@@ -133,8 +133,8 @@ describe('Radio', () => {
 	})
 
 	it('should not dispatch "change" event when "selected" is set programmatically', async () => {
-		const spy = jasmine.createSpy('change')
-		fixture.component.addEventListener('change', spy)
+		const spy = vi.fn()
+		fixture.component.addEventListener<any>('change', spy)
 		fixture.component.selected = true
 		await fixture.update()
 		expect(fixture.component.selected).toBe(true)
@@ -171,12 +171,12 @@ describe('Radio', () => {
 			await fixture1.component.updateComplete
 
 			let changed1 = false
-			const spy1 = jasmine.createSpy('change').and.callFake((e: CustomEvent<boolean>) => changed1 = e.detail)
-			fixture1.component.addEventListener('change', spy1)
+			const spy1 = vi.fn((e: CustomEvent<boolean>) => changed1 = e.detail)
+			fixture1.component.addEventListener<any>('change', spy1)
 
 			let changed2 = false
-			const spy2 = jasmine.createSpy('change').and.callFake((e: CustomEvent<boolean>) => changed2 = e.detail)
-			fixture2.component.addEventListener('change', spy2)
+			const spy2 = vi.fn((e: CustomEvent<boolean>) => changed2 = e.detail)
+			fixture2.component.addEventListener<any>('change', spy2)
 
 			fixture3.component.selected = true
 			await fixture3.component.updateComplete
@@ -308,17 +308,17 @@ describe('Radio', () => {
 			radios[0]!.selected = true
 			await Promise.all(radios.map(radio => radio.updateComplete))
 
-			const spy0 = jasmine.createSpy('change')
-			const spy1 = jasmine.createSpy('change')
+			const spy0 = vi.fn()
+			const spy1 = vi.fn()
 			radios[0]!.addEventListener('change', spy0)
 			radios[1]!.addEventListener('change', spy1)
 
 			pressKey(radios[0]!, 'ArrowDown')
 
 			expect(spy0).toHaveBeenCalledTimes(1)
-			expect(spy0.calls.mostRecent().args[0].detail).toBe(false)
+			expect(spy0.mock.lastCall![0].detail).toBe(false)
 			expect(spy1).toHaveBeenCalledTimes(1)
-			expect(spy1.calls.mostRecent().args[0].detail).toBe(true)
+			expect(spy1.mock.lastCall![0].detail).toBe(true)
 		})
 
 		it('should ignore keys other than the arrow keys', () => {

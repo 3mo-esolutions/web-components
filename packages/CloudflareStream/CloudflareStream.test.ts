@@ -24,14 +24,14 @@ describe('CloudflareStream', () => {
 	})
 
 	describe('autoPause', () => {
-		const play = jasmine.createSpy('play')
-		const pause = jasmine.createSpy('pause')
+		const play = vi.fn()
+		const pause = vi.fn()
 		const global = globalThis as { Stream?: unknown }
 		let originalStream: unknown
 
 		beforeEach(() => {
-			play.calls.reset()
-			pause.calls.reset()
+			play.mockClear()
+			pause.mockClear()
 			originalStream = global.Stream
 			global.Stream = () => ({ play, pause })
 		})
@@ -43,8 +43,8 @@ describe('CloudflareStream', () => {
 		const placeWithVisibleHeight = (visibleHeight: number) => {
 			const height = 100
 			const top = window.innerHeight - visibleHeight
-			spyOn(autoPauseFixture.component, 'getBoundingClientRect')
-				.and.returnValue(new DOMRect(0, top, 200, height))
+			vi.spyOn(autoPauseFixture.component, 'getBoundingClientRect')
+				.mockReturnValue(new DOMRect(0, top, 200, height))
 		}
 
 		const scroll = () => window.dispatchEvent(new Event('scroll'))
@@ -82,7 +82,7 @@ describe('CloudflareStream', () => {
 			autoPauseFixture.component.autoPause = 'when-half-in-viewport'
 			await autoPauseFixture.updateComplete
 			expect(pause).toHaveBeenCalled()
-			pause.calls.reset()
+			pause.mockClear()
 
 			autoPauseFixture.component.getBoundingClientRect = () => new DOMRect(0, 0, 200, 100)
 			scroll()

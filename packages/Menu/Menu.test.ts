@@ -46,7 +46,7 @@ describe('Menu', () => {
 			const item = fixture.component.querySelector('mo-menu-item')
 			item?.click()
 
-			expect(fixture.component.open).toBeFalse()
+			expect(fixture.component.open).toBe(false)
 		})
 
 		it('should close when a list-item other than menu item is clicked', () => {
@@ -55,7 +55,7 @@ describe('Menu', () => {
 			const item = fixture.component.querySelector('mo-list-item')
 			item?.click()
 
-			expect(fixture.component.open).toBeFalse()
+			expect(fixture.component.open).toBe(false)
 		})
 
 		it('should not close when a nested-menu-item with submenu is clicked', () => {
@@ -73,7 +73,7 @@ describe('Menu', () => {
 			const item = fixture.component.querySelectorAll('mo-nested-menu-item')[1]
 			item?.click()
 
-			expect(fixture.component.open).toBeFalse()
+			expect(fixture.component.open).toBe(false)
 		})
 
 		it('should close when a menu-item in a submenu is clicked', () => {
@@ -82,7 +82,7 @@ describe('Menu', () => {
 			const item = fixture.component.querySelector<MenuItem>('mo-nested-menu-item mo-menu-item')
 			item?.click()
 
-			expect(fixture.component.open).toBeFalse()
+			expect(fixture.component.open).toBe(false)
 		})
 
 		it('should close when a list-item in a submenu is clicked', () => {
@@ -91,7 +91,7 @@ describe('Menu', () => {
 			const item = fixture.component.querySelector<MenuItem>('mo-nested-menu-item mo-list-item')
 			item?.click()
 
-			expect(fixture.component.open).toBeFalse()
+			expect(fixture.component.open).toBe(false)
 		})
 	})
 
@@ -117,13 +117,13 @@ describe('Menu', () => {
 		})
 
 		it('should refuse to open while disabled', () => {
-			const openChangeSpy = jasmine.createSpy('openChange')
+			const openChangeSpy = vi.fn()
 			fixture.component.openChange.subscribe(openChangeSpy)
 			fixture.component.disabled = true
 
 			fixture.component.setOpen(true)
 
-			expect(fixture.component.open).toBeFalse()
+			expect(fixture.component.open).toBe(false)
 			expect(openChangeSpy).not.toHaveBeenCalled()
 		})
 	})
@@ -159,7 +159,7 @@ describe('Menu', () => {
 			await open()
 
 			expect(fixture.component.list.focusController.focusedItemIndex).toBe(selectedIndex)
-			expect(fixture.component.items[selectedIndex]!.hasAttribute('focused')).toBeTrue()
+			expect(fixture.component.items[selectedIndex]!.hasAttribute('focused')).toBe(true)
 		})
 
 		it('should scroll the selected item into view when opened', async () => {
@@ -229,8 +229,8 @@ describe('Menu', () => {
 			it(`should open while closed, preventing the page scroll (${key})`, () => {
 				const event = keydown(fixture.component, key)
 
-				expect(fixture.component.menu.open).toBeTrue()
-				expect(event.defaultPrevented).toBeTrue()
+				expect(fixture.component.menu.open).toBe(true)
+				expect(event.defaultPrevented).toBe(true)
 			})
 		}
 
@@ -239,7 +239,7 @@ describe('Menu', () => {
 
 			keydown(fixture.component, 'Tab')
 
-			expect(fixture.component.menu.open).toBeFalse()
+			expect(fixture.component.menu.open).toBe(false)
 		})
 
 		it('should not open on those keys when manual', () => {
@@ -248,15 +248,15 @@ describe('Menu', () => {
 
 			const event = keydown(fixture.component, 'ArrowDown')
 
-			expect(fixture.component.menu.open).toBeFalse()
-			expect(event.defaultPrevented).toBeFalse()
+			expect(fixture.component.menu.open).toBe(false)
+			expect(event.defaultPrevented).toBe(false)
 		})
 
 		for (const modifier of ['ctrlKey', 'shiftKey'] as const) {
 			it(`should ignore keys with ${modifier === 'ctrlKey' ? 'ctrl' : 'shift'} held`, () => {
 				keydown(fixture.component, 'ArrowDown', { [modifier]: true })
 
-				expect(fixture.component.menu.open).toBeFalse()
+				expect(fixture.component.menu.open).toBe(false)
 			})
 		}
 
@@ -266,7 +266,7 @@ describe('Menu', () => {
 
 			keydown(fixture.component.menu.items[0]!, 'ArrowDown')
 
-			expect(fixture.component.siblingMenu.open).toBeFalse()
+			expect(fixture.component.siblingMenu.open).toBe(false)
 		})
 
 		async function muteSiblingMenu() {
@@ -282,7 +282,7 @@ describe('Menu', () => {
 			keydown(fixture.component, 'Enter')
 			await new Promise(resolve => setTimeout(resolve, 30))
 
-			expect(fixture.component.menu.open).toBeFalse()
+			expect(fixture.component.menu.open).toBe(false)
 		})
 
 		it('should open for the anchor\'s synthesised Enter click otherwise', async () => {
@@ -294,8 +294,8 @@ describe('Menu', () => {
 			const event = keydown(fixture.component, 'Enter')
 			await opened
 
-			expect(fixture.component.menu.open).toBeTrue()
-			expect(event.defaultPrevented).toBeTrue()
+			expect(fixture.component.menu.open).toBe(true)
+			expect(event.defaultPrevented).toBe(true)
 		})
 	})
 
@@ -312,7 +312,7 @@ describe('Menu', () => {
 		})
 
 		it('should dispatch openChange only when setOpen actually changes the state', () => {
-			const openChangeSpy = jasmine.createSpy('openChange')
+			const openChangeSpy = vi.fn()
 			fixture.component.openChange.subscribe(openChangeSpy)
 
 			fixture.component.setOpen(true)
@@ -320,7 +320,7 @@ describe('Menu', () => {
 			fixture.component.setOpen(false)
 			fixture.component.setOpen(false)
 
-			expect(openChangeSpy.calls.allArgs()).toEqual([[true], [false]])
+			expect(openChangeSpy.mock.calls).toEqual([[true], [false]])
 		})
 	})
 
@@ -341,18 +341,18 @@ describe('Menu', () => {
 		})
 
 		it('should adopt the value and dispatch change with the selected indices when an item is picked', async () => {
-			const changeSpy = jasmine.createSpy('change')
+			const changeSpy = vi.fn()
 			fixture.component.change.subscribe(changeSpy)
 
 			fixture.component.items[1]!.click()
 			await fixture.updateComplete
 
 			expect(fixture.component.value).toEqual([1])
-			expect(changeSpy).toHaveBeenCalledOnceWith([1])
+			expect(changeSpy).toHaveBeenCalledExactlyOnceWith([1])
 		})
 
 		it('should reflect a programmatically assigned value in the list\'s selection without dispatching change', async () => {
-			const changeSpy = jasmine.createSpy('change')
+			const changeSpy = vi.fn()
 			fixture.component.change.subscribe(changeSpy)
 
 			fixture.component.value = [2]
@@ -360,7 +360,7 @@ describe('Menu', () => {
 			await fixture.component.list.updateComplete
 
 			expect(fixture.component.list.value).toEqual([2])
-			expect(fixture.component.list.selectabilityController.isSelected(fixture.component.items[2]!)).toBeTrue()
+			expect(fixture.component.list.selectabilityController.isSelected(fixture.component.items[2]!)).toBe(true)
 			expect(changeSpy).not.toHaveBeenCalled()
 		})
 
@@ -396,8 +396,8 @@ describe('Menu', () => {
 			fixture.component.openWith(event)
 			await fixture.updateComplete
 
-			expect(fixture.component.open).toBeTrue()
-			expect(event.defaultPrevented).toBeTrue()
+			expect(fixture.component.open).toBe(true)
+			expect(event.defaultPrevented).toBe(true)
 			expect(getPopover().coordinates).toEqual([42, 84])
 		})
 
@@ -405,7 +405,7 @@ describe('Menu', () => {
 			fixture.component.openWith([120, 160])
 			await fixture.updateComplete
 
-			expect(fixture.component.open).toBeTrue()
+			expect(fixture.component.open).toBe(true)
 			expect(getPopover().coordinates).toEqual([120, 160])
 		})
 	})
@@ -439,7 +439,7 @@ describe('Menu', () => {
 		})
 
 		it('should re-dispatch the list\'s itemsChange with the menu items', async () => {
-			const itemsChangeSpy = jasmine.createSpy('itemsChange')
+			const itemsChangeSpy = vi.fn()
 			fixture.component.itemsChange.subscribe(itemsChangeSpy)
 
 			const item = createMenuItem('Item 2')
@@ -447,7 +447,7 @@ describe('Menu', () => {
 			await new Promise(resolve => setTimeout(resolve, 30))
 
 			expect(itemsChangeSpy).toHaveBeenCalled()
-			expect(itemsChangeSpy.calls.mostRecent().args[0]).toEqual(fixture.component.items)
+			expect(itemsChangeSpy.mock.lastCall![0]).toEqual(fixture.component.items)
 			expect(fixture.component.items).toContain(item)
 		})
 	})

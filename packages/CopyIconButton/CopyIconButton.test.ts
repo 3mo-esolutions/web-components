@@ -30,24 +30,24 @@ describe('CopyIconButton', () => {
 	}
 
 	it('should copy the value to the clipboard when clicked', async () => {
-		const writeText = spyOn(clipboard, 'writeText').and.resolveTo()
+		const writeText = vi.spyOn(clipboard, 'writeText').mockResolvedValue()
 
 		await click()
 
-		expect(writeText).toHaveBeenCalledOnceWith('Copy me')
+		expect(writeText).toHaveBeenCalledExactlyOnceWith('Copy me')
 	})
 
 	it('should also copy when clicked programmatically on the element itself', async () => {
-		const writeText = spyOn(clipboard, 'writeText').and.resolveTo()
+		const writeText = vi.spyOn(clipboard, 'writeText').mockResolvedValue()
 
 		fixture.component.click()
 		await new Promise(resolve => setTimeout(resolve))
 
-		expect(writeText).toHaveBeenCalledOnceWith('Copy me')
+		expect(writeText).toHaveBeenCalledExactlyOnceWith('Copy me')
 	})
 
 	it('should not copy while disabled', async () => {
-		const writeText = spyOn(clipboard, 'writeText').and.resolveTo()
+		const writeText = vi.spyOn(clipboard, 'writeText').mockResolvedValue()
 		fixture.component.disabled = true
 
 		await click()
@@ -57,17 +57,17 @@ describe('CopyIconButton', () => {
 	})
 
 	it('should dispatch "copy" with the value which has been copied', async () => {
-		spyOn(clipboard, 'writeText').and.resolveTo()
-		const handler = jasmine.createSpy('copy')
+		vi.spyOn(clipboard, 'writeText').mockResolvedValue()
+		const handler = vi.fn()
 		fixture.component.addEventListener('copy', handler)
 
 		await click()
 
-		expect(handler.calls.mostRecent().args[0].detail).toBe('Copy me')
+		expect(handler.mock.lastCall![0].detail).toBe('Copy me')
 	})
 
 	it('should show the success state and revert to the icon afterwards', async () => {
-		spyOn(clipboard, 'writeText').and.resolveTo()
+		vi.spyOn(clipboard, 'writeText').mockResolvedValue()
 
 		await click()
 		expect(getSwap().value).toBe('success')
@@ -78,18 +78,18 @@ describe('CopyIconButton', () => {
 
 	it('should show the error state and dispatch "copyError" when the clipboard rejects', async () => {
 		const reason = new Error('Denied')
-		spyOn(clipboard, 'writeText').and.rejectWith(reason)
-		const handler = jasmine.createSpy('copyError')
+		vi.spyOn(clipboard, 'writeText').mockRejectedValue(reason)
+		const handler = vi.fn()
 		fixture.component.addEventListener('copyError', handler)
 
 		await click()
 
 		expect(getSwap().value).toBe('error')
-		expect(handler.calls.mostRecent().args[0].detail).toBe(reason)
+		expect(handler.mock.lastCall![0].detail).toBe(reason)
 	})
 
 	it('should treat an absent value as an error without touching the clipboard', async () => {
-		const writeText = spyOn(clipboard, 'writeText').and.resolveTo()
+		const writeText = vi.spyOn(clipboard, 'writeText').mockResolvedValue()
 		fixture.component.value = ''
 
 		await click()
@@ -99,7 +99,7 @@ describe('CopyIconButton', () => {
 	})
 
 	it('should announce the outcome, as it is otherwise only conveyed by an icon', async () => {
-		spyOn(clipboard, 'writeText').and.resolveTo()
+		vi.spyOn(clipboard, 'writeText').mockResolvedValue()
 		expect(getStatus().textContent?.trim()).toBe('')
 
 		await click()

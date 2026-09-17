@@ -8,6 +8,7 @@ import '@3mo/icon-button'
 import '@3mo/flex'
 import './Avatar.js'
 import { type UserAvatar } from './UserAvatar.js'
+import './index.js'
 
 class TestAuthenticator {
 	confirm() { return Promise.resolve({}) }
@@ -66,20 +67,20 @@ describe('UserAvatar', () => {
 
 			avatar().click()
 
-			expect(await waitUntil(() => menuElement.open)).toBeTrue()
+			expect(await waitUntil(() => menuElement.open)).toBe(true)
 		})
 
 		it('should reflect the open property and dispatch openChange when the menu toggles', async () => {
-			const openChange = jasmine.createSpy('openChange')
+			const openChange = vi.fn()
 			fixture.component.addEventListener<any>('openChange', (e: CustomEvent<boolean>) => openChange(e.detail))
 
 			menu().setOpen(true)
 			await fixture.updateComplete
 			await new Promise(resolve => setTimeout(resolve, 50))
 
-			expect(fixture.component.open).toBeTrue()
-			expect(fixture.component.hasAttribute('open')).toBeTrue()
-			expect(openChange).toHaveBeenCalledOnceWith(true)
+			expect(fixture.component.open).toBe(true)
+			expect(fixture.component.hasAttribute('open')).toBe(true)
+			expect(openChange).toHaveBeenCalledExactlyOnceWith(true)
 		})
 
 		it('should render the user\'s name and email in the menu header', () => {
@@ -118,7 +119,7 @@ describe('UserAvatar', () => {
 		}
 
 		it('should unauthenticate when the sign-out item is clicked', async () => {
-			const unauthenticate = spyOn(Authentication, 'unauthenticate').and.resolveTo()
+			const unauthenticate = vi.spyOn(Authentication, 'unauthenticate').mockResolvedValue()
 			Authentication.AuthenticatorConstructor = TestAuthenticator as any
 			await fixture.update()
 
@@ -128,7 +129,7 @@ describe('UserAvatar', () => {
 		})
 
 		it('should trigger global authentication when the account icon-button is clicked', async () => {
-			const authenticateGlobally = spyOn(Authentication, 'authenticateGloballyIfAvailable').and.resolveTo()
+			const authenticateGlobally = vi.spyOn(Authentication, 'authenticateGloballyIfAvailable').mockResolvedValue()
 			fixture.component.name = undefined
 			await fixture.updateComplete
 

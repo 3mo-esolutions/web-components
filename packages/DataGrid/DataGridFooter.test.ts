@@ -98,12 +98,12 @@ describe('DataGridFooter', () => {
 
 		it('should dispatch pageChange through the grid when navigating', async () => {
 			const footer = await settle(fixture)
-			const pageChange = spyOn(fixture.component.pageChange, 'dispatch')
+			const pageChange = vi.spyOn(fixture.component.pageChange, 'dispatch').mockReturnValue(undefined)
 
 			navigationButtonOf(footer, next).click()
 			await settle(fixture)
 
-			expect(pageChange).toHaveBeenCalledOnceWith(2)
+			expect(pageChange).toHaveBeenCalledExactlyOnceWith(2)
 		})
 
 		it('should switch to a number field when the page text is clicked and apply the entered page', async () => {
@@ -203,17 +203,17 @@ describe('DataGridFooter', () => {
 
 		it('should offer \'Auto\' only where the grid supports a dynamic page size', async () => {
 			const staticFooter = await settle(fixture)
-			expect(fixture.component.supportsDynamicPageSize).toBeFalse()
+			expect(fixture.component.supportsDynamicPageSize).toBe(false)
 			expect(menuItemsOf(staticFooter).map(item => item.textContent?.trim())).not.toContain('Auto')
 
 			const dynamicFooter = await settle(dynamicFixture)
-			expect(dynamicFixture.component.supportsDynamicPageSize).toBeTrue()
+			expect(dynamicFixture.component.supportsDynamicPageSize).toBe(true)
 			expect(menuItemsOf(dynamicFooter).map(item => item.textContent?.trim())).toContain('Auto')
 		})
 
 		it('should keep the strategy when applying a picked size, dispatching paginationChange', async () => {
 			const footer = await settle(dynamicFixture)
-			const paginationChange = spyOn(dynamicFixture.component.paginationChange, 'dispatch')
+			const paginationChange = vi.spyOn(dynamicFixture.component.paginationChange, 'dispatch').mockReturnValue(undefined)
 
 			menuItemsOf(footer).find(item => item.textContent?.trim() === (50).format())!.click()
 			await settle(dynamicFixture)
@@ -287,24 +287,24 @@ describe('DataGridFooter', () => {
 
 		it('should start the CSV generation on click and show the progress until it finishes', async () => {
 			let resolveDownload!: () => void
-			const download = spyOn(DataGridCsvController, 'download')
-				.and.callFake(() => new Promise<void>(resolve => resolveDownload = resolve))
+			const download = vi.spyOn(DataGridCsvController, 'download')
+				.mockImplementation(() => new Promise<void>(resolve => resolveDownload = resolve))
 			fixture.component.exportable = true
 			let footer = await settle(fixture)
 
 			exportButtonOf(footer)!.click()
 			footer = await settle(fixture)
 
-			expect(fixture.component.csvController.isGenerating).toBeTrue()
+			expect(fixture.component.csvController.isGenerating).toBe(true)
 			expect(footer.renderRoot.querySelector('#exporting-text')).not.toBeNull()
 			expect(download).toHaveBeenCalledTimes(1)
-			expect(download.calls.mostRecent().args[0]).toContain('Name')
-			expect(download.calls.mostRecent().args[0]).toContain('John')
+			expect(download.mock.lastCall![0]).toContain('Name')
+			expect(download.mock.lastCall![0]).toContain('John')
 
 			resolveDownload()
 			footer = await settle(fixture)
 
-			expect(fixture.component.csvController.isGenerating).toBeFalse()
+			expect(fixture.component.csvController.isGenerating).toBe(false)
 			expect(fixture.component.csvController.generationProgress).toBeUndefined()
 			expect(footer.renderRoot.querySelector('#exporting-text')).toBeNull()
 		})

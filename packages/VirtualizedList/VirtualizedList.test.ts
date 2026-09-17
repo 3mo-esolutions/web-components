@@ -87,8 +87,8 @@ describe('VirtualizedList', () => {
 			await wait(150)
 			const rendered = virtualizedScrollerOf(mixedFixture.component).renderedItems
 
-			expect(rendered.some(element => element.tagName === 'DIV')).toBeTrue()
-			expect(mixedFixture.component.items.every(item => item.tagName === 'MO-LIST-ITEM')).toBeTrue()
+			expect(rendered.some(element => element.tagName === 'DIV')).toBe(true)
+			expect(mixedFixture.component.items.every(item => item.tagName === 'MO-LIST-ITEM')).toBe(true)
 			expect(mixedFixture.component.items.length).toBeLessThan(rendered.length)
 		})
 
@@ -118,7 +118,7 @@ describe('VirtualizedList', () => {
 
 			const item = fixture.component.getItem(1)
 
-			expect(item instanceof Element).toBeTrue()
+			expect(item instanceof Element).toBe(true)
 			expect((item as Element).textContent).toContain('Item 1')
 		})
 
@@ -127,7 +127,7 @@ describe('VirtualizedList', () => {
 
 			const item = fixture.component.getItem(dataLength - 1)
 
-			expect(item instanceof Element).toBeFalse()
+			expect(item instanceof Element).toBe(false)
 			expect(typeof item?.scrollIntoView).toBe('function')
 		})
 	})
@@ -157,12 +157,12 @@ describe('VirtualizedList', () => {
 
 				arrowDown()
 				expect(focus.focusedItemIndex).toBe(0)
-				expect(fixture.component.items[0]!.hasAttribute('focused')).toBeTrue()
+				expect(fixture.component.items[0]!.hasAttribute('focused')).toBe(true)
 
 				arrowDown()
 				expect(focus.focusedItemIndex).toBe(1)
-				expect(fixture.component.items[1]!.hasAttribute('focused')).toBeTrue()
-				expect(fixture.component.items[0]!.hasAttribute('focused')).toBeFalse()
+				expect(fixture.component.items[1]!.hasAttribute('focused')).toBe(true)
+				expect(fixture.component.items[0]!.hasAttribute('focused')).toBe(false)
 			} finally {
 				focus.focusOut()
 			}

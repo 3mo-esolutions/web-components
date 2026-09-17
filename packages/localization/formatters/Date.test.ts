@@ -4,8 +4,8 @@ describe('Date', () => {
 	const date = new Date('2020-01-01 00:00:00.000')
 
 	it('.format()', () => {
-		expect(date.format('de')).toEqual(jasmine.stringContaining('01.01.2020, 00:00:00'))
-		expect(date.format({ language: 'de' })).toEqual(jasmine.stringContaining('01.01.2020, 00:00:00'))
+		expect(date.format('de')).toEqual(expect.stringContaining('01.01.2020, 00:00:00'))
+		expect(date.format({ language: 'de' })).toEqual(expect.stringContaining('01.01.2020, 00:00:00'))
 	})
 
 	it('.formatToParts()', () => {
@@ -31,8 +31,8 @@ describe('Date', () => {
 	})
 
 	it('.formatAsTime()', () => {
-		expect(date.formatAsTime('de')).toEqual(jasmine.stringContaining('00:00:00'))
-		expect(date.formatAsTime({ language: 'de' })).toEqual(jasmine.stringContaining('00:00:00'))
+		expect(date.formatAsTime('de')).toEqual(expect.stringContaining('00:00:00'))
+		expect(date.formatAsTime({ language: 'de' })).toEqual(expect.stringContaining('00:00:00'))
 	})
 
 	it('.formatAsDate()', () => {

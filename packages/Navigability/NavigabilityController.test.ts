@@ -293,9 +293,9 @@ describe('NavigabilityController', () => {
 			expect(fixture.component.changes.at(-1)?.method).toBe('pointer')
 		})
 
-		it('should follow DOM focus onto an item in the roving strategy', () => {
+		it('should follow DOM focus onto an item in the roving strategy', context => {
 			if (!deliversFocusEvents()) {
-				pending('no focus events in this browser while its window is inactive')
+				context.skip('no focus events in this browser while its window is inactive')
 			}
 
 			fixture.component.elements[3]!.focus()
@@ -321,9 +321,9 @@ describe('NavigabilityController', () => {
 			expect(fixture.component.elements.map(element => element.tabIndex)).toEqual([-1, -1, 0, -1, -1])
 		})
 
-		it('should move DOM focus along with the cursor while the host holds focus', () => {
+		it('should move DOM focus along with the cursor while the host holds focus', context => {
 			if (!deliversFocusEvents()) {
-				pending('no focus events in this browser while its window is inactive')
+				context.skip('no focus events in this browser while its window is inactive')
 			}
 
 			fixture.component.elements[0]!.focus()

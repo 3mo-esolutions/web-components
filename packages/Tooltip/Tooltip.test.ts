@@ -1,5 +1,7 @@
 import { Component, component, css, html, ifDefined, state, type HTMLTemplateResult } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
+import { type TestContext } from 'vitest'
+import { type Tooltip } from './Tooltip.js'
 import { TooltipPlacement } from './TooltipPlacement.js'
 import './index.js'
 
@@ -61,15 +63,15 @@ describe('Tooltip', () => {
 
 	describe('rich mode', () => {
 		it('should stay non-rich for text-only content', () => {
-			expect(fixture.component.tooltip.rich).toBeFalse()
-			expect(fixture.component.tooltip.hasAttribute('rich')).toBeFalse()
+			expect(fixture.component.tooltip.rich).toBe(false)
+			expect(fixture.component.tooltip.hasAttribute('rich')).toBe(false)
 		})
 
 		it('should become rich and reflect the attribute when element content is slotted', async () => {
 			await setContent(html`<span>Rich content</span>`)
 
-			expect(fixture.component.tooltip.rich).toBeTrue()
-			expect(fixture.component.tooltip.hasAttribute('rich')).toBeTrue()
+			expect(fixture.component.tooltip.rich).toBe(true)
+			expect(fixture.component.tooltip.hasAttribute('rich')).toBe(true)
 		})
 	})
 
@@ -81,7 +83,7 @@ describe('Tooltip', () => {
 		it('should not set an aria-label on the anchor for rich content', async () => {
 			await setContent(html`<span>Rich content</span>`)
 
-			expect(fixture.component.hasAttribute('aria-label')).toBeFalse()
+			expect(fixture.component.hasAttribute('aria-label')).toBe(false)
 		})
 
 		it('should remove the anchor\'s aria-label when the content is cleared', async () => {
@@ -89,13 +91,13 @@ describe('Tooltip', () => {
 
 			await setContent(html.nothing)
 
-			expect(fixture.component.hasAttribute('aria-label')).toBeFalse()
+			expect(fixture.component.hasAttribute('aria-label')).toBe(false)
 		})
 	})
 
 	describe('interest-based opening', () => {
 		function spyOnOpenChange() {
-			const spy = jasmine.createSpy('openChange')
+			const spy = vi.fn()
 			fixture.component.tooltip.addEventListener<any>('openChange', (e: CustomEvent<boolean>) => spy(e.detail))
 			return spy
 		}
@@ -118,20 +120,20 @@ describe('Tooltip', () => {
 			fixture.component.dispatchEvent(new FocusEvent('focusout', { bubbles: true, composed: true }))
 		}
 
-		function focusByKeyboard() {
+		function focusByKeyboard(context: TestContext) {
 			focusAnchor(true)
 			if (!fixture.component.matches(':focus-visible')) {
-				pending('The platform did not apply the requested focus visibility, as headless Firefox does not in an inactive window')
+				context.skip('The platform did not apply the requested focus visibility, as headless Firefox does not in an inactive window')
 			}
 		}
 
-		it('should open and dispatch openChange when the anchor receives keyboard focus', () => {
+		it('should open and dispatch openChange when the anchor receives keyboard focus', context => {
 			const spy = spyOnOpenChange()
 
-			focusByKeyboard()
+			focusByKeyboard(context)
 
-			expect(fixture.component.tooltip.open).toBeTrue()
-			expect(spy).toHaveBeenCalledOnceWith(true)
+			expect(fixture.component.tooltip.open).toBe(true)
+			expect(spy).toHaveBeenCalledExactlyOnceWith(true)
 		})
 
 		it('should not open when the anchor is focused programmatically', () => {
@@ -139,19 +141,19 @@ describe('Tooltip', () => {
 
 			focusAnchor()
 
-			expect(fixture.component.tooltip.open).toBeFalse()
+			expect(fixture.component.tooltip.open).toBe(false)
 			expect(spy).not.toHaveBeenCalled()
 		})
 
-		it('should close when keyboard focus leaves the anchor', () => {
-			focusByKeyboard()
-			expect(fixture.component.tooltip.open).toBeTrue()
+		it('should close when keyboard focus leaves the anchor', context => {
+			focusByKeyboard(context)
+			expect(fixture.component.tooltip.open).toBe(true)
 			const spy = spyOnOpenChange()
 
 			blurAnchor()
 
-			expect(fixture.component.tooltip.open).toBeFalse()
-			expect(spy).toHaveBeenCalledOnceWith(false)
+			expect(fixture.component.tooltip.open).toBe(false)
+			expect(spy).toHaveBeenCalledExactlyOnceWith(false)
 		})
 	})
 
@@ -159,7 +161,7 @@ describe('Tooltip', () => {
 		// The inner popover would otherwise treat a click on its anchor as a request to open, which a
 		// touch tap concludes with — leaving the tooltip stuck open with no interest behind it.
 		function spyOnOpenChange() {
-			const spy = jasmine.createSpy('openChange')
+			const spy = vi.fn()
 			fixture.component.tooltip.addEventListener<any>('openChange', (e: CustomEvent<boolean>) => spy(e.detail))
 			return spy
 		}

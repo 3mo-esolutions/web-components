@@ -1,5 +1,5 @@
-import { LocalizableString } from './LocalizableString'
-import { Localizer } from '.'
+import { LocalizableString } from './LocalizableString.js'
+import { Localizer } from './index.js'
 
 describe('LocalizableString', () => {
 	it('should cache instances', () => {

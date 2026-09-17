@@ -71,19 +71,19 @@ describe('MasterDetail', () => {
 
 	describe('with detail content', () => {
 		it('should open and dispatch "openChange" once', async () => {
-			const handler = jasmine.createSpy()
+			const handler = vi.fn()
 			fixture.component.addEventListener('openChange', handler)
 
 			await slotDetail()
 
 			expect(fixture.component.open).toBe(true)
 			expect(handler).toHaveBeenCalledTimes(1)
-			expect(handler.calls.mostRecent().args[0].detail).toBe(true)
+			expect(handler.mock.lastCall![0].detail).toBe(true)
 		})
 
 		it('should not dispatch "openChange" again when the detail content changes while it stays open', async () => {
 			await slotDetail()
-			const handler = jasmine.createSpy()
+			const handler = vi.fn()
 			fixture.component.addEventListener('openChange', handler)
 
 			await slotDetail()
@@ -132,7 +132,7 @@ describe('MasterDetail', () => {
 
 		it('should close again when the content is removed', async () => {
 			const detail = await slotDetail()
-			const handler = jasmine.createSpy()
+			const handler = vi.fn()
 			fixture.component.addEventListener('openChange', handler)
 
 			detail.remove()
@@ -140,7 +140,7 @@ describe('MasterDetail', () => {
 
 			expect(fixture.component.open).toBe(false)
 			expect(items()[1].collapsed).toBe(true)
-			expect(handler.calls.mostRecent().args[0].detail).toBe(false)
+			expect(handler.mock.lastCall![0].detail).toBe(false)
 		})
 	})
 
@@ -189,6 +189,21 @@ describe('MasterDetail', () => {
 			</mo-master-detail>
 		`)
 
+		const scroller = () => scrollableFixture.component.querySelector<HTMLElement>('[slot=master]')!
+
+		/** The reveal only scrolls once the opened detail pane has shrunk the master one, and a loaded
+		 * machine outruns a fixed delay, so both halves are awaited. */
+		const revealed = async (item: Element, timeout = 2000) => {
+			const start = performance.now()
+			const settled = () => {
+				const pane = scroller().getBoundingClientRect()
+				return pane.height < 400 && item.getBoundingClientRect().bottom <= pane.bottom + 1
+			}
+			while (settled() === false && performance.now() - start < timeout) {
+				await new Promise(resolve => setTimeout(resolve, 10))
+			}
+		}
+
 		it('should keep the last pointed-at master element in view when the detail pane opens', async () => {
 			const item = scrollableFixture.component.querySelector('#item-9')!
 			item.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, composed: true }))
@@ -196,12 +211,11 @@ describe('MasterDetail', () => {
 			const detail = document.createElement('div')
 			detail.slot = 'detail'
 			scrollableFixture.component.appendChild(detail)
-			await new Promise(resolve => setTimeout(resolve, 10))
+			await revealed(item)
 
-			const scroller = scrollableFixture.component.querySelector<HTMLElement>('[slot=master]')!
-			expect(scroller.getBoundingClientRect().height).toBeLessThan(400)
-			expect(item.getBoundingClientRect().bottom).toBeLessThanOrEqual(scroller.getBoundingClientRect().bottom + 1)
-			expect(item.getBoundingClientRect().top).toBeGreaterThanOrEqual(scroller.getBoundingClientRect().top - 1)
+			expect(scroller().getBoundingClientRect().height).toBeLessThan(400)
+			expect(item.getBoundingClientRect().bottom).toBeLessThanOrEqual(scroller().getBoundingClientRect().bottom + 1)
+			expect(item.getBoundingClientRect().top).toBeGreaterThanOrEqual(scroller().getBoundingClientRect().top - 1)
 		})
 
 		it('should keep the last focused master element in view when the detail pane opens', async () => {
@@ -214,23 +228,21 @@ describe('MasterDetail', () => {
 			const detail = document.createElement('div')
 			detail.slot = 'detail'
 			scrollableFixture.component.appendChild(detail)
-			await new Promise(resolve => setTimeout(resolve, 10))
+			await revealed(item)
 
-			const scroller = scrollableFixture.component.querySelector<HTMLElement>('[slot=master]')!
-			expect(scroller.getBoundingClientRect().height).toBeLessThan(400)
-			expect(item.getBoundingClientRect().bottom).toBeLessThanOrEqual(scroller.getBoundingClientRect().bottom + 1)
-			expect(item.getBoundingClientRect().top).toBeGreaterThanOrEqual(scroller.getBoundingClientRect().top - 1)
+			expect(scroller().getBoundingClientRect().height).toBeLessThan(400)
+			expect(item.getBoundingClientRect().bottom).toBeLessThanOrEqual(scroller().getBoundingClientRect().bottom + 1)
+			expect(item.getBoundingClientRect().top).toBeGreaterThanOrEqual(scroller().getBoundingClientRect().top - 1)
 		})
 
 		it('should not scroll when nothing was interacted with', async () => {
-			const scroller = scrollableFixture.component.querySelector<HTMLElement>('[slot=master]')!
-
 			const detail = document.createElement('div')
 			detail.slot = 'detail'
 			scrollableFixture.component.appendChild(detail)
-			await new Promise(resolve => setTimeout(resolve, 10))
+			// Absence cannot be awaited, so this one gives the reveal a generous chance to misfire.
+			await new Promise(resolve => setTimeout(resolve, 100))
 
-			expect(scroller.scrollTop).toBe(0)
+			expect(scroller().scrollTop).toBe(0)
 		})
 	})
 
@@ -252,8 +264,8 @@ describe('MasterDetail', () => {
 			fixture.component.collapsed = true
 			await updateComplete()
 
-			expect(fixture.component.collapsed).toBeTrue()
-			expect(items()[1].collapsed).toBeTrue()
+			expect(fixture.component.collapsed).toBe(true)
+			expect(items()[1].collapsed).toBe(true)
 			expect(resizer()).not.toBeNull()
 		})
 	})

@@ -19,11 +19,12 @@ class TestHost extends Component {
 	get keyValues() { return [...this.renderRoot.querySelectorAll('mo-key-value')] as Array<KeyValue> }
 
 	protected override get template() {
+		// The binding's key path is a conditional over a polymorphic this, which no call site resolves.
 		return html`
-			<mo-key-value ${bind(this, 'subject', { keyPath: 'first' })}></mo-key-value>
-			<mo-key-value key='Given' ${bind(this, 'subject', { keyPath: 'first' })}></mo-key-value>
-			<mo-key-value ${bind(this, 'subject', { keyPath: 'readOnly' })}></mo-key-value>
-			<mo-key-value ${bind(this, 'subject', { keyPath: this.keyPath })}></mo-key-value>
+			<mo-key-value ${bind(this, 'subject', { keyPath: 'first' as never })}></mo-key-value>
+			<mo-key-value key='Given' ${bind(this, 'subject', { keyPath: 'first' as never })}></mo-key-value>
+			<mo-key-value ${bind(this, 'subject', { keyPath: 'readOnly' as never })}></mo-key-value>
+			<mo-key-value ${bind(this, 'subject', { keyPath: this.keyPath as never })}></mo-key-value>
 			<mo-key-value ${bind(this, 'own')}></mo-key-value>
 		`
 	}
@@ -36,7 +37,7 @@ class NullSourceTestHost extends Component {
 	get keyValue() { return this.renderRoot.querySelector('mo-key-value') as KeyValue }
 
 	protected override get template() {
-		return html`<mo-key-value ${bind(this, 'subject', { keyPath: 'first' })}></mo-key-value>`
+		return html`<mo-key-value ${bind(this, 'subject', { keyPath: 'first' as never })}></mo-key-value>`
 	}
 }
 
@@ -99,8 +100,8 @@ describe('KeyValueBindingIntegration', () => {
 	 * branch which writes back to the source. Until that loop is moved out of the branch, a getter-backed
 	 * property yields a value but no key.
 	 */
-	it('should derive the key of a read-only property', () => {
-		pending('"@a11d/lit" skips binding integrations for one-way bindings')
+	it('should derive the key of a read-only property', context => {
+		context.skip('"@a11d/lit" skips binding integrations for one-way bindings')
 
 		expect(keyValue(readOnly).key).toBe('Read-only label')
 	})

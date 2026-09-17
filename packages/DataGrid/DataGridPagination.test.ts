@@ -11,7 +11,7 @@ describe('DataGridPagination', () => {
 		})
 
 		it('should parse the slots in either order, as their tokens are disjoint', () => {
-			expect(DataGridPagination.from('100 pages')?.[equals](DataGridPagination.from('pages 100'))).toBeTrue()
+			expect(DataGridPagination.from('100 pages')?.[equals](DataGridPagination.from('pages 100'))).toBe(true)
 		})
 
 		it('should parse a strategy alone', () => {
@@ -85,14 +85,14 @@ describe('DataGridPagination', () => {
 
 	describe('invalid input', () => {
 		it('should ignore an unknown token with a warning', () => {
-			const warn = spyOn(console, 'warn')
+			const warn = vi.spyOn(console, 'warn').mockReturnValue(undefined)
 
 			expect(DataGridPagination.from('scrol 100')?.toString()).toBe('100')
 			expect(warn).toHaveBeenCalled()
 		})
 
 		it('should keep the first of two tokens of the same slot with a warning', () => {
-			const warn = spyOn(console, 'warn')
+			const warn = vi.spyOn(console, 'warn').mockReturnValue(undefined)
 
 			expect(DataGridPagination.from('pages scroll')?.toString()).toBe('pages')
 			expect(DataGridPagination.from('10 20')?.toString()).toBe('10')
@@ -100,7 +100,7 @@ describe('DataGridPagination', () => {
 		})
 
 		it('should never throw, as it parses attribute values', () => {
-			spyOn(console, 'warn')
+			vi.spyOn(console, 'warn').mockReturnValue(undefined)
 
 			expect(() => DataGridPagination.from('')).not.toThrow()
 			expect(() => DataGridPagination.from('   ')).not.toThrow()
@@ -136,26 +136,26 @@ describe('DataGridPagination', () => {
 		})
 
 		it('should be frozen', () => {
-			expect(Object.isFrozen(DataGridPagination.from('pages 25'))).toBeTrue()
+			expect(Object.isFrozen(DataGridPagination.from('pages 25'))).toBe(true)
 		})
 	})
 
 	describe('equality', () => {
 		it('should compare by slots', () => {
-			expect(DataGridPagination.from('pages 25')?.[equals](DataGridPagination.from('pages 25'))).toBeTrue()
-			expect(DataGridPagination.from('pages 25')?.[equals](DataGridPagination.from('pages 50'))).toBeFalse()
-			expect(DataGridPagination.from('pages 25')?.[equals](DataGridPagination.from('scroll 25'))).toBeFalse()
-			expect(DataGridPagination.from('pages')?.[equals](DataGridPagination.from('pages 25'))).toBeFalse()
+			expect(DataGridPagination.from('pages 25')?.[equals](DataGridPagination.from('pages 25'))).toBe(true)
+			expect(DataGridPagination.from('pages 25')?.[equals](DataGridPagination.from('pages 50'))).toBe(false)
+			expect(DataGridPagination.from('pages 25')?.[equals](DataGridPagination.from('scroll 25'))).toBe(false)
+			expect(DataGridPagination.from('pages')?.[equals](DataGridPagination.from('pages 25'))).toBe(false)
 		})
 
 		it('should not equal a foreign value', () => {
-			expect(DataGridPagination.from('pages 25')?.[equals]('pages 25')).toBeFalse()
-			expect(DataGridPagination.from('pages 25')?.[equals](undefined)).toBeFalse()
+			expect(DataGridPagination.from('pages 25')?.[equals]('pages 25')).toBe(false)
+			expect(DataGridPagination.from('pages 25')?.[equals](undefined)).toBe(false)
 		})
 
 		it('should be used by Object[equals]', () => {
-			expect(Object[equals](DataGridPagination.from('pages 25'), DataGridPagination.from('pages 25'))).toBeTrue()
-			expect(Object[equals](DataGridPagination.from('pages 25'), DataGridPagination.from('scroll'))).toBeFalse()
+			expect(Object[equals](DataGridPagination.from('pages 25'), DataGridPagination.from('pages 25'))).toBe(true)
+			expect(Object[equals](DataGridPagination.from('pages 25'), DataGridPagination.from('scroll'))).toBe(false)
 		})
 	})
 })

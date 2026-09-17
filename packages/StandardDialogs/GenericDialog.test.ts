@@ -11,9 +11,9 @@ describe('GenericDialog', () => {
 		blocking: true,
 		size: DialogSize.Medium,
 		primaryButtonText: 'Primary Button',
-		primaryAction: jasmine.createSpy('primaryAction').and.returnValue('Primary Button Clicked!'),
+		primaryAction: vi.fn().mockReturnValue('Primary Button Clicked!'),
 		secondaryButtonText: 'Secondary Button',
-		secondaryAction: jasmine.createSpy('secondaryAction').and.returnValue('Secondary Button Clicked!'),
+		secondaryAction: vi.fn().mockReturnValue('Secondary Button Clicked!'),
 	}
 
 	it('should set "primaryOnEnter" dialog property to true', () => {
@@ -32,14 +32,14 @@ describe('GenericDialog', () => {
 	it('should call "primaryAction" parameter and return its value when the primary button is clicked', async () => {
 		const confirmationPromise = fixture.component.confirm()
 		fixture.component.primaryActionElement?.click()
-		expect(parameters.primaryAction).toHaveBeenCalledOnceWith()
-		await expectAsync(confirmationPromise).toBeResolvedTo('Primary Button Clicked!')
+		expect(parameters.primaryAction).toHaveBeenCalledExactlyOnceWith()
+		await expect(confirmationPromise).resolves.toEqual('Primary Button Clicked!')
 	})
 
 	it('should call "secondaryAction" parameter and return its value when the secondary button is clicked', async () => {
 		const confirmationPromise = fixture.component.confirm()
 		fixture.component.secondaryActionElement?.click()
-		expect(parameters.secondaryAction).toHaveBeenCalledOnceWith()
-		await expectAsync(confirmationPromise).toBeResolvedTo('Secondary Button Clicked!')
+		expect(parameters.secondaryAction).toHaveBeenCalledExactlyOnceWith()
+		await expect(confirmationPromise).resolves.toEqual('Secondary Button Clicked!')
 	})
 })

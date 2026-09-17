@@ -26,12 +26,12 @@ describe('ApplicationLogo', () => {
 	})
 
 	it('should navigate to the application\'s base path when clicked', () => {
-		const setUrl = spyOn(RoutableComponent, 'setUrl')
+		const setUrl = vi.spyOn(RoutableComponent, 'setUrl').mockReturnValue(undefined)
 		const expected = new URL(`/${RoutableComponent.basePath}`, RoutableComponent.url).toString()
 
 		fixture.component.click()
 
 		expect(setUrl).toHaveBeenCalledTimes(1)
-		expect(setUrl.calls.mostRecent().args[0]?.toString()).toBe(expected)
+		expect(setUrl.mock.lastCall![0]?.toString()).toBe(expected)
 	})
 })

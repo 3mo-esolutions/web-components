@@ -31,14 +31,14 @@ describe('DataGridContextMenuController', () => {
 	}
 
 	it('should have a context menu only when the grid defines a row context menu template', async () => {
-		expect(fixture.component.contextMenuController.hasContextMenu).toBeFalse()
-		expect(fixture.component.hasContextMenu).toBeFalse()
+		expect(fixture.component.contextMenuController.hasContextMenu).toBe(false)
+		expect(fixture.component.hasContextMenu).toBe(false)
 
 		fixture.component.getRowContextMenuTemplate = rowContextMenuTemplate
 		await fixture.updateComplete
 
-		expect(fixture.component.contextMenuController.hasContextMenu).toBeTrue()
-		expect(fixture.component.hasContextMenu).toBeTrue()
+		expect(fixture.component.contextMenuController.hasContextMenu).toBe(true)
+		expect(fixture.component.hasContextMenu).toBe(true)
 	})
 
 	it('should render nothing for empty data, as a menu without a subject is meaningless', () => {

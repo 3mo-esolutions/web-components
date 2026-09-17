@@ -22,13 +22,13 @@ describe('SplitButtonDialogAdapter', () => {
 	afterEach(() => Dialog.executingActionAdaptersByComponent.delete(TestSplitButtonChild))
 
 	it('should delegate the executing state to the adapter registered for the split-button\'s first child', async () => {
-		const adapter = jasmine.createSpy('adapter')
+		const adapter = vi.fn()
 		Dialog.executingActionAdaptersByComponent.set(TestSplitButtonChild, adapter)
 
 		fixture.component.executingAction = DialogActionKey.Primary
 		await fixture.updateComplete
 
-		expect(adapter).toHaveBeenCalledOnceWith(child(), true)
+		expect(adapter).toHaveBeenCalledExactlyOnceWith(child(), true)
 
 		fixture.component.executingAction = undefined
 		await fixture.updateComplete
@@ -42,7 +42,7 @@ describe('SplitButtonDialogAdapter', () => {
 
 		fixture.component.executingAction = DialogActionKey.Primary
 
-		await expectAsync(fixture.component.updateComplete).toBeResolved()
+		await expect(fixture.component.updateComplete).resolves.not.toThrow()
 		expect(child().outerHTML).toBe(outerHTMLBefore)
 	})
 })

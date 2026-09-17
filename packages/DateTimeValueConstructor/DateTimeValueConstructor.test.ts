@@ -13,21 +13,21 @@ describe('DateTimeValueConstructor', () => {
 
 		for (const [description, value] of acceptedValues) {
 			it(`should accept ISO date-time strings with a time zone designator - ${description}`, () => {
-				expect(valueConstructor.shallConstruct(value)).toBeTrue()
+				expect(valueConstructor.shallConstruct(value)).toBe(true)
 			})
 		}
 
 		it('should reject date-only and zone-less date-time strings', () => {
-			expect(valueConstructor.shallConstruct('2020-01-01')).toBeFalse()
-			expect(valueConstructor.shallConstruct('2020-01-01T00:00:00')).toBeFalse()
-			expect(valueConstructor.shallConstruct('2020-01-01T00:00')).toBeFalse()
+			expect(valueConstructor.shallConstruct('2020-01-01')).toBe(false)
+			expect(valueConstructor.shallConstruct('2020-01-01T00:00:00')).toBe(false)
+			expect(valueConstructor.shallConstruct('2020-01-01T00:00')).toBe(false)
 		})
 
 		it('should reject non-string values', () => {
-			expect(valueConstructor.shallConstruct(1592208300000)).toBeFalse()
-			expect(valueConstructor.shallConstruct(new DateTime('2020-06-15T08:05:00.000Z'))).toBeFalse()
-			expect(valueConstructor.shallConstruct(undefined)).toBeFalse()
-			expect(valueConstructor.shallConstruct(null)).toBeFalse()
+			expect(valueConstructor.shallConstruct(1592208300000)).toBe(false)
+			expect(valueConstructor.shallConstruct(new DateTime('2020-06-15T08:05:00.000Z'))).toBe(false)
+			expect(valueConstructor.shallConstruct(undefined)).toBe(false)
+			expect(valueConstructor.shallConstruct(null)).toBe(false)
 		})
 	})
 
@@ -42,12 +42,12 @@ describe('DateTimeValueConstructor', () => {
 
 	describe('shallDeconstruct', () => {
 		it('should accept Date and DateTime instances only', () => {
-			expect(valueConstructor.shallDeconstruct(new Date('2020-06-15T08:05:00.000Z'))).toBeTrue()
-			expect(valueConstructor.shallDeconstruct(new DateTime('2020-06-15T08:05:00.000Z'))).toBeTrue()
+			expect(valueConstructor.shallDeconstruct(new Date('2020-06-15T08:05:00.000Z'))).toBe(true)
+			expect(valueConstructor.shallDeconstruct(new DateTime('2020-06-15T08:05:00.000Z'))).toBe(true)
 
-			expect(valueConstructor.shallDeconstruct('2020-06-15T08:05:00.000Z')).toBeFalse()
-			expect(valueConstructor.shallDeconstruct(1592208300000)).toBeFalse()
-			expect(valueConstructor.shallDeconstruct(undefined)).toBeFalse()
+			expect(valueConstructor.shallDeconstruct('2020-06-15T08:05:00.000Z')).toBe(false)
+			expect(valueConstructor.shallDeconstruct(1592208300000)).toBe(false)
+			expect(valueConstructor.shallDeconstruct(undefined)).toBe(false)
 		})
 	})
 
@@ -57,7 +57,7 @@ describe('DateTimeValueConstructor', () => {
 
 			const text = valueConstructor.deconstruct(dateTime)
 
-			expect(valueConstructor.shallConstruct(text)).toBeTrue()
+			expect(valueConstructor.shallConstruct(text)).toBe(true)
 			expect(valueConstructor.construct(text).valueOf()).toBe(dateTime.valueOf())
 		})
 	})

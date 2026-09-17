@@ -54,7 +54,7 @@ describe('Currency', () => {
 	// them yet, so they must still format via the bare code rather than throw.
 	it('should format every code without throwing', () => {
 		for (const code of ['EUR', 'USD', 'XCG', 'ZWG', 'XTS', 'XXX'] as Array<CurrencyCode>) {
-			expect(() => 1..formatAsCurrency(new Currency(code), 'de')).withContext(code).not.toThrow()
+			expect(() => 1..formatAsCurrency(new Currency(code), 'de'), code).not.toThrow()
 		}
 	})
 

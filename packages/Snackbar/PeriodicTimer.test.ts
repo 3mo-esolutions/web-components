@@ -4,11 +4,11 @@ describe('PeriodicTimer', () => {
 	// The timer is driven by setInterval and Date.now, both of which the clock owns — real time would
 	// make every case here a five-second wait.
 	beforeEach(() => {
-		jasmine.clock().install()
-		jasmine.clock().mockDate()
+		vi.useFakeTimers()
+		vi.setSystemTime(new Date)
 	})
 
-	afterEach(() => jasmine.clock().uninstall())
+	afterEach(() => vi.useRealTimers())
 
 	/** Drains the microtask chain a resolved wait settles through, which the clock does not advance. */
 	const settle = async () => {
@@ -27,11 +27,11 @@ describe('PeriodicTimer', () => {
 		const timer = new PeriodicTimer(1000)
 		const wait = waitOf(timer)
 
-		jasmine.clock().tick(999)
+		vi.advanceTimersByTime(999)
 		await settle()
 		expect(wait.ticked).toBe(false)
 
-		jasmine.clock().tick(1)
+		vi.advanceTimersByTime(1)
 		await settle()
 		expect(wait.ticked).toBe(true)
 
@@ -45,7 +45,7 @@ describe('PeriodicTimer', () => {
 		timer.run()
 		expect(timer.remainingTimeToNextTick).toBe(1000)
 
-		jasmine.clock().tick(400)
+		vi.advanceTimersByTime(400)
 		expect(timer.remainingTimeToNextTick).toBe(600)
 
 		timer.dispose()
@@ -55,9 +55,9 @@ describe('PeriodicTimer', () => {
 		const timer = new PeriodicTimer(1000)
 		const wait = waitOf(timer)
 
-		jasmine.clock().tick(400)
+		vi.advanceTimersByTime(400)
 		timer.pause()
-		jasmine.clock().tick(10_000)
+		vi.advanceTimersByTime(10_000)
 		await settle()
 
 		expect(wait.ticked).toBe(false)
@@ -69,18 +69,18 @@ describe('PeriodicTimer', () => {
 		const timer = new PeriodicTimer(1000)
 		const wait = waitOf(timer)
 
-		jasmine.clock().tick(400)
+		vi.advanceTimersByTime(400)
 		timer.pause()
 		expect(timer.remainingTimeToNextTick).toBe(600)
 
-		jasmine.clock().tick(10_000) // held: time spent paused is not spent
+		vi.advanceTimersByTime(10_000) // held: time spent paused is not spent
 		timer.run()
 
-		jasmine.clock().tick(599)
+		vi.advanceTimersByTime(599)
 		await settle()
 		expect(wait.ticked).toBe(false)
 
-		jasmine.clock().tick(1)
+		vi.advanceTimersByTime(1)
 		await settle()
 		expect(wait.ticked).toBe(true)
 
@@ -92,7 +92,7 @@ describe('PeriodicTimer', () => {
 		const wait = waitOf(timer)
 
 		timer.dispose()
-		jasmine.clock().tick(10_000)
+		vi.advanceTimersByTime(10_000)
 		await settle()
 
 		expect(wait.ticked).toBe(false)

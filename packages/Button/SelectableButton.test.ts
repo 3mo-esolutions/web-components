@@ -1,4 +1,4 @@
-import { html } from '@a11d/lit'
+import { html, type LitElement } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { ButtonType } from './Button.js'
 import { type SelectableButton } from './SelectableButton.js'
@@ -36,7 +36,7 @@ describe('SelectableButton', () => {
 		})
 
 		it('should ask before it answers, and do nothing when refused', async () => {
-			const changes = jasmine.createSpy('change')
+			const changes = vi.fn()
 			fixture.component.addEventListener('change', changes)
 			fixture.component.addEventListener('requestSelect', (e: Event) => e.preventDefault())
 
@@ -66,7 +66,7 @@ describe('SelectableButton', () => {
 	})
 
 	describe('in a selection group', () => {
-		const fixture = new ComponentTestFixture<HTMLElement>(html`
+		const fixture = new ComponentTestFixture<HTMLElement & LitElement>(html`
 			<mo-selection-group selectability='single' aria-label='Payment'>
 				<mo-selectable-button value='cash'>Cash</mo-selectable-button>
 				<mo-selectable-button value='card'>Card</mo-selectable-button>

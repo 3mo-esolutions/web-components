@@ -34,32 +34,32 @@ describe('DataGridRow', () => {
 	describe('Click events', () => {
 		it('should dispatch rowClick with the row when its content is clicked', () => {
 			const row = getRow(0)
-			const rowClick = spyOn(fixture.component.rowClick, 'dispatch')
+			const rowClick = vi.spyOn(fixture.component.rowClick, 'dispatch').mockReturnValue(undefined)
 
 			row.content.dispatchEvent(new MouseEvent('click', { bubbles: true }))
 
-			expect(rowClick).toHaveBeenCalledOnceWith(row)
+			expect(rowClick).toHaveBeenCalledExactlyOnceWith(row)
 		})
 
 		it('should dispatch rowDoubleClick on double-click', async () => {
 			const row = getRow(0)
-			const rowDoubleClick = spyOn(fixture.component.rowDoubleClick, 'dispatch')
+			const rowDoubleClick = vi.spyOn(fixture.component.rowDoubleClick, 'dispatch').mockReturnValue(undefined)
 
 			row.content.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }))
 			await new Promise(r => setTimeout(r, 20))
 
-			expect(rowDoubleClick).toHaveBeenCalledOnceWith(row)
+			expect(rowDoubleClick).toHaveBeenCalledExactlyOnceWith(row)
 		})
 
 		it('should dispatch rowMiddleClick only for the middle auxclick button, as other aux buttons mean nothing here', async () => {
 			const row = getRow(0)
-			const rowMiddleClick = spyOn(fixture.component.rowMiddleClick, 'dispatch')
+			const rowMiddleClick = vi.spyOn(fixture.component.rowMiddleClick, 'dispatch').mockReturnValue(undefined)
 
 			row.content.dispatchEvent(new MouseEvent('auxclick', { button: 1, bubbles: true }))
 			await new Promise(r => setTimeout(r, 20))
-			expect(rowMiddleClick).toHaveBeenCalledOnceWith(row)
+			expect(rowMiddleClick).toHaveBeenCalledExactlyOnceWith(row)
 
-			rowMiddleClick.calls.reset()
+			rowMiddleClick.mockClear()
 			row.content.dispatchEvent(new MouseEvent('auxclick', { button: 2, bubbles: true }))
 			await new Promise(r => setTimeout(r, 20))
 
@@ -69,7 +69,7 @@ describe('DataGridRow', () => {
 		it('should not dispatch rowClick for clicks on the selection or details-expander areas, as they stop propagation', async () => {
 			await settle()
 			const row = getRow(0)
-			const rowClick = spyOn(fixture.component.rowClick, 'dispatch')
+			const rowClick = vi.spyOn(fixture.component.rowClick, 'dispatch').mockReturnValue(undefined)
 
 			row.renderRoot.querySelector('mo-checkbox')!.dispatchEvent(new MouseEvent('click', { bubbles: true, composed: true }))
 			expect(rowClick).not.toHaveBeenCalled()
@@ -133,14 +133,14 @@ describe('DataGridRow', () => {
 			document.body.appendChild(items)
 			const [plain, disabled, primary] = [...items.children] as [ContextMenuItem, DataGridPrimaryContextMenuItem, DataGridPrimaryContextMenuItem]
 			expect(primary).toBeInstanceOf(DataGridPrimaryContextMenuItem)
-			expect(disabled.disabled).toBeTrue()
+			expect(disabled.disabled).toBe(true)
 			const clicks = {
-				plain: spyOn(plain, 'click'),
-				disabled: spyOn(disabled, 'click'),
-				primary: spyOn(primary, 'click'),
+				plain: vi.spyOn(plain, 'click').mockReturnValue(undefined),
+				disabled: vi.spyOn(disabled, 'click').mockReturnValue(undefined),
+				primary: vi.spyOn(primary, 'click').mockReturnValue(undefined),
 			}
-			const close = jasmine.createSpy('close')
-			spyOnProperty(ContextMenu, 'openInstance', 'get').and.returnValue({ items: [plain, disabled, primary], close } as any)
+			const close = vi.fn()
+			vi.spyOn(ContextMenu, 'openInstance', 'get').mockReturnValue({ items: [plain, disabled, primary], close } as any)
 
 			activate(getRow(0))
 			await new Promise(r => setTimeout(r, 30))
@@ -214,7 +214,7 @@ describe('DataGridRow', () => {
 
 		it('should not lay out the grid\'s columns at all while it has neither cells nor details', async () => {
 			const row = getRow(1)
-			expect(row.dataRecord.hasDetails).toBeFalse()
+			expect(row.dataRecord.hasDetails).toBe(false)
 
 			await hide(row)
 
@@ -223,15 +223,15 @@ describe('DataGridRow', () => {
 
 		it('should render a row it has not decided about yet, as the observer only reports after the first paint', async () => {
 			const row = getRow(0)
-			expect(row.isRendered).toBeTrue()
+			expect(row.isRendered).toBe(true)
 
 			await hide(row)
-			expect(row.isRendered).toBeFalse()
+			expect(row.isRendered).toBe(false)
 			expect(row.renderRoot.querySelector('mo-data-grid-cell')).toBeNull()
 
 			await fixture.component.virtualizationController.reveal(row)
 
-			expect(row.isRendered).toBeTrue()
+			expect(row.isRendered).toBe(true)
 			expect(row.renderRoot.querySelector('mo-data-grid-cell')).not.toBeNull()
 		})
 
@@ -256,7 +256,7 @@ describe('DataGridRow', () => {
 			row.toggleDetails()
 			await settle()
 
-			expect(row.detailsOpen).toBeTrue()
+			expect(row.detailsOpen).toBe(true)
 			expect(row.subRows.length).toBe(1)
 			expect(row.subRows[0]?.data.name).toBe('Alice Jr')
 			expect(row.subRows[0]?.level).toBe(1)
@@ -266,8 +266,8 @@ describe('DataGridRow', () => {
 			fixture.component.isDataSelectable = data => data.id !== 2
 			await settle()
 
-			expect(getRow(0).renderRoot.querySelector('mo-checkbox')?.disabled).toBeFalse()
-			expect(getRow(1).renderRoot.querySelector('mo-checkbox')?.disabled).toBeTrue()
+			expect(getRow(0).renderRoot.querySelector('mo-checkbox')?.disabled).toBe(false)
+			expect(getRow(1).renderRoot.querySelector('mo-checkbox')?.disabled).toBe(true)
 		})
 	})
 

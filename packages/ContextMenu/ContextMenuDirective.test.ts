@@ -1,9 +1,9 @@
-import { html } from '@a11d/lit'
+import { html, type LitElement } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { contextMenu } from './index.js'
 
 describe('ContextMenuDirective', () => {
-	const fixture = new ComponentTestFixture<HTMLDivElement>(html`
+	const fixture = new ComponentTestFixture<HTMLDivElement & LitElement>(html`
 		<div ${contextMenu(() => html`<mo-context-menu-item>Item</mo-context-menu-item>`)}>Target</div>
 	`)
 

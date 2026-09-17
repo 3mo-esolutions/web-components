@@ -6,7 +6,7 @@ describe('FocusRing', () => {
 	const fixture = new ComponentTestFixture(html`<mo-focus-ring></mo-focus-ring>`)
 
 	it('should reject dispatching "visibility-changed" event', () => {
-		spyOn(HTMLElement.prototype, 'dispatchEvent')
+		vi.spyOn(HTMLElement.prototype, 'dispatchEvent').mockReturnValue(false)
 
 		const visibilityEvent = fixture.component.dispatchEvent(new Event('visibility-changed'))
 		expect(visibilityEvent).toBe(false)
