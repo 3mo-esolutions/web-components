@@ -3,12 +3,28 @@ import { CustomDocsPage } from './CustomDocsPage.jsx'
 import customElements from '../custom-elements.json'
 import { themes } from 'storybook/theming'
 import { addons } from 'storybook/internal/preview-api'
+import { action } from 'storybook/actions'
 import { DARK_MODE_EVENT_NAME } from '@vueless/storybook-dark-mode'
+import { FieldComponent } from '@3mo/field'
 
 // Keep your custom elements manifest setup
 setCustomElementsManifest(customElements)
 
 const channel = addons.getChannel()
+
+// Every field's value events land in the Actions panel, so that no story has to wire them up itself.
+// They are listened for in the CAPTURE phase because a field dispatches them without `bubbles` — the
+// capture phase still descends through the ancestors, while the bubble phase would never reach here.
+// Only `CustomEvent`s count: a control's own native "input"/"change" also passes by on its way to
+// being stopped inside the field, and carries no value.
+for (const type of ['input', 'change'] as const) {
+	const log = action(type)
+	document.addEventListener(type, event => {
+		if (event instanceof CustomEvent && event.target instanceof FieldComponent) {
+			log(event.detail)
+		}
+	}, { capture: true })
+}
 
 export default {
 	parameters: {
