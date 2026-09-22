@@ -34,7 +34,8 @@ export class DateTimeRange {
 
 	private static readonly untilDelimiters = new Map<LanguageCode, string | undefined>()
 
-	private static getUntilDelimiter(language: LanguageCode = Localizer.languages.current) {
+	/** The language's delimiter between the two ends of a range, e.g. "–". */
+	static getUntilDelimiter(language: LanguageCode = Localizer.languages.current) {
 		if (DateTimeRange.untilDelimiters.has(language)) {
 			return DateTimeRange.untilDelimiters.get(language)
 		}

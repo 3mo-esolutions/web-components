@@ -73,11 +73,20 @@ class InfiniteScrollTestComponent extends Component {
 	}
 }
 
-/** Awaits the frames the controller uses to coalesce its checks and to measure the container after a chunk. */
+/**
+ * Awaits the frames the controller uses to coalesce its checks and to measure the container after a
+ * chunk, until it comes to rest. Paced by frames rather than by a fixed budget of time, so that a
+ * busy machine stretches the wait along with the frames the controller itself waits for.
+ */
 const settle = async (component: InfiniteScrollTestComponent) => {
-	for (let i = 0; i < 20; i++) {
+	let lastLoadCount = -1
+	let restingFrames = 0
+	for (let frame = 0; frame < 200 && restingFrames < 10; frame++) {
 		await component.updateComplete
-		await new Promise(resolve => setTimeout(resolve, 10))
+		await new Promise(resolve => requestAnimationFrame(resolve))
+		const resting = component.loadCount === lastLoadCount && component.controller.pending === false
+		restingFrames = resting ? restingFrames + 1 : 0
+		lastLoadCount = component.loadCount
 	}
 	await component.updateComplete
 }
