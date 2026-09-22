@@ -31,10 +31,12 @@ export type SegmentedDisplayControllerOptions = {
 	accept?(character: string): string | undefined
 	/** The value as it is typed. */
 	handleInput(value: string): void
-	/** The value once the input is left, as the input's own `change` reports it. */
+	/**
+	 * The value settled: it grew as long as it can be, or the input was left after being edited. A
+	 * value of a known length needs no blur to count as entered — its last character is the commit.
+	 * Both can report the same value, so a host which acts on it compares with what it already holds.
+	 */
 	handleChange?(value: string): void
-	/** The value has just become as long as it can be. Fired once per completion. */
-	handleComplete?(value: string): void
 	handleFocusChange?(focused: boolean): void
 }
 
@@ -93,7 +95,6 @@ export class SegmentedDisplayController<THost extends ReactiveControllerHost = R
 	})
 
 	private focused = false
-	private completed = false
 
 	constructor(protected override readonly host: THost, options: OptionsOrFactory<THost>) {
 		super(host)
@@ -234,11 +235,9 @@ export class SegmentedDisplayController<THost extends ReactiveControllerHost = R
 			element.value = value
 		}
 		this.options.handleInput(value)
-		const complete = value.length >= this.options.length
-		if (complete && !this.completed) {
-			this.options.handleComplete?.(value)
+		if (value.length >= this.options.length) {
+			this.options.handleChange?.(value)
 		}
-		this.completed = complete
 		this.refresh()
 		this.host.requestUpdate()
 	}

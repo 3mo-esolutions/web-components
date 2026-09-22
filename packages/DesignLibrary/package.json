@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/del",
-	"version": "0.6.2",
+	"version": "0.6.3",
 	"description": "3MO Design Library to build business-suite web applications",
 	"repository": {
 		"type": "git",
@@ -90,6 +90,7 @@
 		"@3mo/color-picker": "x",
 		"@3mo/field": "x",
 		"@3mo/standard-dialogs": "x",
+		"@3mo/code-field": "x",
 		"@3mo/date-time": "x",
 		"@3mo/number-fields": "x",
 		"@3mo/text-fields": "x",

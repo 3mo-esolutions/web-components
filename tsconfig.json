@@ -82,6 +82,9 @@
 			"path": "./packages/CollapsibleCard"
 		},
 		{
+			"path": "./packages/CodeField"
+		},
+		{
 			"path": "./packages/Color"
 		},
 		{

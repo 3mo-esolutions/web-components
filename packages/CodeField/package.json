@@ -1,7 +1,7 @@
 {
-	"name": "@3mo/segmented-input",
-	"version": "0.2.0",
-	"description": "Controllers for inputs made of several sub-inputs — date units, code cells, templated groups.",
+	"name": "@3mo/code-field",
+	"version": "0.1.0",
+	"description": "A field for short codes — verification codes, one-time passwords and PINs — as one cell per character.",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/3mo-esolutions/web-components"
@@ -9,12 +9,11 @@
 	"keywords": [
 		"lit",
 		"web-component",
-		"controller",
-		"segment",
-		"input",
+		"code",
 		"otp",
 		"pin",
-		"mask"
+		"one-time-code",
+		"field-code"
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
@@ -28,9 +27,9 @@
 	],
 	"dependencies": {
 		"@a11d/lit": "x",
-		"tslib": "x"
-	},
-	"devDependencies": {
-		"@a11d/lit-testing": "x"
+		"tslib": "x",
+		"@3mo/field": "x",
+		"@3mo/localization": "x",
+		"@3mo/segmented-input": "x"
 	}
 }

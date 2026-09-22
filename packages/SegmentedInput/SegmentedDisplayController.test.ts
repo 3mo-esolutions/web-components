@@ -18,7 +18,6 @@ class SegmentedDisplayTest extends Component {
 
 	readonly inputs = new Array<string>()
 	readonly changes = new Array<string>()
-	readonly completions = new Array<string>()
 	readonly focusChanges = new Array<boolean>()
 
 	readonly controller = new SegmentedDisplayController<SegmentedDisplayTest>(this, host => ({
@@ -38,7 +37,6 @@ class SegmentedDisplayTest extends Component {
 		accept: character => /\d/.test(character) ? character : undefined,
 		handleInput: value => { host.value = value; host.inputs.push(value) },
 		handleChange: value => host.changes.push(value),
-		handleComplete: value => host.completions.push(value),
 		handleFocusChange: focused => host.focusChanges.push(focused),
 	}))
 
@@ -165,11 +163,20 @@ describe('SegmentedDisplayController', () => {
 			expect(host().changes).toEqual([])
 		})
 
-		it('should report a change once the input is left', async () => {
+		it('should report a change once a partial value is left', async () => {
 			await enter('12')
 			input().dispatchEvent(new Event('change', { bubbles: true }))
 
 			expect(host().changes).toEqual(['12'])
+		})
+
+		it('should report a change as soon as the value is as long as it can be', async () => {
+			await enter('12345')
+			expect(host().changes).toEqual([])
+
+			await enter('123456')
+
+			expect(host().changes).toEqual(['123456'])
 		})
 
 		it('should drop what the value does not take', async () => {
@@ -185,23 +192,13 @@ describe('SegmentedDisplayController', () => {
 			expect(input().value).toBe('123456')
 		})
 
-		it('should report a completion once', async () => {
-			await enter('12345')
-			expect(host().completions).toEqual([])
-
-			await enter('123456')
-			expect(host().completions).toEqual(['123456'])
-
-			await enter('123456')
-			expect(host().completions).toEqual(['123456'])
-		})
-
-		it('should report a completion again after the value is emptied', async () => {
+		// The host decides what to make of that; the field which owns the value reports it once.
+		it('should report the same complete value again when it is re-entered', async () => {
 			await enter('123456')
 			await enter('')
 			await enter('123456')
 
-			expect(host().completions).toEqual(['123456', '123456'])
+			expect(host().changes).toEqual(['123456', '123456'])
 		})
 
 		it('should put the caret on a pressed cell', async () => {
