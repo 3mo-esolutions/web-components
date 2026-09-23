@@ -28,8 +28,8 @@ describe('FieldTime', () => {
 		fixture.component.value = '14:07'
 		await fixture.updateComplete
 
-		expect(fixture.component.segments.value?.hour).toBe(14)
-		expect(fixture.component.segments.value?.minute).toBe(7)
+		expect(fixture.component.controller.segments.value?.hour).toBe(14)
+		expect(fixture.component.controller.segments.value?.minute).toBe(7)
 		expect(segment('minute').textContent).toBe('07')
 	})
 
