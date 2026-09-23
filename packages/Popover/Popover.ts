@@ -1,4 +1,5 @@
 import { Component, component, css, event, eventListener, html, property, query } from '@a11d/lit'
+import { FocusController } from '@3mo/focus-controller'
 import { PopoverPlacement } from './PopoverPlacement.js'
 import { type PopoverCoordinates } from './PopoverCoordinates.js'
 import { PopoverAlignment } from './PopoverAlignment.js'
@@ -104,18 +105,52 @@ export class Popover extends Component {
 		}
 	}
 
+	/**
+	 * Whether the focus was the popover's to return as it was closing, read while it still is: the state
+	 * is taken in "beforetoggle", which is reported as the popover hides, rather than in "toggle", which
+	 * follows in a task of its own and by then may find focus somewhere else entirely.
+	 */
+	private heldFocus = false
+
+	@eventListener('beforetoggle')
+	protected handleBeforeToggle(e: ToggleEvent) {
+		if (e.newState === 'closed') {
+			this.heldFocus = this.holdsFocus
+		}
+	}
+
 	@eventListener('toggle')
 	protected handleToggle(e: ToggleEvent) {
 		const open = e.newState === 'open'
 		// Follows platform-driven toggles too: "Esc" light dismissal and native invoker buttons
 		this.open = open
 		this.openChange.dispatch(open)
-		if (this.mode !== 'hint' && !open) {
+		// Only the focus it holds is the popover's to return. Focus which has moved on — to whatever was
+		// clicked outside, or to the next anchor of a menu bar switching between its menus — is not, and
+		// pulling it back to the anchor would take it from whoever has just been given it.
+		if (this.mode !== 'hint' && !open && this.heldFocus) {
 			const target = this.target ? this.anchor?.closest(`#${this.target}`) : this.anchor
 			if (target && target instanceof HTMLElement) {
 				target.focus()
 			}
 		}
+	}
+
+	/**
+	 * Whether the focus is the popover's to return: it is inside it — across shadow roots and through the
+	 * slots it projects — or nothing holds it at all.
+	 */
+	private get holdsFocus() {
+		const active = FocusController.activeElement
+		if (!active || active === this.ownerDocument.body) {
+			return true
+		}
+		for (let node = active as Node | null; node; node = (node as Element).assignedSlot ?? node.parentNode ?? (node as ShadowRoot).host ?? null) {
+			if (node === this) {
+				return true
+			}
+		}
+		return false
 	}
 
 	protected handleAnchorKeyDown(e: KeyboardEvent) {

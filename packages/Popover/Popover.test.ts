@@ -108,6 +108,25 @@ describe('Popover', () => {
 			expect(generic.component.focus).toHaveBeenCalled()
 		})
 
+		it('should leave the focus where it has moved on to when closed', async () => {
+			const elsewhere = document.body.appendChild(document.createElement('button'))
+			vi.spyOn(generic.component!, 'focus').mockReturnValue(undefined)
+			generic.component.popoverElement.open = true
+
+			await generic.updateComplete
+			await new Promise(r => setTimeout(r))
+
+			elsewhere.focus()
+			generic.component.popoverElement.open = false
+
+			await generic.updateComplete
+			await new Promise(r => setTimeout(r))
+
+			expect(generic.component.focus).not.toHaveBeenCalled()
+			expect(document.activeElement).toBe(elsewhere)
+			elsewhere.remove()
+		})
+
 		it('should not return focus to the anchor when a hint popover closes', async () => {
 			vi.spyOn(generic.component!, 'focus').mockReturnValue(undefined)
 			generic.component.popoverElement.mode = 'hint'
