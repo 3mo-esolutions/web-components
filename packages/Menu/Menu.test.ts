@@ -234,6 +234,14 @@ describe('Menu', () => {
 			})
 		}
 
+		it('should not open on a key something around the anchor has already claimed', () => {
+			document.addEventListener('keydown', event => event.preventDefault(), { once: true, capture: true })
+
+			keydown(fixture.component, 'Home')
+
+			expect(fixture.component.menu.open).toBe(false)
+		})
+
 		it('should close on Tab while open', () => {
 			fixture.component.menu.setOpen(true)
 
@@ -449,6 +457,59 @@ describe('Menu', () => {
 			expect(itemsChangeSpy).toHaveBeenCalled()
 			expect(itemsChangeSpy.mock.lastCall![0]).toEqual(fixture.component.items)
 			expect(fixture.component.items).toContain(item)
+		})
+	})
+
+	describe('announcing its anchor', () => {
+		const fixture = new ComponentTestFixture<Menu>(html`
+			<mo-menu>
+				<mo-menu-item>Item</mo-menu-item>
+			</mo-menu>
+		`)
+
+		let anchor: HTMLButtonElement
+		let other: HTMLButtonElement
+
+		beforeEach(async () => {
+			anchor = document.body.appendChild(document.createElement('button'))
+			other = document.body.appendChild(document.createElement('button'))
+			fixture.component.anchor = anchor
+			await fixture.updateComplete
+		})
+
+		afterEach(() => {
+			anchor.remove()
+			other.remove()
+		})
+
+		it('should make the anchor a menu button', () => {
+			expect(anchor.getAttribute('aria-haspopup')).toBe('menu')
+			expect(anchor.getAttribute('aria-expanded')).toBe('false')
+		})
+
+		it('should follow the open state', async () => {
+			fixture.component.setOpen(true)
+			await fixture.updateComplete
+
+			expect(anchor.getAttribute('aria-expanded')).toBe('true')
+		})
+
+		it('should hand the announcement over when the anchor changes', async () => {
+			fixture.component.anchor = other
+			await fixture.updateComplete
+
+			expect(anchor.hasAttribute('aria-haspopup')).toBe(false)
+			expect(anchor.hasAttribute('aria-expanded')).toBe(false)
+			expect(other.getAttribute('aria-haspopup')).toBe('menu')
+		})
+
+		it('should announce nothing for a manual menu, which its anchor does not open', async () => {
+			fixture.component.manual = true
+			fixture.component.anchor = other
+			await fixture.updateComplete
+
+			expect(other.hasAttribute('aria-haspopup')).toBe(false)
+			expect(anchor.hasAttribute('aria-haspopup')).toBe(false)
 		})
 	})
 })

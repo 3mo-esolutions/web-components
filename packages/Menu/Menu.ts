@@ -48,7 +48,9 @@ export class Menu extends Component {
 		type: 'keydown',
 		target: () => this.anchor || [],
 		listener: (event: KeyboardEvent) => {
-			if (this.manual || event.ctrlKey || event.shiftKey || event.composedPath().some(isMenu)) {
+			// A key which something around the anchor has already claimed is not an opening key: a menu bar
+			// moves its cursor with Home and End, which would otherwise open the menu they moved away from.
+			if (this.manual || event.defaultPrevented || event.ctrlKey || event.shiftKey || event.composedPath().some(isMenu)) {
 				return
 			}
 
@@ -83,7 +85,10 @@ export class Menu extends Component {
 
 	@property({
 		type: Object,
-		updated(this: Menu) { this.anchorKeyDownEventController.resubscribe() },
+		updated(this: Menu) {
+			this.anchorKeyDownEventController.resubscribe()
+			this.announceAnchor()
+		},
 	}) anchor!: HTMLElement
 	@property() placement?: MenuPlacement
 	@property() alignment?: MenuAlignment
@@ -119,7 +124,25 @@ export class Menu extends Component {
 		}
 	}
 
+	/**
+	 * An anchor which opens a menu is a menu button, and that is what announces the menu before it is
+	 * open. A manual menu has no such anchor: it is opened by something other than activating it — a
+	 * right-click, or the consumer itself.
+	 */
+	private announcedAnchor?: HTMLElement
+	protected announceAnchor() {
+		const anchor = this.manual ? undefined : this.anchor
+		if (this.announcedAnchor && this.announcedAnchor !== anchor) {
+			this.announcedAnchor.removeAttribute('aria-haspopup')
+			this.announcedAnchor.removeAttribute('aria-expanded')
+		}
+		this.announcedAnchor = anchor
+		anchor?.setAttribute('aria-haspopup', 'menu')
+		anchor?.setAttribute('aria-expanded', String(this.open))
+	}
+
 	protected openUpdated() {
+		this.announceAnchor()
 		if (!this.open) {
 			// Dropped rather than remembered, so that the next opening starts from whatever is selected
 			// by then instead of resuming where the closed one left off.

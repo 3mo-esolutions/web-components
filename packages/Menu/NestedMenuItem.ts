@@ -14,24 +14,27 @@ export class NestedMenuItem extends MenuItem {
 
 	@query('mo-menu') readonly subMenu!: Menu
 
+	/** Whether the submenu acted on it, which is what tells a menu bar around this menu to leave the key alone. */
 	private setOpen(open: boolean) {
-		if (!this.disabled && !!this.hasSubMenu && this.open !== open && this.focused) {
-			this.open = open
-			if (open) {
-				const focus = this.subMenu.list.focusController
-				focus.focusIn()
-				focus.focusedItemIndex = 0
-				focus.keyboardFocus = true
-			}
+		if (this.disabled || !this.hasSubMenu || this.open === open || !this.focused) {
+			return false
 		}
+		this.open = open
+		if (open) {
+			const focus = this.subMenu.list.focusController
+			focus.focusIn()
+			focus.focusedItemIndex = 0
+			focus.keyboardFocus = true
+		}
+		return true
 	}
 
 	readonly slotController = new SlotController(this)
 
 	@eventListener('listKeyDown')
 	protected handleKeyDown(event: CustomEvent<KeyboardEvent>) {
-		if (['Right', 'ArrowRight'].includes(event.detail.key)) {
-			this.setOpen(true)
+		if (['Right', 'ArrowRight'].includes(event.detail.key) && this.setOpen(true)) {
+			event.detail.preventDefault()
 		}
 	}
 
@@ -84,7 +87,12 @@ export class NestedMenuItem extends MenuItem {
 			<mo-icon icon='chevron_right'></mo-icon>
 			<mo-menu .anchor=${this} placement='inline-end' alignment='start'
 				?open=${bind(this, 'open')}
-				@listKeyDown=${(e: CustomEvent<KeyboardEvent>) => { e.stopImmediatePropagation(); !['Left', 'ArrowLeft'].includes(e.detail.key) ? void 0 : this.setOpen(false) }}
+				@listKeyDown=${(e: CustomEvent<KeyboardEvent>) => {
+					e.stopImmediatePropagation()
+					if (['Left', 'ArrowLeft'].includes(e.detail.key) && this.setOpen(false)) {
+						e.detail.preventDefault()
+					}
+				}}
 			>
 				<slot name='submenu'></slot>
 			</mo-menu>
