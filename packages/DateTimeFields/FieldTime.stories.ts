@@ -14,7 +14,7 @@ export default {
 		readonly: false,
 	},
 	package: p,
-	decorators: [story => html`<div style='height: 250px'>${story()}</div>`]
+	decorators: [story => html`<div style='height: 250px; width: 220px'>${story()}</div>`]
 } as Meta
 
 export const FieldTime: StoryObj = {

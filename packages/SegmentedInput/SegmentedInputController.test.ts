@@ -114,7 +114,6 @@ describe('SegmentedInputController', () => {
 		it('should stamp every editable segment', () => {
 			const first = segment('segment-0')
 			expect(first.getAttribute('aria-label')).toBe('Expiry')
-			expect(first.getAttribute('contenteditable')).toBe('plaintext-only')
 			expect(first.getAttribute('inputmode')).toBe('numeric')
 			expect(first.getAttribute('enterkeyhint')).toBe('next')
 			expect(first.hasAttribute('data-placeholder')).toBe(true)
@@ -343,6 +342,28 @@ describe('SegmentedInputController', () => {
 
 			leave()
 			expect(host().commits).toBe(2)
+		})
+	})
+
+	describe('editing', () => {
+		it('should keep the segments out of editing until the field is used', () => {
+			expect(segment('segment-0').hasAttribute('contenteditable')).toBe(false)
+			expect(segment('segment-1').hasAttribute('contenteditable')).toBe(false)
+		})
+
+		it('should make the segments editable on a press inside the field, before one is focused', () => {
+			segment('segment-1').dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, cancelable: true, composed: true }))
+
+			expect(segment('segment-0').getAttribute('contenteditable')).toBe('plaintext-only')
+			expect(segment('segment-1').getAttribute('contenteditable')).toBe('plaintext-only')
+		})
+
+		it('should make a segment entered by keyboard editable, and take editing back on leaving', () => {
+			focus(segment('segment-0'))
+			expect(segment('segment-0').getAttribute('contenteditable')).toBe('plaintext-only')
+
+			leave()
+			expect(segment('segment-0').hasAttribute('contenteditable')).toBe(false)
 		})
 	})
 

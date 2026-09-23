@@ -88,7 +88,8 @@ for (const variant of variants) {
 
 			it('should render localized digits after a language change', async () => {
 				await switchTo('en')
-				expect(items()[5]!.textContent!.trim()).toBe('05')
+				// English clocks run on twelve hours, so the hour list carries the day period.
+				expect(items()[5]!.textContent!.trim()).toBe(variant.unit === 'hour' ? '05 AM' : '05')
 
 				await switchTo('fa')
 				expect(items()[5]!.textContent!.trim()).toBe((5).format('fa').padStart(2, (0).format('fa')))

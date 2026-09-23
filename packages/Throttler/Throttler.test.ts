@@ -2,12 +2,19 @@ import { Throttler } from './Throttler.js'
 
 describe('Throttler', () => {
 	it('should skip throttling the leading call', async () => {
-		const throttler = new Throttler(100)
-		const start = performance.now()
+		vi.useFakeTimers()
+		try {
+			const throttler = new Throttler(100)
+			let settled = false
 
-		await throttler.throttle()
+			void throttler.throttle().then(() => settled = true)
+			await Promise.resolve()
 
-		expect(performance.now() - start).toBeLessThanOrEqual(1)
+			// Settled without the clock ever advancing, rather than merely fast enough for a wall clock.
+			expect(settled).toBe(true)
+		} finally {
+			vi.useRealTimers()
+		}
 	})
 
 	it('should throttle calls', async () => {

@@ -6,7 +6,7 @@ import { type MaterialIcon } from '@3mo/icon'
 import { FieldDateTimePrecision } from './FieldDateTimePrecision.js'
 import type { Calendar } from './selection/index.js'
 
-const dateTimeConverter = (value: unknown) => {
+export const dateTimeConverter = (value: unknown) => {
 	if (value instanceof DateTime) {
 		return value
 	}

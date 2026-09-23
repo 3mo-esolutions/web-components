@@ -116,6 +116,8 @@ export class SegmentedInputController<TSegment extends InputSegment = InputSegme
 	private shortcutTimer?: ReturnType<typeof setTimeout>
 	private focusedKey?: string
 	private focusedWithin = false
+	/** Chromium focuses the editing host nearest to a press below the field, so the segments are only editable while in use. */
+	private engaged = false
 
 	constructor(protected override readonly host: THost, options: OptionsOrFactory<TSegment, THost>) {
 		super(host)
@@ -242,7 +244,7 @@ export class SegmentedInputController<TSegment extends InputSegment = InputSegme
 		setOrRemove(element, 'aria-invalid', options.invalid ? 'true' : undefined)
 		setOrRemove(element, 'aria-required', options.required ? 'true' : undefined)
 		element.toggleAttribute('data-placeholder', !segment.filled)
-		setOrRemove(element, 'contenteditable', editable ? 'plaintext-only' : undefined)
+		setOrRemove(element, 'contenteditable', editable && this.engaged ? 'plaintext-only' : undefined)
 		setOrRemove(element, 'inputmode', editable ? segment.inputMode : undefined)
 		setOrRemove(element, 'enterkeyhint', editable ? 'next' : undefined)
 		setOrRemove(element, 'spellcheck', editable ? 'false' : undefined)
@@ -323,6 +325,7 @@ export class SegmentedInputController<TSegment extends InputSegment = InputSegme
 		}
 		this.focusedKey = segment.key
 		this.typed = ''
+		this.engaged = true
 		// A collapsed selection is what keeps Android from composing across the segment's text.
 		window.getSelection()?.collapse(event.currentTarget as Node, 0)
 		this.refresh()
@@ -340,6 +343,7 @@ export class SegmentedInputController<TSegment extends InputSegment = InputSegme
 			return
 		}
 		this.focusedWithin = false
+		this.engaged = false
 		this.commit()
 		// A field left empty forgets where it was, so that the next entry starts at the first unit again.
 		if (this.isEmpty) {
@@ -356,6 +360,7 @@ export class SegmentedInputController<TSegment extends InputSegment = InputSegme
 	 * browser begins its own focus change — Blink ignores a `focus()` issued from inside a focus event.
 	 */
 	private handlePointerDown(event: PointerEvent) {
+		this.engage()
 		if (this.focusedWithin || !this.isEmpty || !this.editable) {
 			return
 		}
@@ -366,6 +371,18 @@ export class SegmentedInputController<TSegment extends InputSegment = InputSegme
 		}
 		event.preventDefault()
 		this.focusFirst()
+	}
+
+	/** Before the browser focuses a segment: a phone raises its keyboard only for an element editable when pressed. */
+	private engage() {
+		this.engaged = true
+		this.refresh()
+		requestAnimationFrame(() => {
+			if (!this.focusedWithin) {
+				this.engaged = false
+				this.refresh()
+			}
+		})
 	}
 
 	// #endregion

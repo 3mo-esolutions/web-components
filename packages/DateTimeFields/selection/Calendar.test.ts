@@ -46,7 +46,6 @@ describe('Calendar', () => {
 
 	const navigateTo = async (date: DateTime) => {
 		await fixture.component.setNavigatingValue(date)
-		fixture.component.requestUpdate()
 		await settle()
 	}
 

@@ -29,6 +29,9 @@ export class Calendar extends Component {
 	async setNavigatingValue(date: DateTime, behavior: 'instant' | 'smooth' = 'instant') {
 		this.datesController.disableObservers = true
 		this.datesController.navigationDate = date
+		// Only a date beyond the generated range requests an update by itself, so without this the
+		// item marked as navigating - and thereby scrolled to - would still be the previous one.
+		this.requestUpdate()
 		await this.updateComplete
 		await new Promise(r => setTimeout(r, 10))
 		this.renderRoot.querySelector<HTMLElement>(`.${this.view}[data-navigating]`)
