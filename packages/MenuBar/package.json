@@ -1,0 +1,42 @@
+{
+	"name": "@3mo/menu-bar",
+	"version": "0.1.0",
+	"description": "The menus of an application along one bar, with the menubar keyboard and hover patterns",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/3mo-esolutions/web-components"
+	},
+	"keywords": [
+		"lit",
+		"web-component",
+		"menu-bar",
+		"menubar",
+		"menu",
+		"aria"
+	],
+	"author": "3MO GmbH",
+	"license": "MIT",
+	"homepage": "https://www.3mo.de",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"customElements": "dist/custom-elements.json",
+	"files": [
+		"dist"
+	],
+	"dependencies": {
+		"@a11d/lit": "x",
+		"tslib": "x",
+		"@3mo/theme": "x",
+		"@3mo/focus-ring": "x",
+		"@3mo/disabled-property": "x",
+		"@3mo/navigability": "x",
+		"@3mo/overflow-controller": "x"
+	},
+	"devDependencies": {
+		"@a11d/lit-testing": "x",
+		"@3mo/focus-controller": "x",
+		"@3mo/menu": "x",
+		"@3mo/line": "x"
+	}
+}

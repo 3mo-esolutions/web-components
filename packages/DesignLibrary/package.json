@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/del",
-	"version": "0.6.3",
+	"version": "0.6.4",
 	"description": "3MO Design Library to build business-suite web applications",
 	"repository": {
 		"type": "git",
@@ -82,6 +82,7 @@
 		"@3mo/snackbar": "x",
 		"@3mo/list": "x",
 		"@3mo/menu": "x",
+		"@3mo/menu-bar": "x",
 		"@3mo/focus-controller": "x",
 		"@3mo/pointer-controller": "x",
 		"@3mo/popover": ">=0.10.x",

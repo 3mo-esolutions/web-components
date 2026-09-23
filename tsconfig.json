@@ -280,6 +280,9 @@
 			"path": "./packages/Menu"
 		},
 		{
+			"path": "./packages/MenuBar"
+		},
+		{
 			"path": "./packages/ModdableDataGrid"
 		},
 		{
