@@ -2,16 +2,24 @@ import { html } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { type LanguageCode, Localizer } from '@3mo/localization'
 import type { FieldDateTime } from './FieldDateTime.js'
-import { FieldDateTimePrecision } from './FieldDateTimePrecision.js'
+import { FieldDateTimePrecision } from '../FieldDateTimePrecision.js'
 import '@3mo/date-time'
-import './index.js'
+import '../index.js'
 
 describe('FieldDateTime', () => {
 	const fixture = new ComponentTestFixture<FieldDateTime>(html`<mo-field-date-time open precision='day'></mo-field-date-time>`)
 	const plainFixture = new ComponentTestFixture<FieldDateTime>(html`<mo-field-date-time precision='day' .pickerHidden=${true}></mo-field-date-time>`)
 
 	const getCalendar = () => fixture.component.renderRoot.querySelector('mo-calendar')!
-	const input = () => plainFixture.component.inputElement
+	const segment = (type: string) => plainFixture.component.renderRoot.querySelector<HTMLElement>(`[data-segment=${type}]`)!
+	const focus = (element: HTMLElement) => {
+		element.focus({ preventScroll: true })
+		element.dispatchEvent(new FocusEvent('focus'))
+		element.dispatchEvent(new FocusEvent('focusin', { bubbles: true }))
+	}
+	const press = (element: HTMLElement, key: string) => element.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }))
+	const type = (element: HTMLElement, characters: string) => [...characters].forEach(key => press(element, key))
+	const leave = () => segment('day').parentElement!.dispatchEvent(new FocusEvent('focusout', { bubbles: true, relatedTarget: null }))
 	const utc = (isoDateTime: string) => DateTime.from(Date.parse(`${isoDateTime}.000Z`), 'gregory', 'UTC')
 
 	it('should parse the precision attribute into a FieldDateTimePrecision', () => {
@@ -66,7 +74,7 @@ describe('FieldDateTime', () => {
 		for (const [precision, expected] of valueByPrecision) {
 			it(`should zero out units below the ${precision.key} precision in the value`, async () => {
 				fixture.component.precision = precision
-				fixture.component.navigationDate = utc('2025-05-19T14:37:52')
+				fixture.component.controller.navigationDate = utc('2025-05-19T14:37:52')
 				await fixture.updateComplete
 
 				getCalendar().dispatchEvent(new CustomEvent('dateClick', { detail: utc('2025-05-19T00:00:00') }))
@@ -77,7 +85,7 @@ describe('FieldDateTime', () => {
 
 		it('should set the value to the week start when a week is picked at week precision', async () => {
 			fixture.component.precision = FieldDateTimePrecision.Week
-			fixture.component.navigationDate = utc('2025-05-21T00:00:00')
+			fixture.component.controller.navigationDate = utc('2025-05-21T00:00:00')
 			await fixture.updateComplete
 
 			getCalendar().dispatchEvent(new CustomEvent('dateClick', { detail: utc('2025-05-21T00:00:00') }))
@@ -87,7 +95,7 @@ describe('FieldDateTime', () => {
 
 		it('should preserve the navigated time of day when a day is picked at minute precision', async () => {
 			fixture.component.precision = FieldDateTimePrecision.Minute
-			fixture.component.navigationDate = utc('2025-05-19T14:37:52')
+			fixture.component.controller.navigationDate = utc('2025-05-19T14:37:52')
 			await fixture.updateComplete
 
 			getCalendar().dispatchEvent(new CustomEvent('dateClick', { detail: utc('2025-06-02T00:00:00') }))
@@ -123,7 +131,7 @@ describe('FieldDateTime', () => {
 			fixture.component.value = utc('2025-05-19T14:37:00')
 			await fixture.updateComplete
 			const hourList = list('mo-hour-list')!
-			const picked = fixture.component.navigationDate.with({ hour: 9 })
+			const picked = fixture.component.controller.navigationDate.with({ hour: 9 })
 			vi.spyOn(fixture.component.change, 'dispatch').mockReturnValue(undefined)
 
 			hourList.dispatchEvent(new CustomEvent('navigate', { detail: picked }))
@@ -135,50 +143,87 @@ describe('FieldDateTime', () => {
 		})
 	})
 
-	describe('typed input', () => {
-		it('should parse the typed date on the change event and format it back into the input', async () => {
-			input().value = '2025-05-19'
-			input().dispatchEvent(new Event('change'))
-			await plainFixture.updateComplete
-
-			const instant = Date.parse('2025-05-19')
-			expect(plainFixture.component.value!.valueOf()).toBe(instant)
-			expect(input().value).toBe(new DateTime(instant).format(FieldDateTimePrecision.Day.formatOptions))
+	describe('segments', () => {
+		it('should render one spinbutton per unit of the precision', () => {
+			expect(segment('day').getAttribute('role')).toBe('spinbutton')
+			expect(segment('month')).not.toBeNull()
+			expect(segment('year')).not.toBeNull()
+			expect(segment('hour')).toBeNull()
 		})
 
-		it('should set the value to undefined for unparseable input', async () => {
-			plainFixture.component.value = new DateTime(Date.parse('2025-05-19T12:00:00.000Z'))
+		it('should render the value into the segments', async () => {
+			plainFixture.component.shortcutReferenceDate = utc('2020-06-10T00:00:00')
+			plainFixture.component.value = utc('2025-05-19T00:00:00')
 			await plainFixture.updateComplete
 
-			input().value = 'not a date'
-			input().dispatchEvent(new Event('change'))
+			expect(segment('day').textContent).toBe('19')
+			expect(segment('month').textContent).toBe('05')
+			expect(segment('year').textContent).toBe('2025')
+		})
+
+		it('should commit the typed segments as the value and dispatch change when the group is left', async () => {
+			plainFixture.component.shortcutReferenceDate = utc('2020-06-10T00:00:00')
+			await plainFixture.updateComplete
+			vi.spyOn(plainFixture.component.change, 'dispatch').mockReturnValue(undefined)
+
+			focus(segment('day'))
+			type(segment('day'), '19')
+			type(segment('month'), '05')
+			type(segment('year'), '2025')
+			leave()
 			await plainFixture.updateComplete
 
-			expect(plainFixture.component.value).toBeUndefined()
+			expect(plainFixture.component.value!.valueOf()).toBe(utc('2025-05-19T00:00:00').valueOf())
+			expect(plainFixture.component.change.dispatch).toHaveBeenCalled()
+		})
+
+		it('should complete the units left out from shortcutReferenceDate', async () => {
+			plainFixture.component.shortcutReferenceDate = utc('2020-06-10T00:00:00')
+			await plainFixture.updateComplete
+
+			focus(segment('day'))
+			type(segment('day'), '05')
+			leave()
+			await plainFixture.updateComplete
+
+			expect(plainFixture.component.value!.valueOf()).toBe(utc('2020-06-05T00:00:00').valueOf())
 		})
 
 		it('should resolve relative shortcuts against shortcutReferenceDate', async () => {
 			plainFixture.component.shortcutReferenceDate = utc('2020-06-10T00:00:00')
 			await plainFixture.updateComplete
 
-			input().value = '+1'
-			input().dispatchEvent(new Event('change'))
+			focus(segment('day'))
+			type(segment('day'), '+1')
+			press(segment('day'), 'Enter')
 			await plainFixture.updateComplete
 
 			expect(plainFixture.component.value!.valueOf()).toBe(utc('2020-06-11T00:00:00').valueOf())
 		})
 
-		it('should dispatch input with the parsed value while typing', async () => {
+		it('should dispatch input once every unit is filled while typing, before committing', async () => {
 			plainFixture.component.shortcutReferenceDate = utc('2020-06-10T00:00:00')
 			await plainFixture.updateComplete
 			vi.spyOn(plainFixture.component.input, 'dispatch').mockReturnValue(undefined)
 
-			input().value = '+1'
-			input().dispatchEvent(new Event('input'))
+			focus(segment('day'))
+			type(segment('day'), '19')
+			type(segment('month'), '05')
+			expect(plainFixture.component.input.dispatch).not.toHaveBeenCalled()
+
+			type(segment('year'), '2025')
 
 			const dispatched = vi.mocked(plainFixture.component.input.dispatch).mock.lastCall![0] as DateTime
-			expect(dispatched.valueOf()).toBe(utc('2020-06-11T00:00:00').valueOf())
+			expect(dispatched.valueOf()).toBe(utc('2025-05-19T00:00:00').valueOf())
 			expect(plainFixture.component.value).toBeUndefined()
+		})
+
+		it('should focus the first segment through focus()', async () => {
+			plainFixture.component.focus()
+			await plainFixture.updateComplete
+
+			const firstSegment = plainFixture.component.renderRoot.querySelector('[role=spinbutton]')
+			expect(plainFixture.component.shadowRoot!.activeElement).toBe(firstSegment)
 		})
 	})
 
@@ -304,20 +349,20 @@ describe('FieldDateTime', () => {
 			await new Promise<void>(resolve => queueMicrotask(() => resolve()))
 		}
 
-		it('should format the input value with the calendar and digits of the current language', async () => {
+		it('should render the segments with the calendar and digits of the current language', async () => {
 			const instant = Date.parse('2025-05-19T12:00:00.000Z')
 
 			await switchTo('en')
 			plainFixture.component.value = new DateTime(instant)
 			await plainFixture.updateComplete
-			expect(input().value).toContain((2025).format('en'))
+			expect(segment('year').textContent).toBe((2025).format('en'))
 
 			await switchTo('fa')
 			plainFixture.component.value = new DateTime(instant)
 			await plainFixture.updateComplete
 
-			expect(input().value).toContain((1404).format('fa'))
-			expect(input().value).not.toContain('2025')
+			expect(segment('year').textContent).toBe((1404).format('fa'))
+			expect(segment('day').parentElement!.getAttribute('dir')).toBe('rtl')
 		})
 	})
 })

@@ -95,13 +95,14 @@ export class Calendar extends Component {
 				}
 
 				&[data-start], &[data-end] {
-					background: var(--mo-color-accent-transparent);
 					opacity: 1;
-					color: color-mix(in srgb, var(--mo-color-accent), var(--mo-color-foreground)) !important;
+					background: var(--mo-color-selected);
+					color: var(--mo-color-on-selected);
 				}
 
 				&[data-in-range] {
-					background: color-mix(in srgb, var(--mo-color-accent), transparent 92%);
+					background: color-mix(in srgb, var(--mo-color-selected), transparent 42%);
+					border-radius: initial;
 				}
 
 				&[data-disabled] {

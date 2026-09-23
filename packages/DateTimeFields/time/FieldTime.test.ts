@@ -1,9 +1,9 @@
 import { html } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { type FieldTime } from './FieldTime.js'
-import { FieldDateTimePrecision } from './FieldDateTimePrecision.js'
+import { FieldDateTimePrecision } from '../FieldDateTimePrecision.js'
 import '@3mo/date-time'
-import './index.js'
+import '../index.js'
 
 describe('FieldTime', () => {
 	const fixture = new ComponentTestFixture<FieldTime>(html`<mo-field-time .pickerHidden=${true}></mo-field-time>`)

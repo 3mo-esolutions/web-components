@@ -1,7 +1,7 @@
 import { Component, component, html, property } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { FieldTimeController } from './FieldTimeController.js'
-import { FieldDateTimePrecision } from './FieldDateTimePrecision.js'
+import { FieldDateTimePrecision } from '../FieldDateTimePrecision.js'
 import '@3mo/date-time'
 
 @component('test-field-time-controller')

@@ -1,17 +1,25 @@
 import { html } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import type { FieldDateTimeRange } from './FieldDateTimeRange.js'
-import { FieldDateTimePrecision } from './FieldDateTimePrecision.js'
+import { FieldDateTimePrecision } from '../FieldDateTimePrecision.js'
 import '@3mo/date-time'
-import './index.js'
+import '../index.js'
 
 describe('FieldDateTimeRange', () => {
 	const fixture = new ComponentTestFixture<FieldDateTimeRange>(html`<mo-field-date-time-range open precision='day'></mo-field-date-time-range>`)
 
 	const getCalendar = () => fixture.component.renderRoot.querySelector('mo-calendar')!
-	const input = () => fixture.component.inputElement
-	const selection = () => String(fixture.component.selection)
-	const select = (value: 'start' | 'end') => fixture.component.selection = value as typeof fixture.component.selection
+	const segment = (range: 'start' | 'end', type: string) => fixture.component.renderRoot.querySelector<HTMLElement>(`[data-range=${range}] [data-segment=${type}]`)!
+	const focus = (element: HTMLElement) => {
+		element.focus({ preventScroll: true })
+		element.dispatchEvent(new FocusEvent('focus'))
+		element.dispatchEvent(new FocusEvent('focusin', { bubbles: true }))
+	}
+	const press = (element: HTMLElement, key: string) => element.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }))
+	const type = (element: HTMLElement, characters: string) => [...characters].forEach(key => press(element, key))
+	const leave = (range: 'start' | 'end') => segment(range, 'day').parentElement!.dispatchEvent(new FocusEvent('focusout', { bubbles: true, relatedTarget: null }))
+	const selection = () => String(fixture.component.controller.selection)
+	const select = (value: 'start' | 'end') => fixture.component.controller.selection = value as typeof fixture.component.controller.selection
 	const utc = (isoDateTime: string) => DateTime.from(Date.parse(`${isoDateTime}.000Z`), 'gregory', 'UTC')
 
 	describe('start/end selection', () => {
@@ -35,7 +43,7 @@ describe('FieldDateTimeRange', () => {
 
 		it('should set the range end to the end of the picked unit when selection is "end"', async () => {
 			select('end')
-			fixture.component.navigationDate = utc('2025-05-19T00:00:00')
+			fixture.component.controller.navigationDate = utc('2025-05-19T00:00:00')
 			await fixture.updateComplete
 
 			getCalendar().dispatchEvent(new CustomEvent('dateClick', { detail: utc('2025-05-19T00:00:00') }))
@@ -60,7 +68,7 @@ describe('FieldDateTimeRange', () => {
 			await fixture.updateComplete
 			const hourList = fixture.component.renderRoot.querySelector('mo-hour-list')!
 
-			hourList.dispatchEvent(new CustomEvent('change', { detail: fixture.component.navigationDate.with({ hour: 9 }) }))
+			hourList.dispatchEvent(new CustomEvent('change', { detail: fixture.component.controller.navigationDate.with({ hour: 9 }) }))
 
 			expect(fixture.component.value!.start).toBeDefined()
 			expect(selection()).toBe('start')
@@ -71,34 +79,69 @@ describe('FieldDateTimeRange', () => {
 			const end = utc('2025-05-20T00:00:00')
 			fixture.component.value = new DateTimeRange(start, end)
 			await fixture.updateComplete
-			expect(fixture.component.navigationDate.valueOf()).toBe(start.valueOf())
+			expect(fixture.component.controller.navigationDate.valueOf()).toBe(start.valueOf())
 
 			fixture.component.renderRoot.querySelector('mo-tab-bar')!.dispatchEvent(new CustomEvent('change', { detail: 'end' }))
 			await fixture.updateComplete
 
 			expect(selection()).toBe('end')
-			expect(fixture.component.navigationDate.valueOf()).toBe(end.valueOf())
+			expect(fixture.component.controller.navigationDate.valueOf()).toBe(end.valueOf())
 		})
 	})
 
-	describe('typed input', () => {
-		it('should parse "start – end" text into a range on change and format it back', async () => {
-			input().value = '2020-06-10 – 2020-06-20'
-			input().dispatchEvent(new Event('change'))
+	describe('segments', () => {
+		it('should render a group of segments for each end', () => {
+			expect(segment('start', 'day').getAttribute('role')).toBe('spinbutton')
+			expect(segment('end', 'year')).not.toBeNull()
+		})
+
+		it('should set the start from the start segments and the end from the end segments', async () => {
+			fixture.component.shortcutReferenceDate = utc('2020-06-15T00:00:00')
 			await fixture.updateComplete
 
-			const expected = new DateTimeRange(new DateTime(Date.parse('2020-06-10')), new DateTime(Date.parse('2020-06-20')))
-			expect(fixture.component.value!.start!.valueOf()).toBe(Date.parse('2020-06-10'))
-			expect(fixture.component.value!.end!.valueOf()).toBe(Date.parse('2020-06-20'))
-			expect(input().value).toBe(expected.format(FieldDateTimePrecision.Day.formatOptions))
+			focus(segment('start', 'day'))
+			type(segment('start', 'day'), '10')
+			leave('start')
+			await fixture.updateComplete
+			expect(fixture.component.value!.start!.valueOf()).toBe(utc('2020-06-10T00:00:00').valueOf())
+			expect(fixture.component.value!.end).toBeUndefined()
+
+			focus(segment('end', 'day'))
+			type(segment('end', 'day'), '20')
+			leave('end')
+			await fixture.updateComplete
+
+			expect(fixture.component.value!.start!.valueOf()).toBe(utc('2020-06-10T00:00:00').valueOf())
+			expect(fixture.component.value!.end!.valueOf()).toBe(utc('2020-06-20T23:59:59').valueOf())
+		})
+
+		it('should continue from the last start segment into the first end segment and back', () => {
+			const startSegments = [...fixture.component.renderRoot.querySelectorAll<HTMLElement>('[data-range=start] [role=spinbutton]')]
+			const endSegments = [...fixture.component.renderRoot.querySelectorAll<HTMLElement>('[data-range=end] [role=spinbutton]')]
+			// An empty field opens on its first segment, so the last one is reached with a second focus.
+			focus(startSegments.at(-1)!)
+			focus(startSegments.at(-1)!)
+			press(startSegments.at(-1)!, 'ArrowRight')
+			expect(fixture.component.shadowRoot!.activeElement).toBe(endSegments[0]!)
+
+			press(endSegments[0]!, 'ArrowLeft')
+			expect(fixture.component.shadowRoot!.activeElement).toBe(startSegments.at(-1)!)
+		})
+
+		it('should switch the selection to the end whose segments are focused', async () => {
+			focus(segment('end', 'day'))
+			await fixture.updateComplete
+
+			expect(selection()).toBe('end')
 		})
 
 		it('should parse a range keyword shortcut into the corresponding range', async () => {
 			fixture.component.shortcutReferenceDate = utc('2020-06-15T00:00:00')
 			await fixture.updateComplete
 
-			input().value = 'm'
-			input().dispatchEvent(new Event('change'))
+			focus(segment('start', 'day'))
+			type(segment('start', 'day'), 'm')
+			press(segment('start', 'day'), 'Enter')
 			await fixture.updateComplete
 
 			expect(fixture.component.value!.start!.valueOf()).toBe(utc('2020-06-01T00:00:00').valueOf())

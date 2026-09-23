@@ -28,7 +28,6 @@ export class FieldDateTimePrecision {
 			hour: this < FieldDateTimePrecision.Hour ? undefined : '2-digit',
 			minute: this < FieldDateTimePrecision.Minute ? undefined : '2-digit',
 			second: this < FieldDateTimePrecision.Second ? undefined : '2-digit',
-			hourCycle: 'h23',
 		}
 	}
 

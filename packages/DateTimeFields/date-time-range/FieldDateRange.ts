@@ -1,6 +1,6 @@
 
 import { component } from '@a11d/lit'
-import { FieldDateTimePrecision } from './FieldDateTimePrecision.js'
+import { FieldDateTimePrecision } from '../FieldDateTimePrecision.js'
 import { FieldDateTimeRange } from './FieldDateTimeRange.js'
 
 /** @element mo-field-date */

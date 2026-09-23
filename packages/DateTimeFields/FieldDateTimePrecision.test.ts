@@ -20,12 +20,16 @@ describe('FieldDateTimePrecision', () => {
 
 	describe('formatOptions', () => {
 		it('should return the correct format options for each precision', () => {
-			expect(FieldDateTimePrecision.Year.formatOptions).toEqual(expect.objectContaining({ year: 'numeric', hourCycle: 'h23' }))
-			expect(FieldDateTimePrecision.Month.formatOptions).toEqual(expect.objectContaining({ year: 'numeric', month: '2-digit', hourCycle: 'h23' }))
-			expect(FieldDateTimePrecision.Day.formatOptions).toEqual(expect.objectContaining({ year: 'numeric', month: '2-digit', day: '2-digit', hourCycle: 'h23' }))
-			expect(FieldDateTimePrecision.Hour.formatOptions).toEqual(expect.objectContaining({ year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', hourCycle: 'h23' }))
-			expect(FieldDateTimePrecision.Minute.formatOptions).toEqual(expect.objectContaining({ year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }))
-			expect(FieldDateTimePrecision.Second.formatOptions).toEqual(expect.objectContaining({ year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' }))
+			expect(FieldDateTimePrecision.Year.formatOptions).toEqual(expect.objectContaining({ year: 'numeric' }))
+			expect(FieldDateTimePrecision.Month.formatOptions).toEqual(expect.objectContaining({ year: 'numeric', month: '2-digit' }))
+			expect(FieldDateTimePrecision.Day.formatOptions).toEqual(expect.objectContaining({ year: 'numeric', month: '2-digit', day: '2-digit' }))
+			expect(FieldDateTimePrecision.Hour.formatOptions).toEqual(expect.objectContaining({ year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit' }))
+			expect(FieldDateTimePrecision.Minute.formatOptions).toEqual(expect.objectContaining({ year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }))
+			expect(FieldDateTimePrecision.Second.formatOptions).toEqual(expect.objectContaining({ year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }))
+		})
+
+		it('should leave the hour cycle to the language', () => {
+			expect(FieldDateTimePrecision.Minute.formatOptions.hourCycle).toBeUndefined()
 		})
 	})
 

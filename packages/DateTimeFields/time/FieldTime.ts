@@ -1,10 +1,10 @@
 import { bind, cache, component, css, html, property, style } from '@a11d/lit'
 import { FieldComponent } from '@3mo/field'
 import { Localizer } from '@3mo/localization'
-import { FieldDateTimePrecision } from './FieldDateTimePrecision.js'
-import { dateTimeConverter } from './FieldDateTimeBase.js'
+import { FieldDateTimePrecision } from '../FieldDateTimePrecision.js'
+import { dateTimeConverter } from '../dateTimeConverter.js'
 import { FieldTimeController } from './FieldTimeController.js'
-import { hourCycleConverter, segmentsStyles, type HourCycle } from './segments/index.js'
+import { hourCycleConverter, segmentsStyles, type HourCycle } from '../segments/index.js'
 
 Localizer.dictionaries.add('de', {
 	'Time': 'Uhrzeit',

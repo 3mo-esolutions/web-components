@@ -1,6 +1,6 @@
 import { Controller, type ReactiveControllerHost } from '@a11d/lit'
-import { FieldDateTimePrecision } from './FieldDateTimePrecision.js'
-import { DateTimeSegmentsController, type HourCycle } from './segments/index.js'
+import { FieldDateTimePrecision } from '../FieldDateTimePrecision.js'
+import { DateTimeSegmentsController, type HourCycle } from '../segments/index.js'
 
 export type FieldTimeControllerOptions = {
 	/** `HH:mm`, or `HH:mm:ss` at second precision: what a native time input holds. */

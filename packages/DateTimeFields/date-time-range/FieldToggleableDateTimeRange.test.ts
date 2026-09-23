@@ -1,9 +1,9 @@
 import { html } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import type { FieldToggleableDateTimeRange } from './FieldToggleableDateTimeRange.js'
-import { FieldDateTimePrecision } from './FieldDateTimePrecision.js'
+import { FieldDateTimePrecision } from '../FieldDateTimePrecision.js'
 import '@3mo/date-time'
-import './index.js'
+import '../index.js'
 
 describe('FieldToggleableDateTimeRange', () => {
 	const fixture = new ComponentTestFixture<FieldToggleableDateTimeRange>(
