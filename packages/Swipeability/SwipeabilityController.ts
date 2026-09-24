@@ -1,4 +1,5 @@
 import { Controller, type ReactiveControllerHost } from '@a11d/lit'
+import { PointerDragController, type PointerDrag } from '@3mo/pointer-controller'
 
 export type SwipeabilityAxis = 'block' | 'inline'
 
@@ -60,17 +61,16 @@ export type SwipeabilityControllerOptions = {
  *
  * @ssr true
  */
-export class SwipeabilityController<THost extends ReactiveControllerHost = ReactiveControllerHost> extends Controller implements EventListenerObject {
-	static readonly deadZone = 4
+export class SwipeabilityController<THost extends ReactiveControllerHost = ReactiveControllerHost> extends Controller {
 	static readonly threshold = 0.25
 	static readonly velocityThreshold = 400
 	/** Sampling window (ms) for velocity calculation. */
 	static readonly velocityWindow = 100
 	static readonly velocityMinimumInterval = 20
 
-	private listened?: HTMLElement
-	private origin?: { readonly x: number, readonly y: number, readonly pointerId: number, readonly detent: number, readonly path: Array<EventTarget> }
-	private claimed?: boolean
+	private readonly drag: PointerDragController<THost>
+	private stamped?: HTMLElement
+	private origin?: { readonly detent: number, readonly path: ReadonlyArray<EventTarget> }
 	private settled?: number
 	private samples = new Array<{ readonly offset: number, readonly time: number }>()
 	private swiping = false
@@ -83,6 +83,17 @@ export class SwipeabilityController<THost extends ReactiveControllerHost = React
 	) {
 		super(host)
 		this.options = typeof options === 'function' ? options(host) : options
+		const controller = this
+		this.drag = new PointerDragController<THost>(host, {
+			get target() { return controller.options.surface },
+			get disabled() { return controller.options.disabled },
+			handlePress: event => controller.handlePress(event),
+			isDrag: (deltaX, deltaY) => controller.isDrag(deltaX, deltaY),
+			handleDragStart: () => controller.handleDragStart(),
+			handleDrag: drag => controller.handleDrag(drag),
+			handleDragEnd: drag => controller.handleDragEnd(drag),
+			handleDragCancel: () => controller.handleDragCancel(),
+		})
 	}
 
 	get state(): SwipeabilityState {
@@ -95,47 +106,33 @@ export class SwipeabilityController<THost extends ReactiveControllerHost = React
 
 	override hostUpdated() {
 		const surface = this.options.surface
-		if (surface !== this.listened) {
-			this.listened?.removeEventListener('pointerdown', this)
-			this.listened = surface
-			surface?.addEventListener('pointerdown', this)
+		if (surface !== this.stamped) {
+			this.stamped = surface
 			this.stamp()
 		}
 	}
 
 	override hostDisconnected() {
 		this.abandon()
-		this.listened?.removeEventListener('pointerdown', this)
-		this.listened = undefined
-	}
-
-	handleEvent(event: Event) {
-		switch (event.type) {
-			case 'pointerdown': return this.handlePointerDown(event as PointerEvent)
-			case 'pointermove': return this.handlePointerMove(event as PointerEvent)
-			case 'touchmove': return this.handleTouchMove(event as TouchEvent)
-			case 'pointerup': return this.handlePointerUp(event as PointerEvent)
-			case 'pointercancel': return this.handlePointerCancel(event as PointerEvent)
-			case 'click': return this.handleClick(event)
-		}
+		this.stamped = undefined
 	}
 
 	/** Cancels an in-flight gesture and cleans up window listeners. */
 	abandon() {
-		window.removeEventListener('pointermove', this)
-		window.removeEventListener('touchmove', this)
-		window.removeEventListener('pointerup', this)
-		window.removeEventListener('pointercancel', this)
+		this.drag.abandon()
+		this.reset()
+	}
+
+	private reset() {
 		this.origin = undefined
-		this.claimed = undefined
 		this.samples = []
 		this.swiping = false
 		this.stamp()
 	}
 
 	private stamp() {
-		if (this.listened) {
-			this.listened.dataset.swipeability = this.state
+		if (this.stamped) {
+			this.stamped.dataset.swipeability = this.state
 		}
 	}
 
@@ -148,27 +145,18 @@ export class SwipeabilityController<THost extends ReactiveControllerHost = React
 		return forward === !rtl ? 1 : -1
 	}
 
-	private handlePointerDown(event: PointerEvent) {
-		if (this.options.disabled || this.origin || !event.isPrimary || (event.pointerType === 'mouse' && event.button !== 0)) {
-			return
-		}
+	private handlePress(event: PointerEvent) {
 		// Read off the very event which starts the gesture, so a device with both a finger and a mouse
 		// answers each of them on its own terms.
 		if (this.options.pointerTypes && !this.options.pointerTypes.includes(event.pointerType as SwipeabilityPointerType)) {
-			return
+			return false
 		}
 		this.origin = {
-			x: event.clientX,
-			y: event.clientY,
-			pointerId: event.pointerId,
 			detent: this.options.detent ?? this.settled ?? this.detents[0] ?? 0,
 			path: event.composedPath(),
 		}
-		window.addEventListener('pointermove', this)
-		// Non-passive to allow preventDefault when claiming touch.
-		window.addEventListener('touchmove', this, { passive: false })
-		window.addEventListener('pointerup', this)
-		window.addEventListener('pointercancel', this)
+		this.samples = []
+		return true
 	}
 
 	private contentScrollsWith(along: number) {
@@ -192,22 +180,14 @@ export class SwipeabilityController<THost extends ReactiveControllerHost = React
 		return false
 	}
 
-	private decide(along: number, across: number) {
-		if (Math.abs(along) < 1 && Math.abs(across) < 1) {
-			return
-		}
-		if (Math.abs(across) > Math.abs(along) || this.contentScrollsWith(along)) {
-			this.abandon()
-			return
-		}
-		this.claimed = true
+	/** The browser's if it runs across the axis, or if something beneath it can still scroll that way. */
+	private isDrag(deltaX: number, deltaY: number) {
+		const { along, across } = this.deltas(deltaX, deltaY)
+		return Math.abs(across) <= Math.abs(along) && !this.contentScrollsWith(along)
 	}
 
-	private deltas(x: number, y: number) {
-		const origin = this.origin!
-		const dx = x - origin.x
-		const dy = y - origin.y
-		return this.options.axis === 'block' ? { along: dy, across: dx } : { along: dx, across: dy }
+	private deltas(deltaX: number, deltaY: number) {
+		return this.options.axis === 'block' ? { along: deltaY, across: deltaX } : { along: deltaX, across: deltaY }
 	}
 
 	private offsetOf(along: number) {
@@ -216,84 +196,33 @@ export class SwipeabilityController<THost extends ReactiveControllerHost = React
 		return Math.min(Math.max(offset, detents[0] ?? 0), detents.at(-1) ?? 0)
 	}
 
-	private handleTouchMove(event: TouchEvent) {
-		const touch = event.touches[0]
-		if (!this.origin || !touch) {
-			return
-		}
-		const { along, across } = this.deltas(touch.clientX, touch.clientY)
-		if (this.claimed === undefined) {
-			this.decide(along, across)
-		}
-		if (this.claimed) {
-			event.preventDefault()
-		}
+	private handleDragStart() {
+		this.swiping = true
+		this.stamp()
+		this.options.handleSwipeStart?.()
 	}
 
-	private handlePointerMove(event: PointerEvent) {
-		const origin = this.origin
-		if (!origin || event.pointerId !== origin.pointerId) {
-			return
-		}
-
-		const { along, across } = this.deltas(event.clientX, event.clientY)
-		if (this.claimed === undefined) {
-			this.decide(along, across)
-		}
-		if (!this.claimed) {
-			return
-		}
-
-		if (!this.swiping) {
-			if (Math.abs(along) < SwipeabilityController.deadZone) {
-				return
-			}
-			this.swiping = true
-			this.stamp()
-			try {
-				this.options.surface?.setPointerCapture(origin.pointerId)
-			} catch {
-				// An inactive pointer cannot be captured, which costs the gesture nothing.
-			}
-			getSelection()?.removeAllRanges()
-			this.options.handleSwipeStart?.()
-		}
-
-		const offset = this.offsetOf(along)
+	private handleDrag({ deltaX, deltaY, event }: PointerDrag) {
+		const offset = this.offsetOf(this.deltas(deltaX, deltaY).along)
 		this.sample(offset, event.timeStamp)
 		this.options.handleSwipe?.(offset)
 	}
 
-	private handlePointerUp(event: PointerEvent) {
-		const origin = this.origin
-		if (!origin || event.pointerId !== origin.pointerId) {
-			return
-		}
-
-		const swiping = this.swiping
-		const offset = this.samples.at(-1)?.offset ?? origin.detent
+	private handleDragEnd({ event }: PointerDrag) {
+		const start = this.origin?.detent ?? 0
+		const offset = this.samples.at(-1)?.offset ?? start
 		this.sample(offset, event.timeStamp)
-		const detent = this.targetDetent(offset, this.velocity, origin.detent)
-		this.abandon()
-
-		if (swiping) {
-			this.settled = detent
-			this.swallowNextClick()
-			this.options.handleSwipeEnd?.(detent, offset)
-		}
+		const detent = this.targetDetent(offset, this.velocity, start)
+		this.reset()
+		this.settled = detent
+		this.options.handleSwipeEnd?.(detent, offset)
 	}
 
-	private handlePointerCancel(event: PointerEvent) {
-		const origin = this.origin
-		if (!origin || event.pointerId !== origin.pointerId) {
-			return
-		}
-		const swiping = this.swiping
-		const offset = this.samples.at(-1)?.offset ?? origin.detent
-		this.abandon()
-		if (swiping) {
-			this.options.handleSwipeEnd?.(origin.detent, offset)
-		}
+	private handleDragCancel() {
+		const start = this.origin?.detent ?? 0
+		const offset = this.samples.at(-1)?.offset ?? start
+		this.reset()
+		this.options.handleSwipeEnd?.(start, offset)
 	}
 
 	private targetDetent(offset: number, velocity: number, start: number) {
@@ -327,16 +256,5 @@ export class SwipeabilityController<THost extends ReactiveControllerHost = React
 		}
 		const elapsed = latest.time - oldest.time
 		return elapsed >= SwipeabilityController.velocityMinimumInterval ? (latest.offset - oldest.offset) / elapsed * 1000 : 0
-	}
-
-	private swallowNextClick() {
-		const surface = this.options.surface
-		surface?.addEventListener('click', this, { capture: true, once: true })
-		setTimeout(() => surface?.removeEventListener('click', this, { capture: true }))
-	}
-
-	private handleClick(event: Event) {
-		event.preventDefault()
-		event.stopImmediatePropagation()
 	}
 }

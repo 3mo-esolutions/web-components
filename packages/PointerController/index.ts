@@ -1,3 +1,4 @@
+export * from './PointerDragController.js'
 export * from './PointerHoverController.js'
 export * from './PointerPressController.js'
 export * from './PointerRepeatController.js'

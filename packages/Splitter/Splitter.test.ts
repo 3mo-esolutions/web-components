@@ -30,9 +30,12 @@ const extentOf = (element: Element, direction: Direction) => {
 
 const resizerHostsOf = (splitter: Splitter) => [...splitter.renderRoot.querySelectorAll('mo-splitter-resizer-host')] as Array<SplitterResizerHost>
 
-const pressResizer = (host: SplitterResizerHost) => host.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, composed: true }))
-const releasePointer = () => window.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, composed: true }))
-const movePointerTo = ({ x, y }: { x: number, y: number }) => window.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, composed: true, clientX: x, clientY: y }))
+const pointer = (type: string, x = 0, y = 0) =>
+	new PointerEvent(type, { bubbles: true, composed: true, pointerId: 1, isPrimary: true, buttons: type === 'pointerup' ? 0 : 1, clientX: x, clientY: y })
+
+const pressResizer = (host: SplitterResizerHost) => host.dispatchEvent(pointer('pointerdown'))
+const releasePointer = () => window.dispatchEvent(pointer('pointerup'))
+const movePointerTo = ({ x, y }: { x: number, y: number }) => window.dispatchEvent(pointer('pointermove', x, y))
 
 /** The coordinate which the splitter's direction dependent math must translate into "offset" pixels of the item. */
 const pointAt = (item: SplitterItem, direction: Direction, offset: number) => {
@@ -279,7 +282,7 @@ describe('Splitter', () => {
 				</mo-splitter>
 			`)
 
-			it('should enter the resizing state on mousedown on a resizer (reflected "resizing" attribute)', async () => {
+			it('should enter the resizing state when a resizer is pressed (reflected "resizing" attribute)', async () => {
 				pressResizer(resizerHostsOf(fixture.component)[0]!)
 				await fixture.updateComplete
 
@@ -294,7 +297,7 @@ describe('Splitter', () => {
 				expect(extentOf(fixture.component.items[0]!, 'vertical')).toBeCloseTo(size * 0.25, -1)
 			})
 
-			it('should stop resizing on mouseup anywhere on the window', async () => {
+			it('should stop resizing when the pointer is released anywhere on the window', async () => {
 				pressResizer(resizerHostsOf(fixture.component)[0]!)
 				await fixture.updateComplete
 

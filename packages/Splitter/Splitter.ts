@@ -1,7 +1,7 @@
-import { component, html, property, Component, css, styleMap, queryAll, eventListener, style, state } from '@a11d/lit'
+import { component, html, property, Component, css, styleMap, style } from '@a11d/lit'
 import { type Flex } from '@3mo/flex'
 import { MutationController } from '@3mo/mutation-observer'
-import { SplitterItem, type SplitterResizerHost } from './index.js'
+import { SplitterItem } from './index.js'
 import '@3mo/theme'
 
 /**
@@ -21,9 +21,8 @@ export class Splitter extends Component {
 
 	@property({ type: Boolean, reflect: true }) protected resizing = false
 
-	@state({ updated(this: Splitter) { this.resize() } }) private requestResizeKey = 0
-
-	@queryAll('mo-splitter-resizer-host') private readonly resizerElements!: Array<SplitterResizerHost>
+	/** What resizing measures once, at its start, so that following the pointer reads no layout. */
+	private resize?: { readonly item: SplitterItem, readonly edge: number, readonly extent: number }
 
 	get items() {
 		return [...this.children].filter((c): c is SplitterItem => c instanceof SplitterItem)
@@ -59,46 +58,30 @@ export class Splitter extends Component {
 		`
 	}
 
-	private resizeRequestEvent?: TouchEvent | PointerEvent
-	@eventListener({ target: window, type: 'pointermove', options: { passive: true } })
-	@eventListener({ target: window, type: 'touchmove', options: { passive: true } })
-	protected requestResize(e: TouchEvent | PointerEvent) {
-		if (this.resizing) {
-			this.resizeRequestEvent = e
-			this.requestResizeKey++
-		}
+	private startResizing(item: SplitterItem) {
+		const { left, top, right, bottom } = item.getBoundingClientRect()
+		const { width, height } = this.getBoundingClientRect()
+		const edges = { 'horizontal': left, 'horizontal-reversed': right, 'vertical': top, 'vertical-reversed': bottom }
+		const horizontal = this.direction === 'horizontal' || this.direction === 'horizontal-reversed'
+		this.resize = { item, edge: edges[this.direction], extent: horizontal ? width : height }
+		this.resizing = true
 	}
 
-	protected resize() {
-		const resizingResizer = this.resizerElements.find(r => r.resizing)
-		const resizingItem = !resizingResizer ? undefined : this.items[this.resizerElements.indexOf(resizingResizer)]
-		if (!resizingItem) {
+	private resizeTo({ x, y }: { readonly x: number, readonly y: number }) {
+		const resize = this.resize
+		if (!resize) {
 			return
 		}
-		const e = this.resizeRequestEvent!
-		// Don't check for instanceof TouchEvent, as Safari doesn't understand it
-		const clientX = 'touches' in e ? e.touches[0]!.clientX : e.clientX
-		const clientY = 'touches' in e ? e.touches[0]!.clientY : e.clientY
-		const { left, top, right, bottom } = resizingItem.getBoundingClientRect()
+		const size = this.direction === 'horizontal' ? x - resize.edge
+			: this.direction === 'horizontal-reversed' ? resize.edge - x
+				: this.direction === 'vertical' ? y - resize.edge
+					: resize.edge - y
+		resize.item.size = `${size / resize.extent * 100}%`
+	}
 
-		const getSize = () => {
-			switch (this.direction) {
-				case 'horizontal':
-					return clientX - left
-				case 'horizontal-reversed':
-					return right - clientX
-				case 'vertical':
-					return clientY - top
-				case 'vertical-reversed':
-					return bottom - clientY
-			}
-		}
-
-		const totalSize = this.direction === 'horizontal' || this.direction === 'horizontal-reversed'
-			? this.getBoundingClientRect().width
-			: this.getBoundingClientRect().height
-
-		resizingItem.size = `${getSize() / totalSize * 100}%`
+	private stopResizing() {
+		this.resize = undefined
+		this.resizing = false
 	}
 
 	protected override get template() {
@@ -127,8 +110,9 @@ export class Splitter extends Component {
 			<mo-splitter-resizer-host part='resizer-host'
 				?collapsed=${item.collapsed}
 				direction=${this.direction}
-				@resizeStart=${() => this.resizing = true}
-				@resizeStop=${() => this.resizing = false}
+				@resizeStart=${() => this.startResizing(item)}
+				@resize=${(event: CustomEvent<{ readonly x: number, readonly y: number }>) => this.resizeTo(event.detail)}
+				@resizeStop=${() => this.stopResizing()}
 			>${this.resizerTemplate}</mo-splitter-resizer-host>
 		`
 	}

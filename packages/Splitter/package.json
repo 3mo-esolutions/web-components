@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/splitter",
-	"version": "0.2.2",
+	"version": "0.2.3",
 	"description": "A splitter web-component.",
 	"repository": {
 		"type": "git",
@@ -23,6 +23,7 @@
 	],
 	"dependencies": {
 		"@a11d/lit": "x",
+		"@3mo/pointer-controller": ">=1.6.0",
 		"tslib": "x",
 		"csstype": "x",
 		"@3mo/theme": "x",

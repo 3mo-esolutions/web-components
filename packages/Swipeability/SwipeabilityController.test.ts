@@ -63,7 +63,7 @@ describe('SwipeabilityController', () => {
 	const pointer = (type: string, along: number, timeStamp = 0, across = 0) => {
 		const [x, y] = axis === 'block' ? [across, along] : [along, across]
 		return Object.defineProperty(
-			new PointerEvent(type, { clientX: x, clientY: y, pointerId: 1, isPrimary: true, bubbles: true, composed: true }),
+			new PointerEvent(type, { clientX: x, clientY: y, pointerId: 1, isPrimary: true, buttons: type === 'pointerup' ? 0 : 1, bubbles: true, composed: true }),
 			'timeStamp', { value: timeStamp }
 		)
 	}

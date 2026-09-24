@@ -22,10 +22,18 @@ describe('SplitterResizerHost', () => {
 
 	const resizer = () => fixture.component.resizerElement!
 
-	const press = (type: 'mousedown' | 'touchstart' = 'mousedown') => fixture.component.dispatchEvent(new Event(type, { bubbles: true, composed: true }))
-	const release = (type: 'mouseup' | 'touchend' = 'mouseup') => window.dispatchEvent(new Event(type, { bubbles: true, composed: true }))
+	const pointer = (type: string, init: PointerEventInit = {}) =>
+		new PointerEvent(type, { bubbles: true, composed: true, pointerId: 1, isPrimary: true, buttons: type === 'pointerup' ? 0 : 1, ...init })
 
-	it('should dispatch "resizeStart" on mousedown and "resizeStop" on mouseup anywhere on the window', () => {
+	const press = (pointerType = 'mouse') => fixture.component.dispatchEvent(pointer('pointerdown', { pointerType }))
+	const move = (x: number, y: number) => window.dispatchEvent(pointer('pointermove', { clientX: x, clientY: y }))
+	const release = () => window.dispatchEvent(pointer('pointerup'))
+
+	afterEach(() => {
+		release()
+	})
+
+	it('should dispatch "resizeStart" when pressed and "resizeStop" when released anywhere on the window', () => {
 		const start = vi.fn()
 		const stop = vi.fn()
 		fixture.component.addEventListener('resizeStart', start)
@@ -39,12 +47,36 @@ describe('SplitterResizerHost', () => {
 		expect(stop).toHaveBeenCalledTimes(1)
 	})
 
-	it('should start and stop resizing from touch events as well (touchstart / window touchend)', () => {
-		press('touchstart')
+	it('should resize from a touch as well', () => {
+		press('touch')
 		expect(fixture.component.resizing).toBe(true)
 
-		release('touchend')
+		release()
 		expect(fixture.component.resizing).toBe(false)
+	})
+
+	it('should report where the pointer is while resizing ("resize"), and nothing once released', () => {
+		const resize = vi.fn()
+		fixture.component.addEventListener('resize', resize)
+
+		press()
+		move(30, 40)
+		release()
+		move(50, 60)
+
+		expect(resize).toHaveBeenCalledTimes(1)
+		expect((resize.mock.lastCall![0] as CustomEvent).detail).toEqual({ x: 30, y: 40 })
+	})
+
+	it('should stop resizing when the browser takes the pointer over', () => {
+		const stop = vi.fn()
+		fixture.component.addEventListener('resizeStop', stop)
+
+		press('touch')
+		window.dispatchEvent(pointer('pointercancel'))
+
+		expect(fixture.component.resizing).toBe(false)
+		expect(stop).toHaveBeenCalledTimes(1)
 	})
 
 	it('should forward its direction to the slotted resizer ("hostDirection")', async () => {
@@ -56,7 +88,7 @@ describe('SplitterResizerHost', () => {
 		expect(resizer().hostDirection).toBe('horizontal-reversed')
 	})
 
-	it('should mark the slotted resizer while resizing ("hostResizing" set on mousedown, cleared on mouseup)', () => {
+	it('should mark the slotted resizer while resizing ("hostResizing" set when pressed, cleared when released)', () => {
 		press()
 		expect(resizer().hostResizing).toBe(true)
 

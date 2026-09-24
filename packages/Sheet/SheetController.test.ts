@@ -154,7 +154,7 @@ describe('SheetController', () => {
 		const handle = () => container.querySelector<HTMLElement>('#handle')!
 
 		const pointer = (type: string, y: number, timeStamp = 0) => Object.defineProperty(
-			new PointerEvent(type, { clientX: 0, clientY: y, pointerId: 1, isPrimary: true, bubbles: true, composed: true }),
+			new PointerEvent(type, { clientX: 0, clientY: y, pointerId: 1, isPrimary: true, buttons: type === 'pointerup' ? 0 : 1, bubbles: true, composed: true }),
 			'timeStamp', { value: timeStamp }
 		)
 
@@ -330,7 +330,7 @@ describe('SheetController', () => {
 
 		it('should leave a gesture across its own axis to whatever scrolls there', () => {
 			handle().dispatchEvent(pointer('pointerdown', 0))
-			const across = new PointerEvent('pointermove', { clientX: 40, clientY: 6, pointerId: 1, isPrimary: true, bubbles: true })
+			const across = new PointerEvent('pointermove', { clientX: 40, clientY: 6, pointerId: 1, isPrimary: true, buttons: 1, bubbles: true })
 			window.dispatchEvent(across)
 
 			expect(panel().style.translate).toBe('')

@@ -1,6 +1,7 @@
 import { component, html, Component, css, property, event, eventListener } from '@a11d/lit'
 import { type Flex } from '@3mo/flex'
 import { SlotController } from '@3mo/slot-controller'
+import { PointerDragController } from '@3mo/pointer-controller'
 import { SplitterResizer } from './index.js'
 
 /**
@@ -11,11 +12,13 @@ import { SplitterResizer } from './index.js'
  * @attr collapsed
  *
  * @event resizeStart
+ * @event resize - Where the pointer is while resizing, in client coordinates.
  * @event resizeStop
  */
 @component('mo-splitter-resizer-host')
 export class SplitterResizerHost extends Component {
 	@event() readonly resizeStart!: EventDispatcher
+	@event() readonly resize!: EventDispatcher<{ readonly x: number, readonly y: number }>
 	@event() readonly resizeStop!: EventDispatcher
 
 	@property({ reflect: true, updated(this: SplitterResizerHost) { !this.resizerElement ? void 0 : this.resizerElement.hostDirection = this.direction } }) direction?: Flex['direction']
@@ -29,26 +32,20 @@ export class SplitterResizerHost extends Component {
 
 	protected slotController = new SlotController(this)
 
-	@eventListener('mousedown')
-	@eventListener('touchstart')
-	protected startResize(e: PointerEvent) {
-		this.resizing = true
-		!this.resizerElement ? void 0 : this.resizerElement.hostResizing = true
-		this.resizeStart.dispatch()
-		if (e.pointerId) {
-			this.setPointerCapture(e.pointerId)
-		}
-	}
+	protected readonly pointerDrag = new PointerDragController(this, host => ({
+		threshold: 0,
+		handleDragStart: () => host.setResizing(true),
+		handleDrag: ({ event }) => host.resize.dispatch({ x: event.clientX, y: event.clientY }),
+		handleDragEnd: () => host.setResizing(false),
+		handleDragCancel: () => host.setResizing(false),
+	}))
 
-	@eventListener({ target: window, type: 'mouseup' })
-	@eventListener({ target: window, type: 'touchend' })
-	protected endResize(e: PointerEvent) {
-		this.resizing = false
-		!this.resizerElement ? void 0 : this.resizerElement.hostResizing = false
-		this.resizeStop.dispatch()
-		if (e.pointerId) {
-			this.releasePointerCapture(e.pointerId)
+	private setResizing(resizing: boolean) {
+		this.resizing = resizing
+		if (this.resizerElement) {
+			this.resizerElement.hostResizing = resizing
 		}
+		(resizing ? this.resizeStart : this.resizeStop).dispatch()
 	}
 
 	@eventListener('pointerenter')

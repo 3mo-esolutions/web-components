@@ -1,5 +1,6 @@
-import { Component, component, property, html, css, state, eventListener, style } from '@a11d/lit'
+import { Component, component, property, html, css, state, style, ElementRef } from '@a11d/lit'
 import { DirectionsByLanguage } from '@3mo/localization'
+import { PointerDragController, type PointerDrag } from '@3mo/pointer-controller'
 import { type DataGridColumn, type DataGrid } from './index.js'
 
 @component('mo-data-grid-header-separator')
@@ -14,6 +15,17 @@ export class DataGridHeaderSeparator extends Component {
 
 	private initialWidth?: number
 	private targetWidth?: number
+
+	private readonly handle = new ElementRef<HTMLElement>()
+
+	protected readonly pointerDrag = new PointerDragController(this, host => ({
+		get target() { return host.handle.value },
+		threshold: 0,
+		handleDragStart: drag => host.handleDragStart(drag),
+		handleDrag: drag => host.handleDrag(drag),
+		handleDragEnd: () => host.handleDragEnd(),
+		handleDragCancel: () => host.handleDragCancel(),
+	}))
 
 	static override get styles() {
 		return css`
@@ -64,54 +76,40 @@ export class DataGridHeaderSeparator extends Component {
 
 	protected override get template() {
 		return html`
-			<div class='separator' @pointerdown=${this.handlePointerDown} @dblclick=${this.handleDoubleClick}></div>
+			<div class='separator' ${this.handle.ref()} @dblclick=${this.handleDoubleClick}></div>
 			${!this.isResizing ? html.nothing : html`<div class='resizer' ${style({ insetInlineStart: `${this.pointerInlineStart}px` })}></div>`}
 		`
 	}
 
-	@eventListener({ target: window, type: 'pointerup' })
-	protected handlePointerUp() {
-		if (!this.isResizing) {
-			return
-		}
-		this.isResizing = false
-		this.initialWidth = undefined
-		if (this.targetWidth) {
-			this.column.modify({ width: `${this.targetWidth}px` })
-		}
-	}
-
-	@eventListener({ target: window, type: 'pointermove', options: { passive: false } })
-	@eventListener({ target: window, type: 'touchmove', options: { passive: false } })
-	protected handlePointerMove(e: PointerEvent | TouchEvent) {
-		if (this.isResizing === false || this.initialWidth === undefined) {
-			return
-		}
-
-		e.preventDefault()
-		this.updatePointerPosition(e)
-
-		const isRtl = DirectionsByLanguage.get() === 'rtl'
-		const { left: offsetLeft, right: offsetRight } = this.getBoundingClientRect()
-		const offsetInlineStart = !isRtl ? offsetLeft : offsetRight
-
-		this.targetWidth = this.initialWidth + this.pointerInlineStart - offsetInlineStart
-
-		if (this.targetWidth < this.minimum) {
-			this.targetWidth = this.minimum
-		}
-	}
-
-	private readonly handlePointerDown = (e: PointerEvent) => {
+	private handleDragStart({ event }: PointerDrag) {
 		this.isResizing = true
 		this.initialWidth = this.column.widthInPixels
-		this.updatePointerPosition(e)
+		this.targetWidth = undefined
+		this.updatePointerPosition(event)
 	}
 
-	private updatePointerPosition(e: PointerEvent | TouchEvent) {
-		const isRtl = DirectionsByLanguage.get() === 'rtl'
-		const clientX = 'touches' in e ? e.touches[0]!.clientX : e.clientX
-		this.pointerInlineStart = !isRtl ? clientX : window.innerWidth - clientX
+	private handleDrag({ deltaX, event }: PointerDrag) {
+		this.updatePointerPosition(event)
+		const inlineDelta = DirectionsByLanguage.get() === 'rtl' ? -deltaX : deltaX
+		this.targetWidth = Math.max(this.minimum, (this.initialWidth ?? 0) + inlineDelta)
+	}
+
+	private handleDragEnd() {
+		const { targetWidth, initialWidth } = this
+		this.handleDragCancel()
+		if (targetWidth !== undefined && targetWidth !== initialWidth) {
+			this.column.modify({ width: `${targetWidth}px` })
+		}
+	}
+
+	private handleDragCancel() {
+		this.isResizing = false
+		this.initialWidth = undefined
+		this.targetWidth = undefined
+	}
+
+	private updatePointerPosition({ clientX }: PointerEvent) {
+		this.pointerInlineStart = DirectionsByLanguage.get() !== 'rtl' ? clientX : window.innerWidth - clientX
 	}
 
 	private readonly handleDoubleClick = () => {

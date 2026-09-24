@@ -40,9 +40,9 @@ describe('DataGridHeaderSeparator', () => {
 	const modifiedWidth = () => fixture.component.columnsController.columns.modifications.get('name')?.width
 
 	const drag = (separator: DataGridHeaderSeparator, from: number, to: number) => {
-		handleOf(separator).dispatchEvent(new PointerEvent('pointerdown', { clientX: from, bubbles: true }))
-		window.dispatchEvent(new PointerEvent('pointermove', { clientX: to }))
-		window.dispatchEvent(new PointerEvent('pointerup', { clientX: to }))
+		handleOf(separator).dispatchEvent(new PointerEvent('pointerdown', { clientX: from, isPrimary: true, buttons: 1, bubbles: true }))
+		window.dispatchEvent(new PointerEvent('pointermove', { clientX: to, isPrimary: true, buttons: 1 }))
+		window.dispatchEvent(new PointerEvent('pointerup', { clientX: to, isPrimary: true }))
 	}
 
 	describe('Resizing', () => {
@@ -78,8 +78,8 @@ describe('DataGridHeaderSeparator', () => {
 		it('should not apply a width when the pointer never moved', async () => {
 			const separator = await getSeparator()
 
-			handleOf(separator).dispatchEvent(new PointerEvent('pointerdown', { clientX: 10, bubbles: true }))
-			window.dispatchEvent(new PointerEvent('pointerup', { clientX: 10 }))
+			handleOf(separator).dispatchEvent(new PointerEvent('pointerdown', { clientX: 10, isPrimary: true, buttons: 1, bubbles: true }))
+			window.dispatchEvent(new PointerEvent('pointerup', { clientX: 10, isPrimary: true }))
 
 			expect(modifiedWidth()).toBeUndefined()
 		})
@@ -92,6 +92,29 @@ describe('DataGridHeaderSeparator', () => {
 			drag(separator, window.innerWidth - right, window.innerWidth - right - 50)
 
 			expect(parseFloat(modifiedWidth() as string)).toBeCloseTo(initialWidthInPixels + 50, 3)
+		})
+
+		it('should widen the column as the pointer moves towards its inline end in RTL', async () => {
+			Localizer.languages.current = 'fa'
+			const separator = await getSeparator()
+			const { left, width } = separator.getBoundingClientRect()
+			const pressed = left + width / 2
+
+			drag(separator, pressed, pressed - 50)
+
+			expect(parseFloat(modifiedWidth() as string)).toBeCloseTo(initialWidthInPixels + 50, 3)
+		})
+
+		it('should not apply an earlier width again when a later press does not move', async () => {
+			const separator = await getSeparator()
+			const { left } = separator.getBoundingClientRect()
+			drag(separator, left, left + 50)
+			handleOf(separator).dispatchEvent(new MouseEvent('dblclick', { bubbles: true }))
+			expect(modifiedWidth()).toBe('max-content')
+
+			drag(separator, left, left)
+
+			expect(modifiedWidth()).toBe('max-content')
 		})
 	})
 

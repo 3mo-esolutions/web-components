@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/swipeability",
-	"version": "0.2.1",
+	"version": "0.2.2",
 	"description": "A controller which drags a surface along one axis between rest positions, deferring to whatever scrolls beneath it",
 	"repository": {
 		"type": "git",
@@ -27,6 +27,7 @@
 	],
 	"dependencies": {
 		"@a11d/lit": "x",
+		"@3mo/pointer-controller": ">=1.6.0",
 		"tslib": "x"
 	},
 	"devDependencies": {
