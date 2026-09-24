@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/navigability",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "A controller that keeps the current item of a composite widget: arrow keys, Home/End, paging, typeahead, and a roving or activedescendant focus strategy",
 	"repository": {
 		"type": "git",

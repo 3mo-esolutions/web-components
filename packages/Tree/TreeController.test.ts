@@ -155,7 +155,7 @@ describe('TreeController', () => {
 
 			expect(item('Music').getAttribute('aria-selected')).toBe('true')
 			expect(item('Documents').getAttribute('aria-selected')).toBe('false')
-			expect(fixture.component.hasAttribute('aria-multiselectable')).toBe(true)
+			expect(fixture.component.getAttribute('aria-multiselectable')).toBe('true')
 
 			fixture.component.selectability = undefined
 			fixture.component.requestUpdate()

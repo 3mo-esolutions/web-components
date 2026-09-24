@@ -46,7 +46,7 @@ export interface NavigabilityControllerOptions<T> {
 	readonly stamping?: boolean
 	/** The element of an item the registry has not seen: a virtualized host answers with its scroller's shim. */
 	readonly getElement?: (index: number) => NavigabilityElement | undefined
-	/** Where keys arrive and, in the `activedescendant` strategy, where the current item is announced. Defaults to the host; `null` leaves the keys to the owner, which calls {@link NavigabilityController.handleKeyDown} itself. */
+	/** Where keys arrive and, in the `activedescendant` strategy, where the current item is announced. Defaults to the host; `null` leaves the keys to the owner, which calls {@link NavigabilityController.handleKeyDown} itself. Re-read after every update, so a rendered part can be the target. A text field keeps its caret keys: Home, End, the horizontal arrows and typing. */
 	readonly keyboardTarget?: EventTarget | null
 	/** Called only when the cursor actually moved. */
 	readonly handleChange?: (change: NavigabilityChange<T>) => void
@@ -77,7 +77,7 @@ type NavigabilityHost = ReactiveControllerHost & EventTarget
 export class NavigabilityController<T, THost extends NavigabilityHost = NavigabilityHost> extends Controller implements EventListenerObject {
 	static readonly typeaheadTimeout = 1000
 
-	private static idCounter = 0
+	private static readonly nonTextInputTypes = ['button', 'checkbox', 'color', 'file', 'hidden', 'image', 'radio', 'range', 'reset', 'submit']
 
 	readonly indexability: IndexabilityController<T>
 
@@ -98,12 +98,13 @@ export class NavigabilityController<T, THost extends NavigabilityHost = Navigabi
 	}
 
 	private listening = false
+	private listenedKeyboardTarget?: EventTarget
 
 	private desiredIndex = -1
 	private _index = -1
 	private _item: T | undefined
 	private currentKey: unknown
-	private lastPointerDown = 0
+	private lastPointerDown = -Infinity
 	private method: NavigabilityMethod = 'programmatic'
 	private typed = ''
 	private typedTimeout?: ReturnType<typeof setTimeout>
@@ -123,7 +124,7 @@ export class NavigabilityController<T, THost extends NavigabilityHost = Navigabi
 	private get orientation() { return this.options.orientation ?? 'vertical' }
 	private get focusStrategy() { return this.options.focus ?? 'roving' }
 	private get stamping() { return this.options.stamping ?? true }
-	private get keyboardTarget() { return this.options.keyboardTarget === undefined ? this.host : this.options.keyboardTarget }
+	private get keyboardTarget() { return this.options.keyboardTarget === undefined ? this.host : this.options.keyboardTarget ?? undefined }
 
 	override hostConnected() {
 		if (!this.options || this.listening) {
@@ -132,19 +133,35 @@ export class NavigabilityController<T, THost extends NavigabilityHost = Navigabi
 		this.listening = true
 		this.host.addEventListener('pointerdown', this)
 		this.host.addEventListener('focusin', this)
-		this.keyboardTarget?.addEventListener('keydown', this)
+		this.listenToKeyboardTarget()
 	}
 
 	override hostDisconnected() {
 		this.listening = false
 		this.host.removeEventListener('pointerdown', this)
 		this.host.removeEventListener('focusin', this)
-		this.keyboardTarget?.removeEventListener('keydown', this)
+		this.listenedKeyboardTarget?.removeEventListener('keydown', this)
+		this.listenedKeyboardTarget = undefined
 	}
 
 	override hostUpdated() {
+		if (this.listening) {
+			this.listenToKeyboardTarget()
+		}
 		this.reconcile()
 		this.stamp()
+	}
+
+	private listenToKeyboardTarget() {
+		const target = this.keyboardTarget
+		if (target !== this.listenedKeyboardTarget) {
+			if (this.focusStrategy === 'activedescendant' && this.listenedKeyboardTarget instanceof HTMLElement) {
+				this.announce(this.listenedKeyboardTarget, undefined)
+			}
+			this.listenedKeyboardTarget?.removeEventListener('keydown', this)
+			target?.addEventListener('keydown', this)
+			this.listenedKeyboardTarget = target
+		}
 	}
 
 	handleEvent(event: Event) {
@@ -208,9 +225,14 @@ export class NavigabilityController<T, THost extends NavigabilityHost = Navigabi
 		if (event.ctrlKey || event.metaKey || event.altKey) {
 			return false
 		}
+		const editing = NavigabilityController.isTextField(this.keyboardTarget)
+		if (editing && (event.key === 'Home' || event.key === 'End')) {
+			return false
+		}
 		const options: NavigabilityGoOptions = { method: 'keyboard', event }
 		const vertical = this.orientation !== 'horizontal'
-		const horizontal = this.orientation !== 'vertical'
+		const horizontal = this.orientation !== 'vertical' && !editing
+		const typeahead = this.options.typeahead && !editing
 		const rtl = this.host instanceof Element && getComputedStyle(this.host).direction === 'rtl'
 		let handled = false
 
@@ -256,7 +278,7 @@ export class NavigabilityController<T, THost extends NavigabilityHost = Navigabi
 				handled = true
 				break
 			case 'Backspace':
-				if (this.options.typeahead && this.typed) {
+				if (typeahead && this.typed) {
 					this.typed = this.typed.slice(0, -1)
 					handled = this.type(options)
 				}
@@ -265,7 +287,7 @@ export class NavigabilityController<T, THost extends NavigabilityHost = Navigabi
 				this.resetTypeahead()
 				break
 			default:
-				if (this.options.typeahead && event.key.length === 1 && (this.typed || event.key !== ' ')) {
+				if (typeahead && event.key.length === 1 && (this.typed || event.key !== ' ')) {
 					this.typed += event.key
 					handled = this.type(options)
 				}
@@ -586,14 +608,21 @@ export class NavigabilityController<T, THost extends NavigabilityHost = Navigabi
 		}
 		if (this.focusStrategy === 'activedescendant') {
 			const target = this.keyboardTarget instanceof HTMLElement ? this.keyboardTarget : this.host instanceof HTMLElement ? this.host : undefined
-			const element = this.registered.get(this._index)?.element
-			if (target && element) {
-				element.id ||= `navigability-${++NavigabilityController.idCounter}`
-				target.setAttribute('aria-activedescendant', element.id)
-			} else {
-				target?.removeAttribute('aria-activedescendant')
+			if (target) {
+				this.announce(target, this.registered.get(this._index)?.element)
 			}
 		}
+	}
+
+	/** By element reference, since an id cannot reach an item in another tree, such as a field's shadow-root input pointing at the consumer's options. */
+	private announce(target: HTMLElement, element: HTMLElement | undefined) {
+		target.ariaActiveDescendantElement = element ?? null
+	}
+
+	private static isTextField(target: EventTarget | undefined) {
+		return target instanceof HTMLTextAreaElement
+			|| (target instanceof HTMLInputElement && !NavigabilityController.nonTextInputTypes.includes(target.type))
+			|| (target instanceof HTMLElement && target.isContentEditable)
 	}
 
 	private stampItem({ element, options }: IndexabilityItem<T>, firstNavigable = this._index === -1 ? this.closestNavigable(0, 1, false) : -1) {

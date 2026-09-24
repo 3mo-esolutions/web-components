@@ -927,7 +927,7 @@ describe('SelectabilityController', () => {
 		})
 
 		it('tells the host it takes more than one', async () => {
-			expect(fixture.component.hasAttribute('aria-multiselectable')).toBe(true)
+			expect(fixture.component.getAttribute('aria-multiselectable')).toBe('true')
 
 			fixture.component.selectability = Selectability.Single
 			await fixture.update()

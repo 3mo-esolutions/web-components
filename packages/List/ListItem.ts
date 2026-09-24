@@ -43,6 +43,10 @@ export class ListItem extends Component {
 				opacity: 0.5;
 			}
 
+			:host([data-navigability=current]) {
+				background-color: var(--mo-color-transparent-gray);
+			}
+
 			:host(:focus) {
 				outline: none;
 			}

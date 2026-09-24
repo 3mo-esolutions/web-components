@@ -1,6 +1,6 @@
 import { component, Component, html, repeat, state } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { NavigabilityController, type NavigabilityChange, type NavigabilityFocus } from './NavigabilityController.js'
+import { NavigabilityController, type NavigabilityChange, type NavigabilityFocus, type NavigabilityOrientation } from './NavigabilityController.js'
 
 type Fruit = { readonly id: number, readonly name: string, readonly disabled?: boolean }
 
@@ -14,6 +14,8 @@ class NavigabilityTest extends Component {
 	wrap = false
 	typeahead: boolean | ((fruit: Fruit) => string) = true
 	stamping = true
+	orientation: NavigabilityOrientation = 'vertical'
+	keyboardTarget?: EventTarget
 	handleKeyDown?: (event: KeyboardEvent, item: Fruit | undefined) => boolean | void
 
 	readonly changes = new Array<NavigabilityChange<Fruit>>()
@@ -26,6 +28,8 @@ class NavigabilityTest extends Component {
 		get wrap() { return host.wrap },
 		get typeahead() { return host.typeahead },
 		get stamping() { return host.stamping },
+		get orientation() { return host.orientation },
+		get keyboardTarget() { return host.keyboardTarget },
 		handleChange: change => host.changes.push(change),
 		handleKeyDown: (event, item) => host.handleKeyDown?.(event, item),
 	}))
@@ -231,6 +235,35 @@ describe('NavigabilityController', () => {
 			expect(controller().index).toBe(0)
 		})
 
+		it('should listen on a keyboard target that only exists after an update', async () => {
+			const input = fixture.component.shadowRoot!.appendChild(document.createElement('input'))
+			fixture.component.keyboardTarget = input
+			fixture.component.requestUpdate()
+			await fixture.updateComplete
+
+			keyDown(input, 'ArrowDown')
+			expect(controller().index).toBe(0)
+
+			keyDown(fixture.component, 'ArrowDown')
+			expect(controller().index).toBe(0)
+		})
+
+		it('should leave a text field as the keyboard target its caret keys and its typing', async () => {
+			const input = fixture.component.shadowRoot!.appendChild(document.createElement('input'))
+			fixture.component.keyboardTarget = input
+			fixture.component.orientation = 'both'
+			fixture.component.requestUpdate()
+			await fixture.updateComplete
+
+			for (const key of ['Home', 'End', 'ArrowLeft', 'ArrowRight', 'b']) {
+				expect(keyDown(input, key).defaultPrevented, key).toBe(false)
+			}
+			expect(controller().index).toBeUndefined()
+
+			expect(keyDown(input, 'ArrowDown').defaultPrevented).toBe(true)
+			expect(controller().index).toBe(0)
+		})
+
 		it('should ignore keys while disabled by a prior default prevention', () => {
 			const event = new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true, cancelable: true })
 			event.preventDefault()
@@ -332,15 +365,47 @@ describe('NavigabilityController', () => {
 			expect(fixture.component.shadowRoot!.activeElement).toBe(fixture.component.elements[1]!)
 		})
 
-		it('should announce the current item through aria-activedescendant instead, in that strategy', async () => {
+		const announceOnListbox = async () => {
+			const listbox = fixture.component.shadowRoot!.querySelector<HTMLElement>('[role=listbox]')!
 			fixture.component.navigabilityFocus = 'activedescendant'
+			fixture.component.keyboardTarget = listbox
 			fixture.component.requestUpdate()
 			await fixture.updateComplete
+			return listbox
+		}
+
+		it('should announce the current item through aria-activedescendant on the keyboard target instead, in that strategy', async () => {
+			const listbox = await announceOnListbox()
 
 			controller().goTo(2)
 
-			expect(fixture.component.getAttribute('aria-activedescendant')).toBe(fixture.component.elements[2]!.id)
+			expect(listbox.ariaActiveDescendantElement).toBe(fixture.component.elements[2]!)
 			expect(fixture.component.elements.every(element => element.tabIndex === -1 || !element.hasAttribute('tabindex'))).toBe(true)
+		})
+
+		it('should announce the current item to a keyboard target in a shadow root below the items, where an id cannot reach', async () => {
+			const field = document.createElement('div')
+			fixture.component.shadowRoot!.append(field)
+			const input = field.attachShadow({ mode: 'open' }).appendChild(document.createElement('input'))
+			fixture.component.navigabilityFocus = 'activedescendant'
+			fixture.component.keyboardTarget = input
+			fixture.component.requestUpdate()
+			await fixture.updateComplete
+
+			keyDown(input, 'ArrowDown')
+			keyDown(input, 'ArrowDown')
+
+			expect(input.ariaActiveDescendantElement).toBe(fixture.component.elements[1]!)
+		})
+
+		it('should withdraw the announcement once the cursor is cleared', async () => {
+			const listbox = await announceOnListbox()
+			controller().goTo(2)
+
+			controller().clear()
+
+			expect(listbox.ariaActiveDescendantElement).toBeNull()
+			expect(listbox.hasAttribute('aria-activedescendant')).toBe(false)
 		})
 
 		it('should stamp nothing when told so', async () => {

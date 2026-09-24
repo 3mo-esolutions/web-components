@@ -488,7 +488,11 @@ export class SelectabilityController<T, TItemOptions extends SelectabilityItemOp
 	private stampHost() {
 		const role = this.host.role ?? this.host.getAttribute('role') ?? ''
 		if (SelectabilityController.multiselectableRoles.includes(role)) {
-			this.host.toggleAttribute('aria-multiselectable', this.multiple)
+			if (this.multiple) {
+				this.host.setAttribute('aria-multiselectable', 'true')
+			} else {
+				this.host.removeAttribute('aria-multiselectable')
+			}
 		}
 	}
 

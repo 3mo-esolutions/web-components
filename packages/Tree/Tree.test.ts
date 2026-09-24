@@ -61,7 +61,7 @@ describe('Tree', () => {
 		await fixture.updateComplete
 
 		expect(fixture.component.value).toEqual(['readme', 'taxes'])
-		expect(fixture.component.hasAttribute('aria-multiselectable')).toBe(true)
+		expect(fixture.component.getAttribute('aria-multiselectable')).toBe('true')
 	})
 
 	it('should close the item it belongs to, which reports it itself', async () => {
