@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/context-menu",
-	"version": "0.7.0",
+	"version": "0.8.0",
 	"description": "A web component to display a context menu",
 	"repository": {
 		"type": "git",
@@ -24,7 +24,7 @@
 	"dependencies": {
 		"tslib": "x",
 		"@a11d/lit": "x",
-		"@3mo/menu": ">=0.10.x",
+		"@3mo/menu": ">=0.14.1",
 		"@3mo/popover": ">=0.11.x"
 	}
 }

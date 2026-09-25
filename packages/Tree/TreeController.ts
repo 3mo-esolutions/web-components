@@ -54,7 +54,6 @@ export class TreeController<T extends HTMLElement, THost extends TreeHost = Tree
 
 	protected readonly options: TreeControllerOptions<T>
 
-	private registered = new Set<T>()
 	private visibleCache?: {
 		readonly nodes: ReadonlyArray<HierarchyNode<T>>
 		readonly expanded: ReadonlyArray<T>
@@ -177,19 +176,11 @@ export class TreeController<T extends HTMLElement, THost extends TreeHost = Tree
 	}
 
 	private register() {
-		const registered = new Set<T>()
-		for (const [index, node] of this.visible.entries()) {
-			registered.add(node.data)
-			this.indexability.register(node.data, { index, data: node.data, disabled: this.isDisabled(node.data) })
+		const removed = this.indexability.setItems(this.visible.map(node => node.data), (item, index) => ({ index, data: item, disabled: this.isDisabled(item) }))
+		for (const item of removed) {
+			item.removeAttribute('tabindex')
+			delete item.dataset.navigability
 		}
-		for (const item of this.registered) {
-			if (!registered.has(item)) {
-				this.indexability.unregister(item)
-				item.removeAttribute('tabindex')
-				delete item.dataset.navigability
-			}
-		}
-		this.registered = registered
 	}
 
 	/** What the hierarchy knows and no primitive does. */

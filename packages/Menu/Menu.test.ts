@@ -158,8 +158,7 @@ describe('Menu', () => {
 		it('should focus the selected item when opened', async () => {
 			await open()
 
-			expect(fixture.component.list.focusController.focusedItemIndex).toBe(selectedIndex)
-			expect(fixture.component.items[selectedIndex]!.hasAttribute('focused')).toBe(true)
+			expect(document.activeElement).toBe(fixture.component.items[selectedIndex]!)
 		})
 
 		it('should scroll the selected item into view when opened', async () => {
@@ -178,12 +177,10 @@ describe('Menu', () => {
 			fixture.component.open = false
 			await fixture.updateComplete
 
-			expect(fixture.component.list.focusController.focusedItemIndex).toBeUndefined()
-
 			fixture.component.value = [10]
 			await open()
 
-			expect(fixture.component.list.focusController.focusedItemIndex).toBe(10)
+			expect(document.activeElement).toBe(fixture.component.items[10]!)
 		})
 	})
 
@@ -250,9 +247,10 @@ describe('Menu', () => {
 			expect(fixture.component.menu.open).toBe(false)
 		})
 
-		it('should not open on those keys when manual', () => {
+		it('should not open on those keys when manual', async () => {
 			fixture.component.menu.manual = true
 			fixture.component.siblingMenu.manual = true
+			await Promise.all([fixture.component.menu.updateComplete, fixture.component.siblingMenu.updateComplete])
 
 			const event = keydown(fixture.component, 'ArrowDown')
 
@@ -359,27 +357,26 @@ describe('Menu', () => {
 			expect(changeSpy).toHaveBeenCalledExactlyOnceWith([1])
 		})
 
-		it('should reflect a programmatically assigned value in the list\'s selection without dispatching change', async () => {
+		it('should reflect a programmatically assigned value on its items without dispatching change', async () => {
 			const changeSpy = vi.fn()
 			fixture.component.change.subscribe(changeSpy)
 
 			fixture.component.value = [2]
 			await fixture.updateComplete
-			await fixture.component.list.updateComplete
+			await fixture.component.items[2]!.updateComplete
 
-			expect(fixture.component.list.value).toEqual([2])
-			expect(fixture.component.list.selectabilityController.isSelected(fixture.component.items[2]!)).toBe(true)
+			expect((fixture.component.items as unknown as Array<{ selected: boolean }>).map(item => item.selected)).toEqual([false, false, true])
+			expect(fixture.component.items[2]!.getAttribute('aria-checked')).toBe('true')
 			expect(changeSpy).not.toHaveBeenCalled()
 		})
 
-		for (const selectability of [SelectableListSelectability.Single, SelectableListSelectability.Multiple]) {
-			it(`should forward its selectability to the list (${selectability})`, async () => {
+		for (const [selectability, role] of [[SelectableListSelectability.Single, 'menuitemradio'], [SelectableListSelectability.Multiple, 'menuitemcheckbox']] as const) {
+			it(`should announce its selectable items as ${role} (${selectability})`, async () => {
 				fixture.component.selectability = selectability
 
 				await fixture.updateComplete
 
-				expect(fixture.component.list.selectability).toBe(selectability)
-				expect(fixture.component.list.selectabilityController.selectability).toBe(selectability)
+				expect(fixture.component.items.map(item => item.getAttribute('role'))).toEqual(Array(3).fill(role))
 			})
 		}
 	})

@@ -58,7 +58,7 @@ export class Option<T> extends SelectionListItem {
 				width: 100%;
 			}
 
-			:host([focused]) {
+			:host([data-navigability=current]) {
 				background-color: var(--mo-color-transparent-gray);
 			}
 

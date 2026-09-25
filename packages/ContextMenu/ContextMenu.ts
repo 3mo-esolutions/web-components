@@ -55,8 +55,11 @@ export class ContextMenu extends Menu {
 		document.removeEventListener('click', this.handleDocumentClick)
 	}
 
-	protected override openUpdated() {
-		super.openUpdated()
+	protected override updated(props: PropertyValues<this>) {
+		super.updated(props)
+		if (!props.has('open')) {
+			return
+		}
 		if (this.open) {
 			document.addEventListener('click', this.handleDocumentClick)
 		} else {
@@ -85,9 +88,6 @@ export class ContextMenu extends Menu {
 			contextMenu.setOpen(false)
 		}
 		super.openWith(...parameters)
-		if (this.open) {
-			this.updateComplete.then(() => this.items[0]?.focus())
-		}
 	}
 }
 

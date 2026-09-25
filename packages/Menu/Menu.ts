@@ -1,8 +1,9 @@
-import { Component, EventListenerController, component, css, event, html, ifDefined, property, query, state } from '@a11d/lit'
+import { Component, component, css, event, html, ifDefined, property, query, state, type PropertyValues } from '@a11d/lit'
 import { Popover, type PopoverCoordinates } from '@3mo/popover'
 import { SlotController } from '@3mo/slot-controller'
 import { disabledProperty } from '@3mo/disabled-property'
-import { listItem, SelectableListSelectability, type ListElement, type ListItem, type SelectableList } from '@3mo/list'
+import { listItems, SelectableListSelectability, type ListItem } from '@3mo/list'
+import { MenuController } from './MenuController.js'
 import type { MenuPlacement, MenuAlignment } from './index.js'
 
 export function isMenu(element: EventTarget): element is HTMLElement {
@@ -34,77 +35,54 @@ export function isMenu(element: EventTarget): element is HTMLElement {
  */
 @component('mo-menu')
 export class Menu extends Component {
-	static readonly preventClose = Symbol('Menu.preventClose')
+	static readonly preventClose: typeof MenuController.preventClose = MenuController.preventClose
 
 	@event() readonly change!: EventDispatcher<Array<number>>
 	@event() readonly openChange!: EventDispatcher<boolean>
 	@event() readonly itemsChange!: EventDispatcher<Array<ListItem & HTMLElement>>
 
-	override readonly role = 'menu'
 	override readonly tabIndex = -1
 
 	protected readonly slotController = new SlotController(this)
-	protected readonly anchorKeyDownEventController = new EventListenerController(this, {
-		type: 'keydown',
-		target: () => this.anchor || [],
-		listener: (event: KeyboardEvent) => {
-			// A key which something around the anchor has already claimed is not an opening key: a menu bar
-			// moves its cursor with Home and End, which would otherwise open the menu they moved away from.
-			if (this.manual || event.defaultPrevented || event.ctrlKey || event.shiftKey || event.composedPath().some(isMenu)) {
-				return
-			}
 
-			switch (event.key) {
-				case 'Down':
-				case 'ArrowDown':
-				case 'Up':
-				case 'ArrowUp':
-				case 'Home':
-				case 'PageUp':
-				case 'End':
-				case 'PageDown':
-					if (this.open === false) {
-						// Prevent scrolling the page
-						event.preventDefault()
-						event.stopPropagation()
-						this.setOpen(true)
-					}
-					break
-				case 'Tab':
-					if (this.open === true) {
-						event.stopPropagation()
-						this.setOpen(false)
-					}
-					break
-				default:
-					break
-			}
-		}
-	})
-
-
-	@property({
-		type: Object,
-		updated(this: Menu) {
-			this.anchorKeyDownEventController.resubscribe()
-			this.announceAnchor()
-		},
-	}) anchor!: HTMLElement
+	@property({ type: Object }) anchor!: HTMLElement
 	@property() placement?: MenuPlacement
 	@property() alignment?: MenuAlignment
-	@property({ type: Boolean, reflect: true, updated(this: Menu) { this.openUpdated() } }) open = false
+	@property({ type: Boolean, reflect: true }) open = false
 	@property() target?: string
 	@property({ type: Boolean }) manual = false
 	@property({ type: Boolean }) preventOpenOnAnchorEnter = false
 	@property() selectability = SelectableListSelectability.Multiple
-	@property({ type: Array, bindingDefault: true }) value?: SelectableList['value']
+	@property({ type: Array, bindingDefault: true }) value?: Array<number>
 	@disabledProperty() disabled = false
 
 	@state() protected coordinates?: PopoverCoordinates
 
-	@query('mo-selectable-list') readonly list!: ListElement & SelectableList
+	@query('slot') private readonly slotElement?: HTMLSlotElement
 
-	get items() { return (this.list?.items ?? []) as Array<ListItem & HTMLElement> }
+	private _items = new Array<ListItem & HTMLElement>()
+	get items() { return this._items }
+
+	protected readonly controller = new MenuController(this, host => {
+		const menu = host as Menu
+		return {
+			get items() { return menu.items },
+			get expanded() { return menu.open },
+			handleExpandedChange: open => menu.setOpen(open),
+			get selectability() { return menu.selectability },
+			get value() { return menu.value },
+			handleChange: value => {
+				menu.value = value
+				menu.change.dispatch(value)
+			},
+		}
+	})
+
+	/** A manual menu opens some other way, such as by a right-click, so its anchor is no menu button. */
+	protected override willUpdate(props: PropertyValues<this>) {
+		super.willUpdate(props)
+		this.controller.trigger.set(this.manual ? undefined : this.anchor)
+	}
 
 	openWith(e: MouseEvent | PopoverCoordinates) {
 		if (e instanceof MouseEvent) {
@@ -121,42 +99,6 @@ export class Menu extends Component {
 		if (!this.disabled && this.open !== open) {
 			this.open = open
 			this.openChange.dispatch(open)
-		}
-	}
-
-	/**
-	 * An anchor which opens a menu is a menu button, and that is what announces the menu before it is
-	 * open. A manual menu has no such anchor: it is opened by something other than activating it — a
-	 * right-click, or the consumer itself.
-	 */
-	private announcedAnchor?: HTMLElement
-	protected announceAnchor() {
-		const anchor = this.manual ? undefined : this.anchor
-		if (this.announcedAnchor && this.announcedAnchor !== anchor) {
-			this.announcedAnchor.removeAttribute('aria-haspopup')
-			this.announcedAnchor.removeAttribute('aria-expanded')
-		}
-		this.announcedAnchor = anchor
-		anchor?.setAttribute('aria-haspopup', 'menu')
-		anchor?.setAttribute('aria-expanded', String(this.open))
-	}
-
-	protected openUpdated() {
-		this.announceAnchor()
-		if (!this.open) {
-			// Dropped rather than remembered, so that the next opening starts from whatever is selected
-			// by then instead of resuming where the closed one left off.
-			this.list.focusController.focusedItemIndex = undefined
-			this.list.focusController.focusOut()
-		}
-	}
-
-	protected handlePopoverOpenChange(open: boolean) {
-		this.setOpen(open)
-		if (open) {
-			// Deliberately here and not in `openUpdated`: that runs while the popover is still
-			// `display: none`, where an unlaid-out list cannot be scrolled to its selected item.
-			this.list.focusController.focusIn()
 		}
 	}
 
@@ -189,20 +131,13 @@ export class Menu extends Component {
 				placement=${ifDefined(this.placement)}
 				alignment=${ifDefined(this.alignment)}
 				?open=${this.open}
-				@openChange=${(e: CustomEvent<boolean>) => this.handlePopoverOpenChange(e.detail)}
+				@openChange=${(e: CustomEvent<boolean>) => this.setOpen(e.detail)}
 				.coordinates=${this.coordinates}
 				.shouldOpen=${this.shouldOpen}
 			>
-				<mo-selectable-list part='list'
-					selectability=${ifDefined(this.selectability)}
-					.value=${this.value ?? []}
-					@change=${this.handleChange.bind(this)}
-					@click=${this.handleMenuClick.bind(this)}
-					@itemsChange=${this.handleItemsChange.bind(this)}
-					@listKeyDown=${(e: CustomEvent<KeyboardEvent>) => this.dispatchEvent(new CustomEvent('listKeyDown', { detail: e.detail }))}
-				>
-					<slot></slot>
-				</mo-selectable-list>
+				<div part='list' ${this.controller.menu.ref()}>
+					<slot @slotchange=${() => this.handleItemsChange()}></slot>
+				</div>
 			</mo-popover>
 		`
 	}
@@ -212,20 +147,9 @@ export class Menu extends Component {
 			|| ((e as any)[Popover.isSyntheticClickEvent] === true && this.preventOpenOnAnchorEnter === false)
 	}
 
-	protected handleChange(e: CustomEvent<Array<number>>) {
-		this.value = e.detail
-		this.change.dispatch(e.detail)
-	}
-
-	protected handleMenuClick(e: PointerEvent & { [Menu.preventClose]?: boolean }) {
-		if (e[Menu.preventClose] !== true &&
-			e.composedPath().some(element => !!(element as Element)[listItem])
-		) {
-			this.setOpen(false)
-		}
-	}
-
 	protected handleItemsChange() {
+		this._items = (this.slotElement?.[listItems] ?? []) as Array<ListItem & HTMLElement>
+		this.controller.handleItemsChange()
 		this.itemsChange.dispatch(this.items)
 	}
 }

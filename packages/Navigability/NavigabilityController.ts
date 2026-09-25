@@ -590,7 +590,8 @@ export class NavigabilityController<T, THost extends NavigabilityHost = Navigabi
 		if (!(this.host instanceof Node)) {
 			return false
 		}
-		for (let node: Node | null = this.activeElement; node; node = node.parentNode ?? (node instanceof ShadowRoot ? node.host : null)) {
+		// Through the slots an item is assigned to, as a submenu's items are slotted twice over.
+		for (let node: Node | null = this.activeElement; node; node = (node as Element).assignedSlot ?? node.parentNode ?? (node instanceof ShadowRoot ? node.host : null)) {
 			if (node === this.host) {
 				return true
 			}

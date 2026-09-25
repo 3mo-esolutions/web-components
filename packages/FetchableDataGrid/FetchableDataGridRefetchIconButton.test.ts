@@ -74,7 +74,7 @@ describe('FetchableDataGridRefetchIconButton', () => {
 			const menu = ContextMenu.openInstance!
 			await menu.updateComplete
 			while (menu.items.length === 0) {
-				await menu.list.updateComplete
+				await menu.updateComplete
 				await tick()
 			}
 			return menu

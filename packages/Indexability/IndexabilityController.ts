@@ -35,7 +35,8 @@ export interface IndexabilityObserver<TData = unknown, TItemOptions extends Inde
  * readonly selectability = new SelectabilityController(this, { indexability: this.indexability })
  * ```
  *
- * Items no template can put a directive on are registered through {@link register} and {@link unregister}.
+ * Items no template can put a directive on are added through {@link setItems}, or one by one through
+ * {@link addItem} and {@link deleteItem}.
  * Only rendered items are known here, so anything needing the full universe takes it from the owner's data.
  */
 export class IndexabilityController<TData = unknown, TItemOptions extends IndexabilityItemOptions<TData> = IndexabilityItemOptions<TData>> extends Controller {
@@ -92,11 +93,35 @@ export class IndexabilityController<TData = unknown, TItemOptions extends Indexa
 		return undefined
 	}
 
-	register(element: HTMLElement, options: TItemOptions) {
+	addItem(element: HTMLElement, options: TItemOptions) {
 		this.elements.set(element, options)
 	}
 
-	unregister(element: HTMLElement) {
+	deleteItem(element: HTMLElement) {
 		this.elements.delete(element)
+	}
+
+	/**
+	 * Makes these elements, such as slotted ones, the items, deleting every other one. Returns the ones it
+	 * deleted. For a registry whose items are all added by hand, as it deletes a template's items too.
+	 */
+	setItems<TElement extends HTMLElement>(elements: ReadonlyArray<TElement>, options: (element: TElement, index: number) => TItemOptions) {
+		const kept = new Set<HTMLElement>(elements)
+		const deleted = [...this.elements].filter(element => !kept.has(element)) as Array<TElement>
+		for (const element of deleted) {
+			this.deleteItem(element)
+		}
+		elements.forEach((element, index) => this.addItem(element, options(element, index)))
+		return deleted
+	}
+
+	/** @deprecated Use {@link addItem}. */
+	register(element: HTMLElement, options: TItemOptions) {
+		this.addItem(element, options)
+	}
+
+	/** @deprecated Use {@link deleteItem}. */
+	unregister(element: HTMLElement) {
+		this.deleteItem(element)
 	}
 }

@@ -51,21 +51,13 @@ async function closeMenu(component?: FetchableSelect) {
 	}
 	component.open = false
 	await component.updateComplete
-	const menu = component.menu
-	if (menu) {
-		menu.open = false
-		await menu.updateComplete
-		if (menu.list) {
-			menu.list.focusController.focusOut()
+	const popover = component.popoverElement
+	if (popover) {
+		popover.open = false
+		if (popover.matches(':popover-open')) {
+			popover.hidePopover()
 		}
-		const popover = menu.renderRoot.querySelector('mo-popover')
-		if (popover) {
-			popover.open = false
-			if (popover.matches(':popover-open')) {
-				popover.hidePopover()
-			}
-			await popover.updateComplete
-		}
+		await popover.updateComplete
 	}
 }
 

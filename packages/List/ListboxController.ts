@@ -2,6 +2,7 @@ import { Controller, ElementRef, eventListener, type ReactiveElement } from '@a1
 import { IndexabilityController } from '@3mo/indexability'
 import { NavigabilityController, type NavigabilityChange } from '@3mo/navigability'
 import { Selectability, SelectabilityController, SelectabilityInteraction, type SelectabilityItemOptions } from '@3mo/selectability'
+import { SelectionListItemChangeEvent } from './SelectionListItemChangeEvent.js'
 
 export type ListboxOrientation = 'vertical' | 'horizontal'
 
@@ -21,6 +22,8 @@ export interface ListboxControllerOptions<T> {
 	readonly selectionFollowsFocus?: boolean
 	/** Defaults to `vertical`. */
 	readonly orientation?: ListboxOrientation
+	/** The arrows run on from the last option to the first and back. */
+	readonly wrap?: boolean
 	/** The element that keeps focus while the options are browsed, such as a combobox's input. The active option is then announced on it instead of receiving focus. */
 	readonly combobox?: HTMLElement
 }
@@ -83,6 +86,8 @@ export class ListboxController<T, THost extends ReactiveElement = ReactiveElemen
 			key: item => controller.keyOf(item),
 			get focus() { return controller.options.combobox ? 'activedescendant' : 'roving' },
 			get orientation() { return controller.options.orientation ?? 'vertical' },
+			get wrap() { return controller.options.wrap },
+			isNavigable: item => controller.isNavigable(item),
 			typeahead: true,
 			get keyboardTarget() { return controller.options.combobox ?? controller.listbox.value ?? host },
 			handleChange: change => controller.handleCursorChange(change),
@@ -94,6 +99,7 @@ export class ListboxController<T, THost extends ReactiveElement = ReactiveElemen
 	private renderedItems?: ReadonlyArray<T>
 	private readonly disabled = new Set<unknown>()
 	private readonly keys = new WeakMap<HTMLElement, unknown>()
+	private readonly elements = new Map<unknown, HTMLElement>()
 	private entered = false
 
 	/** Registers an option: `<li ${controller.option({ index, data })}>`. */
@@ -106,6 +112,27 @@ export class ListboxController<T, THost extends ReactiveElement = ReactiveElemen
 		} else {
 			this.navigability.goTo(item, { method: 'programmatic' })
 		}
+	}
+
+	goFirst() {
+		this.navigability.goFirst({ method: 'programmatic' })
+	}
+
+	goLast() {
+		this.navigability.goLast({ method: 'programmatic' })
+	}
+
+	/** Makes the first selected option the active one. Returns whether there was one. */
+	goToSelection() {
+		const selected = this.firstSelected
+		if (selected !== undefined) {
+			this.goTo(selected)
+		}
+		return selected !== undefined
+	}
+
+	private get firstSelected() {
+		return this.items.find(item => this.selectability.isSelected(item) && !this.disabled.has(this.keyOf(item)))
 	}
 
 	private get items() {
@@ -143,6 +170,7 @@ export class ListboxController<T, THost extends ReactiveElement = ReactiveElemen
 		this.renderedItems = undefined
 		const key = this.keyOf(data)
 		this.keys.set(element, key)
+		this.elements.set(key, element)
 		element.setAttribute('role', 'option')
 		if (disabled) {
 			this.disabled.add(key)
@@ -155,19 +183,31 @@ export class ListboxController<T, THost extends ReactiveElement = ReactiveElemen
 
 	private forget(element: HTMLElement) {
 		this.renderedItems = undefined
-		this.disabled.delete(this.keys.get(element))
+		const key = this.keys.get(element)
+		this.disabled.delete(key)
+		if (this.elements.get(key) === element) {
+			this.elements.delete(key)
+		}
 		this.keys.delete(element)
+	}
+
+	/** Disabled options are passed over, and so are options not shown, such as a collapsed item's children. */
+	private isNavigable(item: T) {
+		const key = this.keyOf(item)
+		const element = this.elements.get(key)
+		return !this.disabled.has(key) && (!element || element.checkVisibility())
 	}
 
 	private handleCursorChange({ item, method, event }: NavigabilityChange<T>) {
 		const entering = !this.entered
 		this.entered = true
+		this.markKeyboardFocus(item === undefined ? undefined : this.elementOf(item), method === 'keyboard')
 		if (item === undefined) {
 			return
 		}
 		// Tab lands on the first option before any cursor exists; the pattern wants it on the selection.
 		if (entering && event?.type === 'focusin' && method !== 'pointer') {
-			const selected = this.items.find(candidate => this.selectability.isSelected(candidate) && !this.disabled.has(this.keyOf(candidate)))
+			const selected = this.firstSelected
 			if (selected !== undefined && this.keyOf(selected) !== this.keyOf(item)) {
 				this.navigability.goTo(selected, { method, event })
 				return
@@ -230,8 +270,24 @@ export class ListboxController<T, THost extends ReactiveElement = ReactiveElemen
 	}
 
 	/** A key activates an option the way a click does, so the option's own click handlers run for it too. */
+	private elementOf(item: T) {
+		return this.elements.get(this.keyOf(item))
+	}
+
+	private keyboardFocused?: HTMLElement
+
+	/** The active option of a combobox never takes focus, so the one a key reached shows keyboard focus this way. */
+	private markKeyboardFocus(element: HTMLElement | undefined, keyboard: boolean) {
+		if (!this.options.combobox) {
+			return
+		}
+		this.keyboardFocused?.removeAttribute('data-keyboard-focus')
+		this.keyboardFocused = keyboard ? element : undefined
+		this.keyboardFocused?.setAttribute('data-keyboard-focus', '')
+	}
+
 	private press(item: T, event: KeyboardEvent) {
-		const element = this.indexability.items.find(candidate => this.keyOf(candidate.options.data) === this.keyOf(item))?.element
+		const element = this.elementOf(item)
 		if (!element) {
 			this.activate(item, event)
 			return
@@ -249,8 +305,21 @@ export class ListboxController<T, THost extends ReactiveElement = ReactiveElemen
 	@eventListener({ type: 'click', options: { capture: true } })
 	protected handleClick(event: MouseEvent) {
 		const item = this.indexability.itemAt(event.composedPath())
-		if (item && !item.options.disabled) {
+		if (item && !item.options.disabled && !('selected' in item.element)) {
 			this.activate(item.options.data, event)
+		}
+	}
+
+	/** An option rendering its own `selected` selects itself and reports it here, on the render root, which rendered and slotted options both reach. */
+	@eventListener({ type: 'change', target(this: ListboxController<unknown>) { return this.host.renderRoot } })
+	protected handleOptionChange(event: Event) {
+		if (!(event instanceof SelectionListItemChangeEvent)) {
+			return
+		}
+		const item = this.indexability.itemAt(event.composedPath())
+		if (item && !item.options.disabled && this.selectability.isSelectable(item.options.data)) {
+			event.stopImmediatePropagation()
+			this.selectability.select(item.options.data, { selected: event.selected, preserve: true, event })
 		}
 	}
 

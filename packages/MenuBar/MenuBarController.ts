@@ -134,7 +134,7 @@ export class MenuBarController<T extends MenuBarItemElement = MenuBarItemElement
 			const trigger = item.trigger
 			if (trigger) {
 				trigger.setAttribute('role', 'menuitem')
-				this.navigability.indexability.register(trigger, { index, data: item, disabled: !!item.disabled })
+				this.navigability.indexability.addItem(trigger, { index, data: item, disabled: !!item.disabled })
 			}
 			this.subscribe(item)
 		})
@@ -164,7 +164,7 @@ export class MenuBarController<T extends MenuBarItemElement = MenuBarItemElement
 	private unsubscribe(item: T) {
 		const trigger = item.trigger
 		if (trigger) {
-			this.navigability.indexability.unregister(trigger)
+			this.navigability.indexability.deleteItem(trigger)
 		}
 		const menu = item.menu
 		if (menu) {

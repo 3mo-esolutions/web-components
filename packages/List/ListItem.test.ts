@@ -1,6 +1,8 @@
 import { html } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
+import { userEvent } from 'vitest/browser'
 import { type ListItem } from './ListItem.js'
+import type { SelectionListItem } from './SelectionListItem.js'
 import './index.js'
 
 describe('ListItem', () => {
@@ -8,22 +10,17 @@ describe('ListItem', () => {
 		<mo-list-item icon='star'>Star item</mo-list-item>
 	`)
 
-	const ripple = () => fixture.component.renderRoot.querySelector('mo-list-item-ripple')!
-
-	const markFocused = async () => {
-		fixture.component.toggleAttribute('focused', true)
-		await fixture.updateComplete
-		await ripple().updateComplete
-	}
-
 	const recordClicks = () => {
 		const clicks = new Array<Event>()
 		fixture.component.addEventListener('click', event => clicks.push(event))
 		return clicks
 	}
 
-	const keyDown = (key: string, options?: KeyboardEventInit) =>
-		window.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, ...options }))
+	const keyDown = (key: string, options?: KeyboardEventInit) => {
+		const event = new KeyboardEvent('keydown', { key, bubbles: true, composed: true, cancelable: true, ...options })
+		fixture.component.dispatchEvent(event)
+		return event
+	}
 
 	it('should have the listitem role and take a place in the tab order', () => {
 		expect(fixture.component.role).toBe('listitem')
@@ -49,17 +46,15 @@ describe('ListItem', () => {
 	})
 
 	describe('keyboard activation', () => {
-		it('should dispatch a click on Enter while marked focused', async () => {
-			await markFocused()
+		it('should click itself on Enter, claiming the key', () => {
 			const clicks = recordClicks()
 
-			keyDown('Enter')
+			expect(keyDown('Enter').defaultPrevented).toBe(true)
 
 			expect(clicks.length).toBe(1)
 		})
 
-		it('should dispatch a click on Space, unless preventClickOnSpace', async () => {
-			await markFocused()
+		it('should click itself on Space, unless preventClickOnSpace', async () => {
 			const clicks = recordClicks()
 
 			keyDown(' ')
@@ -67,27 +62,12 @@ describe('ListItem', () => {
 
 			fixture.component.preventClickOnSpace = true
 			await fixture.updateComplete
-			await ripple().updateComplete
 
 			keyDown(' ')
 			expect(clicks.length).toBe(1)
 		})
 
-		it('should not activate while disabled or while not focused', async () => {
-			const clicks = recordClicks()
-
-			keyDown('Enter')
-			expect(clicks.length).toBe(0)
-
-			fixture.component.disabled = true
-			await markFocused()
-
-			keyDown('Enter')
-			expect(clicks.length).toBe(0)
-		})
-
-		it('should not repeat the activation while the key is held', async () => {
-			await markFocused()
+		it('should not repeat the activation while the key is held', () => {
 			const clicks = recordClicks()
 
 			keyDown('Enter')
@@ -95,19 +75,78 @@ describe('ListItem', () => {
 
 			expect(clicks.length).toBe(1)
 		})
-	})
 
-	describe('focus visuals', () => {
-		const focusRing = () => fixture.component.renderRoot.querySelector('mo-focus-ring')
-
-		it('should show the focus ring only for keyboard focus (focused together with data-keyboard-focus)', async () => {
-			await markFocused()
-			expect(focusRing()).toBeNull()
-
-			fixture.component.toggleAttribute('data-keyboard-focus', true)
-			await fixture.update()
-
-			expect(focusRing()).not.toBeNull()
+		it('should leave the keys to a listbox or a menu around it, which activates its own items', () => {
+			const clicks = recordClicks()
+			const parent = fixture.component.parentNode!
+			const listbox = Object.assign(document.createElement('div'), { role: 'listbox' })
+			parent.append(listbox)
+			listbox.append(fixture.component)
+			try {
+				expect(keyDown('Enter').defaultPrevented).toBe(false)
+				expect(clicks.length).toBe(0)
+			} finally {
+				parent.append(fixture.component)
+				listbox.remove()
+			}
 		})
+
+		it('should leave a key something inside it already claimed', () => {
+			const clicks = recordClicks()
+			const event = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, composed: true, cancelable: true })
+			event.preventDefault()
+
+			fixture.component.dispatchEvent(event)
+
+			expect(clicks.length).toBe(0)
+		})
+	})
+})
+describe('ListItem in a plain list', () => {
+	const fixture = new ComponentTestFixture(html`
+		<div>
+			<button id='before'>Before</button>
+			<mo-list>
+				<mo-list-item>Plain</mo-list-item>
+				<mo-checkbox-list-item>Checkbox</mo-checkbox-list-item>
+				<mo-switch-list-item>Switch</mo-switch-list-item>
+				<mo-radio-list-item>Radio</mo-radio-list-item>
+			</mo-list>
+		</div>
+	`)
+
+	const item = <T = SelectionListItem>(name: string) => [...fixture.component.querySelectorAll('mo-list > *')].find(element => element.textContent?.trim() === name) as T
+
+	for (const name of ['Checkbox', 'Switch', 'Radio']) {
+		it(`should toggle the ${name.toLowerCase()} item on a real Enter and Space`, async () => {
+			const selectionItem = item(name)
+			selectionItem.focus()
+
+			await userEvent.keyboard('{Enter}')
+			await selectionItem.updateComplete
+			expect(selectionItem.selected).toBe(true)
+
+			if (name !== 'Radio') {
+				await userEvent.keyboard(' ')
+				await selectionItem.updateComplete
+				expect(selectionItem.selected).toBe(false)
+			}
+		})
+	}
+
+	it('should draw the focus ring for keyboard focus, and not for a click', async () => {
+		const plain = item<ListItem>('Plain')
+		const ring = () => plain.renderRoot.querySelector('mo-focus-ring')
+
+		fixture.component.querySelector<HTMLButtonElement>('#before')!.focus()
+		await userEvent.keyboard('{Tab}')
+		await plain.updateComplete
+		expect(document.activeElement).toBe(plain)
+		expect(ring()).not.toBeNull()
+
+		await userEvent.click(item<HTMLElement>('Checkbox'))
+		await userEvent.click(plain)
+		await plain.updateComplete
+		expect(ring()).toBeNull()
 	})
 })

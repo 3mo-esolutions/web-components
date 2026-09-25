@@ -1,5 +1,6 @@
 import { Component, component, html, query, render } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
+import { userEvent } from 'vitest/browser'
 import type { NestedMenuItem } from '@3mo/menu'
 import { ContextMenu } from './ContextMenu.js'
 import './index.js'
@@ -104,7 +105,19 @@ describe('ContextMenu', () => {
 			expect(getPopover(fixture.component.menu).coordinates).toEqual([160, 180])
 		})
 
-		it('should focus the first item once opened', async () => {
+		it('should focus the menu itself with no item active once opened by pointer, as native context menus do', async () => {
+			await open(fixture.component.menu)
+			await new Promise(resolve => setTimeout(resolve, 30))
+
+			expect(deepActiveElement()?.getAttribute('role')).toBe('menu')
+			expect(fixture.component.menu.items.some(item => item.dataset.navigability === 'current')).toBe(false)
+		})
+
+		it('should focus the first item once opened from the keyboard', async () => {
+			fixture.component.tabIndex = 0
+			await userEvent.keyboard('{Shift}')
+			fixture.component.focus()
+
 			await open(fixture.component.menu)
 			await new Promise(resolve => setTimeout(resolve, 30))
 
@@ -152,7 +165,7 @@ describe('ContextMenu', () => {
 		it('should stay open for an inside click that lands on no item', async () => {
 			await open(fixture.component.menu)
 
-			const list = fixture.component.menu.renderRoot.querySelector('mo-selectable-list')!
+			const list = fixture.component.menu.renderRoot.querySelector<HTMLElement>('[part=list]')!
 			list.dispatchEvent(new MouseEvent('click', { bubbles: true, composed: true }))
 
 			expect(fixture.component.menu.open).toBe(true)

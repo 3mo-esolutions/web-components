@@ -280,7 +280,7 @@ describe('EntityDataGrid', () => {
 			const menu = ContextMenu.openInstance!
 			await menu.updateComplete
 			while (menu.items.some(item => item.getAttribute('data-test-id') === 'edit') === false) {
-				await menu.list.updateComplete
+				await menu.updateComplete
 				await tick()
 			}
 

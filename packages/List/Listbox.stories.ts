@@ -275,9 +275,9 @@ class StoryListboxCombobox extends Component {
 		for (const option of this.children as HTMLCollectionOf<HTMLElement>) {
 			option.hidden = !option.textContent!.toLowerCase().includes(query)
 			if (option.hidden) {
-				this.cities.indexability.unregister(option)
+				this.cities.indexability.deleteItem(option)
 			} else {
-				this.cities.indexability.register(option, { index: index++, data: option.textContent!.trim() })
+				this.cities.indexability.addItem(option, { index: index++, data: option.textContent!.trim() })
 			}
 		}
 	}

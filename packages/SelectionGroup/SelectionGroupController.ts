@@ -126,7 +126,6 @@ export class SelectionGroupController<T extends SelectionGroupItem = SelectionGr
 		[SelectionGroupPattern.Toolbar, { hostRole: 'toolbar', clearsOnReactivation: false }],
 	])
 
-	private registered = new Array<T>()
 	private focused?: { readonly item: T, readonly index: number }
 	private lastItemRole?: string
 
@@ -211,22 +210,9 @@ export class SelectionGroupController<T extends SelectionGroupItem = SelectionGr
 	/** The items are the host's markup, so nothing rendered them and nothing registered them. */
 	private syncRegistries() {
 		const items = this.items
-		for (const previous of this.registered) {
-			if (!items.includes(previous)) {
-				this.navigability.indexability.unregister(previous)
-				this.selectability.indexability.unregister(previous)
-			}
-		}
-		items.forEach((item, index) => {
-			const options = { index, data: item, disabled: !!item.disabled }
-			this.navigability.indexability.register(item, options)
-			if (this.rendersOwnState(item)) {
-				this.selectability.indexability.unregister(item)
-			} else {
-				this.selectability.indexability.register(item, options)
-			}
-		})
-		this.registered = [...items]
+		const options = (item: T) => ({ index: items.indexOf(item), data: item, disabled: !!item.disabled })
+		this.navigability.indexability.setItems(items, options)
+		this.selectability.indexability.setItems(items.filter(item => !this.rendersOwnState(item)), options)
 	}
 
 	private stampItem(item: T) {

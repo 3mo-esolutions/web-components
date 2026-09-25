@@ -16,25 +16,19 @@ export class NestedMenuItem extends MenuItem {
 
 	/** Whether the submenu acted on it, which is what tells a menu bar around this menu to leave the key alone. */
 	private setOpen(open: boolean) {
-		if (this.disabled || !this.hasSubMenu || this.open === open || !this.focused) {
+		if (this.disabled || !this.hasSubMenu || this.open === open) {
 			return false
 		}
 		this.open = open
-		if (open) {
-			const focus = this.subMenu.list.focusController
-			focus.focusIn()
-			focus.focusedItemIndex = 0
-			focus.keyboardFocus = true
-		}
 		return true
 	}
 
 	readonly slotController = new SlotController(this)
 
-	@eventListener('listKeyDown')
-	protected handleKeyDown(event: CustomEvent<KeyboardEvent>) {
-		if (['Right', 'ArrowRight'].includes(event.detail.key) && this.setOpen(true)) {
-			event.detail.preventDefault()
+	@eventListener('keydown')
+	protected handleSubmenuKeyDown(event: KeyboardEvent) {
+		if (event.target === this && ['Right', 'ArrowRight'].includes(event.key) && this.setOpen(true)) {
+			event.preventDefault()
 		}
 	}
 
@@ -63,14 +57,6 @@ export class NestedMenuItem extends MenuItem {
 		`
 	}
 
-	protected override get rippleActive() {
-		return super.rippleActive && !this.open
-	}
-
-	protected override get focusRingActive() {
-		return super.focusRingActive && !this.open
-	}
-
 	protected override get template() {
 		return html`
 			${super.template}
@@ -87,10 +73,10 @@ export class NestedMenuItem extends MenuItem {
 			<mo-icon icon='chevron_right'></mo-icon>
 			<mo-menu .anchor=${this} placement='inline-end' alignment='start'
 				?open=${bind(this, 'open')}
-				@listKeyDown=${(e: CustomEvent<KeyboardEvent>) => {
-					e.stopImmediatePropagation()
-					if (['Left', 'ArrowLeft'].includes(e.detail.key) && this.setOpen(false)) {
-						e.detail.preventDefault()
+				@keydown=${(e: KeyboardEvent) => {
+					if (!e.defaultPrevented && ['Left', 'ArrowLeft'].includes(e.key) && this.setOpen(false)) {
+						e.preventDefault()
+						this.focus()
 					}
 				}}
 			>

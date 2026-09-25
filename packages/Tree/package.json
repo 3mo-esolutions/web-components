@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/tree",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"description": "A tree view: a hierarchy to browse, select from and act on, driven by data and built on the navigability, expandability and selectability controllers",
 	"repository": {
 		"type": "git",
@@ -28,7 +28,7 @@
 		"@a11d/lit": "x",
 		"@3mo/theme": "x",
 		"@3mo/icon": "x",
-		"@3mo/indexability": "x",
+		"@3mo/indexability": ">=0.3.0",
 		"@3mo/navigability": "x",
 		"@3mo/expandability": "x",
 		"@3mo/selectability": "x",

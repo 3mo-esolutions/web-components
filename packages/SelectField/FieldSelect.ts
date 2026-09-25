@@ -1,9 +1,9 @@
 import { html, property, css, event, component, live, query, eventListener, state, ifDefined, type PropertyValues } from '@a11d/lit'
 import { FieldComponent } from '@3mo/field'
-import type { ListItem } from '@3mo/list'
-import type { Menu } from '@3mo/menu'
+import { ComboboxController, listItems, type ListItem } from '@3mo/list'
 import type { FocusMethod } from '@3mo/focus-controller'
-import { PopoverFloatingUiPositionController, type PopoverAlignment, type PopoverPlacement } from '@3mo/popover'
+import { Popover, PopoverFloatingUiPositionController, type PopoverAlignment, type PopoverPlacement } from '@3mo/popover'
+import { Selectability } from '@3mo/selectability'
 import { FieldSelectValueController, type Data, type Index, type Value } from './SelectValueController.js'
 import { Option } from './Option.js'
 
@@ -25,8 +25,8 @@ import { Option } from './Option.js'
  *
  * @csspart input - The input element.
  * @csspart dropDownIcon - The dropdown icon.
- * @csspart menu - The menu consisting of list of options.
- * @csspart list - The list of options.
+ * @csspart menu - The popover holding the options.
+ * @csspart list - The listbox of options.
  *
  * @i18n "No results"
  *
@@ -57,7 +57,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 
 	@query('input#value') readonly valueInputElement!: HTMLInputElement
 	@query('input#search') readonly searchInputElement?: HTMLInputElement
-	@query('mo-menu') readonly menu?: Menu
+	@query('mo-popover') readonly popoverElement?: Popover
 
 	override get isPopulated() {
 		const valueNotNullOrEmpty = ['', undefined, null].includes(this.value as any) === false
@@ -71,11 +71,27 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 		return this.dense
 	}
 
-	get listItems() { return (this.menu?.list?.items ?? []) as Array<ListItem> }
+	private _listItems = new Array<ListItem>()
+	get listItems() { return this._listItems }
 	get options() { return this.listItems.filter(i => i instanceof Option) as Array<Option<T>> }
 	get selectedOptions() { return this.options.filter(o => o.selected) }
 
 	protected readonly valueController = new FieldSelectValueController<T>(this)
+
+	/** Only options are selected; other list items are actions. */
+	protected readonly combobox = new ComboboxController<HTMLElement>(this, host => {
+		const field = host as FieldSelect<unknown>
+		return {
+			get expanded() { return field.open },
+			handleExpandedChange: open => field.open = open,
+			get autocomplete() { return field.searchable },
+			get items() { return field.listItems },
+			get selectability() { return field.multiple ? Selectability.Multiple : Selectability.Single },
+			isSelectable: item => item instanceof Option,
+			get selection() { return field.valueController.selection as ReadonlyArray<HTMLElement> },
+			handleChange: selection => field.handleSelection(selection.map(item => field.listItems.indexOf(item as ListItem))),
+		}
+	})
 
 	protected override get isActive() {
 		return super.isActive || this.open
@@ -88,18 +104,31 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 
 	protected override updated(props: PropertyValues) {
 		super.updated(props)
+		this.collectListItems()
 		this.toggleAttribute('data-show-no-options-hint', this.showNoOptionsHint)
 	}
 
-	protected override firstUpdated(props: PropertyValues) {
+	protected override async firstUpdated(props: PropertyValues) {
 		super.firstUpdated(props)
-		this.menu?.updateComplete.then(async () => {
-			const popover = this.menu?.renderRoot.querySelector('mo-popover')
-			if (popover?.positionController instanceof PopoverFloatingUiPositionController) {
-				popover.positionController.addMiddleware((await import('./closeWhenOutOfViewport.js')).closeWhenOutOfViewport())
-				popover.positionController.addMiddleware((await import('./sameInlineSize.js')).sameInlineSize())
-			}
-		})
+		const popover = this.popoverElement
+		if (popover?.positionController instanceof PopoverFloatingUiPositionController) {
+			popover.positionController.addMiddleware((await import('./closeWhenOutOfViewport.js')).closeWhenOutOfViewport())
+			popover.positionController.addMiddleware((await import('./sameInlineSize.js')).sameInlineSize())
+		}
+	}
+
+	/** Slotted or rendered by a subclass, so read off the listbox after every change. */
+	private collectListItems() {
+		const listbox = this.combobox.listbox.value
+		const items = !listbox ? [] : [...listbox.children].flatMap(child => child[listItems] ?? []) as Array<ListItem>
+		if (items.length !== this._listItems.length || items.some((item, index) => item !== this._listItems[index])) {
+			this._listItems = items
+			this.handleItemsChange()
+		}
+	}
+
+	private updateListItems() {
+		this.combobox.indexability.setItems(this.listItems, (item, index) => ({ index, data: item, disabled: item.disabled }))
 	}
 
 	static override get styles() {
@@ -128,9 +157,11 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 				color: var(--mo-color-accent);
 			}
 
-			mo-menu::part(popover) {
+			mo-popover {
 				position-visibility: anchors-visible;
 				background: var(--mo-color-background);
+				border-radius: var(--mo-border-radius);
+				font-size: 0.875rem;
 				max-height: 300px;
 				overflow-y: auto;
 				scrollbar-width: thin;
@@ -182,6 +213,8 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 				id=${this.searching ? 'search' : 'value'}
 				type='text'
 				autocomplete='off'
+				aria-label=${ifDefined(this.label || undefined)}
+				${this.combobox.input.ref()}
 				?readonly=${!this.searching || !this.searchable}
 				?disabled=${this.disabled}
 				.value=${live(this.searching ? this.searchString || '' : this.valueToInputValue(this.value) || '')}
@@ -224,25 +257,28 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 
 	protected get menuTemplate() {
 		return html`
-			<mo-menu part='menu' exportparts='list'
+			<mo-popover part='menu'
 				target='field'
-				selectability=${this.multiple ? 'multiple' : 'single'}
 				.anchor=${this}
 				alignment=${ifDefined(this.menuAlignment)}
 				placement=${ifDefined(this.menuPlacement)}
-				?disabled=${this.disabled}
+				.shouldOpen=${this.shouldOpen}
 				?open=${this.open}
 				@openChange=${(e: CustomEvent<boolean>) => this.open = e.detail}
-				.value=${this.valueController.menuValue}
-				@change=${(e: CustomEvent<Array<number>>) => this.handleSelection(e.detail)}
-				@itemsChange=${() => this.handleItemsChange()}
 			>
 				${this.noResultsOptionTemplate}
-				${this.defaultOptionTemplate}
-				${this.optionsTemplate}
-			</mo-menu>
+				<div id='listbox' part='list' aria-label=${ifDefined(this.label || undefined)}
+					${this.combobox.listbox.ref()}
+					@slotchange=${() => this.collectListItems()}
+				>
+					${this.defaultOptionTemplate}
+					${this.optionsTemplate}
+				</div>
+			</mo-popover>
 		`
 	}
+
+	private readonly shouldOpen = (e: Event) => !this.disabled && Popover.shouldOpen.call({ anchor: this, target: 'field' }, e)
 
 	protected get optionsTemplate() {
 		return html`
@@ -261,7 +297,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 			<mo-list-item value='' @click=${() => this.handleSelection([])}>
 				${this.default}
 			</mo-list-item>
-			<mo-line></mo-line>
+			<mo-line role='presentation'></mo-line>
 		`
 	}
 
@@ -274,6 +310,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 	requestValueUpdate() {
 		this.options.forEach(o => o.selected = this.valueController.isSelected(o))
 		this.searchString ??= this.valueToInputValue(this.value) || undefined
+		this.requestUpdate()
 	}
 
 	protected valueToInputValue(value: Value) {
@@ -314,6 +351,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 			option.index = this.listItems.indexOf(option)
 			option.multiple = this.multiple
 		}
+		this.updateListItems()
 		this.valueController.handleItemsChange()
 	}
 
@@ -348,6 +386,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 			option.toggleAttribute('data-search-no-match', !matches)
 			option.disabled = !matches
 		}
+		this.updateListItems()
 		return Promise.resolve()
 	}
 
@@ -359,6 +398,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 			option.removeAttribute('data-search-no-match')
 			option.disabled = false
 		}
+		this.updateListItems()
 	}
 }
 

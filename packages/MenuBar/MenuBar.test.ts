@@ -114,16 +114,15 @@ describe('MenuBar', () => {
 		expect(menus()[1]!.open).toBe(true)
 	})
 
-	it('should leave focus on the trigger of the menu it switched to', async () => {
+	it('should move focus into the menu it switched to, onto its first item', async () => {
 		triggers()[0]!.focus()
 		fixture.component.menuBarController.open(items()[0])
 		await tick()
 
 		keydown(triggers()[0]!, 'ArrowRight')
-		await settleUntil(() => menus()[1]!.open)
-		await tick()
+		await settleUntil(() => FocusController.activeElement === menus()[1]!.items[0])
 
-		expect(FocusController.activeElement).toBe(triggers()[1]!)
+		expect(FocusController.activeElement).toBe(menus()[1]!.items[0]!)
 	})
 
 	it('should hide and skip the items which do not fit, announcing the verdict', async () => {

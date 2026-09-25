@@ -4,7 +4,7 @@ Object.defineProperty(Element.prototype, list, {
 	enumerable: false,
 	configurable: true,
 	get(this: Element) {
-		return this.tagName === 'UL' || this.tagName === 'OL' || this.role === 'list' ? this : undefined
+		return this.tagName === 'UL' || this.tagName === 'OL' || this.role === 'list' || this.role === 'listbox' ? this : undefined
 	},
 })
 

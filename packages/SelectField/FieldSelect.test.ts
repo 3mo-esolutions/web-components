@@ -4,6 +4,7 @@ import type { Value } from './SelectValueController.js'
 import { html } from '@a11d/lit'
 import { PopoverAlignment, PopoverPlacement } from '@3mo/popover'
 import { computePosition } from '@floating-ui/dom'
+import { userEvent } from 'vitest/browser'
 import { closeWhenOutOfViewport } from './closeWhenOutOfViewport.js'
 import { sameInlineSize } from './sameInlineSize.js'
 import '@3mo/date-time'
@@ -18,8 +19,9 @@ const people = new Array<Person>(
 )
 
 const tick = (duration = 0) => new Promise(resolve => setTimeout(resolve, duration))
+const frames = async (count: number) => { for (let i = 0; i < count; i++) { await new Promise(resolve => requestAnimationFrame(resolve)) } }
 
-const getPopover = (component: FieldSelect<unknown>) => component.menu?.renderRoot.querySelector('mo-popover') ?? undefined
+const getPopover = (component: FieldSelect<unknown>) => component.popoverElement
 
 const getNoResultsHint = (component: FieldSelect<unknown>) => component.renderRoot.querySelector('#no-options-hint') as HTMLElement
 
@@ -53,14 +55,6 @@ async function closeMenu(component?: FieldSelect<unknown>) {
 	}
 	component.open = false
 	await component.updateComplete
-	const menu = component.menu
-	if (menu) {
-		menu.open = false
-		await menu.updateComplete
-		if (menu.list) {
-			menu.list.focusController.focusOut()
-		}
-	}
 	const popover = getPopover(component)
 	if (popover) {
 		popover.open = false
@@ -221,12 +215,11 @@ describe('FieldSelect', () => {
 			['menuAlignment', 'alignment', PopoverAlignment.End],
 			['menuPlacement', 'placement', PopoverPlacement.BlockStart],
 		] as const) {
-			it(`should tunnel ${property} to the menu`, async () => {
+			it(`should tunnel ${property} to the popover`, async () => {
 				(fixture.component as any)[property] = value
 				await settle(fixture.component)
-				await fixture.component.menu!.updateComplete
+				await getPopover(fixture.component)!.updateComplete
 
-				expect(fixture.component.menu!.getAttribute(attribute)).toBe(value)
 				expect(getPopover(fixture.component)!.getAttribute(attribute)).toBe(value)
 			})
 		}
@@ -238,7 +231,7 @@ describe('FieldSelect', () => {
 				it(`should open when a navigation key is pressed on the field (${key})`, async () => {
 					expect(fixture.component.open).toBe(false)
 
-					fixture.component.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }))
+					fixture.component.valueInputElement.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, composed: true, cancelable: true }))
 					await settle(fixture.component)
 
 					expect(fixture.component.open).toBe(true)
@@ -249,7 +242,7 @@ describe('FieldSelect', () => {
 				await openMenu(fixture.component)
 				expect(fixture.component.open).toBe(true)
 
-				fixture.component.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true }))
+				fixture.component.valueInputElement.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, composed: true, cancelable: true }))
 				await settle(fixture.component)
 
 				expect(fixture.component.open).toBe(false)
@@ -285,12 +278,66 @@ describe('FieldSelect', () => {
 				expect(option.getBoundingClientRect().bottom).toBeLessThanOrEqual(popover.getBoundingClientRect().bottom)
 			})
 
-			it('should move the keyboard focus on from the selected option', async () => {
+			it('should move the active option on from the selected option', async () => {
 				await openMenu(fixture.component)
+				const input = fixture.component.valueInputElement
+				expect(input.ariaActiveDescendantElement).toBe(fixture.component.options[selectedIndex]!)
 
-				document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }))
+				input.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true, composed: true, cancelable: true }))
 
-				expect(fixture.component.menu!.list.focusController.focusedItemIndex).toBe(selectedIndex + 1)
+				expect(input.ariaActiveDescendantElement).toBe(fixture.component.options[selectedIndex + 1]!)
+			})
+
+			it('should open onto an option chosen by a real click far down the list', async () => {
+				await openMenu(fixture.component)
+				const option = fixture.component.options[numbers.length - 2]!
+				option.scrollIntoView({ block: 'nearest' })
+
+				await userEvent.click(option)
+				await settle(fixture.component)
+				expect(fixture.component.open).toBe(false)
+				expect(fixture.component.value).toBe(numbers.length - 2)
+
+				await openMenu(fixture.component)
+				await frames(2)
+				const popover = getPopover(fixture.component)!
+				expect(fixture.component.valueInputElement.ariaActiveDescendantElement).toBe(option)
+				expect(option.getBoundingClientRect().top).toBeGreaterThanOrEqual(popover.getBoundingClientRect().top)
+				expect(option.getBoundingClientRect().bottom).toBeLessThanOrEqual(popover.getBoundingClientRect().bottom)
+			})
+		})
+
+		describe('with more options than fit, choosing several', () => {
+			const numbers = [...new Array(60).keys()]
+
+			const fixture = new ComponentTestFixture<FieldSelect<number>>(html`
+				<mo-field-select label='Select' multiple>
+					${numbers.map(n => html`<mo-option value=${n} .data=${n}>Option ${n}</mo-option>`)}
+				</mo-field-select>
+			`)
+
+			afterEach(() => closeMenu(fixture.component))
+
+			const checkboxOf = (option: Option<number>) => option.renderRoot.querySelector('mo-checkbox')!
+
+			it('should keep the list where it is, and the clicked option active, when options far down are chosen through their checkboxes', async () => {
+				await openMenu(fixture.component)
+				const popover = getPopover(fixture.component)!
+				const [first, second] = [fixture.component.options[numbers.length - 2]!, fixture.component.options[numbers.length - 5]!]
+				first.scrollIntoView({ block: 'nearest' })
+				const scrollTop = popover.scrollTop
+				expect(scrollTop).toBeGreaterThan(0)
+
+				for (const option of [first, second]) {
+					await userEvent.click(checkboxOf(option))
+					await settle(fixture.component)
+					await frames(2)
+
+					expect(fixture.component.open).toBe(true)
+					expect(popover.scrollTop).toBe(scrollTop)
+					expect(fixture.component.valueInputElement.ariaActiveDescendantElement).toBe(option)
+				}
+				expect(fixture.component.value).toEqual([numbers.length - 5, numbers.length - 2])
 			})
 		})
 
@@ -380,6 +427,32 @@ describe('FieldSelect', () => {
 
 			expect(visibleOptionTexts(fixture.component)).toEqual(['John', 'Joe'])
 			expect(fixture.component.options.filter(o => !o.disabled).map(o => o.text)).toEqual(['John', 'Joe'])
+		})
+
+		it('should reach every option again after choosing a searched one by keyboard and reopening', async () => {
+			const input = () => fixture.component.searchInputElement ?? fixture.component.valueInputElement
+			const press = (key: string) => input().dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, composed: true, cancelable: true }))
+			const active = () => input().ariaActiveDescendantElement?.textContent?.trim()
+			await focusIn(fixture.component)
+			await type(fixture.component, 'jane')
+			press('ArrowDown')
+			press('Enter')
+			await settle(fixture.component)
+			expect(fixture.component.value).toBe(2)
+			expect(fixture.component.open).toBe(false)
+
+			press('ArrowDown')
+			const start = performance.now()
+			while (active() !== 'Jane' && performance.now() - start < 1000) {
+				await tick(10)
+			}
+			expect(active()).toBe('Jane')
+
+			press('ArrowDown')
+			expect(active()).toBe('Joe')
+			press('ArrowUp')
+			press('ArrowUp')
+			expect(active()).toBe('John')
 		})
 
 		it('should keep the menu open while typing', async () => {
@@ -535,12 +608,147 @@ describe('FieldSelect', () => {
 		})
 	})
 
+	describe('as a combobox over a listbox', () => {
+		const input = () => fixture.component.valueInputElement
+		const listbox = () => fixture.component.renderRoot.querySelector<HTMLElement>('#listbox')!
+		const press = (key: string) => {
+			const event = new KeyboardEvent('keydown', { key, bubbles: true, composed: true, cancelable: true })
+			input().dispatchEvent(event)
+			return event
+		}
+
+		beforeEach(() => settle(fixture.component))
+
+		it('should make its input a combobox that controls a listbox of options', async () => {
+			await openMenu(fixture.component)
+
+			expect(input().getAttribute('role')).toBe('combobox')
+			expect(input().getAttribute('aria-label')).toBe('Select')
+			expect(input().ariaControlsElements).toEqual([listbox()])
+			expect(listbox().getAttribute('role')).toBe('listbox')
+			expect(fixture.component.options.map(option => option.getAttribute('role'))).toEqual(Array(people.length).fill('option'))
+		})
+
+		it('should say whether the listbox is expanded', async () => {
+			expect(input().getAttribute('aria-expanded')).toBe('false')
+
+			await openMenu(fixture.component)
+
+			expect(input().getAttribute('aria-expanded')).toBe('true')
+		})
+
+		it('should say which option is selected', async () => {
+			fixture.component.value = 2
+			await settle(fixture.component)
+
+			expect(fixture.component.options.map(option => option.getAttribute('aria-selected'))).toEqual(['false', 'false', 'true', 'false'])
+		})
+
+		it('should say it takes several options in multiple mode', async () => {
+			expect(listbox().hasAttribute('aria-multiselectable')).toBe(false)
+
+			fixture.component.multiple = true
+			await settle(fixture.component)
+
+			expect(listbox().getAttribute('aria-multiselectable')).toBe('true')
+		})
+
+		it('should announce the active option on the input while open, and none once closed', async () => {
+			await openMenu(fixture.component)
+			press('ArrowDown')
+			press('ArrowDown')
+			expect(input().ariaActiveDescendantElement).toBe(fixture.component.options[1]!)
+
+			await closeMenu(fixture.component)
+			await settle(fixture.component)
+
+			expect(input().ariaActiveDescendantElement).toBeNull()
+		})
+
+		it('should choose the active option on Enter and close', async () => {
+			await openMenu(fixture.component)
+			press('ArrowDown')
+			press('ArrowDown')
+			press('ArrowDown')
+
+			expect(press('Enter').defaultPrevented).toBe(true)
+			await settle(fixture.component)
+
+			expect(fixture.component.value).toBe(2)
+			expect(fixture.component.open).toBe(false)
+		})
+
+		it('should keep focus in the input when an option is pressed', async () => {
+			await openMenu(fixture.component)
+			const pressed = new MouseEvent('mousedown', { bubbles: true, composed: true, cancelable: true })
+
+			fixture.component.options[1]!.dispatchEvent(pressed)
+
+			expect(pressed.defaultPrevented).toBe(true)
+		})
+
+		it('should run an option\'s own click handler after choosing it, so the handler has the last word', async () => {
+			const option = fixture.component.options[3]!
+			const { changeSpy } = spyOnChangeEvents()
+			option.addEventListener('click', () => fixture.component.value = undefined)
+
+			option.click()
+			await settle(fixture.component)
+
+			expect(changeSpy).toHaveBeenCalledExactlyOnceWith(3)
+			expect(fixture.component.value).toBeUndefined()
+		})
+
+		it('should run that handler for Enter as well', async () => {
+			const option = fixture.component.options[1]!
+			const handler = vi.fn()
+			option.addEventListener('click', handler)
+			await openMenu(fixture.component)
+			press('ArrowDown')
+			press('ArrowDown')
+
+			press('Enter')
+
+			expect(handler).toHaveBeenCalledOnce()
+		})
+	})
+
+	describe('with list items that are not options', () => {
+		const fixture = new ComponentTestFixture<FieldSelect<Person>>(html`
+			<mo-field-select label='Select'>
+				<mo-list-item id='action'>Add a person</mo-list-item>
+				${people.map(p => html`<mo-option value=${p.id} .data=${p}>${p.name}</mo-option>`)}
+			</mo-field-select>
+		`)
+
+		afterEach(() => closeMenu(fixture.component))
+
+		it('should reach them with the arrows but never select them', async () => {
+			await settle(fixture.component)
+			fixture.component.value = 2
+			await settle(fixture.component)
+			const action = fixture.component.querySelector('#action')!
+			await openMenu(fixture.component)
+
+			for (let step = 0; step < 3; step++) {
+				fixture.component.valueInputElement.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true, composed: true, cancelable: true }))
+			}
+			expect(fixture.component.valueInputElement.ariaActiveDescendantElement).toBe(action)
+			action.dispatchEvent(new MouseEvent('click', { bubbles: true, composed: true }))
+			await settle(fixture.component)
+
+			expect(fixture.component.listItems[0]).toBe(action)
+			expect(fixture.component.value).toBe(2)
+			expect(fixture.component.open).toBe(false)
+		})
+	})
+
 	describe('change event dispatching', () => {
 		it('should dispatch change events and select the option on user interaction', async () => {
 			const { changeSpy, dataChangeSpy, indexChangeSpy } = spyOnChangeEvents()
 
 			await tick()
-			fixture.component.renderRoot.querySelector('mo-menu')?.change.dispatch([1])
+			fixture.component.options[1]!.click()
 
 			expect(fixture.component.options[1]!.selected).toBe(true)
 			expect(indexChangeSpy).toHaveBeenCalledWith(1)
@@ -745,11 +953,10 @@ describe('FieldSelect', () => {
 				await tick()
 			}
 
-			/** The press carries the modifiers; the option then reports itself with a plain event. */
 			const click = async (index: number, { shift = false } = {}) => {
 				const option = fixture.component.options[index]!
 				option.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, composed: true, shiftKey: shift }))
-				option.click()
+				option.dispatchEvent(new MouseEvent('click', { bubbles: true, composed: true, cancelable: true, shiftKey: shift }))
 				window.dispatchEvent(new KeyboardEvent('keyup', { key: 'Shift' }))
 				await settleClick()
 			}
@@ -1003,7 +1210,7 @@ describe('FieldSelect', () => {
 			await click(2)
 			expect(fixture.component.index).toBe(2)
 
-			fixture.component.menu!.list.itemsChange.dispatch(fixture.component.listItems)
+			fixture.component['handleItemsChange']()
 			await settle(fixture.component)
 
 			expect(fixture.component.index).toBe(2)

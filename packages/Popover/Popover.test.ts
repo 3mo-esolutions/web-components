@@ -312,6 +312,16 @@ describe('Popover', () => {
 			expect(fixture.component.popoverElement.open).toBe(true)
 			expect(event.defaultPrevented).toBe(true)
 		})
+
+		it('should not open on an Enter something inside the anchor has already claimed', async () => {
+			const event = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, composed: true, cancelable: true })
+			event.preventDefault()
+			fixture.component.dispatchEvent(event)
+
+			await fixture.updateComplete
+
+			expect(fixture.component.popoverElement.open).toBe(false)
+		})
 	})
 
 	describe('shouldOpen', () => {

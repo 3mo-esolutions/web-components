@@ -1,5 +1,6 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { html } from '@a11d/lit'
+import { userEvent } from 'vitest/browser'
 import { type SelectableList, SelectableListSelectability, type SelectableListItem } from './index.js'
 
 class SelectableListTestFixture extends ComponentTestFixture<SelectableList> {
@@ -50,6 +51,14 @@ describe('SelectableList', () => {
 	describe('single selection', () => {
 		const fixture = new SelectableListTestFixture({ selectability: SelectableListSelectability.Single })
 
+		it('should run the arrows on from the last item to the first, as the list always has', () => {
+			const last = fixture.items.at(-1)!
+			last.focus()
+			last.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true, composed: true, cancelable: true }))
+
+			expect(fixture.component.shadowRoot?.activeElement ?? document.activeElement).toBe(fixture.items[0]!)
+		})
+
 		it('should select only one item', async () => {
 			for (const item of fixture.items) {
 				item.click()
@@ -83,6 +92,17 @@ describe('SelectableList', () => {
 
 	describe('multiple selection', () => {
 		const fixture = new SelectableListTestFixture({ selectability: SelectableListSelectability.Multiple })
+
+		it('should toggle an item once on a real Enter, as only the list activates it', async () => {
+			const item = fixture.items[1]!
+			item.focus()
+
+			await userEvent.keyboard('{Enter}')
+			await fixture.updateComplete
+
+			expect(item.selected).toBe(true)
+			expect(fixture.component.value).toEqual([1])
+		})
 
 		it('should select multiple items', async () => {
 			for (const item of fixture.items) {
@@ -163,7 +183,7 @@ describe('SelectableList', () => {
 		const fixture = new SelectableListTestFixture({ selectability: SelectableListSelectability.Multiple })
 
 		const resolvedIndices = () => fixture.items
-			.map((item, index) => fixture.component.selectabilityController.isSelected(item) ? index : undefined)
+			.map((item, index) => item.getAttribute('aria-selected') === 'true' ? index : undefined)
 			.filter(index => index !== undefined)
 
 		it('should resolve an assigned value to its items without announcing a change', async () => {
@@ -181,5 +201,40 @@ describe('SelectableList', () => {
 			expect(resolvedIndices()).toEqual([])
 			expect(fixture.selectedIndices).toEqual([])
 		})
+	})
+})
+describe('SelectableList with collapsible items', () => {
+	const fixture = new ComponentTestFixture<SelectableList>(html`
+		<mo-selectable-list selectability='multiple'>
+			<mo-selectable-list-item>Home</mo-selectable-list-item>
+			<mo-collapsible-list-item>
+				<mo-list-item>Sales</mo-list-item>
+				<mo-selectable-list-item slot='details'>Products</mo-selectable-list-item>
+				<mo-selectable-list-item slot='details'>Brands</mo-selectable-list-item>
+			</mo-collapsible-list-item>
+			<mo-selectable-list-item>Settings</mo-selectable-list-item>
+		</mo-selectable-list>
+	`)
+
+	const active = () => (document.activeElement as HTMLElement | null)?.textContent?.trim()
+
+	it('should pass over the children of a collapsed item, and reach them once it is open', async () => {
+		fixture.component.items[0]!.focus()
+
+		await userEvent.keyboard('{ArrowDown}')
+		expect(active()).toBe('Sales')
+		await userEvent.keyboard('{ArrowDown}')
+		expect(active()).toBe('Settings')
+
+		const collapsible = fixture.component.querySelector<HTMLElement & { open: boolean, updateComplete: Promise<unknown> }>('mo-collapsible-list-item')!
+		collapsible.open = true
+		await collapsible.updateComplete
+		const brands = fixture.component.items.find(item => item.textContent?.trim() === 'Brands')!
+		const start = performance.now()
+		while (!brands.checkVisibility() && performance.now() - start < 1000) {
+			await new Promise(resolve => requestAnimationFrame(resolve))
+		}
+		await userEvent.keyboard('{ArrowUp}')
+		expect(active()).toBe('Brands')
 	})
 })

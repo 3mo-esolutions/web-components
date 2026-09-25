@@ -2,8 +2,8 @@ import { Component, type PropertyValues, bind, component, css, eventListener, ht
 import { ApplicationTopLayer } from '@a11d/lit-application'
 import { FetcherController } from '@3mo/fetcher-controller'
 import type { FieldSearch } from '@3mo/text-fields'
-import type { List } from '@3mo/list'
-import { type CommandPaletteDataSource } from './CommandPaletteDataSource.js'
+import { ComboboxController } from '@3mo/list'
+import { type CommandPaletteData, type CommandPaletteDataSource } from './CommandPaletteDataSource.js'
 
 @component('mo-command-palette')
 export class CommandPalette extends Component {
@@ -42,9 +42,17 @@ export class CommandPalette extends Component {
 	readonly dataSources = [...CommandPalette.dataSources].sort((a, b) => a.order - b.order)
 
 	@query('mo-command-palette-search-field') private readonly searchField!: FieldSearch
-	@query('mo-list') private readonly list?: List
 
-	@eventListener({ target: window, type: 'keydown' })
+	/** The results are commands, not a selection. */
+	private readonly combobox = new ComboboxController<CommandPaletteData>(this, host => ({
+		get expanded() { return host.matches(':popover-open') },
+		handleExpandedChange: expanded => !expanded && host.hidePopover(),
+		activateFirst: true,
+		isSelectable: () => false,
+	}))
+
+	/** In the capture phase, so Tab is claimed before the search field's combobox closes the palette on it. */
+	@eventListener({ target: window, type: 'keydown', options: { capture: true } })
 	protected handleKeyDown(event: KeyboardEvent) {
 		if (!this.matches(':popover-open')) {
 			return
@@ -65,15 +73,9 @@ export class CommandPalette extends Component {
 		if (event.newState === 'open') {
 			this.searchField.focus()
 			this.searchField.select()
-			if (this.list) {
-				this.list.focusController.focusIn()
-				this.list.focusController.focusedItemIndex = 0
-			}
+			this.combobox.goTo(this.data[0])
 		} else if (event.newState === 'closed') {
-			if (this.list) {
-				this.list.focusController.focusedItemIndex = undefined
-				this.list.focusController.focusOut()
-			}
+			this.combobox.goTo(undefined)
 		}
 	}
 
@@ -101,9 +103,10 @@ export class CommandPalette extends Component {
 		return all.filter(r => r.status === 'fulfilled').map(r => r.value)
 	}
 
-	protected override updated(props: PropertyValues<this>) {
-		super.updated(props)
-		this.list?.focusController.focusIn()
+	protected override async firstUpdated(props: PropertyValues<this>) {
+		super.firstUpdated(props)
+		await this.searchField.updateComplete
+		this.combobox.input.set(this.searchField.inputElement)
 	}
 
 	static override get styles() {
@@ -157,7 +160,7 @@ export class CommandPalette extends Component {
 				background: var(--mo-color-transparent-gray-1);
 			}
 
-			mo-list {
+			.list {
 				display: flex;
 				flex-direction: column;
 
@@ -236,10 +239,7 @@ export class CommandPalette extends Component {
 	}
 
 	protected override get template() {
-		const refocusSearch = () => {
-			this.searchField.focus()
-			this.list?.focusController.focusIn()
-		}
+		const refocusSearch = () => this.searchField.focus()
 		const fetching = this.fetcherController.pending
 		return html`
 			<mo-card type='outlined' ?data-fetching=${fetching} @click=${(e: PointerEvent) => e.stopPropagation()}>
@@ -264,17 +264,29 @@ export class CommandPalette extends Component {
 		`
 	}
 
+	private dataCache?: { readonly value: unknown, readonly filter?: string, readonly data: ReadonlyArray<CommandPaletteData> }
+
+	private get data() {
+		const value = this.fetcherController.value
+		const filter = this.filteredDataSourceId
+		if (!this.dataCache || this.dataCache.value !== value || this.dataCache.filter !== filter) {
+			const data = value
+				?.filter(i => !filter || i.source.id === filter)
+				?.flatMap(i => i.data) ?? []
+			this.dataCache = { value, filter, data }
+		}
+		return this.dataCache.data
+	}
+
 	private get listTemplate() {
 		const selectedDataSource = this.dataSources.find(ds => ds.id === this.filteredDataSourceId)
-		const data = this.fetcherController.value
-			?.filter(i => !this.filteredDataSourceId || i.source.id === this.filteredDataSourceId)
-			?.flatMap(i => i.data) ?? []
+		const data = this.data
 		return !data.length && !this.fetcherController.pending ? html`
 			<mo-empty-state icon=${selectedDataSource?.icon ?? 'search'}>${t('No results')}</mo-empty-state>
 		` : html`
-			<mo-list ?data-fetching=${this.fetcherController.pending}>
-				${data.map(item => html`
-					<mo-list-item @click=${() => this.executeCommand(item.command)}>
+			<div class='list' ?data-fetching=${this.fetcherController.pending} ${this.combobox.listbox.ref()}>
+				${data.map((item, index) => html`
+					<mo-list-item ${this.combobox.option({ index, data: item })} @click=${() => this.executeCommand(item.command)}>
 						<mo-icon icon=${item.icon}></mo-icon>
 						<mo-flex>
 							<span class='label'>${this.getSearchedTemplate(item.label)}</span>
@@ -282,7 +294,7 @@ export class CommandPalette extends Component {
 						</mo-flex>
 					</mo-list-item>
 				`)}
-			</mo-list>
+			</div>
 		`
 	}
 

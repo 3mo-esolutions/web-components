@@ -1,6 +1,5 @@
 import { Component, component, css, event, html } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
-import { ListFocusController } from './ListFocusController.js'
 import { listItems } from './extensions.js'
 
 /**
@@ -16,7 +15,6 @@ export class List extends Component {
 
 	override readonly role = 'list'
 
-	readonly focusController = new ListFocusController(this)
 	readonly slotController = new SlotController(this, () => this.items = this[listItems] as Array<HTMLElement> ?? [])
 
 	private _items = new Array<HTMLElement>()

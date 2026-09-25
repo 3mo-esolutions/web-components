@@ -1,4 +1,4 @@
-import { Component, component, css, html, property } from '@a11d/lit'
+import { Component, component, css, eventListener, html, property } from '@a11d/lit'
 import { disabledProperty } from '@3mo/disabled-property'
 import type { MaterialIcon } from '@3mo/icon'
 import './ListItemRipple.js'
@@ -17,8 +17,8 @@ export class ListItem extends Component {
 	@disabledProperty({ blockFocus: true }) disabled = false
 	@property() icon?: MaterialIcon
 	@property({ type: Boolean }) preventClickOnSpace = false
-
-	@property({ type: Boolean, reflect: true }) protected focused = false
+	/** Keyboard focus, real or, in a combobox, the active option's. */
+	@property({ type: Boolean, attribute: 'data-keyboard-focus', reflect: true }) protected keyboardFocus = false
 
 	override role = 'listitem'
 	override tabIndex = 0
@@ -53,18 +53,45 @@ export class ListItem extends Component {
 		`
 	}
 
-	protected get rippleActive() {
-		return this.focused
+	@eventListener('focus')
+	protected handleFocus() {
+		this.keyboardFocus = this.matches(':focus-visible')
 	}
 
-	protected get focusRingActive() {
-		return this.focused && this.hasAttribute('data-keyboard-focus')
+	@eventListener('blur')
+	protected handleBlur() {
+		this.keyboardFocus = false
+	}
+
+	@eventListener('keydown')
+	protected handleKeyDown(event: KeyboardEvent) {
+		if (event.target !== this || event.defaultPrevented || event.repeat || this.activatedAround) {
+			return
+		}
+		if (event.key === 'Enter' || (event.key === ' ' && !this.preventClickOnSpace)) {
+			event.preventDefault()
+			this.click()
+		}
+	}
+
+	/** A listbox, a menu or a tree activates its own items; a plain list, or none at all, leaves it to the item. */
+	private get activatedAround() {
+		for (let node: Node | null = this.assignedSlot ?? this.parentNode; node; node = (node as Element).assignedSlot ?? node.parentNode ?? (node as ShadowRoot).host ?? null) {
+			const role = node instanceof Element ? node.getAttribute('role') : null
+			if (role === 'list') {
+				return false
+			}
+			if (role === 'listbox' || role === 'menu' || role === 'menubar' || role === 'tree') {
+				return true
+			}
+		}
+		return false
 	}
 
 	protected override get template() {
 		return html`
-			${!this.focusRingActive ? html.nothing : html`<mo-focus-ring inward visible></mo-focus-ring>`}
-			<mo-list-item-ripple ?focused=${this.rippleActive} ?disabled=${this.disabled} ?preventClickOnSpace=${this.preventClickOnSpace}></mo-list-item-ripple>
+			${!this.keyboardFocus ? html.nothing : html`<mo-focus-ring inward visible></mo-focus-ring>`}
+			<mo-list-item-ripple ?disabled=${this.disabled}></mo-list-item-ripple>
 			${this.iconTemplate}
 			<slot></slot>
 		`

@@ -253,4 +253,47 @@ describe('IndexabilityController', () => {
 			expect(indices).toEqual([0]) // the lone `.other` item, never the three `.item`s
 		})
 	})
+
+	describe('setItems', () => {
+		const fixture = create({ items: [] })
+		const elements: Array<HTMLElement> = [...new Array(4).keys()].map(() => document.createElement('div'))
+
+		beforeEach(() => fixture.component.append(...elements))
+		afterEach(() => elements.forEach(element => element.remove()))
+
+		const setItems = (list: ReadonlyArray<HTMLElement>) => fixture.component.controller.setItems(list, (element, index) => ({ index, data: `element-${elements.indexOf(element)}` }))
+		const registered = () => fixture.component.controller.items.map(item => item.options.data)
+
+		it('makes exactly the given elements the items, each with the options it is given for its position', () => {
+			setItems([elements[2]!, elements[0]!])
+
+			expect(registered()).toEqual(['element-2', 'element-0'])
+			expect(fixture.component.controller.itemAt([elements[0]!])?.options.index).toBe(1)
+		})
+
+		it('deletes and returns every other item, however it was added, as it keeps no memory of earlier calls', () => {
+			setItems([elements[0]!, elements[1]!])
+			fixture.component.controller.addItem(elements[3]!, { index: 5, data: 'element-3' })
+
+			const removed = setItems([elements[1]!, elements[2]!])
+
+			expect(removed).toEqual([elements[0], elements[3]])
+			expect(registered()).toEqual(['element-1', 'element-2'])
+			expect(setItems([])).toEqual([elements[1], elements[2]])
+			expect(registered()).toEqual([])
+		})
+	})
+
+	describe('register and unregister', () => {
+		const fixture = create({ items: [] })
+		const element = document.createElement('div')
+
+		it('still add and delete an item, as deprecated aliases of addItem and deleteItem', () => {
+			fixture.component.controller.register(element, { index: 0, data: 'element' })
+			expect(fixture.component.controller.itemAt([element])?.options.data).toBe('element')
+
+			fixture.component.controller.unregister(element)
+			expect(fixture.component.controller.itemAt([element])).toBeUndefined()
+		})
+	})
 })

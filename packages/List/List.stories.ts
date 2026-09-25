@@ -53,10 +53,6 @@ export const Default: StoryObj = {
 	`
 }
 
-export const ItemsWithoutList: StoryObj = {
-	render: () => items
-}
-
 export const CustomSubGridLayout: StoryObj = {
 	render: () => html`
 		<style>

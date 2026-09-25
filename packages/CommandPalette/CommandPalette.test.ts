@@ -106,8 +106,7 @@ describe('CommandPalette', () => {
 	}
 
 	const searchField = () => palette.renderRoot.querySelector('mo-command-palette-search-field')!
-	const list = () => palette.renderRoot.querySelector('mo-list')
-	const items = () => [...palette.renderRoot.querySelectorAll<HTMLElement>('mo-list mo-list-item')]
+	const items = () => [...palette.renderRoot.querySelectorAll<HTMLElement>('[role=listbox] mo-list-item')]
 	const labels = () => items().map(item => item.querySelector('.label')!.textContent!.trim())
 	const tabs = () => [...palette.renderRoot.querySelectorAll('mo-tab')]
 	const buttons = () => [...palette.renderRoot.querySelectorAll<HTMLElement>('#buttons mo-button')]
@@ -133,17 +132,31 @@ describe('CommandPalette', () => {
 			expect(searchField().inputElement.selectionEnd).toBe(3)
 		})
 
-		it('should seed the list focus on the first item when opened, and drop it when closed', async () => {
+		it('should make the first result the active option when opened, announced on the search input, and none once closed', async () => {
 			await setup(new TestDataSource({ name: 'A', data: ['Alpha', 'Beta'] }))
 			await until(() => items().length === 2)
 
 			await open()
 
-			expect(list()!.focusController.focusedItemIndex).toBe(0)
+			expect(searchField().inputElement.getAttribute('role')).toBe('combobox')
+			expect(searchField().inputElement.ariaActiveDescendantElement).toBe(items()[0]!)
 
 			await close()
 
-			expect(list()!.focusController.focusedItemIndex).toBeUndefined()
+			expect(searchField().inputElement.ariaActiveDescendantElement).toBeNull()
+		})
+
+		it('should run the active result on Enter', async () => {
+			const source = new TestDataSource({ name: 'A', data: ['Alpha', 'Beta'] })
+			await setup(source)
+			await until(() => items().length === 2)
+			await open()
+
+			const input = searchField().inputElement
+			input.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true, composed: true, cancelable: true }))
+			input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, composed: true, cancelable: true }))
+
+			expect(source.commandSpy).toHaveBeenCalledExactlyOnceWith('Beta')
 		})
 
 		it('should close on a click on the backdrop (the host itself) and stay open for clicks inside the card', async () => {
@@ -215,7 +228,7 @@ describe('CommandPalette', () => {
 			palette.keyword = 'nothing matches this'
 			await until(() => !!palette.renderRoot.querySelector('mo-empty-state'))
 
-			expect(list()).toBeNull()
+			expect(palette.renderRoot.querySelector('[role=listbox]')).toBeNull()
 		})
 	})
 
@@ -249,7 +262,7 @@ describe('CommandPalette', () => {
 			await setup(a, b)
 			await open()
 
-			const tab = (shiftKey = false) => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', shiftKey, bubbles: true }))
+			const tab = (shiftKey = false) => searchField().inputElement.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', shiftKey, bubbles: true, composed: true, cancelable: true }))
 
 			tab()
 			expect(palette.filteredDataSourceId).toBe(a.id)
@@ -263,6 +276,7 @@ describe('CommandPalette', () => {
 			expect(palette.filteredDataSourceId).toBe(a.id)
 			tab(true)
 			expect(palette.filteredDataSourceId).toBeUndefined()
+			expect(palette.matches(':popover-open')).toBe(true)
 		})
 
 		it('should ignore Tab while the palette is closed', async () => {

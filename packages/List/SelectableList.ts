@@ -1,15 +1,9 @@
-import { component, event, eventListener, property, queryAsync } from '@a11d/lit'
-import { Selectability, SelectabilityController, SelectabilityInteraction } from '@3mo/selectability'
+import { component, event, eventListener, property } from '@a11d/lit'
+import { Selectability } from '@3mo/selectability'
 import { List } from './List.js'
+import { ListboxController } from './ListboxController.js'
 
-export class SelectionListItemChangeEvent<T> extends CustomEvent<T> {
-	static readonly type = 'change'
-	readonly selected: boolean
-	constructor(value: T, selected: boolean) {
-		super(SelectionListItemChangeEvent.type, { bubbles: true, detail: value })
-		this.selected = selected
-	}
-}
+export { SelectionListItemChangeEvent } from './SelectionListItemChangeEvent.js'
 
 export { Selectability as SelectableListSelectability } from '@3mo/selectability'
 
@@ -27,42 +21,41 @@ export { Selectability as SelectableListSelectability } from '@3mo/selectability
 export class SelectableList extends List {
 	@event() readonly change!: EventDispatcher<Array<number>>
 
-	@property({ type: Array, bindingDefault: true }) value = new Array<number>()
+	@property({ type: Array, bindingDefault: true, updated(this: SelectableList) { this.syncItems() } }) value = new Array<number>()
 	@property() selectability = Selectability.Single
 
-	@queryAsync('slot') protected readonly slotElement!: Promise<HTMLSlotElement>
-
-	readonly selectabilityController: SelectabilityController<HTMLElement>
-
-	constructor() {
-		super()
-		const component = this
-		this.selectabilityController = new SelectabilityController<HTMLElement>(this, {
-			get selectability() { return component.selectability },
-			get items() { return component.items },
-			get selection() { return component.selectionFromValue },
-			handleChange: ({ selection }) => {
-				component.value = selection.map(item => component.items.indexOf(item))
-				component.syncItems()
-				component.change.dispatch(component.value)
+	protected readonly listbox = new ListboxController<HTMLElement>(this, host => {
+		const list = host as SelectableList
+		return {
+			get items() { return list.items },
+			get selectability() { return list.selectability },
+			wrap: true,
+			get selection() { return list.selectionFromValue },
+			handleChange: selection => {
+				list.value = selection.map(item => list.items.indexOf(item))
+				list.syncItems()
+				list.change.dispatch(list.value)
 			},
-			interaction: SelectabilityInteraction.Manual,
-			stamping: false,
-		})
-	}
+		}
+	})
 
-	/** The value's indices resolved to their elements — the list's own state stays the indices. */
 	private get selectionFromValue() {
 		return this.value
 			.map(index => this.items[index])
 			.filter((item): item is HTMLElement => !!item)
 	}
 
-	/** Items announce their own state as they are clicked, so after the controller has ruled on it
-	 * they are told what the answer actually was — including the ones that were not touched. */
+	@eventListener('itemsChange')
+	protected handleItemsChange() {
+		this.listbox.indexability.setItems(this.items, (item, index) => ({ index, data: item, disabled: isDisabled(item) }))
+		this.syncItems()
+	}
+
+	/** Items render their own state, so each is told the list's answer. */
 	private syncItems() {
+		const selection = this.selectionFromValue
 		for (const item of this.items) {
-			const selected = this.selectabilityController.isSelected(item)
+			const selected = selection.includes(item)
 			if ('selected' in item) {
 				(item as HTMLElement & { selected: unknown }).selected = selected
 			} else {
@@ -71,27 +64,14 @@ export class SelectableList extends List {
 		}
 	}
 
-	/** The topmost selected item — the `ListElement` hook the roving focus starts from. */
-	get defaultFocusedItemIndex() {
-		return this.value.length === 0 ? undefined : Math.min(...this.value)
-	}
-
-	@eventListener({ type: 'change', target(this: SelectableList) { return this.slotElement } })
-	protected handleChange(event: CustomEvent) {
-		if (event instanceof SelectionListItemChangeEvent) {
-			event.stopImmediatePropagation()
-			const item = event.target as HTMLElement
-			if (this.items.includes(item)) {
-				// An item that carries its own control speaks only for itself, which is what `preserve`
-				// means — and what single selectability goes on ignoring.
-				this.selectabilityController.select(item, { selected: event.selected, preserve: true, event })
-			}
-		}
-	}
 }
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'mo-selectable-list': List
+		'mo-selectable-list': SelectableList
 	}
+}
+/** The property where there is one, as its attribute reflects only once the item has updated. */
+function isDisabled(item: HTMLElement) {
+	return 'disabled' in item ? !!item.disabled : item.hasAttribute('disabled')
 }

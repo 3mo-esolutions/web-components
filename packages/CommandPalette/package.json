@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/command-palette",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"description": "Command-palettes are a common way to provide users with a list of actions they can perform in a given context.",
 	"repository": {
 		"type": "git",

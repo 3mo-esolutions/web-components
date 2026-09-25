@@ -154,7 +154,7 @@ export class Popover extends Component {
 	}
 
 	protected handleAnchorKeyDown(e: KeyboardEvent) {
-		if (this.open === false && e.key === 'Enter') {
+		if (this.open === false && e.key === 'Enter' && !e.defaultPrevented) {
 			(e as any)[Popover.isSyntheticClickEvent] = true
 			// Prevent synthetic click event by the browser
 			// because this will only happen when the anchor is focusable

@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/selection-group",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "A container that turns any set of children into one selection with one tab stop and the ARIA pattern it calls for, and the headless controller behind it.",
 	"repository": {
 		"type": "git",

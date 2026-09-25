@@ -59,7 +59,6 @@ export class FieldSelectValueController<T> extends Controller {
 
 	private request?: SelectionRequest
 	private published?: Selection<T>
-	private _menuValue = new Array<number>()
 	private syncing = false
 
 	private static keyOf<T>(option: Option<T>) {
@@ -67,8 +66,6 @@ export class FieldSelectValueController<T> extends Controller {
 	}
 
 	get selection() { return this.selectability.selection }
-
-	get menuValue() { return this._menuValue }
 
 	isSelected(option: Option<T>) {
 		return this.selectability.isSelected(option)
@@ -149,7 +146,6 @@ export class FieldSelectValueController<T> extends Controller {
 			data: this.pluralize(options.map(option => option.data)) as Data<T>,
 		}
 		if (!this.published || (['value', 'index', 'data'] as const).some(origin => same(selection[origin], this.published![origin]) === false)) {
-			this._menuValue = indices
 			this.published = selection
 			this.host.value = selection.value
 			this.host.index = selection.index

@@ -89,27 +89,20 @@ describe('CollapsibleListItem', () => {
 
 		const summaryItem = () => fixture.component.querySelector('mo-list-item:not([slot])')!
 
-		// What the list dispatches to its items for every key it sees.
-		const keyDown = (key: string) => summaryItem().dispatchEvent(new CustomEvent('listKeyDown', {
-			detail: new KeyboardEvent('keydown', { key, cancelable: true }),
-			bubbles: true,
-			composed: true,
-		}))
+		const keyDown = (target: Element, key: string) => target.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, composed: true, cancelable: true }))
 
-		it('should open on ArrowRight and close on ArrowLeft while its item is focused', async () => {
-			summaryItem().toggleAttribute('focused', true)
-
-			keyDown('ArrowRight')
+		it('should open on ArrowRight and close on ArrowLeft pressed on its item', async () => {
+			keyDown(summaryItem(), 'ArrowRight')
 			await fixture.updateComplete
 			expect(fixture.component.open).toBe(true)
 
-			keyDown('ArrowLeft')
+			keyDown(summaryItem(), 'ArrowLeft')
 			await fixture.updateComplete
 			expect(fixture.component.open).toBe(false)
 		})
 
-		it('should ignore the keys while its item is not focused', async () => {
-			keyDown('ArrowRight')
+		it('should ignore the keys of the items it reveals', async () => {
+			keyDown(fixture.component.querySelector('mo-list-item[slot=details]')!, 'ArrowRight')
 			await fixture.updateComplete
 
 			expect(fixture.component.open).toBe(false)

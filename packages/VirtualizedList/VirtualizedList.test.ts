@@ -144,28 +144,4 @@ describe('VirtualizedList', () => {
 			expect(item.textContent).toContain(`Item ${index}`)
 		})
 	})
-
-	describe('keyboard navigation', () => {
-		const arrowDown = () => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }))
-
-		it('should move focus through the rendered items with the arrow keys', async () => {
-			await settle()
-			const focus = fixture.component.focusController
-
-			try {
-				focus.focusIn()
-
-				arrowDown()
-				expect(focus.focusedItemIndex).toBe(0)
-				expect(fixture.component.items[0]!.hasAttribute('focused')).toBe(true)
-
-				arrowDown()
-				expect(focus.focusedItemIndex).toBe(1)
-				expect(fixture.component.items[1]!.hasAttribute('focused')).toBe(true)
-				expect(fixture.component.items[0]!.hasAttribute('focused')).toBe(false)
-			} finally {
-				focus.focusOut()
-			}
-		})
-	})
 })

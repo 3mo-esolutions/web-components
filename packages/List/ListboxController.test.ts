@@ -2,6 +2,7 @@ import { Component, component, ElementRef, html, repeat, state } from '@a11d/lit
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { Selectability } from '@3mo/selectability'
 import { ListboxController, type ListboxOrientation } from './ListboxController.js'
+import { userEvent } from 'vitest/browser'
 
 type Fruit = { readonly id: number, readonly name: string, readonly disabled?: boolean }
 
@@ -68,7 +69,7 @@ class ListboxComboboxTest extends Component {
 	get options() { return [...this.children] as Array<HTMLElement> }
 
 	protected override firstUpdated() {
-		this.options.forEach((option, index) => this.controller.indexability.register(option, { index, data: option.textContent! }))
+		this.options.forEach((option, index) => this.controller.indexability.addItem(option, { index, data: option.textContent! }))
 		this.requestUpdate()
 	}
 
@@ -185,6 +186,16 @@ describe('ListboxController', () => {
 			press('End')
 			expect(fixture.component.active).toBe('Cherry')
 			press('Home')
+			expect(fixture.component.active).toBe('Apple')
+		})
+
+		it('should stop at either end rather than wrap', () => {
+			press('End')
+			press('ArrowDown')
+			expect(fixture.component.active).toBe('Cherry')
+
+			press('Home')
+			press('ArrowUp')
 			expect(fixture.component.active).toBe('Apple')
 		})
 
@@ -429,6 +440,41 @@ describe('ListboxController', () => {
 
 			expect(press.defaultPrevented).toBe(true)
 			expect(comboboxFixture.component.selections).toEqual([['Cairo']])
+		})
+	})
+
+	describe('with more options than fit', () => {
+		const many = [...new Array(40).keys()].map((index): Fruit => ({ id: index + 1, name: `Fruit ${index + 1}` }))
+
+		const clickFarDown = async (selectability: Selectability) => {
+			fixture.component.selectability = selectability
+			fixture.component.items = many
+			await fixture.updateComplete
+			Object.assign(fixture.component.listbox.style, { maxHeight: '100px', overflow: 'auto' })
+			const listbox = fixture.component.listbox
+			const options = fixture.component.options
+			options.at(-3)!.scrollIntoView({ block: 'nearest' })
+			const scrollTop = listbox.scrollTop
+			expect(scrollTop).toBeGreaterThan(0)
+
+			for (const option of [options.at(-3)!, options.at(-5)!]) {
+				await userEvent.click(option)
+				await fixture.updateComplete
+				await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+
+				expect(listbox.scrollTop).toBe(scrollTop)
+				expect(fixture.component.active).toBe(option.textContent)
+				expect(fixture.component.shadowRoot!.activeElement).toBe(option)
+			}
+			return fixture.component.selected
+		}
+
+		it('should keep the list where it is and the clicked option active when options far down are clicked', async () => {
+			expect(await clickFarDown(Selectability.Single)).toEqual(['Fruit 36'])
+		})
+
+		it('should keep the list where it is and the clicked option active when several options far down are chosen', async () => {
+			expect(await clickFarDown(Selectability.Multiple)).toEqual(['Fruit 36', 'Fruit 38'])
 		})
 	})
 })

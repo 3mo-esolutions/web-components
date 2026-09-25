@@ -1,5 +1,5 @@
 import '@3mo/icon-button'
-import '@3mo/menu'
+import '@3mo/popover'
 import '@3mo/field'
 import '@3mo/line'
 import '@3mo/icon'
