@@ -1,4 +1,4 @@
-import { component, css } from '@a11d/lit'
+import { component, css, html } from '@a11d/lit'
 import { ListItem } from '@3mo/list'
 
 /** @element mo-navigation-list-item */
@@ -18,6 +18,12 @@ export class NavigationListItem extends ListItem {
 				background-color: var(--mo-color-selected);
 				color: var(--mo-color-on-selected);
 			}
+		`
+	}
+
+	protected override get startSlotDefaultContent() {
+		return !this.icon ? html.nothing : html`
+			<mo-icon part='icon' icon=${this.icon}></mo-icon>
 		`
 	}
 }

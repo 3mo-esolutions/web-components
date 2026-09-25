@@ -11,6 +11,8 @@ import './ListItemRipple.js'
  * @attr preventClickOnSpace - Whether the list item should prevent click on space
  *
  * @slot - Default slot for content
+ * @slot start - Slot for content at the start
+ * @slot end - Slot for content at the end
  */
 @component('mo-list-item')
 export class ListItem extends Component {
@@ -32,10 +34,15 @@ export class ListItem extends Component {
 				user-select: none;
 				padding-inline: 1rem;
 				padding-block: 0.48em;
-				display: flex;
-				gap: 1rem;
 				align-items: center;
 				min-height: 3rem;
+				/*
+				 * Only takes effect for list-items used without a list; inside one,
+				 * the list turns the item into a subgrid. No gap here on purpose:
+				 * a subgrid's own gap overrides the one inherited from the list, which
+				 * would reintroduce gutters around empty start/end columns.
+				 */
+				display: flex;
 			}
 
 			:host([disabled]) {
@@ -49,6 +56,36 @@ export class ListItem extends Component {
 
 			:host(:focus) {
 				outline: none;
+			}
+
+			slot[name=start], slot:not([name]), slot[name=end] {
+				display: inline-flex;
+				align-items: center;
+			}
+
+			slot:not([name]) {
+				/* Preserves the spacing of content that is not slotted into start/end */
+				gap: var(--mo-list-item-spacing, 1rem);
+				/* For list-items without a list */
+				flex: 1;
+			}
+
+			slot[name=end] {
+				justify-content: end;
+			}
+
+			/*
+			 * The spacing between the columns is carried by whatever occupies them
+			 * rather than by a column-gap on the list, so that a start/end column
+			 * nobody uses takes up exactly no space. Both selectors are needed:
+			 * "::slotted" for consumer content, "> *" for the item's own default content.
+			 */
+			slot[name=start]::slotted(*), slot[name=start] > * {
+				margin-inline-end: var(--mo-list-item-spacing, 1rem);
+			}
+
+			slot[name=end]::slotted(*), slot[name=end] > * {
+				margin-inline-start: var(--mo-list-item-spacing, 1rem);
 			}
 		`
 	}
@@ -65,15 +102,18 @@ export class ListItem extends Component {
 		return html`
 			${!this.focusRingActive ? html.nothing : html`<mo-focus-ring inward visible></mo-focus-ring>`}
 			<mo-list-item-ripple ?focused=${this.rippleActive} ?disabled=${this.disabled} ?preventClickOnSpace=${this.preventClickOnSpace}></mo-list-item-ripple>
-			${this.iconTemplate}
+			<slot name='start'>${this.startSlotDefaultContent}</slot>
 			<slot></slot>
+			<slot name='end'>${this.endSlotDefaultContent}</slot>
 		`
 	}
 
-	protected get iconTemplate() {
-		return !this.icon ? html.nothing : html`
-			<mo-icon part='icon' style='opacity: 0.66' icon=${this.icon}></mo-icon>
-		`
+	protected get startSlotDefaultContent() {
+		return html.nothing
+	}
+
+	protected get endSlotDefaultContent() {
+		return html.nothing
 	}
 }
 

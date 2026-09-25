@@ -8,13 +8,15 @@ Object.defineProperty(Element.prototype, list, {
 	},
 })
 
+export const listItemRoles: ReadonlyArray<string> = ['listitem', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'option']
+
 export const listItem = Symbol('listItem')
 
 Object.defineProperty(Element.prototype, listItem, {
 	enumerable: false,
 	configurable: true,
 	get(this: Element) {
-		return this.tagName === 'LI' || (!!this.role && ['listitem', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'option'].includes(this.role)) ? this : undefined
+		return this.tagName === 'LI' || (!!this.role && listItemRoles.includes(this.role)) ? this : undefined
 	},
 })
 

@@ -74,16 +74,12 @@ export class Option<T> extends SelectionListItem {
 
 			mo-checkbox {
 				height: fit-content;
-				margin-inline-start: auto;
 			}
 		`
 	}
 
-	protected override get template() {
-		return html`
-			${super.template}
-			${this.checkboxTemplate}
-		`
+	protected override get endSlotDefaultContent() {
+		return this.checkboxTemplate
 	}
 
 	protected get checkboxTemplate() {

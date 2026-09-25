@@ -1,4 +1,4 @@
-import { component, html, property, query } from '@a11d/lit'
+import { component, css, html, property, query } from '@a11d/lit'
 import { type GetItemTemplate, type VirtualizedScroller } from '@3mo/virtualized-scroller'
 import { List, listItem } from '@3mo/list'
 
@@ -16,6 +16,21 @@ export class VirtualizedList<T = unknown> extends List {
 	@property({ type: Object }) getItemTemplate: GetItemTemplate<T> = (() => html.nothing)
 
 	@query('mo-virtualized-scroller') protected readonly virtualizedScroller!: VirtualizedScroller
+
+	static override get styles() {
+		return css`
+			${super.styles}
+
+			:host {
+				/*
+				 * The scroller renders the items inside its own shadow root, so they can
+				 * never take part in the column grid List sets up. Opt out of it, otherwise
+				 * the scroller is placed into the zero-width start track and nothing renders.
+				 */
+				display: block;
+			}
+		`
+	}
 
 	override get items() {
 		return (this.virtualizedScroller?.renderedItems ?? []).filter(e => !!e[listItem]) as Array<HTMLElement>

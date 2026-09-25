@@ -52,7 +52,7 @@ export class NestedMenuItem extends MenuItem {
 			}
 
 			mo-icon[icon=chevron_right] {
-				margin-inline-start: auto;
+				/* The end column already pushes it to the end, no auto margin needed */
 				margin-inline-end: -8px;
 			}
 
@@ -78,13 +78,18 @@ export class NestedMenuItem extends MenuItem {
 		`
 	}
 
+	protected override get endSlotDefaultContent() {
+		return !this.hasSubMenu ? html.nothing : html`
+			<mo-icon icon='chevron_right'></mo-icon>
+		`
+	}
+
 	protected get hasSubMenu() {
 		return this.slotController.hasAssignedContent('submenu')
 	}
 
 	protected get subMenuTemplate() {
 		return !this.hasSubMenu ? html.nothing : html`
-			<mo-icon icon='chevron_right'></mo-icon>
 			<mo-menu .anchor=${this} placement='inline-end' alignment='start'
 				?open=${bind(this, 'open')}
 				@listKeyDown=${(e: CustomEvent<KeyboardEvent>) => {
