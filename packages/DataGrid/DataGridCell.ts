@@ -1,11 +1,5 @@
-import { component, Component, html, property, css, state, type HTMLTemplateResult } from '@a11d/lit'
-import { NotificationComponent } from '@a11d/lit-application'
-import { Localizer } from '@3mo/localization'
-import { DataGridColumn, DataGridEditability, type DataGridRow } from './index.js'
-
-Localizer.dictionaries.add('de', {
-	'Copied to clipboard': 'In die Zwischenablage kopiert',
-})
+import { component, Component, html, property, css, type HTMLTemplateResult } from '@a11d/lit'
+import { DataGridColumn, type DataGridRow } from './index.js'
 
 /**
  * @element mo-data-grid-cell
@@ -20,84 +14,18 @@ export class DataGridCell<TValue extends KeyPath.ValueOf<TData>, TData = any, TD
 	@property({ type: Object }) column!: DataGridColumn<TData, TValue>
 	@property({ type: Object }) row!: DataGridRow<TData, TDetailsElement>
 
-	@state() private editing = false
-
-	override readonly role = 'gridcell'
-
 	get dataGrid() { return this.row.dataGrid }
 	get data() { return this.row.data }
 	get dataSelector() { return this.column.dataSelector }
 
 	private get valueTextContent() { return this.renderRoot.textContent?.trim() || '' }
 
-	private get isEditable() {
-		return this.dataGrid.editability !== DataGridEditability.Never
-			&& [undefined, null].includes(this.editContentTemplate as any) === false
-			&& (this.column.editable === true || (typeof this.column.editable === 'function' && this.column.editable(this.data)))
-	}
-
 	get isEditing() {
-		return this.isEditable
-			&& (this.editing || this.dataGrid.editability === DataGridEditability.Always)
+		return this.dataGrid.controller.editability.isEditing(this)
 	}
 
-	handlePointerDown(event: PointerEvent) {
-		if (this.isEditing && event.composedPath().includes(this) === false) {
-			this.setEditing(false)
-		}
-	}
-
-	handleDoubleClick(event: MouseEvent) {
-		if (this.dataGrid.editability === DataGridEditability.Cell) {
-			event.preventDefault()
-			this.setEditing(true)
-		}
-	}
-
-	async handleKeyDown(event: KeyboardEvent) {
-		switch (event.key) {
-			case 'Enter':
-				if (this.isEditing === false) {
-					event.preventDefault()
-					event.stopPropagation()
-					if (this.isEditable) {
-						this.setEditing(true)
-					} else {
-						this.click()
-					}
-				}
-				break
-			case 'Escape':
-				event.preventDefault()
-				event.stopPropagation()
-				this.setEditing(false)
-				await this.updateComplete
-				this.dataGrid.navigabilityController.focusCell(this, event)
-				break
-			case 'c':
-				if (this.isEditing === false && (event.ctrlKey || event.metaKey)) {
-					event.preventDefault()
-					await navigator.clipboard.writeText(this.valueTextContent)
-					NotificationComponent.notifySuccess(t('Copied to clipboard'))
-				}
-				break
-			default:
-				if (this.isEditing === false) {
-					this.dataGrid.navigabilityController.handleKeyDown(event, this)
-				}
-				break
-		}
-	}
-
-	private async setEditing(value: boolean) {
-		if (this.editing === value) {
-			return
-		}
-		this.editing = value
-		await this.updateComplete
-		if (value) {
-			this.renderRoot.querySelector<HTMLElement>('[autofocus]')?.focus()
-		}
+	setEditing(editing: boolean) {
+		return this.dataGrid.controller.editability.setEditing(this, editing)
 	}
 
 	static override get styles() {
@@ -145,15 +73,6 @@ export class DataGridCell<TValue extends KeyPath.ValueOf<TData>, TData = any, TD
 		this.title = this.tooltip
 		this.toggleAttribute('isEditing', this.isEditing)
 		this.setAttribute('alignment', this.column.alignment || 'start')
-		if (this.isEditing) {
-			this.removeAttribute('tabindex')
-		} else {
-			this.setAttribute('tabindex', this.dataGrid.navigabilityController.isTabStop(this) ? '0' : '-1')
-		}
-		this.toggleAttribute('data-sticky', this.column.sticky !== undefined)
-		this.style.insetInline = this.column.stickyColumnInsetInline
-		const stickyEdge = this.column.stickyEdge
-		stickyEdge ? this.setAttribute('data-sticky-edge', stickyEdge) : this.removeAttribute('data-sticky-edge')
 		return this.isEditing ? this.editContentTemplate as HTMLTemplateResult : this.contentTemplate
 	}
 

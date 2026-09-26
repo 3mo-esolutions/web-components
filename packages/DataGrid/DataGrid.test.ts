@@ -54,9 +54,9 @@ describe('DataGrid', () => {
 			const [first, second, third] = fixture.component.data
 
 			expect(fixture.component.dataRecords).toEqual([
-				new DataRecord(fixture.component, { index: 0, level: 0, data: first }),
-				new DataRecord(fixture.component, { index: 1, level: 0, data: second }),
-				new DataRecord(fixture.component, { index: 2, level: 0, data: third }),
+				new DataRecord(fixture.component.controller, { index: 0, level: 0, data: first }),
+				new DataRecord(fixture.component.controller, { index: 1, level: 0, data: second }),
+				new DataRecord(fixture.component.controller, { index: 2, level: 0, data: third }),
 			])
 		})
 
@@ -70,8 +70,8 @@ describe('DataGrid', () => {
 			const [first, second] = fixture.component.data
 
 			expect(fixture.component.dataRecords).toEqual([
-				new DataRecord(fixture.component, { index: 0, level: 0, data: first }),
-				new DataRecord(fixture.component, { index: 1, level: 0, data: second }),
+				new DataRecord(fixture.component.controller, { index: 0, level: 0, data: first }),
+				new DataRecord(fixture.component.controller, { index: 1, level: 0, data: second }),
 			])
 		})
 
@@ -190,10 +190,10 @@ describe('DataGrid', () => {
 				expect(thirdColumn?.hidden).toEqual(false)
 			})
 
-			it('should automatically set dataGrid property of columns', () => {
+			it('should attach the controller of the grid to its columns', () => {
 				const [firstColumn, secondColumn] = fixture.component.columns
-				expect(firstColumn?.dataGrid).toBe(fixture.component)
-				expect(secondColumn?.dataGrid).toBe(fixture.component)
+				expect(firstColumn?.controller).toBe(fixture.component.controller)
+				expect(secondColumn?.controller).toBe(fixture.component.controller)
 			})
 
 			describe('with keys of every shape', () => {
@@ -239,7 +239,7 @@ describe('DataGrid', () => {
 		describe('explicit', () => {
 			const fixture = new ComponentTestFixture<TestDataGrid>(html`<test-data-grid></test-data-grid>`)
 
-			it('should automatically set dataGrid property of columns', async () => {
+			it('should attach the controller of the grid to its columns', async () => {
 				fixture.component.columns = [
 					new DataGridColumn({ heading: 'Id', dataSelector: 'id' }),
 					new DataGridColumn({ heading: 'Name', dataSelector: 'name' }),
@@ -248,8 +248,8 @@ describe('DataGrid', () => {
 				await fixture.updateComplete
 
 				const [firstColumn, secondColumn] = fixture.component.columns
-				expect(firstColumn?.dataGrid).toBe(fixture.component)
-				expect(secondColumn?.dataGrid).toBe(fixture.component)
+				expect(firstColumn?.controller).toBe(fixture.component.controller)
+				expect(secondColumn?.controller).toBe(fixture.component.controller)
 			})
 
 			it('should take precedence over auto-generated columns', async () => {
@@ -293,10 +293,10 @@ describe('DataGrid', () => {
 				expect(secondColumn?.heading).toEqual('Name')
 			})
 
-			it('should set dataGrid property of columns', () => {
+			it('should attach the controller of the grid to its columns', () => {
 				const [firstColumn, secondColumn] = fixture.component.columns
-				expect(firstColumn?.dataGrid).toBe(fixture.component)
-				expect(secondColumn?.dataGrid).toBe(fixture.component)
+				expect(firstColumn?.controller).toBe(fixture.component.controller)
+				expect(secondColumn?.controller).toBe(fixture.component.controller)
 			})
 
 			it('should update columns when columns change', async () => {
@@ -504,13 +504,13 @@ describe('DataGrid', () => {
 			await fixture.updateComplete
 
 			fixture.component.rows.at(0)!.cells.at(0)!
-				.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', shiftKey: false }))
+				.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, composed: true, key: 'ArrowDown', shiftKey: false }))
 			await fixture.updateComplete
 
 			expect(fixture.component.isRowSelected(fixture.component.rows.at(1)!)).toBe(true)
 
 			fixture.component.rows.at(1)!.cells.at(0)!
-				.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', shiftKey: true }))
+				.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, composed: true, key: 'ArrowDown', shiftKey: true }))
 			await fixture.updateComplete
 
 			expect(fixture.component.isRowSelected(fixture.component.rows.at(1)!)).toBe(shouldPreservePreviousSelection)
@@ -779,7 +779,7 @@ describe('DataGrid', () => {
 				expect(row().detailsOpen).toBe(false)
 				expect(detailsContainer().children.length).toBe(1)
 
-				row().dataRecord = new DataRecord(fixture.component, {
+				row().dataRecord = new DataRecord(fixture.component.controller, {
 					index: 0,
 					level: 0,
 					data: { id: 999, name: 'Recycled Person', birthDate: new DateTime(2000, 0, 0), balance: 0 },
@@ -827,7 +827,7 @@ describe('DataGrid', () => {
 		const expectCellToBeEditable = (fixture: ComponentTestFixture<TestDataGrid>, editable: boolean, alsoWithoutDoubleClick = false) => {
 			const cell = fixture.component.rows[0]?.cells[0]
 			if (alsoWithoutDoubleClick === false) {
-				cell?.dispatchEvent(new MouseEvent('dblclick'))
+				cell?.dispatchEvent(new MouseEvent('dblclick', { bubbles: true, composed: true }))
 			}
 			expect(cell?.isEditing).toBe(editable)
 		}
@@ -837,7 +837,7 @@ describe('DataGrid', () => {
 			const cell = row?.cells[1] // name
 
 			if (alsoWithoutKeyDown === false) {
-				cell?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }))
+				cell?.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, composed: true, key: 'Enter' }))
 				await fixture.updateComplete
 			}
 			cell?.renderRoot.querySelector('mo-field-text')?.change.dispatch('Not John!')
@@ -858,28 +858,96 @@ describe('DataGrid', () => {
 
 			it('should switch to edit mode on enter', () => {
 				const cell = fixture.component.rows[0]?.cells[0]
-				cell?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }))
+				cell?.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, composed: true, key: 'Enter' }))
 				expect(cell?.isEditing).toBe(true)
 			})
 
 			it('should switch out of edit mode on Escape', () => {
 				const cell = fixture.component.rows[0]?.cells[0]
-				cell?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }))
-				cell?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
+				cell?.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, composed: true, key: 'Enter' }))
+				cell?.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, composed: true, key: 'Escape' }))
 				expect(cell?.isEditing).toBe(false)
+			})
+
+			it('should leave Escape to the window while no cell is being edited, where a dialog closes on it', () => {
+				const cell = fixture.component.rows[0]!.cells[0]!
+				const escapes = new Array<KeyboardEvent>()
+				const listener = (event: KeyboardEvent) => escapes.push(event)
+				window.addEventListener('keydown', listener)
+
+				cell.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, composed: true, cancelable: true, key: 'Escape' }))
+				window.removeEventListener('keydown', listener)
+
+				expect(escapes.length).toBe(1)
+				expect(escapes[0]!.defaultPrevented).toBe(false)
+			})
+
+			it('should keep Escape from the window while a cell is being edited, as it ends the edit only', () => {
+				const cell = fixture.component.rows[0]!.cells[0]!
+				cell.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, composed: true, key: 'Enter' }))
+				const listener = vi.fn()
+				window.addEventListener('keydown', listener)
+
+				cell.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, composed: true, cancelable: true, key: 'Escape' }))
+				window.removeEventListener('keydown', listener)
+
+				expect(cell.isEditing).toBe(false)
+				expect(listener).not.toHaveBeenCalled()
 			})
 
 			it('should switch out of edit mode on a pointerdown event anywhere where the composedPath does not include the cell', () => {
 				const cell = fixture.component.rows[0]?.cells[0]
 				const anotherCell = fixture.component.rows[0]?.cells[1]
-				cell?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }))
+				cell?.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, composed: true, key: 'Enter' }))
 				anotherCell?.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, composed: true }))
 				expect(cell?.isEditing).toBe(false)
 			})
 
+			it('should leave a press anywhere alone while no cell is being edited', () => {
+				const rows = vi.spyOn(fixture.component, 'rows', 'get')
+
+				document.body.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, composed: true }))
+
+				expect(rows).not.toHaveBeenCalled()
+			})
+
+			it('should listen for a press outside only while a cell is being edited', () => {
+				const cell = fixture.component.rows[0]!.cells[0]!
+				const controller = fixture.component.controller.editability
+				const add = vi.spyOn(document, 'addEventListener')
+				const remove = vi.spyOn(document, 'removeEventListener')
+
+				cell.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, composed: true, key: 'Enter' }))
+				expect(add).toHaveBeenCalledWith('pointerdown', controller)
+
+				cell.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, composed: true, key: 'Escape' }))
+				expect(remove).toHaveBeenCalledWith('pointerdown', controller)
+			})
+
+			it('should leave the tab order to the editor while editing, and put the cell back afterwards', () => {
+				const cell = fixture.component.rows[0]!.cells[0]!
+				expect(cell.getAttribute('tabindex')).toBe('0')
+
+				cell.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, composed: true, key: 'Enter' }))
+				expect(cell.hasAttribute('tabindex')).toBe(false)
+
+				cell.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, composed: true, key: 'Escape' }))
+				expect(cell.getAttribute('tabindex')).toBe('0')
+			})
+
+			it('should edit one cell at a time', () => {
+				const [first, second] = fixture.component.rows[0]!.cells
+
+				first!.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, composed: true, key: 'Enter' }))
+				second!.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, composed: true, key: 'Enter' }))
+
+				expect(first!.isEditing).toBe(false)
+				expect(second!.isEditing).toBe(true)
+			})
+
 			it('should not stop propagation of Enter key when already editing', () => {
 				const cell = fixture.component.rows[0]?.cells[0]
-				cell?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }))
+				cell?.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, composed: true, key: 'Enter' }))
 				expect(cell?.isEditing).toBe(true)
 
 				const event = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true })
@@ -892,7 +960,7 @@ describe('DataGrid', () => {
 
 			it('should dispatch cellEdit with the edited cell when the value changes', async () => {
 				const cell = fixture.component.rows[0]!.cells[1]! // name
-				cell.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }))
+				cell.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, composed: true, key: 'Enter' }))
 				await fixture.updateComplete
 				vi.spyOn(fixture.component.cellEdit, 'dispatch').mockReturnValue(undefined)
 				const editedValue = `${cell.value}!`
@@ -905,7 +973,7 @@ describe('DataGrid', () => {
 
 			it('should not apply the edit nor dispatch cellEdit when the value did not change', async () => {
 				const cell = fixture.component.rows[0]!.cells[1]! // name
-				cell.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }))
+				cell.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, composed: true, key: 'Enter' }))
 				await fixture.updateComplete
 				vi.spyOn(fixture.component.cellEdit, 'dispatch').mockReturnValue(undefined)
 				const unchangedValue = `${cell.value}`
@@ -1604,6 +1672,88 @@ describe('DataGrid', () => {
 
 				expect(scroller?.contains(fixture.component.rows[0]!)).toBe(true)
 			})
+		})
+	})
+
+	describe('Sticky columns', () => {
+		const fixture = new ComponentTestFixture<TestDataGrid>(html`<test-data-grid></test-data-grid>`)
+
+		const rendered = async () => {
+			const grid = fixture.component
+			await grid.updateComplete
+			await Promise.all(grid.rows.map(row => row.updateComplete))
+			await Promise.all(grid.rows.flatMap(row => row.cells.map(cell => cell.updateComplete)))
+		}
+
+		it('should move the sticky cells and headers as a width changes, without re-rendering a row or a cell', async () => {
+			const grid = fixture.component
+			grid.columns = [
+				new DataGridColumn<Person>({ heading: 'Id', dataSelector: 'id', sticky: 'start' }),
+				new DataGridColumn<Person>({ heading: 'Name', dataSelector: 'name', sticky: 'start' }),
+				new DataGridColumn<Person>({ heading: 'Balance', dataSelector: 'balance' }),
+			]
+			await rendered()
+			await new Promise(r => setTimeout(r, 100))
+			await rendered()
+			const updates = grid.rows
+				.flatMap(row => [row, ...row.cells])
+				.map(element => vi.spyOn(element as unknown as { update(...parameters: Array<unknown>): void }, 'update'))
+			const nameHeader = grid.renderRoot.querySelector('mo-data-grid-header')!.renderRoot.querySelectorAll('mo-data-grid-column-header')[1]!
+
+			grid.controller.columns.setWidthInPixels('id', 123)
+
+			expect(grid.rows.map(row => row.cells[1]!.style.insetInline)).toEqual(['123px auto', '123px auto', '123px auto'])
+			expect(nameHeader.style.insetInline).toBe('123px auto')
+			expect(grid.rows[0]!.cells[1]!.getAttribute('data-sticky')).toBe('start')
+			await rendered()
+			expect(updates.filter(update => update.mock.calls.length > 0)).toEqual([])
+		})
+
+		it('should stamp the roles of the header and its column headers', async () => {
+			const header = fixture.component.renderRoot.querySelector('mo-data-grid-header')!
+			await header.updateComplete
+
+			expect(header.role).toBe('row')
+			expect([...header.renderRoot.querySelectorAll('mo-data-grid-column-header')].every(columnHeader => columnHeader.role === 'columnheader')).toBe(true)
+		})
+	})
+
+	describe('Size anchor', () => {
+		const fixture = new ComponentTestFixture<TestDataGrid>(html`
+			<test-data-grid>
+				<mo-data-grid-column-date heading='Birth date' dataSelector='birthDate'></mo-data-grid-column-date>
+			</test-data-grid>
+		`)
+
+		it('should size a column by its own content, not by the column generated from the data before the column elements were read', async () => {
+			const grid = fixture.component
+			await grid.updateComplete
+			await Promise.all(grid.rows.map(row => row.updateComplete))
+			const cell = grid.rows[0]!.cells[0]!
+			await cell.updateComplete
+
+			const anchor = grid.renderRoot.querySelector('#size-anchor > div')!
+
+			expect(anchor.textContent?.trim()).toBe(cell.renderRoot.textContent?.trim())
+		})
+	})
+
+	describe('Controller', () => {
+		const fixture = new ComponentTestFixture<TestDataGrid>(html`<test-data-grid></test-data-grid>`)
+
+		it('should still reach each controller under the name it had before they were composed into one', () => {
+			const { controller } = fixture.component
+
+			expect(fixture.component.columnsController).toBe(controller.columns)
+			expect(fixture.component.selectionController).toBe(controller.selection)
+			expect(fixture.component.sortingController).toBe(controller.sorting)
+			expect(fixture.component.contextMenuController).toBe(controller.contextMenu)
+			expect(fixture.component.detailsController).toBe(controller.details)
+			expect(fixture.component.csvController).toBe(controller.csv)
+			expect(fixture.component.reorderabilityController).toBe(controller.reorderability)
+			expect(fixture.component.navigabilityController).toBe(controller.navigability)
+			expect(fixture.component.recordsController).toBe(controller.records)
+			expect(fixture.component.virtualizationController).toBe(controller.virtualization)
 		})
 	})
 })

@@ -280,7 +280,7 @@ export class DataGridFooter<TData> extends Component {
 		if (!this.dataGrid.exportable) {
 			return html.nothing
 		}
-		const { generationProgress, isGenerating } = this.dataGrid.csvController
+		const { generationProgress, isGenerating } = this.dataGrid.controller.csv
 		return html`
 			<div id='csv'>
 				<mo-grid columns='auto auto auto' gap='6px' rows='auto' alignItems='center'>

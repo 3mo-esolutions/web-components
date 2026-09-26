@@ -1,17 +1,7 @@
-import { type Selectability, SelectabilityBehaviorOnItemsChange, SelectabilityController, SelectabilityInteraction } from '@3mo/selectability'
-import type { ReactiveElement } from '@a11d/lit'
-import type { DataRecord } from './DataRecord.js'
+import { SelectabilityController, SelectabilityInteraction } from '@3mo/selectability'
+import type { DataGridController } from './DataGridController.js'
 
 export { Selectability as DataGridSelectability, SelectabilityBehaviorOnItemsChange as DataGridSelectionBehaviorOnDataChange } from '@3mo/selectability'
-
-interface SelectableComponent<TData> extends ReactiveElement {
-	selectability?: Selectability
-	readonly dataRecords: Array<DataRecord<TData>>
-	selectedData: Array<TData>
-	isDataSelectable?(data: TData): boolean
-	readonly selectionChange?: EventDispatcher<Array<TData>>
-	readonly selectionBehaviorOnDataChange?: SelectabilityBehaviorOnItemsChange
-}
 
 export class DataGridSelectionController<TData> extends SelectabilityController<TData> {
 	private static readonly keys = new WeakMap<object, string>()
@@ -31,26 +21,22 @@ export class DataGridSelectionController<TData> extends SelectabilityController<
 		return key
 	}
 
-	constructor(override readonly host: SelectableComponent<TData>) {
-		super(host, {
+	/** `handleChange` runs once the grid's owner holds the new selection. */
+	constructor(controller: DataGridController<TData>, options?: { readonly handleChange?: () => void }) {
+		super(controller.host, {
 			interaction: SelectabilityInteraction.Manual,
-			stamping: false,
-			get selectability() { return host.selectability },
-			get items() { return host.dataRecords.map(record => record.data) },
-			get selection() { return host.selectedData },
-			get isSelectable() { return host.isDataSelectable?.bind(host) },
-			get behaviorOnItemsChange() { return host.selectionBehaviorOnDataChange },
+			get selectability() { return controller.options.selectability },
+			get items() { return controller.records.records.map(record => record.data) },
+			get selection() { return controller.options.selectedData },
+			get isSelectable() { return controller.options.isDataSelectable },
+			get behaviorOnItemsChange() { return controller.options.selectionBehaviorOnDataChange },
 			key: DataGridSelectionController.keyOf,
 			handleChange: ({ selection }) => {
-				host.selectedData = [...selection]
-				host.selectionChange?.dispatch([...selection])
+				controller.options.handleSelectionChange?.([...selection])
+				options?.handleChange?.()
 			},
 		})
 	}
 
 	get hasSelection() { return this.enabled }
-
-	selectPreviouslySelectedData() {
-		this.handleItemsChange(SelectabilityBehaviorOnItemsChange.Maintain)
-	}
 }

@@ -1,8 +1,8 @@
 import { type HierarchyNode } from '@3mo/hierarchy'
-import { type DataGrid } from './DataGrid.js'
+import { type DataGridController } from './DataGridController.js'
 
 export class DataRecord<TData> {
-	constructor(readonly dataGrid: DataGrid<TData, any>, init: Partial<DataRecord<TData>>) {
+	constructor(readonly controller: DataGridController<TData, any>, init: Partial<Pick<DataRecord<TData>, 'data' | 'index' | 'level' | 'node'>>) {
 		const { node, ...rest } = init
 		Object.assign(this, rest)
 		Object.defineProperty(this, 'node', { value: node, enumerable: false, writable: true, configurable: true })
@@ -14,39 +14,20 @@ export class DataRecord<TData> {
 	readonly level!: number
 
 	get isSelected(): boolean {
-		return this.dataGrid.selectionController.isSelected(this.data)
+		return this.controller.selection.isSelected(this.data)
 	}
 
 	get isSelectable(): boolean {
-		return this.dataGrid.selectionController.isSelectable(this.data)
+		return this.controller.selection.isSelectable(this.data)
 	}
 
 	get detailsOpen(): boolean {
-		return this.dataGrid.detailsController.isOpen(this)
+		return this.controller.details.isOpen(this)
 	}
 
 	private _subDataRecords?: Array<DataRecord<TData>>
 	get subDataRecords() {
-		if (this._subDataRecords !== undefined) {
-			return this._subDataRecords
-		}
-
-		if (this.node) {
-			return !this.node.children?.length ? undefined : this._subDataRecords = this.node.children.map(child => this.dataGrid.recordOf(child))
-		}
-
-		if (!this.dataGrid.subDataGridDataSelector) {
-			return undefined
-		}
-
-		const subData = KeyPath.get(this.data, this.dataGrid.subDataGridDataSelector)
-		if (!Array.isArray(subData) || !subData.length) {
-			return undefined
-		}
-
-		return this._subDataRecords = this.dataGrid.sortingController
-			.toSortedBy<TData>([...subData], d => d)
-			.map(data => new DataRecord(this.dataGrid, { data, level: this.level + 1 }))
+		return this._subDataRecords ??= this.controller.records.subRecordsOf(this)
 	}
 
 	get flattenedRecords(): Array<DataRecord<TData>> {
@@ -65,6 +46,6 @@ export class DataRecord<TData> {
 	}
 
 	get hasDetails(): boolean {
-		return this.dataGrid.detailsController.hasDetail(this)
+		return this.controller.details.hasDetail(this)
 	}
 }

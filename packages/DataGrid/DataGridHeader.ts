@@ -1,7 +1,6 @@
 import { component, Component, css, html, property, event, style, live, queryAll, repeat, bind } from '@a11d/lit'
 import { observeResize } from '@3mo/resize-observer'
 import { Localizer } from '@3mo/localization'
-import { ReorderabilityController } from '@3mo/reorderability'
 import { DataGridSelectability, type DataGrid, type DataGridColumn, type DataGridColumnsController, type DataGridColumnHeader } from './index.js'
 
 Localizer.dictionaries.add('en', {
@@ -31,18 +30,7 @@ export class DataGridHeader<TData> extends Component {
 	@property({ type: Object }) dataGrid!: DataGrid<TData, any>
 	@property({ type: Boolean, reflect: true }) overlayOpen = false
 
-	override readonly role = 'row'
-
 	@queryAll('mo-data-grid-column-header') private readonly columnHeaders!: Array<DataGridColumnHeader>
-
-	readonly reorderabilityController = new ReorderabilityController(this, {
-		strategy: 'indicator',
-		handleReorder: (source, destination) => {
-			const sourceColumn = this.dataGrid.visibleColumns[source]!
-			const destinationColumn = this.dataGrid.visibleColumns[destination]!
-			this.dataGrid.columnsController.columns.move(sourceColumn.dataSelector, this.dataGrid.columns.indexOf(destinationColumn))
-		}
-	})
 
 	protected override connected() {
 		this.dataGrid.dataChange.subscribe(this.handleDataGridDataChange)
@@ -133,9 +121,9 @@ export class DataGridHeader<TData> extends Component {
 	}
 
 	private get reorderabilityTemplate() {
-		return !this.dataGrid.reorderabilityController.visible ? html.nothing : html`
+		return !this.dataGrid.controller.reorderability.visible ? html.nothing : html`
 			<mo-flex class='reorder'
-				${style({ insetInlineStart: this.dataGrid.columnsController.getStickyColumnInsetInline('reordering') })}
+				${style({ insetInlineStart: this.dataGrid.controller.columns.getStickyColumnInsetInline('reordering') })}
 				${this.getResizeObserver('reordering')}
 			></mo-flex>
 		`
@@ -144,7 +132,7 @@ export class DataGridHeader<TData> extends Component {
 	private get detailsExpanderTemplate() {
 		return this.dataGrid.hasDetails === false ? html.nothing : html`
 			<mo-flex class='details' justifyContent='center' alignItems='center'
-				${style({ insetInlineStart: this.dataGrid.columnsController.getStickyColumnInsetInline('details') })}
+				${style({ insetInlineStart: this.dataGrid.controller.columns.getStickyColumnInsetInline('details') })}
 				${this.getResizeObserver('details')}
 			>
 				${!this.dataGrid.hasDetails || !this.dataGrid.multipleDetails ? html.nothing : html`
@@ -160,7 +148,7 @@ export class DataGridHeader<TData> extends Component {
 	private get selectionTemplate() {
 		return !this.dataGrid.hasSelection ? html.nothing : html`
 			<mo-flex class='selection' justifyContent='center' alignItems='center'
-				${style({ insetInlineStart: this.dataGrid.columnsController.getStickyColumnInsetInline('selection') })}
+				${style({ insetInlineStart: this.dataGrid.controller.columns.getStickyColumnInsetInline('selection') })}
 				${this.getResizeObserver('selection')}
 			>
 				${this.dataGrid.selectability !== DataGridSelectability.Multiple ? html.nothing : html`
@@ -200,10 +188,8 @@ export class DataGridHeader<TData> extends Component {
 			fontSize: 'small',
 		})
 		return html`
-			${repeat(this.dataGrid.visibleColumns, c => c.dataSelector, (column, index) => html`
-				<mo-data-grid-column-header .column=${column} ${this.reorderabilityController.item({
-					index,
-					disabled: !!column.sticky,
+			${repeat(this.dataGrid.visibleColumns, c => c.dataSelector, column => html`
+				<mo-data-grid-column-header .column=${column} ${this.dataGrid.controller.columnHeader(column, {
 					handle: '#reorderable-area',
 					dragImage: html`
 						<mo-flex alignItems='center' justifyContent='center' ${dragImageStyle}>
@@ -230,7 +216,7 @@ export class DataGridHeader<TData> extends Component {
 					<mo-icon-button dense icon='more_vert' title=${t('Actions for ${count:pluralityNumber} selected entries', { count: this.dataGrid.selectedData.length })}></mo-icon-button>
 
 					<mo-menu slot='popover'>
-						${this.dataGrid.contextMenuController.getMenuContentTemplate()}
+						${this.dataGrid.getContextMenuContentTemplate()}
 					</mo-menu>
 				</mo-popover-container>
 			</mo-flex>
@@ -281,7 +267,7 @@ export class DataGridHeader<TData> extends Component {
 	}
 
 	private getResizeObserver(column: Parameters<DataGridColumnsController<TData>['setColumnWidth']>[0]) {
-		return observeResize(([entry]) => this.dataGrid.columnsController.setColumnWidth(column, entry?.contentRect.width ?? 0))
+		return observeResize(([entry]) => this.dataGrid.controller.columns.setColumnWidth(column, entry?.contentRect.width ?? 0))
 	}
 
 	private toggleAllDetails() {

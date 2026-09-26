@@ -1,7 +1,7 @@
 import { fileURLToPath } from 'node:url'
 import { dirname, resolve } from 'path'
 import { readFileSync, readdirSync, existsSync } from 'fs'
-import { mergeConfig } from 'vite'
+import { mergeConfig, type ViteDevServer } from 'vite'
 import type { StorybookConfig } from '@storybook/web-components-vite'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -23,7 +23,7 @@ export default {
 	],
 
 	framework: {
-		name: getAbsolutePath('@storybook/web-components-vite'),
+		name: '@storybook/web-components-vite',
 		options: {}
 	},
 
@@ -51,7 +51,15 @@ export default {
 		return mergeConfig(config, {
 			resolve: {
 				alias: packageAliases,
-			}
+			},
+			plugins: [{
+				// Custom elements cannot be redefined, so hot-replacing a module that registers one throws.
+				name: 'full-reload',
+				handleHotUpdate({ server }: { server: ViteDevServer }) {
+					server.ws.send({ type: 'full-reload' })
+					return []
+				}
+			}]
 		})
 	}
 } as StorybookConfig

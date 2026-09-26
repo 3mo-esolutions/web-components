@@ -1,7 +1,7 @@
 import { query } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { Localizer } from '@3mo/localization'
-import { DataGrid, DataGridCsvController, DataGridPagination, DataGridSelectability, type DataGridFooter } from './index.js'
+import { DataGrid, DataGridPagination, DataGridSelectability, type DataGridFooter } from './index.js'
 
 type Person = { id: number, name: string, birthDate: DateTime, children?: Array<Person> }
 
@@ -287,7 +287,7 @@ describe('DataGridFooter', () => {
 
 		it('should start the CSV generation on click and show the progress until it finishes', async () => {
 			let resolveDownload!: () => void
-			const download = vi.spyOn(DataGridCsvController, 'download')
+			const download = vi.spyOn(DataGrid, 'downloadCsv')
 				.mockImplementation(() => new Promise<void>(resolve => resolveDownload = resolve))
 			fixture.component.exportable = true
 			let footer = await settle(fixture)

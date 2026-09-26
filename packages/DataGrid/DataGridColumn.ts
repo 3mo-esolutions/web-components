@@ -1,6 +1,6 @@
-import { css, html, style, type CSSResult, type HTMLTemplateResult } from '@a11d/lit'
+import { css, type CSSResult, type HTMLTemplateResult } from '@a11d/lit'
 import { equals } from '@a11d/equals'
-import type { DataGrid, DataGridColumns, DataGridSortingStrategy } from './index.js'
+import type { DataGridController, DataGridColumns, DataGridSortingStrategy } from './index.js'
 import type * as CSS from 'csstype'
 
 export type DataGridColumnContentStyle<TData, TValue> =
@@ -21,11 +21,11 @@ export type DataGridColumnMenuItems = HTMLTemplateResult | Map<'sorting' | 'stic
  * source (element, property, or data), and how it *shows* only through a modification via
  * `modify()`, after which the data grid re-derives fresh column instances.
  *
- * The only mutable members are the `dataGrid` context back-reference the controller attaches,
+ * The only mutable members are the `controller` context back-reference the grid attaches,
  * and `widthInPixels`, which is a view over the data grid's measurements rather than a value.
  */
 export class DataGridColumn<TData, TValue = any> {
-	dataGrid!: DataGrid<TData, any>
+	controller!: DataGridController<TData, any>
 	readonly dataSelector!: KeyPath.Of<TData>
 
 	readonly heading!: string
@@ -50,7 +50,8 @@ export class DataGridColumn<TData, TValue = any> {
 
 	readonly sortDataSelector!: KeyPath.Of<TData>
 
-	toggleSort(strategy?: DataGridSortingStrategy | null) {
+	/** @param event - The click that asked for it. Holding Shift, Ctrl or Meta adds to the sorting. */
+	toggleSort(strategy?: DataGridSortingStrategy | null, event?: Parameters<DataGridController<TData, any>['sorting']['toggle']>[2]) {
 		if (!this.sortable) {
 			return
 		}
@@ -60,12 +61,10 @@ export class DataGridColumn<TData, TValue = any> {
 		}
 
 		if (strategy === null) {
-			this.dataGrid.sortingController.reset()
+			this.controller.sorting.reset()
 		} else {
-			this.dataGrid.sortingController.toggle(this.sortDataSelector, strategy)
+			this.controller.sorting.toggle(this.sortDataSelector, strategy, event)
 		}
-
-		this.dataGrid.requestUpdate()
 	}
 
 	readonly getMenuItemsTemplate?: () => DataGridColumnMenuItems
@@ -85,7 +84,7 @@ export class DataGridColumn<TData, TValue = any> {
 	}
 
 	modify(modification: Parameters<DataGridColumns<TData>['modify']>[1]) {
-		return this.dataGrid.columnsController.columns.modify(this.dataSelector, modification)
+		return this.controller.columns.columns.modify(this.dataSelector, modification)
 	}
 
 	[equals](other: DataGridColumn<TData, any>): boolean {
@@ -100,40 +99,19 @@ export class DataGridColumn<TData, TValue = any> {
 
 	// Measured widths are stored on the columns controller keyed by data selector, so that they
 	// survive column instances being re-derived from definitions and modifications.
-	get widthInPixels() { return this.dataGrid?.columnsController.getWidthInPixels(this.dataSelector) ?? 0 }
+	get widthInPixels() { return this.controller?.columns.getWidthInPixels(this.dataSelector) ?? 0 }
 	set widthInPixels(value) {
-		this.dataGrid?.columnsController.setWidthInPixels(this.dataSelector, value)
-		this.dataGrid?.requestUpdate()
+		this.controller?.columns.setWidthInPixels(this.dataSelector, value)
 	}
 
 	get sortingDefinition() {
-		return this.dataGrid
-			?.getSorting()
+		return this.controller
+			?.sorting.get()
 			.find(s => s.selector === this.sortDataSelector)
 	}
 
-	get sumTemplate() {
-		if (!this.dataGrid || this.sumHeading === undefined || this.getSumTemplate === undefined) {
-			return
-		}
-
-		const sumsData = this.dataGrid.selectedData.length ? this.dataGrid.selectedData : this.dataGrid.renderDataRecords.map(r => r.data)
-
-		const sum = sumsData
-			.map(data => parseFloat(KeyPath.get(data, this.dataSelector) as unknown as string))
-			.filter(n => isNaN(n) === false)
-			.reduce(((a, b) => a + b), 0)
-			|| 0
-
-		return html`
-			<mo-data-grid-footer-sum heading=${this.sumHeading || ''} ${style({ color: this.dataGrid.selectedData.length > 0 ? 'var(--mo-color-accent)' : 'currentColor' })}>
-				${this.getSumTemplate(sum)}
-			</mo-data-grid-footer-sum>
-		`
-	}
-
 	get stickyColumnInsetInline() {
-		return this.dataGrid?.columnsController.getStickyColumnInsetInline(this) ?? ''
+		return this.controller?.columns.getStickyColumnInsetInline(this) ?? ''
 	}
 
 	static readonly stickyStyles = css`
@@ -164,7 +142,7 @@ export class DataGridColumn<TData, TValue = any> {
 	`
 
 	get stickyEdge(): string | undefined {
-		if (!this.sticky || !this.dataGrid) {
+		if (!this.sticky || !this.controller) {
 			return undefined
 		}
 
@@ -172,7 +150,7 @@ export class DataGridColumn<TData, TValue = any> {
 			return 'start end'
 		}
 
-		const columns = this.dataGrid.visibleColumns
+		const columns = this.controller.columns.columns.visible
 		const index = columns.indexOf(this)
 
 		if (this.sticky === 'start' && !columns.slice(index + 1).some(c => c.sticky === 'start')) {

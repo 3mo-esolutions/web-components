@@ -22,7 +22,7 @@ describe('DataGridNavigabilityController', () => {
 	const controller = () => fixture.component.navigabilityController
 	const cell = (rowIndex: number, cellIndex: number) => fixture.component.rows[rowIndex]!.cells[cellIndex]!
 	const press = (origin: { dispatchEvent(event: Event): boolean }, key: string, init?: KeyboardEventInit) => {
-		const event = new KeyboardEvent('keydown', { key, cancelable: true, ...init })
+		const event = new KeyboardEvent('keydown', { key, bubbles: true, composed: true, cancelable: true, ...init })
 		origin.dispatchEvent(event)
 		return event
 	}
@@ -99,6 +99,28 @@ describe('DataGridNavigabilityController', () => {
 		expect(tabbable()).toEqual([cell(1, 1)])
 	})
 
+	it('should move the tab stop with the cursor without re-rendering any row or cell', async () => {
+		await settle()
+		const updates = fixture.component.rows
+			.flatMap(row => [row, ...row.cells])
+			.map(element => vi.spyOn(element as unknown as { update(...parameters: Array<unknown>): void }, 'update'))
+
+		press(cell(0, 0), 'ArrowDown')
+
+		expect(cell(1, 0).getAttribute('tabindex')).toBe('0')
+		expect(cell(0, 0).getAttribute('tabindex')).toBe('-1')
+		await fixture.updateComplete
+		await Promise.all(fixture.component.rows.map(row => row.updateComplete))
+		expect(updates.filter(update => update.mock.calls.length > 0)).toEqual([])
+	})
+
+	it('should stamp every cell as a grid cell', () => {
+		const cells = fixture.component.rows.flatMap(row => row.cells)
+
+		expect(cells.length).toBe(6)
+		expect(cells.every(cell => cell.getAttribute('role') === 'gridcell')).toBe(true)
+	})
+
 	it('should leave a modified arrow to the application', () => {
 		const origin = cell(0, 0)
 		vi.spyOn(cell(1, 0), 'focus').mockReturnValue(undefined)
@@ -112,7 +134,8 @@ describe('DataGridNavigabilityController', () => {
 	it('should report the row and column the cursor is on', () => {
 		press(cell(0, 0), 'ArrowDown')
 
-		expect(controller().row.current?.data).toBe(people[1]!)
+		expect(controller().row.current).toBe(fixture.component.rows[1])
+		expect(fixture.component.controller.recordOf(controller().row.current!)?.data).toBe(people[1]!)
 		expect(controller().column.current?.dataSelector).toBe('name')
 		expect(controller().currentCell).toBe(cell(1, 0))
 	})
@@ -178,7 +201,7 @@ describe('DataGridNavigabilityController', () => {
 			const rows = subFixture.component.rows
 			expect(rows.map(row => row.level)).toEqual([0, 1, 0])
 
-			rows[0]!.cells[0]!.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', cancelable: true }))
+			rows[0]!.cells[0]!.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, composed: true, key: 'ArrowDown', cancelable: true }))
 
 			expect(subFixture.component.navigabilityController.row.index).toBe(1)
 			expect(rows[1]!.shadowRoot!.activeElement).toBe(rows[1]!.cells[0]!)

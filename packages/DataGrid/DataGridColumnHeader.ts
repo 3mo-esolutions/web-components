@@ -22,8 +22,6 @@ export class DataGridColumnHeader extends Component {
 	@property({ type: Object }) column!: DataGridColumn<unknown>
 	@property({ type: Boolean, reflect: true }) menuOpen = false
 
-	override readonly role = 'columnheader'
-
 	static override get styles() {
 		return css`
 			:host {
@@ -189,18 +187,6 @@ export class DataGridColumnHeader extends Component {
 	})
 
 	override get template() {
-		if (this.column.sticky) {
-			this.style.insetInline = this.column.stickyColumnInsetInline
-		}
-
-		if (!this.column.sticky) {
-			this.removeAttribute('data-sticky')
-		} else {
-			this.setAttribute('data-sticky', this.column.sticky)
-		}
-		const stickyEdge = this.column.stickyEdge
-		stickyEdge ? this.setAttribute('data-sticky-edge', stickyEdge) : this.removeAttribute('data-sticky-edge')
-
 		const direction = this.column.alignment === 'end' ? 'horizontal-reversed' : 'horizontal'
 
 		const additionalItems = this.column.getMenuItemsTemplate?.()
@@ -239,10 +225,10 @@ export class DataGridColumnHeader extends Component {
 	private get sortingTemplate() {
 		const sortingDefinition = this.column.sortingDefinition
 		const sortIcon = sortingDefinition?.strategy === DataGridSortingStrategy.Ascending ? 'arrow_upward' : 'arrow_downward'
-		const sortingRank = !sortingDefinition || this.column.dataGrid.getSorting().length <= 1 ? undefined : sortingDefinition.rank
-		const handleSortClick = (e: Event) => {
+		const sortingRank = !sortingDefinition || this.column.controller.sorting.get().length <= 1 ? undefined : sortingDefinition.rank
+		const handleSortClick = (e: MouseEvent) => {
 			e.stopPropagation()
-			this.column.toggleSort()
+			this.column.toggleSort(undefined, e)
 		}
 		return !this.column.sortable ? html.nothing : html`
 			<mo-flex id='sort' direction='horizontal' ?data-preview=${!sortingDefinition?.strategy}>
@@ -258,12 +244,12 @@ export class DataGridColumnHeader extends Component {
 			<mo-selectable-menu-item icon='arrow_downward'
 				?disabled=${this.column.sortable === false}
 				?selected=${this.column.sortingDefinition?.strategy === DataGridSortingStrategy.Descending}
-				@click=${() => this.column.toggleSort(DataGridSortingStrategy.Descending)}
+				@click=${(e: MouseEvent) => this.column.toggleSort(DataGridSortingStrategy.Descending, e)}
 			>${t('Sort descending')}</mo-selectable-menu-item>
 			<mo-selectable-menu-item icon='arrow_upward'
 				?disabled=${this.column.sortable === false}
 				?selected=${this.column.sortingDefinition?.strategy === DataGridSortingStrategy.Ascending}
-				@click=${() => this.column.toggleSort(DataGridSortingStrategy.Ascending)}
+				@click=${(e: MouseEvent) => this.column.toggleSort(DataGridSortingStrategy.Ascending, e)}
 			>${t('Sort ascending')}</mo-selectable-menu-item>
 			${additionalItems}
 		`
@@ -298,16 +284,16 @@ export class DataGridColumnHeader extends Component {
 	}
 
 	private get separatorTemplate() {
-		if (!this.column.dataGrid) {
+		if (!this.column.controller) {
 			return html.nothing
 		}
 
-		const index = this.column.dataGrid.visibleColumns.indexOf(this.column)
+		const columns = this.column.controller.columns.columns.visible
+		const index = columns.indexOf(this.column)
 		return html`
 			<mo-data-grid-header-separator
-				?data-last=${this.column.dataGrid.visibleColumns.length - 1 === index}
-				.dataGrid=${this.column.dataGrid as any}
-				.column=${this.column.dataGrid.visibleColumns[index]}
+				?data-last=${columns.length - 1 === index}
+				.column=${columns[index]}
 			></mo-data-grid-header-separator>
 		`
 	}

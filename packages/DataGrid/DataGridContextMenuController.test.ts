@@ -26,7 +26,7 @@ describe('DataGridContextMenuController', () => {
 	`
 
 	const renderMenuContent = (data: Array<Person>) => {
-		render(fixture.component.contextMenuController.getMenuContentTemplate(data), container)
+		render(fixture.component.getContextMenuContentTemplate(data), container)
 		return container
 	}
 

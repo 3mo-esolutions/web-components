@@ -39,9 +39,10 @@ describe('DataGridDetailsController', () => {
 	let host: FakeHost
 	let controller: DataGridDetailsController<Data>
 
+	// The fake host is also the grid's options, as it answers to the same names.
 	const create = (fakeHost: FakeHost) => {
 		host = fakeHost
-		controller = new DataGridDetailsController<Data>(host)
+		controller = new DataGridDetailsController<Data>({ host, options: host, records: { get records() { return host.dataRecords } } } as any)
 	}
 
 	beforeEach(() => create(new FakeHost(true, dataRecords, true, data => data === 'record1' ? html`<p>${data}</p>` : html.nothing, data => data === 'record1')))

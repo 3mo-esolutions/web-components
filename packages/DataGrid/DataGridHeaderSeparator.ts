@@ -1,31 +1,10 @@
-import { Component, component, property, html, css, state, style, ElementRef } from '@a11d/lit'
-import { DirectionsByLanguage } from '@3mo/localization'
-import { PointerDragController, type PointerDrag } from '@3mo/pointer-controller'
-import { type DataGridColumn, type DataGrid } from './index.js'
+import { Component, component, property, html, css } from '@a11d/lit'
+import { type DataGridColumn } from './index.js'
 
+/** The handle resizing a column, drawing a line where the pointer is while it drags. */
 @component('mo-data-grid-header-separator')
 export class DataGridHeaderSeparator extends Component {
-	@property({ type: Object }) dataGrid!: DataGrid<unknown>
 	@property({ type: Object }) column!: DataGridColumn<unknown>
-
-	@state() private isResizing = false
-	@state() private pointerInlineStart = 0
-
-	private readonly minimum = 30
-
-	private initialWidth?: number
-	private targetWidth?: number
-
-	private readonly handle = new ElementRef<HTMLElement>()
-
-	protected readonly pointerDrag = new PointerDragController(this, host => ({
-		get target() { return host.handle.value },
-		threshold: 0,
-		handleDragStart: drag => host.handleDragStart(drag),
-		handleDrag: drag => host.handleDrag(drag),
-		handleDragEnd: () => host.handleDragEnd(),
-		handleDragCancel: () => host.handleDragCancel(),
-	}))
 
 	static override get styles() {
 		return css`
@@ -64,57 +43,28 @@ export class DataGridHeaderSeparator extends Component {
 			}
 
 			.resizer {
+				display: none;
 				position: fixed;
 				pointer-events: none;
 				top: 0;
+				inset-inline-start: var(--mo-data-grid-column-resizer-pointer);
 				height: 100%;
 				background: var(--mo-color-gray);
 				width: 2px;
+			}
+
+			[data-resizing] .resizer {
+				display: block;
 			}
 		`
 	}
 
 	protected override get template() {
 		return html`
-			<div class='separator' ${this.handle.ref()} @dblclick=${this.handleDoubleClick}></div>
-			${!this.isResizing ? html.nothing : html`<div class='resizer' ${style({ insetInlineStart: `${this.pointerInlineStart}px` })}></div>`}
+			<div class='separator' ${this.column?.controller?.columns.resizer(this.column) ?? html.nothing}>
+				<div class='resizer'></div>
+			</div>
 		`
-	}
-
-	private handleDragStart({ event }: PointerDrag) {
-		this.isResizing = true
-		this.initialWidth = this.column.widthInPixels
-		this.targetWidth = undefined
-		this.updatePointerPosition(event)
-	}
-
-	private handleDrag({ deltaX, event }: PointerDrag) {
-		this.updatePointerPosition(event)
-		const inlineDelta = DirectionsByLanguage.get() === 'rtl' ? -deltaX : deltaX
-		this.targetWidth = Math.max(this.minimum, (this.initialWidth ?? 0) + inlineDelta)
-	}
-
-	private handleDragEnd() {
-		const { targetWidth, initialWidth } = this
-		this.handleDragCancel()
-		if (targetWidth !== undefined && targetWidth !== initialWidth) {
-			this.column.modify({ width: `${targetWidth}px` })
-		}
-	}
-
-	private handleDragCancel() {
-		this.isResizing = false
-		this.initialWidth = undefined
-		this.targetWidth = undefined
-	}
-
-	private updatePointerPosition({ clientX }: PointerEvent) {
-		this.pointerInlineStart = DirectionsByLanguage.get() !== 'rtl' ? clientX : window.innerWidth - clientX
-	}
-
-	private readonly handleDoubleClick = () => {
-		this.isResizing = false
-		this.column.modify({ width: 'max-content' })
 	}
 }
 

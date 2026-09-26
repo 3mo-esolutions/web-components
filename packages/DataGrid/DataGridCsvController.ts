@@ -1,17 +1,5 @@
-import { Downloader } from '@3mo/downloader'
 import { type DataRecord } from './DataRecord.js'
-import { type DataGridColumn } from './DataGridColumn.js'
-import { NotificationComponent } from '@a11d/lit-application'
-
-interface Host<TData> {
-	/**
-	 * Gets the entire data set to be exported as CSV.
-	 * This can yield numbers in between to indicate progress for large data sets.
-	 */
-	getCsvData(): AsyncGenerator<number, Array<DataRecord<TData>>>
-	get visibleColumns(): Array<DataGridColumn<TData>>
-	requestUpdate(): void
-}
+import { type DataGridController } from './DataGridController.js'
 
 export class DataGridCsvController<TData> {
 	static sanitize(value: string) {
@@ -26,24 +14,22 @@ export class DataGridCsvController<TData> {
 		return value
 	}
 
-	static async download(data: string) {
-		const fileName = [
-			document.title.split(' | ')[0],
-			new Date().toISOString().replace(/[-:.T]/g, '').slice(0, 14),
-		].filter(Boolean).join('_')
+	constructor(private readonly grid: DataGridController<TData>) { }
 
-		Downloader.download(`data:text/csv;charset=utf-8,${encodeURIComponent(data)}`, `${fileName}.csv`)
+	private get visibleColumns() { return this.grid.columns.columns.visible }
 
-		await new Promise(r => setTimeout(r, 1000))
+	private async *getCsvData(): AsyncGenerator<number, Array<DataRecord<TData>>> {
+		if (this.grid.options.getCsvData) {
+			return yield* this.grid.options.getCsvData()
+		}
+		return this.grid.records.records
 	}
-
-	constructor(protected readonly host: Host<TData>) { }
 
 	private _progress?: number
 	get generationProgress() { return this._progress }
 	private set generationProgress(value: number | undefined) {
 		this._progress = value
-		this.host.requestUpdate()
+		this.grid.host.requestUpdate()
 	}
 
 	get isGenerating() { return this._progress !== undefined }
@@ -58,7 +44,7 @@ export class DataGridCsvController<TData> {
 		try {
 			const dataRecords = new Array<DataRecord<TData>>()
 
-			const asyncIterator = this.host.getCsvData()
+			const asyncIterator = this.getCsvData()
 			while (true) {
 				const { done, value } = await asyncIterator.next()
 				if (done) {
@@ -70,14 +56,14 @@ export class DataGridCsvController<TData> {
 
 			const maxLevel = Math.max(...dataRecords.map(d => d.level))
 
-			const [firstHeading, ...otherHeadings] = this.host.visibleColumns.flatMap(c => [...c.generateCsvHeading?.() ?? []].map(DataGridCsvController.sanitize))
+			const [firstHeading, ...otherHeadings] = this.visibleColumns.flatMap(c => [...c.generateCsvHeading?.() ?? []].map(DataGridCsvController.sanitize))
 
 			const rows = [
 				[firstHeading, ...Array.from({ length: maxLevel }).fill(firstHeading), ...otherHeadings],
 				...dataRecords.map(d => {
 					const nestedPadding = Array.from({ length: d.level }).fill('')
 					const childrenPadding = Array.from({ length: maxLevel - d.level }).fill('')
-					const [first, ...rest] = this.host.visibleColumns
+					const [first, ...rest] = this.visibleColumns
 						.flatMap(column => {
 							const value = KeyPath.get(d.data, column.dataSelector)
 							return [...column.generateCsvValue?.(value, d.data) ?? []].map(DataGridCsvController.sanitize)
@@ -92,9 +78,9 @@ export class DataGridCsvController<TData> {
 			]
 
 			const csvContent = rows.map(row => row.join(',')).join('\n')
-			await DataGridCsvController.download(csvContent)
+			await this.grid.options.handleCsv?.(csvContent)
 		} catch (error: any) {
-			NotificationComponent.notifyAndThrowError(error.message)
+			this.grid.options.handleCsvError?.(error)
 		} finally {
 			this.generationProgress = undefined
 		}

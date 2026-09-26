@@ -1,15 +1,12 @@
-import { PureEventDispatcher } from '@a11d/lit'
-import { DataGridSortingController, DataGridSortingStrategy } from './DataGridSortingController.js'
+import { DataGridSortingController, DataGridSortingStrategy, type DataGridSorting } from './DataGridSortingController.js'
 
 type Data = { id: number, name: string }
 
 describe('DataGridSortingController', () => {
-	let controller: DataGridSortingController<Data>
-	beforeEach(() => controller = new DataGridSortingController({
-		sortingChange: new PureEventDispatcher()
-	}))
+	const ctrl = new MouseEvent('click', { ctrlKey: true })
 
-	afterEach(() => window.dispatchEvent(new KeyboardEvent('keyup', { ctrlKey: false })))
+	let controller: DataGridSortingController<Data>
+	beforeEach(() => controller = new DataGridSortingController())
 
 	const data = [
 		{ id: 1, name: 'Darlene' },
@@ -61,12 +58,24 @@ describe('DataGridSortingController', () => {
 			])
 		})
 
-		it('should dispatch sortingChange event', () => {
-			vi.spyOn(controller.host.sortingChange!, 'dispatch').mockReturnValue(undefined)
+		it('should report the sorting it keeps', () => {
+			const handleChange = vi.fn()
+			controller = new DataGridSortingController({ handleChange })
 
 			controller.set({ selector: 'id', strategy: DataGridSortingStrategy.Descending })
 
-			expect(controller.host.sortingChange!.dispatch).toHaveBeenCalledWith([{ selector: 'id', strategy: DataGridSortingStrategy.Descending, rank: 1 }])
+			expect(handleChange).toHaveBeenCalledExactlyOnceWith([{ selector: 'id', strategy: DataGridSortingStrategy.Descending, rank: 1 }])
+			expect(controller.get()).toEqual([{ selector: 'id', strategy: DataGridSortingStrategy.Descending, rank: 1 }])
+		})
+
+		it('should read the sorting its owner keeps, even when the owner keeps none', () => {
+			const owner = { sorting: undefined as DataGridSorting<Data> | undefined }
+			controller = new DataGridSortingController({ get sorting() { return owner.sorting }, handleChange: sorting => owner.sorting = sorting })
+
+			controller.set({ selector: 'id', strategy: DataGridSortingStrategy.Descending })
+			owner.sorting = undefined
+
+			expect(controller.get()).toEqual([])
 		})
 	})
 
@@ -93,8 +102,7 @@ describe('DataGridSortingController', () => {
 
 		it('should select multiple sorting strategies if any modifier key is pressed', () => {
 			controller.toggle('id')
-			window.dispatchEvent(new KeyboardEvent('keydown', { ctrlKey: true }))
-			controller.toggle('name')
+			controller.toggle('name', undefined, ctrl)
 
 			expect(controller.get()).toEqual([
 				{ selector: 'id', strategy: DataGridSortingStrategy.Descending, rank: 1 },
@@ -115,9 +123,8 @@ describe('DataGridSortingController', () => {
 
 		it('should switch an existing descending sorting to ascending with a modifier held', () => {
 			controller.set({ selector: 'id', strategy: DataGridSortingStrategy.Descending })
-			window.dispatchEvent(new KeyboardEvent('keydown', { ctrlKey: true }))
 
-			controller.toggle('id')
+			controller.toggle('id', undefined, ctrl)
 
 			expect(controller.get()).toEqual([{ selector: 'id', strategy: DataGridSortingStrategy.Ascending, rank: 1 }])
 		})
@@ -127,9 +134,8 @@ describe('DataGridSortingController', () => {
 				{ selector: 'id', strategy: DataGridSortingStrategy.Ascending },
 				{ selector: 'name', strategy: DataGridSortingStrategy.Descending },
 			])
-			window.dispatchEvent(new KeyboardEvent('keydown', { ctrlKey: true }))
 
-			controller.toggle('id')
+			controller.toggle('id', undefined, ctrl)
 
 			expect(controller.get()).toEqual([{ selector: 'name', strategy: DataGridSortingStrategy.Descending, rank: 1 }])
 		})
@@ -179,8 +185,7 @@ describe('DataGridSortingController', () => {
 		describe('multiple sorting', () => {
 			it('should sort using ascending strategy', () => {
 				controller.set({ selector: 'name', strategy: DataGridSortingStrategy.Ascending })
-				window.dispatchEvent(new KeyboardEvent('keydown', { ctrlKey: true }))
-				controller.toggle('id', DataGridSortingStrategy.Ascending)
+				controller.toggle('id', DataGridSortingStrategy.Ascending, ctrl)
 
 				expect(controller.toSorted(data)).toEqual([
 					{ id: 3, name: 'Clarke' },
@@ -193,8 +198,7 @@ describe('DataGridSortingController', () => {
 
 			it('should sort using descending strategy', () => {
 				controller.set({ selector: 'name', strategy: DataGridSortingStrategy.Descending })
-				window.dispatchEvent(new KeyboardEvent('keydown', { ctrlKey: true }))
-				controller.toggle('id', DataGridSortingStrategy.Descending)
+				controller.toggle('id', DataGridSortingStrategy.Descending, ctrl)
 
 				expect(controller.toSorted(data)).toEqual([
 					{ id: 5, name: 'Harry' },

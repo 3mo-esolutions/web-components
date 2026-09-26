@@ -1,14 +1,6 @@
 import { Controller } from '@a11d/lit'
 import { type FetchableDataGridParametersType } from '@3mo/fetchable-data-grid'
-import { DialogDeletion } from '@3mo/standard-dialogs'
-import { Localizer } from '@3mo/localization'
 import { type ModdableDataGrid, type ModdableDataGridMode } from './index.js'
-
-Localizer.dictionaries.add({
-	de: {
-		'view "${name:string}"': 'Ansicht "${name}"',
-	}
-})
 
 export class DataGridModesController<TData, TParameters extends FetchableDataGridParametersType> extends Controller {
 	readonly dataGridKey = `ModdableDataGrid.${this.host.tagName.toLowerCase()}`
@@ -34,7 +26,10 @@ export class DataGridModesController<TData, TParameters extends FetchableDataGri
 		return this.host.modesAdapter
 	}
 
-	constructor(override readonly host: ModdableDataGrid<TData, TParameters, any>) {
+	/** `confirmDeletion` runs the deletion once it is confirmed, and not at all otherwise. */
+	constructor(override readonly host: ModdableDataGrid<TData, TParameters, any>, private readonly options?: {
+		readonly confirmDeletion?: (mode: ModdableDataGridMode<TData, TParameters>, deletion: () => Promise<void>) => Promise<unknown>
+	}) {
 		super(host)
 		this.host.fetcherController.disabled = true
 	}
@@ -106,15 +101,13 @@ export class DataGridModesController<TData, TParameters extends FetchableDataGri
 	}
 
 	async delete(mode: ModdableDataGridMode<TData, TParameters>) {
-		await new DialogDeletion({
-			label: t('view "${name:string}"', { name: mode.name }),
-			deletionAction: async () => {
-				if (this.selectedMode?.id === mode.id) {
-					this.set(undefined)
-				}
-				await this.adapter.delete(this.dataGridKey, mode)
-				await this.fetch()
-			},
-		}).confirm()
+		const deletion = async () => {
+			if (this.selectedMode?.id === mode.id) {
+				this.set(undefined)
+			}
+			await this.adapter.delete(this.dataGridKey, mode)
+			await this.fetch()
+		}
+		await (this.options?.confirmDeletion?.(mode, deletion) ?? deletion())
 	}
 }

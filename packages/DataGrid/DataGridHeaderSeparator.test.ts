@@ -40,7 +40,7 @@ describe('DataGridHeaderSeparator', () => {
 	const modifiedWidth = () => fixture.component.columnsController.columns.modifications.get('name')?.width
 
 	const drag = (separator: DataGridHeaderSeparator, from: number, to: number) => {
-		handleOf(separator).dispatchEvent(new PointerEvent('pointerdown', { clientX: from, isPrimary: true, buttons: 1, bubbles: true }))
+		handleOf(separator).dispatchEvent(new PointerEvent('pointerdown', { clientX: from, isPrimary: true, buttons: 1, bubbles: true, composed: true }))
 		window.dispatchEvent(new PointerEvent('pointermove', { clientX: to, isPrimary: true, buttons: 1 }))
 		window.dispatchEvent(new PointerEvent('pointerup', { clientX: to, isPrimary: true }))
 	}
@@ -109,7 +109,7 @@ describe('DataGridHeaderSeparator', () => {
 			const separator = await getSeparator()
 			const { left } = separator.getBoundingClientRect()
 			drag(separator, left, left + 50)
-			handleOf(separator).dispatchEvent(new MouseEvent('dblclick', { bubbles: true }))
+			handleOf(separator).dispatchEvent(new MouseEvent('dblclick', { bubbles: true, composed: true }))
 			expect(modifiedWidth()).toBe('max-content')
 
 			drag(separator, left, left)
@@ -124,7 +124,7 @@ describe('DataGridHeaderSeparator', () => {
 			drag(separator, 0, 200)
 			expect(modifiedWidth()).not.toBe('max-content')
 
-			handleOf(await getSeparator()).dispatchEvent(new MouseEvent('dblclick', { bubbles: true }))
+			handleOf(await getSeparator()).dispatchEvent(new MouseEvent('dblclick', { bubbles: true, composed: true }))
 
 			expect(modifiedWidth()).toBe('max-content')
 			expect(fixture.component.columns.find(c => c.dataSelector === 'name')?.width).toBe('max-content')

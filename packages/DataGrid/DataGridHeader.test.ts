@@ -181,10 +181,9 @@ describe('DataGridHeader', () => {
 
 	describe('Column reordering', () => {
 		it('should move the dragged column to the drop position as a column modification', async () => {
-			const header = await settle()
 			expect(fixture.component.columns.map(c => c.dataSelector)).toEqual(['name', 'age'])
 
-			header.reorderabilityController.options.handleReorder!(0, 1)
+			fixture.component.controller.columns.reorderability.options.handleReorder!(0, 1)
 			await settle()
 
 			expect(fixture.component.columns.map(c => c.dataSelector)).toEqual(['age', 'name'])
@@ -193,9 +192,9 @@ describe('DataGridHeader', () => {
 
 		it('should not offer dragging for sticky columns', async () => {
 			fixture.component.querySelector('mo-data-grid-column-text')!.sticky = 'start'
-			const header = await settle()
+			await settle()
 
-			const items = header.reorderabilityController.indexability.items
+			const items = fixture.component.controller.columns.reorderability.indexability.items
 
 			expect(items.length).toBe(2)
 			expect(items[0]?.options.disabled).toBe(true)

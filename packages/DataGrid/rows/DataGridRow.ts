@@ -6,7 +6,7 @@ import { tooltip } from '@3mo/tooltip'
 import { ContextMenu } from '@3mo/context-menu'
 import { ReorderabilityState } from '@3mo/reorderability'
 import { type DataGridColumn } from '../DataGridColumn.js'
-import { type DataGridCell, DataGridPrimaryContextMenuItem, type DataRecord } from '../index.js'
+import { type DataGrid, type DataGridCell, DataGridPrimaryContextMenuItem, type DataRecord } from '../index.js'
 
 Localizer.dictionaries.add('de', {
 	'Reordering is unavailable while the grid is sorted.': 'Die Reihenfolge kann nicht geändert werden, solange die Tabelle sortiert ist.',
@@ -15,11 +15,10 @@ Localizer.dictionaries.add('de', {
 
 export abstract class DataGridRow<TData, TDetailsElement extends Element | undefined = undefined> extends Component {
 	@queryAll('mo-data-grid-cell') readonly cells!: Array<DataGridCell<any, TData, TDetailsElement>>
-	@queryAll('[mo-data-grid-row]') readonly subRows!: Array<DataGridRow<TData, TDetailsElement>>
 	@query('#contentContainer') readonly content!: HTMLElement
 
 	@property({ type: Object }) dataRecord!: DataRecord<TData>
-	get dataGrid() { return this.dataRecord.dataGrid }
+	get dataGrid() { return this.dataRecord.controller.host as DataGrid<TData, TDetailsElement> }
 	get data() { return this.dataRecord.data }
 	get index() { return this.dataRecord.index }
 	get level() { return this.dataRecord.level }
@@ -38,7 +37,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	}
 
 	get isRendered() {
-		return isServer || this.dataGrid.virtualizationController.isRendered(this)
+		return isServer || this.dataGrid.controller.virtualization.isRendered(this)
 	}
 
 	protected override initialized() {
@@ -67,27 +66,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	}
 
 	protected get hasDetails() {
-		return this.dataGrid.detailsController.hasDetail(this.dataRecord)
-	}
-
-	private stampAria() {
-		this.role = 'row'
-		const node = this.dataRecord.node
-		this.setAttribute('aria-level', String(this.level + 1))
-		if (node) {
-			this.setAttribute('aria-setsize', String(node.setSize))
-			this.setAttribute('aria-posinset', String(node.position + 1))
-		}
-		if (this.hasDetails) {
-			this.setAttribute('aria-expanded', String(this.detailsOpen))
-		} else {
-			this.removeAttribute('aria-expanded')
-		}
-		if (this.dataGrid.hasSelection) {
-			this.setAttribute('aria-selected', String(this.selected))
-		} else {
-			this.removeAttribute('aria-selected')
-		}
+		return this.dataGrid.controller.details.hasDetail(this.dataRecord)
 	}
 
 	static override get styles() {
@@ -327,10 +306,9 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		this.toggleAttribute('detailsOpen', this.dataRecord.detailsOpen)
 		const isRendered = this.isRendered
 		this.toggleAttribute('data-subgrid', isRendered || this.hasDetails)
-		this.stampAria()
 		return html`
 			<mo-grid id='contentContainer' columns=${isRendered ? 'subgrid' : 'none'}
-				${this.dataGrid.virtualizationController.cells(this)}
+				${this.dataGrid.controller.virtualization.cells(this)}
 				@click=${(e: MouseEvent) => this.handleContentClick(e)}
 				@dblclick=${() => this.handleContentDoubleClick()}
 				@auxclick=${(e: PointerEvent) => e.button !== 1 ? void 0 : this.handleContentMiddleClick()}
@@ -351,17 +329,17 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	protected abstract get rowTemplate(): HTMLTemplateResult
 
 	protected get reorderabilityTemplate() {
-		const reorderability = this.dataGrid.reorderabilityController
+		const reorderability = this.dataGrid.controller.reorderability
 		const disabled = !reorderability.enabled
 		return !reorderability.visible ? html.nothing : html`
 			<mo-flex id='reorderability' justifyContent='center' alignItems='center'
-				${style({ insetInlineStart: this.dataGrid.columnsController.getStickyColumnInsetInline('reordering') })}
+				${style({ insetInlineStart: this.dataGrid.controller.columns.getStickyColumnInsetInline('reordering') })}
 			>
 				<mo-icon-button icon='drag_handle' ?disabled=${disabled}
 					${!disabled ? html.nothing : tooltip(() => html`
 						<mo-flex gap='0.5rem'>
 							${t('Reordering is unavailable while the grid is sorted.')}
-							<mo-anchor @click=${(e: Event) => { e.preventDefault(); this.dataGrid.sortingController.reset() }}>
+							<mo-anchor @click=${(e: Event) => { e.preventDefault(); this.dataGrid.controller.sorting.reset() }}>
 								${t('Clear sorting')}
 							</mo-anchor>
 						</mo-flex>
@@ -374,7 +352,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	protected get detailsExpanderTemplate() {
 		return this.dataGrid.hasDetails === false ? html.nothing : html`
 			<mo-flex id='detailsExpanderContainer' justifyContent='center' alignItems='center'
-				${style({ insetInlineStart: this.dataGrid.columnsController.getStickyColumnInsetInline('details') })}
+				${style({ insetInlineStart: this.dataGrid.controller.columns.getStickyColumnInsetInline('details') })}
 				@click=${(e: Event) => e.stopPropagation()}
 				@dblclick=${(e: Event) => e.stopPropagation()}
 			>
@@ -393,7 +371,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		return !this.dataGrid.hasSelection ? html.nothing : html`
 			<mo-flex id='selectionContainer' justifyContent='center' alignItems='center'
 				?data-has-details=${this.dataGrid.hasDetails}
-				${style({ insetInlineStart: this.dataGrid.columnsController.getStickyColumnInsetInline('selection') })}
+				${style({ insetInlineStart: this.dataGrid.controller.columns.getStickyColumnInsetInline('selection') })}
 				@click=${(e: Event) => e.stopPropagation()}
 				@dblclick=${(e: Event) => e.stopPropagation()}
 			>
@@ -401,7 +379,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 					tabindex='-1'
 					?disabled=${this.dataRecord.isSelectable === false}
 					.selected=${live(this.selected)}
-					@change=${(e: CustomEvent<boolean>) => this.dataGrid.selectionController.select(this.data, { selected: e.detail, preserve: true, event: e })}
+					@change=${(e: CustomEvent<boolean>) => this.dataGrid.controller.selection.select(this.data, { selected: e.detail, preserve: true, event: e })}
 				></mo-checkbox>
 			</mo-flex>
 		`
@@ -413,15 +391,9 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				.row=${this as any}
 				.column=${column}
 				.value=${KeyPath.get(this.data, column.dataSelector as any)}
-				@keydown=${this.delegateToCell('handleKeyDown')}
-				@dblclick=${this.delegateToCell('handleDoubleClick')}
+				${this.dataGrid.controller.cell(column)}
 			></mo-data-grid-cell>
 		`
-	}
-
-	private readonly delegateToCell = (method: 'handleDoubleClick' | 'handleKeyDown') => (e: Event) => {
-		const target = e.target as DataGridCell<any, TData, TDetailsElement>
-		target?.[method]?.(e as any)
 	}
 
 	protected get fillerTemplate() {
@@ -455,7 +427,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 
 	protected handleContentClick(event?: MouseEvent) {
 		if (this.dataGrid.selectOnClick) {
-			this.dataGrid.selectionController.select(this.data, { event })
+			this.dataGrid.controller.selection.select(this.data, { event })
 		}
 
 		if (this.dataGrid.detailsOnClick && this.dataGrid.hasDetails) {
@@ -507,7 +479,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	}
 
 	private get contextMenuTemplate() {
-		return this.dataGrid.contextMenuController.getMenuContentTemplate(
+		return this.dataGrid.getContextMenuContentTemplate(
 			!this.dataGrid.selectability || !this.dataGrid.selectedData.length || !this.dataRecord.isSelected
 				? [this.data]
 				: this.dataGrid.selectedData
@@ -520,7 +492,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	}
 
 	toggleDetails() {
-		this.dataGrid.detailsController.toggle(this.dataRecord)
+		this.dataGrid.controller.details.toggle(this.dataRecord)
 		if (this.dataRecord.detailsOpen) {
 			this.dataGrid.rowDetailsOpen.dispatch(this)
 		} else {

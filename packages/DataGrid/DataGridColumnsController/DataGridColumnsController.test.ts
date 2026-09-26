@@ -6,21 +6,23 @@ import { DataGridColumnsController } from './DataGridColumnsController.js'
 type Data = { a: number, b: number }
 
 describe('DataGridColumnsController', () => {
-	const createController = (host = {}) => {
-		const fakeHost = {
-			addController: () => { },
-			reorderabilityController: { visible: false },
-			hasSelection: true,
-			hasDetails: true,
-			hasContextMenu: false,
-			columnsChange: { dispatch: () => { } },
-			requestUpdate: () => { },
-			...host,
+	/** Stands in for the grid's controller: the columns only ever ask it for these. */
+	const createController = (setup: Partial<typeof defaults> = {}) => {
+		const state = { ...defaults, ...setup }
+		const grid = {
+			host: { addController: () => { }, requestUpdate: () => { }, style: document.createElement('div').style },
+			options: { data: [] },
+			selection: { get hasSelection() { return state.hasSelection } },
+			details: { get hasDetails() { return state.hasDetails } },
+			contextMenu: { get hasContextMenu() { return state.hasContextMenu } },
+			reorderability: { get visible() { return state.reorderabilityVisible }, enabled: false },
+			restampSticky: () => { },
 		} as any
-		const controller = new DataGridColumnsController<Data>(fakeHost)
-		fakeHost.columnsController = controller
-		return controller
+		const controller = new DataGridColumnsController<Data>(grid)
+		grid.columns = controller
+		return Object.assign(controller, { state })
 	}
+	const defaults = { hasSelection: true, hasDetails: true, hasContextMenu: false, reorderabilityVisible: false }
 
 	describe('getStickyColumnInsetInline', () => {
 		it('excludes the details column width from the selection inset once the grid no longer renders a details column', () => {
@@ -31,12 +33,12 @@ describe('DataGridColumnsController', () => {
 			expect(controller.getStickyColumnInsetInline('selection')).toBe('32px')
 
 			// Ungrouping removes the details column. Its last measured width must not leak into the inset anymore.
-			;(controller.host as any).hasDetails = false
+			controller.state.hasDetails = false
 			expect(controller.getStickyColumnInsetInline('selection')).toBe('0px')
 		})
 
 		it('keeps the reordering column width in the inset while it is visible but disabled (e.g. the grid is sorted)', () => {
-			const controller = createController({ reorderabilityController: { visible: true }, hasDetails: false })
+			const controller = createController({ reorderabilityVisible: true, hasDetails: false })
 			controller.setColumnWidth('reordering', 40)
 
 			// The reordering column still occupies space while sorted, so the selection column must sit behind it.
@@ -44,7 +46,7 @@ describe('DataGridColumnsController', () => {
 		})
 
 		it('should stack a sticky data column\'s inset from the measured widths of the preceding sticky columns and the feature columns', () => {
-			const controller = createController({ reorderabilityController: { visible: true }, hasContextMenu: true })
+			const controller = createController({ reorderabilityVisible: true, hasContextMenu: true })
 			controller.setColumnWidth('reordering', 20)
 			controller.setColumnWidth('details', 20)
 			controller.setColumnWidth('selection', 40)
@@ -65,6 +67,22 @@ describe('DataGridColumnsController', () => {
 			expect(controller.getStickyColumnInsetInline(b!)).toBe('180px auto')
 			expect(controller.getStickyColumnInsetInline(c!)).toBe('auto 28px')
 			expect(controller.getStickyColumnInsetInline(d!)).toBe('230px 28px')
+		})
+
+		it('should stack two sticky columns showing the same data one behind the other', () => {
+			const controller = createController({ hasDetails: false })
+			controller.setColumnWidth('selection', 40)
+			controller.columns.definitions.programmatic = [
+				new DataGridColumn<Data>({ dataSelector: 'a', heading: 'A', sticky: 'start' }),
+				new DataGridColumn<Data>({ dataSelector: 'b', heading: 'B' }),
+				new DataGridColumn<Data>({ dataSelector: 'a', heading: 'A again', sticky: 'start' }),
+			]
+			controller.setWidthInPixels('a', 100)
+
+			const [first, , second] = [...controller.columns]
+
+			expect(controller.getStickyColumnInsetInline(first!)).toBe('40px auto')
+			expect(controller.getStickyColumnInsetInline(second!)).toBe('140px auto')
 		})
 	})
 

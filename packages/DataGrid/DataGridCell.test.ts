@@ -44,14 +44,14 @@ describe('DataGridCell', () => {
 			const cell1 = getCell(0, 1)
 
 			vi.spyOn(cell1, 'focus').mockReturnValue(undefined)
-			cell0.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight' }))
+			cell0.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, composed: true, key: 'ArrowRight' }))
 			expect(cell1.focus).toHaveBeenCalled()
 
 			vi.spyOn(cell0, 'focus').mockReturnValue(undefined)
-			cell1.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight' }))
+			cell1.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, composed: true, key: 'ArrowRight' }))
 			expect(cell0.focus).toHaveBeenCalledTimes(1)
 
-			cell0.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft' }))
+			cell0.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, composed: true, key: 'ArrowLeft' }))
 			expect(cell1.focus).toHaveBeenCalledTimes(2)
 		})
 
@@ -60,14 +60,14 @@ describe('DataGridCell', () => {
 			const row1Cell0 = getCell(1, 0)
 
 			vi.spyOn(row1Cell0, 'focus').mockReturnValue(undefined)
-			row0Cell0.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }))
+			row0Cell0.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, composed: true, key: 'ArrowDown' }))
 			expect(row1Cell0.focus).toHaveBeenCalled()
 
 			vi.spyOn(row0Cell0, 'focus').mockReturnValue(undefined)
-			row1Cell0.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }))
+			row1Cell0.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, composed: true, key: 'ArrowDown' }))
 			expect(row0Cell0.focus).toHaveBeenCalledTimes(1)
 
-			row0Cell0.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp' }))
+			row0Cell0.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, composed: true, key: 'ArrowUp' }))
 			expect(row1Cell0.focus).toHaveBeenCalledTimes(2)
 		})
 
@@ -80,7 +80,7 @@ describe('DataGridCell', () => {
 			expect(cell0.isEditing).toBe(true)
 			vi.spyOn(cell1, 'focus').mockReturnValue(undefined)
 
-			cell0.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight' }))
+			cell0.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, composed: true, key: 'ArrowRight' }))
 
 			expect(cell1.focus).not.toHaveBeenCalled()
 		})
@@ -90,7 +90,7 @@ describe('DataGridCell', () => {
 			expect(cell.isEditing).toBe(false)
 			vi.spyOn(cell, 'click').mockReturnValue(undefined)
 
-			cell.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }))
+			cell.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, composed: true, key: 'Enter' }))
 
 			expect(cell.click).toHaveBeenCalledTimes(1)
 		})
@@ -100,7 +100,7 @@ describe('DataGridCell', () => {
 			vi.spyOn(NotificationComponent, 'notifySuccess').mockResolvedValue(undefined)
 
 			const cell = getCell(0, 0)
-			cell.dispatchEvent(new KeyboardEvent('keydown', { key: 'c', ctrlKey: true }))
+			cell.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, composed: true, key: 'c', ctrlKey: true }))
 			await new Promise(r => setTimeout(r, 20))
 
 			expect(writeText).toHaveBeenCalledExactlyOnceWith('Alice')
@@ -114,7 +114,7 @@ describe('DataGridCell', () => {
 
 			const cell = getCell(0, 0)
 			expect(cell.isEditing).toBe(true)
-			cell.dispatchEvent(new KeyboardEvent('keydown', { key: 'c', ctrlKey: true }))
+			cell.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, composed: true, key: 'c', ctrlKey: true }))
 			await new Promise(r => setTimeout(r, 20))
 
 			expect(writeText).not.toHaveBeenCalled()
@@ -125,7 +125,7 @@ describe('DataGridCell', () => {
 			fixture.component.selectOnClick = true
 			await settle()
 
-			getCell(0, 0).dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }))
+			getCell(0, 0).dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, composed: true, key: 'ArrowDown' }))
 			await fixture.updateComplete
 
 			expect(fixture.component.selectedData).toEqual([testData[1]!])

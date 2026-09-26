@@ -3,6 +3,7 @@ import { tooltip } from '@3mo/tooltip'
 import { ReorderabilityController } from '@3mo/reorderability'
 import { FetchableDataGrid, type FetchableDataGridParametersType } from '@3mo/fetchable-data-grid'
 import { Localizer } from '@3mo/localization'
+import { DialogDeletion } from '@3mo/standard-dialogs'
 import { ModdableDataGridMode, ModdableDataGridModeColumn } from './ModdableDataGridMode.js'
 import { DialogMode } from './DialogMode.js'
 import { equals } from '@a11d/equals'
@@ -15,6 +16,7 @@ Localizer.dictionaries.add({
 		'Archive': 'Archiv',
 		'Edit view': 'Ansicht bearbeiten',
 		'Delete view': 'Ansicht löschen',
+		'view "${name:string}"': 'Ansicht "${name}"',
 		'Keep in Dock': 'Ansicht im Dock anheften',
 		'Archive view': 'Archivansicht',
 	}
@@ -35,7 +37,9 @@ export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataG
 
 	get mode() { return this.modesController.selectedMode }
 
-	readonly modesController = new DataGridModesController<TData, TParameters>(this)
+	readonly modesController = new DataGridModesController<TData, TParameters>(this, {
+		confirmDeletion: (mode, deletion) => new DialogDeletion({ label: t('view "${name:string}"', { name: mode.name }), deletionAction: deletion }).confirm(),
+	})
 
 	readonly modesReorderabilityController = new ReorderabilityController(this, {
 		handleReorder: (source, destination) => {

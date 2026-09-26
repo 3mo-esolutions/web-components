@@ -1,4 +1,4 @@
-import { KeyboardController } from '@3mo/keyboard-controller'
+import '@a11d/key-path'
 
 export enum DataGridSortingStrategy {
 	Descending = 'descending',
@@ -18,26 +18,38 @@ export type DataGridSorting<TData> =
 	| DataGridSortingDefinition<TData>
 	| Array<DataGridSortingDefinition<TData>>
 
-interface SortableComponent<TData> {
-	sorting?: DataGridSorting<TData> | undefined
-	readonly sortingChange?: EventDispatcher<Array<DataGridRankedSortDefinition<TData>>>
-}
-
 export class DataGridSortingController<TData> {
-	constructor(readonly host: SortableComponent<TData>) { }
+	/** Given `sorting`, the owner keeps it and commits it in `handleChange`; left out, the controller keeps it. */
+	constructor(private readonly options: {
+		readonly sorting?: DataGridSorting<TData>
+		readonly handleChange?: (sorting: Array<DataGridRankedSortDefinition<TData>>) => void
+	} = {}) { }
+
+	private internal?: DataGridSorting<TData>
 
 	get enabled() {
 		return this.get().length > 0
 	}
 
+	private get owned() {
+		return 'sorting' in this.options
+	}
+
+	/** The sorting as it is kept, whose identity changes whenever the sorting does. */
+	get state() {
+		return this.owned ? this.options.sorting : this.internal
+	}
+
 	get() {
-		return this.toNormalizedRanked(this.host.sorting ?? [])
+		return this.toNormalizedRanked(this.state ?? [])
 	}
 
 	set(sorting: DataGridSorting<TData>) {
 		const normalized = this.toNormalizedRanked(sorting ?? [])
-		this.host.sorting = normalized
-		this.host.sortingChange?.dispatch(normalized)
+		if (!this.owned) {
+			this.internal = normalized
+		}
+		this.options.handleChange?.(normalized)
 	}
 
 	private toNormalizedRanked(sorting: DataGridSorting<TData>) {
@@ -51,18 +63,19 @@ export class DataGridSortingController<TData> {
 
 	/**
 	 * Toggles the sorting strategy of the provided key path.
-	 * If a modifier key is pressed, the sorting will be added to the existing sorting definitions.
+	 * If the event holds Shift, Ctrl or Meta, the sorting will be added to the existing sorting definitions.
 	 *
 	 * @param selector - The key path of the data to sort by
 	 * @param strategy - The sorting strategy to use forcefully. If not provided, the strategy will be toggled between ascending, descending, and unsorted
+	 * @param event - The click or key press that asked for it
 	 */
-	toggle(selector: KeyPath.Of<TData>, strategy?: DataGridSortingStrategy) {
+	toggle(selector: KeyPath.Of<TData>, strategy?: DataGridSortingStrategy, event?: Pick<MouseEvent, 'shiftKey' | 'ctrlKey' | 'metaKey'>) {
 		const defaultSortingStrategy = DataGridSortingStrategy.Descending
 
 		const sortings = this.get()
 		const existing = sortings.find(x => x.selector === selector)
 
-		const allowMultiple = KeyboardController.shift || KeyboardController.meta || KeyboardController.ctrl
+		const allowMultiple = !!event && (event.shiftKey || event.metaKey || event.ctrlKey)
 
 		switch (true) {
 			case allowMultiple && !!strategy:

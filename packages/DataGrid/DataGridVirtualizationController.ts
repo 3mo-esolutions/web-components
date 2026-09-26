@@ -222,7 +222,9 @@ export class DataGridVirtualizationController extends Controller {
 
 	private handleIntersections(entries: ReadonlyArray<IntersectionObserverEntry>, isRenderBand: boolean) {
 		let smallestPart = 0
-		for (const { target, isIntersecting, rootBounds, boundingClientRect } of entries) {
+		// A batch may hold several reports about one part, of which only the last is current.
+		const latest = new Map(entries.map(entry => [entry.target, entry]))
+		for (const { target, isIntersecting, rootBounds, boundingClientRect } of latest.values()) {
 			// A root momentarily without a box — a resize, a zoom — reports every part as hidden. The
 			// rows are left as they are, and the report that follows the resize decides about them.
 			if (!rootBounds || (rootBounds.width === 0 && rootBounds.height === 0)) {

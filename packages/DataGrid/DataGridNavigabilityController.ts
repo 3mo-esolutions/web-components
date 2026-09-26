@@ -1,41 +1,79 @@
 import { Controller, eventListener } from '@a11d/lit'
 import { NavigabilityController } from '@3mo/navigability'
-import { type DataGrid } from './DataGrid.js'
 import { type DataGridColumn } from './DataGridColumn.js'
-import { type DataGridCell } from './DataGridCell.js'
-import { type DataGridRow } from './rows/index.js'
+import { DataGridController } from './DataGridController.js'
+import { type VirtualizableRow } from './DataGridVirtualizationController.js'
 
-export class DataGridNavigabilityController<TData, TDetailsElement extends Element | undefined = undefined, THost extends DataGrid<TData, TDetailsElement> = DataGrid<TData, TDetailsElement>> extends Controller {
-	readonly row: NavigabilityController<DataGridRow<TData, TDetailsElement>, THost>
-	readonly column: NavigabilityController<DataGridColumn<TData>, THost>
+/**
+ * The cursor over the grid's cells: one cursor over the rows, one over the columns, and the one cell in the
+ * tab order where they meet. An edited cell leaves the tab order and the keys to its editor. Ctrl or Meta
+ * with C copies the cell's text.
+ */
+export class DataGridNavigabilityController<TData> extends Controller {
+	readonly row: NavigabilityController<HTMLElement>
+	readonly column: NavigabilityController<DataGridColumn<TData>>
 
-	constructor(protected override readonly host: THost) {
-		super(host)
+	/** `handleChange` runs whenever the cursor moves. */
+	constructor(private readonly grid: DataGridController<TData>, private readonly options?: { readonly handleChange?: () => void }) {
+		super(grid.host)
 		const controller = this
-		this.row = new NavigabilityController(host, {
+		this.row = new NavigabilityController<HTMLElement>(grid.host, {
 			get items() { return controller.rowElements },
 			getElement: index => controller.rowElements[index],
 			keyboardTarget: null,
 			focus: 'activedescendant',
 			stamping: false,
 			wrap: true,
+			handleChange: () => controller.handleCursorChange(),
 		})
-		this.column = new NavigabilityController(host, {
+		this.column = new NavigabilityController<DataGridColumn<TData>>(grid.host, {
 			get items() { return controller.visibleColumns },
 			keyboardTarget: null,
 			focus: 'activedescendant',
 			stamping: false,
 			orientation: 'horizontal',
 			wrap: true,
+			handleChange: () => controller.handleCursorChange(),
 		})
 	}
 
-	private rowsCache?: ReadonlyArray<DataGridRow<TData, TDetailsElement>>
+	private tabStop?: HTMLElement
+
+	/** The one cell in the tab order sits at the cursor, and an edited cell leaves the tab order to its editor. */
+	stampCell(cell: HTMLElement) {
+		cell.role = 'gridcell'
+		if (this.grid.editability.isEditing(cell)) {
+			cell.removeAttribute('tabindex')
+		} else {
+			cell.setAttribute('tabindex', this.isTabStop(cell) ? '0' : '-1')
+		}
+		if (cell.getAttribute('tabindex') === '0') {
+			this.tabStop = cell
+		}
+	}
+
+	private handleCursorChange() {
+		const previous = this.tabStop
+		const row = this.row.current ?? this.rowElements[0]
+		const column = this.column.current ?? this.visibleColumns[0]
+		const next = !row || !column ? undefined : this.grid.cellAt(row, column)
+		if (previous !== next) {
+			this.tabStop = undefined
+			for (const cell of [previous, next]) {
+				if (cell) {
+					this.stampCell(cell)
+				}
+			}
+		}
+		this.options?.handleChange?.()
+	}
+
+	private rowsCache?: ReadonlyArray<HTMLElement>
 	private columnsCache?: ReadonlyArray<DataGridColumn<TData>>
 
-	// Both universes are derived per read on the host, and the cursor's arithmetic reads them per index.
-	private get rowElements() { return this.rowsCache ??= this.host.rows }
-	private get visibleColumns() { return this.columnsCache ??= this.host.visibleColumns }
+	// Both universes are derived per read, and the cursor's arithmetic reads them per index.
+	private get rowElements() { return this.rowsCache ??= this.grid.rows }
+	private get visibleColumns() { return this.columnsCache ??= this.grid.columns.columns.visible }
 
 	private invalidate() {
 		this.rowsCache = undefined
@@ -48,27 +86,48 @@ export class DataGridNavigabilityController<TData, TDetailsElement extends Eleme
 
 	@eventListener('focusin')
 	protected handleFocusIn(event: Event) {
-		const cell = event.composedPath().find(target => (target as DataGridCell<any, TData, TDetailsElement>).row?.dataGrid as THost === this.host)
+		const cell = this.grid.cellOf(event)
 		if (cell) {
 			this.invalidate()
-			this.syncTo(cell as DataGridCell<any, TData, TDetailsElement>)
+			this.syncTo(cell)
 		}
 	}
 
-	isTabStop(cell: DataGridCell<any, TData, TDetailsElement>) {
+	@eventListener('keydown')
+	protected handleHostKeyDown(event: KeyboardEvent) {
+		const cell = this.grid.cellOf(event)
+		if (!cell || this.grid.editability.isEditing(cell)) {
+			return
+		}
+		if (event.key === 'c' && (event.ctrlKey || event.metaKey)) {
+			event.preventDefault()
+			this.copy(cell)
+			return
+		}
+		this.handleKeyDown(event, cell)
+	}
+
+	private async copy(cell: HTMLElement) {
+		const text = (cell.shadowRoot ?? cell).textContent?.trim() ?? ''
+		await navigator.clipboard.writeText(text)
+		this.grid.options.handleCopy?.(text)
+	}
+
+	private isTabStop(cell: HTMLElement) {
 		const row = this.row.current ?? this.rowElements[0]
 		const column = this.column.current ?? this.visibleColumns[0]
-		return cell.row === row && cell.column === column
+		const cellColumn = this.grid.columnOf(cell)
+		return !!row && !!column && !!cellColumn && DataGridController.isSameColumn(cellColumn, column) && this.grid.rowOf(cell) === row
 	}
 
 	/** The cell the cursor is on, where its row has rendered one. */
 	get currentCell() {
 		const row = this.row.current
 		const column = this.column.current
-		return !row || !column ? undefined : row.getCell(column)
+		return !row || !column ? undefined : this.grid.cellAt(row, column)
 	}
 
-	handleKeyDown(event: KeyboardEvent, origin: DataGridCell<any, TData, TDetailsElement>) {
+	handleKeyDown(event: KeyboardEvent, origin: HTMLElement) {
 		if (event.defaultPrevented) {
 			return false
 		}
@@ -114,16 +173,20 @@ export class DataGridNavigabilityController<TData, TDetailsElement extends Eleme
 		return handled
 	}
 
-	focusCell(cell: DataGridCell<any, TData, TDetailsElement>, event?: Event) {
+	focusCell(cell: HTMLElement, event?: Event) {
 		cell.focus()
-		if (this.host.selectOnClick) {
-			this.host.selectionController.select(cell.row.data, { selected: true, event })
+		const row = this.grid.rowOf(cell)
+		const record = !row ? undefined : this.grid.recordOf(row)
+		if (this.grid.options.selectOnClick && record) {
+			this.grid.selection.select(record.data, { selected: true, event })
 		}
 	}
 
-	private syncTo(cell: DataGridCell<any, TData, TDetailsElement>) {
-		const rowIndex = this.rowElements.indexOf(cell.row as DataGridRow<TData, TDetailsElement>)
-		const columnIndex = this.visibleColumns.indexOf(cell.column)
+	private syncTo(cell: HTMLElement) {
+		const row = this.grid.rowOf(cell)
+		const column = this.grid.columnOf(cell)
+		const rowIndex = !row ? -1 : this.rowElements.indexOf(row)
+		const columnIndex = !column ? -1 : this.visibleColumns.findIndex(candidate => DataGridController.isSameColumn(candidate, column))
 		if (rowIndex < 0 || columnIndex < 0) {
 			return false
 		}
@@ -139,17 +202,17 @@ export class DataGridNavigabilityController<TData, TDetailsElement extends Eleme
 		if (!row || !column) {
 			return
 		}
-		const cell = row.getCell(column)
+		const cell = this.grid.cellAt(row, column)
 		if (cell) {
 			this.focusCell(cell, event)
-		} else {
-			this.revealAndFocus(row, column, event)
+		} else if ('requestUpdate' in row) {
+			this.revealAndFocus(row as HTMLElement & VirtualizableRow, column, event)
 		}
 	}
 
-	private async revealAndFocus(row: DataGridRow<TData, TDetailsElement>, column: DataGridColumn<TData>, event: Event) {
-		await this.host.virtualizationController.reveal(row)
-		const cell = row.getCell(column)
+	private async revealAndFocus(row: HTMLElement & VirtualizableRow, column: DataGridColumn<TData>, event: Event) {
+		await this.grid.virtualization.reveal(row)
+		const cell = this.grid.cellAt(row, column)
 		if (cell) {
 			this.focusCell(cell, event)
 		}

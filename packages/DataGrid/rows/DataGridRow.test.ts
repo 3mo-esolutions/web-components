@@ -19,6 +19,7 @@ describe('DataGridRow', () => {
 	`)
 
 	const getRow = (index = 0) => fixture.component.rows[index]!
+	const subRowsOf = (row: DataGridRow<Person>) => [...row.renderRoot.querySelectorAll<DataGridRow<Person>>('[mo-data-grid-row]')]
 
 	const settle = async () => {
 		await fixture.updateComplete
@@ -187,11 +188,11 @@ describe('DataGridRow', () => {
 			const row = getRow(0)
 			row.toggleDetails()
 			await settle()
-			expect(row.subRows.length).toBe(1)
+			expect(subRowsOf(row).length).toBe(1)
 
 			await hide(row)
 
-			expect(row.subRows.length).toBe(1)
+			expect(subRowsOf(row).length).toBe(1)
 		})
 
 		it('should keep its height while not intersecting, so that the rows below it do not move', async () => {
@@ -251,15 +252,15 @@ describe('DataGridRow', () => {
 	describe('Details', () => {
 		it('should render sub-rows for records with sub data', async () => {
 			const row = getRow(0)
-			expect(row.subRows.length).toBe(0)
+			expect(subRowsOf(row).length).toBe(0)
 
 			row.toggleDetails()
 			await settle()
 
 			expect(row.detailsOpen).toBe(true)
-			expect(row.subRows.length).toBe(1)
-			expect(row.subRows[0]?.data.name).toBe('Alice Jr')
-			expect(row.subRows[0]?.level).toBe(1)
+			expect(subRowsOf(row).length).toBe(1)
+			expect(subRowsOf(row)[0]?.data.name).toBe('Alice Jr')
+			expect(subRowsOf(row)[0]?.level).toBe(1)
 		})
 
 		it('should disable the selection checkbox for unselectable data', async () => {
@@ -278,6 +279,142 @@ describe('DataGridRow', () => {
 
 			expect(row.getCell(column)).toBe(row.cells[0])
 			expect(row.getCell(column.with({ heading: 'Another Heading', width: '100px' }))).toBe(row.cells[0])
+		})
+	})
+
+	describe('Registry', () => {
+		it('should list the sub rows after their parent, and find them by their data', async () => {
+			getRow(0).toggleDetails()
+			await settle()
+			const aliceJr = testData[0]!.sub![0]!
+
+			expect(fixture.component.rows.map(row => row.data.name)).toEqual(['Alice', 'Alice Jr', 'Bob', 'Charlie'])
+			expect(fixture.component.getRow(aliceJr)?.level).toBe(1)
+		})
+	})
+
+	describe('ARIA', () => {
+		it('should stamp every row with its role and its place in the hierarchy, sub rows included', async () => {
+			getRow(0).toggleDetails()
+			await settle()
+			const rows = fixture.component.rows
+
+			expect(fixture.component.role).toBe('treegrid')
+			expect(rows.map(row => row.role)).toEqual(['row', 'row', 'row', 'row'])
+			expect(rows.map(row => row.getAttribute('aria-level'))).toEqual(['1', '2', '1', '1'])
+			expect(rows.map(row => row.getAttribute('aria-setsize'))).toEqual(['3', '1', '3', '3'])
+			expect(rows.map(row => row.getAttribute('aria-posinset'))).toEqual(['1', '1', '2', '3'])
+		})
+
+		it('should announce the selection on every row, and the grid as multiselectable', async () => {
+			await settle()
+			getRow(1).renderRoot.querySelector('mo-checkbox')!.dispatchEvent(new CustomEvent('change', { detail: true }))
+			await settle()
+
+			expect(fixture.component.getAttribute('aria-multiselectable')).toBe('true')
+			expect(fixture.component.rows.map(row => row.getAttribute('aria-selected'))).toEqual(['false', 'true', 'false'])
+		})
+
+		it('should announce no selection while the grid is not selectable', async () => {
+			fixture.component.selectability = undefined
+			await settle()
+
+			expect(fixture.component.hasAttribute('aria-multiselectable')).toBe(false)
+			expect(fixture.component.rows.map(row => row.hasAttribute('aria-selected'))).toEqual([false, false, false])
+		})
+
+		it('should announce the expansion only on rows which have details', async () => {
+			await settle()
+			expect(fixture.component.rows.map(row => row.getAttribute('aria-expanded'))).toEqual(['false', null, null])
+
+			getRow(0).toggleDetails()
+			await settle()
+
+			expect(getRow(0).getAttribute('aria-expanded')).toBe('true')
+		})
+	})
+
+	describe('Re-rendering', () => {
+		const rendered = async () => {
+			await fixture.component.updateComplete
+			await Promise.all(fixture.component.rows.map(row => row.updateComplete))
+		}
+
+		const spyOnUpdates = () => fixture.component.rows.map(row => [row, vi.spyOn(row as unknown as { update(...parameters: Array<unknown>): void }, 'update')] as const)
+		const updatedRows = (spies: ReturnType<typeof spyOnUpdates>) => spies.filter(([, spy]) => spy.mock.calls.length > 0).map(([row]) => row.data.name)
+
+		it('should re-render only the row whose selection changed', async () => {
+			await settle()
+			const spies = spyOnUpdates()
+
+			getRow(1).renderRoot.querySelector('mo-checkbox')!.dispatchEvent(new CustomEvent('change', { detail: true }))
+			await rendered()
+
+			expect(updatedRows(spies)).toEqual(['Bob'])
+		})
+
+		it('should re-render only the two rows a single selection moved between', async () => {
+			fixture.component.selectability = DataGridSelectability.Single
+			fixture.component.selectedData = [testData[0]!]
+			await settle()
+			const spies = spyOnUpdates()
+
+			fixture.component.select([testData[2]!])
+			await rendered()
+
+			expect(updatedRows(spies)).toEqual(['Alice', 'Charlie'])
+		})
+
+		it('should re-render only the row whose details toggled', async () => {
+			await settle()
+			const spies = spyOnUpdates()
+
+			getRow(0).toggleDetails()
+			await rendered()
+
+			expect(updatedRows(spies)).toEqual(['Alice'])
+		})
+	})
+
+	describe('Data changed in place', () => {
+		const inPlaceFixture = new ComponentTestFixture<DataGrid<Person>>(html`
+			<mo-data-grid selectability=${DataGridSelectability.Multiple}>
+				<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
+			</mo-data-grid>
+		`)
+
+		const rendered = async () => {
+			const grid = inPlaceFixture.component
+			await grid.updateComplete
+			await Promise.all(grid.rows.map(row => row.updateComplete))
+			await Promise.all(grid.rows.flatMap(row => row.cells.map(cell => cell.updateComplete)))
+		}
+
+		const nameShownIn = (index: number) => inPlaceFixture.component.rows[index]!.cells[0]!.renderRoot.textContent?.trim()
+
+		beforeEach(async () => {
+			inPlaceFixture.component.data = [{ id: 1, name: 'Alice' }, { id: 2, name: 'Bob' }]
+			await rendered()
+		})
+
+		it('should show data changed in place once the grid is asked to update, as every row re-renders with it', async () => {
+			inPlaceFixture.component.data[1]!.name = 'Robert'
+			inPlaceFixture.component.requestUpdate()
+			await rendered()
+
+			expect(nameShownIn(1)).toBe('Robert')
+		})
+
+		it('should show data changed in place in reaction to a selection change, although a selection alone re-renders only its row', async () => {
+			inPlaceFixture.component.selectionChange.subscribe(() => {
+				inPlaceFixture.component.data[1]!.name = 'Robert'
+				inPlaceFixture.component.requestUpdate()
+			})
+
+			inPlaceFixture.component.rows[0]!.renderRoot.querySelector('mo-checkbox')!.dispatchEvent(new CustomEvent('change', { detail: true }))
+			await rendered()
+
+			expect(nameShownIn(1)).toBe('Robert')
 		})
 	})
 })

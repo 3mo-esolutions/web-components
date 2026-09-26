@@ -1,5 +1,5 @@
 import { ReorderabilityController } from '@3mo/reorderability'
-import type { DataGrid } from './DataGrid.js'
+import type { DataGridController } from './DataGridController.js'
 import type { DataRecord } from './DataRecord.js'
 
 export type DataGridReorderChange<T> = {
@@ -9,16 +9,16 @@ export type DataGridReorderChange<T> = {
 }
 
 export class DataGridReorderabilityController<T> extends ReorderabilityController {
-	constructor(override readonly host: DataGrid<T, any>) {
-		super(host)
+	constructor(private readonly grid: DataGridController<T>) {
+		super(grid.host)
 	}
 
 	get visible() {
-		return this.host.reorderability && !this.host.detailsController.hasDetails
+		return !!this.grid.options.reorderability && !this.grid.details.hasDetails
 	}
 
 	get enabled() {
-		return this.visible && !this.host.sortingController.enabled
+		return this.visible && !this.grid.sorting.enabled
 	}
 
 	reorder(source: number, destination: number) {
@@ -30,23 +30,22 @@ export class DataGridReorderabilityController<T> extends ReorderabilityControlle
 			return
 		}
 
-		const d = [...this.host.data]
-		const [movedItem] = d.splice(source, 1)
-		d.splice(destination, 0, movedItem!)
+		const data = [...this.grid.options.data]
+		const [movedItem] = data.splice(source, 1)
+		data.splice(destination, 0, movedItem!)
 
-		this.host.data = d
-
+		const records = this.grid.records.recordsOf(data)
 		const isMovingDown = source < destination
-		this.host.reorder.dispatch([
+		this.grid.options.handleReorder?.(data, [
 			{
-				record: this.host.dataRecords[destination]!,
+				record: records[destination]!,
 				oldIndex: source,
 				type: 'move',
 			},
 			...Array.from({ length: Math.abs(destination - source) })
 				.map((_, i) => isMovingDown ? source + i : destination + i + 1)
 				.map(i => ({
-					record: this.host.dataRecords[i]!,
+					record: records[i]!,
 					oldIndex: isMovingDown ? i + 1 : i - 1,
 					type: 'shift',
 				} as const))

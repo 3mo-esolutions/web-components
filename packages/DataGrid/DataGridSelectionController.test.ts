@@ -2,6 +2,7 @@ import { component, Component, PureEventDispatcher } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { DataGridSelectability, DataGridSelectionBehaviorOnDataChange, DataGridSelectionController } from './DataGridSelectionController.js'
 import type { DataRecord } from './DataRecord.js'
+import type { DataGridController } from './DataGridController.js'
 
 type Data = { id: number }
 
@@ -16,9 +17,22 @@ class TestHost extends Component {
 
 	readonly selectionChange = new PureEventDispatcher<Array<Data>>()
 
-	get dataRecords() { return this.source.map((data, index) => ({ data, index }) as DataRecord<Data>) }
+	private readonly grid = (host => ({
+		host,
+		records: { get records() { return host.source.map((data, index) => ({ data, index }) as DataRecord<Data>) } },
+		options: {
+			get selectability() { return host.selectability },
+			get selectedData() { return host.selectedData },
+			get isDataSelectable() { return host.isDataSelectable },
+			get selectionBehaviorOnDataChange() { return host.selectionBehaviorOnDataChange },
+			handleSelectionChange: (selection: Array<Data>) => {
+				host.selectedData = selection
+				host.selectionChange.dispatch(selection)
+			},
+		},
+	}) as unknown as DataGridController<Data>)(this)
 
-	readonly controller = new DataGridSelectionController<Data>(this)
+	readonly controller = new DataGridSelectionController<Data>(this.grid)
 }
 
 describe('DataGridSelectionController', () => {
@@ -168,19 +182,6 @@ describe('DataGridSelectionController', () => {
 			fixture.component.controller.select(data[0]!, { selected: true, preserve: true })
 			fixture.component.controller.select(data[2]!, { selected: true, preserve: true })
 			expect(fixture.component.selectedData).toEqual([data[0]!, data[2]!])
-		})
-	})
-
-	describe('selectPreviouslySelectedData', () => {
-		const fixture = create()
-
-		it('re-resolves the selection onto the data now present', () => {
-			fixture.component.controller.selection = [...data]
-			fixture.component.source = [...data, { id: 4 }]
-
-			fixture.component.controller.selectPreviouslySelectedData()
-
-			expect(fixture.component.selectedData).toEqual([...data])
 		})
 	})
 

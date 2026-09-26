@@ -1,28 +1,29 @@
 import { DataGridReorderabilityController } from './DataGridReorderabilityController.js'
 
 describe('DataGridReorderabilityController', () => {
-	const createController = (host = {}) => new DataGridReorderabilityController({
-		addController: () => { },
-		reorderability: true,
-		sortingController: { enabled: false },
-		detailsController: { hasDetails: false },
-		...host,
+	/** Stands in for the grid's controller: the reordering only ever asks it for these. */
+	const createController = (options = {}, grid = {}) => new DataGridReorderabilityController({
+		host: { addController: () => { } },
+		options: { reorderability: true, ...options },
+		sorting: { enabled: false },
+		details: { hasDetails: false },
+		...grid,
 	} as any)
 
 	describe('visible', () => {
 		it('stays true while the grid is sorted, so the column is kept and only dragging is disabled', () => {
-			expect(createController({ sortingController: { enabled: true } }).visible).toBe(true)
+			expect(createController({}, { sorting: { enabled: true } }).visible).toBe(true)
 		})
 
 		it('is false when the feature is off or the grid shows details', () => {
 			expect(createController({ reorderability: false }).visible).toBe(false)
-			expect(createController({ detailsController: { hasDetails: true } }).visible).toBe(false)
+			expect(createController({}, { details: { hasDetails: true } }).visible).toBe(false)
 		})
 	})
 
 	describe('enabled', () => {
 		it('is false while the grid is sorted, even though the column is still visible', () => {
-			const controller = createController({ sortingController: { enabled: true } })
+			const controller = createController({}, { sorting: { enabled: true } })
 			expect(controller.visible).toBe(true)
 			expect(controller.enabled).toBe(false)
 		})
@@ -36,15 +37,21 @@ describe('DataGridReorderabilityController', () => {
 		const createGrid = (data: Array<string>) => {
 			const dispatched = new Array<Array<{ type: string, oldIndex: number, index: number }>>()
 			const host = {
-				addController: () => { },
 				reorderability: true,
-				sortingController: { enabled: false },
-				detailsController: { hasDetails: false },
 				data,
-				get dataRecords() { return this.data.map((_: string, index: number) => ({ index })) },
-				reorder: { dispatch: (changes: any) => dispatched.push(changes.map((c: any) => ({ type: c.type, oldIndex: c.oldIndex, index: c.record.index }))) },
+				handleReorder: (reordered: Array<string>, changes: any) => {
+					host.data = reordered
+					dispatched.push(changes.map((c: any) => ({ type: c.type, oldIndex: c.oldIndex, index: c.record.index })))
+				},
 			}
-			return { host, controller: new DataGridReorderabilityController(host as any), dispatched }
+			const grid = {
+				host: { addController: () => { } },
+				options: host,
+				sorting: { enabled: false },
+				details: { hasDetails: false },
+				records: { recordsOf: (records: Array<string>) => records.map((_, index) => ({ index })) },
+			}
+			return { host, controller: new DataGridReorderabilityController(grid as any), dispatched }
 		}
 
 		it('moves the datum and reports the move plus every record it shifted', () => {
