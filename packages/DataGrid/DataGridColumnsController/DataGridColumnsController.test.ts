@@ -155,5 +155,31 @@ describe('DataGridColumnsController', () => {
 			expect(reorderable).toContain('[order]')
 			expect(reorderable).not.toContain('[details]')
 		})
+
+		it('should lay out the tracks of a grid which first rendered outside the flat tree, such as slotted into a host yet to render its slot', async () => {
+			const host = document.createElement('div')
+			const root = host.attachShadow({ mode: 'open' })
+			const grid = document.createElement('mo-data-grid') as DataGrid<Data>
+			grid.selectability = DataGridSelectability.Multiple
+			grid.data = [{ a: 1, b: 2 }]
+			const column = document.createElement('mo-data-grid-column-number')
+			Object.assign(column, { heading: 'A', dataSelector: 'a', width: '50px' })
+			grid.append(column)
+			host.append(grid)
+			document.body.append(host)
+			try {
+				await grid.updateComplete
+				await new Promise(r => setTimeout(r, 30))
+				await grid.updateComplete
+
+				root.append(document.createElement('slot'))
+				await new Promise(requestAnimationFrame)
+
+				const tracks = getComputedStyle(grid.renderRoot.querySelector('#content')!).gridTemplateColumns
+				expect(tracks).toMatch(/^\[selection\] 40px \[data\] 50px \[padding\] [\d.]+px \[actions\] 28px/)
+			} finally {
+				host.remove()
+			}
+		})
 	})
 })

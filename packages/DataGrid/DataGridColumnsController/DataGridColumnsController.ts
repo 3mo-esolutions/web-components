@@ -206,14 +206,13 @@ export class DataGridColumnsController<TData> extends Controller implements Even
 	}
 
 	private get cssColumns() {
-		const style = window.getComputedStyle(this.grid.host)
-		const order = !this.grid.reorderability.enabled ? undefined : style.getPropertyValue('--mo-data-grid-column-reorder-width')
-		const details = !this.grid.details.hasDetails ? undefined : style.getPropertyValue('--mo-data-grid-column-details-width')
-		const selection = !this.grid.selection.hasSelection ? undefined : style.getPropertyValue('--mo-data-grid-column-selection-width')
+		const order = !this.grid.reorderability.enabled ? undefined : 'var(--mo-data-grid-column-reorder-width)'
+		const details = !this.grid.details.hasDetails ? undefined : 'var(--mo-data-grid-column-details-width)'
+		const selection = !this.grid.selection.hasSelection ? undefined : 'var(--mo-data-grid-column-selection-width)'
 		const data = this.columns.visible
 			.map(c => c.width)
 			.filter((c): c is string => c !== undefined)
-		const actions = style.getPropertyValue('--mo-data-grid-column-actions-width')
+		const actions = 'var(--mo-data-grid-column-actions-width)'
 		return [
 			{ name: 'order', width: order },
 			{ name: 'details', width: details },

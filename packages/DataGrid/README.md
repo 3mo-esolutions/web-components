@@ -241,7 +241,7 @@ The handle resizing a column, drawing a line where the pointer is while it drags
 | `dataSelector` | `dataSelector` | `` object extends Required<TData> ? string : TData extends readonly any[] ? Extract<keyof TData, `${number}`> \| Extract<keyof TData, string> \| SubKeyPathOf<...> : TData extends object ? Extract<...> \| SubKeyPathOf<...> : never `` |  | The data selector of the column |
 | `sortDataSelector` | `sortDataSelector` | `` (object extends Required<TData> ? string : TData extends readonly any[] ? Extract<keyof TData, `${number}`> \| Extract<keyof TData, string> \| SubKeyPathOf<...> : TData extends object ? Extract<...> \| SubKeyPathOf<...> : never) \| undefined `` |  | The data selector of the column |
 | `nonSortable` | `nonSortable` | `boolean` | `false` | Whether the column is sortable |
-| `nonEditable` | `nonEditable` |  | `false` | Whether the column is editable |
+| `nonEditable` | `nonEditable` | `boolean \| Predicate<TData>` | `false` | Whether the column is editable |
 | `sticky` | `sticky` | `DataGridColumnSticky \| undefined` |  | The sticky position of the column, either 'start', 'end', or 'both' |
 | `contentStyle` | `contentStyle` | `DataGridColumnContentStyle<TData, TValue> \| undefined` |  | The content style of the column. It can be a string, CSSResult, or a function that returns either based on the cell value and data. |
 |  | `getContentTemplate` |  |  | The content template of the column. |
@@ -262,7 +262,7 @@ The handle resizing a column, drawing a line where the pointer is while it drags
 | `dataSelector` | `dataSelector` | `` object extends Required<TData> ? string : TData extends readonly any[] ? Extract<keyof TData, `${number}`> \| Extract<keyof TData, string> \| SubKeyPathOf<...> : TData extends object ? Extract<...> \| SubKeyPathOf<...> : never `` |  | The data selector of the column |
 | `sortDataSelector` | `sortDataSelector` | `` (object extends Required<TData> ? string : TData extends readonly any[] ? Extract<keyof TData, `${number}`> \| Extract<keyof TData, string> \| SubKeyPathOf<...> : TData extends object ? Extract<...> \| SubKeyPathOf<...> : never) \| undefined `` |  | The data selector of the column |
 | `nonSortable` | `nonSortable` | `boolean` | `false` | Whether the column is sortable |
-| `nonEditable` | `nonEditable` |  | `false` | Whether the column is editable |
+| `nonEditable` | `nonEditable` | `boolean \| Predicate<TData>` | `false` | Whether the column is editable |
 | `sticky` | `sticky` | `DataGridColumnSticky \| undefined` |  | The sticky position of the column, either 'start', 'end', or 'both' |
 | `contentStyle` | `contentStyle` | `DataGridColumnContentStyle<TData, TValue> \| undefined` |  | The content style of the column. It can be a string, CSSResult, or a function that returns either based on the cell value and data. |
 |  | `getContentTemplate` |  |  | The content template of the column. |
@@ -335,7 +335,7 @@ The handle resizing a column, drawing a line where the pointer is while it drags
 | `dataSelector` | `dataSelector` | `` object extends Required<TData> ? string : TData extends readonly any[] ? Extract<keyof TData, `${number}`> \| Extract<keyof TData, string> \| SubKeyPathOf<...> : TData extends object ? Extract<...> \| SubKeyPathOf<...> : never `` |  | The data selector of the column |
 | `sortDataSelector` | `sortDataSelector` | `` (object extends Required<TData> ? string : TData extends readonly any[] ? Extract<keyof TData, `${number}`> \| Extract<keyof TData, string> \| SubKeyPathOf<...> : TData extends object ? Extract<...> \| SubKeyPathOf<...> : never) \| undefined `` |  | The data selector of the column |
 | `nonSortable` | `nonSortable` | `boolean` | `false` | Whether the column is sortable |
-| `nonEditable` | `nonEditable` |  | `false` | Whether the column is editable |
+| `nonEditable` | `nonEditable` | `boolean \| Predicate<TData>` | `false` | Whether the column is editable |
 | `sticky` | `sticky` | `DataGridColumnSticky \| undefined` |  | The sticky position of the column, either 'start', 'end', or 'both' |
 | `contentStyle` | `contentStyle` | `DataGridColumnContentStyle<TData, TValue> \| undefined` |  | The content style of the column. It can be a string, CSSResult, or a function that returns either based on the cell value and data. |
 |  | `getContentTemplate` |  |  | The content template of the column. |
@@ -359,7 +359,7 @@ The handle resizing a column, drawing a line where the pointer is while it drags
 | `dataSelector` | `dataSelector` | `` object extends Required<TData> ? string : TData extends readonly any[] ? Extract<keyof TData, `${number}`> \| Extract<keyof TData, string> \| SubKeyPathOf<...> : TData extends object ? Extract<...> \| SubKeyPathOf<...> : never `` |  | The data selector of the column |
 | `sortDataSelector` | `sortDataSelector` | `` (object extends Required<TData> ? string : TData extends readonly any[] ? Extract<keyof TData, `${number}`> \| Extract<keyof TData, string> \| SubKeyPathOf<...> : TData extends object ? Extract<...> \| SubKeyPathOf<...> : never) \| undefined `` |  | The data selector of the column |
 | `nonSortable` | `nonSortable` | `boolean` | `false` | Whether the column is sortable |
-| `nonEditable` | `nonEditable` |  | `false` | Whether the column is editable |
+| `nonEditable` | `nonEditable` | `boolean \| Predicate<TData>` | `false` | Whether the column is editable |
 | `sticky` | `sticky` | `DataGridColumnSticky \| undefined` |  | The sticky position of the column, either 'start', 'end', or 'both' |
 | `contentStyle` | `contentStyle` | `DataGridColumnContentStyle<TData, TValue> \| undefined` |  | The content style of the column. It can be a string, CSSResult, or a function that returns either based on the cell value and data. |
 |  | `getContentTemplate` |  |  | The content template of the column. |
@@ -383,7 +383,7 @@ The handle resizing a column, drawing a line where the pointer is while it drags
 | `dataSelector` | `dataSelector` | `` object extends Required<TData> ? string : TData extends readonly any[] ? Extract<keyof TData, `${number}`> \| Extract<keyof TData, string> \| SubKeyPathOf<...> : TData extends object ? Extract<...> \| SubKeyPathOf<...> : never `` |  | The data selector of the column |
 | `sortDataSelector` | `sortDataSelector` | `` (object extends Required<TData> ? string : TData extends readonly any[] ? Extract<keyof TData, `${number}`> \| Extract<keyof TData, string> \| SubKeyPathOf<...> : TData extends object ? Extract<...> \| SubKeyPathOf<...> : never) \| undefined `` |  | The data selector of the column |
 | `nonSortable` | `nonSortable` | `boolean` | `false` | Whether the column is sortable |
-| `nonEditable` | `nonEditable` |  | `false` | Whether the column is editable |
+| `nonEditable` | `nonEditable` | `boolean \| Predicate<TData>` | `false` | Whether the column is editable |
 | `sticky` | `sticky` | `DataGridColumnSticky \| undefined` |  | The sticky position of the column, either 'start', 'end', or 'both' |
 | `contentStyle` | `contentStyle` | `DataGridColumnContentStyle<TData, TValue> \| undefined` |  | The content style of the column. It can be a string, CSSResult, or a function that returns either based on the cell value and data. |
 |  | `getContentTemplate` |  |  | The content template of the column. |
@@ -407,7 +407,7 @@ The handle resizing a column, drawing a line where the pointer is while it drags
 | `dataSelector` | `dataSelector` | `` object extends Required<TData> ? string : TData extends readonly any[] ? Extract<keyof TData, `${number}`> \| Extract<keyof TData, string> \| SubKeyPathOf<...> : TData extends object ? Extract<...> \| SubKeyPathOf<...> : never `` |  | The data selector of the column |
 | `sortDataSelector` | `sortDataSelector` | `` (object extends Required<TData> ? string : TData extends readonly any[] ? Extract<keyof TData, `${number}`> \| Extract<keyof TData, string> \| SubKeyPathOf<...> : TData extends object ? Extract<...> \| SubKeyPathOf<...> : never) \| undefined `` |  | The data selector of the column |
 | `nonSortable` | `nonSortable` | `boolean` | `false` | Whether the column is sortable |
-| `nonEditable` | `nonEditable` |  | `false` | Whether the column is editable |
+| `nonEditable` | `nonEditable` | `boolean \| Predicate<TData>` | `false` | Whether the column is editable |
 | `sticky` | `sticky` | `DataGridColumnSticky \| undefined` |  | The sticky position of the column, either 'start', 'end', or 'both' |
 | `contentStyle` | `contentStyle` | `DataGridColumnContentStyle<TData, TValue> \| undefined` |  | The content style of the column. It can be a string, CSSResult, or a function that returns either based on the cell value and data. |
 |  | `getContentTemplate` |  |  | The content template of the column. |
@@ -431,7 +431,7 @@ The handle resizing a column, drawing a line where the pointer is while it drags
 | `dataSelector` | `dataSelector` | `` object extends Required<TData> ? string : TData extends readonly any[] ? Extract<keyof TData, `${number}`> \| Extract<keyof TData, string> \| SubKeyPathOf<...> : TData extends object ? Extract<...> \| SubKeyPathOf<...> : never `` |  | The data selector of the column |
 | `sortDataSelector` | `sortDataSelector` | `` (object extends Required<TData> ? string : TData extends readonly any[] ? Extract<keyof TData, `${number}`> \| Extract<keyof TData, string> \| SubKeyPathOf<...> : TData extends object ? Extract<...> \| SubKeyPathOf<...> : never) \| undefined `` |  | The data selector of the column |
 | `nonSortable` | `nonSortable` | `boolean` | `false` | Whether the column is sortable |
-| `nonEditable` | `nonEditable` |  | `false` | Whether the column is editable |
+| `nonEditable` | `nonEditable` | `boolean \| Predicate<TData>` | `false` | Whether the column is editable |
 | `sticky` | `sticky` | `DataGridColumnSticky \| undefined` |  | The sticky position of the column, either 'start', 'end', or 'both' |
 | `contentStyle` | `contentStyle` | `DataGridColumnContentStyle<TData, TValue> \| undefined` |  | The content style of the column. It can be a string, CSSResult, or a function that returns either based on the cell value and data. |
 |  | `getContentTemplate` |  |  | The content template of the column. |
@@ -462,7 +462,7 @@ The handle resizing a column, drawing a line where the pointer is while it drags
 | `dataSelector` | `dataSelector` | `` object extends Required<TData> ? string : TData extends readonly any[] ? Extract<keyof TData, `${number}`> \| Extract<keyof TData, string> \| SubKeyPathOf<...> : TData extends object ? Extract<...> \| SubKeyPathOf<...> : never `` |  | The data selector of the column |
 | `sortDataSelector` | `sortDataSelector` | `` (object extends Required<TData> ? string : TData extends readonly any[] ? Extract<keyof TData, `${number}`> \| Extract<keyof TData, string> \| SubKeyPathOf<...> : TData extends object ? Extract<...> \| SubKeyPathOf<...> : never) \| undefined `` |  | The data selector of the column |
 | `nonSortable` | `nonSortable` | `boolean` | `false` | Whether the column is sortable |
-| `nonEditable` | `nonEditable` |  | `false` | Whether the column is editable |
+| `nonEditable` | `nonEditable` | `boolean \| Predicate<TData>` | `false` | Whether the column is editable |
 | `sticky` | `sticky` | `DataGridColumnSticky \| undefined` |  | The sticky position of the column, either 'start', 'end', or 'both' |
 | `contentStyle` | `contentStyle` | `DataGridColumnContentStyle<TData, TValue> \| undefined` |  | The content style of the column. It can be a string, CSSResult, or a function that returns either based on the cell value and data. |
 |  | `getContentTemplate` |  |  | The content template of the column. |
@@ -491,7 +491,7 @@ The handle resizing a column, drawing a line where the pointer is while it drags
 | `dataSelector` | `dataSelector` | `` object extends Required<TData> ? string : TData extends readonly any[] ? Extract<keyof TData, `${number}`> \| Extract<keyof TData, string> \| SubKeyPathOf<...> : TData extends object ? Extract<...> \| SubKeyPathOf<...> : never `` |  | The data selector of the column |
 | `sortDataSelector` | `sortDataSelector` | `` (object extends Required<TData> ? string : TData extends readonly any[] ? Extract<keyof TData, `${number}`> \| Extract<keyof TData, string> \| SubKeyPathOf<...> : TData extends object ? Extract<...> \| SubKeyPathOf<...> : never) \| undefined `` |  | The data selector of the column |
 | `nonSortable` | `nonSortable` | `boolean` | `false` | Whether the column is sortable |
-| `nonEditable` | `nonEditable` |  | `false` | Whether the column is editable |
+| `nonEditable` | `nonEditable` | `boolean \| Predicate<TData>` | `false` | Whether the column is editable |
 | `sticky` | `sticky` | `DataGridColumnSticky \| undefined` |  | The sticky position of the column, either 'start', 'end', or 'both' |
 | `contentStyle` | `contentStyle` | `DataGridColumnContentStyle<TData, TValue> \| undefined` |  | The content style of the column. It can be a string, CSSResult, or a function that returns either based on the cell value and data. |
 |  | `getContentTemplate` |  |  | The content template of the column. |
@@ -520,7 +520,7 @@ The handle resizing a column, drawing a line where the pointer is while it drags
 | `dataSelector` | `dataSelector` | `` object extends Required<TData> ? string : TData extends readonly any[] ? Extract<keyof TData, `${number}`> \| Extract<keyof TData, string> \| SubKeyPathOf<...> : TData extends object ? Extract<...> \| SubKeyPathOf<...> : never `` |  | The data selector of the column |
 | `sortDataSelector` | `sortDataSelector` | `` (object extends Required<TData> ? string : TData extends readonly any[] ? Extract<keyof TData, `${number}`> \| Extract<keyof TData, string> \| SubKeyPathOf<...> : TData extends object ? Extract<...> \| SubKeyPathOf<...> : never) \| undefined `` |  | The data selector of the column |
 | `nonSortable` | `nonSortable` | `boolean` | `false` | Whether the column is sortable |
-| `nonEditable` | `nonEditable` |  | `false` | Whether the column is editable |
+| `nonEditable` | `nonEditable` | `boolean \| Predicate<TData>` | `false` | Whether the column is editable |
 | `sticky` | `sticky` | `DataGridColumnSticky \| undefined` |  | The sticky position of the column, either 'start', 'end', or 'both' |
 | `contentStyle` | `contentStyle` | `DataGridColumnContentStyle<TData, TValue> \| undefined` |  | The content style of the column. It can be a string, CSSResult, or a function that returns either based on the cell value and data. |
 |  | `getContentTemplate` |  |  | The content template of the column. |
