@@ -37,6 +37,11 @@ export class SplitButton extends Component {
 
 			mo-button {
 				--mo-button-horizontal-padding: 6px;
+
+				mo-icon {
+					/* On the baseline, the line would add the text's descent below the icon */
+					vertical-align: top;
+				}
 			}
 		`
 	}

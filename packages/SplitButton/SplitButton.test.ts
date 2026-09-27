@@ -35,6 +35,16 @@ describe('SplitButton', () => {
 
 			expect(spy).not.toHaveBeenCalled()
 		})
+
+		// On a line of text, the arrow sits above the middle by the room the text font keeps below the baseline, which the icon font has none of:
+		it('should center its arrow vertically', async () => {
+			const button = fixture.component.renderRoot.querySelector('mo-button')!
+			await button.updateComplete
+			await vi.waitFor(() => expect([...document.fonts].some(font => font.family.includes('Material Icons') && font.status === 'loaded')).toBe(true), { timeout: 10_000 })
+			const center = (rect: DOMRect) => rect.top + rect.height / 2
+
+			expect(center(button.querySelector('mo-icon')!.getBoundingClientRect())).toBeCloseTo(center(button.getBoundingClientRect()), 0)
+		})
 	})
 
 	describe('menu', () => {
