@@ -27,9 +27,9 @@ A guide for coding agents working in this repository: how it is organized, how t
 | `stories/` | Central sample data for stories and demos: `people`, `employees`, `companies`, `countries`, `photos`, and `respond()` to fake a request. |
 | `samples/<recipe>/` | Recipes: complete screens built from the pieces, `recipe-*` elements, a private `package.json`. Shown under Recipes. |
 | `.storybook/` | Storybook config: `main.ts` (aliases every `@3mo/*` to its `index.ts`, full-reload plugin), `preview.ts`, `blocks.tsx` (docs blocks), `source.ts` (Show code, `sourceOf`), `lazy.ts`, `globals.ts` (theme and language toolbar), `stories.test.ts` (smoke test), `docs/*.mdx` (Getting Started, Contributing). |
-| `scripts/` | `analyze.ts`, `readme.ts`, `changelog.ts`, `release.ts`, `pre-commit.ts`, `clean.ts`, `docs-build.ts`, `llms.ts`, `vitest-setup.ts`, helpers in `util/`. |
+| `scripts/` | `analyze.ts`, `readme.ts`, `changelog.ts`, `bump.ts`, `release.ts`, `pre-commit.ts`, `clean.ts`, `docs-build.ts`, `llms.ts`, `vitest-setup.ts`, helpers in `util/`. |
 | `vitest.config.ts` | Projects `specs` (instances `chromium`, `firefox`) and `stories`. |
-| `.github/workflows/` | `qa.yml` runs `npm run typescript`, `npm run lint` and `npm run test` on every PR and push to main; `development.yml` also deploys the Storybook to GitHub Pages. |
+| `.github/workflows/` | `qa.yml` runs `npm run typescript`, `npm run lint` and `npm run test` on every PR and push to main; `development.yml` also deploys the Storybook to GitHub Pages and, after QA, runs `npm run release` on every push to main. |
 
 Generated files, never edited by hand:
 
@@ -53,10 +53,12 @@ Generated files, never edited by hand:
 | `npm run analyze` | Regenerates the manifest. Needed before Storybook starts in a fresh checkout and after any JSDoc change. |
 | `npm run readme -- <@3mo/name or Directory>` | Regenerates one package's README; no argument regenerates all, `--root` only the root table. |
 | `npm run changelog` | Regenerates the changelogs. |
+| `npm run bump -- <@3mo/name or Directory>... <patch|minor|major|prerelease>` | Bumps the versions and regenerates the manifest and those READMEs. `premajor`, `preminor` and `prepatch` work too; prereleases are `-preview.<n>`. |
+| `npm run release -- --dry-run` | Lists the versions a release would publish, in publish order, and the packages with changes their published version lacks. Reads npm and git only. |
 | `npm run llms -- <directory>` | Writes the Markdown pages, `llms.txt` and `llms-full.txt` into a built Storybook (`docs-dist` by default), from its `index.json`. |
 | `npx storybook dev -p 3010 --ci --no-open` | A Storybook dev server. Needs `custom-elements.json`. |
 
-- Do not run `npm start`, `npm run clean`, `npm run build` or the release scripts. `clean` deletes every `dist/`, and `npm run typescript` relies on the warm incremental cache in `dist/*.tsbuildinfo`. Never delete `dist/` or `*.tsbuildinfo` to fix type errors.
+- Do not run `npm start`, `npm run clean`, `npm run build` or `npm run release` without `--dry-run`. `clean` deletes every `dist/`, and `npm run typescript` relies on the warm incremental cache in `dist/*.tsbuildinfo`. Never delete `dist/` or `*.tsbuildinfo` to fix type errors.
 - Phantom "has no exported member" or type errors naming shapes that no longer exist mean a stale incremental cache: run `node ./node_modules/typescript-7/bin/tsc --build --force --noEmit` once. To check one package in isolation: `node ./node_modules/typescript-7/bin/tsc -p packages/<Name>/tsconfig.json --noEmit`.
 - Storybook reloads the page by itself after any source edit (custom elements cannot be hot-replaced). Restart it after adding a story file, a new story export in an existing file, a new MDX page, or editing `manager-head.html`: the story index is built at startup. Check `http://localhost:<port>/index.json` for a story id before concluding a story is broken.
 - A fresh git worktree has no `node_modules`, so `@3mo/*` resolve to the main checkout's packages. Run `npm install` in the worktree (workspaces link `@3mo/*` to its own `packages/`) before trusting any test, type-check or story. When linking by hand on Windows, use junctions, and never `Remove-Item -Recurse` a junction: it deletes through into the target.
@@ -65,7 +67,7 @@ Generated files, never edited by hand:
 
 A package directory holds:
 
-- `package.json`: `name` (`@3mo/<kebab-name>`), `version`, `description`, `repository` (`url` + `directory: packages/<Name>`), `bugs`, `keywords`, `author: "3MO GmbH"`, `license: "MIT"`, `homepage`, `type: module`, `main: dist/index.js`, `types: dist/index.d.ts`, `customElements: dist/custom-elements.json`, `files: ["dist"]`. Dependencies are `"x"` unless a version floor is needed (`">=0.13.0"`); `@a11d/lit-testing` is a dev dependency.
+- `package.json`: `name` (`@3mo/<kebab-name>`), `version`, `description`, `repository` (`url` + `directory: packages/<Name>`), `bugs`, `keywords`, `author: "3MO GmbH"`, `license: "MIT"`, `homepage`, `type: module`, `main: dist/index.js`, `types: dist/index.d.ts`, `customElements: dist/custom-elements.json`, `files: ["dist", "CHANGELOG.md"]`. Dependencies are `"x"` unless a version floor is needed (`">=0.13.0"`); `@a11d/lit-testing` is a dev dependency.
 - `description`: one sentence, at most 130 characters, in one form: "A web component for …", "Web components for …", "A Lit controller for …", "A utility for …", then what sets it apart, with a dependency as "built on …". It is what npm search shows and the lead of pages without a component.
 - `homepage`: the package's Storybook page, `https://3mo-esolutions.github.io/web-components/?path=/docs/<section>-<name>--overview`, or its GitHub tree for a package without one. The README picks its primary stories file from this id.
 - `tsconfig.json`: extends `../../tsconfig.base.json`, `outDir: ./dist`, and excludes `./dist`, `**/*.config.*`, `**/*.stories.ts`, `**/stories/**`, `**/*.test.ts`, so nothing but source is published.
@@ -276,7 +278,9 @@ The full rules are in `.storybook/docs/WritingStories.mdx` (Contributing / Writi
 
 - Conventional commits: `feat(Button): Add the selectable button component`. The scope is the package's directory name, exactly; the subject is capitalized, code in backticks, `!` marks a breaking change (`feat(Chip)!: …`). Types: `feat`, `fix`, `chore`, `refactor`, `perf`, `test`, `docs`, `infra`.
 - `scripts/changelog.ts` reads the first-parent history of `main` for commits that changed `packages/<Name>/package.json` and keeps their changes whose scope equals `<Name>`. A wrong or misspelled scope, or a change that does not touch the package's `package.json` (its version), means no changelog entry. The changelog is generated, never committed; put release notes in the commit body.
-- `npm run release -- <@3mo/name> <patch|minor|major|prerelease>` builds the package, regenerates its manifest and README, bumps the version and publishes to npm. Releases, version bumps, and dependency floors are handled manually and intentionally; do not bump versions or publish automatically.
+- A version is bumped in the commit that makes the change, with `npm run bump`. A change a dependent needs bumps the dependent in the same push and raises its floor (`">=0.6.0"`). Version bumps and dependency floors are the maintainer's decision; do not bump versions unless asked.
+- `npm run release` publishes what `main` holds: every package whose version npm does not have yet. It refuses anything but a clean checkout of `main` at `origin/main`, orders the packages by their `@3mo/*` dependencies and peer dependencies (bases first), builds them, writes their manifests and changelogs into the packages so the tarballs ship them, and publishes, prereleases under the `preview` tag. It commits, tags and creates nothing on GitHub, and a rerun skips what is already published, so a failed release is finished by running it again. It warns about packages whose shipped files changed since their published version was built (npm's `gitHead`, or the commit that set the version) without a bump: those changes are not published until a bump.
+- Every push to `main` publishes through the `Release` job of `development.yml`, with npm trusted publishing: npm trusts that workflow file in the GitHub environment `npm`, which only `main` may deploy to, so there is no token or secret. Each package has its own trust rule, and `npm trust` only accepts packages that already exist on npm. A new package is therefore published once by hand (`npm run release` from a clean `main`), then trusted with `npm trust github <@3mo/name> --file development.yml --repo 3mo-esolutions/web-components --env npm --allow-publish`. Renaming the workflow or the environment breaks every rule.
 - On `main`, the pre-commit hook regenerates the root README.
 
 ## Verification before calling work done

@@ -7,9 +7,36 @@ on:
       - main
 
 jobs:
-  qa-client:
-    name: Client
+  qa:
+    name: Quality Assurance
     uses: ./.github/workflows/qa.yml
+
+  Release:
+    name: 📦 Publish Pending Versions
+    needs: qa
+    runs-on: ubuntu-latest
+    environment: npm
+    concurrency:
+      group: release
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout Repository ⬇️
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Setup Node ⬇️
+        uses: actions/setup-node@v6
+        with:
+          node-version: 26.x
+          cache: 'npm'
+      - name: Install Dependencies ⬇️
+        run: npm ci
+
+      - name: Publish 🚀
+        run: npm run release
 
   Docs:
     name: 📖 Deploy Documentation
@@ -29,7 +56,7 @@ jobs:
       - name: Setup Node ⬇️
         uses: actions/setup-node@v6
         with:
-          node-version: 22.x
+          node-version: 26.x
           cache: 'npm'
       - name: Install Dependencies ⬇️
         run: npm ci
@@ -38,13 +65,13 @@ jobs:
         run: npm run docs:build
 
       - name: Setup GitHub ⚙️
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
 
       - name: Upload to GitHub ⬆️
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: './docs-dist'
 
       - name: Deploy to GitHub Pages 🚀
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

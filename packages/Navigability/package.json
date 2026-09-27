@@ -28,7 +28,8 @@
 	"types": "dist/index.d.ts",
 	"customElements": "dist/custom-elements.json",
 	"files": [
-		"dist"
+		"dist",
+		"CHANGELOG.md"
 	],
 	"dependencies": {
 		"@3mo/indexability": "x",

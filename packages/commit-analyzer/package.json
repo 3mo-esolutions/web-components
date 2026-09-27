@@ -22,7 +22,8 @@
 	"type": "module",
 	"main": "index.ts",
 	"files": [
-		"dist"
+		"dist",
+		"CHANGELOG.md"
 	],
 	"dependencies": {
 		"tslib": "x"

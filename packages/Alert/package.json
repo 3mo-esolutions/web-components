@@ -23,7 +23,8 @@
 	"types": "dist/index.d.ts",
 	"customElements": "dist/custom-elements.json",
 	"files": [
-		"dist"
+		"dist",
+		"CHANGELOG.md"
 	],
 	"dependencies": {
 		"@a11d/lit": "x",

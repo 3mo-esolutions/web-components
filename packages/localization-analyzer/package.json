@@ -22,7 +22,8 @@
 	"type": "module",
 	"main": "index.mjs",
 	"files": [
-		"*.mjs"
+		"*.mjs",
+		"CHANGELOG.md"
 	],
 	"dependencies": {
 		"acorn-walk": "^8.3.3",
