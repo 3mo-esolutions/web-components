@@ -27,7 +27,7 @@ import '@3mo/fab'
 - [Extended](https://3mo-esolutions.github.io/web-components/?path=/story/actions-floating-action-button--extended) — Text in the default slot makes it an extended FAB, labelled beside its icon.
 - [Dense](https://3mo-esolutions.github.io/web-components/?path=/story/actions-floating-action-button--dense) — `dense` makes it the small FAB, with or without a label.
 - [Icon At End](https://3mo-esolutions.github.io/web-components/?path=/story/actions-floating-action-button--icon-at-end) — `iconAtEnd` moves the icon after the label, and follows the writing direction.
-- [Icon Slot](https://3mo-esolutions.github.io/web-components/?path=/story/actions-floating-action-button--icon-slot) — The `icon` slot takes any content in place of the Material icon.
+- [Icon Slot](https://3mo-esolutions.github.io/web-components/?path=/story/actions-floating-action-button--icon-slot) — The `icon` slot takes any content in place of the Material icon, such as an SVG drawn in the current color.
 - [Parts](https://3mo-esolutions.github.io/web-components/?path=/story/actions-floating-action-button--parts) — The `button`, `ripple` and `focus-ring` parts can be restyled or hidden from outside.
 
 ## API

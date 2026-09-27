@@ -31,6 +31,27 @@ describe('Fab', () => {
 			expect(mdFabOf(emptyFixture.component).hasAttribute('label')).toBe(false)
 			expect(mdFabOf(emptyFixture.component).label).toBe('')
 		})
+
+		const slottedIconFixture = new ComponentTestFixture<Fab>(html`<mo-fab><span slot='icon'>🚀</span>Launch</mo-fab>`)
+
+		it('should leave the text of slotted "icon" content out of the label', () => {
+			expect(mdFabOf(slottedIconFixture.component).label).toBe('Launch')
+		})
+
+		const slottedIconOnlyFixture = new ComponentTestFixture<Fab>(html`<mo-fab><span slot='icon'>🚀</span></mo-fab>`)
+
+		it('should tunnel no label when only slotted "icon" content has text', () => {
+			expect(mdFabOf(slottedIconOnlyFixture.component).hasAttribute('label')).toBe(false)
+		})
+
+		const laterIconFixture = new ComponentTestFixture<Fab>(html`<mo-fab icon='add'>Create</mo-fab>`)
+
+		it('should keep the label free of slotted "icon" content added later', async () => {
+			laterIconFixture.component.prepend(Object.assign(document.createElement('span'), { slot: 'icon', textContent: '🚀' }))
+			await settle()
+
+			expect(mdFabOf(laterIconFixture.component).label).toBe('Create')
+		})
 	})
 
 	describe('icon', () => {

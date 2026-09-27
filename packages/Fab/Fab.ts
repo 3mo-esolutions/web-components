@@ -73,7 +73,13 @@ export class Fab extends Component {
 		`
 	}
 
-	protected get label() { return this.textContent?.trim() || undefined }
+	protected get label() {
+		return [...this.childNodes]
+			.filter(node => !(node instanceof Element && node.slot))
+			.map(node => node.textContent)
+			.join('')
+			.trim() || undefined
+	}
 
 	protected override get template() {
 		return html`
