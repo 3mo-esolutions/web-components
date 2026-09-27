@@ -66,6 +66,36 @@ describe('LocalizedString', () => {
 		expect(LocalizedString.get(key, 'de', { count: 2 }).toString()).toBe('2 Elemente')
 	})
 
+	it('should collapse the trailing categories onto the last form when a dictionary provides fewer forms than the language distinguishes', () => {
+		const key = '${count:pluralityNumber} elements'
+		// Spanish distinguishes 'one', 'many' and 'other', but only the first and the last are reachable with a count below a million.
+		Localizer.dictionaries.add('es', {
+			[key]: [
+				'Un elemento',
+				'${count} elementos'
+			]
+		})
+
+		expect(LocalizedString.get(key, 'es', { count: 0 }).toString()).toBe('0 elementos')
+		expect(LocalizedString.get(key, 'es', { count: 1 }).toString()).toBe('Un elemento')
+		expect(LocalizedString.get(key, 'es', { count: 2 }).toString()).toBe('2 elementos')
+	})
+
+	it('should select the singular form for a count of zero in languages whose singular covers it', () => {
+		const key = '${count:pluralityNumber} messages'
+		// Persian counts zero with the singular, unlike German.
+		Localizer.dictionaries.add('fa', {
+			[key]: [
+				'پیام',
+				'پیام‌ها'
+			]
+		})
+
+		expect(LocalizedString.get(key, 'fa', { count: 0 }).toString()).toBe('پیام')
+		expect(LocalizedString.get(key, 'fa', { count: 1 }).toString()).toBe('پیام')
+		expect(LocalizedString.get(key, 'fa', { count: 2 }).toString()).toBe('پیام‌ها')
+	})
+
 	it('should fallback to key if localization is not available', () => {
 		const key = 'nonExistentKey'
 		const ls = LocalizedString.get(key, 'de', {})

@@ -38,8 +38,10 @@ export class LocalizedString<Key extends LocalizableStringKey> {
 		}
 		const pluralityIndexParameterKey = this.matchedParameters.find(p => p.type === LocalizedString.pluralityIdentityType)?.key
 		const pluralityValue = !pluralityIndexParameterKey ? 0 : (this.parameters as any)[pluralityIndexParameterKey] || 0
-		const pluralityIndex = CardinalPluralizationRulesByLanguage.get(this.language)?.(pluralityValue) ?? 0
-		return this._value = this.substituteVariables(localizationOrLocalizations[pluralityIndex] as string)
+		const pluralityIndex = CardinalPluralizationRulesByLanguage.get(this.language)(pluralityValue)
+		// A dictionary may provide fewer forms than the language distinguishes, in which case the trailing categories collapse onto the last form.
+		const localization = localizationOrLocalizations[pluralityIndex] ?? localizationOrLocalizations.at(-1)
+		return this._value = this.substituteVariables(localization as string)
 	}
 
 	private substituteVariables(text: string) {
