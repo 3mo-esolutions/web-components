@@ -23,16 +23,18 @@ const queryActionElement = (slotName: string) => {
 }
 
 /**
+ * A modal dialog with a heading, content and actions, usually rendered by a dialog component.
+ *
  * @element mo-dialog
  *
- * @attr open
- * @attr heading
- * @attr size
- * @attr blocking
- * @attr primaryOnEnter
- * @attr manualClose
- * @attr primaryButtonText
- * @attr secondaryButtonText
+ * @attr open - Whether the dialog is open.
+ * @attr heading - The heading in the header.
+ * @attr size - `small`, `medium` or `large`. Without one, the dialog fits its content.
+ * @attr blocking - Hides the close button and ignores Escape and the backdrop, so that only an action closes the dialog.
+ * @attr primaryOnEnter - Runs the primary action when Enter is pressed.
+ * @attr manualClose - Keeps the dialog open after its primary and secondary actions, leaving the closing to them.
+ * @attr primaryButtonText - The text of the default primary button.
+ * @attr secondaryButtonText - The text of the default secondary button.
  *
  * @slot - Content of the dialog
  * @slot primaryAction - Primary action of the dialog
@@ -40,10 +42,11 @@ const queryActionElement = (slotName: string) => {
  * @slot action - Additional actions of the dialog which are displayed in the header
  * @slot footer - Footer of the dialog
  *
+ * @csspart dialog - The native dialog element.
+ * @csspart header - The header, holding the heading and the header actions.
  * @csspart heading - Dialog heading
- * @csspart header - Dialog footer
  * @csspart content - Dialog content
- * @csspart footer - Dialog footer
+ * @csspart footer - The footer, holding the actions and the footer slot.
  *
  * @cssprop --mo-dialog-heading-color - Color of the dialog heading
  * @cssprop --mo-dialog-content-color - Color of the dialog content
@@ -54,8 +57,18 @@ const queryActionElement = (slotName: string) => {
  * @i18n "Close"
  * @i18n "Open as Tab"
  *
+ * @fires openChange - Dispatched with the new state whenever the dialog opens or closes.
  * @fires pageHeadingChange - Dispatched when the dialog heading changes
  * @fires requestPopup - Dispatched when the dialog is requested to be popped up
+ *
+ * @accessibility
+ * A native modal `dialog`, built on the Material Web dialog, so the page behind it is inert and `Tab` stays inside. It is named by
+ * its `heading`, rendered as an `h2`, and the element with `autofocus` inside takes focus as it opens.
+ *
+ * | Key | Does |
+ * | --- | --- |
+ * | `Escape` | Cancels, unless the dialog is `blocking`: a dialog of its own closes and fires `openChange`, one in a dialog component runs the component's cancellation. |
+ * | `Enter` | Runs the primary action, with `primaryOnEnter`. |
  */
 @component('mo-dialog')
 @DialogComponent.dialogElement()
@@ -65,11 +78,16 @@ export class Dialog extends Component implements IDialog {
 
 	@event({ bubbles: true, cancelable: true, composed: true }) readonly pageHeadingChange!: EventDispatcher<string>
 	@event() readonly requestPopup!: EventDispatcher
+	@event() readonly openChange!: EventDispatcher<boolean>
 
 	@property({
 		type: Boolean,
-		async updated(this: Dialog) {
-			if (this.open === true) {
+		event: 'openChange',
+		async updated(this: Dialog, open: boolean, previousOpen: boolean | undefined) {
+			if (previousOpen !== undefined && previousOpen !== open) {
+				this.openChange.dispatch(open)
+			}
+			if (open === true) {
 				await new Promise(requestAnimationFrame)
 				this.querySelector<any>('[autofocus]')?.focus()
 			}
@@ -110,7 +128,30 @@ export class Dialog extends Component implements IDialog {
 	@queryActionElement('secondaryAction') readonly secondaryActionElement!: HTMLElement
 	@query('mo-icon-button[icon=close]') readonly cancellationActionElement!: HTMLElement
 
-	handleAction!: (key: DialogActionKey) => void | Promise<void>
+	/** Called with the action taken: primary, secondary or cancellation. A dialog component sets it; without one, the dialog closes itself. */
+	handleAction: (key: DialogActionKey) => void | Promise<void> = key => {
+		if (!this.manualClose || key === DialogActionKey.Cancellation) {
+			this.open = false
+		}
+	}
+
+	private get routesCancellationItself() {
+		const host = (this.getRootNode() as ShadowRoot).host
+		return host instanceof DialogComponent && host.dialogElement === this
+	}
+
+	private readonly handleCancel = (e: Event) => {
+		e.preventDefault()
+		if (e.target !== e.currentTarget || !this.open) {
+			return
+		}
+		if (!this.preventCancellationOnEscape && !this.routesCancellationItself) {
+			this.handleAction(DialogActionKey.Cancellation)
+		}
+		if (!e.cancelable) {
+			this.open = false
+		}
+	}
 
 	protected readonly slotController = new SlotController(this)
 
@@ -275,9 +316,12 @@ export class Dialog extends Component implements IDialog {
 				?data-bound-to-window=${this.boundToWindow}
 				data-size=${ifDefined(this.size)}
 				@scroll=${(e: Event) => this.dispatchEvent(new Event('scroll', e))}
-				@cancel=${(e: Event) => e.preventDefault()}
+				@cancel=${this.handleCancel}
 				@open=${() => this.showTopLayer = true}
-				@close=${() => this.showTopLayer = false}
+				@close=${() => {
+					this.showTopLayer = false
+					this.open = false
+				}}
 			>
 				${this.headerTemplate}
 				${this.contentTemplate}
@@ -438,7 +482,7 @@ MdDialog.elementStyles.push(css`
 		--md-divider-color: var(--md-dialog-scroll-divider-color);
 	}
 
-	.scrim {
+	.scrim, :host([open]) .scrim {
 		display: none;
 	}
 

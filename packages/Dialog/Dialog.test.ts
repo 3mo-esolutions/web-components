@@ -340,6 +340,99 @@ describe('Dialog', () => {
 		})
 	})
 
+	describe('open state', () => {
+		const fixture = new ComponentTestFixture<Dialog>(html`<mo-dialog heading='Order 10482' primaryButtonText='Done'></mo-dialog>`)
+
+		const mdDialog = () => fixture.component.renderRoot.querySelector('md-dialog') as MdDialog
+		const nativeDialog = () => mdDialog().renderRoot.querySelector('dialog')!
+
+		let changes: Array<boolean>
+
+		beforeEach(async () => {
+			changes = []
+			fixture.component.addEventListener('openChange', (e: Event) => changes.push((e as CustomEvent<boolean>).detail))
+			fixture.component.open = true
+			await fixture.updateComplete
+			await mdDialog().updateComplete
+		})
+
+		it('should dispatch openChange with the new state as the dialog opens and closes', async () => {
+			fixture.component.open = false
+			await fixture.updateComplete
+
+			expect(changes).toEqual([true, false])
+		})
+
+		it('should close itself on an action when no dialog component handles it', async () => {
+			fixture.component.cancellationActionElement.click()
+			await fixture.updateComplete
+
+			expect(fixture.component.open).toBe(false)
+			expect(mdDialog().open).toBe(false)
+			expect(changes).toEqual([true, false])
+		})
+
+		it('should stay open after the primary action when manualClose is set and no dialog component handles it', async () => {
+			fixture.component.manualClose = true
+
+			fixture.component.primaryActionElement.click()
+			await fixture.updateComplete
+
+			expect(fixture.component.open).toBe(true)
+		})
+
+		it('should close and dispatch openChange when Escape cancels the dialog', async () => {
+			const cancelEvent = new Event('cancel', { cancelable: true })
+
+			nativeDialog().dispatchEvent(cancelEvent)
+			await fixture.updateComplete
+
+			expect(cancelEvent.defaultPrevented).toBe(true)
+			expect(fixture.component.open).toBe(false)
+			expect(changes).toEqual([true, false])
+		})
+
+		it('should stay open on Escape when blocking', async () => {
+			fixture.component.blocking = true
+			await fixture.updateComplete
+
+			nativeDialog().dispatchEvent(new Event('cancel', { cancelable: true }))
+			await fixture.updateComplete
+
+			expect(fixture.component.open).toBe(true)
+			expect(mdDialog().open).toBe(true)
+		})
+
+		it('should follow the browser closing the dialog with an uncancelable cancel, even when blocking', async () => {
+			fixture.component.blocking = true
+			await fixture.updateComplete
+
+			nativeDialog().dispatchEvent(new Event('cancel'))
+			await fixture.updateComplete
+
+			expect(fixture.component.open).toBe(false)
+			expect(changes).toEqual([true, false])
+		})
+
+		it('should reopen after being closed by Escape', async () => {
+			nativeDialog().dispatchEvent(new Event('cancel', { cancelable: true }))
+			await fixture.updateComplete
+
+			fixture.component.open = true
+			await fixture.updateComplete
+
+			expect(mdDialog().open).toBe(true)
+			expect(changes).toEqual([true, false, true])
+		})
+
+		it('should follow the underlying dialog when it closes itself', async () => {
+			mdDialog().dispatchEvent(new Event('close', { cancelable: true }))
+			await fixture.updateComplete
+
+			expect(fixture.component.open).toBe(false)
+		})
+	})
+
 	describe('confirmation lifecycle', () => {
 		const fixture = new ComponentTestFixture(() => new TestConfirmationDialog(undefined))
 
@@ -420,6 +513,19 @@ describe('Dialog', () => {
 			window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
 
 			await expect(confirmationPromise).rejects.toThrow(DialogCancelledError)
+		})
+
+		it('should leave the cancellation on Escape to the dialog component rather than running it twice', async () => {
+			const cancellation = vi.spyOn(fixture.component.dialogElement, 'handleAction')
+			fixture.component.confirm().catch(() => void 0)
+			await untilTopLayerIsOwned()
+			const nativeDialog = fixture.component.dialogElement.renderRoot.querySelector('md-dialog')!.renderRoot.querySelector('dialog')!
+
+			nativeDialog.dispatchEvent(new Event('cancel', { cancelable: true }))
+			await new Promise(resolve => setTimeout(resolve, 50))
+
+			expect(cancellation).not.toHaveBeenCalled()
+			expect(fixture.component.dialogElement.open).toBe(true)
 		})
 
 		it('should not cancel on Escape when blocking', async () => {
