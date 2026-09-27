@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/disabled-property",
-	"version": "1.1.4",
+	"version": "1.1.5",
 	"description": "A decorator for a reflected disabled property with aria-disabled, optionally taking the element out of the tab order.",
 	"repository": {
 		"type": "git",
@@ -28,8 +28,10 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"@a11d/lit": "x",
 		"tslib": "x"
+	},
+	"peerDependencies": {
+		"@a11d/lit": "x"
 	},
 	"devDependencies": {
 		"@a11d/lit-testing": "x"

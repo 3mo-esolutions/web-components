@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/snackbar",
-	"version": "0.3.0",
+	"version": "0.3.1",
 	"description": "A web component for timed snackbar notifications that stack at the screen edge and pause while being read.",
 	"repository": {
 		"type": "git",
@@ -29,7 +29,9 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"tslib": "x",
+		"tslib": "x"
+	},
+	"peerDependencies": {
 		"@a11d/lit": "x",
 		"@a11d/lit-application": "x",
 		"@3mo/theme": "x",

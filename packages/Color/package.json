@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/color",
-	"version": "0.1.6",
+	"version": "0.1.7",
 	"description": "A utility for immutable colors parsed from any CSS color string and converted to hex, RGB, HSL and keywords.",
 	"repository": {
 		"type": "git",

@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/throttler",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"description": "A utility for throttling bursts of async calls, letting the first through at once and the last after a quiet delay.",
 	"repository": {
 		"type": "git",

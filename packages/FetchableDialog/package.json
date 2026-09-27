@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/fetchable-dialog",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"description": "A web component for dialogs that fetch their content and stay in a loading state until it arrives.",
 	"repository": {
 		"type": "git",
@@ -29,8 +29,10 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
+		"tslib": "x"
+	},
+	"peerDependencies": {
 		"@a11d/lit": "x",
-		"tslib": "x",
 		"@3mo/loading-dialog": "x",
 		"@3mo/fetcher-controller": "0.2.x"
 	}

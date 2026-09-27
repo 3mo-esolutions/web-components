@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/menu",
-	"version": "0.14.2",
+	"version": "0.14.3",
 	"description": "Web components for popup menus with plain, selectable, nested and navigation items, plus an ARIA menu button controller.",
 	"repository": {
 		"type": "git",
@@ -28,8 +28,10 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
+		"tslib": "x"
+	},
+	"peerDependencies": {
 		"@a11d/lit": "x",
-		"tslib": "x",
 		"@3mo/theme": ">=0.5.4",
 		"@3mo/popover": ">=0.10.x",
 		"@3mo/list": ">=0.12.0",

@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/del",
-	"version": "0.6.4",
+	"version": "0.6.5",
 	"description": "A bundle of the whole library, re-exported with Lit and the application framework, plus a business-suite app shell.",
 	"repository": {
 		"type": "git",
@@ -33,14 +33,19 @@
 		"@lit/task": "x",
 		"@a11d/equals": "x",
 		"@a11d/metadata": "x",
-		"@a11d/lit": "x",
-		"@a11d/lit-application": ">=0.7.0",
 		"@a11d/lit-application-authentication": "x",
 		"@a11d/lit-application-authorization": "x",
 		"@a11d/non-inertable-component": "x",
 		"@a11d/local-storage": "x",
 		"@a11d/array.prototype.group": "x",
 		"@a11d/key-path": "2.x",
+		"detect-browser": "x",
+		"typescript-memoize": "1.x",
+		"@ts-stack/markdown": "x"
+	},
+	"peerDependencies": {
+		"@a11d/lit": "x",
+		"@a11d/lit-application": ">=0.7.0",
 		"@3mo/theme": "x",
 		"@3mo/throttler": "x",
 		"@3mo/data-grid-card-integration": "x",
@@ -153,9 +158,6 @@
 		"@3mo/sheet": "x",
 		"@3mo/copy-icon-button": "x",
 		"@3mo/key-value-list": "x",
-		"@3mo/style-property": "x",
-		"detect-browser": "x",
-		"typescript-memoize": "1.x",
-		"@ts-stack/markdown": "x"
+		"@3mo/style-property": "x"
 	}
 }

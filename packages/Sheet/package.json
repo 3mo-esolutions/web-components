@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/sheet",
-	"version": "0.1.2",
+	"version": "0.1.3",
 	"description": "A web component for modal sheets anchored to any screen edge with swipe-to-dismiss, built on the native dialog element.",
 	"repository": {
 		"type": "git",
@@ -31,8 +31,10 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
+		"tslib": "x"
+	},
+	"peerDependencies": {
 		"@a11d/lit": ">=0.13.0",
-		"tslib": "x",
 		"@3mo/theme": "x",
 		"@3mo/localization": "x",
 		"@3mo/swipeability": "x"

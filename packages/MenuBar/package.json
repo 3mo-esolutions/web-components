@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/menu-bar",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"description": "Web components for application menu bars, like File, Edit and View, with menubar keyboard and hover behavior.",
 	"repository": {
 		"type": "git",
@@ -30,8 +30,10 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
+		"tslib": "x"
+	},
+	"peerDependencies": {
 		"@a11d/lit": "x",
-		"tslib": "x",
 		"@3mo/theme": "x",
 		"@3mo/focus-ring": "x",
 		"@3mo/disabled-property": "x",

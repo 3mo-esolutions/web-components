@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/drawer",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "A web component for modal navigation drawers that slide in from a side edge and close on Escape, a backdrop click or a swipe.",
 	"repository": {
 		"type": "git",
@@ -28,8 +28,10 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
+		"tslib": "x"
+	},
+	"peerDependencies": {
 		"@a11d/lit": "x",
-		"tslib": "x",
 		"@3mo/sheet": "x"
 	}
 }

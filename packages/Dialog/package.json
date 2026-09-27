@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/dialog",
-	"version": "0.8.2",
+	"version": "0.8.3",
 	"description": "Web components for modal dialogs and application pages with a heading, actions and sizes, built on Material Web.",
 	"repository": {
 		"type": "git",
@@ -28,7 +28,9 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"tslib": "x",
+		"tslib": "x"
+	},
+	"peerDependencies": {
 		"@a11d/lit": "x",
 		"@a11d/lit-application": ">=0.8.x",
 		"@material/web": "1.x",

@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/virtualized-list",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "A web component for virtualized lists that render list items from data only while they are in view.",
 	"repository": {
 		"type": "git",
@@ -29,8 +29,10 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"@3mo/virtualized-scroller": "x",
-		"@3mo/list": ">=0.8.x",
 		"tslib": "x"
+	},
+	"peerDependencies": {
+		"@3mo/virtualized-scroller": "x",
+		"@3mo/list": ">=0.8.x"
 	}
 }

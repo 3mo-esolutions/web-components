@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/expandability",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "A Lit controller for the expanded state of collection items, single or multiple, with lazily loaded children and ARIA.",
 	"repository": {
 		"type": "git",
@@ -31,9 +31,11 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"@3mo/indexability": "x",
-		"@a11d/lit": "x",
 		"tslib": "x"
+	},
+	"peerDependencies": {
+		"@3mo/indexability": "x",
+		"@a11d/lit": "x"
 	},
 	"devDependencies": {
 		"@a11d/lit-testing": "x"

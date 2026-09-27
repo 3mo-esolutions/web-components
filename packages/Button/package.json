@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/button",
-	"version": "1.2.0",
+	"version": "1.2.1",
 	"description": "Web components for buttons in the five Material 3 types, with start and end icons and a selectable toggle variant.",
 	"repository": {
 		"type": "git",
@@ -28,8 +28,10 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
+		"tslib": "x"
+	},
+	"peerDependencies": {
 		"@a11d/lit": "x",
-		"tslib": "x",
 		"@3mo/theme": ">=0.4.1",
 		"@3mo/flex": "x",
 		"@3mo/icon": "x",

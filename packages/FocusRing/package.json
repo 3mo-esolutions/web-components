@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/focus-ring",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"description": "A web component for keyboard focus rings in the theme's accent color, attachable to any element, built on Material Web.",
 	"repository": {
 		"type": "git",
@@ -27,9 +27,11 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"@a11d/lit": "x",
-		"@material/web": "x",
 		"tslib": "x"
+	},
+	"peerDependencies": {
+		"@a11d/lit": "x",
+		"@material/web": "x"
 	},
 	"devDependencies": {
 		"@a11d/lit-testing": "x"

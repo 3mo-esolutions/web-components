@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/grid",
-	"version": "1.2.1",
+	"version": "1.2.2",
 	"description": "A web component for CSS grid layouts with rows, columns, gaps, auto-flow and alignment as attributes.",
 	"repository": {
 		"type": "git",
@@ -27,10 +27,12 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"@a11d/lit": "x",
-		"@3mo/style-property": "x",
 		"tslib": "x",
 		"csstype": "x"
+	},
+	"peerDependencies": {
+		"@a11d/lit": "x",
+		"@3mo/style-property": "x"
 	},
 	"devDependencies": {
 		"@a11d/lit-testing": "x"

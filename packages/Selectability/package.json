@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/selectability",
-	"version": "0.3.2",
+	"version": "0.3.3",
 	"description": "A Lit controller for single or multiple selection over items, with range and modifier gestures and ARIA.",
 	"repository": {
 		"type": "git",
@@ -31,9 +31,11 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"@3mo/indexability": "x",
-		"@a11d/lit": "x",
 		"tslib": "x"
+	},
+	"peerDependencies": {
+		"@3mo/indexability": "x",
+		"@a11d/lit": "x"
 	},
 	"devDependencies": {
 		"@a11d/lit-testing": "x"

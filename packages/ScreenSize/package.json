@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/screen-size",
-	"version": "0.0.6",
+	"version": "0.0.7",
 	"description": "Lit directives for rendering a value per mobile, tablet or desktop screen size, or hiding an element on some of them.",
 	"repository": {
 		"type": "git",
@@ -28,7 +28,9 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"@a11d/lit": "x",
 		"tslib": "x"
+	},
+	"peerDependencies": {
+		"@a11d/lit": "x"
 	}
 }

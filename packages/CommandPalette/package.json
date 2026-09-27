@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/command-palette",
-	"version": "0.2.1",
+	"version": "0.2.2",
 	"description": "A web component for a Ctrl+K command palette that searches registered data sources and runs the chosen command.",
 	"repository": {
 		"type": "git",
@@ -28,10 +28,12 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
+		"tslib": "x",
+		"typescript-memoize": "1.x"
+	},
+	"peerDependencies": {
 		"@a11d/lit": "x",
 		"@a11d/lit-application": "x",
-		"tslib": "x",
-		"typescript-memoize": "1.x",
 		"@3mo/fetcher-controller": "0.2.x",
 		"@3mo/flex": "x",
 		"@3mo/scroller": "x",

@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/context-menu",
-	"version": "0.8.0",
+	"version": "0.8.1",
 	"description": "Web components for context menus that open at the pointer on right-click, attachable to any element through a directive.",
 	"repository": {
 		"type": "git",
@@ -27,7 +27,9 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"tslib": "x",
+		"tslib": "x"
+	},
+	"peerDependencies": {
 		"@a11d/lit": "x",
 		"@3mo/menu": ">=0.14.1",
 		"@3mo/popover": ">=0.11.x"

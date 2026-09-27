@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/field",
-	"version": "0.7.0",
+	"version": "0.7.1",
 	"description": "A web component for the shared field frame with a floating label and start and end slots, plus the base classes of every field.",
 	"repository": {
 		"type": "git",
@@ -29,8 +29,10 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
+		"tslib": "x"
+	},
+	"peerDependencies": {
 		"@a11d/lit": "x",
-		"tslib": "x",
 		"@3mo/theme": ">=0.4.x",
 		"@3mo/focus-controller": "x",
 		"@3mo/instanceof-attribute-controller": "x",

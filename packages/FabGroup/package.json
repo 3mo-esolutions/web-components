@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/fab-group",
-	"version": "0.0.8",
+	"version": "0.0.9",
 	"description": "A web component for floating action buttons that unfold a stack of further actions and close on an outside click.",
 	"repository": {
 		"type": "git",
@@ -31,8 +31,10 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
+		"tslib": "x"
+	},
+	"peerDependencies": {
 		"@a11d/lit": "x",
-		"tslib": "x",
 		"@3mo/fab": "x",
 		"@3mo/slot-controller": "x"
 	}

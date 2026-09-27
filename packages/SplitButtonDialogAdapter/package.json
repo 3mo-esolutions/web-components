@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/split-button-dialog-adapter",
-	"version": "0.0.5",
+	"version": "0.0.6",
 	"description": "A utility for dialog actions on split buttons that passes the executing state on to the main button.",
 	"repository": {
 		"type": "git",
@@ -27,7 +27,9 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"tslib": "x",
+		"tslib": "x"
+	},
+	"peerDependencies": {
 		"@3mo/split-button": "x",
 		"@3mo/dialog": "x"
 	}

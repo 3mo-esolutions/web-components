@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/reorderability",
-	"version": "0.3.1",
+	"version": "0.3.2",
 	"description": "A Lit controller for reordering items by dragging with mouse, touch or pen, reading the layout from the items themselves.",
 	"repository": {
 		"type": "git",
@@ -31,10 +31,12 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
+		"tslib": "x"
+	},
+	"peerDependencies": {
 		"@3mo/indexability": "x",
 		"@a11d/lit": "x",
-		"@3mo/pointer-controller": ">=1.6.0",
-		"tslib": "x"
+		"@3mo/pointer-controller": ">=1.6.0"
 	},
 	"devDependencies": {
 		"@a11d/lit-testing": "x"

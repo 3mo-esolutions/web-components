@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/swipeability",
-	"version": "0.2.2",
+	"version": "0.2.3",
 	"description": "A Lit controller for surfaces swiped along one axis between rest positions, yielding to content that scrolls.",
 	"repository": {
 		"type": "git",
@@ -31,9 +31,11 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"@a11d/lit": "x",
-		"@3mo/pointer-controller": ">=1.6.0",
 		"tslib": "x"
+	},
+	"peerDependencies": {
+		"@a11d/lit": "x",
+		"@3mo/pointer-controller": ">=1.6.0"
 	},
 	"devDependencies": {
 		"@a11d/lit-testing": "x"

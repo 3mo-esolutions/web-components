@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/hierarchy",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "A utility for hierarchies flattened into memoized nodes with parent, level and position, plus visible rows and filtering.",
 	"repository": {
 		"type": "git",

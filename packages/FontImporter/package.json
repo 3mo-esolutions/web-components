@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/font-importer",
-	"version": "1.0.5",
+	"version": "1.0.6",
 	"description": "A utility for importing web font stylesheets into the document by URL, each only once.",
 	"repository": {
 		"type": "git",

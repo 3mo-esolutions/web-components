@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/pdf",
-	"version": "0.1.7",
+	"version": "0.1.8",
 	"description": "A web component for embedded PDF documents with a loading spinner, falling back to an iframe on Apple platforms.",
 	"repository": {
 		"type": "git",
@@ -27,9 +27,11 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"@a11d/lit": "x",
 		"tslib": "x",
-		"detect-browser": "x",
+		"detect-browser": "x"
+	},
+	"peerDependencies": {
+		"@a11d/lit": "x",
 		"@3mo/flex": "x",
 		"@3mo/circular-progress": "x"
 	}

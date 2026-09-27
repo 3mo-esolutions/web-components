@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/key-value-list",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "A web component for key-value pairs laid out as a description list in as many columns as fit.",
 	"repository": {
 		"type": "git",
@@ -29,9 +29,11 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"@a11d/lit": "x",
 		"@a11d/metadata": "x",
-		"tslib": "x",
+		"tslib": "x"
+	},
+	"peerDependencies": {
+		"@a11d/lit": "x",
 		"@3mo/resize-observer": "x",
 		"@3mo/slot-controller": "x"
 	},

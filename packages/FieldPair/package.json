@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/field-pair",
-	"version": "0.0.7",
+	"version": "0.0.8",
 	"description": "A web component for pairing a field with an attachment, such as a unit picker, into one control side by side or overlaid.",
 	"repository": {
 		"type": "git",
@@ -27,7 +27,9 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"@a11d/lit": "x",
 		"tslib": "x"
+	},
+	"peerDependencies": {
+		"@a11d/lit": "x"
 	}
 }

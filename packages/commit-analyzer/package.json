@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/commit-analyzer",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"description": "A Node tool for parsing git log output into commits with conventional-commit types, breaking changes and trailers.",
 	"repository": {
 		"type": "git",

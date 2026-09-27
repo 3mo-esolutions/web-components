@@ -33,6 +33,33 @@ import { Component, component, html } from '@3mo/del'
 
 `@3mo/del` registers every element and re-exports the packages, together with `@a11d/lit` and the application framework `@a11d/lit-application`.
 
+## One copy of each package
+
+An element can be defined once per page, so an application loads exactly one copy of each package. The packages therefore list each other, `@a11d/lit` and `@material/web` as peer dependencies, and npm installs those next to your application by itself. When two packages need versions that cannot be one copy, `npm install` stops with an `ERESOLVE` error naming both; update the older one rather than passing `--legacy-peer-deps` or `--force`.
+
+To stay on a version for a while, pin it in your own `package.json`:
+
+```json
+{
+	"dependencies": {
+		"@3mo/del": "x",
+		"@3mo/field": "0.5.3"
+	}
+}
+```
+
+npm checks the pin against what the other packages require. If a newer package needs more, the install or `npm update` names it, and you pin that one too. An `overrides` entry forces a version without that check, for the cases where you accept the risk:
+
+```json
+{
+	"overrides": {
+		"@3mo/field": "0.5.3"
+	}
+}
+```
+
+A preview version is installed through an override as well, as ranges never match a prerelease on their own.
+
 ## Controllers
 
 The pages under [Behaviors](?path=/docs/behaviors-selectability--overview) document Lit reactive controllers, which you import by name for your own elements:

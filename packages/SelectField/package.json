@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/select-field",
-	"version": "0.11.0",
+	"version": "0.11.1",
 	"description": "Web components for select fields and their options, single or multiple, searchable or free-text, as an ARIA combobox.",
 	"repository": {
 		"type": "git",
@@ -29,7 +29,9 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"tslib": "x",
+		"tslib": "x"
+	},
+	"peerDependencies": {
 		"@a11d/lit": "x",
 		"@3mo/icon-button": "x",
 		"@3mo/field": "x",
@@ -39,7 +41,8 @@
 		"@3mo/line": "x",
 		"@3mo/selectability": "x",
 		"@3mo/icon": "x",
-		"@3mo/checkbox": "x"
+		"@3mo/checkbox": "x",
+		"@3mo/localization": "x"
 	},
 	"devDependencies": {
 		"@a11d/lit-testing": "x"

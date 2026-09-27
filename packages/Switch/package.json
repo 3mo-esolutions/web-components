@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/switch",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"description": "A web component for labelled on/off switches, built on Material Web.",
 	"repository": {
 		"type": "git",
@@ -28,8 +28,10 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
+		"tslib": "x"
+	},
+	"peerDependencies": {
 		"@a11d/lit": "x",
-		"tslib": "x",
 		"@3mo/theme": "x",
 		"@3mo/disabled-property": "x",
 		"@material/web": "x"

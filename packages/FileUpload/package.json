@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/file-upload",
-	"version": "0.4.1",
+	"version": "0.4.2",
 	"description": "A web component for uploading files chosen in the file picker, plus a directive that accepts dropped files.",
 	"repository": {
 		"type": "git",
@@ -28,7 +28,9 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"tslib": "x",
+		"tslib": "x"
+	},
+	"peerDependencies": {
 		"@a11d/lit": "x",
 		"@a11d/lit-application": "x",
 		"@3mo/localization": "x"

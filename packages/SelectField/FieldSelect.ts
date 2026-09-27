@@ -6,6 +6,7 @@ import { Popover, PopoverFloatingUiPositionController, type PopoverAlignment, ty
 import { Selectability } from '@3mo/selectability'
 import { FieldSelectValueController, type Data, type Index, type Value } from './SelectValueController.js'
 import { Option } from './Option.js'
+import '@3mo/localization'
 
 /**
  * A field that selects one or more of its options from a dropdown menu, which typing can search.

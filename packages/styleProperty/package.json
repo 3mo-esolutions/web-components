@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/style-property",
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"description": "A decorator for component properties backed by one of the host's inline styles, CSS custom properties included.",
 	"repository": {
 		"type": "git",
@@ -28,8 +28,10 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"@a11d/lit": "x",
 		"tslib": "x"
+	},
+	"peerDependencies": {
+		"@a11d/lit": "x"
 	},
 	"devDependencies": {
 		"@a11d/lit-testing": "x"

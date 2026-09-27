@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/master-detail",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "A web component for master-detail layouts whose resizable detail pane only takes space while it has content.",
 	"repository": {
 		"type": "git",
@@ -29,8 +29,10 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
+		"tslib": "x"
+	},
+	"peerDependencies": {
 		"@a11d/lit": "x",
-		"tslib": "x",
 		"@3mo/flex": "x",
 		"@3mo/splitter": "x"
 	}

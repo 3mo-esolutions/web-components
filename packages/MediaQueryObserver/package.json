@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/media-query-observer",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "A Lit controller for media queries that re-renders its host whenever the match changes.",
 	"repository": {
 		"type": "git",
@@ -28,7 +28,9 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"@a11d/lit": "x",
 		"tslib": "x"
+	},
+	"peerDependencies": {
+		"@a11d/lit": "x"
 	}
 }

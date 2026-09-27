@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/collapsible-card",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"description": "A web component for cards whose body collapses and expands from a toggle in the header.",
 	"repository": {
 		"type": "git",
@@ -29,8 +29,10 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
+		"tslib": "x"
+	},
+	"peerDependencies": {
 		"@a11d/lit": "x",
-		"tslib": "x",
 		"@3mo/card": ">=0.3.3",
 		"@3mo/tooltip": "x",
 		"@3mo/localization": "x",

@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/infinite-scroll-controller",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "A Lit controller for infinite scrolling that fetches the next chunk as the user nears the end of a container.",
 	"repository": {
 		"type": "git",
@@ -30,7 +30,9 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"@a11d/lit": "x",
 		"tslib": "x"
+	},
+	"peerDependencies": {
+		"@a11d/lit": "x"
 	}
 }

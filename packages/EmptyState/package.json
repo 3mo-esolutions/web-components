@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/empty-state",
-	"version": "0.1.8",
+	"version": "0.1.9",
 	"description": "A web component for centered placeholder messages with an optional icon, where there is no content yet.",
 	"repository": {
 		"type": "git",
@@ -27,8 +27,10 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
+		"tslib": "x"
+	},
+	"peerDependencies": {
 		"@a11d/lit": "x",
-		"tslib": "x",
 		"@3mo/heading": "x",
 		"@3mo/flex": "x",
 		"@3mo/icon": "x"

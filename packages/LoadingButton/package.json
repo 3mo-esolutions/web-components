@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/loading-button",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "A web component for buttons that show a spinner by themselves while their click handler's promise runs.",
 	"repository": {
 		"type": "git",
@@ -29,8 +29,10 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
+		"tslib": "x"
+	},
+	"peerDependencies": {
 		"@a11d/lit": "x",
-		"tslib": "x",
 		"@3mo/button": "x",
 		"@3mo/circular-progress": "x"
 	}

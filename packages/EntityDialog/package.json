@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/entity-dialog",
-	"version": "0.6.2",
+	"version": "0.6.3",
 	"description": "A web component for dialogs that fetch an entity to create or edit, then save it with Ctrl+S or delete it.",
 	"repository": {
 		"type": "git",
@@ -30,9 +30,11 @@
 	],
 	"dependencies": {
 		"tslib": "x",
+		"@a11d/metadata": "x"
+	},
+	"peerDependencies": {
 		"@a11d/lit": "x",
 		"@a11d/lit-application": "x",
-		"@a11d/metadata": "x",
 		"@3mo/fetchable-dialog": "x",
 		"@3mo/fetcher-controller": "0.2.x",
 		"@3mo/loading-button": "x"

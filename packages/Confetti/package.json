@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/confetti",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"description": "A web component for confetti bursts that rain over the page, drawn on a canvas.",
 	"repository": {
 		"type": "git",
@@ -27,7 +27,9 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"@a11d/lit": "x",
 		"tslib": "x"
+	},
+	"peerDependencies": {
+		"@a11d/lit": "x"
 	}
 }

@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/toolbar",
-	"version": "0.0.10",
+	"version": "0.0.11",
 	"description": "A web component for single-line toolbars that move the items that do not fit into an overflow menu.",
 	"repository": {
 		"type": "git",
@@ -29,8 +29,10 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
+		"tslib": "x"
+	},
+	"peerDependencies": {
 		"@a11d/lit": ">=0.13.0",
-		"tslib": "x",
 		"@3mo/theme": "x",
 		"@3mo/flex": "x",
 		"@3mo/popover": "x",

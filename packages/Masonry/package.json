@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/masonry",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "A web component for native CSS masonry layouts in columns or rows, falling back to a regular grid where unsupported.",
 	"repository": {
 		"type": "git",
@@ -29,10 +29,12 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"@a11d/lit": "x",
-		"@3mo/style-property": ">=1.1.0",
 		"tslib": "x",
 		"csstype": "x"
+	},
+	"peerDependencies": {
+		"@a11d/lit": "x",
+		"@3mo/style-property": ">=1.1.0"
 	},
 	"devDependencies": {
 		"@a11d/lit-testing": "x"

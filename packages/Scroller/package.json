@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/scroller",
-	"version": "0.5.0",
+	"version": "0.5.1",
 	"description": "A web component for scrollable content with thin, themeable scrollbars and optional scroll snapping.",
 	"repository": {
 		"type": "git",
@@ -28,8 +28,10 @@
 	],
 	"dependencies": {
 		"tslib": "x",
-		"@a11d/lit": "x",
-		"@3mo/style-property": "x",
 		"csstype": "x"
+	},
+	"peerDependencies": {
+		"@a11d/lit": "x",
+		"@3mo/style-property": "x"
 	}
 }

@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/line",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "A web component for horizontal or vertical separator lines, optionally labelled in the middle.",
 	"repository": {
 		"type": "git",
@@ -27,7 +27,9 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"@a11d/lit": "x",
 		"tslib": "x"
+	},
+	"peerDependencies": {
+		"@a11d/lit": "x"
 	}
 }

@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/heading",
-	"version": "0.0.7",
+	"version": "0.0.8",
 	"description": "A web component for text in the library's six heading and two subtitle typography levels.",
 	"repository": {
 		"type": "git",
@@ -28,7 +28,9 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"@a11d/lit": "x",
 		"tslib": "x"
+	},
+	"peerDependencies": {
+		"@a11d/lit": "x"
 	}
 }

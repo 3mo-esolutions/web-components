@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/language-field",
-	"version": "0.3.0",
+	"version": "0.3.1",
 	"description": "A web component for multilingual fields holding one value per language, with a language picker and an all-languages dialog.",
 	"repository": {
 		"type": "git",
@@ -28,7 +28,9 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"tslib": "x",
+		"tslib": "x"
+	},
+	"peerDependencies": {
 		"@a11d/lit": "x",
 		"@a11d/lit-application": "x",
 		"@3mo/flex": "x",

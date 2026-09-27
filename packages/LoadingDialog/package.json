@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/loading-dialog",
-	"version": "0.1.6",
+	"version": "0.1.7",
 	"description": "A web component for dialogs with a loading state that blurs the content behind a spinner and a heading.",
 	"repository": {
 		"type": "git",
@@ -30,7 +30,9 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"tslib": "x",
+		"tslib": "x"
+	},
+	"peerDependencies": {
 		"@a11d/lit": "x",
 		"@3mo/dialog": "x",
 		"@3mo/localization": "x",

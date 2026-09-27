@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/split-button",
-	"version": "0.4.1",
+	"version": "0.4.2",
 	"description": "A web component for split buttons that join a main button with an arrow opening a menu of further actions.",
 	"repository": {
 		"type": "git",
@@ -28,8 +28,10 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
+		"tslib": "x"
+	},
+	"peerDependencies": {
 		"@a11d/lit": "x",
-		"tslib": "x",
 		"@3mo/disabled-property": "x",
 		"@3mo/icon": "x",
 		"@3mo/button": "x",

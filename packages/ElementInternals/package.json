@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/element-internals",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "A Lit controller and decorator for form-associated custom elements, with value, validity, reset and fieldset support.",
 	"repository": {
 		"type": "git",
@@ -31,8 +31,10 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"@a11d/lit": "x",
 		"tslib": "x"
+	},
+	"peerDependencies": {
+		"@a11d/lit": "x"
 	},
 	"devDependencies": {
 		"@a11d/lit-testing": "x"

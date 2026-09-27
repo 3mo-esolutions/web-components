@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/indexability",
-	"version": "0.3.0",
+	"version": "0.3.1",
 	"description": "A Lit controller for mapping items to the elements that render them through one directive, the base other controllers build on.",
 	"repository": {
 		"type": "git",
@@ -31,8 +31,10 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"@a11d/lit": ">=0.13.0",
 		"tslib": "x"
+	},
+	"peerDependencies": {
+		"@a11d/lit": ">=0.13.0"
 	},
 	"devDependencies": {
 		"@a11d/lit-testing": "x"

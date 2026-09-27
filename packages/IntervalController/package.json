@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/interval-controller",
-	"version": "0.0.5",
+	"version": "0.0.6",
 	"description": "A Lit controller for tasks that run at once and then at a fixed interval while the host is connected.",
 	"repository": {
 		"type": "git",
@@ -28,7 +28,9 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"@a11d/lit": "x",
 		"tslib": "x"
+	},
+	"peerDependencies": {
+		"@a11d/lit": "x"
 	}
 }

@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/tab",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"description": "Web components for tabs and tab panels paired by value into the ARIA tabs pattern, built on Material Web.",
 	"repository": {
 		"type": "git",
@@ -28,8 +28,10 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
+		"tslib": "x"
+	},
+	"peerDependencies": {
 		"@a11d/lit": "x",
-		"tslib": "x",
 		"@3mo/theme": "x",
 		"@3mo/icon": "x",
 		"@material/web": "x"

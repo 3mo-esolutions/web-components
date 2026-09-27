@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/fetcher-controller",
-	"version": "0.2.1",
+	"version": "0.2.2",
 	"description": "A Lit controller for fetches that rerun when their arguments change, throttled and with superseded results discarded.",
 	"repository": {
 		"type": "git",
@@ -30,10 +30,12 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"@a11d/lit": "x",
 		"@a11d/equals": "x",
 		"tslib": "x",
-		"@lit/task": "x",
+		"@lit/task": "x"
+	},
+	"peerDependencies": {
+		"@a11d/lit": "x",
 		"@3mo/throttler": "x"
 	}
 }

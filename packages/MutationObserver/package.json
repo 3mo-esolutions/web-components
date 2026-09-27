@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/mutation-observer",
-	"version": "0.0.9",
+	"version": "0.0.10",
 	"description": "A Lit directive for reporting a templated element's mutations, slot changes included, plus Lit's MutationController.",
 	"repository": {
 		"type": "git",
@@ -28,8 +28,10 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"@a11d/lit": "x",
 		"tslib": "x",
 		"@lit-labs/observers": "x"
+	},
+	"peerDependencies": {
+		"@a11d/lit": "x"
 	}
 }

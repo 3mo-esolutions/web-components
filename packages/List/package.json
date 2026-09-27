@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/list",
-	"version": "0.12.0",
+	"version": "0.12.1",
 	"description": "Web components for lists with selectable, checkbox, radio and switch items, plus ARIA listbox and combobox controllers.",
 	"repository": {
 		"type": "git",
@@ -28,11 +28,13 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
+		"tslib": "x"
+	},
+	"peerDependencies": {
 		"@3mo/selectability": ">=0.3.0",
 		"@3mo/navigability": "x",
 		"@3mo/indexability": ">=0.3.0",
 		"@a11d/lit": "x",
-		"tslib": "x",
 		"@3mo/theme": ">=0.5.4",
 		"@3mo/flex": "x",
 		"@3mo/icon": "x",

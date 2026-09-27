@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/split-page-host",
-	"version": "0.0.9",
+	"version": "0.0.10",
 	"description": "A web component for a sidebar beside a content page that shows one at a time, with a back button, when narrow.",
 	"repository": {
 		"type": "git",
@@ -27,7 +27,9 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"tslib": "x",
+		"tslib": "x"
+	},
+	"peerDependencies": {
 		"@a11d/lit": "x",
 		"@a11d/lit-application": "x",
 		"@3mo/localization": "x",

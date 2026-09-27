@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/data-grid-card-integration",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "A utility for data grids inside cards that drops the card's side padding, so the grid spans its full width.",
 	"repository": {
 		"type": "git",
@@ -27,7 +27,9 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"tslib": "x",
+		"tslib": "x"
+	},
+	"peerDependencies": {
 		"@3mo/card": "x",
 		"@3mo/data-grid": "x"
 	}

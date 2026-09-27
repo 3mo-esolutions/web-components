@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/slot-controller",
-	"version": "0.3.6",
+	"version": "0.3.7",
 	"description": "A Lit controller for slotted content that re-renders its host when it changes and tells which nodes a slot holds.",
 	"repository": {
 		"type": "git",
@@ -28,7 +28,9 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"@a11d/lit": "x",
 		"tslib": "x"
+	},
+	"peerDependencies": {
+		"@a11d/lit": "x"
 	}
 }

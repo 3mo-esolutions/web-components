@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/code-field",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "A web component for verification codes, one-time passwords and PINs, entered one cell per character with autofill.",
 	"repository": {
 		"type": "git",
@@ -31,8 +31,10 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
+		"tslib": "x"
+	},
+	"peerDependencies": {
 		"@a11d/lit": "x",
-		"tslib": "x",
 		"@3mo/field": "x",
 		"@3mo/localization": "x",
 		"@3mo/segmented-input": "x"

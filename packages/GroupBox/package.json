@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/group-box",
-	"version": "0.0.5",
+	"version": "0.0.6",
 	"description": "A web component for groups of content under a heading, laid out in a card with a footer.",
 	"repository": {
 		"type": "git",
@@ -28,8 +28,10 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
+		"tslib": "x"
+	},
+	"peerDependencies": {
 		"@a11d/lit": "x",
-		"tslib": "x",
 		"@3mo/section": "x",
 		"@3mo/card": "x"
 	}

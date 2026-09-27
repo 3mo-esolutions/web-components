@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/entity-data-grid",
-	"version": "0.4.1",
+	"version": "0.4.2",
 	"description": "A web component for fetchable data grids that create, edit and delete entities through dialogs and a context menu.",
 	"repository": {
 		"type": "git",
@@ -28,7 +28,9 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"tslib": "x",
+		"tslib": "x"
+	},
+	"peerDependencies": {
 		"@a11d/lit": "x",
 		"@a11d/lit-application": "x",
 		"@3mo/fab": "x",

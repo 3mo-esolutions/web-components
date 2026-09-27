@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/timeline",
-	"version": "0.0.5",
+	"version": "0.0.6",
 	"description": "Web components for vertical or horizontal timelines of items with an icon bullet, meta text and a connecting line.",
 	"repository": {
 		"type": "git",
@@ -27,7 +27,9 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"tslib": "x",
+		"tslib": "x"
+	},
+	"peerDependencies": {
 		"@a11d/lit": "x",
 		"@3mo/flex": "x",
 		"@3mo/resize-observer": "x",

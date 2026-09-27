@@ -1,10 +1,11 @@
-import { ComponentMembers, type CustomElementsManifest, Package, run } from './util/index.ts'
+import { ComponentMembers, type CustomElementsManifest, Package } from './util/index.ts'
 import { ModuleExports } from './util/ModuleExports.ts'
-import { promises as FileSystem, existsSync } from 'fs'
+import { promises as FileSystem, existsSync, globSync } from 'fs'
+import { createRequire } from 'module'
+import Path from 'path'
+import type TypeScript from 'typescript'
 
-await run('wca analyze --outFiles ./custom-elements.json --visibility public ./packages/**/*.ts')
-
-const customElements = JSON.parse(await FileSystem.readFile('./custom-elements.json', 'utf8')) as CustomElementsManifest
+const customElements = JSON.parse(analyzeSources()) as CustomElementsManifest
 
 const unknownTags = new Array<string>()
 
@@ -73,7 +74,7 @@ if (unknownTags.length) {
 
 await Promise.all(
 	Package.all
-		.map(p => ({ package: p, tags: customElements.tags.filter(tag => tag.path.replace(/\\/g, '/').startsWith('./' + p.relativePath)) }))
+		.map(p => ({ package: p, tags: customElements.tags.filter(tag => tag.path.replace(/\\/g, '/').startsWith(`./${p.relativePath}/`)) }))
 		.filter(({ package: p, tags }) => tags.length && existsSync(`./${p.relativePath}/dist`))
 		.map(({ package: p, tags }) => FileSystem.writeFile(
 			`./${p.relativePath}/dist/custom-elements.json`,
@@ -82,3 +83,48 @@ await Promise.all(
 )
 
 await FileSystem.writeFile('./custom-elements.json', JSON.stringify(customElements, null, '\t'))
+
+/**
+ * The analyzer's CLI compiles with fixed options, under which a file without imports or exports is a script, so its
+ * `declare global` types stay unresolved, and a `@3mo/*` import resolves to built declarations wherever `dist` exists,
+ * which carry no defaults. Its own options plus module detection and imports resolved to the sources give the same
+ * manifest in every checkout.
+ */
+/** The part of the analyzer's API used here, as its ES module declarations do not resolve under "NodeNext". */
+type Analyzer = {
+	analyzeSourceFile(sourceFile: TypeScript.SourceFile, options: { program: TypeScript.Program, ts: typeof TypeScript, config: object }): unknown
+	transformAnalyzerResult(kind: 'json', results: Array<unknown>, program: TypeScript.Program, config: { visibility: 'public', inlineTypes: boolean, cwd: string }): string
+}
+
+function analyzeSources() {
+	// The CommonJS build, as the ES module one imports named exports from TypeScript, which Node refuses:
+	const require = createRequire(import.meta.url)
+	const { analyzeSourceFile, transformAnalyzerResult } = require('web-component-analyzer') as Analyzer
+	const ts = createRequire(require.resolve('web-component-analyzer'))('typescript') as typeof TypeScript
+	const files = globSync('packages/**/*.ts', { exclude: path => /(^|[\\/])(dist|node_modules)$/.test(path) })
+		.map(file => Path.resolve(file).replace(/\\/g, '/'))
+	const program = ts.createProgram(files, {
+		noEmitOnError: false,
+		allowJs: true,
+		maxNodeModuleJsDepth: 3,
+		experimentalDecorators: true,
+		target: ts.ScriptTarget.Latest,
+		downlevelIteration: true,
+		module: ts.ModuleKind.ESNext,
+		strictNullChecks: true,
+		moduleResolution: ts.ModuleResolutionKind.Node10,
+		esModuleInterop: true,
+		noEmit: true,
+		allowSyntheticDefaultImports: true,
+		allowUnreachableCode: true,
+		allowUnusedLabels: true,
+		skipLibCheck: true,
+		moduleDetection: ts.ModuleDetectionKind.Force,
+		paths: Object.fromEntries(Package.all.flatMap(p => !p.entry ? [] : [[p.name, [Path.resolve(p.entry)]]])),
+	})
+	const results = program.getSourceFiles()
+		.filter(sourceFile => files.includes(sourceFile.fileName))
+		.sort((a, b) => a.fileName > b.fileName ? 1 : -1)
+		.map(sourceFile => analyzeSourceFile(sourceFile, { program, ts, config: {} }))
+	return transformAnalyzerResult('json', results, program, { visibility: 'public', inlineTypes: false, cwd: process.cwd() })
+}

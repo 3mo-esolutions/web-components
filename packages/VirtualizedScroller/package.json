@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/virtualized-scroller",
-	"version": "0.2.5",
+	"version": "0.2.6",
 	"description": "A web component for scroll containers that render only the visible items of a large array, built on Lit Virtualizer.",
 	"repository": {
 		"type": "git",
@@ -27,9 +27,11 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
+		"tslib": "x"
+	},
+	"peerDependencies": {
 		"@3mo/scroller": "x",
 		"@lit-labs/virtualizer": "x",
-		"@a11d/lit": "x",
-		"tslib": "x"
+		"@a11d/lit": "x"
 	}
 }

@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/keyboard-controller",
-	"version": "0.1.4",
+	"version": "0.1.5",
 	"description": "A utility for tracking globally whether Ctrl, Shift, Alt or Meta is held down.",
 	"repository": {
 		"type": "git",

@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/theme",
-	"version": "0.5.4",
+	"version": "0.5.5",
 	"description": "Design tokens and utilities for theming, with light and dark palettes derived from one accent color and persisted preferences.",
 	"repository": {
 		"type": "git",
@@ -27,10 +27,12 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"@a11d/lit": "x",
 		"@a11d/local-storage": "x",
 		"@a11d/root-css-injector": "x",
-		"@3mo/color": "x",
 		"tslib": "x"
+	},
+	"peerDependencies": {
+		"@a11d/lit": "x",
+		"@3mo/color": "x"
 	}
 }

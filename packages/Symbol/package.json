@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/symbol",
-	"version": "0.1.6",
+	"version": "0.1.7",
 	"description": "A web component for typed Material Symbols with adjustable fill, weight, grade and optical size.",
 	"repository": {
 		"type": "git",
@@ -30,8 +30,10 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"@a11d/lit": "*",
-		"@3mo/font-importer": "*",
 		"tslib": "*"
+	},
+	"peerDependencies": {
+		"@a11d/lit": "*",
+		"@3mo/font-importer": "*"
 	}
 }

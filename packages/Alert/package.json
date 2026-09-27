@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/alert",
-	"version": "1.2.1",
+	"version": "1.2.2",
 	"description": "A web component for inline info, success, warning and error messages with a heading, optionally collapsible.",
 	"repository": {
 		"type": "git",
@@ -27,8 +27,10 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
+		"tslib": "x"
+	},
+	"peerDependencies": {
 		"@a11d/lit": "x",
-		"tslib": "x",
 		"@3mo/theme": "x",
 		"@3mo/icon": "x",
 		"@3mo/heading": "x",

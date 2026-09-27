@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/selection-group",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"description": "A web component for giving any children one selection, one tab stop and the matching ARIA pattern, plus its controller.",
 	"repository": {
 		"type": "git",
@@ -30,8 +30,10 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
+		"tslib": "x"
+	},
+	"peerDependencies": {
 		"@a11d/lit": "x",
-		"tslib": "x",
 		"@3mo/selectability": "x",
 		"@3mo/navigability": "x"
 	},

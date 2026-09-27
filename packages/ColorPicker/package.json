@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/color-picker",
-	"version": "0.2.1",
+	"version": "0.2.2",
 	"description": "A web component for color pickers on the native color input, with typed values and optional preset swatches.",
 	"repository": {
 		"type": "git",
@@ -27,7 +27,9 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"tslib": "x",
+		"tslib": "x"
+	},
+	"peerDependencies": {
 		"@3mo/color": "x"
 	}
 }

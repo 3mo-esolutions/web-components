@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/instanceof-attribute-controller",
-	"version": "0.1.4",
+	"version": "0.1.5",
 	"description": "A Lit controller for an instanceof attribute that lists the tag names of an element's class and its ancestors, for CSS.",
 	"repository": {
 		"type": "git",
@@ -29,7 +29,9 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"@a11d/lit": "x",
 		"tslib": "x"
+	},
+	"peerDependencies": {
+		"@a11d/lit": "x"
 	}
 }

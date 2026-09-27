@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/date-time-fields",
-	"version": "0.17.0",
+	"version": "0.17.1",
 	"description": "Web components for date, date-time, time and range fields with locale-aware segmented entry and a calendar picker.",
 	"repository": {
 		"type": "git",
@@ -30,8 +30,12 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"@a11d/lit": "x",
 		"@a11d/equals": "x",
+		"tslib": "x",
+		"typescript-memoize": "1.x"
+	},
+	"peerDependencies": {
+		"@a11d/lit": "x",
 		"@3mo/date-time": ">=0.10.x",
 		"@3mo/field": ">=0.5.x",
 		"@3mo/flex": "x",
@@ -49,8 +53,6 @@
 		"@3mo/tab": "x",
 		"@3mo/text-fields": "x",
 		"@3mo/line": "x",
-		"tslib": "x",
-		"typescript-memoize": "1.x",
 		"@3mo/switch": "x"
 	}
 }
