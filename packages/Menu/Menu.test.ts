@@ -128,6 +128,30 @@ describe('Menu', () => {
 		})
 	})
 
+	describe('focusing the menu itself', () => {
+		const fixture = new ComponentTestFixture<Menu>(html`
+			<mo-menu>
+				<mo-menu-item>Item 1</mo-menu-item>
+				<mo-menu-item>Item 2</mo-menu-item>
+			</mo-menu>
+		`)
+
+		afterEach(async () => {
+			fixture.component.open = false
+			await fixture.updateComplete
+		})
+
+		it('should draw no outline around the list, which is focused only until an item is', async () => {
+			fixture.component.open = true
+			await fixture.updateComplete
+			const list = fixture.component.renderRoot.querySelector<HTMLElement>('[part=list]')!
+			list.focus()
+
+			expect(fixture.component.shadowRoot!.activeElement).toBe(list)
+			expect(getComputedStyle(list).outlineStyle).toBe('none')
+		})
+	})
+
 	describe('revealing the selection', () => {
 		const indices = [...new Array(60).keys()]
 		const selectedIndex = 50

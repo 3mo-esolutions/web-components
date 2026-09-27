@@ -35,6 +35,10 @@ export function isMenu(element: EventTarget): element is HTMLElement {
  *
  * @csspart popover - The popover part of the menu.
  * @csspart list - The list part of the menu.
+ *
+ * @accessibility
+ * A [menu button](?path=/docs/behaviors-menu-controller--overview): the anchor announces the menu, the items take real focus, and `Escape` returns focus to the anchor.
+ * A `mo-selectable-menu-item` is a `menuitemcheckbox`, or a `menuitemradio` under `selectability='single'`, with `aria-checked`, `mixed` when indeterminate. A `mo-nested-menu-item` opens its submenu with `ArrowRight`, and `ArrowLeft` or `Escape` closes it again; the two arrows do not swap in a right-to-left language yet. A menu is named by its anchor.
  */
 @component('mo-menu')
 export class Menu extends Component {
@@ -121,6 +125,10 @@ export class Menu extends Component {
 				border-radius: var(--mo-toolbar-border-radius, var(--mo-border-radius));
 				background: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-gray) 8%);
 				border-radius: var(--mo-border-radius);
+			}
+
+			[part=list] {
+				outline: none;
 			}
 		`
 	}
