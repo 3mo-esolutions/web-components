@@ -10,12 +10,17 @@ export enum IconVariant {
 }
 
 /**
+ * A Material icon, drawn from the Material Icons font by name.
+ *
  * @element mo-icon
  *
  * @ssr true - The font should be provided manually when using SSR.
  *
- * @attr variant - The variant of the icon tied to a specific font.
- * @attr icon - The icon to display.
+ * @attr variant - The style, each a font of its own: `filled` (default), `outlined`, `rounded` or `sharp`.
+ * @attr icon - The name of the icon, e.g. `delete`.
+ *
+ * @accessibility
+ * It is read out as its icon's name, such as "delete", unless something around it hides it with `aria-hidden`.
  */
 @component('mo-icon')
 export class Icon extends Component {

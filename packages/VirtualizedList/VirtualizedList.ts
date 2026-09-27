@@ -3,12 +3,12 @@ import { type GetItemTemplate, type VirtualizedScroller } from '@3mo/virtualized
 import { List, listItem } from '@3mo/list'
 
 /**
+ * A list that renders list items from an array, only while they are near the viewport, so it scrolls through thousands.
+ *
  * @element mo-virtualized-list
  *
- * @attr data - Array of data to render
- * @attr getItemTemplate - Function that returns template for each item
- *
- * @slot - Default slot for list items
+ * @attr data - The items, one list item each.
+ * @attr getItemTemplate - A function that returns the list item of an item.
  */
 @component('mo-virtualized-list')
 export class VirtualizedList<T = unknown> extends List {

@@ -4,6 +4,7 @@
 		"./dist",
 		"**/*.config.*",
 		"**/*.stories.ts",
+		"**/stories/**",
 		"**/*.test.ts"
 	],
 	"compilerOptions": {

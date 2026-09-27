@@ -7,12 +7,6 @@ export type AccordionValue = string | Array<string> | undefined
 /**
  * A stack of disclosures of which only one is open at a time, unless several are allowed to be.
  *
- * Each item brings its own "details" element and therefore its own semantics and animation — see
- * {@link AccordionItem}. What the accordion adds is the part a group of "details" elements cannot express
- * itself: they are only mutually exclusive when they share a tree, which items in their own shadow roots
- * never do. It follows their "openChange" and closes the others, and projects which of them is open onto
- * "value", so that the open item can be read, written and bound to like any other value in this library.
- *
  * @element mo-accordion
  *
  * @attr multiple - Whether several items may be open at the same time.
@@ -21,6 +15,9 @@ export type AccordionValue = string | Array<string> | undefined
  * @slot - The items of the accordion.
  *
  * @fires change - Dispatched with the new value whenever the accordion arrives at one itself, as the platform has it for every control which is a choice.
+ *
+ * @accessibility
+ * Its items are native `details` elements: each summary is a button whose open state the browser announces, and `Enter` and `Space` toggle it. A disabled item leaves the tab order and says `aria-disabled`.
  */
 @component('mo-accordion')
 export class Accordion extends Component {

@@ -2,15 +2,19 @@ import { component, property, css } from '@a11d/lit'
 import { MdPrimaryTab } from '@material/web/tabs/primary-tab.js'
 
 /**
+ * A tab of a tab bar, with a label and an optional icon.
+ *
  * @element mo-tab
  *
- * @attr inlineIcon
- * @attr iconOnly
+ * @attr value - Identifies the tab in the `value` of its bar, and pairs it with the panel of the same value
+ * @attr inline-icon - Places the icon beside the label instead of above it
+ * @attr icon-only - Marks a tab without a label during server-side rendering; detected on its own otherwise
  *
- * @cssprop --mo-tab-accent
+ * @cssprop --mo-tab-accent-color - The color of the active tab and its indicator
+ * @cssprop --mo-tab-background-color - The background of the tab
  *
- * @slot - Default slot for tab label
- * @slot icon - Slot for tab icon
+ * @slot - The label
+ * @slot icon - The icon
  */
 @component('mo-tab')
 export class Tab extends MdPrimaryTab {

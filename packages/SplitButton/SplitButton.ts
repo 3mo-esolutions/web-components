@@ -4,14 +4,16 @@ import { type ButtonGroup } from '@3mo/button-group'
 import { ButtonType } from '@3mo/button'
 
 /**
+ * A main button joined with an arrow button that opens a menu of further actions.
+ *
  * @element mo-split-button
  *
  * @attr open - Whether the menu is open.
  * @attr type - The type of the buttons, which is passed down to the button-group.
  * @attr disabled - Whether the "more" button is disabled.
  *
- * @slot - The content of the button.
- * @slot more - The content of the more menu.
+ * @slot - The main button, a `mo-button` or a subclass of it.
+ * @slot more - The menu items of the "more" menu.
  *
  * @fires openChange - Dispatched when the menu is opened or closed.
  */

@@ -7,6 +7,8 @@ Localizer.dictionaries.add('de', {
 })
 
 /**
+ * A text field for a search term, with a search icon and a button that clears it.
+ *
  * @element mo-field-search
  *
  * @i18n "Search"

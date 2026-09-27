@@ -6,21 +6,22 @@ import { MdFab } from '@material/web/fab/fab.js'
 import '@3mo/theme'
 
 /**
+ * A floating action button for the primary action of a screen, extended with a label when it has text.
+ *
  * @element mo-fab
  *
  * @ssr true
  *
- * @attr icon
- * @attr label
- * @attr dense
- * @attr iconAtEnd
+ * @attr icon - The Material icon to display.
+ * @attr dense - Makes it the small FAB.
+ * @attr iconAtEnd - Places the icon after the label.
  *
- * @slot - The default slot is used to provide the label for the button.
- * @slot icon - The icon slot is used to provide the icon for the button.
+ * @slot - The label, which makes it an extended FAB.
+ * @slot icon - Content in place of the icon.
  *
- * @csspart button - The button element
- * @csspart ripple - The ripple element
- * @csspart focus-ring - The focus-ring element
+ * @csspart button - The native button element.
+ * @csspart ripple - The ripple effect.
+ * @csspart focus-ring - The focus ring.
  */
 @component('mo-fab')
 export class Fab extends Component {

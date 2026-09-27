@@ -1,41 +1,76 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite'
 import { html } from '@a11d/lit'
-import p from './package.json'
 import './index.js'
 
+type Args = {
+	readonly heading: string
+}
+
 export default {
-	title: 'Layout & Containment / Group Box',
+	title: 'Layout / Group Box',
 	component: 'mo-group-box',
 	args: {
-		heading: 'Satoshi Nakamoto',
-		content: `A purely peer-to-peer version of electronic cash would allow online
-			payments to be sent directly from one party to another without going through a
-			financial institution. Digital signatures provide part of the solution, but the main
-			benefits are lost if a trusted third party is still required to prevent double-spending.
-			We propose a solution to the double-spending problem using a peer-to-peer network.
-			The network timestamps transactions by hashing them into an ongoing chain of
-			hash-based proof-of-work, forming a record that cannot be changed without redoing
-			the proof-of-work. The longest chain not only serves as proof of the sequence of
-			events witnessed, but proof that it came from the largest pool of CPU power. As
-			long as a majority of CPU power is controlled by nodes that are not cooperating to
-			attack the network, they'll generate the longest chain and outpace attackers. The
-			network itself requires minimal structure. Messages are broadcast on a best effort
-			basis, and nodes can leave and rejoin the network at will, accepting the longest
-			proof-of-work chain as proof of what happened while they were gone.`,
+		heading: 'Delivery address',
 	},
-	argTypes: {
-		heading: { control: 'text' },
-		content: { control: 'text' },
-	},
-	package: p,
-} as Meta
+	decorators: [story => html`<div style='max-width: 600px'>${story()}</div>`],
+} satisfies Meta<Args>
 
-export const GroupBox: StoryObj = {
-	render: ({ heading, content }) => html`
+type Story = StoryObj<Args>
+
+export const Default: Story = {
+	render: ({ heading }) => html`
+		<mo-group-box heading=${heading}>
+			<mo-flex gap='12px'>
+				<mo-field-text label='Street'></mo-field-text>
+				<mo-field-text label='City'></mo-field-text>
+				<mo-field-text label='Country'></mo-field-text>
+			</mo-flex>
+		</mo-group-box>
+	`,
+}
+
+/** The `action` slot places buttons beside the heading, and the `footer` slot below the content inside the card. */
+export const Actions: Story = {
+	render: ({ heading }) => html`
 		<mo-group-box heading=${heading}>
 			<mo-icon-button slot='action' icon='share'></mo-icon-button>
 			<mo-icon-button slot='action' icon='more_vert'></mo-icon-button>
-			${content}
+			<mo-flex gap='12px'>
+				<mo-field-text label='Street'></mo-field-text>
+				<mo-field-text label='City'></mo-field-text>
+			</mo-flex>
+			<mo-flex slot='footer' direction='horizontal' justifyContent='end'>
+				<mo-button type='filled'>Save</mo-button>
+			</mo-flex>
 		</mo-group-box>
-	`
+	`,
+}
+
+/** Long content grows the card below the heading. */
+export const LongContent: Story = {
+	render: () => html`
+		<mo-group-box heading='Terms of delivery'>
+			Orders placed on a working day before noon leave the warehouse the same day; later orders leave the next working day.
+			Delivery within the country takes two to three working days, and five to seven to the rest of Europe.
+			The carrier calls ahead on the day of delivery. If nobody answers, the parcel waits at the nearest depot for seven days before it comes back to us.
+			Goods can be returned within thirty days in their original packaging; the return label is in the parcel.
+			Refunds reach the original payment method within five working days of the return arriving.
+		</mo-group-box>
+	`,
+}
+
+/** The `card` part styles the card around the content, and the `header` and `heading` parts the header above it. */
+export const Parts: Story = {
+	render: ({ heading }) => html`
+		<style>
+			.tinted::part(card) { background: var(--mo-color-transparent-gray-3); box-shadow: none; }
+			.tinted::part(heading) { color: var(--mo-color-accent); }
+		</style>
+		<mo-group-box class='tinted' heading=${heading}>
+			<mo-flex gap='12px'>
+				<mo-field-text label='Street'></mo-field-text>
+				<mo-field-text label='City'></mo-field-text>
+			</mo-flex>
+		</mo-group-box>
+	`,
 }

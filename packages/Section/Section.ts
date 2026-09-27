@@ -4,17 +4,19 @@ import '@3mo/heading'
 import '@3mo/grid'
 
 /**
+ * A titled region of a page with a heading, header actions and content.
+ *
  * @element mo-section
  *
- * @attr heading
+ * @attr heading - The heading in the header
  *
  * @slot - Content
  * @slot header - The whole header
  * @slot heading - The heading which has a default template rendering a mo-heading element
  * @slot action - Actions in the header
  *
- * @csspart header
- * @csspart heading
+ * @csspart header - The header holding the heading and the actions
+ * @csspart heading - The default heading
  */
 @component('mo-section')
 export class Section extends Component {

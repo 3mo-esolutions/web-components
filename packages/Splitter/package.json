@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/splitter",
 	"version": "0.2.3",
-	"description": "A splitter web-component.",
+	"description": "Web components for panes resized by dragging a line or knob between them, horizontally or vertically.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/Splitter"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -13,7 +17,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/layout-splitter--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

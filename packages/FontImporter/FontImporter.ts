@@ -1,5 +1,5 @@
 /**
- * A utility class for importing fonts globally.
+ * Imports web font stylesheets into the document by URL, each only once.
  *
  * @ssr true
  */

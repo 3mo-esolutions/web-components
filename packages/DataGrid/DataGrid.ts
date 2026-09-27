@@ -26,34 +26,37 @@ Localizer.dictionaries.add('de', {
 
 
 /**
+ * A table that shows an array of objects as rows, with selection, sorting, pagination, details, editing and CSV export.
+ *
  * @element mo-data-grid
  *
  * @attr data - The data to be displayed in the DataGrid. It is an array of objects, where each object represents a row.
  * @attr columns - The read-only columns of the DataGrid, composed of their definitions and modifications. Provide columns programmatically via `columns.definitions.programmatic`.
  * @attr headerHidden - Whether the header should be hidden.
  * @attr page - The current page.
- * @attr pagination - The pagination mode. It can be either `auto` or a number.
+ * @attr pagination - How the rows are paged: a strategy, `pages` or `scroll`, and a size, a number or `auto` to fit the height, e.g. `pages`, `pages 50` or `50`.
  * @attr sorting - The sorting mode. It is an object with `selector` and `strategy` properties.
- * @attr selectability - The selection mode. Default to 'single' if context menus available, 'undefined' otherwise.
+ * @attr selectability - The selection mode. Defaults to 'single' if context menus available, 'undefined' otherwise.
  * @attr isDataSelectable - Whether data of a given row is selectable.
  * @attr selectedData - The selected data.
  * @attr selectOnClick - Whether the row should be selected on click.
  * @attr selectionBehaviorOnDataChange - The behavior of the selection when the data changes.
- * @attr reorderability - Whether the rows can be reordered. Can only be enabled if sorting is not active, selectability is not 'multiple', and no details are present.
+ * @attr reorderability - Whether rows can be dragged into another order, which works while nothing is sorted and no row has details or sub rows.
  * @attr multipleDetails - Whether multiple details can be opened at the same time.
  * @attr subDataGridDataSelector - The key path of the sub data grid data.
  * @attr hasDataDetail - Whether the data has a detail.
  * @attr detailsOnClick - Whether the details should be opened on click.
- * @attr primaryContextMenuItemOnDoubleClick - The primary context menu item on double click.
+ * @attr primaryContextMenuItemOnDoubleClick - Whether a double or middle click on a row clicks the `mo-data-grid-primary-context-menu-item` of its context menu.
  * @attr editability - The editability mode.
  * @attr getRowDetailsTemplate - A function which returns a template for the details of a given row.
  * @attr getRowContextMenuTemplate - A function which returns a template for the context menu of a given row.
+ * @attr filtersOpen - Whether the elements of the `filter` slot are shown. The filter button of the toolbar toggles it.
  * @attr hasAlternatingBackground - Whether the rows should have alternating background.
- * @attr cellFontSize - The font size of the cells relative to the default font size. Defaults @see DataGrid.cellFontSize 's value which defaults to 0.8.
- * @attr rowHeight - The height of the rows in pixels. Defaults to @see DataGrid.rowHeight 's value which defaults to 35.
+ * @attr cellFontSize - The font size of the cells in rem, between 0.8 and 1.2. Defaults to `DataGrid.cellRelativeFontSize`, 0.8.
+ * @attr rowHeight - The height of the rows in pixels, between 30 and 60. Defaults to `DataGrid.rowHeight`, 35.
  * @attr exportable - Whether the DataGrid is exportable. This will show an export button in the footer.
  *
- * @slot - Use this slot only for declarative DataGrid APIs e.g. setting ColumnDefinitions via `mo-data-grid-columns` tag.
+ * @slot column - The column elements, which assign themselves to it when placed in the grid. It is hidden.
  * @slot toolbar - The horizontal bar above DataGrid's contents.
  * @slot toolbar-action - A slot for action icon-buttons in the toolbar which are displayed on the end.
  * @slot filter - Elements which filter DataGrid's data. When expanded, they continue the toolbar's row if they all fit into its remaining space, otherwise they wrap into rows of their own. It is toggled through an icon-button in the toolbar.
@@ -61,10 +64,10 @@ Localizer.dictionaries.add('de', {
  * @slot primary-action - A slot at the very end of the toolbar expecting primary action elements (e.g. an "add" button) to be placed in. Slotted elements replace the slot's default content, but complement primary actions generated outside of it e.g. EntityDataGrid's create button, which is suppressed via "primaryActionHidden" instead.
  * @slot error-no-content - A slot for displaying an error message when no data is available.
  *
- * @cssprop --mo-data-grid-min-visible-rows - The minimum number of visible rows. Default to 2.5.
+ * @cssprop --mo-data-grid-min-visible-rows - The minimum number of visible rows. Defaults to 2.5.
  * @cssprop --mo-data-grid-footer-background - The background of the footer.
- * @cssprop --mo-data-grid-cell-padding - The inline padding of the cells. Default to 10px.
- * @cssprop --mo-data-grid-column-sub-row-indentation - The indentation of the first column in the sub row. Default to 20px.
+ * @cssprop --mo-data-grid-cell-padding - The inline padding of the cells. Defaults to 0.5rem.
+ * @cssprop --mo-data-grid-column-sub-row-indentation - The indentation of the first column in the sub row. Defaults to 20px.
  *
  * @fires dataChange
  * @fires selectionChange
@@ -79,6 +82,28 @@ Localizer.dictionaries.add('de', {
  * @fires rowDoubleClick
  * @fires rowMiddleClick
  * @fires cellEdit
+ *
+ * @accessibility
+ * A `grid`, or a `treegrid` with sub rows, with `aria-multiselectable` while multiple. The header is a `row` of `columnheader`s,
+ * where the column sorted first says `aria-sort='ascending'` or `'descending'` and every other sortable one `'none'`. Rows are
+ * `row`s with `aria-level`, `aria-setsize` and `aria-posinset`, `aria-selected` while rows can be selected and `aria-expanded`
+ * where they have details or sub rows; cells are `gridcell`s.
+ * One cell is in the tab order and takes real focus. The column headers are not part of the arrow navigation; their buttons are
+ * ordinary tab stops.
+ *
+ * | Key | Does |
+ * | --- | --- |
+ * | The arrows | The cell in that direction, wrapping at the edges. |
+ * | `Home` `End` | The first or last cell of the row. |
+ * | `Ctrl` `Home` / `End` | The first cell of the grid, or the last. |
+ * | `PageUp` `PageDown` | A page of rows up or down. |
+ * | `Enter` | Edits an editable cell; otherwise clicks it, which selects the row with `selectOnClick` and opens its details with `detailsOnClick`. |
+ * | `Enter` `Escape` | While editing: ends it and returns to the cell; `Enter` commits, except in a text area. |
+ * | `Ctrl` or `⌘` `C` | Copies the cell's text. |
+ *
+ * With `selectOnClick`, moving to a cell selects its row, and `Shift` extends the selection. Where it differs from the ARIA
+ * practices: the arrows wrap, `Space` does not select a row, and in a tree grid `ArrowRight` and `ArrowLeft` move between cells
+ * rather than opening and closing rows.
  */
 @component('mo-data-grid')
 export class DataGrid<TData, TDetailsElement extends Element | undefined = undefined> extends Component {

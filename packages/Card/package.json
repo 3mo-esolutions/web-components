@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/card",
 	"version": "0.3.3",
-	"description": "Cards display content and actions about a single subject.",
+	"description": "A web component for filled or outlined cards with a heading, subheading, avatar, actions, media and footer.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/Card"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -14,7 +18,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/layout-card--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

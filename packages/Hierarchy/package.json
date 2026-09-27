@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/hierarchy",
 	"version": "0.1.0",
-	"description": "A hierarchy as pure, memoised data: nodes with parent, level, position and set size, the visible sequence under an expansion state, and filtering that keeps ancestors",
+	"description": "A utility for hierarchies flattened into memoized nodes with parent, level and position, plus visible rows and filtering.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/Hierarchy"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"tree",
@@ -13,7 +17,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/utilities-hierarchy--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

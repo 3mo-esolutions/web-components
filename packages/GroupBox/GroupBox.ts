@@ -3,9 +3,11 @@ import { Section } from '@3mo/section'
 import '@3mo/card'
 
 /**
+ * A section whose content sits in a card under its heading.
+ *
  * @element mo-group-box
  *
- * @slot footer
+ * @slot footer - Content below the body, inside the card
  *
  * @csspart card - The card element.
  */

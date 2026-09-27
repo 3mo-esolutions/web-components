@@ -1,0 +1,93 @@
+import { Meta, Canvas, Description, DocsStory } from '@storybook/addon-docs/blocks'
+import { Hero, Install, Playground, Accessibility, Api, Changelog } from '../../.storybook/blocks'
+import * as DataGridStories from './DataGrid.stories'
+
+<Meta of={DataGridStories} />
+
+<Hero />
+<Install />
+<Playground />
+
+## Columns
+
+A column is an element in the grid, one per kind of value - `mo-data-grid-column-text`, `-number`, `-currency`, `-date` and more - that shows the value at its `dataSelector` under its `heading`.
+
+<DocsStory of={DataGridStories.StickyColumns} />
+<DocsStory of={DataGridStories.CustomCellStyle} />
+<DocsStory of={DataGridStories.ColumnMenuItems} />
+<DocsStory of={DataGridStories.Sums} />
+
+## Selection
+
+`selectability` is `single` or `multiple`, and `selectOnClick` selects a row by a click anywhere on it. The selected rows are `selectedData`, and each change fires `selectionChange`.
+
+<Description of={DataGridStories.Selection} />
+<Canvas of={DataGridStories.Selection} />
+
+## Details and sub rows
+
+A row can open into details below it. `multipleDetails` keeps more than one open, and `detailsOnClick` opens them with a click on the row.
+
+<DocsStory of={DataGridStories.Details} />
+<DocsStory of={DataGridStories.SubDataGrid} />
+<DocsStory of={DataGridStories.SubRows} />
+
+## Editing
+
+`editability` is `cell`, where a double click or Enter edits a cell until Escape or a click elsewhere, or `always`. Each change fires `cellEdit`.
+
+<Description of={DataGridStories.Editing} />
+<Canvas of={DataGridStories.Editing} />
+
+## Sorting and reordering
+
+Rows follow either a sort or an order of your own: they can be dragged only while nothing is sorted and no row has details or sub rows.
+
+<DocsStory of={DataGridStories.Sorting} />
+<DocsStory of={DataGridStories.Reordering} />
+
+## Toolbar, filters and actions
+
+The toolbar holds fields such as a search in its `toolbar` slot, filters behind a toggle in `filter`, icon buttons in `toolbar-action` and the main action in `primary-action`. Actions on a row go into its context menu.
+
+<DocsStory of={DataGridStories.Filters} />
+<DocsStory of={DataGridStories.PrimaryAction} />
+<DocsStory of={DataGridStories.PrimaryActionWithSplitButton} />
+<DocsStory of={DataGridStories.ContextMenu} />
+
+## Large data
+
+The grid renders cells only for the rows near the viewport, so it scrolls through thousands. `pagination='pages'` pages them instead, as many to a page as fit its height, or `pages 50` by fifty.
+
+<DocsStory of={DataGridStories.Virtualization} />
+<DocsStory of={DataGridStories.VirtualizedSubRows} />
+<DocsStory of={DataGridStories.MinVisibleRows} />
+
+## Export
+
+<Description of={DataGridStories.Export} />
+<Canvas of={DataGridStories.Export} />
+
+## Empty state
+
+<Description of={DataGridStories.EmptyState} />
+<Canvas of={DataGridStories.EmptyState} />
+
+## In a card
+
+`@3mo/data-grid-card-integration`, which `@3mo/del` imports, drops the padding of a `mo-card` around a grid inside it, so the grid spans the card's full width. It keeps room above the toolbar of a card without a heading, and below the grid when other content follows it.
+
+<Description of={DataGridStories.InACard} />
+<Canvas of={DataGridStories.InACard} />
+
+## Building a custom grid
+
+`DataGridController` carries everything `mo-data-grid` does except its design, so a grid of another design only has to render. Here it drives a plain `<table>` in the system colors.
+
+<Description of={DataGridStories.CustomDataGrid} />
+<Canvas of={DataGridStories.CustomDataGrid} />
+
+<Accessibility />
+
+<Api />
+<Changelog />

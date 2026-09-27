@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/button",
 	"version": "1.2.0",
-	"description": "Buttons let people take action and make choices with one tap.",
+	"description": "Web components for buttons in the five Material 3 types, with start and end icons and a selectable toggle variant.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/Button"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -14,7 +18,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/actions-button--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

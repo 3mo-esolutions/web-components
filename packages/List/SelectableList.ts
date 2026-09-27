@@ -8,6 +8,8 @@ export { SelectionListItemChangeEvent } from './SelectionListItemChangeEvent.js'
 export { Selectability as SelectableListSelectability } from '@3mo/selectability'
 
 /**
+ * A list that keeps one selection over its selectable items, whichever their control, by their indices.
+ *
  * @element mo-selectable-list
  *
  * @attr selectability - The selectability of the list

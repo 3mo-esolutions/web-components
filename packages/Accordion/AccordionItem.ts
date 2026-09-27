@@ -3,11 +3,7 @@ import { disabledProperty } from '@3mo/disabled-property'
 import '@3mo/icon'
 
 /**
- * A single disclosure: a summary which is always visible and content which the summary reveals.
- *
- * It is a native "details" element underneath, which is what contributes the semantics, the keyboard handling
- * and find-in-page — searching the page reveals content which is collapsed. Opening and closing is animated in
- * CSS alone, towards a height nobody has to measure, so content of any size animates, growing content included.
+ * A single disclosure on a native `details` element: a summary that is always visible and the content it reveals.
  *
  * @element mo-accordion-item
  *

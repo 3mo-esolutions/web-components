@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/confetti",
 	"version": "0.0.4",
-	"description": "A confetti web component",
+	"description": "A web component for confetti bursts that rain over the page, drawn on a canvas.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/Confetti"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -13,7 +17,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/feedback-confetti--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

@@ -1,0 +1,38 @@
+import { Meta, DocsStory } from '@storybook/addon-docs/blocks'
+import { Hero, Install, Playground, Accessibility, Api, Changelog } from '../../.storybook/blocks'
+import * as SheetStories from './Sheet.stories'
+
+<Meta of={SheetStories} />
+
+<Hero />
+<Install />
+<Playground />
+
+## Placement
+
+`placement` picks the edge: `block-end` by default, `block-start`, or `inline-start` and `inline-end`, which follow the writing direction. A [Drawer](?path=/docs/layout-drawer--overview) is a sheet at an inline edge, sized for navigation.
+
+<DocsStory of={SheetStories.Placements} />
+
+## Opening and closing
+
+`open` opens the sheet as a modal native dialog, and `openChange` reports each change. Before the sheet closes itself it fires a cancelable `requestClose`, whose `source` is `escape`, `backdrop`, `handle`, `gesture` or `api`.
+
+<DocsStory of={SheetStories.PreventedClose} />
+
+## Content
+
+The content scrolls within the sheet, and anything opened from it stays interactive above it.
+
+<DocsStory of={SheetStories.Scrollable} />
+<DocsStory of={SheetStories.NestedPopover} />
+
+## Styling
+
+<DocsStory of={SheetStories.CustomProperties} />
+<DocsStory of={SheetStories.Parts} />
+
+<Accessibility />
+
+<Api />
+<Changelog />

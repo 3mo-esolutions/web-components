@@ -1,0 +1,17 @@
+{
+	"extends": "../tsconfig.base.json",
+	"compilerOptions": {
+		"noEmit": true,
+		"jsx": "react",
+		"module": "preserve",
+		"moduleResolution": "bundler",
+		"moduleDetection": "force",
+		"resolveJsonModule": true,
+		"allowImportingTsExtensions": true,
+		"types": ["vite/client"]
+	},
+	"include": [
+		"./**/*.ts",
+		"./**/*.tsx"
+	]
+}

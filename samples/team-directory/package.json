@@ -1,0 +1,6 @@
+{
+	"name": "@3mo/team-directory-recipe",
+	"description": "A recipe for a team directory: cards of people with contact links and a profile dialog, searched and filtered by country.",
+	"private": true,
+	"type": "module"
+}

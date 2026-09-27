@@ -5,24 +5,16 @@ import '@3mo/theme'
 export type KeyPresentation = Partial<Record<'apple' | 'other', { display: string, label?: string }>>
 
 /**
+ * A keyboard shortcut, written as `KeyboardEvent.key` names and shown in the conventions of the user's platform.
+ *
  * @element mo-key
  *
  * @ssr true
  *
- * A keyboard key visualization. The shortcut is written as content using the `KeyboardEvent.key` vocabulary
- * where `+` combines keys into a chord and whitespace separates independent keys:
- * - `<mo-key>Meta+K</mo-key>` renders as `⌘K` on Apple platforms and `Ctrl + K` elsewhere.
- * - `<mo-key>ArrowUp ArrowDown</mo-key>` renders as two independent `↑` `↓` keys.
- * - `<mo-key>F5</mo-key>` renders verbatim like a native `kbd` element.
- *
- * `Meta` denotes the platform's primary modifier, i.e. `⌘` on Apple platforms and `Ctrl` elsewhere.
- * Modifiers are reordered to match the platform's convention (`⌃ ⌥ ⇧ ⌘` on Apple platforms, `Ctrl + Alt + Shift` elsewhere)
- * regardless of the authored order. Symbols are complemented by a visually hidden speakable label for screen readers.
- *
  * @attr platform - The platform to present the keys for. Defaults to the detected platform; override for previews or tests.
  * @attr separator - The visual separator between the keys of a chord. Defaults to the platform convention, i.e. none on Apple platforms and `+` elsewhere.
  *
- * @slot - The shortcut text.
+ * @slot - The shortcut, in which `+` joins the keys of a chord and whitespace separates independent keys.
  *
  * @cssprop --mo-key-color - The foreground color of the keycaps. Defaults to a slightly muted inherited color.
  * @cssprop --mo-key-background - The background color of the keycaps. Defaults to a tint of the inherited color.

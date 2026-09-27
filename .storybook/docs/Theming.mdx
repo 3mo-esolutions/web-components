@@ -1,0 +1,65 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks'
+import { PageHeader } from './components'
+import * as ThemeStories from '../../packages/Theme/Colors.stories'
+
+<Meta title='Getting Started/Theming' />
+
+<PageHeader title='Theming'>Colors, fonts, radius and motion are CSS custom properties on `:root`. `Theme` switches between light and dark and sets the accent color; each component adds properties and parts of its own.</PageHeader>
+
+## Light, dark or system
+
+```ts
+import { Background, Theme } from '@3mo/theme'
+
+Theme.background.value = Background.Dark   // or Background.Light
+Theme.background.value = undefined         // follow the system
+```
+
+The choice is stored in `localStorage` and applied as CSS `color-scheme` on the document. `Theme.background.calculatedValue` is the scheme in effect.
+
+## Accent color
+
+```ts
+Theme.accent.value = 'rgb(103, 80, 164)'   // any CSS color
+Theme.accent.value = undefined             // the default, rgb(0, 119, 200)
+```
+
+The colors that go with it, such as `--mo-color-on-accent` and the accent containers, are derived from it:
+
+<Canvas of={ThemeStories.Colors} />
+
+An element of your own re-renders on either change with `new ThemeController(this)`.
+
+## Tokens
+
+`@3mo/theme` declares these on `:root`, and the components import it themselves:
+
+- **Surfaces**: `--mo-color-background`, `--mo-color-foreground`, `--mo-color-surface`, `--mo-color-on-surface`, `--mo-color-surface-container-lowest` to `--mo-color-surface-container-highest`
+- **Accent**: `--mo-color-accent`, `--mo-color-on-accent`, `--mo-color-accent-container`, `--mo-color-on-accent-container`
+- **Colors**: `--mo-color-red`, `--mo-color-green`, `--mo-color-yellow`, `--mo-color-blue`, `--mo-color-gray`
+- **Type**: `--mo-font-family`, `--mo-font-family-mono`
+- **Shape and depth**: `--mo-border-radius` (4px), `--mo-shadow`, `--mo-shadow-deep`
+- **Motion**: `--mo-duration-quick` (250ms, 0s with reduced motion)
+
+```css
+.panel {
+	background: var(--mo-color-surface);
+	color: var(--mo-color-on-surface);
+	border-radius: var(--mo-border-radius);
+	box-shadow: var(--mo-shadow);
+}
+```
+
+## One component
+
+The API table of every component lists its **CSS custom properties** and **CSS shadow parts**.
+
+```css
+mo-button {
+	--mo-button-accent-color: var(--mo-color-green);
+}
+
+mo-button::part(button) {
+	text-transform: uppercase;
+}
+```

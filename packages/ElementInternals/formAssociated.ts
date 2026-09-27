@@ -18,11 +18,8 @@ export const formAssociations = new WeakMap<HTMLElement, FormAssociation>()
 const applied = Symbol('formAssociated')
 
 /**
- * Declares that the element takes part in forms.
- *
- * The platform reads `formAssociated` and the form callbacks off the class while it is being defined,
- * so a controller cannot add them afterwards. This does, and hands them to the host's
- * `FormAssociationController`. Applied to a base class it covers everything extending it.
+ * Declares that the element takes part in forms, which the platform reads while the class is being defined,
+ * and hands the form callbacks to its `FormAssociationController`. Applied to a base class, it covers every subclass.
  *
  * @ssr true
  */

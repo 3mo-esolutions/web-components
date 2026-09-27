@@ -1,0 +1,52 @@
+import { Meta, DocsStory } from '@storybook/addon-docs/blocks'
+import { Hero, Install, Playground, Accessibility, Api, Changelog } from '../../.storybook/blocks'
+import * as ElementInternalsStories from './ElementInternals.stories'
+
+<Meta of={ElementInternalsStories} />
+
+<Hero />
+<Install />
+<Playground />
+
+## Form participation
+
+A form collects the controls in its own tree, and a shadow root is not part of it, so the `<input>` inside a custom element never reaches the form. `@formAssociated` declares the class a form control, and its `FormAssociationController` hands the form a `value` under the element's `name`.
+
+```ts
+@component('app-text-field')
+@formAssociated
+export class TextField extends Component {
+	readonly formAssociation = new FormAssociationController(this, host => ({
+		get value() { return host.value },
+		get validity() { return host.inputElement ?? undefined },
+	}))
+}
+```
+
+<DocsStory of={ElementInternalsStories.FormParticipation} />
+
+## Validation
+
+`validity` is either an element the control renders, whose validity it takes over, or the flags and message the control works out itself, with an `anchor` for the browser to point its message at. The form refuses to submit while a control is invalid. `:user-invalid` never matches a form-associated custom element, so a control that wants to look invalid listens for its own `invalid` event.
+
+<DocsStory of={ElementInternalsStories.ConstraintValidation} />
+
+## Reset and fieldsets
+
+A reset reaches the control through `handleReset`, where it restores its default, as a native input returns to its `value` attribute. A disabled fieldset takes its controls out of the submission and out of validation, and `handleDisabledChange` tells each to look disabled.
+
+<DocsStory of={ElementInternalsStories.Reset} />
+<DocsStory of={ElementInternalsStories.DisabledFieldset} />
+
+## Element internals
+
+`attachInternals()` throws when it is called a second time, so everything that needs an element's internals - form association, custom states, ARIA - takes them from `elementInternals()`, which attaches them on first use.
+
+```ts
+elementInternals(this).states.add('checked')
+```
+
+<Accessibility />
+
+<Api />
+<Changelog />

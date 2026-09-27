@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/selection-group",
 	"version": "0.1.1",
-	"description": "A container that turns any set of children into one selection with one tab stop and the ARIA pattern it calls for, and the headless controller behind it.",
+	"description": "A web component for giving any children one selection, one tab stop and the matching ARIA pattern, plus its controller.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/SelectionGroup"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -16,7 +20,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/inputs-selection-group--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

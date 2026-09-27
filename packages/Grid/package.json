@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/grid",
 	"version": "1.2.1",
-	"description": "A simple wrapper web-component for CSS Grid Layout.",
+	"description": "A web component for CSS grid layouts with rows, columns, gaps, auto-flow and alignment as attributes.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/Grid"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -13,7 +17,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/layout-grid--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

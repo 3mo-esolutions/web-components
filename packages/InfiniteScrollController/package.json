@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/infinite-scroll-controller",
 	"version": "0.1.0",
-	"description": "A lit controller which loads chunk after chunk as the user scrolls towards the end of a container",
+	"description": "A Lit controller for infinite scrolling that fetches the next chunk as the user nears the end of a container.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/InfiniteScrollController"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -16,7 +20,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/behaviors-infinite-scroll-controller--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

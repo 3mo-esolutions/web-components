@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/safe-round",
 	"version": "1.0.1",
-	"description": "Round numbers without floating point errors",
+	"description": "A utility for rounding numbers to a given number of decimals without floating-point errors, also as Math.safeRound.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/safeRound"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"Math",
@@ -13,7 +17,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/utilities-safe-round--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

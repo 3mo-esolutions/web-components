@@ -11,22 +11,24 @@ export type LanguageFieldTemplateParameter<TValue, TLanguage extends Language = 
 }
 
 /**
- * @attr mode
- * @attr valueKey
- * @attr label
- * @attr dialogSize
- * @attr dense
- * @attr value
- * @attr selectedLanguage
- * @attr defaultLanguage
- * @attr fieldTemplate
- * @attr optionTemplate
+ * The base of a field that holds one value per language, with a language selector attached; subclasses fetch the languages.
+ *
+ * @attr mode - How the language selector is attached: `attach` beside the field or `overlay` over its corner
+ * @attr valueKey - The key of a language the values are stored by, `id` by default
+ * @attr label - The field's label
+ * @attr dialogSize - The size of the dialog that edits every language at once
+ * @attr dense - Makes the language selector dense
+ * @attr value - The values, as a map from language key to value
+ * @attr selectedLanguage - The language whose value is being edited
+ * @attr defaultLanguage - The language whose value is copied to all others while they are empty; the first fetched by default
+ * @attr fieldTemplate - Renders the field for a language
+ * @attr optionTemplate - Renders a language in the selector
  *
  * @csspart dialog-icon-button - The icon button that opens the language selection dialog.
  *
- * @fires change
- * @fires languageChange
- * @fires languagesFetch
+ * @fires change - Dispatched with the map of values when one of them changes
+ * @fires languageChange - Dispatched with the language selected
+ * @fires languagesFetch - Dispatched with the languages once they are fetched
  */
 export abstract class LanguageField<TValue, TLanguage extends Language> extends Component {
 	static applyDefaultLanguageBehavior = true

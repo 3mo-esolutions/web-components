@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/expand-collapse-icon-button",
 	"version": "1.0.3",
-	"description": "A web component that provides an expand/collapse icon-button.",
+	"description": "A web component for chevron icon buttons that rotate to show whether something is expanded or collapsed.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/ExpandCollapseIconButton"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -13,7 +17,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/actions-expand-collapse-icon-button--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

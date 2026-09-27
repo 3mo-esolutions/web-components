@@ -1,12 +1,16 @@
 {
 	"extends": "../tsconfig.base.json",
 	"compilerOptions": {
-		"types": ["vitest/globals"],
+		"types": ["vitest/globals", "vite/client"],
 		"noEmit": true,
 		"allowImportingTsExtensions": true,
 		"allowJs": true
 	},
 	"include": [
-		"**/*.test.ts"
+		"**/*.test.ts",
+		"**/*.stories.ts",
+		"**/stories/**/*.ts",
+		"../samples/**/*.ts",
+		"../stories/**/*.ts"
 	]
 }

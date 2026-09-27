@@ -9,6 +9,7 @@ export type SegmentedInputControllerOptions<TSegment extends InputSegment = Inpu
 	readonly label?: string
 	/** The whole value in words, announced when the group is entered. */
 	readonly description?: string
+	/** Written onto the group; in `rtl` the horizontal arrows swap. Defaults to `ltr`. */
 	readonly direction?: 'ltr' | 'rtl'
 	readonly disabled?: boolean
 	readonly readonly?: boolean
@@ -43,6 +44,7 @@ export type SegmentedInputControllerOptions<TSegment extends InputSegment = Inpu
 	handleShortcut?(text: string): boolean
 	/** The focus would move past the first or last segment — into a neighbouring group, if there is one. */
 	handleMoveBeyond?(direction: -1 | 1): void
+	/** Focus entered or left the group. */
 	handleFocusChange?(focused: boolean): void
 	/** Stamps whatever the specialization adds to a segment, e.g. the value of a spinbutton. */
 	stamp?(element: HTMLElement, segment: TSegment & EditableSegment): void
@@ -69,20 +71,25 @@ const stepsByKey = new Map<string, SegmentedInputStep>([
  * </div>
  * ```
  *
- * The controller owns everything on those elements except their styling: ARIA, `tabindex`,
- * `contenteditable`, `data-*` and the rendered text — the template renders empty elements. What the
- * segments *mean* stays with the host: it hands over the segments, is told what was typed into which,
- * and decides what that makes of its value.
- *
- * Unmodified keys are the controller's; a key pressed with Ctrl, Meta or Alt is left to the host.
- *
- * The segments are `contenteditable` rather than inputs so that they size to their content, so that a
- * right-to-left group keeps the order the language reads them in — inputs are atomic to the
- * bidirectional algorithm and come out reversed — and so that the group is one line of text rather
- * than a row of boxes. A value which must be autofilled needs a real input instead: see
- * {@link SegmentedDisplayController}.
+ * The controller owns everything on those elements but their styling, so the template renders them empty;
+ * what the segments mean stays with the host. They are `contenteditable` rather than inputs, which the
+ * bidirectional algorithm would reverse in a right-to-left group. A value which must be autofilled needs a
+ * real input instead: see {@link SegmentedDisplayController}.
  *
  * @ssr false
+ *
+ * @accessibility
+ * The group is a `group`, and each segment a `spinbutton` with `aria-valuenow`, `aria-valuemin`, `aria-valuemax` and `aria-valuetext`, which says "Empty" while it is. Name the group, and each segment after its part.
+ * The group is one tab stop, on the segment focused last.
+ *
+ * | Key | Does |
+ * | --- | --- |
+ * | `ArrowRight` `ArrowLeft` | The next or previous segment, in reading order. |
+ * | `ArrowUp` `ArrowDown`, `PageUp` `PageDown` | Steps the segment by one, or by a larger step. |
+ * | `Home` `End` | The segment's smallest or largest value. |
+ * | Digits | Type into the segment, which hands on to the next once it is full. |
+ * | `Backspace` `Delete` | Clears the segment. |
+ * | `Enter` | Commits the value. |
  */
 export class SegmentedInputController<TSegment extends InputSegment = InputSegment, THost extends ReactiveControllerHost = ReactiveControllerHost> extends Controller implements EventListenerObject {
 	/** How long typing may pause before a buffered shortcut is handed over. */

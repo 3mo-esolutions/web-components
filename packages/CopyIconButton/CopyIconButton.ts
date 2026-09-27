@@ -35,6 +35,9 @@ Localizer.dictionaries.add('de', {
  *
  * @fires copy - Dispatched with the text which has been written to the clipboard.
  * @fires copyError - Dispatched with the reason the text could not be written to the clipboard.
+ *
+ * @accessibility
+ * The copy is announced in a `status`.
  */
 @component('mo-copy-icon-button')
 export class CopyIconButton extends Component {

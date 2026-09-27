@@ -4,6 +4,7 @@ import { Task, TaskStatus as TaskStaus, type TaskConfig } from '@lit/task'
 import { Throttler } from '@3mo/throttler'
 import { Enqueuer } from './index.js'
 
+/** A Lit task that fetches whenever its arguments change, throttled, and discards the results of fetches that were superseded. */
 export class FetcherController<T = unknown, A extends ReadonlyArray<unknown> = readonly unknown[]> extends Task<A, T> {
 	protected readonly fetchEnqueuer = new Enqueuer()
 	protected readonly throttler = new Throttler(this.options?.throttle ?? 0)

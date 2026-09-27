@@ -10,7 +10,9 @@ export type SwipeabilityState = 'idle' | 'swiping'
 export type SwipeabilityPointerType = 'mouse' | 'pen' | 'touch'
 
 export type SwipeabilityControllerOptions = {
+	/** The element a gesture starts on, which the host moves. */
 	readonly surface?: HTMLElement | undefined
+	/** The axis the surface moves along. */
 	readonly axis: SwipeabilityAxis
 	/** The way along the axis in which offsets grow. Logical: on the inline axis it follows the writing direction. */
 	readonly direction: SwipeabilityDirection
@@ -18,6 +20,7 @@ export type SwipeabilityControllerOptions = {
 	readonly detents: Array<number>
 	/** The rest position the surface currently sits at. Defaults to the last settled detent. */
 	readonly detent?: number
+	/** Ignores gestures as long as this is `true`. */
 	readonly disabled?: boolean
 	/** The kinds of pointer which may start a gesture. Defaults to all of them. */
 	readonly pointerTypes?: Array<SwipeabilityPointerType>
@@ -25,6 +28,7 @@ export type SwipeabilityControllerOptions = {
 	readonly threshold?: number
 	/** Speed which commits to the next detent however short the gesture, in px/s. Defaults to 400. */
 	readonly velocityThreshold?: number
+	/** Called when a gesture is claimed as a swipe. */
 	handleSwipeStart?(): void
 	/** The offset the surface is to be placed at, in pixels, as the gesture moves. */
 	handleSwipe?(offset: number): void
@@ -33,31 +37,8 @@ export type SwipeabilityControllerOptions = {
 }
 
 /**
- * Drags a surface along one axis between rest positions.
- *
- * It measures and decides only - placing and animating the surface is the caller's, which is what
- * lets one surface be moved by a transform, another by a scroll position, and a third by layout.
- * A release commits to the next detent once it has covered a fraction of the way there, or on the
- * strength of a flick, and returns to where it started when the flick reverses. The surface never
- * leaves the span of its detents: there is nothing out there for it to occupy.
- *
- * The first movement decides whose gesture it is: the browser's if it runs across the axis or if
- * something beneath the finger can still scroll that way, otherwise the surface's - claimed by
- * preventing the touch's default, since a touch left to the browser goes on panning the page and
- * cancels the pointer out from under the gesture.
- *
- * Options are usually provided as a factory, whose host parameter enables getter-backed,
- * lazily-read options right in a field initializer:
- *
- * ```ts
- * readonly swipeability = new SwipeabilityController(this, host => ({
- *     axis: 'inline',
- *     direction: 'start',
- *     get surface() { return host },
- *     get detents() { return [0, host.actionsWidth] },
- *     handleSwipe: offset => host.offset = offset,
- * }))
- * ```
+ * Drags a surface along one axis between rest positions, called detents.
+ * It measures and decides only - placing and animating the surface is up to the host.
  *
  * @ssr true
  */

@@ -2,12 +2,8 @@ import { Component, component, css, event, html, isServer, property, repeat } fr
 import { SlotController } from '@3mo/slot-controller'
 
 /**
- * A container which holds several pieces of content and transitions between them, showing only one at a time.
- *
- * It is meant for content which is small enough to share a single box, such as the icon of a button, a short
- * label or a status chip, as all slots occupy the same grid cell and the swap therefore takes the size of its
- * largest one. This is what keeps a swap from resizing while it transitions. Switching between whole views is
- * the job of a tab or a router instead.
+ * A box that transitions between several pieces of content, such as the icon or label of a button, showing one at a time.
+ * It takes the size of the largest, so it never resizes while it transitions.
  *
  * @element mo-swap
  *

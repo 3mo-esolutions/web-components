@@ -5,6 +5,8 @@ import '@3mo/expand-collapse-icon-button'
 import { listItem, listItems } from './extensions.js'
 
 /**
+ * A list item that opens into the nested items below it.
+ *
  * @element mo-collapsible-list-item
  *
  * @attr open - Whether the list item is open

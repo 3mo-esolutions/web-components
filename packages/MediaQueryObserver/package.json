@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/media-query-observer",
 	"version": "0.1.0",
-	"description": "A lit controller for observing media queries.",
+	"description": "A Lit controller for media queries that re-renders its host whenever the match changes.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/MediaQueryObserver"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -14,7 +18,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/behaviors-media-query-observer--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

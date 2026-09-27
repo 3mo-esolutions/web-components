@@ -23,8 +23,11 @@ Localizer.dictionaries.add({
 })
 
 /**
- * @prop modesAdapter - Adapter for modes storage. Defaults to IndexedDbAdapter.
- * @fires modeChange
+ * A fetchable data grid whose users save its filters, sorting, columns and pagination as named views, in a bar above it.
+ * Subclass it to give it its columns, filters and `fetch`.
+ *
+ * @prop modesAdapter - Where the views are kept. Defaults to an `IndexedDbAdapter`.
+ * @fires modeChange - The view applied, or none, each time a view is selected or cleared.
  */
 export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataGridParametersType = Record<string, never>, TDetailsElement extends Element | undefined = undefined> extends FetchableDataGrid<TData, TParameters, TDetailsElement> {
 	static defaultAdapter: Constructor<ModdableDataGridModesAdapter<any, any>> = IndexedDbAdapter

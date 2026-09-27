@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/virtualized-list",
 	"version": "0.1.0",
-	"description": "A virtualized list web-component based on Lit Virtualizer",
+	"description": "A web component for virtualized lists that render list items from data only while they are in view.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/VirtualizedList"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -15,7 +19,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/data-virtualized-list--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

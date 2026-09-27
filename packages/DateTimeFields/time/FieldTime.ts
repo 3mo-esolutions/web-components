@@ -11,9 +11,7 @@ Localizer.dictionaries.add('de', {
 })
 
 /**
- * A time-of-day field. Its value is the 24-hour `HH:mm` (or `HH:mm:ss` at second precision) string the
- * native time input uses, so that it drops in where one was, while the segments follow the language's
- * own clock — "02:07 PM" for English, "14:07" for German — and the popover offers the hour and minute wheels.
+ * A time-of-day field whose value is the `HH:mm` string of a native time input, while its segments follow the language's clock.
  *
  * Its behaviour is {@link FieldTimeController}, for a time field of another design.
  *
@@ -32,6 +30,10 @@ Localizer.dictionaries.add('de', {
  * @csspart literal - A separator between the units
  *
  * @i18n "Time"
+ *
+ * @accessibility
+ * The segments follow the [segmented input](?path=/docs/behaviors-segmented-input--overview): a `group` named after the `label`, with one `spinbutton` per part, and one tab stop for the group. `aria-invalid`, `aria-required` and `aria-readonly` follow the field.
+ * `Alt` `ArrowDown` opens the picker. The picker's calendar cannot be operated with the keyboard yet, so the segments are the keyboard's way in.
  */
 @component('mo-field-time')
 export class FieldTime extends FieldComponent<string> {

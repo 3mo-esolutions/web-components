@@ -9,16 +9,18 @@ export enum SymbolVariant {
 }
 
 /**
+ * A Material symbol, drawn from the variable Material Symbols font by name.
+ *
  * @element mo-symbol
  *
  * @ssr true - The font should be provided manually when using SSR.
  *
- * @attr variant - The variant of the symbol tied to a specific font.
- * @attr icon - The symbol to display.
- * @attr fill - The fill of the symbol.
- * @attr weight - The weight of the symbol.
- * @attr grade - The grade of the symbol.
- * @attr opticalScale - The optical scale of the symbol.
+ * @attr variant - The style, each a font of its own: `rounded` (default), `outlined` or `sharp`.
+ * @attr icon - The name of the symbol, e.g. `delete`.
+ * @attr fill - `1` fills the symbol, `0` outlines it.
+ * @attr weight - The stroke weight, from `100` to `700`.
+ * @attr grade - Fine-tunes the stroke thickness without changing the size, from `-50` to `200`.
+ * @attr opticalScale - The size in pixels the strokes are optimized for, from `20` to `48`.
  */
 @component('mo-symbol')
 export class Symbol extends Component {

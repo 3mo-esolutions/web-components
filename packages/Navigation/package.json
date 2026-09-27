@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/navigation",
 	"version": "0.1.4",
-	"description": "Application navigation presented as a bar, a rail or a drawer, with an orchestrator which picks the one that fits",
+	"description": "Web components for app shells whose navigation shows as a bar, a rail or a drawer, whichever fits the space.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/Navigation"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -17,7 +21,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/layout-navigation--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

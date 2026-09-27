@@ -6,6 +6,19 @@ Localizer.dictionaries.add('de', {
 	'Sign out': 'Abmelden'
 })
 
+/**
+ * The signed-in user's initials, which open a menu with their name, their email and menu items of your own.
+ *
+ * @element mo-user-avatar
+ *
+ * @attr open - Whether the menu is open.
+ * @attr name - The user's full name, whose first and last initials the avatar shows. Without it, nobody is signed in.
+ * @attr email - The email shown under the name in the menu.
+ *
+ * @slot - Menu items, shown below the user and above the sign-out item that an application with an authenticator adds.
+ *
+ * @fires openChange - Whether the menu is open, whenever that changes.
+ */
 @component('mo-user-avatar')
 export class UserAvatar extends Component {
 	@event() readonly openChange!: EventDispatcher<boolean>

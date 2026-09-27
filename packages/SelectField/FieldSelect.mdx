@@ -1,0 +1,54 @@
+import { Meta, DocsStory } from '@storybook/addon-docs/blocks'
+import { Hero, Install, Playground, Accessibility, Api, Changelog } from '../../.storybook/blocks'
+import * as FieldSelectStories from './FieldSelect.stories'
+
+<Meta of={FieldSelectStories} />
+
+<Hero />
+<Install />
+<Playground />
+
+## Options and values
+
+The field's options are `mo-option` elements. The selection is one thing seen three ways - the option's `value`, its position as `index` and the `data` it carries - so set whichever you have and read the one you need.
+
+<DocsStory of={FieldSelectStories.Value} />
+<DocsStory of={FieldSelectStories.IndexAndData} />
+<DocsStory of={FieldSelectStories.DefaultOption} />
+
+## Option content
+
+An option holds any content, while the input shows its text or its `inputText`. Long lists scroll, and the menu opens at the selection.
+
+<DocsStory of={FieldSelectStories.OptionContent} />
+<DocsStory of={FieldSelectStories.SubgridLayout} />
+<DocsStory of={FieldSelectStories.ValueFarDownTheList} />
+
+## Multiple
+
+With `multiple`, the value, index and data are arrays, and the menu stays open while options are picked.
+
+<DocsStory of={FieldSelectStories.Multiple} />
+
+## Search and free input
+
+`searchable` filters the options as the user types. `freeInput` also keeps text that matches none of them.
+
+<DocsStory of={FieldSelectStories.Searchable} />
+<DocsStory of={FieldSelectStories.FreeInput} />
+
+## Actions and states
+
+A list item among the options is an action rather than a choice.
+
+<DocsStory of={FieldSelectStories.Actions} />
+<DocsStory of={FieldSelectStories.States} />
+
+## Fetched options
+
+Options that come from a server belong in the [Fetchable Select Field](?path=/docs/inputs-fetchable-select-field--overview), which fetches them and can search on the server as the user types.
+
+<Accessibility />
+
+<Api />
+<Changelog />

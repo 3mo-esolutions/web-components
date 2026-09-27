@@ -42,4 +42,5 @@ class IntersectionDirective extends AsyncDirective {
 	}
 }
 
+/** A directive that calls back whenever the element it sits on crosses a threshold of its visibility in the root, the viewport by default. */
 export const observeIntersection = directive(IntersectionDirective)

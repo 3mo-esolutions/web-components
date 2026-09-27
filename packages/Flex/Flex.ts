@@ -18,17 +18,19 @@ const flexDirectionConverter = {
 }
 
 /**
+ * A flex container whose attributes set the flexbox properties of its host.
+ *
  * @element mo-flex
  *
  * @ssr true
  *
- * @attr direction
- * @attr wrap
- * @attr gap
- * @attr justifyItems
- * @attr justifyContent
- * @attr alignItems
- * @attr alignContent
+ * @attr direction - The direction items flow in, mapped to `flex-direction`; vertical by default
+ * @attr wrap - Whether items wrap onto multiple lines, mapped to `flex-wrap`
+ * @attr gap - The gap between items, mapped to `gap`
+ * @attr justifyItems - Mapped to `justify-items`
+ * @attr justifyContent - Places the items along the main axis, mapped to `justify-content`
+ * @attr alignItems - Places the items along the cross axis, mapped to `align-items`
+ * @attr alignContent - Places the lines of wrapped items, mapped to `align-content`
  *
  * @slot - The content of the flex container.
  */

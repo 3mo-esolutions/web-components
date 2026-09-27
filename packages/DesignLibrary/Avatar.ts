@@ -1,5 +1,12 @@
 import { html, component, Component, css } from '@a11d/lit'
 
+/**
+ * A circle in the accent color holding initials or an icon, such as a person's.
+ *
+ * @element mo-avatar
+ *
+ * @slot - The initials or icon.
+ */
 @component('mo-avatar')
 export class Avatar extends Component {
 	static override get styles() {

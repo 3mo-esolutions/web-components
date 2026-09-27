@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/moddable-data-grid",
 	"version": "0.8.4",
-	"description": "A moddable variant of @3mo/fetchable-data-grid",
+	"description": "A web component for fetchable data grids with user-saved views of columns, sorting and filters, stored in IndexedDB.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/ModdableDataGrid"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -17,7 +21,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/data-data-grids-moddable-data-grid--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

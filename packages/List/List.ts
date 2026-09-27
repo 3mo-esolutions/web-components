@@ -3,11 +3,17 @@ import { SlotController } from '@3mo/slot-controller'
 import { listItems } from './extensions.js'
 
 /**
+ * A list of items, such as `mo-list-item`s and the ones with a checkbox, switch or radio button.
+ *
  * @element mo-list
  *
- * @slot - Default slot for list items
+ * @slot - The list items.
  *
  * @fires itemsChange - Dispatched when the list items change
+ *
+ * @accessibility
+ * A `list` of `listitem`s: every item is a tab stop, and `Enter` and `Space` click it. For a choice among the items use `mo-selectable-list`, a [listbox](?path=/docs/behaviors-listbox--overview).
+ * `ArrowRight` opens a `mo-collapsible-list-item` and `ArrowLeft` closes it. It does not announce whether it is open yet, and the two keys do not swap in a right-to-left language.
  */
 @component('mo-list')
 export class List extends Component {

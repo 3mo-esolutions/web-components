@@ -2,7 +2,11 @@ import { component, css, html, live } from '@a11d/lit'
 import { Color } from '@3mo/color'
 import { InputFieldComponent } from '@3mo/field'
 
-/** @element mo-field-color */
+/**
+ * A field for a color, typed as a hex code or picked from a swatch that opens the browser's color picker.
+ *
+ * @element mo-field-color
+ */
 @component('mo-field-color')
 export class FieldColor extends InputFieldComponent<Color> {
 	override value?: Color

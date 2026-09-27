@@ -5,3 +5,4 @@ await Promise.all([
 	run('node ./scripts/changelog.ts'),
 ])
 await run('storybook build -o docs-dist')
+await run('node ./scripts/llms.ts docs-dist')

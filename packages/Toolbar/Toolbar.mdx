@@ -1,0 +1,32 @@
+import { Meta, DocsStory } from '@storybook/addon-docs/blocks'
+import { Hero, Install, Playground, Accessibility, Api, Changelog } from '../../.storybook/blocks'
+import * as ToolbarStories from './Toolbar.stories'
+
+<Meta of={ToolbarStories} />
+
+<Hero />
+<Install />
+<Playground />
+
+## Overflow
+
+The toolbar measures its items and moves those that do not fit into the menu behind its overflow button. Moving an item only reassigns its slot, so it is the same element in either place.
+
+<DocsStory of={ToolbarStories.PinnedItems} />
+<DocsStory of={ToolbarStories.Collapsed} />
+<DocsStory of={ToolbarStories.OverflowButton} />
+
+## Your own toolbar
+
+`ToolbarController` is what `mo-toolbar` is built on: it moves the host's items between a pane slot, measured through a `mo-toolbar-pane`, and an overflow slot you project wherever you like. It does the measuring with the [Overflow Controller](?path=/docs/behaviors-overflow-controller--overview).
+
+<DocsStory of={ToolbarStories.WithController} />
+
+## Styling
+
+<DocsStory of={ToolbarStories.Parts} />
+
+<Accessibility />
+
+<Api />
+<Changelog />

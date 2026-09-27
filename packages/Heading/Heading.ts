@@ -12,13 +12,18 @@ export enum HeadingTypography {
 }
 
 /**
+ * Text set in one of the heading or subtitle typography levels.
+ *
  * @element mo-heading
  *
  * @ssr true
  *
- * @attr typography - The typography of the heading.
+ * @attr typography - The level, from `heading1` (largest) to `heading6`, or `subtitle1` and `subtitle2`; `heading3` by default.
  *
- * @slot - The content of the heading.
+ * @slot - The text of the heading.
+ *
+ * @accessibility
+ * It only sets the typography: give it `role='heading'` and `aria-level`, or use `h1` to `h6`.
  */
 @component('mo-heading')
 export class Heading extends Component {

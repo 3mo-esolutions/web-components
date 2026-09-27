@@ -3,12 +3,14 @@ import { MdLinearProgress } from '@material/web/progress/linear-progress.js'
 import '@3mo/theme'
 
 /**
+ * A horizontal bar showing progress, or activity of unknown length.
+ *
  * @element mo-linear-progress
  *
  * @ssr true
  *
- * @attr progress - The progress value. If not set, the progress will be indeterminate.
- * @attr buffer - The buffer value of the progress
+ * @attr progress - The progress from `0` to `1`. With neither this nor `buffer` set, the progress is indeterminate.
+ * @attr buffer - The buffered part from `0` to `1`, shown ahead of the progress.
  * @attr reverse - Reverses the direction of the progress
  *
  * @cssprop --mo-linear-progress-accent-color - The color of the progress

@@ -3,10 +3,13 @@ import { Controller, EventListenerController, type EventListenerTarget, type Rea
 export type FocusMethod = 'pointer' | 'keyboard' | 'programmatic'
 
 export interface FocusControllerOptions {
+	/** Where to listen for focus instead of the host. */
 	target?: EventListenerTarget
+	/** Called when the focus enters or leaves the host, with whether that happened on a descendant and by which method. */
 	handleChange?(focused: boolean, bubbled: boolean, method: FocusMethod): void
 }
 
+/** Tracks whether the focus is within the host, and whether a pointer, the keyboard or a script put it there. */
 export class FocusController extends Controller {
 	/** The innermost focused element, descending into shadow roots. */
 	static get activeElement() {

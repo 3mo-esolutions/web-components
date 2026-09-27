@@ -1,0 +1,6 @@
+{
+	"name": "@3mo/photo-archive-recipe",
+	"description": "A recipe for a photo archive: a data grid of photos filtered by album, with previews, a context menu and a details dialog.",
+	"private": true,
+	"type": "module"
+}

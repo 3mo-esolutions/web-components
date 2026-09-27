@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/style-property",
 	"version": "1.1.0",
-	"description": "A decorator to add a property to a Reactive Element which is used to set a style property on the host element.",
+	"description": "A decorator for component properties backed by one of the host's inline styles, CSS custom properties included.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/styleProperty"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -14,7 +18,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/utilities-style-property--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

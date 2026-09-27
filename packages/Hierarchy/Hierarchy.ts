@@ -1,3 +1,4 @@
+/** A node of a {@link Hierarchy}: its datum and key, and its place in the tree. */
 export class HierarchyNode<T> {
 	/** `undefined` for a leaf and for a node whose children are not loaded yet. */
 	readonly children: ReadonlyArray<HierarchyNode<T>> | undefined = undefined
@@ -58,18 +59,8 @@ export interface HierarchyOptions<T> {
 }
 
 /**
- * A hierarchy as the flat, ordered sequence every item-wise controller reads: the nodes in pre-order,
- * each knowing its parent, level, position and set size, plus what is visible under an expansion state
- * and what survives a filter.
- *
- * ```ts
- * const model = new Hierarchy<Folder>({ children: folder => folder.folders, key: folder => folder.path })
- * model.roots = folders
- * model.visible({ isExpanded: node => expanded.has(node.key) })
- * ```
- *
- * The nodes are derived once and memoised until `roots` is assigned, children are loaded or
- * {@link invalidate} is called. {@link visible} walks them per call; memoise it where that matters.
+ * A hierarchy flattened into its nodes in pre-order, each knowing its parent, level, position and set size, plus what is visible and what survives a filter.
+ * The nodes are memoized until `roots` is assigned, children are loaded or {@link invalidate} is called; {@link visible} walks them per call.
  */
 export class Hierarchy<T> {
 	constructor(private readonly options: HierarchyOptions<T>) { }

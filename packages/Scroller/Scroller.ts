@@ -3,9 +3,13 @@ import { styleProperty } from '@3mo/style-property'
 import type * as CSS from 'csstype'
 
 /**
+ * A scroll container with a thin, themable scrollbar.
+ *
+ * @element mo-scroller
+ *
  * @slot - The content of the scroller
  *
- * @attr snapType - The scroll snap type
+ * @attr snapType - The scroll snap type, mapped to `scroll-snap-type`
  *
  * @cssprop --mo-scroller-thumb-color - The color of the scroller thumb
  * @cssprop --mo-scroller-track-color - The color of the scroller track

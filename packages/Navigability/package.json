@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/navigability",
 	"version": "0.1.2",
-	"description": "A controller that keeps the current item of a composite widget: arrow keys, Home/End, paging, typeahead, and a roving or activedescendant focus strategy",
+	"description": "A Lit controller for the current item of a composite widget, moved by arrow keys, Home, End, paging and typeahead.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/Navigability"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -18,7 +22,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/behaviors-navigability--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

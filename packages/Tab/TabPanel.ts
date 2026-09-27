@@ -3,22 +3,14 @@ import { Component, component, css, html, property } from '@a11d/lit'
 /**
  * One view of a tabbed interface: the content which a single tab reveals.
  *
- * It is the "tabpanel" of the ARIA tabs pattern and belongs into a "mo-tabs", which pairs it with the tab
- * carrying the same "value", names it after that tab and shows it while that tab is active. On its own it
- * shows nothing, as nothing activates it.
- *
- * Its content stays in the DOM while another panel is shown, so scroll offsets, form state and anything
- * already fetched survive a switch. Content which must not survive one is better rendered conditionally.
- *
- * The panel is always focusable, which ARIA asks for wherever a panel holds nothing focusable itself - which
- * cannot be told from the outside once the content sits behind a shadow root. Set "tabindex" to opt out.
+ * It belongs into a `mo-tabs` and stays in the DOM while hidden. It is focusable unless it is given a `tabindex`.
  *
  * @element mo-tab-panel
  *
- * @attr value - Pairs the panel with the tab of the same "value".
- * @attr active - Whether this is the panel being shown. The tabs writes it; it is meant to be read and styled, as in "mo-tab-panel[active]".
+ * @attr value - Pairs the panel with the tab of the same `value`
+ * @attr active - Whether this is the panel being shown; set by `mo-tabs`, meant to be read and styled
  *
- * @slot - The content of the panel.
+ * @slot - The content of the panel
  */
 @component('mo-tab-panel')
 export class TabPanel extends Component {

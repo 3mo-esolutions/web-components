@@ -8,22 +8,24 @@ const asteriskSyntaxConverter = {
 }
 
 /**
+ * A grid container whose attributes set the grid properties of its host.
+ *
  * @element mo-grid
  *
  * @ssr true
  *
- * @attr rows
- * @attr columns
- * @attr autoRows
- * @attr autoColumns
- * @attr autoFlow
- * @attr rowGap
- * @attr columnGap
- * @attr gap
- * @attr justifyItems
- * @attr justifyContent
- * @attr alignItems
- * @attr alignContent
+ * @attr rows - The row tracks, mapped to `grid-template-rows`; `*` stands for `1fr` and `2*` for `2fr`
+ * @attr columns - The column tracks, mapped to `grid-template-columns`; `*` stands for `1fr` and `2*` for `2fr`
+ * @attr autoRows - The size of implicitly created rows, mapped to `grid-auto-rows`
+ * @attr autoColumns - The size of implicitly created columns, mapped to `grid-auto-columns`
+ * @attr autoFlow - How items are placed automatically, mapped to `grid-auto-flow`
+ * @attr rowGap - The gap between rows, mapped to `row-gap`
+ * @attr columnGap - The gap between columns, mapped to `column-gap`
+ * @attr gap - The gap between rows and columns, mapped to `gap`
+ * @attr justifyItems - Places the items in their cells along the inline axis, mapped to `justify-items`
+ * @attr justifyContent - Places the tracks along the inline axis, mapped to `justify-content`
+ * @attr alignItems - Places the items in their cells along the block axis, mapped to `align-items`
+ * @attr alignContent - Places the tracks along the block axis, mapped to `align-content`
  *
  * @slot - The content of the grid container.
  */

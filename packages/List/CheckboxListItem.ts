@@ -3,6 +3,8 @@ import { SelectionListItemWithControl } from './SelectionListItemWithControl.js'
 import { Checkbox } from '@3mo/checkbox'
 
 /**
+ * A list item with a checkbox, which a press anywhere on the item toggles.
+ *
  * @element mo-checkbox-list-item
  *
  * @attr selectionControlAlignment - The alignment of the checkbox relative to the list item content

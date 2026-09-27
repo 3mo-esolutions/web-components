@@ -1,0 +1,29 @@
+import { Meta, Canvas, Description, DocsStory } from '@storybook/addon-docs/blocks'
+import { Hero, Install, Playground, Changelog } from '../../.storybook/blocks'
+import * as ModdableDataGridStories from './ModdableDataGrid.stories'
+
+<Meta of={ModdableDataGridStories} />
+
+<Hero />
+<Install />
+<Playground />
+
+## A grid of your own
+
+`ModdableDataGrid` has no element of its own: a subclass gives it its columns in `columnsTemplate`, its filters in `toolbarDefaultTemplate`, bound to `parameters`, and its `fetch`, as the code of the grid above shows.
+
+## Views
+
+A view saves the grid's `parameters`, sorting, columns and pagination under a name, and selecting it applies them again. Views can be reordered by dragging their chips, copied, edited and moved to an archive.
+
+<Description of={ModdableDataGridStories.ArchivedViews} />
+<Canvas of={ModdableDataGridStories.ArchivedViews} />
+
+## Storage
+
+The views are kept by the grid's `modesAdapter`, which implements `ModdableDataGridModesAdapter` and can store them anywhere, on a server for instance.
+
+<DocsStory of={ModdableDataGridStories.NoViews} />
+<DocsStory of={ModdableDataGridStories.IndexedDb} />
+
+<Changelog />

@@ -6,13 +6,17 @@ export enum FieldPairMode {
 }
 
 /**
+ * A field joined with an attachment, such as a unit or a country code, into one seamless control.
+ *
  * @element mo-field-pair
  *
- * @attr mode
- * @attr reversed
+ * @attr mode - `attach` places the attachment beside the field, `overlay` lays it over the field's top corner at the end
+ * @attr reversed - Puts the attachment before the field
  *
- * @slot - Field
- * @slot attachment - Attachment
+ * @slot - The field
+ * @slot attachment - The field attached to it
+ *
+ * @cssprop --mo-field-pair-attachment-width - The attachment's width, 100px by default
  */
 @component('mo-field-pair')
 export class FieldPair extends Component {

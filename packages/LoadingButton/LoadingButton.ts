@@ -3,8 +3,12 @@ import { Button } from '@3mo/button'
 import '@3mo/circular-progress'
 
 /**
- * @attr loading
- * @attr preventClickEventInference
+ * A `mo-button` that shows a progress while the promise returned by its `click` handler is pending.
+ *
+ * @element mo-loading-button
+ *
+ * @attr loading - Shows the progress and ignores presses.
+ * @attr preventClickEventInference - Ignores the promises returned by `click` handlers, leaving `loading` to the consumer.
  */
 @component('mo-loading-button')
 export class LoadingButton extends Button {

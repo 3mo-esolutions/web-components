@@ -1,54 +1,38 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite'
-import { Component, css, html, state, style } from '@a11d/lit'
-import p from './package.json'
-import { FocusController as FocusC } from './FocusController.js'
+import { html } from '@a11d/lit'
+import { sourceOf } from '../../.storybook/source.js'
+import focusTrackerSource from './stories/FocusTracker.ts?raw'
+import './stories/FocusTracker.js'
 
 export default {
-	title: 'Utilities / Focus Controller',
-	package: p,
-} as Meta
+	title: 'Behaviors / Focus Controller',
+	decorators: [story => html`<div style='display: flex; flex-wrap: wrap; align-items: center; gap: 16px'>${story()}</div>`],
+} satisfies Meta
 
-class StoryFocusController extends Component {
-	@state() protected focused = false
-	@state() protected bubbled = false
-	@state() protected method = ''
-
-	protected readonly focusController = new FocusC(this, {
-		handleChange: (focused, bubbled, method) => [this.focused, this.bubbled, this.method] = [focused, bubbled, method],
-	})
-
-	static override get styles() {
-		return css`
-			:host {
-				display: inline-block;
-			}
-		`
-	}
-
-	protected override get template() {
-		const focusText = this.focused ? 'focused' : 'not focused'
-		const bubbleText = this.bubbled ? '(bubbled)' : ''
-		const methodText = this.focused && this.method ? `using method "${this.method}"` : ''
-		return html`
-			<mo-flex direction='horizontal' ${style({ position: 'relative', border: !this.focused ? '2px dashed var(--mo-color-red)' : '2px dashed var(--mo-color-green)', padding: '50px' })}>
-				<mo-flex gap='10px' style='width: 300px'>
-					<mo-button type='outlined'>Focusable element 1</mo-button>
-					<div type='outlined' style='border: 2px dashed var(--mo-color-gray); padding: 10px; width: 100%; box-sizing: border-box;'>Non focusable element</div>
-					<div tabindex='0' type='outlined' style='border: 2px dashed var(--mo-color-accent); padding: 10px; width: 100%; box-sizing: border-box;'>Focusable element 2</div>
-				</mo-flex>
-				<span ${style({ position: 'absolute', color: !this.focused ? 'var(--mo-color-red)' : 'var(--mo-color-green)', right: '8px', bottom: '8px' })}>${focusText} ${bubbleText} ${methodText}</span>
-			</mo-flex>
-		`
-	}
+/** Tab into the box, or click into it, and out again: the focus is reported as bubbled from a descendant, by keyboard or by pointer. */
+export const Default: StoryObj = {
+	parameters: sourceOf(focusTrackerSource),
+	render: () => html`
+		<story-focus-tracker>
+			<mo-button type='outlined'>Focusable</mo-button>
+			<div>Not focusable</div>
+			<div tabindex='0'>Focusable</div>
+		</story-focus-tracker>
+		<mo-button type='outlined'>Outside</mo-button>
+	`,
 }
 
-customElements.define('story-focus-controller', StoryFocusController)
-
-export const FocusController: StoryObj = {
+/** A host which takes the focus itself reports it as not bubbled. */
+export const FocusedItself: StoryObj = {
 	render: () => html`
-		<div>
-			<story-focus-controller></story-focus-controller>
-			<mo-button type='outline' style='width: auto'>Outside</mo-button>
-		</div>
-	`
+		<story-focus-tracker tabindex='0'>Focusable box</story-focus-tracker>
+	`,
+}
+
+/** Focus moved by `focus()` rather than by the user is reported as `programmatic`. */
+export const Programmatic: StoryObj = {
+	render: () => html`
+		<mo-button type='outlined' @click=${(event: Event) => ((event.currentTarget as Element).nextElementSibling as HTMLElement).focus()}>Focus from script</mo-button>
+		<story-focus-tracker tabindex='0'>Focusable box</story-focus-tracker>
+	`,
 }

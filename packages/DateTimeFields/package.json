@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/date-time-fields",
 	"version": "0.17.0",
-	"description": "Date time fields let people select dates, date-ranges, and times.",
+	"description": "Web components for date, date-time, time and range fields with locale-aware segmented entry and a calendar picker.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/DateTimeFields"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -16,7 +20,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/inputs-date-time-fields-date-field--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

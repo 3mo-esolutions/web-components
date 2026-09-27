@@ -1,3 +1,4 @@
+/** Downloads a file from a URL, a blob or data URL included, under the given name. */
 export class Downloader {
 	static download(url: string, name?: string) {
 		const link = document.createElement('a')

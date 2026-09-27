@@ -1,6 +1,7 @@
 import { apiValueConstructor, type ApiValueConstructor } from '@a11d/api'
 import '@3mo/date-time'
 
+/** An API value constructor that revives the ISO date strings of API responses as `DateTime`s and sends dates as ISO strings. It registers itself on import. */
 @apiValueConstructor()
 export class DateTimeValueConstructor implements ApiValueConstructor<DateTime, string> {
 	private static readonly regex = /(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))/

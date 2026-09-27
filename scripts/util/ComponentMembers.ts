@@ -1,5 +1,6 @@
 import ts from 'typescript'
 import Path from 'path'
+import { ModuleExports } from './ModuleExports.ts'
 
 /** A member together with its source file, which has to be passed explicitly as program nodes carry no parent pointers. */
 interface Declaration {
@@ -10,11 +11,13 @@ interface Declaration {
 class ClassMembers {
 	readonly staticMembers = new Set<string>()
 	readonly instanceMembers = new Map<string, Declaration>()
+	readonly declaration: ts.ClassDeclaration
 	readonly className: string
 	readonly tagName: string | undefined
 	readonly baseClassName: string | undefined
 
-	constructor(className: string, tagName: string | undefined, baseClassName: string | undefined) {
+	constructor(declaration: ts.ClassDeclaration, className: string, tagName: string | undefined, baseClassName: string | undefined) {
+		this.declaration = declaration
 		this.className = className
 		this.tagName = tagName
 		this.baseClassName = baseClassName
@@ -66,6 +69,7 @@ export class ComponentMembers {
 
 	private static getClassMembers(declaration: ts.ClassDeclaration, sourceFile: ts.SourceFile) {
 		const classMembers = new ClassMembers(
+			declaration,
 			declaration.name!.text,
 			this.getTagName(declaration),
 			this.getBaseClassName(declaration),
@@ -123,12 +127,26 @@ export class ComponentMembers {
 		}
 	}
 
+	/** The JSDoc text of a declaration, with each `{@link X}` written as code, which the analyzer emits as "[object Object]". */
+	private static documentation(declaration: ts.NamedDeclaration | undefined) {
+		const symbol = !declaration?.name ? undefined : this.checker.getSymbolAtLocation(declaration.name)
+		return ts.displayPartsToString(symbol?.getDocumentationComment(this.checker))
+			.replace(/\{@link(?:code|plain)?\s+([^\s|}]+)(?:[\s|]+([^}]+))?\}/g, (_, target: string, text?: string) => `\`${text?.trim() || target}\``)
+			.trim() || undefined
+	}
+
+	/** Whether the class of that name registers an element through `@component`. */
+	static isElement(className: string) {
+		return !!this.classesByName.get(className)?.tagName
+	}
+
 	/** Resolves the members of the element with the given tag name, including inherited ones. */
 	static of(tagName: string) {
 		const staticMembers = new Set<string>()
 		const instanceMembers = new Map<string, Declaration>()
 
-		let classMembers = this.classesByTagName.get(tagName)
+		const elementClass = this.classesByTagName.get(tagName)
+		let classMembers = elementClass
 		const visited = new Set<ClassMembers>()
 		while (classMembers && !visited.has(classMembers)) {
 			visited.add(classMembers)
@@ -153,6 +171,12 @@ export class ComponentMembers {
 			staticOnly: new Set([...staticMembers].filter(name => !instanceMembers.has(name))),
 			/** Corrections for members whose emitted type and default were taken from a static of the same name. */
 			corrections: new Map(shadowed.map(name => [name, this.describe(instanceMembers.get(name)!)])),
+			/** The element's `@accessibility` JSDoc section. */
+			accessibility: !elementClass ? undefined : ModuleExports.accessibilityOf(elementClass.declaration),
+			/** The JSDoc text of the element, or of one of its members. */
+			documentation: (memberName?: string) => this.documentation(memberName === undefined
+				? elementClass?.declaration
+				: instanceMembers.get(memberName)?.member),
 		}
 	}
 }

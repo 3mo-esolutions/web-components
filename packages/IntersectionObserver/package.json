@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/intersection-observer",
 	"version": "1.0.6",
-	"description": "A lit controller and directive for observing intersections.",
+	"description": "A Lit directive for observing an element in a template as it intersects the viewport, plus Lit's IntersectionController.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/IntersectionObserver"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -14,7 +18,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/behaviors-intersection-observer--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

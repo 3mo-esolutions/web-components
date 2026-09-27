@@ -3,9 +3,11 @@ import { Controller, PureEventDispatcher, type ReactiveElement } from '@a11d/lit
 export type PointerType = 'mouse' | 'touch' | 'pen'
 
 export interface PointerTypeControllerOptions {
+	/** Called when the user switches to another kind of pointer. */
 	handleTypeChange?(type: PointerType): void
 }
 
+/** Tracks which kind of pointer - mouse, touch or pen - the user last used anywhere in the document. */
 export class PointerTypeController extends Controller {
 	private static readonly change = new PureEventDispatcher<PointerType>()
 

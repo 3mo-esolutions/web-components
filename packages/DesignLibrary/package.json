@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/del",
 	"version": "0.6.4",
-	"description": "3MO Design Library to build business-suite web applications",
+	"description": "A bundle of the whole library, re-exported with Lit and the application framework, plus a business-suite app shell.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/DesignLibrary"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"3mo",
@@ -15,7 +19,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/getting-started-introduction--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

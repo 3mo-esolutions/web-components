@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/timeline",
 	"version": "0.0.5",
-	"description": "A timeline web components supporting horizontal and vertical layouts.",
+	"description": "Web components for vertical or horizontal timelines of items with an icon bullet, meta text and a connecting line.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/Timeline"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -13,7 +17,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/data-timeline--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

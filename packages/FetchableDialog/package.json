@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/fetchable-dialog",
 	"version": "0.2.0",
-	"description": "An extension of @3mo/loading-dialog that fetches an entity.",
+	"description": "A web component for dialogs that fetch their content and stay in a loading state until it arrives.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/FetchableDialog"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -15,7 +19,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://github.com/3mo-esolutions/web-components/tree/main/packages/FetchableDialog",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

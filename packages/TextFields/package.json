@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/text-fields",
 	"version": "0.1.0",
-	"description": "Text fields let users enter text into a UI",
+	"description": "Web components for text, email, search, password and multi-line fields, the password one with a reveal toggle.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/TextFields"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -21,7 +25,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/inputs-text-fields-text-field--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

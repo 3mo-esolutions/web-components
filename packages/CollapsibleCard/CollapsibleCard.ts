@@ -3,15 +3,17 @@ import { Card } from '@3mo/card'
 import { tooltip } from '@3mo/tooltip'
 
 /**
+ * A card whose body collapses down to its header with a toggle button.
+ *
  * @element mo-collapsible-card
  *
  * @ssr true
  *
- * @attr collapsed
- * @attr disableCollapse
- * @attr showSubHeadingOnlyWhenCollapsed
+ * @attr collapsed - Whether the body is collapsed
+ * @attr disableCollapse - Disables the toggle, keeping the card in its current state
+ * @attr showSubHeadingOnlyWhenCollapsed - Shows the sub-heading only while the card is collapsed
  *
- * @cssprop --mo-collapsible-card-transition-duration - The duration of the collapse and expand animation. Set to "0s" to opt out, e.g. when the collapsed state drives the layout of another element which cannot follow along.
+ * @cssprop --mo-collapsible-card-transition-duration - The duration of the collapse and expand animation; "0s" turns it off
  *
  * @i18n "Collapse"
  * @i18n "Expand"

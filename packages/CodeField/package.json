@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/code-field",
 	"version": "0.1.0",
-	"description": "A field for short codes — verification codes, one-time passwords and PINs — as one cell per character.",
+	"description": "A web component for verification codes, one-time passwords and PINs, entered one cell per character with autofill.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/CodeField"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -17,7 +21,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/inputs-code-field--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

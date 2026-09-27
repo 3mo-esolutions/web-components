@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/key",
 	"version": "0.1.0",
-	"description": "A web-component for visualizing platform-aware keyboard keys and shortcuts.",
+	"description": "A web component for keyboard keys and shortcuts rendered the platform's way, as ⌘K on Apple and Ctrl + K elsewhere.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/Key"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -16,7 +20,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/data-key--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

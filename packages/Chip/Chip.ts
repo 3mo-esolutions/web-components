@@ -13,12 +13,7 @@ Localizer.dictionaries.add('de', {
 })
 
 /**
- * A compact element representing an attribute, a selection, an entry the user made, or an action
- * contextual to what is on screen. Chips belong in a set — see `mo-chip-group`.
- *
- * The chip is one button — a native `<button>`, an `<a>` when `href` is given, an inert `<span>` when
- * `readonly` — and `start` and `end` are graphics inside it. The only things beside it are the remove
- * button and whatever a consumer puts in `action`, so pressing either never activates the chip.
+ * A compact element for an attribute, a choice, an entry the user made or a contextual action, set in a `mo-chip-group`.
  *
  * @element mo-chip
  *
@@ -47,6 +42,9 @@ Localizer.dictionaries.add('de', {
  * @fires requestSelect - Dispatched with the state the chip would take, before it takes it. Cancelable: a group prevents it and rules instead.
  * @fires change - Dispatched with the new state when the user toggles a selectable chip.
  * @fires requestRemove - Dispatched before the chip is removed. Cancelable. The chip never removes itself.
+ *
+ * @accessibility
+ * In a `mo-chip-group` the chips follow the pattern of a [selection group](?path=/docs/inputs-selection-group--overview). On a `removable` chip, `Backspace` and `Delete` fire `requestRemove`, and `ArrowRight` and `ArrowLeft` move between the chip and its remove button, which is named "Remove" and the chip's label.
  */
 @component('mo-chip')
 export class Chip extends Component {

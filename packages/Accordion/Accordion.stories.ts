@@ -1,95 +1,135 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite'
-import { html, live, style } from '@a11d/lit'
-import p from './package.json'
+import { html, live } from '@a11d/lit'
+import { useState } from 'storybook/preview-api'
+import type { AccordionValue } from './Accordion.js'
 import './index.js'
 import '@3mo/button'
 import '@3mo/flex'
 import '@3mo/icon'
 
+type Args = {
+	readonly multiple: boolean
+	readonly value: string
+}
+
 export default {
-	title: 'Layout & Containment / Accordion',
+	title: 'Layout / Accordion',
 	component: 'mo-accordion',
 	args: {
 		multiple: false,
 		value: 'shipping',
 	},
 	argTypes: {
-		multiple: { control: 'boolean' },
 		value: { control: 'inline-radio', options: ['', 'shipping', 'payment', 'returns'] },
-		onChange: { action: 'change' },
-		onOpenChange: { action: 'openChange' },
 	},
-	package: p,
-} as Meta
+} satisfies Meta<Args>
 
-const shipping = 'Orders placed before 4pm are dispatched the same day. Delivery takes two to four working days within the EU and up to ten elsewhere.'
-const payment = 'We accept every major card, SEPA direct debit and invoice for business customers. The amount is captured once the order ships.'
-const returns = 'Send anything back within 30 days of delivery and the refund goes to the original means of payment within a week of it reaching us.'
+type Story = StoryObj<Args>
 
-export const Accordion: StoryObj = {
-	// The accordion moves its own value on as it is used, so the controls write the live properties: an
-	// attribute binding would compare against what it last rendered and go quiet once the two have parted.
-	render: ({ multiple, value, onChange, onOpenChange }) => html`
-		<mo-accordion .multiple=${live(multiple)} .value=${live(value || undefined)} @change=${onChange} @openChange=${onOpenChange}>
-			<mo-accordion-item value='shipping' heading='Shipping'>${shipping}</mo-accordion-item>
-			<mo-accordion-item value='payment' heading='Payment'>${payment}</mo-accordion-item>
-			<mo-accordion-item value='returns' heading='Returns'>${returns}</mo-accordion-item>
+export const Default: Story = {
+	// The accordion moves its value on by itself, so the controls write the live properties rather than attributes.
+	render: ({ multiple, value }) => html`
+		<mo-accordion .multiple=${live(multiple)} .value=${live(value || undefined)}>
+			<mo-accordion-item value='shipping' heading='Shipping'>Orders placed before 4pm leave the same day.</mo-accordion-item>
+			<mo-accordion-item value='payment' heading='Payment'>Cards, SEPA direct debit and invoice.</mo-accordion-item>
+			<mo-accordion-item value='returns' heading='Returns'>Send anything back within 30 days.</mo-accordion-item>
 		</mo-accordion>
-	`
+	`,
 }
 
-/**
- * A heading is more than its text often enough: the "start" slot leads it with an icon and the "end" slot
- * trails it with whatever the item is worth summarizing by, so that a collapsed item still says something.
- * Both sit within the summary, which is a button — decorate it, but leave the controls to the content.
- */
-export const RichHeadings: StoryObj = {
+/** `multiple` lets several items stay open, and `value` is then an array. */
+export const Multiple: Story = {
+	render: () => html`
+		<mo-accordion multiple>
+			<mo-accordion-item value='shipping' heading='Shipping' open>Orders placed before 4pm leave the same day.</mo-accordion-item>
+			<mo-accordion-item value='payment' heading='Payment' open>Cards, SEPA direct debit and invoice.</mo-accordion-item>
+			<mo-accordion-item value='returns' heading='Returns'>Send anything back within 30 days.</mo-accordion-item>
+		</mo-accordion>
+	`,
+}
+
+/** `start` leads the heading with an icon and `end` trails it with a summary, so a closed item still says something. The summary is a button, so keep controls in the content. */
+export const RichHeadings: Story = {
 	render: () => html`
 		<mo-accordion multiple>
 			<mo-accordion-item value='shipping'>
 				<mo-icon slot='start' icon='local_shipping'></mo-icon>
 				<span slot='heading'>Shipping</span>
-				<span slot='end' ${style({ color: 'var(--mo-color-gray)' })}>2–4 days</span>
-				${shipping}
+				<span slot='end' style='color: var(--mo-color-gray)'>2–4 days</span>
+				Orders placed before 4pm leave the same day.
 			</mo-accordion-item>
-
 			<mo-accordion-item value='payment'>
 				<mo-icon slot='start' icon='credit_card'></mo-icon>
 				<span slot='heading'>Payment</span>
-				<span slot='end' ${style({ color: 'var(--mo-color-gray)' })}>4 methods</span>
-				${payment}
+				<span slot='end' style='color: var(--mo-color-gray)'>4 methods</span>
+				Cards, SEPA direct debit and invoice.
 			</mo-accordion-item>
-
 			<mo-accordion-item value='returns'>
 				<mo-icon slot='start' icon='assignment_return'></mo-icon>
 				<span slot='heading'>Returns</span>
-				<span slot='end' ${style({ color: 'var(--mo-color-gray)' })}>30 days</span>
-				${returns}
+				<span slot='end' style='color: var(--mo-color-gray)'>30 days</span>
+				Send anything back within 30 days.
 			</mo-accordion-item>
 		</mo-accordion>
-	`
+	`,
 }
 
-/**
- * An item which is disabled refuses the interaction, not the state — an accordion may still open it, which is
- * what a section that is unlocked further down a form needs.
- */
-export const Disabled: StoryObj = {
+/** A disabled item refuses clicks, not the state: the accordion's `value` can still open it. */
+export const Disabled: Story = {
 	render: () => html`
 		<mo-accordion>
-			<mo-accordion-item value='shipping' heading='Shipping'>${shipping}</mo-accordion-item>
-			<mo-accordion-item value='payment' heading='Payment' disabled>${payment}</mo-accordion-item>
-			<mo-accordion-item value='returns' heading='Returns'>${returns}</mo-accordion-item>
+			<mo-accordion-item value='shipping' heading='Shipping'>Orders placed before 4pm leave the same day.</mo-accordion-item>
+			<mo-accordion-item value='payment' heading='Payment' disabled>Cards, SEPA direct debit and invoice.</mo-accordion-item>
+			<mo-accordion-item value='returns' heading='Returns'>Send anything back within 30 days.</mo-accordion-item>
 		</mo-accordion>
-	`
+	`,
 }
 
-/**
- * The items are flush against each other and divided by a line. Since they live in the light DOM and hand
- * their innards out as parts, the very same markup becomes a stack of cards from the outside, with nothing
- * on the accordion itself to configure.
- */
-export const Spaced: StoryObj = {
+/** The open item is a value to read, write and bind; `change` reports only what a click changes, not what is handed in. */
+export const Controlled: Story = {
+	render: () => {
+		const [value, setValue] = useState<AccordionValue>('shipping')
+		return html`
+			<mo-flex gap='0.75rem'>
+				<mo-flex direction='horizontal' gap='0.5rem'>
+					<mo-button type='outlined' @click=${() => setValue('shipping')}>Shipping</mo-button>
+					<mo-button type='outlined' @click=${() => setValue('returns')}>Returns</mo-button>
+					<mo-button type='outlined' @click=${() => setValue(undefined)}>Close</mo-button>
+				</mo-flex>
+				<mo-accordion .value=${live(value)} @change=${(event: CustomEvent<AccordionValue>) => setValue(event.detail)}>
+					<mo-accordion-item value='shipping' heading='Shipping'>Orders placed before 4pm leave the same day.</mo-accordion-item>
+					<mo-accordion-item value='payment' heading='Payment'>Cards, SEPA direct debit and invoice.</mo-accordion-item>
+					<mo-accordion-item value='returns' heading='Returns'>Send anything back within 30 days.</mo-accordion-item>
+				</mo-accordion>
+			</mo-flex>
+		`
+	},
+}
+
+/** An accordion inside an item looks after its own items, and the outer item grows along as the inner one opens. */
+export const Nested: Story = {
+	render: () => html`
+		<mo-accordion>
+			<mo-accordion-item value='orders' heading='Orders'>
+				<mo-accordion style='margin-block-start: 0.5rem'>
+					<mo-accordion-item value='shipping' heading='Shipping'>Orders placed before 4pm leave the same day.</mo-accordion-item>
+					<mo-accordion-item value='returns' heading='Returns'>Send anything back within 30 days.</mo-accordion-item>
+				</mo-accordion>
+			</mo-accordion-item>
+			<mo-accordion-item value='payment' heading='Payment'>Cards, SEPA direct debit and invoice.</mo-accordion-item>
+		</mo-accordion>
+	`,
+}
+
+/** A lone item is a disclosure of its own, with `open` and `openChange`. As a native `details`, it opens for find-in-page too. */
+export const StandaloneItem: Story = {
+	render: () => html`
+		<mo-accordion-item heading='Order 10482'>Two items, shipped on 3 September.</mo-accordion-item>
+	`,
+}
+
+/** Items hand their innards out as parts, so the same markup becomes a stack of cards from outside. */
+export const Parts: Story = {
 	render: () => html`
 		<style>
 			#spaced {
@@ -107,61 +147,10 @@ export const Spaced: StoryObj = {
 				padding: 1rem;
 			}
 		</style>
-
 		<mo-accordion id='spaced'>
-			<mo-accordion-item value='shipping' heading='Shipping'>${shipping}</mo-accordion-item>
-			<mo-accordion-item value='payment' heading='Payment'>${payment}</mo-accordion-item>
-			<mo-accordion-item value='returns' heading='Returns'>${returns}</mo-accordion-item>
+			<mo-accordion-item value='shipping' heading='Shipping'>Orders placed before 4pm leave the same day.</mo-accordion-item>
+			<mo-accordion-item value='payment' heading='Payment'>Cards, SEPA direct debit and invoice.</mo-accordion-item>
+			<mo-accordion-item value='returns' heading='Returns'>Send anything back within 30 days.</mo-accordion-item>
 		</mo-accordion>
-	`
-}
-
-/**
- * Which item is open is a value like any other: it can be read, written and bound to. It reads as an array
- * while "multiple" is set. Opening an item reports a "change" in the actions panel, while a value handed to
- * the accordion stays quiet there — the convention the platform sets for a control which is a choice.
- */
-export const Controlled: StoryObj = {
-	render: ({ onChange }) => {
-		const handleClick = (event: Event) => {
-			const value = (event.target as HTMLElement).closest('mo-button')?.dataset.value
-			if (value !== undefined) {
-				(event.currentTarget as HTMLElement).querySelector('mo-accordion')!.value = value || undefined
-			}
-		}
-		return html`
-			<mo-flex gap='0.75rem' alignItems='stretch' @click=${handleClick}>
-				<mo-flex direction='horizontal' gap='0.5rem' alignItems='center'>
-					<mo-button type='outlined' data-value='shipping'>Shipping</mo-button>
-					<mo-button type='outlined' data-value='returns'>Returns</mo-button>
-					<mo-button type='outlined' data-value=''>Close</mo-button>
-				</mo-flex>
-
-				<mo-accordion @change=${onChange}>
-					<mo-accordion-item value='shipping' heading='Shipping'>${shipping}</mo-accordion-item>
-					<mo-accordion-item value='payment' heading='Payment'>${payment}</mo-accordion-item>
-					<mo-accordion-item value='returns' heading='Returns'>${returns}</mo-accordion-item>
-				</mo-accordion>
-			</mo-flex>
-		`
-	}
-}
-
-/**
- * An accordion inside an item looks after its own items and leaves the surrounding one alone. The outer item
- * follows along as the inner one grows, since neither of them animates towards a height anyone had to measure.
- */
-export const Nested: StoryObj = {
-	render: () => html`
-		<mo-accordion>
-			<mo-accordion-item value='orders' heading='Orders'>
-				<mo-accordion ${style({ marginBlockStart: '0.5rem' })}>
-					<mo-accordion-item value='shipping' heading='Shipping'>${shipping}</mo-accordion-item>
-					<mo-accordion-item value='returns' heading='Returns'>${returns}</mo-accordion-item>
-				</mo-accordion>
-			</mo-accordion-item>
-
-			<mo-accordion-item value='payment' heading='Payment'>${payment}</mo-accordion-item>
-		</mo-accordion>
-	`
+	`,
 }

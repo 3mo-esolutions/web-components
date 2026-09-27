@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/chip",
 	"version": "0.4.0",
-	"description": "A chip web-component with selection, removal and a chip set built on the selection group.",
+	"description": "Web components for selectable, removable and linking chips, and chip sets that share one selection and one tab stop.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/Chip"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -15,7 +19,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/actions-chip--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

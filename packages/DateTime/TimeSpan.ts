@@ -1,5 +1,6 @@
 import { type LanguageCode, Localizer } from '@3mo/localization'
 
+/** A duration in milliseconds, formatted as relative time such as "in 3 days". */
 export class TimeSpan {
 	static readonly ticksPerSecond = 1000
 	static readonly ticksPerMinute = TimeSpan.ticksPerSecond * 60

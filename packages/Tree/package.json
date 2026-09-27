@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/tree",
 	"version": "0.1.2",
-	"description": "A tree view: a hierarchy to browse, select from and act on, driven by data and built on the navigability, expandability and selectability controllers",
+	"description": "Web components for ARIA tree views of nested items to browse, open and select, plus the controller for custom trees.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/Tree"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -16,7 +20,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/data-tree--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

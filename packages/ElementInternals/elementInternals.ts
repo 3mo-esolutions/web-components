@@ -1,10 +1,8 @@
 const attached = new WeakMap<HTMLElement, ElementInternals>()
 
 /**
- * The element's `ElementInternals`, attached on first use.
- *
- * `attachInternals()` throws when it is called a second time, so everything which needs internals -
- * form association, custom states, ARIA - takes them from here instead of attaching its own.
+ * The element's `ElementInternals`, attached on first use. `attachInternals()` throws on a second call,
+ * so everything which needs internals - form association, custom states, ARIA - takes them from here.
  */
 export function elementInternals(element: HTMLElement) {
 	let internals = attached.get(element)

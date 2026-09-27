@@ -4,14 +4,16 @@ import '@3mo/theme'
 import { MdSwitch } from '@material/web/switch/switch.js'
 
 /**
+ * A switch that turns a single setting on or off, with an optional label.
+ *
  * @element mo-switch
  *
- * @attr label
- * @attr disabled
- * @attr selected
+ * @attr label - The label beside the switch
+ * @attr disabled - Fades the switch and makes it ignore input
+ * @attr selected - Whether the switch is on
  *
- * @cssprop --mo-switch-accent-color
- * @cssprop --mo-switch-unselected-color
+ * @cssprop --mo-switch-accent-color - The color of the handle and track when on, and of the focus ring
+ * @cssprop --mo-switch-unselected-color - The color of the handle and track when off
  *
  * @cssprop --mo-switch-selected-icon-color
  *

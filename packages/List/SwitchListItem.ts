@@ -3,6 +3,8 @@ import { SelectionListItemWithControl } from './SelectionListItemWithControl.js'
 import '@3mo/switch'
 
 /**
+ * A list item with a switch, which a press anywhere on the item toggles.
+ *
  * @element mo-switch-list-item
  *
  * @attr selectionControlAlignment - The alignment of the switch relative to the list item content

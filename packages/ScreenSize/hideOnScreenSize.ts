@@ -28,4 +28,5 @@ export class HideOnScreenSizeDirective extends DependsOnScreenSizeDirective {
 	}
 }
 
+/** Hides the element it is placed on at the given screen sizes. */
 export const hideOnScreenSize = directive(HideOnScreenSizeDirective)

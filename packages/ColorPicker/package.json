@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/color-picker",
 	"version": "0.2.1",
-	"description": "A web-component wrapper around the platform's color input, to work with @3mo/color as a value.",
+	"description": "A web component for color pickers on the native color input, with typed values and optional preset swatches.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/ColorPicker"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -13,7 +17,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/inputs-color-picker--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

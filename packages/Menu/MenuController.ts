@@ -6,12 +6,15 @@ import { SelectionListItemChangeEvent } from '@3mo/list'
 export interface MenuControllerOptions {
 	/** Read on every access. */
 	readonly items: ReadonlyArray<HTMLElement>
+	/** Whether the menu is open. The host owns it and commits the controller's answer in `handleExpandedChange`. */
 	readonly expanded: boolean
+	/** Called when a key, a choice or focus leaving opens or closes the menu. */
 	readonly handleExpandedChange?: (expanded: boolean) => void
 	/** For the items carrying a `selected` of their own. Undefined leaves each to itself. */
 	readonly selectability?: Selectability
 	/** The selected items' indices. */
 	readonly value?: ReadonlyArray<number>
+	/** Called with the selected items' indices whenever they change. */
 	readonly handleChange?: (value: Array<number>) => void
 }
 
@@ -27,11 +30,21 @@ export interface MenuControllerOptions {
  * }))
  * ```
  *
- * Opening lands on the selected item. Without one, a keyboard opening lands on the first item, or the last
- * for Up and End, while a pointer opening focuses the menu itself, as native menus do. Escape, Tab, a choice
- * and focus leaving close it, returning focus to the trigger. A press outside is left to the popover showing
- * it. Items rendering their own `selected` are announced as `menuitemradio` or `menuitemcheckbox` by
- * `selectability`. Sideways arrows are left to a submenu or a menu bar.
+ * A press outside is left to the popover showing the menu, and sideways arrows to a submenu or a menu bar.
+ *
+ * @accessibility
+ * The trigger gets `aria-haspopup='menu'` and `aria-expanded`; the menu is a `menu` labelled by its trigger, and its items are `menuitem`s.
+ * Items take real focus. Opened by the keyboard, the menu focuses its selected item, else the first or last one; opened by a pointer, its selected item, else the menu itself. Closing returns focus to the trigger when focus was inside.
+ *
+ * | Key | Does |
+ * | --- | --- |
+ * | `ArrowDown` `Home`, `Enter` `Space` | On the trigger: opens on the first item; `Enter` and `Space` where the trigger is a button. |
+ * | `ArrowUp` `End` | On the trigger: opens on the last item. |
+ * | `ArrowDown` `ArrowUp`, `Home` `End` | In the menu: the next, previous, first or last item, wrapping. |
+ * | A letter | Typeahead. |
+ * | `Enter` `Space` | Clicks the item; choosing one closes the menu. |
+ * | `Escape` | Closes the menu and returns focus to the trigger. |
+ * | `Tab` | Closes the menu and moves focus on, as focus leaving it does. |
  */
 export class MenuController extends Controller {
 	/** Set on a click that chooses nothing, such as one opening a submenu, to keep the menu open. */

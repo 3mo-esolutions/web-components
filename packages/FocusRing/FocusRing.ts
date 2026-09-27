@@ -2,12 +2,14 @@ import { component, css } from '@a11d/lit'
 import { MdFocusRing } from '@material/web/focus/md-focus-ring.js'
 
 /**
+ * A ring that marks keyboard focus on its parent, or on the element it is attached to.
+ *
  * @element mo-focus-ring
  *
- * @attr visible - Visibility of the focus ring.
- * @attr inward - Makes the focus ring animate inwards instead of outwards.
- * @attr htmlFor - ID of the element the focus ring is attached to.
- * @attr control - Element the focus ring is attached to.
+ * @attr visible - Whether the ring shows; keyboard focus sets it and blur clears it.
+ * @attr inward - Draws the ring inside the element instead of around it.
+ * @attr for - The id of the element whose focus the ring follows, in place of its parent.
+ * @prop control - The element whose focus the ring follows, in place of its parent.
  *
  * @cssprop --mo-focus-ring-color - The color of the focus ring, defaults to var(--mo-color-accent).
  */

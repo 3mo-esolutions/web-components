@@ -10,10 +10,12 @@ Localizer.dictionaries.add('de', {
 })
 
 /**
+ * A text field for a password, with a button that reveals it.
+ *
  * @element mo-field-password
  *
- * @attr reveal
- * @attr autoComplete
+ * @attr reveal - Shows the password in plain text
+ * @attr autoComplete - `current-password` by default; `new-password` lets the browser suggest one
  *
  * @i18n "Password"
  */

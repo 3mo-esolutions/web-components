@@ -1,56 +1,61 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite'
-import { html, style } from '@a11d/lit'
-import p from './package.json'
+import { html } from '@a11d/lit'
 import './index.js'
 
-export default {
-	title: 'Selection & Input / Slider',
-	component: 'mo-slider',
-	args: {
-		disabled: false,
-		discrete: false,
-		ticks: false,
-		value: 15,
-		step: 1,
-		min: 0,
-		max: 100,
-	},
-	argTypes: {
-		value: { control: 'number' },
-		disabled: { control: 'boolean' },
-		discrete: { control: 'boolean' },
-		ticks: { control: 'boolean' },
-		step: { control: 'number' },
-		min: { control: 'number' },
-		max: { control: 'number' },
-	},
-	package: p,
-} as Meta
-
-export const Slider: StoryObj = {
-	render: ({ disabled, value, step, min, max, discrete, ticks }) => html`
-		<mo-slider ${style({ marginTop: '20px' })}
-			?discrete=${discrete}
-			?ticks=${ticks}
-			?disabled=${disabled}
-			value=${value}
-			step=${step}
-			min=${min}
-			max=${max}
-		></mo-slider>
-	`
+type Args = {
+	readonly value: number
+	readonly min: number
+	readonly max: number
+	readonly step: number
+	readonly discrete: boolean
+	readonly ticks: boolean
+	readonly disabled: boolean
 }
 
-export const WithCustomAccentColors: StoryObj = {
-	render: ({ disabled, value, step, min, max, discrete, ticks }) => html`
-		<mo-slider ${style({ marginTop: '20px', '--mo-slider-accent-color': 'var(--mo-color-red)' })}
-			?discrete=${discrete}
-			?ticks=${ticks}
-			?disabled=${disabled}
-			value=${value}
-			step=${step}
-			min=${min}
-			max=${max}
-		></mo-slider>
-	`
+export default {
+	title: 'Inputs / Slider',
+	component: 'mo-slider',
+	args: {
+		value: 15,
+		min: 0,
+		max: 100,
+		step: 1,
+		discrete: false,
+		ticks: false,
+		disabled: false,
+	},
+	decorators: [story => html`<div style='display: flex; flex-direction: column; gap: 24px; max-width: 400px; padding-top: 24px'>${story()}</div>`],
+} satisfies Meta<Args>
+
+type Story = StoryObj<Args>
+
+export const Default: Story = {
+	render: ({ value, min, max, step, discrete, ticks, disabled }) => html`
+		<mo-slider value=${value} min=${min} max=${max} step=${step} ?discrete=${discrete} ?ticks=${ticks} ?disabled=${disabled}></mo-slider>
+	`,
+}
+
+/** `discrete` shows the value above the thumb while it is dragged, and `ticks` marks every `step`. */
+export const Discrete: Story = {
+	render: () => html`<mo-slider value='40' step='10' discrete ticks></mo-slider>`,
+}
+
+/** A disabled slider turns gray and ignores input. */
+export const Disabled: Story = {
+	render: () => html`<mo-slider value='40' disabled></mo-slider>`,
+}
+
+/** `--mo-slider-accent-color` colors the active track, the thumb and the value label. */
+export const CustomProperties: Story = {
+	render: () => html`<mo-slider value='40' discrete style='--mo-slider-accent-color: var(--mo-color-red)'></mo-slider>`,
+}
+
+/** The `thumb` part can be restyled from outside. */
+export const Parts: Story = {
+	render: () => html`
+		<style>
+			.large-thumb::part(thumb) { scale: 1.4; }
+		</style>
+		<mo-slider class='large-thumb' value='40'></mo-slider>
+	`,
 }

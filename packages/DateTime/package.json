@@ -1,17 +1,21 @@
 {
 	"name": "@3mo/date-time",
 	"version": "0.10.2",
-	"description": "Global DateTime, TimeSpan, and DateRange classes.",
+	"description": "Utilities for dates and times on Temporal: global DateTime, DateTimeRange and TimeSpan classes that parse localized input.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/DateTime"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"date"
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/utilities-date-time--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

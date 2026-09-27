@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/menu-bar",
 	"version": "0.1.1",
-	"description": "The menus of an application along one bar, with the menubar keyboard and hover patterns",
+	"description": "Web components for application menu bars, like File, Edit and View, with menubar keyboard and hover behavior.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/MenuBar"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -16,7 +20,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/actions-menu-bar--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

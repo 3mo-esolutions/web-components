@@ -5,29 +5,29 @@ import { TabPanel } from './TabPanel.js'
 /**
  * A tabbed interface: a bar of tabs and the panels they reveal, of which one is shown at a time.
  *
- * It is the whole ARIA tabs pattern in one element. The tabs go into the default slot and are handed on to a
- * "mo-tab-bar", which contributes the "tablist", the arrow-key navigation and the indicator. The panels are
- * "mo-tab-panel" elements which assign themselves to the "panel" slot and, unlike anything a container could
- * render for them, stay in the tree the tabs were written in - the only place a tab can point at, as no
- * element may reference into a shadow root beneath it.
- *
- * What the tabs adds on top of the two is the pairing: each panel is matched with the tab of the same
- * "value", the two are linked both ways so that a tab announces what it controls and a panel is named after
- * its tab, and the panel of the current value is the one shown.
- *
- * Reach for a "mo-tab-bar" on its own where the tabs and the content they switch cannot share a box, such as
- * a bar which belongs into the header slot of a page while its content fills the body.
+ * Each `mo-tab-panel` is paired with the tab of the same `value`, and the two are linked for assistive technologies.
  *
  * @element mo-tabs
  *
- * @attr value - The "value" of the active tab, and therefore of the panel being shown.
+ * @attr value - The `value` of the active tab, and therefore of the panel being shown
  *
- * @slot - The tabs.
- * @slot panel - The panels. A "mo-tab-panel" assigns itself to it.
+ * @slot - The `mo-tab` elements
+ * @slot panel - The panels; a `mo-tab-panel` assigns itself to it
  *
- * @csspart bar - The tab bar.
+ * @csspart bar - The tab bar
  *
- * @fires change - Dispatched with the new value whenever the tabs arrive at one themselves, as the platform has it for every control which is a choice.
+ * @fires change - Dispatched with the new value whenever the tabs change it themselves, as opposed to a `value` set from outside
+ *
+ * @accessibility
+ * The bar is a `tablist` and each tab a `tab` with `aria-selected`; every tab is linked to the panel of the same `value` through `aria-controls` and `aria-labelledby`, with made-up ids. A panel is a focusable `tabpanel`, unless it has a `tabindex` of its own.
+ * Focus roves, and the tab that receives focus is activated at once.
+ *
+ * | Key | Does |
+ * | --- | --- |
+ * | `ArrowRight` `ArrowLeft` | Activates the next or previous tab, wrapping. |
+ * | `Home` `End` | Activates the first or last tab. |
+ *
+ * Give a tab with only an icon an `aria-label`.
  */
 @component('mo-tabs')
 export class Tabs extends Component {

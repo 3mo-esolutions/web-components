@@ -2,7 +2,9 @@ import { Controller, ElementRef, eventListener, type ReactiveElement } from '@a1
 import { ListboxController, type ListboxControllerOptions } from './ListboxController.js'
 
 export interface ComboboxControllerOptions<T> extends Omit<ListboxControllerOptions<T>, 'combobox' | 'orientation' | 'selectionFollowsFocus' | 'wrap'> {
+	/** Whether the listbox shows. The host owns it and commits the controller's answer in `handleExpandedChange`. */
 	readonly expanded: boolean
+	/** Called when a key, a choice or Tab opens or closes the listbox. */
 	readonly handleExpandedChange?: (expanded: boolean) => void
 	/** Typing filters the options. */
 	readonly autocomplete?: boolean
@@ -27,9 +29,22 @@ export interface ComboboxControllerOptions<T> extends Omit<ListboxControllerOpti
  *   <div ${this.combobox.option({ index, data: country })}>
  * ```
  *
- * Opening lands on the selected option, or else on the first or last one for the key that opened it. Home,
- * End, Enter and Space open it too where the input takes no typing. Escape, Tab and a choice close it, unless
- * the choice is made through a control nested in the option, such as a checkbox.
+ * @accessibility
+ * The input is a `combobox` with `aria-expanded` and `aria-controls` pointing at the listbox, whose options follow the [listbox](?path=/docs/behaviors-listbox--overview) pattern.
+ * Focus stays in the input: the active option is named by `aria-activedescendant`, set as an element reference so it reaches options in another shadow root, and gets `data-keyboard-focus` so it can show a focus ring.
+ *
+ * | Key | Does |
+ * | --- | --- |
+ * | `ArrowDown` `PageDown` | Closed: opens on the selected option, else on the first. |
+ * | `ArrowUp` `PageUp` | Closed: opens on the selected option, else on the last. |
+ * | `Home` `End`, `Enter` `Space` | Closed, where the input takes no typing: opens, on the first or last option for `Home` and `End`, on the selected one for `Enter` and `Space`. |
+ * | `ArrowDown` `ArrowUp` | Open: the next or previous option. |
+ * | `Home` `End` | Open: the first or last option; in an input that takes typing they move the caret instead. |
+ * | A letter | Typeahead, or the typing that filters the options. |
+ * | `Enter` | Chooses the active option and closes; `Space` too, where the input takes no typing. |
+ * | `Escape` `Tab` | Closes; `Tab` moves focus on as well. |
+ *
+ * Name the input and the listbox, for example after a visible label.
  */
 export class ComboboxController<T, THost extends ReactiveElement = ReactiveElement> extends Controller implements EventListenerObject {
 	private static readonly firstKeys = ['ArrowDown', 'Down', 'PageDown']

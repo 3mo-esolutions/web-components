@@ -6,12 +6,9 @@ export { Selectability as ChipGroupSelectability } from '@3mo/selectability'
 export { type SelectionGroupValue as ChipGroupValue } from '@3mo/selection-group'
 
 /**
- * A set of chips sharing one selection and one tab stop — Material's chip set. It is a
- * `mo-selection-group` whose items are chips: the selection, the pattern, the cursor and the value are
- * all the group's, and what is added here is what a chip set has and a set of answers does not.
+ * A set of chips sharing one selection and one tab stop - Material's chip set.
  *
- * Give it an accessible name with `aria-label` or `aria-labelledby` — a group of filters nothing
- * announces is a bug.
+ * Give it an accessible name with `aria-label` or `aria-labelledby`.
  *
  * @element mo-chip-group
  *

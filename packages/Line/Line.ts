@@ -1,11 +1,13 @@
 import { component, Component, css, html, property } from '@a11d/lit'
 
 /**
+ * A separator line, optionally with a label in its middle.
+ *
  * @element mo-line
  *
- * @prop direction - The direction of the line. Default is `horizontal`.
+ * @attr direction - Whether the line runs horizontally, the default, or vertically
  *
- * @slot - The content of the line.
+ * @slot - A label in the middle of the line
  */
 @component('mo-line')
 export class Line extends Component {

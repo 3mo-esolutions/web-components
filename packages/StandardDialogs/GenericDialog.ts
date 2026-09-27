@@ -11,6 +11,11 @@ interface Parameters<TResult> extends StandardDialogParameters<GenericDialog<TRe
 	readonly errorHandler?: DialogErrorHandler
 }
 
+/**
+ * A dialog with a primary and a secondary action, both configured by its parameters.
+ *
+ * @element mo-generic-dialog
+ */
 @component('mo-generic-dialog')
 export class GenericDialog<TResult = void> extends DialogComponent<Parameters<TResult>, TResult> {
 	protected override get template(): HTMLTemplateResult {

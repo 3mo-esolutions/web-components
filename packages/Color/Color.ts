@@ -1,7 +1,7 @@
 import ColorString from 'color-string'
 
 /**
- * An immutable color class that can be used to represent a color in various formats.
+ * An immutable color parsed from a CSS color string, convertible to hex, RGB, HSL and keyword.
  *
  * @ssr true
  */

@@ -1,0 +1,99 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+import { PageHeader } from './components'
+
+<Meta title='Getting Started/Forms' />
+
+<PageHeader title='Forms'>Every field has a `value` and a `label` and fires `input` and `change`. Bind it to your state with `bind()`, and check it with `checkValidity()`.</PageHeader>
+
+## Binding
+
+`bind()` from `@a11d/lit`, which `@3mo/del` re-exports, keeps an element and a property of your component in sync, both ways.
+
+```ts
+import { Component, component, html, state, bind } from '@a11d/lit'
+import '@3mo/text-fields'
+import '@3mo/number-fields'
+import '@3mo/checkbox'
+
+@component('app-profile')
+export class Profile extends Component {
+	@state() name = ''
+	@state() age?: number
+	@state() newsletter = false
+
+	protected override get template() {
+		return html`
+			<mo-field-text label='Name' required ${bind(this, 'name')}></mo-field-text>
+			<mo-field-number label='Age' ${bind(this, 'age')}></mo-field-number>
+			<mo-checkbox label='Newsletter' ${bind(this, 'newsletter')}></mo-checkbox>
+		`
+	}
+}
+```
+
+- Fields, sliders and selection groups bind their `value`; checkboxes, switches and radios their `selected`.
+- The property updates on `change`. For every keystroke, pass the event: `bind(this, 'name', { event: 'input' })`.
+- Into an object: `readonly binder = new Binder<Person>(this, 'person')`, then `${this.binder.bind('name')}` per field.
+
+## Events
+
+```ts
+html`
+	<mo-field-text label='Search'
+		@input=${(e: CustomEvent<string>) => this.filter(e.detail)}
+		@change=${(e: CustomEvent<string>) => this.search(e.detail)}
+	></mo-field-text>
+`
+```
+
+- `input` fires while the user edits, `change` once the value is committed, for a text field on blur or Enter. `detail` is the value.
+- Neither bubbles, so listen on the field itself.
+
+## Validation
+
+```html
+<mo-field-text label='Name' required minLength='2'></mo-field-text>
+```
+
+```ts
+const valid = await field.checkValidity()
+field.setCustomValidity('This name is taken')   // invalid until set to ''
+```
+
+- Text, number and date fields check `required`. Text fields also check `minLength`, `maxLength` and `pattern`; number fields clamp to `min` and `max`.
+- A field marks itself invalid while it is, and fires `validityChange` with `true` or `false`.
+- The select field does not validate yet.
+
+## Native forms
+
+The fields do not submit with a surrounding `<form>` yet. An element of your own becomes a form control with `@formAssociated` and a `FormAssociationController`:
+
+```ts
+import { Component, component, html, property, query } from '@a11d/lit'
+import { formAssociated, FormAssociationController } from '@3mo/element-internals'
+
+@component('app-code-input')
+@formAssociated
+export class CodeInput extends Component {
+	@property() value = ''
+	@query('input') readonly inputElement?: HTMLInputElement
+
+	readonly formAssociation = new FormAssociationController(this, host => ({
+		get value() { return host.value },
+		get validity() { return host.inputElement ?? undefined },
+	}))
+
+	protected override get template() {
+		return html`
+			<input required .value=${this.value} @input=${(e: Event) => this.value = (e.target as HTMLInputElement).value}>
+		`
+	}
+}
+```
+
+It submits `value` under its `name` and blocks submission while its input is invalid. The options `handleReset` and `handleDisabledChange` cover resets and disabled fieldsets; see [Element Internals](?path=/docs/behaviors-element-internals--overview).
+
+## Fields
+
+- [Text Field](?path=/docs/inputs-text-fields-text-field--overview), [Number Field](?path=/docs/inputs-number-fields-number-field--overview), [Date Field](?path=/docs/inputs-date-time-fields-date-field--overview), [Select Field](?path=/docs/inputs-select-field--overview)
+- [Checkbox](?path=/docs/inputs-checkbox--overview), [Switch](?path=/docs/inputs-switch--overview), [Radio](?path=/docs/inputs-radio--overview), [Selection Group](?path=/docs/inputs-selection-group--overview)

@@ -1,44 +1,17 @@
 import { Controller, type ReactiveControllerHost } from '@a11d/lit'
 
 export interface InfiniteScrollControllerOptions {
-	/**
-	 * The scrolling container. It is re-read on every host update, so it shall be provided
-	 * as a getter whenever the container renders late or gets replaced.
-	 */
+	/** The scrolling container, re-read on every host update - a getter follows one that renders late or is replaced. */
 	readonly container: Element | null | undefined
 	/** Suspends the controller as long as this is `true`. */
 	readonly disabled?: boolean
-	/**
-	 * Fetches the next chunk, appends it to the already loaded ones, and settles only once the
-	 * chunk has been handed over to the host. Resolving to a boolean reports whether another
-	 * chunk follows; resolving to no value declares the end unknown, as in an endless stream.
-	 */
+	/** Fetches the next chunk and hands it to the host before settling, with whether another follows - or nothing when that is unknown. */
 	fetchNext(): Promise<boolean | void> | boolean | void
 }
 
 /**
- * A controller which fetches chunk after chunk as the user scrolls towards the end of a container,
- * thereby replacing explicit page navigation by a continuous stream of data. It only orchestrates
- * *when* to fetch; what a chunk is and where it is stored is entirely up to the host.
- *
- * Options are usually provided as a factory, whose host parameter enables getter-backed,
- * lazily-read options right in a field initializer:
- *
- * ```ts
- * readonly infiniteScrollController = new InfiniteScrollController(this, host => ({
- *     get container() { return host.scroller },
- *     fetchNext: async () => {
- *         const chunk = await host.fetchChunk(host.items.length)
- *         host.items = [...host.items, ...chunk.data]
- *         return chunk.hasNextChunk
- *     },
- * }))
- * ```
- *
- * Redundant requests are prevented by design: chunks are fetched one at a time, and only while the
- * laid-out container is scrolled near its end. A chunk is measured only once the host has rendered
- * it, and one which failed or did not grow the container stalls the stream instead of being
- * requested over and over - revived by scrolling, or after a failure by @see reset only.
+ * Fetches the next chunk of data whenever a container is scrolled near its end, one chunk at a time.
+ * It only decides when to fetch; what a chunk is and where it goes is up to the host.
  *
  * @ssr false
  */

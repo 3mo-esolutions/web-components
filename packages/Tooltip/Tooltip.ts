@@ -3,12 +3,22 @@ import { PopoverFloatingUiPositionController, PopoverInterestController } from '
 import { type TooltipPlacement } from './TooltipPlacement.js'
 
 /**
+ * A short label, or richer content, shown next to an element while it is hovered or focused.
+ *
  * @element mo-tooltip
  *
- * @attr placement - The placement of the tooltip.
- * @attr anchor - The element id that the tooltip is anchored to.
+ * @attr placement - The side of the anchor the tooltip shows on: `block-start`, `block-end`, `inline-start` or `inline-end`.
+ * @attr anchor - The element the tooltip is anchored to, set as a property.
+ * @attr rich - Set by the tooltip itself when its content holds elements, which gives it a surface that can be interacted with.
  *
- * @slot - Default slot for tooltip content
+ * @slot - The text of the tooltip, or rich content.
+ *
+ * @cssprop --mo-tooltip-font-size - The font size of the tooltip.
+ *
+ * @fires openChange - Dispatched when the tooltip shows or hides.
+ *
+ * @accessibility
+ * A tooltip of plain text becomes its anchor's `aria-label`, replacing the anchor's own name; a tooltip with elements inside sets nothing.
  */
 @component('mo-tooltip')
 export class Tooltip extends Component {

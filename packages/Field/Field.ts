@@ -3,21 +3,28 @@ import { SlotController } from '@3mo/slot-controller'
 import { SlottedInputDirectionController } from './SlottedInputDirectionController.js'
 
 /**
+ * The frame every field is drawn in: a floating label, a background and an underline around its content.
+ *
  * @element mo-field
  *
- * @attr label
- * @attr readonly
- * @attr disabled
- * @attr required
- * @attr dense
- * @attr populated
- * @attr invalid
+ * @attr label - The label, which floats above the content once it is populated or active
+ * @attr readonly - Hides the caret in the content
+ * @attr disabled - Fades the field and makes it ignore the pointer
+ * @attr required - Marks the label with an asterisk
+ * @attr dense - Drops the padding and turns the label into a placeholder
+ * @attr populated - Whether the content holds a value, which lifts the label
+ * @attr invalid - Turns the label, caret and underline red
+ * @attr active - Whether the content has focus, which draws the label and underline in the accent color
  *
  * @slot - The field's content
  * @slot start - Content to be placed at the start of the field
  * @slot end - Content to be placed at the end of the field
  *
+ * @csspart container - The box holding the label and the content
+ *
  * @cssprop --mo-field-background - The field's background color
+ * @cssprop --mo-field-border-start-start-radius - The radius of the top corner at the start
+ * @cssprop --mo-field-border-start-end-radius - The radius of the top corner at the end
  */
 @component('mo-field')
 export class Field extends Component {

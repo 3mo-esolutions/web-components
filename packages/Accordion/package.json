@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/accordion",
 	"version": "0.1.0",
-	"description": "A web component which stacks disclosures and reveals them one at a time, built on the native details element.",
+	"description": "A web component for accordions that stack disclosures and open one or several at a time, built on the native details element.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/Accordion"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -15,7 +19,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/layout-accordion--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

@@ -2,13 +2,15 @@ import { Component, component, css, html, property } from '@a11d/lit'
 import { type Splitter } from './Splitter.js'
 
 /**
+ * An item of a splitter, resized by the resizers beside it.
+ *
  * @element mo-splitter-item
  *
- * @attr size
- * @attr min
- * @attr collapsed
+ * @attr size - The initial size along the splitter's direction, such as `60%`; the last item takes the rest
+ * @attr min - The minimum size along the splitter's direction
+ * @attr collapsed - Whether the item shrinks to its content and leaves its space to the others
  *
- * @slot
+ * @slot - The content of the item
  */
 @component('mo-splitter-item')
 export class SplitterItem extends Component {

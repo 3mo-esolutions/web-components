@@ -1,57 +1,78 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite'
 import { html } from '@a11d/lit'
-import p from './package.json'
 import './index.js'
 
+type Args = {
+	readonly label: string
+	readonly value: string
+	readonly required: boolean
+	readonly dense: boolean
+	readonly disabled: boolean
+	readonly readonly: boolean
+}
+
 export default {
-	title: 'Selection & Input / Text Fields / Field Text',
+	title: 'Inputs / Text Fields / Text Field',
 	component: 'mo-field-text',
 	args: {
-		label: 'Label',
+		label: 'Name',
+		value: 'Clarke Griffin',
 		required: false,
 		dense: false,
 		disabled: false,
 		readonly: false,
-		value: 'Value',
 	},
-	package: p,
-} as Meta
+	decorators: [story => html`<div style='display: flex; flex-direction: column; gap: 16px; max-width: 320px'>${story()}</div>`],
+} satisfies Meta<Args>
 
-export const FieldText: StoryObj = {
-	render: ({ label, required, disabled, dense, readonly, value }) => html`
-		<mo-field-text label=${label} ?required=${required} ?disabled=${disabled} ?readonly=${readonly} ?dense=${dense} value=${value}></mo-field-text>
-	`
+type Story = StoryObj<Args>
+
+export const Default: Story = {
+	render: ({ label, value, required, dense, disabled, readonly }) => html`
+		<mo-field-text label=${label} value=${value} ?required=${required} ?dense=${dense} ?disabled=${disabled} ?readonly=${readonly}></mo-field-text>
+	`,
 }
 
-export const MinMaxLength: StoryObj = {
-	render: ({ required, disabled, dense, readonly, value }) => html`
-		<mo-field-text label='Label (between 10 and 25 characters)' minLength='10' maxLength='25'
-			?required=${required} ?disabled=${disabled} ?readonly=${readonly} ?dense=${dense} value=${value}
-		></mo-field-text>
-	`
+/** Required, read-only, disabled and dense. A required field turns invalid once it is emptied. */
+export const States: Story = {
+	render: () => html`
+		<mo-field-text label='Required' required></mo-field-text>
+		<mo-field-text label='Read-only' value='Clarke Griffin' readonly></mo-field-text>
+		<mo-field-text label='Disabled' value='Clarke Griffin' disabled></mo-field-text>
+		<mo-field-text label='Dense' dense></mo-field-text>
+	`,
 }
 
-export const StartAndEndSlots: StoryObj = {
-	render: ({ required, disabled, dense, readonly, value }) => html`
-		<mo-field-text label='Regex' ?required=${required} ?disabled=${disabled} ?readonly=${readonly} ?dense=${dense} value=${value}>
+/** `maxLength` counts down the characters left, and a value shorter than `minLength` is invalid. */
+export const Length: Story = {
+	render: () => html`<mo-field-text label='Username' minLength='3' maxLength='16' value='ada'></mo-field-text>`,
+}
+
+/** `pattern` validates the value against a regular expression, as on a native input - type a letter. */
+export const Pattern: Story = {
+	render: () => html`<mo-field-text label='Postal code' pattern='[0-9]{5}' value='10115'></mo-field-text>`,
+}
+
+/** `start` and `end` hold text, icons or buttons beside the value. */
+export const Slots: Story = {
+	render: () => html`
+		<mo-field-text label='Regex' value='^[a-z]+$'>
 			<span slot='start'>/</span>
 			<span slot='end'>/gm</span>
 		</mo-field-text>
-	`
+		<mo-field-text label='Website' value='3mo.de'>
+			<mo-icon slot='start' icon='insert_link'></mo-icon>
+			<mo-icon-button slot='end' icon='open_in_new' dense></mo-icon-button>
+		</mo-field-text>
+	`,
 }
 
-export const WithTextAlignEnd: StoryObj = {
-	render: ({ required, disabled, dense, readonly, value }) => html`
-		<mo-field-text label='Text Align End' ?required=${required} ?disabled=${disabled} ?readonly=${readonly} ?dense=${dense} value=${value} style='text-align: end'></mo-field-text>
-	`
+/** The value follows the field's `text-align`. */
+export const TextAlign: Story = {
+	render: () => html`<mo-field-text label='Amount' value='1.500' style='text-align: end'></mo-field-text>`,
 }
 
-export const ContentFieldSizing: StoryObj = {
-	render: ({ required, disabled, dense, readonly, value }) => html`
-		Type a long value
-		<mo-field-text label='Label'
-			?required=${required} ?disabled=${disabled} ?readonly=${readonly} ?dense=${dense} value=${value}
-			style='width: fit-content; min-width: 100px'
-		></mo-field-text>
-	`
+/** With `width: fit-content` the field grows with its value - type a long one. */
+export const ContentSizing: Story = {
+	render: () => html`<mo-field-text label='Tag' value='web components' style='width: fit-content; min-width: 100px'></mo-field-text>`,
 }

@@ -1,7 +1,18 @@
 import { component, css } from '@a11d/lit'
 import { SplitterResizer } from './index.js'
 
-/** @element mo-splitter-resizer-line */
+/**
+ * A thin line between two splitter items, as an alternative resizer.
+ *
+ * @element mo-splitter-resizer-line
+ *
+ * @cssprop --mo-splitter-resizer-line-thickness - The thickness of the line
+ * @cssprop --mo-splitter-resizer-line-idle-background - The color of the line
+ * @cssprop --mo-splitter-resizer-line-accent-color - The color of the line while hovered or dragged
+ * @cssprop --mo-splitter-resizer-line-transition-quick - The transition of the line
+ * @cssprop --mo-splitter-resizer-line-vertical-transform - The transform of a line between vertically laid out items while hovered or dragged
+ * @cssprop --mo-splitter-resizer-line-horizontal-transform - The transform of a line between horizontally laid out items while hovered or dragged
+ */
 @component('mo-splitter-resizer-line')
 export class SplitterResizerLine extends SplitterResizer {
 	static override get styles() {

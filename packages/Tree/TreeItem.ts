@@ -2,21 +2,9 @@ import { Component, component, css, event, html, property } from '@a11d/lit'
 import type { MaterialIcon } from '@3mo/icon'
 
 /**
+ * A row of a `mo-tree` and the group of the `mo-tree-item`s nested in it.
+ *
  * @element mo-tree-item
- *
- * A row of a tree and the group of the rows nested in it. A `mo-tree-item` child assigns itself to that
- * group, so a tree is nesting alone:
- *
- * ```html
- * <mo-tree-item value='documents' open>Documents
- *   <mo-tree-item value='taxes'>Taxes</mo-tree-item>
- * </mo-tree-item>
- * ```
- *
- * `open` is the item's own state, whoever sets it: written by hand, bound by the consumer, or set by the
- * tree as the row is opened — and reported by `openChange` either way. `value`, `selected` and `disabled`
- * are read the same way, and the tree stamps `aria-expanded`, `aria-selected`, `aria-disabled`, the cursor
- * and `--mo-tree-level` — which the row indents by — back onto the item. Its look is `::part(row)`'s.
  *
  * @attr value - What the tree reports this item as. An item without one is not in the tree's `value`.
  * @attr open - Whether the nested items are shown.

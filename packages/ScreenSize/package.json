@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/screen-size",
 	"version": "0.0.6",
-	"description": "Lit directives and utilities to depend UI on screen size",
+	"description": "Lit directives for rendering a value per mobile, tablet or desktop screen size, or hiding an element on some of them.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/ScreenSize"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -14,7 +18,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/behaviors-screen-size--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

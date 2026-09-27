@@ -27,17 +27,8 @@ export interface IndexabilityObserver<TData = unknown, TItemOptions extends Inde
  * <div ${this.indexabilityController.item({ index, data })}>
  * ```
  *
- * It owns no gesture, no state and no styling. It is the substrate the controllers which do own those
- * build on, so that an item declares itself once however many interactions it takes part in:
- *
- * ```ts
- * readonly indexability = new IndexabilityController<Person, ItemOptions>(this)
- * readonly selectability = new SelectabilityController(this, { indexability: this.indexability })
- * ```
- *
- * Items no template can put a directive on are added through {@link setItems}, or one by one through
- * {@link addItem} and {@link deleteItem}.
- * Only rendered items are known here, so anything needing the full universe takes it from the owner's data.
+ * It owns no gesture, state or styling: the controllers that do share one registry, so an item declares
+ * itself once. Items no template can put a directive on are added through {@link setItems}.
  */
 export class IndexabilityController<TData = unknown, TItemOptions extends IndexabilityItemOptions<TData> = IndexabilityItemOptions<TData>> extends Controller {
 	constructor(override readonly host: ReactiveElement) { super(host) }

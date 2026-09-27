@@ -6,10 +6,12 @@ import '@3mo/localization'
 export type FileUploadSelection<TMultiple extends boolean = false> = TMultiple extends true ? Array<File> : File | undefined
 
 /**
- * @element mo-file-upload - Facilitates the upload of files.
+ * An invisible file input that passes the files the user chooses to an upload function; `openExplorer()` opens the file dialog.
+ *
+ * @element mo-file-upload
  *
  * @attr upload - The mandatory upload function that is called when the user selects one or more files.
- * @attr uploadOnSelection
+ * @attr uploadOnSelection - Uploads the files as soon as they are chosen, instead of when `uploadSelection()` is called
  * @attr multiple - Whether multiple files can be selected at once.
  * @attr accept - The file types that are accepted for upload, specified as a string containing a comma-separated list of MIME types or file extensions.
  *

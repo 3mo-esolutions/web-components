@@ -6,16 +6,17 @@ import { FieldSelect } from '@3mo/select-field'
 export type FieldFetchableSelectParametersType = Record<string, unknown> | void
 
 /**
+ * A select field whose options are fetched, and searched for on the server as the user types.
+ *
  * @element mo-field-fetchable-select
  *
- * @attr optionsRenderLimit - The maximum number of options to render.
- * @attr parameters - The parameters to pass to the fetch function.
- * @attr searchParameters - The parameters to pass to the fetch function when searching.
+ * @attr optionsRenderLimit - The maximum number of fetched options to render.
+ * @attr parameters - The parameters to pass to the fetch function; a change fetches again.
+ * @attr searchParameters - A function turning the typed text into parameters for the fetch function when searching.
  * @attr fetch - The function to fetch the data.
- * @attr optionTemplate - The template to render the options.
+ * @attr optionTemplate - The template to render an option for each fetched item.
  *
- * @fires parametersChange
- * @fires dataFetch
+ * @fires dataFetch - The fetched data.
  */
 @component('mo-field-fetchable-select')
 export class FieldFetchableSelect<T, TDataFetcherParameters extends FieldFetchableSelectParametersType = void> extends FieldSelect<T> {

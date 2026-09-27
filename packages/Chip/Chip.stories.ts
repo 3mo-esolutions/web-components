@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite'
-import { Component, css, html, state, style } from '@a11d/lit'
-import p from './package.json'
+import { html } from '@a11d/lit'
+import { useState } from 'storybook/preview-api'
 import '@3mo/icon'
 import '@3mo/icon-button'
 import '@3mo/menu'
@@ -9,30 +9,29 @@ import '@3mo/scroller'
 import './index.js'
 
 export default {
-	title: 'Buttons & Actions / Chip',
+	title: 'Actions / Chip',
 	component: 'mo-chip',
-	package: p,
-} as Meta
+} satisfies Meta
 
-/** A chip on its own is a button: the platform's, with a container drawn around it. */
-export const Chip: StoryObj = {
-	render: () => html`<mo-chip>Chip</mo-chip>`
+type Story = StoryObj
+
+export const Default: Story = {
+	render: () => html`<mo-chip>Chip</mo-chip>`,
 }
 
-/**
- * `readonly` renders a plain tag — not focusable, no state layer, nothing to press.
- * This is what a list of attributes should be.
- */
-export const ReadonlyTags: StoryObj = {
+/** `readonly` renders a plain tag - not focusable, nothing to press - which is what a list of attributes should be. */
+export const ReadonlyTags: Story = {
 	render: () => html`
 		<mo-chip-group aria-label='Tags'>
-			${['Wholesale', 'Export', 'Priority'].map(tag => html`<mo-chip readonly>${tag}</mo-chip>`)}
+			<mo-chip readonly>Wholesale</mo-chip>
+			<mo-chip readonly>Export</mo-chip>
+			<mo-chip readonly>Priority</mo-chip>
 		</mo-chip-group>
-	`
+	`,
 }
 
-/** With a leading icon, and with an avatar rounded by the consumer. */
-export const WithLeadingGraphic: StoryObj = {
+/** The `start` slot takes a leading icon, or an avatar the consumer rounds. */
+export const WithLeadingGraphic: Story = {
 	render: () => html`
 		<mo-chip-group aria-label='People'>
 			<mo-chip>
@@ -40,22 +39,18 @@ export const WithLeadingGraphic: StoryObj = {
 				Add to calendar
 			</mo-chip>
 			<mo-chip>
-				<span slot='start' ${style({ display: 'grid', placeItems: 'center', inlineSize: '22px', blockSize: '22px', borderRadius: '50%', background: 'var(--mo-color-accent)', color: 'var(--mo-color-on-accent)', fontSize: '11px' })}>AL</span>
+				<span slot='start' style='display: grid; place-items: center; inline-size: 22px; block-size: 22px; border-radius: 50%; background: var(--mo-color-accent); color: var(--mo-color-on-accent); font-size: 11px'>AL</span>
 				Ada Lovelace
 			</mo-chip>
 		</mo-chip-group>
-	`
+	`,
 }
 
 /**
- * Filter chips. `selectability='multiple'` lets any number of them be on at once, and the group's
- * `value` is the array of the selected chips' values. A selected chip swaps its leading graphic for
- * a checkmark and announces itself as a pressed button.
- *
- * The group is the only writer of `selected`: a chip asks with a cancelable `requestSelect` before it
- * toggles, the group refuses and rules instead, and its own `change` carries the answer.
+ * `selectability='multiple'` lets any number of chips be on, and the group's `value` is the array of their values.
+ * The group decides: a chip asks with a cancelable `requestSelect` and a selected one shows a checkmark.
  */
-export const FilterChips: StoryObj = {
+export const FilterChips: Story = {
 	render: () => html`
 		<mo-chip-group selectability='multiple' aria-label='Filter results' .value=${['open']}>
 			<mo-chip value='open'>Open orders</mo-chip>
@@ -63,97 +58,77 @@ export const FilterChips: StoryObj = {
 			<mo-chip value='overdue'>Overdue</mo-chip>
 			<mo-chip value='archived'>Archived</mo-chip>
 		</mo-chip-group>
-	`
+	`,
 }
 
-/**
- * `selectability='single'` is the alternative to a segmented button. One chip is always chosen, so the
- * set *is* a radio group — it announces itself as one and its chips as radios. Add `deselectable` to let
- * the choice be taken back, and it becomes a set of toggles instead, which is what it then is.
- */
-export const ChoiceChips: StoryObj = {
+/** `selectability='single'` makes the set a radio group, the alternative to a segmented button; `deselectable` lets the choice be taken back. */
+export const ChoiceChips: Story = {
 	render: () => html`
 		<mo-chip-group selectability='single' aria-label='View' value='week'>
 			<mo-chip value='day'>Day</mo-chip>
 			<mo-chip value='week'>Week</mo-chip>
 			<mo-chip value='month'>Month</mo-chip>
 		</mo-chip-group>
-	`
+	`,
 }
 
 /**
- * `removable` adds the remove button and enables Backspace and Delete on the focused chip.
- * `requestRemove` is cancelable and the chip never removes itself — the consumer removes the data
- * and re-renders, which is what keeps a keyed list honest. Focus lands on the chip that took its place.
+ * `removable` adds the remove button, and Backspace or Delete on a focused chip. The chip never removes itself:
+ * remove the data on `requestRemove` and re-render, and focus moves to the chip that took its place.
  */
-export const InputChips: StoryObj = {
-	render: () => html`<mo-story-input-chips></mo-story-input-chips>`
-}
-
-class StoryInputChips extends Component {
-	@state() private tags = ['Acme GmbH', 'Berlin', 'Priority', 'Q3']
-
-	protected override get template() {
+export const InputChips: Story = {
+	render: () => {
+		const [tags, setTags] = useState(['Acme GmbH', 'Berlin', 'Priority', 'Q3'])
 		return html`
-			<mo-chip-group aria-label='Tags'
-				@requestRemove=${(e: CustomEvent<{ source: string }>) => this.handleRequestRemove(e)}
-			>
-				${this.tags.map(tag => html`<mo-chip removable value=${tag}>${tag}</mo-chip>`)}
+			<mo-chip-group aria-label='Tags'>
+				${tags.map(tag => html`
+					<mo-chip removable value=${tag} @requestRemove=${() => setTags(tags.filter(t => t !== tag))}>${tag}</mo-chip>
+				`)}
 			</mo-chip-group>
 		`
-	}
-
-	private handleRequestRemove(e: CustomEvent<{ source: string }>) {
-		const value = (e.target as HTMLElement).getAttribute('value')
-		this.tags = this.tags.filter(tag => tag !== value)
-	}
+	},
 }
 
-/** Both at once: a chip that is selected by pressing it and removed by its own button. */
-export const SelectableAndRemovable: StoryObj = {
+/** Both at once: a chip selected by pressing it and removed by its own button. */
+export const SelectableAndRemovable: Story = {
 	render: () => html`
 		<mo-chip-group selectability='single' aria-label='Shortcuts'>
 			<mo-chip value='hamburg' removable>Berlin → Hamburg</mo-chip>
 			<mo-chip value='munich' removable>Berlin → Munich</mo-chip>
 		</mo-chip-group>
-	`
+	`,
 }
 
 /**
- * Content in the `action` slot sits outside the chip's button, so pressing it is not pressing the
- * chip — and the chip's state layer stops short of it, because it is not part of the button. That makes
- * the slot right for a second *action* and wrong for a decorative affordance like a dropdown arrow, which
- * belongs in the label, inside the button.
+ * The `action` slot sits outside the chip's button, so pressing it does not press the chip.
+ * That suits a second action, not a dropdown arrow, which belongs in `end`.
  */
-export const WithTrailingActions: StoryObj = {
+export const WithTrailingActions: Story = {
 	render: () => html`
 		<mo-chip>
 			Saved view
 			<mo-icon-button dense slot='action' icon='more_vert'></mo-icon-button>
 		</mo-chip>
-	`
+	`,
 }
 
-/** A link chip navigates instead of activating. */
-export const Link: StoryObj = {
-	render: () => html`<mo-chip href='https://www.3mo.de' target='_blank'>3MO</mo-chip>`
+/** With `href` the chip is a link that navigates instead of activating. */
+export const Link: Story = {
+	render: () => html`<mo-chip href='https://www.3mo.de' target='_blank'>3MO</mo-chip>`,
 }
 
-export const Disabled: StoryObj = {
+/** A disabled chip ignores presses, and so does its remove button. */
+export const Disabled: Story = {
 	render: () => html`
 		<mo-chip-group aria-label='States'>
 			<mo-chip disabled>Disabled</mo-chip>
 			<mo-chip disabled removable>Disabled removable</mo-chip>
 		</mo-chip-group>
-	`
+	`,
 }
 
-/**
- * The default is Material 3's: outlined, no fill, filled only once selected. Every color, the corner
- * radius and the height are custom properties, so a chip can carry a status or take a filled look
- * without a variant for it.
- */
-export const Customized: StoryObj = {
+/** Outlined by default and filled once selected; an outer rule changes the colors, the corner radius and the height. */
+export const Customized: Story = {
 	render: () => html`
 		<style>
 			#filled {
@@ -178,156 +153,112 @@ export const Customized: StoryObj = {
 			<mo-chip id='status'>Active</mo-chip>
 			<mo-chip id='pill'>Pill</mo-chip>
 		</mo-chip-group>
-	`
+	`,
 }
 
 /** A set that does not wrap belongs in a scroller. */
-export const Scrolling: StoryObj = {
+export const Scrolling: Story = {
 	render: () => html`
-		<mo-scroller ${style({ maxWidth: '300px' })}>
+		<mo-scroller style='max-width: 300px'>
 			<mo-chip-group nowrap selectability='single' aria-label='Views'>
-				${['All', 'Open', 'Paid', 'Overdue', 'Archived', 'Drafts'].map(view => html`
-					<mo-chip value=${view.toLowerCase()}>${view}</mo-chip>
-				`)}
+				<mo-chip value='all'>All</mo-chip>
+				<mo-chip value='open'>Open</mo-chip>
+				<mo-chip value='paid'>Paid</mo-chip>
+				<mo-chip value='overdue'>Overdue</mo-chip>
+				<mo-chip value='archived'>Archived</mo-chip>
+				<mo-chip value='drafts'>Drafts</mo-chip>
 			</mo-chip-group>
 		</mo-scroller>
-	`
+	`,
 }
-
-customElements.define('mo-story-input-chips', StoryInputChips)
 
 /**
- * The shape a search or booking filter bar takes: a leading chip carrying the count, the applied
- * filters as removable chips, and the rest as chips that open a menu. A chip whose whole body opens a
- * menu needs no API of its own — it is the anchor of a `mo-popover-container`, which is also what
- * Material asks for, since a trailing icon alone is too small a target on a narrow window. Its arrow goes
- * in the `end` slot, inside the button, so the state layer covers the whole chip.
- *
- * The menu owns the answer, not the chip: the chip asks with `requestSelect` and the story refuses it, so
- * picking an option is what fills the chip in and names it, and the first option of each menu clears it.
+ * A filter bar: a chip with the count, the applied filters as removable chips and the rest opening menus from a `mo-popover-container`.
+ * The story refuses `requestSelect`, so picking an option fills a chip in, and the first option clears it.
  */
-export const FilterBar: StoryObj = {
-	render: () => html`<mo-story-filter-bar></mo-story-filter-bar>`
-}
-
-class StoryFilterBar extends Component {
-	@state() private applied = ['Nonstop', 'Carry-on included']
-	@state() private chosen = new Map<string, string>()
-
-	// The first option of each menu is the one that clears it.
-	private static readonly menus = new Map([
-		['Airlines', ['Any airline', 'Star Alliance', 'SkyTeam', 'Oneworld']],
-		['Times', ['Any time', 'Morning', 'Afternoon', 'Evening']],
-		['Price', ['Any price', 'Under 200 €', 'Under 400 €']],
-	])
-
-	protected override get template() {
+export const FilterBar: Story = {
+	render: () => {
+		const [applied, setApplied] = useState(['Nonstop', 'Carry-on included'])
+		const [chosen, setChosen] = useState<Record<string, string | undefined>>({})
+		const menus = {
+			Airlines: ['Any airline', 'Star Alliance', 'SkyTeam', 'Oneworld'],
+			Times: ['Any time', 'Morning', 'Afternoon', 'Evening'],
+			Price: ['Any price', 'Under 200 €', 'Under 400 €'],
+		}
 		return html`
 			<mo-chip-group aria-label='Filters'>
 				<mo-chip>
 					<mo-icon slot='start' icon='tune'></mo-icon>
-					All filters (${this.applied.length + this.chosen.size})
+					All filters (${applied.length + Object.values(chosen).filter(Boolean).length})
 				</mo-chip>
 
-				${this.applied.map(filter => html`
-					<mo-chip selectable selected removable value=${filter}
-						@requestRemove=${() => this.applied = this.applied.filter(f => f !== filter)}
-					>${filter}</mo-chip>
+				${applied.map(filter => html`
+					<mo-chip selectable selected removable value=${filter} @requestRemove=${() => setApplied(applied.filter(f => f !== filter))}>
+						${filter}
+					</mo-chip>
 				`)}
 
-				${[...StoryFilterBar.menus].map(([name, options]) => html`
+				${Object.entries(menus).map(([name, options]) => html`
 					<mo-popover-container>
-						<mo-chip selectable ?selected=${this.chosen.has(name)}
-							@requestSelect=${(e: Event) => e.preventDefault()}
-						>
-							${this.chosen.get(name) ?? name}
+						<mo-chip selectable ?selected=${!!chosen[name]} @requestSelect=${(event: Event) => event.preventDefault()}>
+							${chosen[name] ?? name}
 							<mo-icon slot='end' icon='arrow_drop_down'></mo-icon>
 						</mo-chip>
 						<mo-menu slot='popover'>
 							${options.map((option, index) => html`
-								<mo-menu-item @click=${() => this.choose(name, index === 0 ? undefined : option)}>
-									${option}
-								</mo-menu-item>
+								<mo-menu-item @click=${() => setChosen({ ...chosen, [name]: index === 0 ? undefined : option })}>${option}</mo-menu-item>
 							`)}
 						</mo-menu>
 					</mo-popover-container>
 				`)}
 			</mo-chip-group>
 		`
-	}
-
-	private choose(name: string, option?: string) {
-		const chosen = new Map(this.chosen)
-		option === undefined ? chosen.delete(name) : chosen.set(name, option)
-		this.chosen = chosen
-	}
+	},
 }
-
-customElements.define('mo-story-filter-bar', StoryFilterBar)
 
 /**
- * A status told as a chip, which is what a board or a data grid column wants: `readonly` so it is a
- * label rather than a control, coloured through the same two properties everything else uses, and
- * shrunk with a plain `min-height`, because an outer rule beats the chip's own — only what varies with
- * its state needs a custom property.
- *
- * The last one is the editable case — the status is a menu away, so the chip is not `readonly` and
- * carries the affordance that says so.
+ * Statuses for a board or a grid column: `readonly`, colored by the same two properties and shrunk with a plain `min-height`.
+ * The last one is editable, so it is not `readonly` and carries an arrow.
  */
-export const StatusChips: StoryObj = {
-	render: () => html`<mo-story-status-chips></mo-story-status-chips>`
-}
-
-class StoryStatusChips extends Component {
-	private static readonly colorByStatus = new Map([
-		['Awaiting payment', 'var(--mo-color-yellow)'],
-		['Awaiting pickup', 'var(--mo-color-gray)'],
-		['Shipped', 'var(--mo-color-blue)'],
-		['Completed', 'var(--mo-color-green)'],
-		['Rejected', 'var(--mo-color-red)'],
-	])
-
-	@state() private status = 'Awaiting pickup'
-
-	static override get styles() {
-		return css`
-			mo-chip {
-				min-height: 1.5rem;
-				border-radius: 100px;
-				outline-color: var(--_color);
-				color: var(--_color);
-				background: color-mix(in srgb, var(--_color), var(--mo-color-surface) 80%);
-			}
-		`
-	}
-
-	private static style(status: string) {
-		return style({ '--_color': StoryStatusChips.colorByStatus.get(status)! } as never)
-	}
-
-	protected override get template() {
+export const StatusChips: Story = {
+	render: () => {
+		const colors: Record<string, string> = {
+			'Awaiting payment': 'var(--mo-color-yellow)',
+			'Awaiting pickup': 'var(--mo-color-gray)',
+			'Shipped': 'var(--mo-color-blue)',
+			'Completed': 'var(--mo-color-green)',
+			'Rejected': 'var(--mo-color-red)',
+		}
+		const [status, setStatus] = useState('Awaiting pickup')
 		return html`
+			<style>
+				mo-chip.status {
+					min-height: 1.5rem;
+					border-radius: 100px;
+					outline-color: var(--status-color);
+					color: var(--status-color);
+					background: color-mix(in srgb, var(--status-color), var(--mo-color-surface) 80%);
+				}
+			</style>
 			<mo-flex gap='1rem' alignItems='start'>
 				<mo-chip-group aria-label='Statuses'>
-					${[...StoryStatusChips.colorByStatus.keys()].map(status => html`
-						<mo-chip readonly ${StoryStatusChips.style(status)}>${status}</mo-chip>
+					${Object.entries(colors).map(([label, color]) => html`
+						<mo-chip readonly class='status' style='--status-color: ${color}'>${label}</mo-chip>
 					`)}
 				</mo-chip-group>
 
 				<mo-popover-container>
-					<mo-chip ${StoryStatusChips.style(this.status)}>
-						${this.status}
+					<mo-chip class='status' style='--status-color: ${colors[status]}'>
+						${status}
 						<mo-icon slot='end' icon='arrow_drop_down'></mo-icon>
 					</mo-chip>
 					<mo-menu slot='popover'>
-						${[...StoryStatusChips.colorByStatus.keys()].map(status => html`
-							<mo-menu-item @click=${() => this.status = status}>${status}</mo-menu-item>
+						${Object.keys(colors).map(label => html`
+							<mo-menu-item @click=${() => setStatus(label)}>${label}</mo-menu-item>
 						`)}
 					</mo-menu>
 				</mo-popover-container>
 			</mo-flex>
 		`
-	}
+	},
 }
-
-customElements.define('mo-story-status-chips', StoryStatusChips)

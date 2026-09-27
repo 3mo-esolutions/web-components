@@ -3,13 +3,15 @@ import { Fab } from '@3mo/fab'
 import { SlotController } from '@3mo/slot-controller'
 
 /**
+ * A floating action button that unfolds a column of related ones when pressed, and folds them on a press outside.
+ *
  * @element mo-fab-group
  *
- * @attr open
+ * @attr open - Whether the buttons are unfolded.
  *
- * @slot - Floating action buttons
+ * @slot - The `mo-fab`s it unfolds, from the bottom up, their icons after their labels.
  *
- * @cssprop --mo-fab-group-transition-duration
+ * @cssprop --mo-fab-group-transition-duration - The duration of the unfolding, 250ms by default.
  */
 @component('mo-fab-group')
 export class FabGroup extends Component {

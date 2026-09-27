@@ -2,6 +2,8 @@ import { component, css, eventListener, property } from '@a11d/lit'
 import { SelectionListItem } from './SelectionListItem.js'
 
 /**
+ * A list item that a press selects, shown by its background.
+ *
  * @element mo-selectable-list-item
  *
  * @attr selected - Whether the list item is selected

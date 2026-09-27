@@ -5,12 +5,16 @@ import { SplitterItem } from './index.js'
 import '@3mo/theme'
 
 /**
+ * A layout of items the user resizes by dragging the resizers between them.
+ *
  * @element mo-splitter
  *
- * @attr direction
- * @attr resizerTemplate
+ * @attr direction - The direction in which the items are laid out; vertical by default
+ * @attr resizerTemplate - The template of the resizer between two items; `mo-splitter-resizer-knob` by default
  *
- * @slot
+ * @slot - The `mo-splitter-item` elements
+ *
+ * @csspart resizer-host - The element around each resizer
  */
 @component('mo-splitter')
 export class Splitter extends Component {

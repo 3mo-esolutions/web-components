@@ -1,5 +1,5 @@
 /**
- * A simple keyboard controller which tracks the pressed special keys (ctrl, alt, shift, meta).
+ * Tracks globally whether Ctrl, Shift, Alt or Meta is held down, for code that has no keyboard event at hand.
  *
  * @ssr true
  */

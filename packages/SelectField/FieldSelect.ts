@@ -8,14 +8,18 @@ import { FieldSelectValueController, type Data, type Index, type Value } from '.
 import { Option } from './Option.js'
 
 /**
+ * A field that selects one or more of its options from a dropdown menu, which typing can search.
+ *
  * @element mo-field-select
  *
- * @attr default - The default value.
- * @attr reflectDefault - Whether the default value should be reflected to the attribute.
+ * @attr default - The text of a first menu item that clears the selection.
+ * @attr reflectDefault - Whether the input shows the `default` text while nothing is selected.
+ * @attr dense - Whether the field is dense.
+ * @attr open - Whether the menu is open.
  * @attr multiple - Whether multiple options can be selected.
- * @attr searchable - Whether the options should be searchable.
+ * @attr searchable - Whether typing filters the options.
  * @attr freeInput - Whether the user can input values that are not in the options.
- * @attr value - The selected value.
+ * @attr value - The selected value, or an array of them when `multiple`.
  * @attr index - The selected index.
  * @attr data - The selected data.
  * @attr menuAlignment - Menu popover alignment
@@ -30,10 +34,13 @@ import { Option } from './Option.js'
  *
  * @i18n "No results"
  *
- * @fires change
- * @fires input
- * @fires dataChange
- * @fires indexChange
+ * @fires change - The selected value, or an array of them when `multiple`.
+ * @fires input - The input's text, as typed or as it shows the selection.
+ * @fires dataChange - The selected option's data, or an array of them when `multiple`.
+ * @fires indexChange - The selected option's position, or an array of them when `multiple`.
+ *
+ * @accessibility
+ * A [combobox](?path=/docs/behaviors-combobox--overview) over a listbox of its options: the input and the listbox are named after the `label`, and a `searchable` field adds `aria-autocomplete='list'`. Focus stays in the input while the keys move through the options.
  */
 @component('mo-field-select')
 export class FieldSelect<T> extends FieldComponent<Value> {

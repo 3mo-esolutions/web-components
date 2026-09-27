@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/segmented-input",
 	"version": "0.2.1",
-	"description": "Controllers for inputs made of several sub-inputs — date units, code cells, templated groups.",
+	"description": "Lit controllers for inputs split into typed segments, such as date units or code cells, with keyboard entry and ARIA.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/SegmentedInput"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -18,7 +22,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/behaviors-segmented-input--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

@@ -4,6 +4,8 @@ import '@material/web/checkbox/checkbox.js'
 import '@3mo/theme'
 
 /**
+ * A checkbox with an optional label, which can also show a partial selection.
+ *
  * @element mo-checkbox
  *
  * @ssr true
@@ -12,8 +14,8 @@ import '@3mo/theme'
  * @attr disabled - Whether the checkbox is disabled or not.
  * @attr selected - Whether the checkbox is selected or not. This can be set to 'indeterminate' to show a dash instead of a check-mark.
  *
- * @cssprop --mo-checkbox-accent-color
- * @cssprop --mo-checkbox-disabled-color
+ * @cssprop --mo-checkbox-accent-color - The color of the selected box, its focus ring and its state layer
+ * @cssprop --mo-checkbox-disabled-color - The color of a disabled checkbox and its label
  *
  * @fires change - Dispatched when the selection state of the checkbox changes.
  */

@@ -11,6 +11,8 @@ const lanesConverter = {
 }
 
 /**
+ * A layout that packs items of different sizes into lanes, falling back to a regular grid where the browser lacks native CSS masonry.
+ *
  * @element mo-masonry
  *
  * @ssr true

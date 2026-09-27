@@ -3,7 +3,7 @@ import { property, type ReactiveElement, type UpdatedCallback } from '@a11d/lit'
 const tabIndexBeforeDisabledSymbol = Symbol('tabIndexBeforeDisabledSymbol')
 
 /**
- * A decorator that adds a disabled property to a reactive element, with ability to block focus when disabled.
+ * A decorator for a reflected `disabled` property that sets `aria-disabled` and, with `blockFocus`, takes the element out of the tab order while disabled.
  *
  * @ssr true
  */

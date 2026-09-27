@@ -1,0 +1,43 @@
+import { Meta, DocsStory } from '@storybook/addon-docs/blocks'
+import { Hero, Install, Playground, Accessibility, Api, Changelog } from '../../.storybook/blocks'
+import * as FetchableDataGridStories from './FetchableDataGrid.stories'
+
+<Meta of={FetchableDataGridStories} />
+
+<Hero />
+<Install />
+<Playground />
+
+## Fetching
+
+`fetch` is a function of the grid's `parameters` that returns its rows, and it runs again whenever the parameters change. Everything `mo-data-grid` does works on the rows it returns.
+
+<DocsStory of={FetchableDataGridStories.Parameters} />
+<DocsStory of={FetchableDataGridStories.NoSelection} />
+
+## Pagination on the server
+
+With `paginationParameters`, the grid fetches one page at a time, and `fetch` returns it together with either the `dataLength` of all rows or whether there is a next page.
+
+<DocsStory of={FetchableDataGridStories.Pagination} />
+<DocsStory of={FetchableDataGridStories.PaginationWithHasNextPage} />
+
+## Infinite scrolling
+
+A grid that paginates on the server but has no `pagination` of its own fetches the next page as it is scrolled to its end.
+
+<DocsStory of={FetchableDataGridStories.InfiniteScrolling} />
+<DocsStory of={FetchableDataGridStories.InfiniteScrollingWithHasNextPage} />
+<DocsStory of={FetchableDataGridStories.FailingPage} />
+
+## Refetching
+
+The refetch button in the toolbar fetches again, and `autoRefetch` does it on an interval.
+
+<DocsStory of={FetchableDataGridStories.AutoRefetch} />
+<DocsStory of={FetchableDataGridStories.SilentFetch} />
+
+<Accessibility />
+
+<Api />
+<Changelog />

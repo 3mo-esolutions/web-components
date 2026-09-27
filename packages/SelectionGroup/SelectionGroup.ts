@@ -8,15 +8,7 @@ export type SelectionGroupValue = string | undefined | Array<string>
 
 /**
  * A set of children sharing one selection, one tab stop and one `value` — a question and its answers.
- *
- * It is deliberately unopinionated about what an answer looks like: any element child with a `value` is
- * an item, whether that is a `mo-selectable-button`, a `mo-chip`, a plain `<button>` or something of the
- * consumer's own. What the group is, and what no controller can be on its own, is the container the ARIA
- * pattern requires: the role, the accessible name, the scope, and one bindable fact instead of a
- * `?selected=` expression on every item. The flex is a default, not the reason.
- *
- * Give it an accessible name with `aria-label` or `aria-labelledby` — a set of answers that announces
- * nothing is a bug.
+ * Give it an accessible name with `aria-label` or `aria-labelledby`.
  *
  * @element mo-selection-group
  *
@@ -29,6 +21,17 @@ export type SelectionGroupValue = string | undefined | Array<string>
  * @slot - The items.
  *
  * @fires change - Dispatched with the new value when the selection changes.
+ *
+ * @accessibility
+ * The group takes its pattern from how it selects:
+ *
+ * | Selectability | Group | Items |
+ * | --- | --- | --- |
+ * | `single` | `radiogroup` | `radio` with `aria-checked` |
+ * | `multiple`, or `single` with `deselectable` | `group` | button with `aria-pressed` |
+ * | none | `toolbar` | their own role |
+ *
+ * Focus roves, and Tab lands on the selected item. Every arrow moves, wrapping, and `Home` and `End` go to the ends; the arrows never select, not even in a radio group, where the ARIA practices have them select. `Space` and `Enter` press the item. Name the group with `aria-label` or `aria-labelledby`.
  */
 @component('mo-selection-group')
 export class SelectionGroup extends Component {

@@ -12,6 +12,10 @@ type DateTimeFromParameters =
 	| [epochMilliseconds?: number, calendar?: string, timeZone?: string]
 	| [zonedDateTime: Temporal.ZonedDateTime]
 
+/**
+ * A `Date` with Temporal's fields and arithmetic in the language's calendar and time zone, which also parses localized input.
+ * It is global, and `@3mo/date-time-value-constructor` revives the date strings of API responses as instances.
+ */
 export class DateTime extends Date {
 	static readonly isoRegularExpression = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*))(?:Z|(\+|-)([\d|:]*))?$/
 

@@ -1,6 +1,18 @@
 import { component, property, css, html, eventListener, event } from '@a11d/lit'
 import { SelectionListItem } from '@3mo/list'
 
+/**
+ * An option of a select field, holding any content and selected by its value, its data or its position.
+ *
+ * @element mo-option
+ *
+ * @attr value - The value the field selects the option by.
+ * @attr data - The data the option carries.
+ * @attr index - The option's position among the field's items, which the field sets.
+ * @attr selected - Whether the option is selected, which the field sets.
+ * @attr multiple - Whether the option shows a checkbox, which the field sets when `multiple`.
+ * @attr inputText - The text the field's input shows for the option, in place of its content.
+ */
 @component('mo-option')
 export class Option<T> extends SelectionListItem {
 	@event({ bubbles: true, cancelable: true, composed: true }) readonly requestSelectValueUpdate!: EventDispatcher<void>

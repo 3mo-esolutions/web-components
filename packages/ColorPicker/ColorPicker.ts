@@ -3,12 +3,16 @@ import { component, html, event, ifDefined, property, css, Component, query } fr
 import { Color } from '@3mo/color'
 
 /**
+ * A color swatch that opens the browser's color picker.
+ *
  * @element mo-color-picker
  *
  * @ssr true
  *
  * @attr value - The current color.
  * @attr presets - A list of preset colors.
+ *
+ * @csspart input - The native color input
  *
  * @fires input - Dispatched when the user changes the color.
  * @fires change - Dispatched when the user commits the color.

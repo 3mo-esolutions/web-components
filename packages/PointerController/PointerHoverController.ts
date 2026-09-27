@@ -1,14 +1,13 @@
 import { Controller, EventListenerController, type EventListenerTarget, type ReactiveElement, extractEventTargets } from '@a11d/lit'
 
 export interface PointerHoverControllerOptions {
+	/** Where to track the hover instead of the host. */
 	target?: EventListenerTarget
+	/** Called when the pointer enters or leaves. */
 	handleHoverChange?(hover: boolean): void
 }
 
-/**
- * Follows the pointer boundary events, which engines also dispatch for layout changes underneath
- * a resting pointer, so that the state stays in sync with `:hover` without ever polling it.
- */
+/** Tracks whether a pointer hovers the host from the boundary events, which also fire when the layout moves under a resting pointer. */
 export class PointerHoverController extends Controller {
 	protected _hover = false
 	get hover() { return this._hover }

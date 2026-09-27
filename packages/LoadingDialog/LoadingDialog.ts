@@ -2,16 +2,18 @@ import { component, css, html, property } from '@a11d/lit'
 import { Dialog } from '@3mo/dialog'
 
 /**
+ * A dialog that blurs its content behind a spinner while it is loading.
+ *
  * @element mo-loading-dialog
  *
- * @attr loading
- * @attr loadingHeading
+ * @attr loading - Whether the dialog is loading, which blurs the content and shows the loading slot.
+ * @attr loadingHeading - The heading while loading, followed by an ellipsis; "Loading" by default.
  *
- * @csspart loading
+ * @csspart loading - The container of the loading slot, laid over the content.
  *
  * @i18n "Loading"
  *
- * @slot loading
+ * @slot loading - Shown over the content while loading, a circular progress by default.
  */
 @component('mo-loading-dialog')
 export class LoadingDialog extends Dialog {

@@ -4,6 +4,8 @@ import type { MaterialIcon } from '@3mo/icon'
 import './ListItemRipple.js'
 
 /**
+ * An item of a list, with an optional icon before its content.
+ *
  * @element mo-list-item
  *
  * @attr disabled - Whether the list item is disabled
@@ -11,6 +13,8 @@ import './ListItemRipple.js'
  * @attr preventClickOnSpace - Whether the list item should prevent click on space
  *
  * @slot - Default slot for content
+ *
+ * @csspart icon - The icon before the content.
  */
 @component('mo-list-item')
 export class ListItem extends Component {

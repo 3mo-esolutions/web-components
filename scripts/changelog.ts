@@ -18,7 +18,7 @@ class Release {
 		const info = !change.type ? undefined : Release.typeInfo.get(change.type)
 		const typeName = info?.name ?? ''
 		const typeEmoji = info?.emoji ?? ''
-		return `- **${typeEmoji}${change.isBreaking ? '⚠️ Breaking ' : ' '}${typeName}**: ${change.heading} ([${commit.hash.slice(0, 7)}](${_package.packageJson.repository.url}/commit/${commit.hash}))`
+		return `- **${typeEmoji}${change.isBreaking ? '⚠️ Breaking ' : ' '}${typeName}**: ${change.heading} ([${commit.hash.slice(0, 7)}](${_package.repositoryUrl}/commit/${commit.hash}))`
 	}
 
 	readonly package!: Package
@@ -49,10 +49,14 @@ class Release {
 
 export class ChangeLog {
 	static readonly versionRegex = /"version": \[-"(?<oldVersion>.+)",-]{\+"(?<version>.+)",\+}/
-	static readonly splitRegex = /(?=(\n|^)commit [0-9a-f]{40})/
+	/** The version a package was created with, from the commit that added its `package.json`. */
+	static readonly initialVersionRegex = /^new file mode [\s\S]*?\{\+\s*"version": "(?<version>[^"]+)",\+\}/m
+	static readonly commitRegex = /^(?=commit [0-9a-f]{40})/m
+	static readonly diffRegex = /^(?=diff --git )/m
 
 	static async generate() {
-		const releases = (await Promise.all(Package.all.map(p => this.generateForPackage(p)))).flat()
+		const history = await this.history()
+		const releases = Package.all.flatMap(p => this.generateForPackage(p, history.get(p.relativePath) ?? []))
 		const groupBy = (Object as any).groupBy as <K extends PropertyKey, T>(items: Iterable<T>, keySelector: (item: T, index: number) => K) => Partial<Record<K, T[]>>
 		const releaseNotes = Object.entries(groupBy(releases, release => release.dateString))
 			.sort(([a], [b]) => new Date(b).valueOf() - new Date(a).valueOf())
@@ -64,22 +68,38 @@ export class ChangeLog {
 		FileSystem.writeFileSync(Path.resolve('CHANGELOG.md'), releaseNotes.join('\n\n'))
 	}
 
-	private static async generateForPackage(p: Package) {
-		const commits = (await run('git log --first-parent origin/main ./package.json', { directory: p.relativePath, captureOutput: true }))
-			.split(ChangeLog.splitRegex)
-			.filter(s => !!s.trim().length)
+	/** The commits that changed each package's `package.json`, newest first, each as `git show` prints it for that file. */
+	private static async history() {
+		// A clone without an "origin/main" still gets the changelog of its own history rather than failing `npm start`:
+		const branch = (await run('git rev-parse --verify --quiet origin/main', { captureOutput: true, reject: true })).trim() ? 'origin/main' : 'HEAD'
+		const log = await run(`git log --first-parent --no-renames --patch --unified=0 --word-diff=plain ${branch} -- "packages/*/package.json"`, { captureOutput: true })
+		const history = new Map<string, Array<{ readonly message: string, readonly output: string }>>()
+		for (const entry of log.split(ChangeLog.commitRegex)) {
+			const [message = '', ...diffs] = entry.split(ChangeLog.diffRegex)
+			for (const diff of diffs) {
+				const directory = diff.match(/^diff --git a\/(.+)\/package\.json b\//)?.[1]
+				if (directory) {
+					const commits = history.get(directory) ?? []
+					commits.push({ message, output: message + diff })
+					history.set(directory, commits)
+				}
+			}
+		}
+		return history
+	}
+
+	private static generateForPackage(p: Package, commits: ReadonlyArray<{ readonly message: string, readonly output: string }>) {
 		const releases = new Array<Release>()
 		let lastRelease: Release | undefined
-		for (const [index, commitMessage] of commits.entries()) {
-			const commit = Commit.parse(commitMessage)
-			const output = await run(`git show --unified=0 --word-diff=plain ${commit.hash} package.json`, { directory: p.relativePath, captureOutput: true })
-			if (!output || !output.includes('version')) {
+		for (const [index, { message, output }] of commits.entries()) {
+			const commit = Commit.parse(message)
+			if (!output.includes('version')) {
 				continue
 			}
 			// eslint-disable-next-line prefer-const
 			let { version, oldVersion } = output.match(ChangeLog.versionRegex)?.groups ?? {}
 			if (index === commits.length - 1) {
-				version ||= releases.filter(l => !!l.oldVersion).at(-1)?.oldVersion || version
+				version ||= releases.filter(l => !!l.oldVersion).at(-1)?.oldVersion || output.match(ChangeLog.initialVersionRegex)?.groups?.version || version
 			}
 			const release = !version ? lastRelease : (lastRelease = new Release({ package: p, version, oldVersion, date: !commit.date ? undefined : new Date(commit.date) }))
 			release?.commits.push(commit)
@@ -93,10 +113,6 @@ export class ChangeLog {
 			.filter(s => !!s.trim().length)
 			.join('\n\n')
 		FileSystem.writeFileSync(Path.resolve(p.path, 'CHANGELOG.md'), changelog)
-
-		// If we want to have changelogs directly in the repository in the future, we should get rid of this:
-		p.packageJson.changelog = changelog
-		FileSystem.writeFileSync(Path.resolve(p.path, 'package.json'), JSON.stringify(p.packageJson, null, '\t'))
 
 		return releases
 	}

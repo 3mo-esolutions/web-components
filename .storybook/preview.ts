@@ -1,38 +1,57 @@
-import { setCustomElementsManifest } from '@storybook/web-components-vite'
-import { CustomDocsPage } from './CustomDocsPage.jsx'
-import customElements from '../custom-elements.json'
-import { themes } from 'storybook/theming'
-import { addons } from 'storybook/internal/preview-api'
+import { setCustomElementsManifest, type Preview } from '@storybook/web-components-vite'
 import { action } from 'storybook/actions'
-import { DARK_MODE_EVENT_NAME } from '@vueless/storybook-dark-mode'
-import { FieldComponent } from '@3mo/field'
+import { addons } from 'storybook/preview-api'
+import { UPDATE_GLOBALS } from 'storybook/internal/core-events'
+import '@3mo/del'
+import { DocsContainer } from './DocsContainer.js'
+import { DocsPage } from './DocsPage.js'
+import { applyGlobals, decorators, globalTypes, initialGlobals } from './globals.js'
+import { renderWhenVisible } from './lazy.js'
+import './litLanguage.js'
+import { transformSource } from './source.js'
 
-// Keep your custom elements manifest setup
-setCustomElementsManifest(customElements)
+type Manifest = { readonly tags: ReadonlyArray<{ readonly name: string, readonly events?: ReadonlyArray<{ readonly name: string }> }> }
 
-const channel = addons.getChannel()
+// Globbed rather than imported, as `npm run analyze` generates the file, which the type-check runs without.
+const [manifest] = Object.values(import.meta.glob<Manifest>('../custom-elements.json', { eager: true, import: 'default' }))
 
-// Every field's value events land in the Actions panel, so that no story has to wire them up itself.
-// They are listened for in the CAPTURE phase because a field dispatches them without `bubbles` — the
-// capture phase still descends through the ancestors, while the bubble phase would never reach here.
-// Only `CustomEvent`s count: a control's own native "input"/"change" also passes by on its way to
-// being stopped inside the field, and carries no value.
-for (const type of ['input', 'change'] as const) {
-	const log = action(type)
+setCustomElementsManifest(manifest)
+
+// Every event the manifest documents lands in the Actions panel, whichever element dispatches it. Listening in the
+// capture phase also catches events dispatched without `bubbles`, and only `CustomEvent`s count, as native events
+// of the same names carry no value.
+for (const type of new Set(manifest?.tags.flatMap(tag => tag.events?.map(event => event.name) ?? []))) {
 	document.addEventListener(type, event => {
-		if (event instanceof CustomEvent && event.target instanceof FieldComponent) {
-			log(event.detail)
+		const target = event.target as Element | null
+		if (event instanceof CustomEvent && target?.localName.includes('-')) {
+			action(`${target.localName} ${type}`)(event.detail)
 		}
 	}, { capture: true })
 }
 
+// Only what a story declares in `args` gets a control; the rest of the manifest is documentation.
+const controlsForDeclaredArgs = ({ argTypes, initialArgs }: { argTypes: Record<string, any>, initialArgs: Record<string, unknown> }) =>
+	Object.fromEntries(Object.entries(argTypes).map(([name, argType]) => [name, name in initialArgs ? argType : { ...argType, control: false }]))
+
+// Pages without stories run no decorator, so a change from the toolbar is also applied as it arrives.
+addons.getChannel().on(UPDATE_GLOBALS, ({ globals }: { globals: Record<string, unknown> }) => applyGlobals(globals))
+
 export default {
 	parameters: {
-		// Assign your custom component to the docs page
 		docs: {
-			page: CustomDocsPage,
-			theme: themes.dark,
-			codePanel: true
+			container: DocsContainer,
+			page: DocsPage,
+			toc: {
+				title: 'On this page',
+				headingSelector: 'h2, h3',
+				ignoreSelector: '.docs-hero h2, .docs-hero h3, .docs-changelog h3',
+			},
+			source: {
+				language: 'lit',
+				excludeDecorators: true,
+				transform: transformSource,
+			},
+			codePanel: true,
 		},
 		controls: {
 			expanded: true,
@@ -41,16 +60,20 @@ export default {
 				date: /Date$/,
 			},
 		},
+		options: {
+			storySort: {
+				method: 'alphabetical',
+				order: [
+					'Getting Started', ['Introduction', 'Installation', 'Theming', 'Localization', 'Forms', 'Accessibility', 'Changelog', '*'],
+					'Foundations', ['Theme', 'Localization', '*'],
+					'Actions', 'Inputs', 'Layout', 'Feedback', 'Data', 'Behaviors', 'Utilities', 'Recipes', 'Contributing',
+				],
+			},
+		},
 	},
-	decorators: [
-		(story: any) => {
-			channel.on(DARK_MODE_EVENT_NAME, (isDark: boolean) => {
-				if (globalThis.Theme) {
-					globalThis.Theme.background.value = (isDark ? 'dark' : 'light') as any
-				}
-			})
-			return story()
-		}
-	],
+	globalTypes,
+	initialGlobals,
+	decorators: [...decorators, renderWhenVisible],
+	argTypesEnhancers: [controlsForDeclaredArgs as any],
 	tags: ['autodocs'],
-}
+} satisfies Preview

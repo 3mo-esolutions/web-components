@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/expandability",
 	"version": "0.1.0",
-	"description": "A controller that keeps which items are expanded, single or multiple, with lazy loading, keyed identity and ARIA",
+	"description": "A Lit controller for the expanded state of collection items, single or multiple, with lazily loaded children and ARIA.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/Expandability"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -17,7 +21,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/behaviors-expandability--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

@@ -3,6 +3,7 @@ import { type DateTimeRangeParser } from './parsers/DateTimeRangeParser.js'
 import { DateTimeRangeDelimiterParser } from './index.js'
 import { type ParsingParameters, extractParsingParameters } from './extractParsingParameters.js'
 
+/** A range between two `DateTime`s, either of which may be open, formatted and parsed the way the language writes ranges. */
 export class DateTimeRange {
 	private static readonly customParsers = new Array<Constructor<DateTimeRangeParser>>()
 

@@ -4,6 +4,8 @@ import { Button, ButtonType } from '@3mo/button'
 import type { Flex } from '@3mo/flex'
 
 /**
+ * Buttons joined into one control, in a row or a column, sharing one type.
+ *
  * @element mo-button-group
  *
  * @ssr true - In SSR all buttons should get their type explicitly.
@@ -14,7 +16,7 @@ import type { Flex } from '@3mo/flex'
  * @cssprop --mo-button-group-border-radius - The border radius of the buttons.
  * @cssprop --mo-button-group-separator-color - The color of the separator between buttons.
  *
- * @slot - The content of the which should be buttons of type mo-button
+ * @slot - The buttons: `mo-button`s or subclasses of it.
  */
 @component('mo-button-group')
 export class ButtonGroup extends Component {

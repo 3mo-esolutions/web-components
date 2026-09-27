@@ -15,9 +15,13 @@ export class Package {
 	readonly name!: string
 	readonly packageJson!: {
 		readonly name: string
+		readonly version: string
 		readonly description: string
+		readonly homepage?: string
+		readonly license?: string
+		readonly author?: string | { readonly name: string }
+		readonly main?: string
 		readonly repository: { readonly url: string }
-		changelog?: string
 	}
 
 	constructor(path: string) {
@@ -27,6 +31,17 @@ export class Package {
 		this.packageJsonPath = Path.resolve(path, 'package.json').replace(/\\/g, '/')
 		this.packageJson = JSON.parse(FileSystem.readFileSync(this.packageJsonPath, 'utf8'))
 		this.name = this.packageJson.name
+	}
+
+	/** The module consumers import, as a source file of the package. */
+	get entry() {
+		return [Path.join(this.path, 'index.ts'), this.packageJson.main && Path.join(this.path, this.packageJson.main)]
+			.find(path => !!path && !path.split(Path.sep).includes('dist') && FileSystem.existsSync(path)) || undefined
+	}
+
+	/** The repository's web address, as npm also accepts `git+https://….git`. */
+	get repositoryUrl() {
+		return this.packageJson.repository.url.replace(/^git\+/, '').replace(/\.git$/, '')
 	}
 
 	async release(versionBumpType: string) {
@@ -39,6 +54,7 @@ export class Package {
 		await run('npm run --silent clean')
 		await run('tsc', { directory: this.relativePath })
 		await run('npm run --silent analyze', { reject: true })
+		await run(`npm run --silent readme -- ${this.name}`)
 		await run(`npm version --silent --loglevel=error ${versionBumpType.replace('prepatch', 'prerelease')} ${!isPreRelease ? '' : '--preid=preview'}`, { directory: this.relativePath })
 		await run(`npm publish --loglevel=error --access public ${!isPreRelease ? '' : '--tag preview'}`, { directory: this.relativePath })
 		await run('npm run --silent clean')

@@ -21,6 +21,14 @@ const getViewportShallPausePredicate = (scale: number) => (rect: DOMRect) => {
 	) === false
 }
 
+/**
+ * A Cloudflare Stream video player, embedded at a 16:9 ratio.
+ *
+ * @element mo-cloudflare-stream
+ *
+ * @attr source - The URL of the video's Cloudflare Stream player iframe.
+ * @attr autoPause - When the video pauses as it is scrolled out of view: `when-not-in-viewport`, `when-quarter-in-viewport` or `when-half-in-viewport`. It plays again when it returns.
+ */
 @component('mo-cloudflare-stream')
 export class CloudflareStream extends Component {
 	private static readonly shallPauseByStrategy = new Map<CloudflareStreamAutoPause, ReturnType<typeof getViewportShallPausePredicate>>([

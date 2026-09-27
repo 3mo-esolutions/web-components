@@ -2,6 +2,8 @@ import { component, css } from '@a11d/lit'
 import { ListItem } from '@3mo/list'
 
 /**
+ * A command in a `mo-menu`.
+ *
  * @element mo-menu-item
  */
 @component('mo-menu-item')

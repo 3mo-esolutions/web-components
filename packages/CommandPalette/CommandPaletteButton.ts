@@ -2,6 +2,11 @@ import { Component, component, css, html } from '@a11d/lit'
 import { dependsOnScreenSize } from '@3mo/screen-size'
 import { CommandPalette } from './CommandPalette.js'
 
+/**
+ * A search button that opens the command palette and shows its shortcut on wide screens.
+ *
+ * @element mo-command-palette-button
+ */
 @component('mo-command-palette-button')
 export class CommandPaletteButton extends Component {
 	static override get styles() {

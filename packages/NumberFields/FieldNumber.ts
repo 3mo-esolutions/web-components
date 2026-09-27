@@ -3,6 +3,8 @@ import { InputFieldComponent } from '@3mo/field'
 import '@3mo/localization'
 
 /**
+ * A field for a number, formatted in the user's language and clamped to `min` and `max` when committed.
+ *
  * @element mo-field-number
  *
  * @attr value - The value of the field.

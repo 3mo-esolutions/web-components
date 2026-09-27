@@ -13,21 +13,8 @@ export interface PointerRepeatControllerOptions extends PointerPressControllerOp
 }
 
 /**
- * Repeats while a pointer is held down, as a held key repeats on its own.
- *
- * The trigger fires on the press rather than on the release, so a consumer wires the pointer through
- * this controller instead of through a click handler. It is a {@link PointerPressController}, so a
- * repetition ends with the press however that press ends.
- *
- * Options are usually provided as a factory, whose host parameter enables getter-backed,
- * lazily-read options right in a field initializer:
- *
- * ```ts
- * readonly repeatController = new PointerRepeatController(this, host => ({
- *     get disabled() { return host.disabled },
- *     handleTrigger: () => host.stepUp(),
- * }))
- * ```
+ * Repeats a trigger while a pointer is held down, as a held key repeats on its own.
+ * It fires on the press rather than on the release, so the pointer goes through it instead of a click handler.
  */
 export class PointerRepeatController<THost extends ReactiveElement = ReactiveElement> extends PointerPressController {
 	static readonly defaultDelay = 500

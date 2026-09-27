@@ -24,31 +24,8 @@ export interface OverflowControllerOptions<TItem extends Element = Element> {
 const tolerance = 0.5
 
 /**
- * Decides which of a single-line container's items fit and which overflow — the "Priority+" pattern.
- * Where the overflowing ones go is entirely the host's business.
- *
- * A host which renders its own items declares them where they stand:
- *
- * ```html
- * <div ${this.overflowController.container()}>
- *     ${this.actions.map(action => html`<button ${this.overflowController.item()}>${action}</button>`)}
- * </div>
- * ```
- *
- * A host whose items are light-DOM children it cannot put a directive on passes them as options instead:
- *
- * ```ts
- * readonly overflowController = new OverflowController(this, host => ({
- *     get container() { return host.pane },
- *     get items() { return host.items },
- *     handleChange: (item, overflows) => item.slot = overflows ? 'overflow' : '',
- * }))
- * ```
- *
- * Verdicts come from arithmetic over measured sizes, never from moving items to probe the layout, so an
- * overflowed item never flashes back in to be re-measured and right-to-left needs no special treatment.
- * Items are assumed not to shrink below their measured size (e.g. `flex: 0 0 auto`), spacing is taken
- * from the container's `gap` rather than from margins, and a container without layout overflows everything.
+ * Works out which items of a single-line container fit and which overflow - the "Priority+" pattern.
+ * Where the overflowing ones go is up to the host.
  *
  * @ssr false
  */

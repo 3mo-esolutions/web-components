@@ -33,6 +33,7 @@ export interface NavigabilityControllerOptions<T> {
 	readonly key?: (item: T) => unknown
 	/** An item that is not navigable stays in the order but is stepped over. Defaults to the registry's `disabled` flag. */
 	readonly isNavigable?: (item: T) => boolean
+	/** Ignores keys, presses and focus, leaving the cursor where it is. */
 	readonly disabled?: boolean
 	/** Defaults to `roving`. */
 	readonly focus?: NavigabilityFocus
@@ -69,10 +70,7 @@ type NavigabilityHost = ReactiveControllerHost & EventTarget
  * }))
  * ```
  *
- * The cursor is kept on three levels: the desired index (the intent, sticky while the items change under
- * it), the index (the desired one clamped and snapped to the nearest navigable item) and the item (found
- * again by key when the items are replaced). Arrows, Home and End, PageUp and PageDown and typeahead move
- * it. A change carries its event, so a controller composing selection extends a range on Shift+Arrow.
+ * When the items change, the cursor finds its item again by key, or else snaps to the nearest navigable one.
  */
 export class NavigabilityController<T, THost extends NavigabilityHost = NavigabilityHost> extends Controller implements EventListenerObject {
 	static readonly typeaheadTimeout = 1000

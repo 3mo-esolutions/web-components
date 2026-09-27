@@ -1,7 +1,7 @@
 import { isServer, property, type ReactiveElement } from '@a11d/lit'
 
 /**
- * A decorator factory that defines a property that reflects a style property.
+ * A decorator for a property stored in one of the host's inline styles, CSS custom properties included.
  *
  * @ssr true
  *

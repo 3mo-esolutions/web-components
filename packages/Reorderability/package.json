@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/reorderability",
 	"version": "0.3.1",
-	"description": "A controller that makes elements reorderable by dragging — on mouse, touch and pen — deriving its layout from the elements themselves.",
+	"description": "A Lit controller for reordering items by dragging with mouse, touch or pen, reading the layout from the items themselves.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/Reorderability"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -17,7 +21,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/behaviors-reorderability--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

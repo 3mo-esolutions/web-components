@@ -26,4 +26,5 @@ class ResizeDirective extends AsyncDirective {
 	}
 }
 
+/** A directive that calls back whenever the element it sits on resizes. */
 export const observeResize = directive(ResizeDirective)

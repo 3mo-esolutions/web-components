@@ -47,6 +47,11 @@ class ConfettiParticle {
 	}
 }
 
+/**
+ * A canvas that rains a burst of confetti over its nearest positioned ancestor when `rain()` is called.
+ *
+ * @element mo-confetti
+ */
 @component('mo-confetti')
 export class Confetti extends Component {
 	@state() private canvasWidth = 0
@@ -54,6 +59,7 @@ export class Confetti extends Component {
 
 	@query('canvas') private readonly canvasParticle!: HTMLCanvasElement
 
+	/** Rains confetti and resolves once the last piece has fallen out of view. */
 	async rain() {
 		const animate = () => {
 			requestAnimationFrame(animate)

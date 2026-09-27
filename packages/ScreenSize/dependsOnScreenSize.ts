@@ -61,4 +61,5 @@ export class DependsOnScreenSizeDirective extends AsyncDirective {
 	}
 }
 
+/** Renders the value given for the current screen size - mobile up to 640px, tablet up to 1024px, desktop beyond - falling back to the next larger one. */
 export const dependsOnScreenSize = directive(DependsOnScreenSizeDirective)

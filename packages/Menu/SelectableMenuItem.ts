@@ -2,6 +2,8 @@ import { component, css } from '@a11d/lit'
 import { SelectableListItem } from '@3mo/list'
 
 /**
+ * An item of a `mo-menu` that the menu selects and deselects, one at a time or several at once.
+ *
  * @element mo-selectable-menu-item
  */
 @component('mo-selectable-menu-item')

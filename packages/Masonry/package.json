@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/masonry",
 	"version": "0.1.0",
-	"description": "A simple wrapper web-component for native CSS Masonry Layout.",
+	"description": "A web component for native CSS masonry layouts in columns or rows, falling back to a regular grid where unsupported.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/Masonry"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -15,7 +19,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/layout-masonry--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

@@ -2,7 +2,9 @@ import { Component, component, css, html, property, queryAssignedElements } from
 import type { TimelineItem } from './TimelineItem.js'
 
 /**
- * @element mo-timeline - A component that represents a timeline.
+ * A sequence of events along a line, from top to bottom or from start to end.
+ *
+ * @element mo-timeline
  *
  * @attr direction - The direction of the timeline, either 'vertical' or 'horizontal'. Defaults to 'vertical'.
  *

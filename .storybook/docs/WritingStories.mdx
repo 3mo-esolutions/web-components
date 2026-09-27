@@ -1,0 +1,83 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+import { PageHeader } from './components'
+
+<Meta title='Contributing/Writing Stories' />
+
+<PageHeader title='Writing Stories' section='Contributing'>Every component page is generated from its stories file, so the file is the documentation: what you write is what a reader sees.</PageHeader>
+
+## The file
+
+```ts
+export default {
+	title: 'Actions / Button',
+	component: 'mo-button',
+	args: { type: ButtonType.Outlined, disabled: false },
+	argTypes: { type: { control: 'select', options: Object.values(ButtonType) } },
+} satisfies Meta<Args>
+```
+
+- `component` pulls the API table from the custom elements manifest.
+- `Default` comes first: the simplest self-contained use of the component, with its controls. Its template is also the Usage of the npm README, so it references nothing defined elsewhere in the file.
+- Then one story per aspect, named after it: `Types`, `Disabled`, `Icons`, `Slots`, `Overflow`, `CustomProperties`, `Parts`.
+- One or two lines of JSDoc above a story say what it shows and what to try. They appear under its heading - nothing else explains a story, and no text goes inside a template.
+
+## Controls
+
+- Only what a story declares in `args` gets a control. Every other row of the API table is documentation and offers nothing to change.
+- Declare an arg only when changing it teaches something about the component.
+
+## Show code
+
+- A template with only attributes shows the HTML it renders, with the current control values.
+- A template with property or event bindings or element directives shows as written, so write it the way a consumer would: self-contained, with plain `style` attributes rather than directives.
+- Layout wrappers belong in `decorators`, which the code leaves out.
+
+## Overlays
+
+A dialog, sheet, drawer or menu never opens by itself: the story renders the button that opens it, and the overlay closes the way it would in an application.
+
+## Demos for behaviors
+
+A controller needs a host, so its demo is a component, which is consumer code. Put it in the package's `stories/` folder and show its source:
+
+```ts
+import selectableListSource from './stories/SelectableList.ts?raw'
+import './stories/SelectableList.js'
+
+export const Default: StoryObj = {
+	parameters: sourceOf(selectableListSource),
+	render: () => html`<story-selectable-list></story-selectable-list>`,
+}
+```
+
+Do not declare a demo's tag in `HTMLElementTagNameMap`, or the analyzer publishes it with the package.
+
+## State and events
+
+- State a story needs: `useState` or `useArgs` from `storybook/preview-api`, no component required.
+- Every event the manifest documents appears in the Actions panel by itself. For a native event, pass an `fn()` arg from `storybook/test`.
+- Theme and language are toolbar switches, so no story needs a dark or right-to-left variant.
+
+## Descriptions
+
+- The first sentence of a component's JSDoc leads its page and its npm README. Give every `@attr`, `@slot`, `@cssprop` and `@csspart` one line.
+- A public property without an attribute appears in the API table only when it has a JSDoc line. Undocumented members count as internal.
+- An `@accessibility` section in the JSDoc of an element or controller class says, in Markdown, which roles and states it sets, which keys it answers, and what it needs from the consumer, such as a name. It becomes the Accessibility section of the page and the README. A Behaviors page shows its controller's section once its meta names the class: `parameters: { controller: 'ListboxController' }`.
+- A package's `description` is one sentence of at most 130 characters in one form: what the package is and "for" what - "A web component for …", "Web components for …", "A Lit controller for …", "A utility for …" - then what sets it apart, with a dependency as "built on …". It is what npm search shows, and the lead of pages without a component.
+
+## Section pages
+
+A component whose use needs explaining gets a `<Name>.mdx` next to its stories, like the Data Grid: `Hero`, `Install` and `Playground` from `.storybook/blocks`, then sections of two or three sentences each followed by their stories, then `Accessibility`, `Api` and `Changelog`. In a section, `<DocsStory of={…} />` shows a story with its heading and JSDoc; a bare `<Canvas>` shows neither.
+
+## For language models
+
+The documentation build also publishes every page as Markdown, listed in [llms.txt](https://3mo-esolutions.github.io/web-components/llms.txt), with each story as its code: the template with the arguments filled in, the statements of its render, or the source it shows with `sourceOf`. `scripts/util/DocsPage.ts` renders each block an MDX page uses, one tag per line; a block it does not know fails the build until it learns it.
+
+## What to cover
+
+- every value of an enumerable attribute, side by side in one story
+- states: disabled, readonly, invalid, loading, empty, error
+- each slot, and the components it is meant to sit in
+- edge cases: overflow, long text, many items
+- custom properties and parts
+- keyboard interaction where it matters

@@ -4,9 +4,13 @@ import { MenuItem } from './MenuItem.js'
 import { Menu } from './Menu.js'
 
 /**
+ * An item of a `mo-menu` that opens the items in its `submenu` slot as a menu beside it.
+ *
  * @element mo-nested-menu-item
  *
- * @slot submenu
+ * @attr open - Whether the submenu is open.
+ *
+ * @slot submenu - The items of the submenu.
  */
 @component('mo-nested-menu-item')
 export class NestedMenuItem extends MenuItem {

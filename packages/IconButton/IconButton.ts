@@ -4,6 +4,8 @@ import { type MaterialIcon } from '@3mo/icon'
 import { MdIconButton } from '@material/web/iconbutton/icon-button.js'
 
 /**
+ * A round button showing only an icon, sized by its `font-size` and colored by the inherited `color`.
+ *
  * @element mo-icon-button
  *
  * @ssr true
@@ -12,11 +14,14 @@ import { MdIconButton } from '@material/web/iconbutton/icon-button.js'
  * @attr disabled - Disables the icon-button.
  * @attr dense - Reduces the size of the icon-button.
  *
- * @slot icon - Use The icon to be displayed inside the button.
+ * @slot icon - Content in place of the icon.
  *
  * @csspart button - The native button element wrapping the icon-button.
  * @csspart ripple - The ripple effect of the icon-button.
  * @csspart focus-ring - The focus ring of the icon-button.
+ *
+ * @accessibility
+ * It does not pass `aria-label` on to its button yet, so its name is the name of its icon, such as "more_vert".
  */
 @component('mo-icon-button')
 export class IconButton extends Component {

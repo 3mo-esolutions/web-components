@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/swipeability",
 	"version": "0.2.2",
-	"description": "A controller which drags a surface along one axis between rest positions, deferring to whatever scrolls beneath it",
+	"description": "A Lit controller for surfaces swiped along one axis between rest positions, yielding to content that scrolls.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/Swipeability"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -17,7 +21,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/behaviors-swipeability--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

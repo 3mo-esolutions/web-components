@@ -3,6 +3,11 @@ import { DialogComponent } from '@a11d/lit-application'
 import { getContentTemplate as getContentTemplate } from '@3mo/dialog'
 import { type StandardDialogParameters } from './StandardDialogParameters.js'
 
+/**
+ * A dialog that tells something and closes with one button.
+ *
+ * @element mo-dialog-alert
+ */
 @component('mo-dialog-alert')
 export class DialogAlert extends DialogComponent<StandardDialogParameters<DialogAlert>> {
 	protected override get template(): HTMLTemplateResult {

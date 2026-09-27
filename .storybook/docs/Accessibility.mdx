@@ -1,0 +1,82 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+import { PageHeader } from './components'
+
+<Meta title='Getting Started/Accessibility' />
+
+<PageHeader title='Accessibility'>The components follow the patterns of the WAI-ARIA Authoring Practices. Each pattern is a headless controller that sets the roles, the states and the keys, and the `mo-*` elements are built on it. The names are yours to give.</PageHeader>
+
+## How it is built
+
+- [Indexability](?path=/docs/behaviors-indexability--overview) registers the items of a widget. [Navigability](?path=/docs/behaviors-navigability--overview) keeps the current item and moves it with the keys, [Selectability](?path=/docs/behaviors-selectability--overview) keeps the selection and [Expandability](?path=/docs/behaviors-expandability--overview) what is open. Each writes its own ARIA state onto the items.
+- The pattern controllers combine them: `ListboxController` and `ComboboxController` in `@3mo/list`, `MenuController`, `MenuBarController`, `TreeController`, `DataGridController` and `SelectionGroupController`.
+- Build your own widget on the same controller and it behaves like the element, keys and ARIA included.
+
+## Shared conventions
+
+- A composite widget is one tab stop. Tab enters and leaves it, and the arrows move inside it.
+- The current item takes real focus, and the others get `tabindex='-1'` (a roving tab index). Only the combobox keeps focus in its input and names the active option with `aria-activedescendant`.
+- `Home` and `End` go to the first and last item. `PageUp` and `PageDown` move by a visible page in lists, menus, trees and grids.
+- Typing a letter goes to the next item that starts with it, in listboxes, menus, menu bars and trees. Typing it again cycles through them, and the typed text resets after one second. An item is matched by its `aria-label`, else by its text.
+- In a right-to-left language `ArrowLeft` and `ArrowRight` swap. Two exceptions do not swap yet: the submenu of `mo-nested-menu-item` and `mo-collapsible-list-item`.
+- Disabled items are skipped by the arrows and by typeahead, so the keyboard never reaches them. The APG also allows keeping them focusable; the library does not.
+- The arrows wrap from the last item to the first in a combobox, a menu, a menu bar, a grid, tabs, radios, selection groups and `mo-selectable-list`. They stop at the ends of a tree.
+
+## Focus rings
+
+- `mo-focus-ring` shows on keyboard focus and not on a click. List and menu items draw it inward, and tree items an outline of the accent. `--mo-focus-ring-color` colors the ring, the accent by default.
+- The active option of a combobox never takes focus. It gets `data-keyboard-focus` and shows the ring while the keys move it.
+- In an element of your own, place a `mo-focus-ring` inside the focusable element, or point it at one with `for`. [Focus Controller](?path=/docs/behaviors-focus-controller--overview) tells focus by pointer, keyboard and script apart. See [Focus Ring](?path=/docs/foundations-focus-ring--overview).
+
+## Patterns
+
+Each component page has an **Accessibility** section after its examples: the roles and states it sets, its keys, and what it needs from you. The patterns, and where each is documented:
+
+- **Listbox**: [Listbox](?path=/docs/behaviors-listbox--overview), for `mo-selectable-list` and the options of the select field.
+- **Combobox**: [Combobox](?path=/docs/behaviors-combobox--overview), for the [select field](?path=/docs/inputs-select-field--overview) and the [command palette](?path=/docs/actions-command-palette--overview).
+- **Menu button**: [Menu Controller](?path=/docs/behaviors-menu-controller--overview), for [menus](?path=/docs/actions-menu--overview) and [context menus](?path=/docs/actions-context-menu--overview).
+- **Menu bar**: [Menu Bar](?path=/docs/actions-menu-bar--overview).
+- **Tree**: [Tree](?path=/docs/data-tree--overview).
+- **Grid and tree grid**: [Data Grid](?path=/docs/data-data-grids-data-grid--overview).
+- **Tabs**: [Tabs](?path=/docs/layout-tabs--overview).
+- **Modal dialog**: [Dialog](?path=/docs/layout-dialog--overview), [Sheet](?path=/docs/layout-sheet--overview) and [Drawer](?path=/docs/layout-drawer--overview).
+- **Radio group, toggle buttons and toolbar**: [Radio](?path=/docs/inputs-radio--overview), [Selection Group](?path=/docs/inputs-selection-group--overview) and [Chip](?path=/docs/actions-chip--overview).
+- **Spin button**: [Segmented Input](?path=/docs/behaviors-segmented-input--overview), for the [date and time fields](?path=/docs/inputs-date-time-fields-date-field--overview).
+- **Disclosure**: [Accordion](?path=/docs/layout-accordion--overview) and [Expander](?path=/docs/layout-expander--overview).
+- **Live regions**: [Snackbar](?path=/docs/feedback-snackbar--overview), [Alert](?path=/docs/feedback-alert--overview) and [Copy Icon Button](?path=/docs/actions-copy-icon-button--overview).
+
+## Motion
+
+With `prefers-reduced-motion: reduce`, `--mo-duration-quick` becomes `0s`, and the sheet, snackbars, accordion, chips and tree items drop their animations. Use the property in your own transitions. See [Theming](?path=/docs/getting-started-theming--overview).
+
+## Names
+
+The library cannot know what a control means. Give each of these a name:
+
+- **Fields**: `label`. The select field, the date and time fields, checkboxes, switches and radios pass it on. Text and number fields do not pass it to their input yet.
+- **Icon buttons**: `mo-icon-button` does not pass `aria-label` on to its button yet, so its name is the name of its icon.
+- **Icons**: `mo-icon` is read out as its icon's name, such as "delete", unless something around it hides it.
+- **Groups**: `aria-label` or `aria-labelledby` on `mo-tree`, `mo-menu-bar`, `mo-selectable-list`, `mo-selection-group`, `mo-chip-group`, and the element around a set of radios. A menu is named by its anchor.
+- **Overlays**: `heading` on a dialog, `label` on a sheet or drawer.
+- **Tabs**: `aria-label` on a tab with only an icon.
+- **Headings**: `mo-heading` only sets the type. Give it `role='heading'` and `aria-level`, or use `h1` to `h6`.
+
+## Forms
+
+- Invalid text and number fields turn red and fire `validityChange`, but do not set `aria-invalid`. The date and time fields do.
+- A control of your own joins a form, and its validity with it, through `@formAssociated`. See [Forms](?path=/docs/getting-started-forms--overview) and [Element Internals](?path=/docs/behaviors-element-internals--overview).
+
+## Who does what
+
+The library:
+
+- Sets the roles, states and relations of every pattern above, and keeps them current.
+- Runs the keys, moves focus inside a widget, and returns it to the anchor of a menu or popover that closes.
+- Shows focus rings on keyboard focus, announces snackbars, and honors reduced motion.
+
+You:
+
+- Name every control and group, as listed under Names above.
+- Structure the page with headings and landmarks.
+- Keep an item to one control, apart from the extra buttons the elements provide, such as a chip's remove button.
+- Check the contrast when you change the accent or the colors.
+- Try every screen with the keyboard alone, and with a screen reader.

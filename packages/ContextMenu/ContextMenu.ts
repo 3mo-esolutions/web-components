@@ -2,7 +2,14 @@ import { component, css, eventListener, queryConnectedInstances, type PropertyVa
 import { PopoverFloatingUiPositionController } from '@3mo/popover'
 import { Menu } from '@3mo/menu'
 
-/** @element mo-context-menu */
+/**
+ * A menu opened at the pointer by a right-click on its anchor, usually attached with the `contextMenu` directive.
+ *
+ * @element mo-context-menu
+ *
+ * @accessibility
+ * It opens on the `contextmenu` event, which the context-menu key fires as well, and `Shift` `F10` on some systems, so make its anchor focusable. Inside, it is a [menu](?path=/docs/behaviors-menu-controller--overview).
+ */
 @component('mo-context-menu')
 export class ContextMenu extends Menu {
 	@queryConnectedInstances() private static readonly container: ReadonlySet<ContextMenu> = new Set<ContextMenu>()

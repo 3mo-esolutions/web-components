@@ -10,20 +10,27 @@ export enum AlertType {
 }
 
 /**
+ * A message that stands out from the page, colored by whether it informs, confirms, warns or reports an error.
+ *
  * @element mo-alert
  *
  * @ssr true
  *
  * @attr heading - The heading of the alert.
  * @attr type - The type can be 'info', 'success', 'warning', or 'error'.
- * @attr collapsible - Whether the alert can be collapsed.
- * @attr open - Whether the alert is open. Only applies when the alert is @see {collapsible}.
+ * @attr collapsible - Whether the content can be collapsed under the heading.
+ * @attr open - Whether the content is shown. Only applies when the alert is collapsible and has a heading.
  *
- * @slot - The default slot is used to provide the content of the alert.
+ * @slot - The content of the alert.
  *
- * @cssprop --mo-alert-color - The color of the alert.
+ * @csspart heading - The heading.
+ *
+ * @cssprop --mo-alert-color - The color of the alert, derived from the type by default.
  *
  * @fires openChange - Dispatched when the alert is opened or closed.
+ *
+ * @accessibility
+ * An `alert`, whatever its type, so screen readers announce it as soon as it appears.
  */
 @component('mo-alert')
 export class Alert extends Component {

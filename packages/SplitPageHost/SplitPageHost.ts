@@ -6,13 +6,17 @@ Localizer.dictionaries.add('de', {
 })
 
 /**
+ * A layout of a sidebar beside a hosted page, showing only one of the two at a time below a window width of 900px.
+ *
  * @element mo-split-page-host
  *
  * @attr isContentOpen - Whether the content page is open
  * @attr contentPageHeading - The heading of the content page
  *
  * @slot - The content page
- * @slot sidebar - The sidebar slot
+ * @slot sidebar - The navigation beside the content page
+ *
+ * @cssprop --mo-split-page-host-sidebar-width - The width of the sidebar
  *
  * @i18n "Select a page"
  */

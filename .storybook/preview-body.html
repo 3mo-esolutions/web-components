@@ -1,7 +1,5 @@
-<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+<link rel='stylesheet' href='https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap'>
 <style>
-	@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
-
 	:root {
 		font-family: 'Roboto', sans-serif;
 		--mo-border-radius: 2px;
@@ -13,10 +11,14 @@
 
 	h1, h2, h3, h4, h5, h6 {
 		font-family: 'Roboto', sans-serif !important;
+	}
+
+	:is(#storybook-root, .docs-story) :is(h1, h2, h3, h4, h5, h6) {
 		font-weight: 500 !important;
 	}
 
-	.docblock-argstable * {
+	.docblock-argstable-body td:first-child,
+	.docblock-argstable code {
 		font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace !important;
 	}
 </style>

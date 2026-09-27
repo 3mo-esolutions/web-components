@@ -1,0 +1,37 @@
+import { Meta, DocsStory, Source } from '@storybook/addon-docs/blocks'
+import { Hero, Install, Playground, Accessibility, Api, Changelog } from '../../.storybook/blocks'
+import * as NavigationStories from './Navigation.stories'
+import navigationsSource from './stories/navigations.ts?raw'
+
+<Meta of={NavigationStories} />
+
+<Hero />
+<Install />
+<Playground />
+
+## Presentations
+
+`presentations` lists the ways to present the navigations, most preferred first, and the first one that fits is shown: the bar while its navigations fit its row, the rail while the page keeps `--mo-navigation-min-content-size` beside it, and the drawer, which always fits. Leaving one out of the list is all it takes to never show it.
+
+<DocsStory of={NavigationStories.Rail} />
+<DocsStory of={NavigationStories.Drawer} />
+
+## Navigations
+
+`navigations` takes objects implementing `INavigation`: a label, an optional icon, and either children or a `link` directive that makes an element navigate, which is where your router comes in. `current` tells which navigation the page belongs to.
+
+<Source code={navigationsSource} language='typescript' />
+
+## Header
+
+<DocsStory of={NavigationStories.Slots} />
+
+## Styling
+
+<DocsStory of={NavigationStories.CustomProperties} />
+<DocsStory of={NavigationStories.Parts} />
+
+<Accessibility />
+
+<Api />
+<Changelog />

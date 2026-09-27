@@ -5,12 +5,16 @@
 export interface CustomElementsManifest {
 	version: string
 	tags: Array<Tag>
+	/** The `@accessibility` JSDoc section of every exported class that has one, by class name, for pages documenting a controller. */
+	accessibility?: Record<string, string>
 }
 
 export interface Tag {
 	name: string
 	path: string
 	description?: string
+	/** The element's `@accessibility` JSDoc section: its roles, states and keys, in Markdown. */
+	accessibility?: string
 	attributes?: Array<Member>
 	properties?: Array<Member>
 	events?: Array<Event>

@@ -16,15 +16,8 @@ const patternsByType: Record<FieldCodeType, RegExp> = {
 }
 
 /**
- * A short code entered one character per cell — a verification code, a one-time password, a PIN.
- *
- * The cells are a drawing: the value lives in one real input behind them, which is what lets a phone
- * offer the code it has just received, a password manager fill an authenticator code, and a pasted
- * code land in one go. A screen reader is handed that one input, named by the field's label, rather
- * than as many controls as there are characters.
- *
- * `input` follows every character. `change` reports the code once it settles, which for a value of a
- * known length is the moment its last character lands rather than the moment the field is left.
+ * A field for a short code entered one character per cell — a verification code, a one-time password, a PIN.
+ * The cells are drawn over one real input, which phones, password managers and paste fill in one go.
  *
  * @element mo-field-code
  *
@@ -32,7 +25,7 @@ const patternsByType: Record<FieldCodeType, RegExp> = {
  * @attr length - How many characters the code has. Defaults to six.
  * @attr type - What the code is made of: "numeric" (default), "alphanumeric" or "alphabetic"
  * @attr pattern - A regular expression a character must match, in place of `type`
- * @attr separators - The positions a separator follows, e.g. "2" for "123-456"
+ * @attr separators - The positions a separator follows, e.g. "[2]" for "123-456"
  * @attr separator - The separator itself
  * @attr mask - Shown in place of every entered character, e.g. "•" for a PIN
  * @attr autoComplete - Defaults to "one-time-code". Set "off" for a code no phone should offer.
@@ -42,6 +35,11 @@ const patternsByType: Record<FieldCodeType, RegExp> = {
  * @csspart input - The input holding the value
  * @csspart cell - One character's cell
  * @csspart separator - A separator between two cells
+ *
+ * @cssprop --mo-field-code-cell-width - The width of a cell
+ * @cssprop --mo-field-code-cell-height - The height of a cell
+ * @cssprop --mo-field-code-gap - The space between the cells
+ * @cssprop --mo-field-background - The background of the cells
  *
  * @i18n "Code"
  */

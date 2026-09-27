@@ -1,96 +1,94 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite'
-import { css, html, style } from '@a11d/lit'
-import p from './package.json'
-import { CollapsibleCard as CollapsibleCardComponent } from './CollapsibleCard.js'
-import '../Line/index.js'
+import { html } from '@a11d/lit'
+import { sourceOf } from '../../.storybook/source.js'
+import collapsibleCardWithLineSource from './stories/CollapsibleCardWithLine.ts?raw'
+import './stories/CollapsibleCardWithLine.js'
 import './index.js'
 
+type Args = {
+	readonly heading: string
+	readonly subHeading: string
+	readonly collapsed: boolean
+}
+
 export default {
-	title: 'Layout & Containment / Collapsible Card',
+	title: 'Layout / Collapsible Card',
 	component: 'mo-collapsible-card',
 	args: {
-		type: 'filled',
-		heading: 'Satoshi Nakamoto',
-		subHeading: 'On 9th of January 2009',
-		content: `A purely peer-to-peer version of electronic cash would allow online
-			payments to be sent directly from one party to another without going through a
-			financial institution. Digital signatures provide part of the solution, but the main
-			benefits are lost if a trusted third party is still required to prevent double-spending.
-			We propose a solution to the double-spending problem using a peer-to-peer network.
-			The network timestamps transactions by hashing them into an ongoing chain of
-			hash-based proof-of-work, forming a record that cannot be changed without redoing
-			the proof-of-work. The longest chain not only serves as proof of the sequence of
-			events witnessed, but proof that it came from the largest pool of CPU power. As
-			long as a majority of CPU power is controlled by nodes that are not cooperating to
-			attack the network, they'll generate the longest chain and outpace attackers. The
-			network itself requires minimal structure. Messages are broadcast on a best effort
-			basis, and nodes can leave and rejoin the network at will, accepting the longest
-			proof-of-work chain as proof of what happened while they were gone.`,
+		heading: 'Order #24080',
+		subHeading: 'Serenity Freight',
+		collapsed: false,
 	},
-	argTypes: {
-		type: { control: 'select', options: ['filled', 'outlined'] },
-		heading: { control: 'text' },
-		subHeading: { control: 'text' },
-		content: { control: 'text' },
-	},
-	package: p,
-} as Meta
+	decorators: [story => html`<div style='display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 400px)); gap: 16px; align-items: start'>${story()}</div>`],
+} satisfies Meta<Args>
 
-export const CollapsibleCard: StoryObj = {
-	render: ({ type, heading, subHeading, content }) => html`
-		<mo-collapsible-card type=${type} heading=${heading} subHeading=${subHeading} ${style({ width: '400px' })}>
-			${content}
+type Story = StoryObj<Args>
+
+export const Default: Story = {
+	render: ({ heading, subHeading, collapsed }) => html`
+		<mo-collapsible-card heading=${heading} subHeading=${subHeading} ?collapsed=${collapsed}>
+			Twelve steel plates and four tubes of weld seam sealant, shipped from Toronto on Monday. Delivery is expected within five working days.
 		</mo-collapsible-card>
-	`
+	`,
 }
 
-export const WithFixedHeight: StoryObj = {
-	name: 'With a fixed height',
-	render: ({ type, heading, subHeading, content }) => html`
-		<mo-collapsible-card type=${type} heading=${heading} subHeading=${subHeading} ${style({ width: '400px', height: '500px' })}>
-			${content}
-			<mo-button slot='footer'>Read more</mo-button>
+/** With `showSubHeadingOnlyWhenCollapsed` the sub-heading appears only while collapsed, as a summary of the hidden body - expand the card to see it go. */
+export const SubHeadingWhenCollapsed: Story = {
+	render: () => html`
+		<mo-collapsible-card heading='Delivery address' subHeading='Musterstraße 1, 10115 Berlin' showSubHeadingOnlyWhenCollapsed collapsed>
+			<mo-flex gap='12px'>
+				<mo-field-text label='Street' value='Musterstraße 1'></mo-field-text>
+				<mo-field-text label='City' value='10115 Berlin'></mo-field-text>
+			</mo-flex>
 		</mo-collapsible-card>
-	`
+	`,
 }
 
-export const WithFooterAndSlottedContent: StoryObj = {
-	name: 'With an element between the header and the body',
-	parameters: {
-		docs: {
-			description: {
-				story: 'Subclasses may render additional elements into the card, e.g. a line between the header and the body. Those keep their place while the body collapses.',
-			}
-		}
-	},
-	render: ({ type, heading, subHeading, content }) => html`
-		<story-collapsible-card-with-line type=${type} heading=${heading} subHeading=${subHeading} ${style({ width: '400px' })}>
-			${content}
+/** `disableCollapse` disables the toggle, keeping the card expanded or collapsed as it is. */
+export const DisableCollapse: Story = {
+	render: ({ heading, subHeading }) => html`
+		<mo-collapsible-card heading=${heading} subHeading=${subHeading} disableCollapse>
+			Twelve steel plates, shipped on Monday.
+		</mo-collapsible-card>
+		<mo-collapsible-card heading=${heading} subHeading=${subHeading} disableCollapse collapsed>
+			Twelve steel plates, shipped on Monday.
+		</mo-collapsible-card>
+	`,
+}
+
+/** With a height of its own the body fills it, and collapsing gives the height up down to the header. */
+export const FixedHeight: Story = {
+	render: ({ heading, subHeading }) => html`
+		<mo-collapsible-card heading=${heading} subHeading=${subHeading} style='height: 400px'>
+			Twelve steel plates and four tubes of weld seam sealant, shipped from Toronto on Monday. Delivery is expected within five working days.
+			The carrier calls ahead on the day; if nobody answers, the parcel waits at the nearest depot for seven days.
 			<mo-button slot='footer'>Read more</mo-button>
+		</mo-collapsible-card>
+	`,
+}
+
+/** A subclass can render more into the card, such as a line between the header and the body, which keeps its place while the body collapses. */
+export const Subclassing: Story = {
+	parameters: sourceOf(collapsibleCardWithLineSource),
+	render: ({ heading, subHeading }) => html`
+		<story-collapsible-card-with-line heading=${heading} subHeading=${subHeading}>
+			<mo-field-text label='Street'></mo-field-text>
+			<mo-field-text label='City'></mo-field-text>
+			<mo-field-text label='Postal code'></mo-field-text>
+			<mo-field-text label='Country'></mo-field-text>
+			<mo-button slot='footer'>Save</mo-button>
 		</story-collapsible-card-with-line>
-	`
+	`,
 }
 
-/** How consuming applications extend the card: an extra element in front of the body, and a body which lays its content out itself. */
-class StoryCollapsibleCardWithLine extends CollapsibleCardComponent {
-	static override get styles() {
-		return css`
-			${super.styles}
-
-			slot:not([name]) {
-				display: grid;
-				grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-				gap: 0.875rem;
-			}
-		`
-	}
-
-	protected override get bodyTemplate() {
-		return html`
-			${this.collapsed ? html.nothing : html`<mo-line></mo-line>`}
-			${super.bodyTemplate}
-		`
-	}
+/** `--mo-collapsible-card-transition-duration` sets how long collapsing takes, one second here, and `0s` turns the animation off. */
+export const CustomProperties: Story = {
+	render: ({ heading, subHeading }) => html`
+		<mo-collapsible-card heading=${heading} subHeading=${subHeading} style='--mo-collapsible-card-transition-duration: 1s'>
+			Twelve steel plates and four tubes of weld seam sealant, shipped from Toronto on Monday. Delivery is expected within five working days.
+		</mo-collapsible-card>
+		<mo-collapsible-card heading=${heading} subHeading=${subHeading} style='--mo-collapsible-card-transition-duration: 0s'>
+			Twelve steel plates and four tubes of weld seam sealant, shipped from Toronto on Monday. Delivery is expected within five working days.
+		</mo-collapsible-card>
+	`,
 }
-
-customElements.define('story-collapsible-card-with-line', StoryCollapsibleCardWithLine)

@@ -13,12 +13,19 @@ import '@3mo/theme'
 /**
  * A short update about an app process, shown at the anchored edge of the screen.
  *
+ * @element mo-snackbar
+ *
  * @attr open - Whether the snack-bar is currently shown
  * @attr type - The notification type which controls the accent color and icon
+ * @attr text - The message, taken from the notification.
+ * @attr notification - The notification shown, with its message, type and actions; `Snackbar.notify…` sets it.
  *
  * @cssprop --mo-snackbar-color - The accent color of the snack-bar. Defaults to a color derived from the notification type.
  *
  * @csspart surface - The snack-bar's surface
+ *
+ * @accessibility
+ * A `status`, or an `alert` for a warning or an error. It stays 5 seconds, 10 for a warning and 15 for an error, plus 2.5 per action, and hovering or focusing the snackbars holds them.
  */
 @component('mo-snackbar')
 @NotificationComponent.defaultComponent()

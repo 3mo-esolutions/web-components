@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/loading-button-dialog-adapter",
 	"version": "0.0.4",
-	"description": "The @3mo/dialog adapter of the @3mo/loading-button component",
+	"description": "A utility for dialog actions on loading buttons that shows the spinner while the action runs.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/LoadingButtonDialogAdapter"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -13,7 +17,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://github.com/3mo-esolutions/web-components/tree/main/packages/LoadingButtonDialogAdapter",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

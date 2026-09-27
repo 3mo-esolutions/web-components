@@ -1,0 +1,86 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks'
+import { PageHeader } from './components'
+import * as LocalizerStories from '../../packages/localization/Localizer.stories'
+
+<Meta title='Getting Started/Localization' />
+
+<PageHeader title='Localization'>`t()` translates, `Localizer` holds the dictionaries and the current language, and numbers, dates and lists format themselves for that language.</PageHeader>
+
+<Canvas of={LocalizerStories.Default} />
+
+## Translate
+
+```ts
+import '@3mo/localization'   // makes t() global, as @3mo/del does
+
+t('Save')
+t('Hello ${name}', { name: 'Ada' })
+t('Updated on ${date:Date}', { date: new Date() })
+```
+
+- The key is the text in the source language, which therefore needs no dictionary, plurals aside.
+- A typed placeholder such as `${count:number}` or `${date:Date}` types its parameter. Numbers and dates are formatted for the language.
+- `t()` returns a `LocalizedString` typed as `string`. It renders as text; wrap it in `String()` before comparing.
+
+## Dictionaries
+
+```ts
+import { Localizer } from '@3mo/localization'
+
+Localizer.dictionaries.add('de', {
+	'Save': 'Speichern',
+	'Hello ${name}': 'Hallo ${name}',
+})
+
+Localizer.dictionaries.add({
+	de: { 'Cancel': 'Abbrechen' },
+	fa: { 'Cancel': 'لغو' },
+})
+```
+
+- The translation added last wins, so yours can replace the ones the components bring along.
+- A missing translation falls back to the key and logs a warning.
+
+## Plurals
+
+```ts
+Localizer.dictionaries.add('en', {
+	'${count:pluralityNumber} new messages': [
+		'${count} new message',
+		'${count} new messages',
+	],
+})
+
+t('${count:pluralityNumber} new messages', { count: 1 })   // "1 new message"
+```
+
+The array holds one form per plural category of the language, in the order of `CardinalPluralizationRulesByLanguage`.
+
+## The current language
+
+```ts
+Localizer.languages.current          // e.g. 'de'
+Localizer.languages.current = 'fa'   // stored, and every Lit element re-renders
+Localizer.languages.change.subscribe(language => console.log(language))
+```
+
+It comes from the `?lang=` URL parameter, the stored choice, the browser's language or `en`, in that order.
+
+## Formatting
+
+```ts
+(1234.5).format()                          // "1234.5"         de: "1234,5"
+(1234.5).formatAsCurrency('EUR')           // "€1,234.50"      de: "1.234,50 €"
+(25).formatAsPercent()                     // "25%"            de: "25 %"
+(12).formatAsUnit('kilometer')             // "12 km"
+new Date(2026, 8, 26).formatAsDate()       // "Sep 26, 2026"   de: "26.09.2026"
+['Anna', 'Ben', 'Cleo'].format()           // "Anna, Ben, and Cleo"
+'1.234,5'.toNumber('de')                   // 1234.5
+```
+
+- Each uses the current language unless given one: `(1234.5).format('de')`, `(1234.5).formatAsCurrency('EUR', 'de')`.
+- Dates also have `format()`, with the time, and `formatAsTime()`.
+
+## Writing direction
+
+`<body>` gets `lang` and `dir` for the current language, `dir='rtl'` for `fa`, `ar` or `he`, so the whole page flips with it. `DirectionsByLanguage.get()` returns the direction.

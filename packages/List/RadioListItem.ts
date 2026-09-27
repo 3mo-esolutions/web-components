@@ -3,6 +3,8 @@ import { SelectionListItemWithControl } from './SelectionListItemWithControl.js'
 import '@3mo/radio'
 
 /**
+ * A list item with a radio button, which a press anywhere on the item selects.
+ *
  * @element mo-radio-list-item
  *
  * @attr selectionControlAlignment - The alignment of the radio relative to the list item content

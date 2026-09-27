@@ -7,11 +7,13 @@ import '@3mo/menu'
 import '@3mo/icon-button'
 
 /**
+ * A single-line toolbar that moves the items that do not fit into an overflow menu.
+ *
  * @element mo-toolbar
  *
- * @attr overflowIcon
- * @attr overflowPosition
- * @attr collapsed
+ * @attr overflowIcon - The icon of the overflow menu button. Defaults to `more_vert`.
+ * @attr overflowPosition - Whether the overflow menu button comes at the `start` or the `end` (default).
+ * @attr collapsed - Puts every item into the overflow menu.
  *
  * @csspart pane - The toolbar pane
  * @csspart overflow-icon - The overflow icon

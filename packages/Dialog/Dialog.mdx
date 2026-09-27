@@ -1,0 +1,56 @@
+import { Meta, DocsStory } from '@storybook/addon-docs/blocks'
+import { Hero, Install, Playground, Accessibility, Api, Changelog } from '../../.storybook/blocks'
+import * as DialogStories from './Dialog.stories'
+
+<Meta of={DialogStories} />
+
+<Hero />
+<Install />
+<Playground />
+
+## Size and content
+
+Without a `size` a dialog fits its content; with one it takes a width of its own. Content that does not fit scrolls between the fixed header and footer.
+
+<DocsStory of={DialogStories.Sizes} />
+<DocsStory of={DialogStories.Scrollable} />
+
+## Actions
+
+`primaryButtonText` and `secondaryButtonText` render the two footer buttons. On its own a dialog closes on any action, on Escape and on the backdrop, and reports it with `openChange`; a dialog component takes the actions over through `handleAction`. Buttons of your own go into the action slots, extra controls into the header or the footer.
+
+<DocsStory of={DialogStories.ActionSlots} />
+<DocsStory of={DialogStories.HeaderActions} />
+<DocsStory of={DialogStories.Footer} />
+<DocsStory of={DialogStories.Blocking} />
+<DocsStory of={DialogStories.AutoFocus} />
+
+## Dialog components
+
+An application does not place `mo-dialog` in a page: it writes a `DialogComponent` from `@a11d/lit-application` that renders one, and awaits `confirm()`. The component runs the actions, closes the dialog and resolves with the result, while `primaryOnEnter` and `manualClose` tune how it does so.
+
+<DocsStory of={DialogStories.DialogComponent} />
+
+`@3mo/fetchable-dialog` adds `mo-fetchable-dialog` and `FetchableDialogComponent`, which fetch an entity by `id` before showing it.
+
+<DocsStory of={DialogStories.FetchableDialog} />
+
+While an action runs, the dialog tells the button that started it. `@3mo/loading-button-dialog-adapter` makes a loading button spin, and `@3mo/split-button-dialog-adapter` passes the state on to a split button's main button; each takes effect once imported.
+
+<DocsStory of={DialogStories.SplitButtonAction} />
+
+A dialog component with a route can also pop out into a tab of its own, where the dialog becomes a page.
+
+<DocsStory of={DialogStories.BoundToWindow} />
+
+Ready-made dialog components cover the common cases: the [Alert](?path=/docs/feedback-standard-dialogs-alert-dialog--overview), [Deletion](?path=/docs/feedback-standard-dialogs-deletion-dialog--overview) and [Generic](?path=/docs/feedback-standard-dialogs-generic-dialog--overview) dialogs, the [Loading Dialog](?path=/docs/feedback-loading-dialog--overview) and the [Entity Dialog](?path=/docs/data-entity-dialog--overview).
+
+## Styling
+
+<DocsStory of={DialogStories.CustomProperties} />
+<DocsStory of={DialogStories.Parts} />
+
+<Accessibility />
+
+<Api />
+<Changelog />

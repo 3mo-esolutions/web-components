@@ -10,21 +10,23 @@ export enum CardType {
 }
 
 /**
+ * A surface that groups content with an optional header, media and footer.
+ *
  * @element mo-card
  *
  * @ssr true
  *
- * @attr type
- * @attr heading
- * @attr subHeading
- * @attr avatar
- * @attr image
+ * @attr type - Whether the card is filled with a shadow or outlined with a border
+ * @attr heading - The heading in the header
+ * @attr subHeading - The secondary line below the heading
+ * @attr avatar - The text shown in the avatar circle of the header
+ * @attr image - The URL of an image shown above the header
  *
  * @slot action - Actions in the header
  * @slot heading - Custom heading in the header
  * @slot subHeading - Custom subHeading in the header
  * @slot avatar - Custom avatar in the header
- * @slot header - The header. Using this will lead to slots 'heading', 'subHeading', 'avatar' and 'action's not working.
+ * @slot header - Replaces the whole header, including the heading, subHeading, avatar and action slots
  * @slot media - Embedded media
  * @slot - Body / Content
  * @slot footer - Actions in the footer

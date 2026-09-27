@@ -4,18 +4,23 @@ import { SlotController } from '@3mo/slot-controller'
 import { observeResize } from '@3mo/resize-observer'
 
 /**
- * @element mo-timeline-item - A component that represents a single item in a timeline.
+ * An event of a `mo-timeline`, marked on its line by a bullet point or an icon.
  *
- * @attr icon - The icon of the item.
- * @attr meta - The meta information of the item.
- * @attr line - The line template renderer of the item.
+ * @element mo-timeline-item
+ *
+ * @attr icon - A character, such as an emoji, shown on the line in place of the bullet point.
+ * @attr meta - Text shown in a column beside the content, such as the date of the event.
+ * @attr line - A function that returns the line drawn to the next item, given the default one.
  *
  * @slot - The content of the item.
- * @slot icon - The icon of the item.
- * @slot meta - The meta information of the item.
+ * @slot icon - Shown on the line in place of the bullet point or the `icon` attribute.
+ * @slot meta - Shown beside the content in place of the `meta` attribute.
  *
- * @cssprop --mo-timeline-item-padding-end - The padding end of the item.
+ * @cssprop --mo-timeline-item-padding-end - The space below the item in a vertical timeline. Defaults to 35px.
  * @cssprop --mo-timeline-item-bullet-color - The color of the bullet point.
+ *
+ * @csspart icon - The icon or bullet point on the line.
+ * @csspart meta - The meta information beside the content.
  */
 @component('mo-timeline-item')
 export class TimelineItem extends Component {

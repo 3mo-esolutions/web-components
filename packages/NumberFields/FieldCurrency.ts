@@ -3,6 +3,8 @@ import { Currency, type CurrencyCode } from '@3mo/localization'
 import { FieldNumber } from './FieldNumber.js'
 
 /**
+ * A number field for an amount of money, showing the currency's symbol at the end.
+ *
  * @element mo-field-currency
  *
  * @attr currency - The currency of the field.

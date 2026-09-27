@@ -5,20 +5,9 @@ import { TreeController } from './TreeController.js'
 import { TreeItem } from './TreeItem.js'
 
 /**
+ * A hierarchy to browse and select from, written as nested `mo-tree-item`s.
+ *
  * @element mo-tree
- *
- * A hierarchy to browse, select from and act on — the WAI-ARIA tree view, written as nested `mo-tree-item`s.
- *
- * ```html
- * <mo-tree selectability='single'>
- *   <mo-tree-item value='documents' open>Documents
- *     <mo-tree-item value='taxes'>Taxes</mo-tree-item>
- *   </mo-tree-item>
- * </mo-tree>
- * ```
- *
- * Which rows are open is the items' own state — `open` on each of them, which they report as `openChange`.
- * The selection is the tree's, since only one row can hold it, and it reports the items by their `value`.
  *
  * @attr selectability - `single` or `multiple`; unset, items are not selectable and a click opens instead.
  * @attr value - The selected item, or the selected items while `multiple`.
@@ -26,6 +15,23 @@ import { TreeItem } from './TreeItem.js'
  * @slot - The items.
  *
  * @fires change - The new value, whenever the selection changes through the tree.
+ *
+ * @accessibility
+ * A `tree`, with `aria-multiselectable` while multiple. Items are `treeitem`s with `aria-level`, `aria-setsize` and `aria-posinset`, `aria-expanded` on parents, `aria-selected` while the tree has a `selectability`, and `aria-disabled`; children sit in a `group`. Focus roves over the visible items.
+ *
+ * | Key | Does |
+ * | --- | --- |
+ * | `ArrowDown` `ArrowUp` | The next or previous visible item. |
+ * | `ArrowRight` | Opens a closed parent, or moves to the first child of an open one. |
+ * | `ArrowLeft` | Closes an open parent, or moves to the parent. |
+ * | `Home` `End`, `PageUp` `PageDown` | The first or last visible item, or a page further. |
+ * | `*` | Opens every sibling of the item. |
+ * | A letter | Typeahead. |
+ * | `Enter` | Clicks the item: selects it, or opens and closes a parent while the tree has no `selectability`. |
+ * | `Space` | With a `selectability`: selects the item, or toggles it while multiple. |
+ * | `Shift` + an arrow, `Ctrl` `A` | Multiple: extends the selection, or selects all. |
+ *
+ * The arrows stop at the ends rather than wrapping. Name the tree with `aria-label` or `aria-labelledby`.
  */
 @component('mo-tree')
 export class Tree extends Component {

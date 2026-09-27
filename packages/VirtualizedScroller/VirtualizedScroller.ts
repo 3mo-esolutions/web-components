@@ -12,8 +12,12 @@ export interface VirtualizedElement {
 }
 
 /**
- * @attr items
- * @attr getItemTemplate
+ * A scroller that renders only the items near its viewport, for lists of thousands.
+ *
+ * @element mo-virtualized-scroller
+ *
+ * @attr items - The items to render, all of them
+ * @attr getItemTemplate - Renders an item, given the item and its index
  */
 @component('mo-virtualized-scroller')
 export class VirtualizedScroller<T = unknown> extends Component {

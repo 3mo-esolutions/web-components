@@ -3,10 +3,12 @@ import { SlotController } from '@3mo/slot-controller'
 import { type Popover, PopoverAlignment, PopoverPlacement } from './index.js'
 
 /**
+ * Anchors the popover in its `popover` slot to the element in its default slot.
+ *
  * @element mo-popover-container
  *
- * @attr alignment
- * @attr placement
+ * @attr alignment - Passed on to the popover.
+ * @attr placement - Passed on to the popover.
  *
  * @slot - The content to be anchored
  * @slot popover - The popover to be anchored

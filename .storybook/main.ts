@@ -10,6 +10,8 @@ const __dirname = dirname(__filename)
 
 export default {
 	stories: [
+		'./docs/**/*.mdx',
+		'../packages/**/*.mdx',
 		'../packages/**/*.stories.ts',
 		'../samples/**/*.stories.ts',
 	],
@@ -19,7 +21,6 @@ export default {
 	addons: [
 		getAbsolutePath('@storybook/addon-docs'),
 		getAbsolutePath('@storybook/addon-links'),
-		getAbsolutePath('@vueless/storybook-dark-mode')
 	],
 
 	framework: {
@@ -27,22 +28,30 @@ export default {
 		options: {}
 	},
 
+	docs: {
+		defaultName: 'Overview',
+	},
+
+	core: {
+		disableWhatsNewNotifications: true,
+	},
+
+	features: {
+		sidebarOnboardingChecklist: false,
+		interactions: false,
+	},
+
 	viteFinal(config) {
 		const packagesPath = resolve(__dirname, '../packages')
 		const packageFolders = readdirSync(packagesPath)
 
 		const packageAliases = packageFolders.reduce((aliases, pkg) => {
-			// Read the package.json to get the correct package name
 			const pkgJsonPath = resolve(packagesPath, pkg, 'package.json')
 			if (existsSync(pkgJsonPath)) {
 				const pkgJson = JSON.parse(readFileSync(pkgJsonPath, 'utf8'))
-				const packageName = pkgJson.name
-
-				// Point the package name to its source entry file
-				// Make sure this path is correct for your structure (e.g., src/index.ts)
 				const entryPoint = resolve(packagesPath, pkg, 'index.ts')
 				if (existsSync(entryPoint)) {
-					aliases[packageName] = entryPoint
+					aliases[pkgJson.name] = entryPoint
 				}
 			}
 			return aliases
@@ -58,6 +67,26 @@ export default {
 				handleHotUpdate({ server }: { server: ViteDevServer }) {
 					server.ws.send({ type: 'full-reload' })
 					return []
+				}
+			}, {
+				// What the documentation build writes for language models, rendered on request here instead.
+				name: 'llms',
+				configureServer(server: ViteDevServer) {
+					server.middlewares.use(async (request, response, next) => {
+						const path = request.url?.split('?')[0]?.replace(/^\//, '') ?? ''
+						if (!/^(llms(-full)?\.txt|docs\/[\w-]+\.md)$/.test(path)) {
+							return next()
+						}
+						const { LlmsText } = await import('../scripts/util/LlmsText.ts')
+						const index = await fetch(`http://${request.headers.host}/index.json`).then(response => response.json())
+						const manifest = JSON.parse(readFileSync(resolve(__dirname, '../custom-elements.json'), 'utf8'))
+						const content = LlmsText.files(index, manifest).get(path)
+						if (content === undefined) {
+							return next()
+						}
+						response.setHeader('Content-Type', `${path.endsWith('.md') ? 'text/markdown' : 'text/plain'}; charset=utf-8`)
+						response.end(content)
+					})
 				}
 			}]
 		})

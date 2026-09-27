@@ -3,11 +3,17 @@ import { Checkbox } from '@3mo/checkbox'
 import type { Flex } from '@3mo/flex'
 
 /**
+ * A checkbox that selects or clears the checkboxes nested in it, and shows a dash while only some are selected.
+ *
  * @element mo-checkbox-group
  *
  * @ssr true
  *
- * @attr direction
+ * @attr direction - The direction the nested checkboxes are laid out in
+ *
+ * @slot - The checkboxes and groups the group selects
+ *
+ * @cssprop --mo-checkbox-group-nested-margin - The indentation of the nested checkboxes, 32px by default
  */
 @component('mo-checkbox-group')
 export class CheckboxGroup extends Checkbox {

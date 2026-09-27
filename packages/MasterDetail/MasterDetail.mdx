@@ -1,0 +1,33 @@
+import { Meta, DocsStory } from '@storybook/addon-docs/blocks'
+import { Hero, Install, Playground, Accessibility, Api, Changelog } from '../../.storybook/blocks'
+import * as MasterDetailStories from './MasterDetail.stories'
+
+<Meta of={MasterDetailStories} />
+
+<Hero />
+<Install />
+<Playground />
+
+## Panes
+
+The `master` slot is always visible; the `detail` slot follows its state, such as its selection. The layout only reacts to the detail slot filling or emptying, so whether a detail pane is rendered at all stays your decision, and nothing is reserved while it is empty.
+
+<DocsStory of={MasterDetailStories.Selection} />
+<DocsStory of={MasterDetailStories.SideBySide} />
+
+## Collapsing
+
+`collapsed` keeps the detail pane's header reachable instead of removing it. Bind it to whatever collapses inside the pane, such as a `mo-collapsible-card`.
+
+<DocsStory of={MasterDetailStories.CollapsibleDetail} />
+
+## Any content
+
+Neither pane has to be a 3MO component: the layout sizes whatever it is handed.
+
+<DocsStory of={MasterDetailStories.EditorAndOutput} />
+
+<Accessibility />
+
+<Api />
+<Changelog />

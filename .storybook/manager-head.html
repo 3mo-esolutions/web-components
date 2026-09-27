@@ -1,20 +1,32 @@
 <title>3MO Web Components</title>
 <link rel='shortcut icon' href='/favicon.svg'>
 <link rel='icon' type='image/svg+xml' href='/favicon.svg' sizes='192x192'>
+<link rel='preconnect' href='https://fonts.googleapis.com'>
+<link rel='stylesheet' href='https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap'>
 <style>
-	.sidebar-subheading {
-		font-size: 13px !important;
-		text-transform: unset !important;
-		letter-spacing: 0.05rem !important;
-		text-decoration: underline !important;
-		color: rgb(138 148 153);
-	}
-
-	svg[type=story] {
-		color: violet !important;
-	}
-
 	iframe {
 		background-color: transparent !important;
+	}
+
+	#storybook-sidebar-region {
+		[data-radix-scroll-area-content]:has(#storybook-explorer-menu) {
+			height: 100%;
+		}
+
+		div:has(> #storybook-explorer-menu) {
+			box-sizing: border-box;
+			height: 100%;
+			padding-block-end: 0;
+		}
+
+		#storybook-explorer-menu {
+			flex: 1;
+			min-height: 0;
+			margin-inline: -12px;
+			padding: 0 12px 20px;
+			overflow-y: auto;
+			scrollbar-width: thin;
+			scroll-padding-block: 4rem;
+		}
 	}
 </style>

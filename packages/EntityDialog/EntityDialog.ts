@@ -8,6 +8,17 @@ Localizer.dictionaries.add('de', {
 	'Edit ${label:string}': '${label:string} bearbeiten',
 })
 
+/**
+ * A dialog that fetches an entity to edit, saves it with its primary button or Ctrl+S, and deletes it with its secondary one.
+ *
+ * @element mo-entity-dialog
+ *
+ * @attr preventPrimaryOnCtrlS - Whether Ctrl+S leaves the entity unsaved.
+ * @attr entity - The entity being edited. Set by the `EntityDialogComponent` rendering the dialog.
+ * @attr save - The function that saves the entity. Set by the `EntityDialogComponent` rendering the dialog.
+ * @attr delete - The function that deletes the entity, which adds the Delete button. Set by the `EntityDialogComponent` rendering the dialog.
+ * @attr parameters - The parameters of the dialog, whose `id` decides between creating and editing. Set by the `EntityDialogComponent` rendering the dialog.
+ */
 @component('mo-entity-dialog')
 export class EntityDialog<TEntity extends object> extends FetchableDialog<TEntity> {
 	@property({ type: Boolean }) preventPrimaryOnCtrlS = false

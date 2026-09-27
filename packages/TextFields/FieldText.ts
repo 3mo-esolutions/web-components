@@ -59,13 +59,15 @@ export type FieldTextAutoComplete =
 	| 'new-password'
 
 /**
+ * A single-line text field.
+ *
  * @element mo-field-text
  *
- * @attr value
- * @attr minLength
- * @attr maxLength
- * @attr pattern
- * @attr autoComplete
+ * @attr value - The text
+ * @attr minLength - The fewest characters a valid value has
+ * @attr maxLength - The most characters the field takes, counted down at the end
+ * @attr pattern - A regular expression the value has to match, as on a native input
+ * @attr autoComplete - What the browser may fill in, as the native `autocomplete` attribute
  */
 @component('mo-field-text')
 export class FieldText extends InputFieldComponent<string> {

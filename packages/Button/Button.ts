@@ -19,24 +19,26 @@ export enum ButtonType {
 }
 
 /**
+ * A button that triggers an action, in one of the five Material 3 types.
+ *
  * @element mo-button
  *
  * @ssr true
  *
- * @attr type
- * @attr disabled
- * @attr startIcon
- * @attr endIcon
+ * @attr type - The emphasis, from `text` (lowest) to `filled` (highest).
+ * @attr disabled - Whether the button ignores presses.
+ * @attr startIcon - A Material icon shown before the label.
+ * @attr endIcon - A Material icon shown after the label.
  *
- * @slot - The content of the button.
- * @slot start - The starting content of the button.
- * @slot end - The end content of the button.
+ * @slot - The label. It is truncated with an ellipsis when it does not fit.
+ * @slot start - Content before the label, in place of `startIcon`.
+ * @slot end - Content after the label, in place of `endIcon`.
  *
- * @cssprop --mo-button-accent-color
- * @cssprop --mo-button-on-accent-color
- * @cssprop --mo-button-horizontal-padding
- * @cssprop --mo-button-disabled-background-color
- * @cssprop --mo-button-disabled-color
+ * @cssprop --mo-button-accent-color - The container color of filled buttons, and the label and outline color of text and outlined ones.
+ * @cssprop --mo-button-on-accent-color - The label color of filled and tonal buttons.
+ * @cssprop --mo-button-horizontal-padding - The inline padding, 12px for text buttons and 16px for the others by default.
+ * @cssprop --mo-button-disabled-background-color - The container color of disabled filled buttons.
+ * @cssprop --mo-button-disabled-color - The label and outline color of disabled buttons.
  *
  * @csspart button - The composed native button element.
  * @csspart ripple - The ripple element.

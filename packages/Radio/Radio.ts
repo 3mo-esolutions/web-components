@@ -7,6 +7,8 @@ import { RadioGroupController } from './RadioGroupController.js'
 import type { MdRadio } from '@material/web/radio/radio.js'
 
 /**
+ * A radio button with an optional label, one of a group of mutually exclusive options.
+ *
  * @element mo-radio
  *
  * @attr label - The label of the radio.
@@ -14,11 +16,21 @@ import type { MdRadio } from '@material/web/radio/radio.js'
  * @attr disabled - Whether the radio is disabled or not.
  * @attr selected - Whether the radio is selected or not.
  *
- * @cssprop --mo-radio-accent-color
- * @cssprop --mo-radio-disabled-color
- * @cssprop --mo-radio-unchecked-color
+ * @cssprop --mo-radio-accent-color - The color of a selected radio and of its focus ring
+ * @cssprop --mo-radio-disabled-color - The color of a disabled radio and its label
+ * @cssprop --mo-radio-unchecked-color - The color of an unselected radio
  *
  * @fires change - Dispatched when the selected state of the radio changes.
+ *
+ * @accessibility
+ * Radios with the same `name` form a group across the whole document, with the selected radio as its one tab stop. While none is selected every enabled radio is a tab stop, where the ARIA practices have only the first.
+ *
+ * | Key | Does |
+ * | --- | --- |
+ * | The arrows | Selects the next or previous enabled radio of the group, wrapping. |
+ * | `Space` | Selects the radio. |
+ *
+ * The radios have no container with a `radiogroup` role: wrap them in one with a name, or use a `mo-selection-group`.
  */
 @component('mo-radio')
 export class Radio extends Component {

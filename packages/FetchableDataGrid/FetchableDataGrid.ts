@@ -28,6 +28,8 @@ Localizer.dictionaries.add('de', {
 })
 
 /**
+ * A data grid that fetches its rows through a function of its parameters, a page at a time if the server paginates.
+ *
  * @element mo-fetchable-data-grid
  *
  * @attr fetch - A function that fetches the data from the server.
@@ -41,8 +43,8 @@ Localizer.dictionaries.add('de', {
  *
  * @csspart infinite-scroll-indicator - The row at the end of the stream which indicates that more data is being loaded, or that loading it has failed.
  *
- * @fires parametersChange
- * @fires dataFetch
+ * @fires parametersChange - The new parameters, whenever `setParameters()` changes them.
+ * @fires dataFetch - The result of every fetch.
  */
 @component('mo-fetchable-data-grid')
 export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDataGridParametersType = Record<string, never>, TDetailsElement extends Element | undefined = undefined> extends DataGrid<TData, TDetailsElement> {

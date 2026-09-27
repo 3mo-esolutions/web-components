@@ -32,19 +32,22 @@ export enum AnchorReferrerPolicy {
 }
 
 /**
+ * A link styled in the accent color that navigates like a native anchor, or only fires `click` without an `href`.
+ *
  * @element mo-anchor
  *
  * @ssr true
  *
- * @attr href
- * @attr target
- * @attr target
- * @attr download
- * @attr ping
- * @attr referrerPolicy
- * @attr rel
+ * @attr href - The URL to navigate to. Without it the anchor only fires `click`.
+ * @attr target - Where to open the URL, such as `_blank` for a new tab.
+ * @attr download - Downloads the URL instead of navigating, under this file name if one is given.
+ * @attr ping - Space-separated URLs notified when the link is followed.
+ * @attr referrerPolicy - How much of the referrer to send when the link is followed.
+ * @attr rel - The relationship to the linked URL, such as `noopener`.
  *
- * @slot - The content of the anchor
+ * @slot - The content of the anchor.
+ *
+ * @cssprop --mo-anchor-color - The link color, the accent color by default.
  */
 @component('mo-anchor')
 export class Anchor extends Component {

@@ -1,3 +1,4 @@
+/** Resolves only the latest of the promises it is handed; one superseded before it settled rejects with an `EnqueuerError`. */
 export class Enqueuer {
 	private timerId?: number
 
@@ -19,6 +20,7 @@ export class Enqueuer {
 	}
 }
 
+/** The rejection of a superseded promise, carrying the result that was discarded. */
 export class EnqueuerError<T> extends Error {
 	private static readonly message = 'The result of a promise has been discarded in favor of another one which has started afterwards.'
 

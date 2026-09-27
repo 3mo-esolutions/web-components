@@ -1,0 +1,35 @@
+import { Meta, DocsStory } from '@storybook/addon-docs/blocks'
+import { Hero, Install, Playground, Accessibility, Api, Changelog } from '../../.storybook/blocks'
+import * as PopoverStories from './Popover.stories'
+
+<Meta of={PopoverStories} />
+
+<Hero />
+<Install />
+<Playground />
+
+## Anchoring
+
+`mo-popover-container` anchors the popover in its `popover` slot to the element beside it, which then opens it with a click or Enter. Elsewhere, set the popover's `anchor` to the element. It is positioned with CSS anchor positioning, and with Floating UI where the browser lacks it.
+
+<DocsStory of={PopoverStories.Placements} />
+<DocsStory of={PopoverStories.Target} />
+
+## Opening and closing
+
+An `auto` popover closes on a click outside or Escape, while a `manual` one waits for `open`. Either way, `openChange` reports each change.
+
+<DocsStory of={PopoverStories.Manual} />
+<DocsStory of={PopoverStories.Focus} />
+<DocsStory of={PopoverStories.PlatformInvokers} />
+
+## Lazy popovers
+
+The `popover()` directive declares a popover on its anchor. Given a `trigger` - `click`, `contextmenu` or `interest` for hover and focus - it renders the popover only once the anchor is first used, which keeps long lists of anchors cheap.
+
+<DocsStory of={PopoverStories.Lazy} />
+
+<Accessibility />
+
+<Api />
+<Changelog />

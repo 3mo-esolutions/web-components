@@ -1,10 +1,13 @@
 import { Controller, EventListenerController, type EventListenerTarget, type ReactiveElement, extractEventTargets } from '@a11d/lit'
 
 export interface PointerPressControllerOptions {
+	/** Where to track the press instead of the host. */
 	target?: EventListenerTarget
+	/** Called when a press starts, and when it ends wherever the pointer is released. */
 	handlePressChange?(press: boolean): void
 }
 
+/** Tracks whether a pointer is pressed on the host, until it is released anywhere. */
 export class PointerPressController extends Controller {
 	constructor(protected override readonly host: ReactiveElement, protected readonly options?: PointerPressControllerOptions) {
 		super(host)

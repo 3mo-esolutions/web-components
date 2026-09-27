@@ -5,6 +5,7 @@ import { PointerTypeController, type PointerTypeControllerOptions } from './Poin
 
 export interface PointerControllerOptions extends PointerPressControllerOptions, PointerHoverControllerOptions, PointerTypeControllerOptions { }
 
+/** Tracks whether a pointer hovers or presses the host, and which kind of pointer the user last used. */
 export class PointerController extends Controller {
 	constructor(protected override readonly host: ReactiveElement, protected readonly options?: PointerControllerOptions) {
 		super(host)

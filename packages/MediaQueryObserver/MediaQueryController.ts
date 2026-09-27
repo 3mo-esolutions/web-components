@@ -1,5 +1,6 @@
 import { Controller, type ReactiveControllerHost } from '@a11d/lit'
 
+/** A controller that tells whether a media query matches, and re-renders its host and calls back when that changes. */
 export class MediaQueryController extends Controller {
 	private readonly mediaQuery: MediaQueryList
 

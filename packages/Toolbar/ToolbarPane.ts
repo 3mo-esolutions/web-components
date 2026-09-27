@@ -2,11 +2,11 @@ import { Component, component, css, html } from '@a11d/lit'
 import { SlotController } from '@3mo/slot-controller'
 
 /**
- * @element mo-toolbar-pane
+ * The single-line pane a `ToolbarController` measures, clipping the items that do not fit.
  *
- * A single-line container which lays its items out along the inline axis and clips those which do
- * not fit - the measurable pane of a @see ToolbarController. Spacing between items shall be provided
- * via `gap`, as the controller's measurements do not account for margins.
+ * Space its items with `gap`, as the measurements do not count margins.
+ *
+ * @element mo-toolbar-pane
  *
  * @slot - The toolbar items
  */

@@ -3,16 +3,18 @@ import { type Flex } from '@3mo/flex'
 import '@3mo/splitter'
 
 /**
+ * A resizable layout of a master pane and a detail pane that takes its share of the space only while it has content.
+ *
  * @element mo-master-detail
  *
- * @attr direction - The direction in which the panes are laid out. Defaults to 'vertical', which places the detail pane below the master pane.
- * @attr masterSize - The size of the master pane while both panes share the available space.
- * @attr minSize - The minimum size of either pane while both panes share the available space.
- * @attr collapsed - Whether the detail pane is collapsed to the size of its own content, leaving the rest to the master pane.
- * @attr open - Whether the detail pane has content. Derived from the 'detail' slot and therefore read-only.
+ * @attr direction - The direction in which the panes are laid out; 'vertical', the default, places the detail pane below the master pane
+ * @attr masterSize - The size of the master pane while both panes share the available space
+ * @attr minSize - The minimum size of either pane while both panes share the available space
+ * @attr collapsed - Whether the detail pane is collapsed to the size of its own content, leaving the rest to the master pane
+ * @attr open - Whether the detail pane has content; derived from the 'detail' slot and therefore read-only
  *
- * @slot master - The pane which is always visible. Usually a list or a data-grid, but anything whose state the detail pane depends on.
- * @slot detail - The pane which details the current state of the master pane. Absent as long as it has no content.
+ * @slot master - The pane which is always visible, such as a list or a data grid
+ * @slot detail - The pane which details the state of the master pane; absent as long as it has no content
  *
  * @csspart resizer-host - The element between both panes which resizes them.
  *

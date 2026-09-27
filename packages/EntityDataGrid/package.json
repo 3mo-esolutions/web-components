@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/entity-data-grid",
 	"version": "0.4.1",
-	"description": "An extension of @3mo/fetchable-data-grid that can be used to save and delete entities.",
+	"description": "A web component for fetchable data grids that create, edit and delete entities through dialogs and a context menu.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/EntityDataGrid"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -14,7 +18,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/data-data-grids-entity-data-grid--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

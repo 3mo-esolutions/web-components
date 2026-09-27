@@ -74,12 +74,8 @@ interface ReorderabilityDrag {
  * <div ${this.reorderabilityController.item({ index })}>
  * ```
  *
- * The drop reports `(source, destination)` indices through {@link handleReorder}; the controller never
- * touches the data. The layout is read off the items' boxes at drag start: items on one line get
- * single-axis rules, anything else is hit-tested.
- *
- * Built on pointer events rather than native drag and drop: on Android the page receives native drag
- * events only a few times a second, and Firefox on Android has no touch drag at all.
+ * The drop reports `(source, destination)` through {@link handleReorder}; the controller never touches the data.
+ * Built on pointer events, as Android delivers native drag events only a few times a second and Firefox on Android none for touch.
  */
 export class ReorderabilityController<TItemOptions extends ReorderabilityControllerItemDirectiveOptions = ReorderabilityControllerItemDirectiveOptions> extends Controller {
 	/** Touch and pen hold first, so a plain swipe still scrolls. */
@@ -94,7 +90,9 @@ export class ReorderabilityController<TItemOptions extends ReorderabilityControl
 	readonly indexability: IndexabilityController<unknown, TItemOptions>
 
 	constructor(override readonly host: ReactiveElement, readonly options: {
+		/** Called on the drop with the dragged item's index and the one it lands at; the host moves the data. */
 		handleReorder?: (source: number, destination: number) => void
+		/** `live` moves the other items aside during the drag, `indicator` leaves them in place and marks the drop target. Defaults to `live`. */
 		strategy?: ReorderabilityStrategy
 		/** A registry shared with other controllers on the same host; created when absent. */
 		indexability?: IndexabilityController<unknown, TItemOptions>

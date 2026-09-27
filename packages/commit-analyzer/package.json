@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/commit-analyzer",
 	"version": "0.1.1",
-	"description": "Analyzer for commit messages supporting optional conventional commits",
+	"description": "A Node tool for parsing git log output into commits with conventional-commit types, breaking changes and trailers.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/commit-analyzer"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"commit",
@@ -14,7 +18,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://github.com/3mo-esolutions/web-components/tree/main/packages/commit-analyzer",
 	"type": "module",
 	"main": "index.ts",
 	"files": [

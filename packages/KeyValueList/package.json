@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/key-value-list",
 	"version": "0.1.0",
-	"description": "A web component which lists key-value pairs as a description list and fills the width it is given with as many key-value columns as fit.",
+	"description": "A web component for key-value pairs laid out as a description list in as many columns as fit.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/KeyValueList"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -15,7 +19,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/data-key-value-list--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

@@ -3,8 +3,9 @@ import { Controller, type ReactiveControllerHost } from '@a11d/lit'
 export type PointerDrag = {
 	/** Where the pointer was pressed, in client coordinates. */
 	readonly origin: { readonly x: number, readonly y: number }
-	/** How far the pointer has moved since, in pixels. */
+	/** How far the pointer has moved horizontally since, in pixels. */
 	readonly deltaX: number
+	/** How far the pointer has moved vertically since, in pixels. */
 	readonly deltaY: number
 	/** The latest event of the press: the one moving or releasing the pointer. */
 	readonly event: PointerEvent
@@ -13,6 +14,7 @@ export type PointerDrag = {
 export interface PointerDragControllerOptions {
 	/** The element a drag starts on and which captures the pointer while it lasts. Defaults to the host. */
 	readonly target?: HTMLElement | null
+	/** Ignores presses as long as this is `true`. */
 	readonly disabled?: boolean
 	/** How far a press travels before it becomes a drag, in pixels. `0` makes the press itself one. Defaults to 4. */
 	readonly threshold?: number
@@ -22,9 +24,11 @@ export interface PointerDragControllerOptions {
 	handlePress?(event: PointerEvent): boolean | void
 	/** Asked once, on the first movement. Return `false` to leave the gesture to the browser. */
 	isDrag?(deltaX: number, deltaY: number): boolean
+	/** Called when a press becomes a drag. */
 	handleDragStart?(drag: PointerDrag): void
 	/** Every movement of a drag, the one which started it included. */
 	handleDrag?(drag: PointerDrag): void
+	/** Called when the pointer is released after a drag. */
 	handleDragEnd?(drag: PointerDrag): void
 	/** The browser took the pointer over, or its release never arrived. */
 	handleDragCancel?(): void
@@ -41,18 +45,7 @@ type PointerDragPress = {
 	holdTimer?: ReturnType<typeof setTimeout>
 }
 
-/**
- * Turns a press on an element into a drag once it travels far enough, or once a touch is held long enough.
- *
- * ```ts
- * readonly drag = new PointerDragController(this, host => ({
- *   handleDrag: ({ deltaX }) => host.offset = deltaX,
- * }))
- * ```
- *
- * While a drag lasts, the target captures the pointer and the touch is kept from scrolling; the click
- * which follows a drag is swallowed, so a press which never became one is still an ordinary click.
- */
+/** Turns a press on an element into a drag once it travels far enough, or once a touch is held long enough. */
 export class PointerDragController<THost extends ReactiveControllerHost = ReactiveControllerHost> extends Controller implements EventListenerObject {
 	static readonly defaultThreshold = 4
 	/** How far a held touch may drift before it counts as scrolling, in pixels. */

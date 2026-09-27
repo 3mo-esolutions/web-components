@@ -3,8 +3,7 @@ import { SheetController, type SheetRequestCloseSource } from './SheetController
 import type { SheetPlacement } from './SheetPlacement.js'
 
 /**
- * An edge-anchored modal sheet surface rendered in the top layer via native `<dialog>`.
- * Supports modal backdrop, focus containment, CSS animations, and swipe-to-dismiss.
+ * A modal panel anchored to an edge of the viewport, closed by Escape, the backdrop, its handle or a swipe.
  *
  * @element mo-sheet
  *
@@ -31,6 +30,9 @@ import type { SheetPlacement } from './SheetPlacement.js'
  *
  * @fires openChange - Dispatched with the new state whenever the sheet opens or closes.
  * @fires requestClose - Dispatched with the source before the sheet closes itself. Cancelable to keep the sheet open.
+ *
+ * @accessibility
+ * A native modal `dialog`, so the page behind it is inert. It is named by `label`, the element with `autofocus` inside takes focus as it opens, and its handle is a button named "Close". `Escape` fires the cancelable `requestClose` and closes.
  */
 @component('mo-sheet')
 export class Sheet extends Component {

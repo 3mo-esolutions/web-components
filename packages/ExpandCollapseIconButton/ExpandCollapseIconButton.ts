@@ -2,12 +2,14 @@ import { component, css, Component, html, property } from '@a11d/lit'
 import '@3mo/icon-button'
 
 /**
+ * A dense chevron icon-button that turns upside down while the content it controls is open.
+ *
  * @element mo-expand-collapse-icon-button
  *
  * @ssr true
  *
- * @attr disabled
- * @attr open
+ * @attr disabled - Disables the button.
+ * @attr open - Whether the controlled content is open, which turns the chevron up.
  */
 @component('mo-expand-collapse-icon-button')
 export class ExpandCollapseIconButton extends Component {

@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/command-palette",
 	"version": "0.2.1",
-	"description": "Command-palettes are a common way to provide users with a list of actions they can perform in a given context.",
+	"description": "A web component for a Ctrl+K command palette that searches registered data sources and runs the chosen command.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/CommandPalette"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -14,7 +18,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/actions-command-palette--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

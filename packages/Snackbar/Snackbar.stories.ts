@@ -1,59 +1,48 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite'
 import { html } from '@a11d/lit'
-import p from './package.json'
-import './index.js'
-import { Snackbar } from './Snackbar.js'
+import { Snackbar } from './index.js'
 
 export default {
-	title: 'Communication / Snackbar',
+	title: 'Feedback / Snackbar',
 	component: 'mo-snackbar',
-	package: p,
-} as Meta
+	decorators: [story => html`<div style='display: flex; flex-wrap: wrap; gap: 12px'>${story()}</div>`],
+} satisfies Meta
 
-let count = 0
-
-export const Info: StoryObj = {
+export const Default: StoryObj = {
 	render: () => html`
-		<mo-button @click=${() => Snackbar.notifyInfo(`Notification #${count++}`)}>Info</mo-button>
-	`
+		<mo-button @click=${() => Snackbar.notifyInfo('Changes saved')}>Save</mo-button>
+	`,
 }
 
-export const Success: StoryObj = {
+/** Each type brings its own color and icon; a warning stays 10 seconds and an error 15, where the others go after 5. */
+export const Types: StoryObj = {
 	render: () => html`
-		<mo-button @click=${() => Snackbar.notifySuccess(`Notification #${count++}`)}>Success</mo-button>
-	`
+		<mo-button @click=${() => Snackbar.notifyInfo('A new version is available')}>Info</mo-button>
+		<mo-button @click=${() => Snackbar.notifySuccess('The order was shipped')}>Success</mo-button>
+		<mo-button @click=${() => Snackbar.notifyWarning('The subscription ends in 3 days')}>Warning</mo-button>
+		<mo-button @click=${() => Snackbar.notifyError('The payment was declined')}>Error</mo-button>
+	`,
 }
 
-export const Warning: StoryObj = {
-	render: () => html`
-		<mo-button @click=${() => Snackbar.notifyWarning(`Notification #${count++}`)}>Warning</mo-button>
-	`
-}
-
-export const Error: StoryObj = {
-	render: () => html`
-		<mo-button @click=${() => Snackbar.notifyError(`Notification #${count++}`)}>Error</mo-button>
-	`
-}
-
-export const WithActions: StoryObj = {
+/** `actions` add buttons to the snack-bar, and each one keeps it open 2.5 seconds longer. */
+export const Actions: StoryObj = {
 	render: () => html`
 		<mo-button @click=${() => Snackbar.notifySuccess({
-			message: `Event #${count++} created`,
-			actions: [{ title: 'Undo', handleClick: () => Snackbar.notifyInfo('Undone!') }],
-		})}>With Actions</mo-button>
-	`
+			message: 'The event was created',
+			actions: [{ title: 'Undo', handleClick: () => Snackbar.notifyInfo('The event was removed') }],
+		})}>Create event</mo-button>
+	`,
 }
 
+/** Up to three snack-bars lay out as a list; more pile up behind the third. Hover the pile to lay them all out again and pause their timers. */
 export const Stacking: StoryObj = {
 	render: () => html`
-		<p>Snack-bars lay out as a list while up to 3 of them are open. From the 4th one on, they collapse into a pile behind the 3rd one instead of growing the list any further. Hover over the stack to lay them all out again.</p>
 		<mo-button @click=${() => {
-			Snackbar.notifyInfo(`Notification #${count++}`)
-			Snackbar.notifySuccess(`Notification #${count++}`)
-			Snackbar.notifyWarning(`Notification #${count++}`)
-			Snackbar.notifyError(`Notification #${count++}`)
-			Snackbar.notifyInfo(`Notification #${count++} with a longer message that spans wider than the others`)
+			Snackbar.notifyInfo('Notification 1')
+			Snackbar.notifySuccess('Notification 2')
+			Snackbar.notifyWarning('Notification 3')
+			Snackbar.notifyError('Notification 4')
+			Snackbar.notifyInfo('Notification 5 with a longer message that spans wider than the others')
 		}}>Show 5 notifications</mo-button>
-	`
+	`,
 }

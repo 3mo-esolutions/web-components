@@ -24,9 +24,11 @@ export interface ExpandabilityControllerOptions<T> {
 	readonly items: ReadonlyArray<T>
 	/** Identity. Defaults to the item itself. */
 	readonly key?: (item: T) => unknown
+	/** Whether the item has anything to open, such as children. Defaults to `true`. */
 	readonly isExpandable?: (item: T) => boolean
 	/** Given, the host owns the state and commits the controller's answer in {@link handleChange}. */
 	readonly expanded?: ReadonlyArray<T>
+	/** Called with the open items, and which ones opened or closed, whenever they change. */
 	readonly handleChange?: (change: ExpandabilityChange<T>) => void
 	/** Defaults to `true`. */
 	readonly multiple?: boolean
@@ -36,6 +38,7 @@ export interface ExpandabilityControllerOptions<T> {
 	readonly load?: (item: T) => Promise<unknown>
 	/** Off, for a host that announces expansion itself. Defaults to `true`. */
 	readonly stamping?: boolean
+	/** A registry shared with other controllers on the same host; created when absent. */
 	readonly indexability?: IndexabilityController<T, ExpandabilityItemOptions<T>>
 }
 

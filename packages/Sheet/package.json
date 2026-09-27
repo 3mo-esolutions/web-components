@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/sheet",
 	"version": "0.1.2",
-	"description": "An edge-anchored modal sheet web component built on the native dialog element",
+	"description": "A web component for modal sheets anchored to any screen edge with swipe-to-dismiss, built on the native dialog element.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/Sheet"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -17,7 +21,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/layout-sheet--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

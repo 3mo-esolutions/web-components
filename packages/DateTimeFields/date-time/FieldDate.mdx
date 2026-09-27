@@ -1,0 +1,50 @@
+import { Meta, DocsStory } from '@storybook/addon-docs/blocks'
+import { Hero, Install, Playground, Accessibility, Api, Changelog } from '../../../.storybook/blocks'
+import * as FieldDateStories from './FieldDate.stories'
+import * as FieldDateTimeStories from './FieldDateTime.stories'
+
+<Meta of={FieldDateStories} />
+
+<Hero />
+<Install />
+<Playground />
+
+## Typing in segments
+
+A date is typed into one segment per unit, in the order and with the separators of the page's language. Shortcuts and pasted text resolve to a whole date.
+
+<DocsStory of={FieldDateStories.Keyboard} />
+<DocsStory of={FieldDateStories.ShortcutReferenceDate} />
+
+## The calendar
+
+The calendar opens from the button or with Alt+ArrowDown, beside presets such as today or the end of the month. Whatever the field refuses is disabled in it.
+
+<DocsStory of={FieldDateStories.MinAndMax} />
+<DocsStory of={FieldDateStories.DateDisabled} />
+<DocsStory of={FieldDateStories.PickerHidden} />
+
+## Precision
+
+`precision` picks a year, a month, a week or a day. The [Date Time Field](?path=/docs/inputs-date-time-fields-date-time-field--overview) goes on to the hour, the minute and the second.
+
+<DocsStory of={FieldDateStories.Precisions} />
+
+## States
+
+<DocsStory of={FieldDateStories.States} />
+
+## Ranges and times
+
+The [Date Range Field](?path=/docs/inputs-date-time-fields-date-range-field--overview) and the [Date Time Range Field](?path=/docs/inputs-date-time-fields-date-time-range-field--overview) take a start and an end, each in its own segments. The [Time Field](?path=/docs/inputs-date-time-fields-time-field--overview) holds a time of day as the `HH:mm` string of a native time input.
+
+## Custom fields
+
+Each field's behaviour is a controller - `FieldDateTimeController`, `FieldDateTimeRangeController` and `FieldTimeController` - so a field of another design only renders it. The range and time pages show one of each.
+
+<DocsStory of={FieldDateTimeStories.CustomDateTimeField} />
+
+<Accessibility />
+
+<Api />
+<Changelog />

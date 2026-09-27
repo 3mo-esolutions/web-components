@@ -2,7 +2,9 @@ import { component, css, Component, property, html, query, event } from '@a11d/l
 import * as System from 'detect-browser'
 
 /**
- * @element mo-expander - A component that expands and collapses its content.
+ * A disclosure that shows or hides its content under a clickable heading.
+ *
+ * @element mo-expander
  *
  * @attr open - Whether the expander is open.
  * @attr heading - The heading of the expander.
@@ -15,6 +17,9 @@ import * as System from 'detect-browser'
  * @csspart expand-collapse-icon-button - The expand-collapse-icon-button of the expander.
  *
  * @fires openChange - Dispatched when the expander is opened or closed.
+ *
+ * @accessibility
+ * A native `details` element: the summary is a button whose open state the browser announces, and `Enter` and `Space` toggle it.
  */
 @component('mo-expander')
 export class Expander extends Component {

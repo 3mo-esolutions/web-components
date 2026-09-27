@@ -12,10 +12,13 @@ export function isMenu(element: EventTarget): element is HTMLElement {
 }
 
 /**
+ * A list of commands in a popover, opened from its anchor by a press or the keyboard.
+ *
  * @element mo-menu
  *
  * @attr anchor - The element that the menu is anchored to.
  * @attr placement - The placement of the menu.
+ * @attr alignment - How the menu lines up with its anchor: `start`, `center` or `end`.
  * @attr open - Whether the menu is open.
  * @attr target - The target of the menu.
  * @attr manual - Whether the menu is opened manually. This won't affect the opening triggers via the keyboard.
@@ -24,7 +27,7 @@ export function isMenu(element: EventTarget): element is HTMLElement {
  * @attr value - The value of the menu.
  * @attr disabled - Whether the menu is disabled.
  *
- * @slot - Default slot for list items
+ * @slot - The menu items.
  *
  * @fires change - Dispatched when the menu value changes.
  * @fires openChange - Dispatched when the menu open state changes.

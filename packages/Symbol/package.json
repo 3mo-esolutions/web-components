@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/symbol",
 	"version": "0.1.6",
-	"description": "Icon Web Component based on Material Symbols.",
+	"description": "A web component for typed Material Symbols with adjustable fill, weight, grade and optical size.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components/tree/main/packages/icon"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/Symbol"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -16,7 +20,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/foundations-symbol--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

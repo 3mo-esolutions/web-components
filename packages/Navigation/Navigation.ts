@@ -6,13 +6,7 @@ import './NavigationRail.js'
 import './NavigationDrawer.js'
 
 /**
- * The application's shell: a header, the page beside or beneath it, and the navigations presented as
- * whichever of `bar`, `rail` and `drawer` fits.
- *
- * `presentations` is the order they are preferred in, and the first one which fits is the one shown —
- * the bar as long as its navigations fit its row, the rail as long as the page keeps
- * `--mo-navigation-min-content-size` beside it, and the drawer, which always fits. Demoting the bar is
- * therefore a matter of leaving it out of the order rather than of replacing the shell.
+ * The application's shell: a header, the page, and the navigations as a bar, a rail or a drawer, whichever fits.
  *
  * @element mo-navigation
  *

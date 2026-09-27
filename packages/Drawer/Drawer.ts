@@ -2,9 +2,7 @@ import { component, css } from '@a11d/lit'
 import { Sheet, type SheetPlacement } from '@3mo/sheet'
 
 /**
- * A navigation panel which comes in from the side. It is a sheet anchored to an inline edge, and
- * therefore modal: the page behind it is inert until it is dismissed by the Escape key, a click on
- * the backdrop, or a swipe.
+ * A navigation panel that comes in from the side: a sheet anchored to an inline edge.
  *
  * @element mo-drawer
  *
@@ -18,6 +16,9 @@ import { Sheet, type SheetPlacement } from '@3mo/sheet'
  *
  * @fires openChange - Dispatched with the new state whenever the drawer opens or closes.
  * @fires requestClose - Dispatched with the source before the drawer closes itself. Cancelable to keep it open.
+ *
+ * @accessibility
+ * A native modal `dialog`, so the page behind it is inert. It is named by `label`, the element with `autofocus` inside takes focus as it opens, and `Escape` fires the cancelable `requestClose` and closes.
  */
 @component('mo-drawer')
 export class Drawer extends Sheet {

@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/slot-controller",
 	"version": "0.3.6",
-	"description": "A controller that updates a host when slotted content changes and provides helper methods for checking and getting assigned slot elements.",
+	"description": "A Lit controller for slotted content that re-renders its host when it changes and tells which nodes a slot holds.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/SlotController"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -14,7 +18,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/behaviors-slot-controller--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

@@ -3,21 +3,9 @@ import { MenuBarController } from './MenuBarController.js'
 import { MenuBarItem } from './MenuBarItem.js'
 
 /**
- * The menus of an application along one bar, like File, Edit and View of a desktop program.
- * It is meant for commands; a site's navigation belongs in `mo-navigation`.
+ * The menus of an application along one bar, like File, Edit and View of a desktop program; navigation belongs in `mo-navigation`.
  *
  * Give it an accessible name with `aria-label` or `aria-labelledby`.
- *
- * ```html
- * <mo-menu-bar aria-label='Editor'>
- *     <mo-menu-bar-item>
- *         File
- *         <mo-menu slot='menu'>
- *             <mo-menu-item>New</mo-menu-item>
- *         </mo-menu>
- *     </mo-menu-bar-item>
- * </mo-menu-bar>
- * ```
  *
  * @element mo-menu-bar
  *
@@ -26,6 +14,18 @@ import { MenuBarItem } from './MenuBarItem.js'
  * @slot - The items, which are `mo-menu-bar-item`s.
  *
  * @fires overflowChange - Dispatched when `hasOverflow` changes.
+ *
+ * @accessibility
+ * A `menubar` whose items are `none`, with the button of each a `menuitem` and each item's menu a [menu](?path=/docs/behaviors-menu-controller--overview). The bar is one tab stop.
+ *
+ * | Key | Does |
+ * | --- | --- |
+ * | `ArrowRight` `ArrowLeft`, `Home` `End` | The next, previous, first or last item. |
+ * | A letter | Typeahead by the items' labels. |
+ * | `ArrowDown` `Enter` `Space` | Opens the item's menu on its first item; `ArrowUp` on its last. |
+ * | `ArrowRight` `ArrowLeft` | While a menu is open: opens the neighbouring menu instead, as a pointer moving over the items does. |
+ *
+ * Items that do not fit the bar are hidden and skipped; the bar reports them with `overflowChange`, so offer them another way. Name the bar with `aria-label`.
  */
 @component('mo-menu-bar')
 export class MenuBar extends Component {

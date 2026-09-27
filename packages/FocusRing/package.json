@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/focus-ring",
 	"version": "0.1.1",
-	"description": "Focus ring emphasizes the element that has the focus.",
+	"description": "A web component for keyboard focus rings in the theme's accent color, attachable to any element, built on Material Web.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/FocusRing"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -13,7 +17,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/foundations-focus-ring--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

@@ -1,56 +1,43 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite'
-import { Component, css, html, state, style } from '@a11d/lit'
-import p from './package.json'
+import { html } from '@a11d/lit'
+import type { VirtualizedScroller } from './VirtualizedScroller.js'
 import './index.js'
 
 export default {
-	title: 'Layout & Containment / Virtualized Scroller',
+	title: 'Layout / Virtualized Scroller',
 	component: 'mo-virtualized-scroller',
-	package: p,
-} as Meta
+} satisfies Meta
 
-const items = new Array(1000).fill(undefined).map((_, i) => i)
+export const Default: StoryObj = {
+	render: () => html`
+		<mo-virtualized-scroller style='height: 400px'
+			.items=${Array.from({ length: 1000 }, (_, index) => index + 1)}
+			.getItemTemplate=${(number: number) => html`<div style='padding: 10px'>Item ${number}</div>`}
+		></mo-virtualized-scroller>
+	`,
+}
 
-export const VirtualizedScroller: StoryObj = {
-	render: () => {
-		return html`
-			<mo-virtualized-scroller ${style({ height: '400px' })}
-				.items=${items}
-				.getItemTemplate=${(number: number) => html`<story-virtualized-scroller-box>Box #${number}</story-virtualized-scroller-box>`}
+/** Items of different heights are measured as they render, so a hundred thousand of them still scroll smoothly. */
+export const VariableHeights: StoryObj = {
+	render: () => html`
+		<mo-virtualized-scroller style='height: 400px'
+			.items=${Array.from({ length: 100_000 }, (_, index) => index + 1)}
+			.getItemTemplate=${(number: number) => html`
+				<div style='width: 100%; box-sizing: border-box; margin-block: 4px; padding: 10px; height: ${40 + number % 5 * 20}px; border-radius: 4px; color: black; background: ${number % 2 ? '#7FCDCD' : '#F7CAC9'}'>Item ${number}</div>
+			`}
+		></mo-virtualized-scroller>
+	`,
+}
+
+/** `getElement(index)` returns an item even when it is not rendered, so that it can be scrolled into view. */
+export const ScrollToItem: StoryObj = {
+	render: () => html`
+		<mo-flex gap='8px' alignItems='start'>
+			<mo-button @click=${(e: Event) => ((e.currentTarget as HTMLElement).parentElement!.querySelector('mo-virtualized-scroller') as VirtualizedScroller).getElement(499)?.scrollIntoView({ block: 'center' })}>Scroll to item 500</mo-button>
+			<mo-virtualized-scroller style='height: 400px'
+				.items=${Array.from({ length: 1000 }, (_, index) => index + 1)}
+				.getItemTemplate=${(number: number) => html`<div style='padding: 10px'>Item ${number}</div>`}
 			></mo-virtualized-scroller>
-		`
-	}
+		</mo-flex>
+	`,
 }
-
-class Box extends Component {
-	@state() private secondPassedConnected = false
-
-	override connected() {
-		setTimeout(() => this.secondPassedConnected = true, 1000)
-	}
-
-	override disconnected() {
-		this.secondPassedConnected = false
-	}
-
-	static override get styles() {
-		return css`
-			:host {
-				display: block;
-				width: 100%;
-				margin: 10px;
-			}
-		`
-	}
-
-	protected override get template() {
-		return html`
-			<div ${style({ padding: '10px', backgroundColor: this.secondPassedConnected ? '#7FCDCD' : '#F7CAC9' })}>
-				${this.secondPassedConnected ? '✅' : '⌛'}
-				<slot></slot>
-			</div>
-		`
-	}
-}
-
-customElements.define('story-virtualized-scroller-box', Box)

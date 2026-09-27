@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/snackbar",
 	"version": "0.3.0",
-	"description": "Snackbars show short updates about app processes at the bottom of the screen.",
+	"description": "A web component for timed snackbar notifications that stack at the screen edge and pause while being read.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/Snackbar"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"lit",
@@ -15,7 +19,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/feedback-snackbar--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

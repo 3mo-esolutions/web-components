@@ -7,6 +7,8 @@ Localizer.dictionaries.add('de', {
 })
 
 /**
+ * A text field for an email address, which offers the email keyboard on touch devices.
+ *
  * @element mo-field-email
  *
  * @attr value - The value of the field.

@@ -17,9 +17,9 @@ import './Field.js'
  *
  * @csspart container - Field's container
  *
- * @fires change
- * @fires input
- * @fires validityChange
+ * @fires change - Dispatched with the value when the user commits it
+ * @fires input - Dispatched with the value while the user edits it
+ * @fires validityChange - Dispatched with whether the value is valid, after every validation
  */
 export abstract class FieldComponent<T> extends Component {
 	static {

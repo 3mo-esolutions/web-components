@@ -17,6 +17,7 @@ export interface ListboxControllerOptions<T> {
 	readonly isSelectable?: (item: T) => boolean
 	/** The host's own selection. Given, the host owns the state and commits it in `handleChange`. */
 	readonly selection?: ReadonlyArray<T>
+	/** Called with the new selection whenever it changes. */
 	readonly handleChange?: (selection: ReadonlyArray<T>) => void
 	/** Single selection only: an option the arrow keys reach is selected. Defaults to `false`. */
 	readonly selectionFollowsFocus?: boolean
@@ -42,9 +43,23 @@ export interface ListboxControllerOptions<T> {
  *   <li ${this.fruits.option({ index, data: fruit })}>
  * ```
  *
- * Arrows, Home, End and typeahead move between the options; Space and Enter select. With multiple
- * selection, Shift+Arrow and Shift+Space extend a range, Ctrl+Shift+Home and End select to either end,
- * and Ctrl+A selects everything or, when everything is selected, nothing.
+ * @accessibility
+ * The list is a `listbox`, with `aria-multiselectable` while multiple and `aria-orientation='horizontal'` when horizontal.
+ * Each option is an `option` with `aria-selected`, and `aria-disabled` while disabled.
+ * Focus roves: Tab lands on the first selected option, else on the first one. The arrows move without selecting,
+ * unless `selectionFollowsFocus` selects as they move in single selection.
+ *
+ * | Key | Does |
+ * | --- | --- |
+ * | `ArrowDown` `ArrowUp` | The next or previous option; `ArrowRight` and `ArrowLeft` when horizontal. |
+ * | `Home` `End`, `PageUp` `PageDown` | The first or last option, or a page further. |
+ * | A letter | Typeahead. |
+ * | `Space` `Enter` | Selects the option, as a click does; toggles it while multiple. |
+ * | `Shift` + an arrow | Multiple: moves and extends the selection from where it started. |
+ * | `Ctrl` `Shift` `Home` / `End` | Multiple: selects from the option to the first or last one. |
+ * | `Ctrl` `A` | Multiple: selects all, or none while all are selected. |
+ *
+ * Name the list with `aria-label` or `aria-labelledby`.
  */
 export class ListboxController<T, THost extends ReactiveElement = ReactiveElement> extends Controller {
 	/** The listbox itself. Without it, the host is the listbox. */

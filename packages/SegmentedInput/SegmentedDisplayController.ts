@@ -37,6 +37,7 @@ export type SegmentedDisplayControllerOptions = {
 	 * Both can report the same value, so a host which acts on it compares with what it already holds.
 	 */
 	handleChange?(value: string): void
+	/** Focus entered or left the input. */
 	handleFocusChange?(focused: boolean): void
 }
 
@@ -55,17 +56,9 @@ export type SegmentedDisplaySegment = LiteralSegment | EditableSegment & { reado
  * </div>
  * ```
  *
- * A code is one value, not several: the cells are a drawing of it, and everything which makes a value
- * arrive — a phone offering the code it just received through `autocomplete="one-time-code"`, a
- * password manager filling an authenticator code, a paste into the middle, select-all, undo, the
- * long-press menu — happens on the input, where the platform already implements it. Splitting the
- * value over one input per cell would take all of that away and hand a screen reader six controls
- * where the user has one thing to enter.
- *
- * The cells are hidden from assistive technology for the same reason: the input carries the name, the
- * value and the caret. The host places the input over the cells and paints it transparent — its
- * `::selection` as well, since a selection repaints the text it covers and the value would show
- * through the drawing. The cells mark the selected range themselves, through `data-active`.
+ * A code is one value, not several: autofill, paste, undo and a screen reader all work on the one input,
+ * which the host places over the cells and paints transparent, its `::selection` included. The cells are
+ * hidden from assistive technology and mark the selected range through `data-active`.
  *
  * @ssr false
  */

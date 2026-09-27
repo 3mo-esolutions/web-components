@@ -3,11 +3,7 @@ import { SelectionGroupPattern } from '@3mo/selection-group'
 import { Button } from './Button.js'
 
 /**
- * A `mo-button` that carries a selected state. Inside a `mo-selection-group` the group owns the selection
- * and the tab stop; on its own it is a toggle bound with `selected`.
- *
- * The selection state is announced on the host, not on the native button two shadow roots down in
- * `@material/web`, which forwards only `aria-label`, `aria-haspopup` and `aria-expanded`.
+ * A `mo-button` that carries a selected state, a toggle on its own or an option of a `mo-selection-group`.
  *
  * @element mo-selectable-button
  *
@@ -23,7 +19,10 @@ export class SelectableButton extends Button {
 
 	@property() value?: string
 	@property({ type: Boolean, reflect: true, bindingDefault: true, event: 'change' }) selected = false
-	/** The pattern of the group the button is in, written by that group. Alone, it is a toggle. */
+	/**
+	 * The pattern of the group the button is in, written by that group. Alone, it is a toggle.
+	 * @ignore
+	 */
 	@property() selectionPattern?: SelectionGroupPattern
 
 	private get isRadio() {

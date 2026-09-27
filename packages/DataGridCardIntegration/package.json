@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/data-grid-card-integration",
 	"version": "0.1.0",
-	"description": "Integration of @3mo/data-grid and @3mo/card packages.",
+	"description": "A utility for data grids inside cards that drops the card's side padding, so the grid spans its full width.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/DataGridCardIntegration"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"data-grid",
@@ -13,7 +17,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://github.com/3mo-esolutions/web-components/tree/main/packages/DataGridCardIntegration",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

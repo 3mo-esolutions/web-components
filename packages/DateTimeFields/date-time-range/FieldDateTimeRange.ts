@@ -11,11 +11,15 @@ Localizer.dictionaries.add('de', {
 })
 
 /**
+ * A date and time range field, with segments for each end and a picker that edits one end at a time.
+ *
  * Its behaviour is {@link FieldDateTimeRangeController}, for a date range field of another design.
  *
- * @element mo-field-date-range
+ * @element mo-field-date-time-range
  *
  * @attr value - The selected date range.
+ *
+ * @csspart segments-range - Both ends' segments and the delimiter between them
  *
  * @i18n "Period"
  * @i18n "Start"
@@ -30,6 +34,10 @@ Localizer.dictionaries.add('de', {
  * @i18n "Last year"
  * @i18n "This year"
  * @i18n "Next year"
+ *
+ * @accessibility
+ * The segments follow the [segmented input](?path=/docs/behaviors-segmented-input--overview): a `group` named after the `label`, with one `spinbutton` per part, and one tab stop for the group. `aria-invalid`, `aria-required` and `aria-readonly` follow the field.
+ * `Alt` `ArrowDown` opens the picker. The picker's calendar cannot be operated with the keyboard yet, so the segments are the keyboard's way in.
  */
 @component('mo-field-date-time-range')
 export class FieldDateTimeRange extends FieldDateTimeBase<DateTimeRange | undefined> {

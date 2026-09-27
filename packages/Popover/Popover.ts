@@ -9,19 +9,18 @@ import { PopoverCssAnchorPositionController } from './PopoverCssAnchorPositionCo
 export type PopoverMode = 'auto' | 'manual' | 'hint'
 
 /**
+ * A floating surface anchored to an element, shown above everything else.
+ *
  * @element mo-popover
  *
- * @attr coordinates - The coordinates of the popover.
- * @attr anchor - The anchor element for the popover.
- * @attr target - The target element for the popover.
- * @attr placement - The placement of the popover relative to the anchor.
- * @attr alignment - The alignment of the popover relative to the anchor.
- * @attr offset - The offset of the popover.
+ * @attr coordinates - A point `[x, y]` in the viewport to open at instead of the anchor.
+ * @attr anchor - The element the popover is anchored to and opened by.
+ * @attr target - The id of the element within the anchor whose clicks open the popover.
+ * @attr placement - The side of the anchor: `block-end` (default), `block-start`, `inline-start` or `inline-end`.
+ * @attr alignment - How the popover lines up along that side: `start` (default), `center` or `end`.
+ * @attr offset - The distance from the anchor in pixels, in browsers without CSS anchor positioning.
  * @attr open - Whether the popover is open.
- * @attr mode - Whether the popover is manually controlled:
- * 	- `auto` (default): can be "light dismissed" — this means that you can hide the popover by clicking outside it or pressing the Esc key. Showing an auto popover will generally close other auto popovers that are already displayed, unless they are nested.
- * 	- `manual`: cannot be "light dismissed" and are not automatically closed. Popovers must explicitly be opened via setting the `open` property. Multiple independent manual popovers can be shown simultaneously.
- * 	- `hint`: do not close auto popovers when they are displayed, but will close other hint popovers. They can be light dismissed and will respond to close requests.
+ * @attr mode - `auto` (default) closes on a click outside or Escape and closes other auto popovers; `manual` opens and closes only through `open`; `hint` closes like `auto` but leaves auto popovers open.
  *
  * @slot - Default slot for popover content
  *

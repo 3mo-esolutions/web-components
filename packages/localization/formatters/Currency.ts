@@ -30,7 +30,7 @@ export class Currency {
 
 	/**
 	 * The symbol the given language writes this currency with, falling back to the code itself.
-	 * Symbols are language-specific: `CNY` is `¥` in Chinese but `CN¥` in German.
+	 * Symbols are language-specific: the same currency can be `¥` in one language and `CN¥` in another.
 	 */
 	getSymbol(language = Localizer.languages.current) {
 		try {

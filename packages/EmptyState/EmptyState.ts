@@ -2,13 +2,15 @@ import { html, component, Component, property, css } from '@a11d/lit'
 import type { MaterialIcon } from '@3mo/icon'
 
 /**
+ * A placeholder that says why a view has nothing to show, with an icon above the message.
+ *
  * @element mo-empty-state
  *
  * @ssr true
  *
- * @attr icon
+ * @attr icon - The Material icon shown above the message.
  *
- * @slot - Error message
+ * @slot - The message, and any action that fills the view.
  */
 @component('mo-empty-state')
 export class EmptyState extends Component {

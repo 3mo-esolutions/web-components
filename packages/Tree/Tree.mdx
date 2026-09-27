@@ -1,0 +1,51 @@
+import { Meta, Canvas, Description, DocsStory } from '@storybook/addon-docs/blocks'
+import { Hero, Install, Playground, Accessibility, Api, Changelog } from '../../.storybook/blocks'
+import * as TreeStories from './Tree.stories'
+
+<Meta of={TreeStories} />
+
+<Hero />
+<Install />
+<Playground />
+
+## Items
+
+The nesting is the hierarchy: a `mo-tree-item` inside another is one of its children. Which items are open is each item's own `open`, whoever sets it, and it reports every change as `openChange`.
+
+<DocsStory of={TreeStories.InitialState} />
+<DocsStory of={TreeStories.Slots} />
+<DocsStory of={TreeStories.Overflow} />
+
+## Selection
+
+The selection belongs to the tree, which reports it in `value` by the `value` of the selected items and fires `change` when it changes.
+
+<DocsStory of={TreeStories.Selection} />
+<DocsStory of={TreeStories.Controlled} />
+<DocsStory of={TreeStories.Methods} />
+
+## Keyboard
+
+The tree follows the WAI-ARIA tree view pattern: it is one tab stop, and the keys move a cursor through the visible items.
+
+<Description of={TreeStories.Keyboard} />
+<Canvas of={TreeStories.Keyboard} />
+
+## Appearance
+
+The tree sets `--mo-tree-level` on every item, which its row indents by.
+
+<Description of={TreeStories.Parts} />
+<Canvas of={TreeStories.Parts} />
+
+## Building your own tree
+
+`TreeController` carries the behavior of `mo-tree` without its design, over any elements a host renders.
+
+<Description of={TreeStories.Controller} />
+<Canvas of={TreeStories.Controller} />
+
+<Accessibility />
+
+<Api />
+<Changelog />

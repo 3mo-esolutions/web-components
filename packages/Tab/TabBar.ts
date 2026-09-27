@@ -3,15 +3,19 @@ import { type MdTabs } from '@material/web/tabs/tabs.js'
 import { Tab } from './Tab.js'
 
 /**
+ * A bar of tabs of which one is active, without panels of its own.
+ *
  * @element mo-tab-bar
  *
  * @ssr true
  *
- * @attr value
+ * @attr value - The `value` of the active tab
  *
- * @slot - Default slot for tab elements
+ * @cssprop --mo-tab-divider-color - The color of the line below the tabs
  *
- * @fires change
+ * @slot - The `mo-tab` elements
+ *
+ * @fires change - Dispatched with the new value when another tab is activated
  */
 @component('mo-tab-bar')
 export class TabBar extends Component {

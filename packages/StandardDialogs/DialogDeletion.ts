@@ -21,6 +21,11 @@ interface Parameters {
 	deletionAction?: (this: DialogDeletion) => void | PromiseLike<void>
 }
 
+/**
+ * A dialog that asks to confirm a deletion, then runs it.
+ *
+ * @element mo-dialog-deletion
+ */
 @component('mo-dialog-deletion')
 export class DialogDeletion extends DialogComponent<Parameters> {
 	static readonly deletionConfirmation = new LocalStorage('DialogDeletion.DeletionConfirmation', true)

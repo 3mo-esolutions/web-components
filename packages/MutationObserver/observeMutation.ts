@@ -30,4 +30,5 @@ class MutationDirective extends AsyncDirective {
 	}
 }
 
+/** A directive that reports the mutations of the element it sits on, by default of its children, and on a `<slot>` also every `slotchange`. */
 export const observeMutation = directive(MutationDirective)

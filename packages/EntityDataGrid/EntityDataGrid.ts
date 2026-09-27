@@ -10,14 +10,17 @@ type EditAction<TEntity extends EntityWithId> = ((entity: TEntity) => unknown | 
 type CreateOrEditAction<TEntity extends EntityWithId> = CreateAction | EditAction<TEntity>
 
 /**
- * @element mo-entity-data-grid - A data grid that supports CRUD operations.
+ * A fetchable data grid that creates, edits and deletes its rows through functions or entity dialogs, refetching after each.
  *
- * @attr create - The create action can be either a function or a class that extends EntityDialogComponent.
- * @attr edit - The edit action can be either a function or a class that extends EntityDialogComponent.
+ * @element mo-entity-data-grid
+ *
+ * @attr create - Creates an entity: a function, or an `EntityDialogComponent` class the grid opens. Adds a create button to the toolbar.
+ * @attr edit - Edits an entity: a function, or an `EntityDialogComponent` class the grid opens with the entity's `id`. Adds Edit to the menu of a row.
  * @attr isEntityEditable - A predicate that determines whether an entity is editable.
- * @attr createOrEdit - The createOrEdit is an aggregate of the create and edit actions. It can be either a function or a class that extends EntityDialogComponent.
- * @attr delete - The delete action can be either a function or a class that extends EntityDialogComponent.
+ * @attr createOrEdit - Sets both `create` and `edit`, typically to one entity dialog.
+ * @attr delete - A function that deletes the given entities. Adds Delete to the menu of a row.
  * @attr isEntityDeletable - A predicate that determines whether an entity is deletable.
+ * @attr rowContextMenuTemplate - A function that returns items of your own for the menu of the given rows, placed above Edit and Delete.
  * @attr createHidden - Whether to hide the primary action button generated for the create action.
  */
 @component('mo-entity-data-grid')

@@ -2,7 +2,10 @@ import { component, css, html, property } from '@a11d/lit'
 import { FieldNumber } from './FieldNumber.js'
 
 /**
+ * A number field for a percentage, from 0 to 100 unless `min` and `max` say otherwise, with a percent sign at the end.
+ *
  * @element mo-field-percent
+ *
  * @attr percentSign - The percent sign of the field.
  */
 @component('mo-field-percent')

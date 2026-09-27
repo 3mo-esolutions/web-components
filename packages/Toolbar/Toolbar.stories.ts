@@ -1,123 +1,123 @@
-import { type Meta, type StoryObj } from '@storybook/web-components-vite'
-import { Component, html, property, range, style } from '@a11d/lit'
-import { type MaterialIcon } from '@3mo/icon'
-import { ToolbarController } from './index.js'
-import p from './package.json'
+import type { Meta, StoryObj } from '@storybook/web-components-vite'
+import { html } from '@a11d/lit'
+import type { MaterialIcon } from '@3mo/icon'
+import { sourceOf } from '../../.storybook/source.js'
+import splitToolbarSource from './stories/SplitToolbar.ts?raw'
+import './stories/SplitToolbar.js'
+import './index.js'
+
+type Args = {
+	readonly collapsed: boolean
+	readonly overflowIcon: MaterialIcon
+	readonly overflowPosition: 'start' | 'end'
+}
 
 export default {
-	title: 'Layout & Containment / Toolbar',
+	title: 'Layout / Toolbar',
 	component: 'mo-toolbar',
-	package: p,
-} as Meta
-
-const resizable = (content: unknown) => html`
-	<div ${style({ resize: 'horizontal', overflow: 'hidden', minWidth: '100px', padding: '4px', border: '1px dashed var(--mo-color-transparent-gray-3)', borderRadius: 'var(--mo-border-radius)' })}>
-		${content}
-	</div>
-`
-
-export const Default: StoryObj = {
 	args: {
 		collapsed: false,
-		extraItems: 5,
-		overflowIcon: 'more_vert' as MaterialIcon,
-		overflowPosition: 'end' as ('end' | 'start'),
+		overflowIcon: 'more_vert',
+		overflowPosition: 'end',
 	},
 	argTypes: {
-		collapsed: {
-			control: 'boolean'
-		},
-		extraItems: {
-			control: 'number'
-		},
-		overflowPosition: {
-			control: 'radio',
-			options: ['start', 'end']
-		}
+		overflowPosition: { control: 'inline-radio', options: ['start', 'end'] },
 	},
-	parameters: {
-		docs: {
-			description: {
-				story: 'Items which no longer fit move into the overflow menu - drag the handle at the dashed container\'s end corner to resize the toolbar. As the very same elements are only reassigned between slots, they keep their state and event listeners in either home. The "Paste" item opts out of overflowing via the `data-no-overflow` attribute and always stays in the toolbar.'
-			}
-		}
-	},
-	render: ({ collapsed, extraItems, overflowIcon, overflowPosition }) => resizable(html`
+	decorators: [story => html`<div style='resize: horizontal; overflow: hidden; min-width: 100px; padding: 4px; border: 1px dashed var(--mo-color-transparent-gray-3); border-radius: var(--mo-border-radius)'>${story()}</div>`],
+} satisfies Meta<Args>
+
+type Story = StoryObj<Args>
+
+/** Items that no longer fit move into the overflow menu - drag the dashed box's corner to resize it. They stay the same elements, with their state and listeners. */
+export const Default: Story = {
+	render: ({ collapsed, overflowIcon, overflowPosition }) => html`
 		<mo-toolbar ?collapsed=${collapsed} overflowIcon=${overflowIcon} overflowPosition=${overflowPosition}>
-			<mo-menu-item icon='content_cut'>
-				<span>Cut</span>
-			</mo-menu-item>
-			<mo-menu-item icon='content_copy'>
-				<span>Copy</span>
-			</mo-menu-item>
-			<mo-menu-item icon='content_paste' data-no-overflow>
-				<span>Paste</span>
-			</mo-menu-item>
-			${[...range(0, extraItems)].map(i => html`
-				<mo-menu-item icon='category'>
-					<span>Item ${i + 1}</span>
-				</mo-menu-item>
-			`)}
+			<mo-menu-item icon='content_cut'>Cut</mo-menu-item>
+			<mo-menu-item icon='content_copy'>Copy</mo-menu-item>
+			<mo-menu-item icon='content_paste'>Paste</mo-menu-item>
+			<mo-menu-item icon='format_bold'>Bold</mo-menu-item>
+			<mo-menu-item icon='format_italic'>Italic</mo-menu-item>
+			<mo-menu-item icon='format_underlined'>Underline</mo-menu-item>
+			<mo-menu-item icon='insert_link'>Link</mo-menu-item>
+			<mo-menu-item icon='image'>Image</mo-menu-item>
 		</mo-toolbar>
-	`)
+	`,
 }
 
-export const WithController: StoryObj = {
-	args: { itemCount: 4 },
-	parameters: {
-		docs: {
-			description: {
-				story: 'The `ToolbarController` orchestrates any pane/overflow-slot pair on a custom component. This one hosts two independent panes - the right one laid out right-to-left - whose overflowing items gather in a shared list toggled by the button in between.'
+/** An item with `data-no-overflow` never moves into the menu: "Save" stays however narrow the toolbar gets. */
+export const PinnedItems: Story = {
+	render: () => html`
+		<mo-toolbar>
+			<mo-menu-item icon='save' data-no-overflow>Save</mo-menu-item>
+			<mo-menu-item icon='content_cut'>Cut</mo-menu-item>
+			<mo-menu-item icon='content_copy'>Copy</mo-menu-item>
+			<mo-menu-item icon='content_paste'>Paste</mo-menu-item>
+			<mo-menu-item icon='format_bold'>Bold</mo-menu-item>
+			<mo-menu-item icon='format_italic'>Italic</mo-menu-item>
+		</mo-toolbar>
+	`,
+}
+
+/** `collapsed` puts every item into the menu, leaving only its button. */
+export const Collapsed: Story = {
+	render: () => html`
+		<mo-toolbar collapsed>
+			<mo-menu-item icon='content_cut'>Cut</mo-menu-item>
+			<mo-menu-item icon='content_copy'>Copy</mo-menu-item>
+			<mo-menu-item icon='content_paste'>Paste</mo-menu-item>
+		</mo-toolbar>
+	`,
+}
+
+/** `overflowPosition='start'` puts the menu button before the items, and `overflowIcon` changes its icon. */
+export const OverflowButton: Story = {
+	render: () => html`
+		<mo-toolbar overflowPosition='start' overflowIcon='menu'>
+			<mo-menu-item icon='content_cut'>Cut</mo-menu-item>
+			<mo-menu-item icon='content_copy'>Copy</mo-menu-item>
+			<mo-menu-item icon='content_paste'>Paste</mo-menu-item>
+			<mo-menu-item icon='format_bold'>Bold</mo-menu-item>
+			<mo-menu-item icon='format_italic'>Italic</mo-menu-item>
+			<mo-menu-item icon='format_underlined'>Underline</mo-menu-item>
+		</mo-toolbar>
+	`,
+}
+
+/** The `pane` and `overflow-icon` parts can be styled from outside. */
+export const Parts: Story = {
+	render: () => html`
+		<style>
+			#styled-toolbar::part(pane) {
+				gap: 8px;
 			}
-		}
-	},
-	render: ({ itemCount }) => {
-		return resizable(html`
-			<story-custom-toolbar>
-				${[...range(0, itemCount)].map(i => html`
-					<mo-menu-item icon='arrow_circle_left' slot='left'>
-						<span>Left ${i + 1}</span>
-					</mo-menu-item>
-				`)}
-				${[...range(0, itemCount)].map(i => html`
-					<mo-menu-item icon='arrow_circle_right' slot='right'>
-						<span>Right ${i + 1}</span>
-					</mo-menu-item>
-				`)}
-			</story-custom-toolbar>
-		`)
-	}
-}
-class StoryCustomToolbar extends Component {
-	@property({ type: Boolean, reflect: true }) open = false
 
-	protected readonly leftToolbarController = new ToolbarController(this, {
-		paneSlotName: 'left',
-		overflowContentSlotName: 'left-ovf',
-	})
-
-	protected readonly rightToolbarController = new ToolbarController(this, {
-		paneSlotName: 'right',
-		overflowContentSlotName: 'right-ovf',
-	})
-
-	protected override get template() {
-		return html`
-			<div style='display: flex; width: 100%; gap: 5px'>
-				<mo-toolbar-pane ${this.leftToolbarController.pane.ref()} style='flex: 1 1;'>
-					<slot name=${this.leftToolbarController.paneSlotName}></slot>
-				</mo-toolbar-pane>
-				<mo-button style='flex: 0 0 auto' @click=${() => this.open = !this.open}>Overflow</mo-button>
-				<mo-toolbar-pane ${this.rightToolbarController.pane.ref()} style='flex: 1 1; direction: rtl'>
-					<slot name=${this.rightToolbarController.paneSlotName}></slot>
-				</mo-toolbar-pane>
-			</div>
-			<mo-list style='max-width: 350px; border-radius: var(--mo-border-radius); margin-inline: auto; margin-block: 10px; background-color: var(--mo-color-accent); display: ${this.open ? 'block' : 'none'}'>
-				<slot name=${this.leftToolbarController.overflowContentSlotName}></slot>
-				<slot name=${this.rightToolbarController.overflowContentSlotName}></slot>
-			</mo-list>
-		`
-	}
+			#styled-toolbar::part(overflow-icon) {
+				color: var(--mo-color-accent);
+			}
+		</style>
+		<mo-toolbar id='styled-toolbar'>
+			<mo-menu-item icon='content_cut'>Cut</mo-menu-item>
+			<mo-menu-item icon='content_copy'>Copy</mo-menu-item>
+			<mo-menu-item icon='content_paste'>Paste</mo-menu-item>
+			<mo-menu-item icon='format_bold'>Bold</mo-menu-item>
+			<mo-menu-item icon='format_italic'>Italic</mo-menu-item>
+		</mo-toolbar>
+	`,
 }
 
-customElements.define('story-custom-toolbar', StoryCustomToolbar)
+/** `ToolbarController` moves items between any pane slot and overflow slot of your own component; here two panes share one list. */
+export const WithController: Story = {
+	parameters: sourceOf(splitToolbarSource),
+	render: () => html`
+		<story-split-toolbar>
+			<mo-menu-item icon='arrow_circle_left' slot='left'>Left 1</mo-menu-item>
+			<mo-menu-item icon='arrow_circle_left' slot='left'>Left 2</mo-menu-item>
+			<mo-menu-item icon='arrow_circle_left' slot='left'>Left 3</mo-menu-item>
+			<mo-menu-item icon='arrow_circle_left' slot='left'>Left 4</mo-menu-item>
+			<mo-menu-item icon='arrow_circle_right' slot='right'>Right 1</mo-menu-item>
+			<mo-menu-item icon='arrow_circle_right' slot='right'>Right 2</mo-menu-item>
+			<mo-menu-item icon='arrow_circle_right' slot='right'>Right 3</mo-menu-item>
+			<mo-menu-item icon='arrow_circle_right' slot='right'>Right 4</mo-menu-item>
+		</story-split-toolbar>
+	`,
+}

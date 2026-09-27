@@ -1,60 +1,98 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite'
 import { html } from '@a11d/lit'
-import p from './package.json'
 import { contextMenu } from './index.js'
 
 export default {
-	title: 'Selection & Input / Context Menu',
-	component: 'mo-field-context-menu',
-	package: p,
-} as Meta
+	title: 'Actions / Context Menu',
+	component: 'mo-context-menu',
+} satisfies Meta
 
-const keyboardShortcut = (shortcut: string) => html`<span style='font-size: 13px; color: darkgray'>${shortcut}</span>`
+type Story = StoryObj
 
-const mainContextMenu = html`
-	<mo-context-menu-item>
-		<mo-icon style='opacity: 0.66' icon='content_cut'></mo-icon>
-		<span style='flex: 1'>Cut</span>
-		${keyboardShortcut('Ctrl + X')}
-	</mo-context-menu-item>
-	<mo-context-menu-item>
-		<mo-icon style='opacity: 0.66' icon='content_copy'></mo-icon>
-		<span style='flex: 1'>Copy</span>
-		${keyboardShortcut('Ctrl + C')}
-	</mo-context-menu-item>
-	<mo-context-menu-item>
-		<mo-icon style='opacity: 0.66' icon='content_paste'></mo-icon>
-		<span style='flex: 1'>Paste</span>
-		${keyboardShortcut('Ctrl + V')}
-	</mo-context-menu-item>
-	<div role='separator' style='width: 100%; height: 1px; background: darkgray; opacity: 0.3'></div>
-	<mo-context-menu-item>Dictionary</mo-context-menu-item>
-	<mo-context-menu-item>Thesaurus</mo-context-menu-item>
-	<mo-context-menu-item>
-		More
-		<mo-context-menu-item slot='submenu'>Open in New</mo-context-menu-item>
-		<mo-context-menu-item slot='submenu'>Report Issue</mo-context-menu-item>
-		<mo-context-menu-item slot='submenu'>
-			More
-			<mo-context-menu-item slot='submenu'>Open in New</mo-context-menu-item>
-			<mo-context-menu-item slot='submenu'>Report Issue</mo-context-menu-item>
-		</mo-context-menu-item>
-	</mo-context-menu-item>
-`
-
-const specialContextMenu = html`
-	<mo-context-menu-item>
-		<mo-icon style='opacity: 0.66' icon='auto_fix_normal'></mo-icon>
-		<span style='flex: 1'>Another Item</span>
-	</mo-context-menu-item>
-`
-
-export const ContextMenu: StoryObj = {
+export const Default: Story = {
 	render: () => html`
-		<div ${contextMenu(() => mainContextMenu)} style='width: 100%; height: 300px; position: relative; display: flex; align-items: center; justify-content: center; border: dotted 2px currentColor; opacity: .7; border-radius: var(--mo-border-radius)'>
-			Right click anywhere
-
-			<div ${contextMenu(() => specialContextMenu)} style='position: absolute; top: 50px; left: 60px; width: 100px; height: 100px; border: dotted 2px red; display: flex; align-items: center; justify-content: center;'>Or here</div>
+		<div style='display: inline-flex; align-items: center; gap: 8px; padding: 16px; border: 1px solid var(--mo-color-transparent-gray-3); border-radius: var(--mo-border-radius)'
+			${contextMenu(() => html`
+				<mo-context-menu-item icon='open_in_new'>Open</mo-context-menu-item>
+				<mo-context-menu-item icon='edit'>Rename</mo-context-menu-item>
+				<mo-context-menu-item icon='delete'>Delete</mo-context-menu-item>
+			`)}
+		>
+			<mo-icon icon='description'></mo-icon>
+			Invoice 2026-08.pdf
 		</div>
-	`
+	`,
+}
+
+/** Items take any content, such as a shortcut hint after a label that fills the row, and `mo-line` separates groups. */
+export const ItemContent: Story = {
+	render: () => html`
+		<div style='padding: 16px; border: 1px solid var(--mo-color-transparent-gray-3); border-radius: var(--mo-border-radius)'
+			${contextMenu(() => html`
+				<mo-context-menu-item icon='content_cut'>
+					<span style='flex: 1'>Cut</span>
+					<span style='font-size: 13px; opacity: 0.6'>Ctrl + X</span>
+				</mo-context-menu-item>
+				<mo-context-menu-item icon='content_copy'>
+					<span style='flex: 1'>Copy</span>
+					<span style='font-size: 13px; opacity: 0.6'>Ctrl + C</span>
+				</mo-context-menu-item>
+				<mo-context-menu-item icon='content_paste'>
+					<span style='flex: 1'>Paste</span>
+					<span style='font-size: 13px; opacity: 0.6'>Ctrl + V</span>
+				</mo-context-menu-item>
+				<mo-line></mo-line>
+				<mo-context-menu-item>Dictionary</mo-context-menu-item>
+				<mo-context-menu-item>Thesaurus</mo-context-menu-item>
+			`)}
+		>
+			The quick brown fox jumps over the lazy dog.
+		</div>
+	`,
+}
+
+/** Items in the `submenu` slot of an item open beside it, on hover or with ArrowRight, and nest further. */
+export const Submenus: Story = {
+	render: () => html`
+		<div style='padding: 16px; border: 1px solid var(--mo-color-transparent-gray-3); border-radius: var(--mo-border-radius)'
+			${contextMenu(() => html`
+				<mo-context-menu-item icon='open_in_new'>Open</mo-context-menu-item>
+				<mo-context-menu-item icon='share'>
+					Share
+					<mo-context-menu-item slot='submenu'>Email</mo-context-menu-item>
+					<mo-context-menu-item slot='submenu'>Link</mo-context-menu-item>
+					<mo-context-menu-item slot='submenu'>
+						More
+						<mo-context-menu-item slot='submenu'>Print</mo-context-menu-item>
+						<mo-context-menu-item slot='submenu'>Report issue</mo-context-menu-item>
+					</mo-context-menu-item>
+				</mo-context-menu-item>
+			`)}
+		>
+			Quarterly report
+		</div>
+	`,
+}
+
+/** Areas nest: a right-click opens the menu of the innermost one, and opening one menu closes any other. */
+export const NestedAreas: Story = {
+	render: () => html`
+		<div style='height: 240px; padding: 16px; border: 1px dashed var(--mo-color-transparent-gray-3); border-radius: var(--mo-border-radius)'
+			${contextMenu(() => html`
+				<mo-context-menu-item icon='create_new_folder'>New folder</mo-context-menu-item>
+				<mo-context-menu-item icon='content_paste'>Paste</mo-context-menu-item>
+			`)}
+		>
+			<div style='display: inline-flex; align-items: center; gap: 8px; padding: 16px; border: 1px solid var(--mo-color-transparent-gray-3); border-radius: var(--mo-border-radius); background: var(--mo-color-surface)'
+				${contextMenu(() => html`
+					<mo-context-menu-item icon='open_in_new'>Open</mo-context-menu-item>
+					<mo-context-menu-item icon='edit'>Rename</mo-context-menu-item>
+					<mo-context-menu-item icon='delete'>Delete</mo-context-menu-item>
+				`)}
+			>
+				<mo-icon icon='description'></mo-icon>
+				Invoice 2026-08.pdf
+			</div>
+		</div>
+	`,
 }

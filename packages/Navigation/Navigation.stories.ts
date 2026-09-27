@@ -1,146 +1,97 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite'
-import { Directive, directive, html, noChange, PartType, type ElementPart, type PartInfo } from '@a11d/lit'
-import type { MaterialIcon } from '@3mo/icon'
-import p from './package.json'
-import { type INavigation, type NavigationInvocationOptions } from './INavigation.js'
-import { type NavigationPresentation } from './NavigationPresentation.js'
+import { html } from '@a11d/lit'
+import type { NavigationPresentation } from './NavigationPresentation.js'
+import { navigations } from './stories/navigations.js'
 import './index.js'
 
+type Args = {
+	readonly presentations: Array<NavigationPresentation>
+}
+
 export default {
-	title: 'Layout & Containment / Navigation',
+	title: 'Layout / Navigation',
 	component: 'mo-navigation',
-	package: p,
 	args: {
 		presentations: ['bar', 'drawer'],
-		drawerOpen: false,
 	},
 	argTypes: {
 		presentations: { control: 'object' },
-		drawerOpen: { control: 'boolean' },
 	},
-} as Meta
+	decorators: [story => html`<div style='display: flex; flex-direction: column; height: 600px; border: 1px solid var(--mo-color-transparent-gray-3)'>${story()}</div>`],
+} satisfies Meta<Args>
 
-/** Stands in for a router: the story has no application, so the location is the hash and navigating announces itself the way the platform does. */
-class StoryLinkDirective extends Directive {
-	private path?: string
-	private options?: NavigationInvocationOptions
+type Story = StoryObj<Args>
 
-	constructor(partInfo: PartInfo) {
-		super(partInfo)
-		if (partInfo.type !== PartType.ELEMENT) {
-			throw new Error('storyLink can only be used on an element')
-		}
-		const element = (partInfo as ElementPart).element
-		element.addEventListener('click', () => {
-			location.hash = this.path ?? ''
-			window.dispatchEvent(new PopStateEvent('popstate'))
-			this.options?.invocationHandler?.()
-		})
-	}
-
-	render(path: string, options?: NavigationInvocationOptions) {
-		this.path = path
-		this.options = options
-		return noChange
-	}
-}
-
-const storyLink = directive(StoryLinkDirective)
-
-class StoryNavigation implements INavigation {
-	constructor(readonly options: {
-		readonly label: string
-		readonly icon?: MaterialIcon
-		readonly path?: string
-		readonly hasSeparator?: boolean
-		readonly children?: Array<StoryNavigation>
-	}) {
-		if (options.path) {
-			this.link = linkOptions => storyLink(options.path!, linkOptions)
-		}
-	}
-
-	get label() { return this.options.label }
-	get icon() { return this.options.icon }
-	get hasSeparator() { return this.options.hasSeparator }
-	get children() { return this.options.children }
-	get current(): boolean {
-		return this.options.path
-			? location.hash.slice(1) === this.options.path
-			: this.options.children?.some(child => child.current) === true
-	}
-
-	readonly link?: INavigation['link']
-}
-
-const link = (label: string, path: string, icon?: MaterialIcon, hasSeparator = false) => new StoryNavigation({ label, path, icon, hasSeparator })
-
-const navigations = [
-	link('Dashboard', '/', 'dashboard'),
-	new StoryNavigation({
-		label: 'Reports', icon: 'assessment', children: [
-			link('Overview', '/reports'),
-			new StoryNavigation({
-				label: 'Quarterly', children: [
-					link('First quarter', '/reports/quarterly/q1'),
-					link('Second quarter', '/reports/quarterly/q2'),
-				]
-			}),
-			link('Annual', '/reports/annual'),
-		]
-	}),
-	new StoryNavigation({
-		label: 'Records', icon: 'inventory_2', hasSeparator: true, children: [
-			link('Products', '/products'),
-			link('Customers', '/customers'),
-		]
-	}),
-	new StoryNavigation({
-		label: 'Logistics', icon: 'local_shipping', children: [
-			link('Shipments', '/shipments'),
-			link('Warehouses', '/warehouses'),
-		]
-	}),
-	link('Settings', '/settings', 'settings'),
-	link('Help', '/help', 'help', true),
-]
-
-const page = html`
-	<mo-flex style='padding: 2rem; gap: 1rem'>
-		<mo-heading typography='heading3'>The page</mo-heading>
-		<div>The navigation lays the page out beside or beneath itself, so this is what keeps its room.</div>
-	</mo-flex>
-`
-
-const template = (presentations: Array<NavigationPresentation>, drawerOpen: boolean) => html`
-	<mo-navigation style='height: 600px; border: 1px solid var(--mo-color-transparent-gray-3)'
-		heading='Business Suite'
-		.navigations=${navigations}
-		.presentations=${presentations}
-		.drawerOpen=${drawerOpen}
-	>${page}</mo-navigation>
-`
-
-/**
- * The presentation is the first one of `presentations` which fits: the bar as long as its navigations fit
- * its row, and the drawer once they do not. Narrow the canvas to watch it change over.
- */
-export const Navigation: StoryObj = {
-	render: ({ presentations, drawerOpen }) => template(presentations, drawerOpen),
+/** The bar shows while its navigations fit its row, and the drawer once they do not - narrow the canvas to watch it change over. */
+export const Default: Story = {
+	render: ({ presentations }) => html`
+		<mo-navigation heading='Business Suite' .navigations=${navigations} .presentations=${presentations}>
+			<mo-heading typography='heading3' style='padding: 2rem'>Dashboard</mo-heading>
+		</mo-navigation>
+	`,
 }
 
 /**
- * With the rail in the order, it takes the range in which the bar no longer fits but the page still has
- * room beside a rail. The rail carries the top level; picking a group shows its destinations in a panel,
- * docked beside the page while both fit and laid over it while they do not.
+ * With `rail` in the order, the rail takes over once the bar no longer fits, as long as the page keeps its room beside it.
+ * Picking a group shows its destinations in a panel, docked beside the page while both fit.
  */
-export const Rail: StoryObj = {
+export const Rail: Story = {
 	args: { presentations: ['bar', 'rail', 'drawer'] },
-	render: ({ presentations, drawerOpen }) => template(presentations, drawerOpen),
+	render: ({ presentations }) => html`
+		<mo-navigation heading='Business Suite' .navigations=${navigations} .presentations=${presentations}>
+			<mo-heading typography='heading3' style='padding: 2rem'>Dashboard</mo-heading>
+		</mo-navigation>
+	`,
 }
 
-/** Every navigation as one tree, over the page. */
-export const Drawer: StoryObj = {
-	args: { presentations: ['drawer'], drawerOpen: true },
-	render: ({ presentations, drawerOpen }) => template(presentations, drawerOpen),
+/** The drawer holds every navigation as one tree, over the page; the menu button in the header opens it. */
+export const Drawer: Story = {
+	args: { presentations: ['drawer'] },
+	render: ({ presentations }) => html`
+		<mo-navigation heading='Business Suite' .navigations=${navigations} .presentations=${presentations}>
+			<mo-heading typography='heading3' style='padding: 2rem'>Dashboard</mo-heading>
+		</mo-navigation>
+	`,
+}
+
+/** The `logo` slot leads the header, or tops the rail, and the `end` slot closes the header. */
+export const Slots: Story = {
+	render: ({ presentations }) => html`
+		<mo-navigation heading='Business Suite' .navigations=${navigations} .presentations=${presentations}>
+			<mo-icon slot='logo' icon='hub' style='font-size: 28px'></mo-icon>
+			<mo-icon-button slot='end' icon='notifications'></mo-icon-button>
+			<mo-icon-button slot='end' icon='account_circle'></mo-icon-button>
+			<mo-heading typography='heading3' style='padding: 2rem'>Dashboard</mo-heading>
+		</mo-navigation>
+	`,
+}
+
+/** The rail's sizes and the room the page keeps beside it are custom properties, which move the point where the rail gives way to the drawer. */
+export const CustomProperties: Story = {
+	render: () => html`
+		<mo-navigation heading='Business Suite' .navigations=${navigations} .presentations=${['rail', 'drawer']}
+			style='--mo-navigation-rail-size: 4.5rem; --mo-navigation-rail-panel-size: 14rem; --mo-navigation-min-content-size: 20rem'
+		>
+			<mo-heading typography='heading3' style='padding: 2rem'>Dashboard</mo-heading>
+		</mo-navigation>
+	`,
+}
+
+/** The `app-bar` and `content` parts can be styled from outside. */
+export const Parts: Story = {
+	render: ({ presentations }) => html`
+		<style>
+			#styled-navigation::part(app-bar) {
+				background: var(--mo-color-surface-container-high);
+				color: var(--mo-color-foreground);
+			}
+
+			#styled-navigation::part(content) {
+				background: var(--mo-color-transparent-gray-1);
+			}
+		</style>
+		<mo-navigation id='styled-navigation' heading='Business Suite' .navigations=${navigations} .presentations=${presentations}>
+			<mo-heading typography='heading3' style='padding: 2rem'>Dashboard</mo-heading>
+		</mo-navigation>
+	`,
 }

@@ -1,6 +1,13 @@
 import { component, html, Component, property, css } from '@a11d/lit'
 import * as System from 'detect-browser'
 
+/**
+ * A PDF document embedded in the page, with a spinner while it loads.
+ *
+ * @element mo-pdf
+ *
+ * @attr source - The URL of the PDF document.
+ */
 @component('mo-pdf')
 export class Pdf extends Component {
 	@property() source?: string

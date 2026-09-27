@@ -1,7 +1,14 @@
 import { component, css } from '@a11d/lit'
 import { SplitterResizer } from './index.js'
 
-/** @element mo-splitter-resizer-knob */
+/**
+ * A rounded knob between two splitter items, the default resizer.
+ *
+ * @element mo-splitter-resizer-knob
+ *
+ * @cssprop --mo-splitter-resizer-knob-background - The color of the knob
+ * @cssprop --mo-splitter-resizer-knob-active-background - The color of the knob while hovered or dragged
+ */
 @component('mo-splitter-resizer-knob')
 export class SplitterResizerKnob extends SplitterResizer {
 	static override get styles() {

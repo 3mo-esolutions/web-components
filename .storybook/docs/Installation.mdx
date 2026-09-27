@@ -1,0 +1,83 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+import { PageHeader } from './components'
+
+<Meta title='Getting Started/Installation' />
+
+<PageHeader title='Installation'>Every component is its own npm package, and `@3mo/del` bundles them all. Importing a package registers its elements.</PageHeader>
+
+## One package
+
+```bash
+npm install @3mo/button
+```
+
+```ts
+import '@3mo/button'
+```
+
+```html
+<mo-button type='filled'>Save</mo-button>
+```
+
+Each component page shows its package under **Install** and **Import**.
+
+## The whole library
+
+```bash
+npm install @3mo/del
+```
+
+```ts
+import { Component, component, html } from '@3mo/del'
+```
+
+`@3mo/del` registers every element and re-exports the packages, together with `@a11d/lit` and the application framework `@a11d/lit-application`.
+
+## Controllers
+
+The pages under [Behaviors](?path=/docs/behaviors-selectability--overview) document Lit reactive controllers, which you import by name for your own elements:
+
+```ts
+import { SelectabilityController } from '@3mo/selectability'
+```
+
+## TypeScript
+
+The packages ship as ES2022 modules with type declarations. Writing your own elements with the `@a11d/lit` decorators needs:
+
+```json
+{
+	"compilerOptions": {
+		"experimentalDecorators": true,
+		"useDefineForClassFields": false
+	}
+}
+```
+
+## Fonts and icons
+
+Components use the page's font. `--mo-font-family` starts with Roboto, which you load yourself:
+
+```html
+<link rel='stylesheet' href='https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap'>
+
+<style>
+	:root {
+		font-family: var(--mo-font-family);
+		background-color: var(--mo-color-background);
+		color: var(--mo-color-foreground);
+	}
+</style>
+```
+
+`mo-icon` loads the Material Icons font from Google Fonts when the first icon renders. Choose the variant before any icon is created; `@3mo/del` sets `sharp`.
+
+```ts
+import { Icon, IconVariant } from '@3mo/icon'
+
+Icon.defaultVariant = IconVariant.Outlined
+```
+
+## Server-side rendering
+
+Elements tagged `@ssr true` in their source render with Lit SSR. On the server, provide the icon font yourself.

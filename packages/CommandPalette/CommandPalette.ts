@@ -5,6 +5,15 @@ import type { FieldSearch } from '@3mo/text-fields'
 import { ComboboxController } from '@3mo/list'
 import { type CommandPaletteData, type CommandPaletteDataSource } from './CommandPaletteDataSource.js'
 
+/**
+ * A search across every registered data source, opened with Ctrl/⌘+P or Ctrl/⌘+K, whose results are commands.
+ *
+ * @element mo-command-palette
+ *
+ * @accessibility
+ * `Ctrl` or `⌘` with `K` or `P` opens it with the first result active. The arrows move through the results, `Enter` runs one, `Escape` closes, and `Tab` switches between the data sources rather than leaving.
+ * The palette is a popover without a `dialog` role or a name yet.
+ */
 @component('mo-command-palette')
 export class CommandPalette extends Component {
 	static readonly dataSources = new Set<CommandPaletteDataSource<any>>()

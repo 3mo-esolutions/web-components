@@ -1,32 +1,48 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite'
 import { html } from '@a11d/lit'
-import p from './package.json'
 import './index.js'
 
+type Args = {
+	readonly label: string
+	readonly value: string
+	readonly required: boolean
+	readonly dense: boolean
+	readonly disabled: boolean
+	readonly readonly: boolean
+}
+
 export default {
-	title: 'Selection & Input / Text Fields / Field Search',
+	title: 'Inputs / Text Fields / Search Field',
 	component: 'mo-field-search',
 	args: {
-		label: 'Label',
+		label: 'Search products',
+		value: 'chair',
 		required: false,
 		dense: false,
 		disabled: false,
 		readonly: false,
-		value: 'Value',
 	},
-	package: p,
-} as Meta
+	decorators: [story => html`<div style='display: flex; flex-direction: column; gap: 16px; max-width: 320px'>${story()}</div>`],
+} satisfies Meta<Args>
 
-export const Search: StoryObj = {
-	render: ({ label, value, dense, required, disabled, readonly }) => html`
-		<mo-field-search label=${label} value=${value} ?required=${required} ?disabled=${disabled} ?readonly=${readonly} ?dense=${dense}></mo-field-search>
-	`
+type Story = StoryObj<Args>
+
+export const Default: Story = {
+	render: ({ label, value, required, dense, disabled, readonly }) => html`
+		<mo-field-search label=${label} value=${value} ?required=${required} ?dense=${dense} ?disabled=${disabled} ?readonly=${readonly}></mo-field-search>
+	`,
 }
 
-export const EndSlot: StoryObj = {
-	render: ({ label, required, dense, disabled, readonly }) => html`
-		<mo-field-search label=${label} ?required=${required} ?disabled=${disabled} ?readonly=${readonly} ?dense=${dense}>
-			<mo-icon-button slot='end' icon='settings'></mo-icon-button>
+/** Without a `label` the field is labelled "Search", and a dense one suits a toolbar. The clear button appears once there is text. */
+export const Dense: Story = {
+	render: () => html`<mo-field-search dense></mo-field-search>`,
+}
+
+/** The `end` slot holds further actions, after the clear button. */
+export const Slots: Story = {
+	render: () => html`
+		<mo-field-search label='Search products' value='chair'>
+			<mo-icon-button slot='end' icon='tune' dense></mo-icon-button>
 		</mo-field-search>
-	`
+	`,
 }

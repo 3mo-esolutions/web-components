@@ -1,7 +1,11 @@
 import { component, css, literal } from '@a11d/lit'
 import { FieldText } from './FieldText.js'
 
-/** @element mo-field-text-area */
+/**
+ * A multi-line text field.
+ *
+ * @element mo-field-text-area
+ */
 @component('mo-field-text-area')
 export class FieldTextArea extends FieldText {
 	protected override get elementTag() {

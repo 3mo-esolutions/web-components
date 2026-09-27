@@ -1,158 +1,211 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite'
-import { action } from 'storybook/actions'
 import { html } from '@a11d/lit'
-import p from './package.json'
-import './index.js'
-// eslint-disable-next-line no-duplicate-imports
 import { SelectableListSelectability } from './index.js'
 
-export default {
-	title: 'Data Display / List',
-	component: 'mo-list',
-	package: p,
-} as Meta
-
-const changed = action('change')
-const itemsChanged = action('itemsChange')
-
-const keyboardShortcut = (shortcut: string) => html`
-	<span style='font-size: 13px; color: darkgray; text-align: end'>${shortcut}</span>
-`
-
-const separator = html`
-	<div role='separator' style='width: 100%; height: 1px; background: darkgray; opacity: 0.3'></div>
-`
-
-const items = html`
-	<mo-list-item icon='inbox'>
-		<span style='flex: 1'>Inbox</span>
-		${keyboardShortcut('Ctrl + I')}
-	</mo-list-item>
-	<mo-list-item icon='drafts'>
-		<span style='flex: 1'>Drafts</span>
-		${keyboardShortcut('Ctrl + D')}
-	</mo-list-item>
-	${separator}
-	<mo-list-item><span class='first-column-padding' hidden></span>Trash</mo-list-item>
-	<mo-list-item><span class='first-column-padding' hidden></span>Spam</mo-list-item>
-	${separator}
-	<mo-list-item disabled style='opacity: 1' icon='settings_suggest'>
-		<span>
-			<span style='opacity: 0.5'>Personalization -</span>
-			<mo-anchor style='pointer-events: auto;'>Upgrade to Pro!</mo-anchor>
-		</span>
-	</mo-list-item>
-	<mo-list-item icon='logout'>
-		Logout
-	</mo-list-item>
-`
-
-export const Default: StoryObj = {
-	render: () => html`
-		<mo-list>${items}</mo-list>
-	`
+type Args = {
+	readonly selectability: SelectableListSelectability
 }
 
-export const CustomSubGridLayout: StoryObj = {
+export default {
+	title: 'Data / List',
+	component: 'mo-list',
+} satisfies Meta<Args>
+
+type Story = StoryObj<Args>
+
+export const Default: Story = {
+	render: () => html`
+		<mo-list>
+			<mo-list-item icon='inbox'>Inbox</mo-list-item>
+			<mo-list-item icon='drafts'>Drafts</mo-list-item>
+			<mo-list-item icon='send'>Sent</mo-list-item>
+			<mo-list-item icon='delete'>Trash</mo-list-item>
+		</mo-list>
+	`,
+}
+
+/** An item holds any content after its `icon`, such as a shortcut at its end, and an element with `role='separator'` divides the groups. */
+export const Content: Story = {
+	render: () => html`
+		<mo-list style='max-width: 360px'>
+			<mo-list-item icon='inbox'>
+				<span style='flex: 1'>Inbox</span>
+				<mo-key>Meta+I</mo-key>
+			</mo-list-item>
+			<mo-list-item icon='drafts'>
+				<span style='flex: 1'>Drafts</span>
+				<mo-key>Meta+D</mo-key>
+			</mo-list-item>
+			<div role='separator' style='height: 1px; background: var(--mo-color-transparent-gray-3)'></div>
+			<mo-list-item>Trash</mo-list-item>
+			<mo-list-item>Spam</mo-list-item>
+			<div role='separator' style='height: 1px; background: var(--mo-color-transparent-gray-3)'></div>
+			<mo-list-item icon='logout'>Sign out</mo-list-item>
+		</mo-list>
+	`,
+}
+
+/** A `disabled` item fades and ignores presses; an element inside it can still take them with `pointer-events: auto`. */
+export const Disabled: Story = {
+	render: () => html`
+		<mo-list style='max-width: 360px'>
+			<mo-list-item icon='inbox'>Inbox</mo-list-item>
+			<mo-list-item icon='archive' disabled>Archive</mo-list-item>
+			<mo-list-item icon='settings_suggest' disabled style='opacity: 1'>
+				<span>
+					<span style='opacity: 0.5'>Personalization -</span>
+					<mo-anchor style='pointer-events: auto'>Upgrade to Pro</mo-anchor>
+				</span>
+			</mo-list-item>
+		</mo-list>
+	`,
+}
+
+/** A list laid out as a grid whose items take its columns through `subgrid` lines up the icons, labels and shortcuts of all items. */
+export const SubgridLayout: Story = {
 	render: () => html`
 		<style>
-			#custom {
+			.subgrid {
 				display: grid;
 				grid-template-columns: auto 1fr auto;
+				max-width: 360px;
 
 				& > * {
 					grid-column: 1 / -1;
 					display: grid;
 					grid-template-columns: subgrid;
 				}
-
-				.first-column-padding {
-					display: inline-block;
-				}
 			}
 		</style>
-		<mo-list id='custom'>${items}</mo-list>
-	`
+		<mo-list class='subgrid'>
+			<mo-list-item icon='inbox'>
+				<span>Inbox</span>
+				<mo-key>Meta+I</mo-key>
+			</mo-list-item>
+			<mo-list-item icon='drafts'>
+				<span>Drafts</span>
+				<mo-key>Meta+D</mo-key>
+			</mo-list-item>
+			<mo-list-item>
+				<span></span>
+				<span>Trash</span>
+			</mo-list-item>
+			<mo-list-item icon='logout'>
+				<span>Sign out</span>
+				<mo-key>Meta+Shift+Q</mo-key>
+			</mo-list-item>
+		</mo-list>
+	`,
 }
 
-export const WithCheckboxListItems: StoryObj = {
+/** `mo-checkbox-list-item` makes the whole item the label of its checkbox. */
+export const CheckboxItems: Story = {
 	render: () => html`
-		<mo-card heading='Connectivity' style='--mo-card-body-padding: 0px'>
+		<mo-card heading='Connectivity' style='max-width: 360px; --mo-card-body-padding: 0px'>
 			<mo-list>
-				<mo-checkbox-list-item>
+				<mo-checkbox-list-item selected>
 					<mo-icon style='opacity: 0.66' icon='wifi'></mo-icon>
-					WiFi
+					Wi-Fi
 				</mo-checkbox-list-item>
-
 				<mo-checkbox-list-item>
 					<mo-icon style='opacity: 0.66' icon='bluetooth'></mo-icon>
 					Bluetooth
 				</mo-checkbox-list-item>
-
-				<mo-checkbox-list-item>
+				<mo-checkbox-list-item indeterminate>
 					<mo-icon style='opacity: 0.66' icon='nfc'></mo-icon>
 					NFC
 				</mo-checkbox-list-item>
 			</mo-list>
 		</mo-card>
-	`
+	`,
 }
 
-export const WithSwitchListItems: StoryObj = {
+/** `mo-switch-list-item` does the same for a switch. */
+export const SwitchItems: Story = {
 	render: () => html`
-		<mo-card heading='Connectivity' style='--mo-card-body-padding: 0px'>
+		<mo-card heading='Connectivity' style='max-width: 360px; --mo-card-body-padding: 0px'>
 			<mo-list>
-				<mo-switch-list-item>
+				<mo-switch-list-item selected>
 					<mo-icon style='opacity: 0.66' icon='wifi'></mo-icon>
-					WiFi
+					Wi-Fi
 				</mo-switch-list-item>
-
 				<mo-switch-list-item>
 					<mo-icon style='opacity: 0.66' icon='bluetooth'></mo-icon>
 					Bluetooth
 				</mo-switch-list-item>
-
 				<mo-switch-list-item>
 					<mo-icon style='opacity: 0.66' icon='nfc'></mo-icon>
 					NFC
 				</mo-switch-list-item>
 			</mo-list>
 		</mo-card>
-	`
+	`,
 }
 
-export const WithRadioListItems: StoryObj = {
+/** `mo-radio-list-item` does the same for a radio button. */
+export const RadioItems: Story = {
 	render: () => html`
-		<mo-card heading='Notifications' style='--mo-card-body-padding: 0px'>
+		<mo-card heading='Notifications' style='max-width: 360px; --mo-card-body-padding: 0px'>
 			<mo-list>
-				<mo-radio-list-item>
+				<mo-radio-list-item selected>
 					<mo-icon style='opacity: 0.66' icon='notifications'></mo-icon>
 					All
 				</mo-radio-list-item>
-
 				<mo-radio-list-item>
 					<mo-icon style='opacity: 0.66' icon='person'></mo-icon>
 					Personalized
 				</mo-radio-list-item>
-
 				<mo-radio-list-item>
 					<mo-icon style='opacity: 0.66' icon='do_not_disturb'></mo-icon>
 					None
 				</mo-radio-list-item>
 			</mo-list>
 		</mo-card>
-	`
+	`,
 }
 
-export const WithCollapsibleListItems: StoryObj = {
+/** `selectionControlAlignment='start'` places the control before the content instead of at its end. */
+export const SelectionControlAlignment: Story = {
 	render: () => html`
-		<mo-card heading='Navigation Menu' style='--mo-card-body-padding: 0px'>
+		<mo-list style='max-width: 360px'>
+			<mo-checkbox-list-item selectionControlAlignment='start' selected>Wi-Fi</mo-checkbox-list-item>
+			<mo-switch-list-item selectionControlAlignment='start'>Bluetooth</mo-switch-list-item>
+			<mo-radio-list-item selectionControlAlignment='start'>NFC</mo-radio-list-item>
+		</mo-list>
+	`,
+}
+
+/** A `toggleable` selectable item is selected and deselected by a press, and shows its state by its background. */
+export const SelectableItems: Story = {
+	render: () => html`
+		<mo-card heading='Connectivity' style='max-width: 360px; --mo-card-body-padding: 0px'>
+			<mo-list>
+				<mo-selectable-list-item toggleable>
+					<mo-icon style='opacity: 0.66' icon='wifi'></mo-icon>
+					Wi-Fi
+				</mo-selectable-list-item>
+				<mo-selectable-list-item toggleable>
+					<mo-icon style='opacity: 0.66' icon='bluetooth'></mo-icon>
+					Bluetooth
+				</mo-selectable-list-item>
+				<mo-selectable-list-item toggleable>
+					<mo-icon style='opacity: 0.66' icon='nfc'></mo-icon>
+					NFC
+				</mo-selectable-list-item>
+			</mo-list>
+		</mo-card>
+	`,
+}
+
+/** `mo-collapsible-list-item` opens its `details` below the item it holds, to any depth. */
+export const CollapsibleItems: Story = {
+	render: () => html`
+		<mo-card heading='Navigation' style='max-width: 360px; --mo-card-body-padding: 0px'>
 			<mo-list>
 				<mo-list-item>
 					<mo-icon style='opacity: 0.66' icon='home'></mo-icon>
 					Home
 				</mo-list-item>
-
 				<mo-collapsible-list-item>
 					<mo-list-item>
 						<mo-icon style='opacity: 0.66' icon='inventory_2'></mo-icon>
@@ -169,71 +222,47 @@ export const WithCollapsibleListItems: StoryObj = {
 				</mo-collapsible-list-item>
 			</mo-list>
 		</mo-card>
-	`
+	`,
 }
 
-export const Selectable: StoryObj = {
-	render: () => html`
-		<mo-card heading='Connectivity' style='--mo-card-body-padding: 0px'>
-			<mo-list>
-				<mo-selectable-list-item toggleable>
-					<mo-icon style='opacity: 0.66' icon='wifi'></mo-icon>
-					WiFi
-				</mo-selectable-list-item>
-
-				<mo-selectable-list-item toggleable>
-					<mo-icon style='opacity: 0.66' icon='bluetooth'></mo-icon>
-					Bluetooth
-				</mo-selectable-list-item>
-
-				<mo-selectable-list-item toggleable>
-					<mo-icon style='opacity: 0.66' icon='nfc'></mo-icon>
-					NFC
-				</mo-selectable-list-item>
-			</mo-list>
-		</mo-card>
-	`
+/** `mo-selectable-list` keeps one selection over all its selectable items, whatever their control, as their indices in `value`; arrow keys move between them. */
+export const SelectableList: Story = {
+	args: {
+		selectability: SelectableListSelectability.Single,
+	},
+	argTypes: {
+		selectability: { control: 'inline-radio', options: [SelectableListSelectability.Single, SelectableListSelectability.Multiple] },
+	},
+	render: ({ selectability }) => html`
+		<mo-selectable-list selectability=${selectability} style='max-width: 360px'>
+			<mo-selectable-list-item toggleable>Item 1</mo-selectable-list-item>
+			<mo-selectable-list-item toggleable>Item 2</mo-selectable-list-item>
+			<mo-checkbox-list-item disabled>Item 3</mo-checkbox-list-item>
+			<mo-checkbox-list-item>Item 4</mo-checkbox-list-item>
+			<mo-checkbox-list-item>Item 5</mo-checkbox-list-item>
+			<mo-switch-list-item>Item 6</mo-switch-list-item>
+			<mo-switch-list-item>Item 7</mo-switch-list-item>
+			<mo-radio-list-item>Item 8</mo-radio-list-item>
+			<mo-radio-list-item>Item 9</mo-radio-list-item>
+		</mo-selectable-list>
+	`,
 }
 
-const getSelectableTemplate = (selectability: SelectableListSelectability) => html`
-	<mo-selectable-list selectability=${selectability}
-		@change=${(e: CustomEvent<Array<number>>) => changed(e.detail)}
-		@itemsChange=${(e: CustomEvent<Array<HTMLElement>>) => itemsChanged(e.detail.length)}
-	>
-		<mo-selectable-list-item toggleable>Item 1</mo-selectable-list-item>
-		<mo-selectable-list-item toggleable>Item 2</mo-selectable-list-item>
-		<mo-checkbox-list-item disabled>Item 3 (disabled)</mo-checkbox-list-item>
-		<mo-checkbox-list-item>Item 4</mo-checkbox-list-item>
-		<mo-checkbox-list-item>Item 5</mo-checkbox-list-item>
-		<mo-switch-list-item>Item 6</mo-switch-list-item>
-		<mo-switch-list-item>Item 7</mo-switch-list-item>
-		<mo-radio-list-item>Item 8</mo-radio-list-item>
-		<mo-radio-list-item>Item 9</mo-radio-list-item>
-	</mo-selectable-list>
-`
-
-export const WithSelectablitySingle: StoryObj = {
-	render: () => getSelectableTemplate(SelectableListSelectability.Single)
-}
-
-export const WithSelectablityMultiple: StoryObj = {
-	render: () => getSelectableTemplate(SelectableListSelectability.Multiple)
-}
-
-export const WithSelectabilityAndCollapsible: StoryObj = {
+/** Selectable items inside collapsible ones join the list's selection too; here `:has()` outlines the group that holds it. */
+export const SelectableCollapsibleItems: Story = {
 	render: () => html`
 		<style>
 			mo-collapsible-list-item:has(mo-selectable-list-item[selected]) > mo-list-item:not([slot]) {
-				border: 2px dashed var(--mo-color-yellow);
+				outline: 2px dashed var(--mo-color-yellow);
+				outline-offset: -2px;
 			}
 		</style>
-		<mo-card id='with-selection' heading='Navigation Menu' style='--mo-card-body-padding: 0px'>
+		<mo-card heading='Navigation' style='max-width: 360px; --mo-card-body-padding: 0px'>
 			<mo-selectable-list>
 				<mo-selectable-list-item>
 					<mo-icon style='opacity: 0.66' icon='home'></mo-icon>
 					Home
 				</mo-selectable-list-item>
-
 				<mo-collapsible-list-item>
 					<mo-list-item>
 						<mo-icon style='opacity: 0.66' icon='inventory_2'></mo-icon>
@@ -250,5 +279,5 @@ export const WithSelectabilityAndCollapsible: StoryObj = {
 				</mo-collapsible-list-item>
 			</mo-selectable-list>
 		</mo-card>
-	`
+	`,
 }

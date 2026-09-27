@@ -1,3 +1,4 @@
+/** Rounds a number to the given decimals without floating-point errors, halves away from zero. Also installed as `Math.safeRound`. */
 export function safeRound(number: number, decimals = 0) {
 	const absNumber = Math.abs(number)
 	// Math.round has no support for decimals, so we round value x 10^n and then divide by 10^n

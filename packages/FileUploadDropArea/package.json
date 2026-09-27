@@ -1,10 +1,14 @@
 {
 	"name": "@3mo/file-upload-drop-area",
 	"version": "0.3.0",
-	"description": "A component to upload files via drag and drop",
+	"description": "A web component for drop areas that upload the files dropped onto them, or picked in the file dialog on click.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/3mo-esolutions/web-components"
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/FileUploadDropArea"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
 	},
 	"keywords": [
 		"web-component",
@@ -16,7 +20,7 @@
 	],
 	"author": "3MO GmbH",
 	"license": "MIT",
-	"homepage": "https://www.3mo.de",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/inputs-file-upload-drop-area--overview",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

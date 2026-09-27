@@ -30,21 +30,7 @@ export interface FormAssociationControllerOptions {
 
 /**
  * Makes the host a form control: it submits a value, blocks submission while invalid, and follows
- * resets, fieldsets and restorations as a native control does.
- *
- * The class needs {@link formAssociated} beside it - the platform reads that declaration while the
- * element is being defined, which is before any controller exists.
- *
- * ```ts
- * @component('mo-rating')
- * @formAssociated
- * export class Rating extends Component {
- *     readonly formAssociation = new FormAssociationController(this, host => ({
- *         get value() { return host.value?.toString() },
- *         get validity() { return host.inputElement },
- *     }))
- * }
- * ```
+ * resets, fieldsets and restorations as a native control does. Its class needs {@link formAssociated}.
  *
  * @ssr true
  */

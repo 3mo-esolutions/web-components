@@ -12,6 +12,8 @@ Localizer.dictionaries.add('de', {
 })
 
 /**
+ * A date and time field, typed into segments in the language's order or picked from a calendar and time lists.
+ *
  * Its behaviour is {@link FieldDateTimeController}, for a date field of another design.
  *
  * @element mo-field-date-time
@@ -31,6 +33,10 @@ Localizer.dictionaries.add('de', {
  * @i18n "Year start"
  * @i18n "Year end"
  * @i18n "Empty"
+ *
+ * @accessibility
+ * The segments follow the [segmented input](?path=/docs/behaviors-segmented-input--overview): a `group` named after the `label`, with one `spinbutton` per part, and one tab stop for the group. `aria-invalid`, `aria-required` and `aria-readonly` follow the field.
+ * `Alt` `ArrowDown` opens the picker. The picker's calendar cannot be operated with the keyboard yet, so the segments are the keyboard's way in.
  */
 @component('mo-field-date-time')
 export class FieldDateTime extends FieldDateTimeBase<Date | undefined> {

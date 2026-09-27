@@ -1,32 +1,47 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite'
-import { html, style } from '@a11d/lit'
-import p from './package.json'
+import { html } from '@a11d/lit'
 import './index.js'
 
 export default {
-	title: 'Layout & Containment / Scroller',
+	title: 'Layout / Scroller',
 	component: 'mo-scroller',
-	package: p,
-} as Meta
+} satisfies Meta
 
-const loremIpsum = (repetition: number) => new Array(repetition).fill(0).map(() => html`<p>Lorem ipsum dolor sit.</p>`)
-
-export const Scroller: StoryObj = {
+export const Default: StoryObj = {
 	render: () => html`
-		<mo-scroller ${style({ height: '400px' })}>
-			${loremIpsum(50)}
+		<mo-scroller style='height: 400px'>
+			${Array.from({ length: 50 }, (_, index) => html`<p>Paragraph ${index + 1}</p>`)}
 		</mo-scroller>
-	`
+	`,
 }
 
+/** Content wider than the scroller scrolls sideways with the same thin scrollbar. */
+export const Horizontal: StoryObj = {
+	render: () => html`
+		<mo-scroller>
+			<mo-flex direction='horizontal' gap='8px' style='width: max-content; padding-block-end: 8px'>
+				${Array.from({ length: 30 }, (_, index) => html`<mo-card style='width: 160px'>Card ${index + 1}</mo-card>`)}
+			</mo-flex>
+		</mo-scroller>
+	`,
+}
+
+/** `snapType` sets `scroll-snap-type`, so that scrolling comes to rest on the items that declare `scroll-snap-align`. */
 export const Snapping: StoryObj = {
 	render: () => html`
-		<mo-scroller ${style({ height: '400px' })} snapType='y proximity'>
-			${new Array(50).fill(0).map((_, i) => html`
-				<div ${style({ textAlign: 'center', lineHeight: '300px', color: 'black', backgroundColor: i % 2 ? '#7FCDCD' : '#F3E0BE', scrollSnapAlign: 'center' })}>
-					${loremIpsum(1)}
-				</div>
+		<mo-scroller snapType='y proximity' style='height: 400px'>
+			${Array.from({ length: 20 }, (_, index) => html`
+				<div style='height: 300px; display: flex; align-items: center; justify-content: center; color: black; scroll-snap-align: center; background: ${index % 2 ? '#7FCDCD' : '#F3E0BE'}'>Slide ${index + 1}</div>
 			`)}
 		</mo-scroller>
-	`
+	`,
+}
+
+/** `--mo-scroller-thumb-color` and `--mo-scroller-track-color` color the scrollbar. */
+export const CustomProperties: StoryObj = {
+	render: () => html`
+		<mo-scroller style='height: 400px; --mo-scroller-thumb-color: var(--mo-color-accent); --mo-scroller-track-color: var(--mo-color-transparent-gray-3)'>
+			${Array.from({ length: 50 }, (_, index) => html`<p>Paragraph ${index + 1}</p>`)}
+		</mo-scroller>
+	`,
 }

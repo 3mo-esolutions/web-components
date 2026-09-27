@@ -1,286 +1,136 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite'
-import { Component, css, html, property, state, style } from '@a11d/lit'
-import p from './package.json'
-import { PopoverAlignment, PopoverPlacement, popover, type PopoverContainer } from './index.js'
+import { html } from '@a11d/lit'
+import { useState } from 'storybook/preview-api'
+import { type PopoverAlignment, type PopoverPlacement, popover } from './index.js'
 import '@3mo/chip'
 
+type Args = {
+	readonly placement: PopoverPlacement
+	readonly alignment: PopoverAlignment
+}
+
 export default {
-	title: 'Layout & Containment / Popover',
+	title: 'Layout / Popover',
 	component: 'mo-popover',
 	args: {
-		placement: 'block-start',
-		alignment: 'start',
+		placement: 'block-end' as PopoverPlacement,
+		alignment: 'start' as PopoverAlignment,
 	},
 	argTypes: {
-		placement: {
-			control: 'select',
-			options: ['block-start', 'block-end', 'inline-start', 'inline-end'],
-		},
-		alignment: {
-			control: 'select',
-			options: ['start', 'center', 'end'],
-		},
+		placement: { control: 'select', options: ['block-start', 'block-end', 'inline-start', 'inline-end'] },
+		alignment: { control: 'select', options: ['start', 'center', 'end'] },
 	},
-	package: p,
-} as Meta
+} satisfies Meta<Args>
 
-const content = html`
-	<input autofocus>
-	<mo-card heading='Popover'>
-		Here some content
-	</mo-card>
-`
+type Story = StoryObj<Args>
 
-export const Popover: StoryObj = {
+export const Default: Story = {
+	render: ({ placement, alignment }) => html`
+		<mo-popover-container placement=${placement} alignment=${alignment}>
+			<mo-button type='outlined'>Delivery</mo-button>
+			<mo-popover slot='popover'>
+				<mo-card heading='Delivery'>Two to four working days within the EU.</mo-card>
+			</mo-popover>
+		</mo-popover-container>
+	`,
+}
+
+/** `placement` picks the side of the anchor and `alignment` how the popover lines up along it; a popover that does not fit flips to the opposite side. */
+export const Placements: Story = {
+	decorators: [story => html`<div style='display: grid; place-items: center; min-height: 480px'>${story()}</div>`],
+	render: () => {
+		const [open, setOpen] = useState(false)
+		return html`
+			<mo-button type='outlined' style='anchor-name: --placements; width: 480px; height: 160px' @click=${() => setOpen(!open)}>Show every placement</mo-button>
+			${['block-start', 'block-end', 'inline-start', 'inline-end'].flatMap(placement => ['start', 'center', 'end'].map(alignment => html`
+				<mo-popover mode='manual' placement=${placement} alignment=${alignment} style='position-anchor: --placements' ?open=${open}>
+					<mo-card><code>${placement} ${alignment}</code></mo-card>
+				</mo-popover>
+			`))}
+		`
+	},
+}
+
+/** `target` names the element within the anchor that opens the popover: only the icon button does here. */
+export const Target: Story = {
+	render: ({ placement, alignment }) => html`
+		<mo-popover-container placement=${placement} alignment=${alignment}>
+			<mo-button type='outlined'>
+				Shipping
+				<mo-icon-button id='shipping-info' slot='end' icon='info'></mo-icon-button>
+			</mo-button>
+			<mo-popover slot='popover' target='shipping-info'>
+				<mo-card heading='Shipping'>Orders placed before 4pm leave the same day.</mo-card>
+			</mo-popover>
+		</mo-popover-container>
+	`,
+}
+
+/** `mode='manual'` leaves opening and closing to `open`: neither a click outside nor Escape closes it. */
+export const Manual: Story = {
 	render: ({ placement, alignment }) => {
+		const [open, setOpen] = useState(false)
 		return html`
 			<mo-popover-container placement=${placement} alignment=${alignment}>
-				<mo-button type='outlined'>Click to open the popover</mo-button>
-				<mo-popover slot='popover'>${content}</mo-popover>
+				<mo-button type='outlined' @click=${() => setOpen(!open)}>Toggle</mo-button>
+				<mo-popover slot='popover' mode='manual' ?open=${open} @openChange=${(event: CustomEvent<boolean>) => setOpen(event.detail)}>
+					<mo-card heading='Pinned'>Stays open until toggled again.</mo-card>
+				</mo-popover>
 			</mo-popover-container>
 		`
-	}
+	},
 }
 
-export const Manual: StoryObj = {
-	render: ({ placement, alignment }) => {
-		const handleClick = (e: Event) => {
-			((e.target as HTMLElement).previousElementSibling as PopoverContainer)
-				?.popoverElement
-				?.toggleAttribute('open')
-		}
-		return html`
-			<mo-flex direction='horizontal' gap='1rem'>
-				<mo-popover-container placement=${placement} alignment=${alignment}>
-					<mo-button disabled type='outlined'>Anchor</mo-button>
-					<mo-popover slot='popover' mode='manual' @click=${(e: Event) => e.stopPropagation()}>${content}</mo-popover>
-				</mo-popover-container>
-				<mo-button type='outlined' @click=${handleClick}>Click here to toggle the popover instead!</mo-button>
-			</mo-flex>
-		`
-	}
+/** The element marked `autofocus` takes the focus as the popover opens, and the focus returns to the anchor as it closes. */
+export const Focus: Story = {
+	render: ({ placement, alignment }) => html`
+		<mo-popover-container placement=${placement} alignment=${alignment}>
+			<mo-button type='outlined'>Rename</mo-button>
+			<mo-popover slot='popover'>
+				<mo-card>
+					<mo-field-text label='Name' autofocus></mo-field-text>
+				</mo-card>
+			</mo-popover>
+		</mo-popover-container>
+	`,
 }
-
-export const Target: StoryObj = {
-	render: ({ placement, alignment }) => {
-		return html`
-			<mo-popover-container placement=${placement} alignment=${alignment}>
-				<mo-button type='outlined'>
-					Click on the icon-button to open the popover
-					<mo-icon-button id='icon-button' slot='end' icon='expand_more'></mo-icon-button>
-				</mo-button>
-				<mo-popover slot='popover' target='icon-button'>${content}</mo-popover>
-			</mo-popover-container>
-		`
-	}
-}
-
-export const Lazy: StoryObj = {
-	render: () => html`<mo-story-popover-lazy></mo-story-popover-lazy>`
-}
-
-const clock = (date: Date) => date.toLocaleTimeString(undefined, { hour12: false })
 
 /**
- * Ages from freshly built to settled, so that a popover materialized by an interaction is
- * distinguishable from one merely re-opened with the instance it already has.
+ * `popover()` with a `trigger` renders nothing until the anchor is first used, so a hundred chips cost no popovers.
+ * Each one shows when it was built, and keeps its instance when opened again.
  */
-class StoryPopoverLazyDetails extends Component {
-	@property({ type: Object }) pageRenderedAt = new Date()
-
-	private readonly createdAt = new Date()
-	@state() private settled = false
-
-	override connected() {
-		setTimeout(() => this.settled = true, 2000)
-	}
-
-	protected override get template() {
-		const seconds = Math.round((this.createdAt.getTime() - this.pageRenderedAt.getTime()) / 1000)
-		return html`
-			<mo-flex gap='0.5rem'>
-				<div>Built at <strong>${clock(this.createdAt)}</strong>, ${seconds} seconds after the page rendered.</div>
-				<div ${style({ padding: '0.4rem 0.6rem', borderRadius: 'var(--mo-border-radius)', color: '#101010', backgroundColor: this.settled ? '#7FCDCD' : '#F7CAC9' })}>
-					${this.settled ? '✅ Settled — re-opening keeps this instance' : '⌛ Just built by the interaction opening it'}
-				</div>
-			</mo-flex>
-		`
-	}
+export const Lazy: Story = {
+	render: () => html`
+		<mo-flex direction='horizontal' wrap='wrap' gap='6px'>
+			${Array.from({ length: 100 }, (_, index) => html`
+				<mo-chip ${popover(() => html`
+					<mo-popover>
+						<mo-card heading='Popover ${index + 1}'>Built at ${new Date().toLocaleTimeString()}</mo-card>
+					</mo-popover>
+				`, { trigger: 'click' })}>${index + 1}</mo-chip>
+			`)}
+		</mo-flex>
+	`,
 }
-
-customElements.define('mo-story-popover-lazy-details', StoryPopoverLazyDetails)
-
-class StoryPopoverLazy extends Component {
-	private static readonly anchorsCount = 100
-
-	private readonly renderedAt = new Date()
-	@state() private materializedCount = 0
-
-	private readonly observer = new MutationObserver(() => this.countMaterialized())
-
-	override connectedCallback() {
-		super.connectedCallback()
-		this.updateComplete.then(() => this.observer.observe(this.renderRoot, { childList: true, subtree: true }))
-	}
-
-	override disconnectedCallback() {
-		this.observer.disconnect()
-		super.disconnectedCallback()
-	}
-
-	private countMaterialized() {
-		this.materializedCount = this.renderRoot.querySelectorAll('mo-popover').length
-	}
-
-	static override get styles() {
-		return css`
-			#anchors {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 0.4rem;
-			}
-
-			code {
-				background: var(--mo-color-transparent-gray-3);
-				padding: 0.1rem 0.3rem;
-				border-radius: var(--mo-border-radius);
-			}
-		`
-	}
-
-	protected override get template() {
-		return html`
-			<mo-flex gap='1rem'>
-				<mo-card>
-					<mo-flex gap='0.5rem'>
-						<div>
-							<strong>${this.materializedCount}</strong> of ${StoryPopoverLazy.anchorsCount} popovers exist in the DOM.
-							The page itself rendered at <strong>${clock(this.renderedAt)}</strong>.
-						</div>
-						<div>
-							Every chip declares its popover through
-							<code>\${popover(() => html\`…\`, { trigger: 'click' })}</code>,
-							which renders nothing until the chip is clicked. Each popover therefore reports the moment
-							it was built rather than the moment the page was, and stays red for two seconds afterwards.
-							Re-opening a chip shows the same settled instance, as the popover keeps triggering itself
-							once it exists.
-						</div>
-					</mo-flex>
-				</mo-card>
-
-				<div id='anchors'>
-					${new Array(StoryPopoverLazy.anchorsCount).fill(undefined).map((_, index) => html`
-						<mo-chip
-							${popover(() => html`
-								<mo-popover>
-									<mo-card heading='Popover ${index + 1}'>
-										<mo-story-popover-lazy-details .pageRenderedAt=${this.renderedAt}></mo-story-popover-lazy-details>
-									</mo-card>
-								</mo-popover>
-							`, { trigger: 'click' })}
-						>${index + 1}</mo-chip>
-					`)}
-				</div>
-			</mo-flex>
-		`
-	}
-}
-
-customElements.define('mo-story-popover-lazy', StoryPopoverLazy)
 
 /* eslint-disable @html-eslint/use-baseline */
 
-export const PlatformInvokers: StoryObj = {
-	render: ({ placement, alignment }) => {
-		const commandsSupported = 'commandForElement' in HTMLButtonElement.prototype
-		return html`
-			<mo-flex gap='1rem' alignItems='start'>
-				<mo-card>
-					A popover is a native popover element, which is why the platform's own invoker buttons
-					drive it without any wiring by this library: they toggle it, tether it as their implicit
-					anchor and wire up the corresponding ARIA attributes and focus behavior themselves.
-				</mo-card>
-
-				<button popovertarget='story-popover-popovertarget'>
-					Toggle via "popovertarget"
-				</button>
-				<mo-popover id='story-popover-popovertarget' placement=${placement} alignment=${alignment}>
-					<mo-card heading='popovertarget'>
-						Opened by the browser. No anchor was assigned to this popover.
-					</mo-card>
-				</mo-popover>
-
-				${!commandsSupported ? html`
-					<mo-card heading='commandfor'>
-						The Invoker Commands API is not supported in this browser.
-					</mo-card>
-				` : html`
-					<button commandfor='story-popover-commandfor' command='toggle-popover'>
-						Toggle via "commandfor"
-					</button>
-					<mo-popover id='story-popover-commandfor' placement=${placement} alignment=${alignment}>
-						<mo-card heading='commandfor'>
-							Opened by the browser. No anchor was assigned to this popover.
-						</mo-card>
-					</mo-popover>
-				`}
-			</mo-flex>
-		`
-	}
-}
-
-export const AnchorPositioning: StoryObj = {
-	render: () => {
-		return html`
-			<mo-flex alignItems='center' justifyContent='center' style='margin: auto; height: 500px'>
-				<mo-story-popover-anchor-positioning></mo-story-popover-anchor-positioning>
-			</mo-flex>
-		`
-	}
-}
-
-class StoryPopoverAnchorPositioning extends Component {
-	static override get styles() {
-		return css`
-			mo-button {
-				anchor-name: --story-popover-catalog;
-				width: 600px;
-				height: 200px;
-			}
-
-			mo-popover {
-				position-anchor: --story-popover-catalog;
-			}
-		`
-	}
-
-	protected override get template() {
-		return html`
-			<mo-button type='outlined'>Click to open the popover</mo-button>
-			${this.getCardTemplate(PopoverPlacement.InlineStart, PopoverAlignment.Start)}
-			${this.getCardTemplate(PopoverPlacement.InlineStart, PopoverAlignment.Center)}
-			${this.getCardTemplate(PopoverPlacement.InlineStart, PopoverAlignment.End)}
-			${this.getCardTemplate(PopoverPlacement.BlockStart, PopoverAlignment.Start)}
-			${this.getCardTemplate(PopoverPlacement.BlockStart, PopoverAlignment.Center)}
-			${this.getCardTemplate(PopoverPlacement.BlockStart, PopoverAlignment.End)}
-			${this.getCardTemplate(PopoverPlacement.InlineEnd, PopoverAlignment.Start)}
-			${this.getCardTemplate(PopoverPlacement.InlineEnd, PopoverAlignment.Center)}
-			${this.getCardTemplate(PopoverPlacement.InlineEnd, PopoverAlignment.End)}
-			${this.getCardTemplate(PopoverPlacement.BlockEnd, PopoverAlignment.Start)}
-			${this.getCardTemplate(PopoverPlacement.BlockEnd, PopoverAlignment.Center)}
-			${this.getCardTemplate(PopoverPlacement.BlockEnd, PopoverAlignment.End)}
-		`
-	}
-
-	protected getCardTemplate(placement: PopoverPlacement, alignment: PopoverAlignment) {
-		return html`
-			<mo-popover mode='manual' .anchor=${this} open placement=${placement} alignment=${alignment}>
-				<mo-card>
-					<code>${placement} / ${alignment}</code>
-				</mo-card>
+/**
+ * A popover is a native popover element, so the platform's `popovertarget` and `commandfor` buttons toggle it and anchor it to themselves.
+ * `commandfor` needs a browser with Invoker Commands.
+ */
+export const PlatformInvokers: Story = {
+	render: ({ placement, alignment }) => html`
+		<mo-flex direction='horizontal' gap='1rem'>
+			<button popovertarget='popover-target-demo'>popovertarget</button>
+			<mo-popover id='popover-target-demo' placement=${placement} alignment=${alignment}>
+				<mo-card heading='popovertarget'>Opened by the browser.</mo-card>
 			</mo-popover>
-		`
-	}
-}
 
-customElements.define('mo-story-popover-anchor-positioning', StoryPopoverAnchorPositioning)
+			<button commandfor='command-for-demo' command='toggle-popover'>commandfor</button>
+			<mo-popover id='command-for-demo' placement=${placement} alignment=${alignment}>
+				<mo-card heading='commandfor'>Opened by the browser.</mo-card>
+			</mo-popover>
+		</mo-flex>
+	`,
+}

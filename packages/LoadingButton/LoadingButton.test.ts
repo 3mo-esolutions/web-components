@@ -133,6 +133,39 @@ describe('LoadingButton', () => {
 		})
 	})
 
+	// A template's `@click` registers Lit's event part rather than the function, in the development build as in production:
+	describe('click event inference from a template binding', () => {
+		let result: unknown
+		const fixture = new ComponentTestFixture<LoadingButton>(html`<mo-loading-button @click=${() => result}>Save</mo-loading-button>`)
+
+		beforeEach(() => settle())
+
+		const clickInternalButton = () => fixture.component.renderRoot.querySelector<HTMLElement>(mdButtonSelector)!.click()
+
+		it('should enter loading until the promise the bound function returns settles', async () => {
+			let complete!: () => void
+			result = new Promise<void>(resolve => { complete = resolve })
+
+			clickInternalButton()
+
+			expect(fixture.component.loading).toBe(true)
+
+			complete()
+			await settle()
+
+			expect(fixture.component.loading).toBe(false)
+		})
+
+		it('should not enter loading when the bound function returns nothing', async () => {
+			result = undefined
+
+			clickInternalButton()
+			await settle()
+
+			expect(fixture.component.loading).toBe(false)
+		})
+	})
+
 	describe('progress indicator', () => {
 		const fixture = new ComponentTestFixture<LoadingButton>('mo-loading-button')
 
