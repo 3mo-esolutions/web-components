@@ -1,13 +1,9 @@
 import { Controller, type ReactiveControllerHost } from '@a11d/lit'
-import { Localizer, type LanguageCode } from '@3mo/localization'
+import { type LanguageCode } from '@3mo/localization'
 import { SegmentedInputController, type SegmentedInputStep } from '@3mo/segmented-input'
 import { type FieldDateTimePrecision } from '../FieldDateTimePrecision.js'
 import { type DateTimeSegment, type EditableDateTimeSegment, type EditableDateTimeSegmentType } from './DateTimeSegment.js'
 import { DateTimeSegmenter, type HourCycle } from './DateTimeSegmenter.js'
-
-Localizer.dictionaries.add('de', {
-	'Empty': 'Leer',
-})
 
 export type DateTimeSegmentsControllerOptions = {
 	readonly value?: DateTime

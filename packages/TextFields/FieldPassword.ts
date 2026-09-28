@@ -1,13 +1,7 @@
 import { html, component, property, css } from '@a11d/lit'
 import { FieldText, type FieldTextAutoComplete } from './FieldText.js'
-import { Localizer } from '@3mo/localization'
+import '@3mo/localization'
 import '@3mo/icon-button'
-
-Localizer.dictionaries.add('de', {
-	Password: 'Passwort',
-	Reveal: 'Anzeigen',
-	Hide: 'Verbergen',
-})
 
 /**
  * A text field for a password, with a button that reveals it.

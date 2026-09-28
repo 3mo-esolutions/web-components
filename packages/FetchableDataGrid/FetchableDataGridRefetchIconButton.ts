@@ -1,13 +1,7 @@
 import { Component, component, event, html, property, css } from '@a11d/lit'
 import { tooltip } from '@3mo/tooltip'
-import { Localizer } from '@3mo/localization'
+import '@3mo/localization'
 import { contextMenu } from '@3mo/context-menu'
-
-Localizer.dictionaries.add('de', {
-	'Refetch': 'Neu laden',
-	'automatically every ${seconds:string}': 'automatisch alle ${seconds:string}',
-	'Off': 'Aus',
-})
 
 /**
  * @fires requestFetch

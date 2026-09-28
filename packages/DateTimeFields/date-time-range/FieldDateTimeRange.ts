@@ -1,14 +1,8 @@
 import { component, css, html, property } from '@a11d/lit'
 import { type MaterialIcon } from '@3mo/icon'
-import { Localizer } from '@3mo/localization'
+import '@3mo/localization'
 import { FieldDateTimeBase } from '../date-time/FieldDateTimeBase.js'
 import { FieldDateTimeRangeController, type FieldDateTimeRangeSelection } from './FieldDateTimeRangeController.js'
-
-Localizer.dictionaries.add('de', {
-	'Period': 'Zeitraum',
-	'Start': 'Start',
-	'End': 'Ende',
-})
 
 /**
  * A date and time range field, with segments for each end and a picker that edits one end at a time.

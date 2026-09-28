@@ -1,10 +1,6 @@
 import { component, html, property, style } from '@a11d/lit'
-import { Localizer } from '@3mo/localization'
+import '@3mo/localization'
 import { FieldText } from './FieldText.js'
-
-Localizer.dictionaries.add('de', {
-	'Search': 'Suche',
-})
 
 /**
  * A text field for a search term, with a search icon and a button that clears it.

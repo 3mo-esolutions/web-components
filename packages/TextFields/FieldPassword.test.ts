@@ -3,6 +3,7 @@ import { Localizer } from '@3mo/localization'
 import { type FieldPassword } from './FieldPassword.js'
 import { expectFieldPropertyTunnelsToInput, expectInputEventTunnelsToField, expectSlotRendersOnlyWithAssignedContent } from '../Field/InputFieldComponent.test.js'
 import './index.js'
+import './translations/de.js'
 import '@3mo/icon-button'
 
 describe('FieldPassword', () => {

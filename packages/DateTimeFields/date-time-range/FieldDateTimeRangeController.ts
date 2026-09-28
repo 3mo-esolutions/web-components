@@ -1,21 +1,8 @@
 import { type ReactiveControllerHost } from '@a11d/lit'
-import { Localizer } from '@3mo/localization'
+import '@3mo/localization'
 import { FieldDateTimeControllerBase, type FieldDateTimePreset } from '../date-time/FieldDateTimeControllerBase.js'
 import { FieldDateTimePrecision } from '../FieldDateTimePrecision.js'
 import { DateRangeParser } from './DateRangeParser.js'
-
-Localizer.dictionaries.add('de', {
-	'Last ${count:number} days': 'Letzte ${count} Tage',
-	'Last week': 'Letzte Woche',
-	'This week': 'Diese Woche',
-	'Next week': 'Nächste Woche',
-	'Last month': 'Letzter Monat',
-	'This month': 'Dieser Monat',
-	'Next month': 'Nächster Monat',
-	'Last year': 'Letztes Jahr',
-	'This year': 'Dieses Jahr',
-	'Next year': 'Nächstes Jahr',
-})
 
 /** The end of the range a picker edits. */
 export type FieldDateTimeRangeSelection = 'start' | 'end'

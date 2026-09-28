@@ -3,29 +3,11 @@ import { type FetchableDataGridParametersType } from '@3mo/fetchable-data-grid'
 import { ReorderabilityState } from '@3mo/reorderability'
 import { tooltip } from '@3mo/tooltip'
 import { DialogAlert, GenericDialog } from '@3mo/standard-dialogs'
-import { Localizer } from '@3mo/localization'
+import '@3mo/localization'
 import { type Menu } from '@3mo/menu'
 import { type ModdableDataGridMode } from './ModdableDataGridMode.js'
 import { DialogMode } from './DialogMode.js'
 import { type ModdableDataGrid } from './ModdableDataGrid.js'
-
-Localizer.dictionaries.add({
-	de: {
-		'Save changes': 'Änderungen speichern',
-		'Copy': 'Kopieren',
-		'Move to archive': 'Ins Archiv verschieben',
-		'Save as a new view': 'Als neue Ansicht speichern',
-		'Discard changes': 'Änderungen verwerfen',
-		'Discard': 'Verwerfen',
-		'Archive': 'Archivieren',
-		'Don\'t Save': 'Nicht speichern',
-		'Edit': 'Bearbeiten',
-		'More options': 'Weitere Optionen',
-		'Unsaved changes': 'Änderungen',
-		'Do you want to save the new changes for "${name:string}" before switching view?': 'Sollen die Änderungen in der Ansicht "${name}" vor dem Fortfahren gespeichert werden?',
-		'Do you want to discard changes of view "${name:string}"?': 'Sollen die Änderungen in der Ansicht "${name}" verworfen werden?',
-	}
-})
 
 @component('mo-moddable-data-grid-chip')
 export class ModdableDataGridChip<TData, TParameters extends FetchableDataGridParametersType> extends Component {

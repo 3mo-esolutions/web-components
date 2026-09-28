@@ -1,19 +1,7 @@
 import { type ReactiveControllerHost } from '@a11d/lit'
-import { Localizer } from '@3mo/localization'
+import '@3mo/localization'
 import { FieldDateTimeControllerBase, type FieldDateTimePreset } from './FieldDateTimeControllerBase.js'
 import { FieldDateTimePrecision } from '../FieldDateTimePrecision.js'
-
-Localizer.dictionaries.add('de', {
-	'Today': 'Heute',
-	'Yesterday': 'Gestern',
-	'Tomorrow': 'Morgen',
-	'Week start': 'Wochenstart',
-	'Week end': 'Wochenende',
-	'Month start': 'Monatsanfang',
-	'Month end': 'Monatsende',
-	'Year start': 'Jahresanfang',
-	'Year end': 'Jahresende',
-})
 
 /**
  * Everything a date or date-time field does, for a host which only renders it: the segments at the

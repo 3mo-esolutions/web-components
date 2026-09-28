@@ -5,7 +5,7 @@ import { Downloader } from '@3mo/downloader'
 import { InstanceofAttributeController } from '@3mo/instanceof-attribute-controller'
 import { SlotController } from '@3mo/slot-controller'
 import { tooltip } from '@3mo/tooltip'
-import { Localizer } from '@3mo/localization'
+import '@3mo/localization'
 import { type Scroller } from '@3mo/scroller'
 import { observeResize } from '@3mo/resize-observer'
 import { DataGridEditability, DataGridController, type DataGridRankedSortDefinition, type DataGridSorting, DataGridSelectability, DataGridSelectionBehaviorOnDataChange, type DataRecord } from './controller/index.js'
@@ -14,14 +14,6 @@ import { DataGridColumnDefinitions } from './DataGridColumnDefinitions.js'
 import { type DataGridColumn, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, type DataGridReorderChange } from './index.js'
 import { DataGridToolbarElementStyles } from './DataGridToolbarElementStyles.js'
 import { DataGridPagination, type DataGridPaginationLike, type DataGridPaginationSize, type DataGridPaginationStrategy } from './DataGridPagination.js'
-
-Localizer.dictionaries.add('de', {
-	'No results': 'Kein Ergebnis',
-	'More Filters': 'Weitere Filter',
-	'Copied to clipboard': 'In die Zwischenablage kopiert',
-	'selected': 'ausgewählt',
-})
-
 
 /**
  * A table that shows an array of objects as rows, with selection, sorting, pagination, details, editing and CSV export.

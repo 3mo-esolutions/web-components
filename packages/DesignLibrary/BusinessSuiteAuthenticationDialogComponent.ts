@@ -1,20 +1,9 @@
 import { bind, html, state, style } from '@a11d/lit'
 import { DialogAuthenticator } from '@a11d/lit-application-authentication'
-import { Localizer } from '@3mo/localization'
+import '@3mo/localization'
 import { LocalStorage } from '@a11d/local-storage'
 import { NotificationComponent } from '@a11d/lit-application'
 import { updateAllComponentsOnDispatch } from './updateAllComponentsOnDispatch.js'
-
-Localizer.dictionaries.add('de', {
-	'Authenticated successfully': 'Erfolgreich authentifiziert',
-	'Password reset instructions have been sent to your email address': 'Anweisungen zum Zurücksetzen des Passworts wurden an Ihre E-Mail-Adresse gesendet',
-	'Password could not be reset': 'Passwort konnte nicht zurückgesetzt werden',
-	'Username': 'Benutzer',
-	'Password': 'Passwort',
-	'Remember Password': 'Passwort merken',
-	'Reset Password': 'Passwort zurücksetzen',
-	'Login': 'Anmelden'
-})
 
 export type User = {
 	name?: string

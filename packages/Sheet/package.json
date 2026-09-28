@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/sheet",
-	"version": "0.1.3",
+	"version": "0.1.4",
 	"description": "A web component for modal sheets anchored to any screen edge with swipe-to-dismiss, built on the native dialog element.",
 	"repository": {
 		"type": "git",
@@ -25,6 +25,20 @@
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"source": "./index.ts",
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		},
+		"./translations/*": {
+			"source": "./translations/*.ts",
+			"types": "./dist/translations/*.d.ts",
+			"default": "./dist/translations/*.js"
+		},
+		"./dist/*": "./dist/*",
+		"./package.json": "./package.json"
+	},
 	"customElements": "dist/custom-elements.json",
 	"files": [
 		"dist",

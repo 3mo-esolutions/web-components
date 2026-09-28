@@ -1,16 +1,12 @@
 import { Component, component, css, event, eventListener, html, ifDefined, literal, property, query, staticHtml } from '@a11d/lit'
 import { disabledProperty } from '@3mo/disabled-property'
 import { SlotController } from '@3mo/slot-controller'
-import { Localizer } from '@3mo/localization'
+import '@3mo/localization'
 import { SelectionGroupPattern } from '@3mo/selection-group'
 import '@3mo/icon'
 import '@3mo/theme'
 import '@3mo/focus-ring'
 import '@material/web/ripple/ripple.js'
-
-Localizer.dictionaries.add('de', {
-	'Remove ${label:string}': '${label} entfernen',
-})
 
 /**
  * A compact element for an attribute, a choice, an entry the user made or a contextual action, set in a `mo-chip-group`.

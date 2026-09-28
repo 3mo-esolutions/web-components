@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/date-time",
-	"version": "0.10.4",
+	"version": "0.10.5",
 	"description": "Utilities for dates and times on Temporal: global DateTime, DateTimeRange and TimeSpan classes that parse localized input.",
 	"repository": {
 		"type": "git",
@@ -19,6 +19,20 @@
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"source": "./index.ts",
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		},
+		"./translations/*": {
+			"source": "./translations/*.ts",
+			"types": "./dist/translations/*.d.ts",
+			"default": "./dist/translations/*.js"
+		},
+		"./dist/*": "./dist/*",
+		"./package.json": "./package.json"
+	},
 	"customElements": "dist/custom-elements.json",
 	"files": [
 		"dist",

@@ -1,5 +1,6 @@
 import { DateTimeRange } from './DateTimeRange.js'
 import { DateTime } from './DateTime.js'
+import './translations/de.js'
 
 describe('DateTimeRange', () => {
 	describe('static parse()', () => {

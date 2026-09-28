@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/dialog",
-	"version": "0.8.3",
+	"version": "0.8.4",
 	"description": "Web components for modal dialogs and application pages with a heading, actions and sizes, built on Material Web.",
 	"repository": {
 		"type": "git",
@@ -22,6 +22,20 @@
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"source": "./index.ts",
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		},
+		"./translations/*": {
+			"source": "./translations/*.ts",
+			"types": "./dist/translations/*.d.ts",
+			"default": "./dist/translations/*.js"
+		},
+		"./dist/*": "./dist/*",
+		"./package.json": "./package.json"
+	},
 	"customElements": "dist/custom-elements.json",
 	"files": [
 		"dist",

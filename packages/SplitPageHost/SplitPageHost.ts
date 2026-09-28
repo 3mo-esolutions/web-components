@@ -1,9 +1,4 @@
 import { html, css, property, style, component, Component } from '@a11d/lit'
-import { Localizer } from '@3mo/localization'
-
-Localizer.dictionaries.add('de', {
-	'Select a page': 'Wählen Sie eine Seite'
-})
 
 /**
  * A layout of a sidebar beside a hosted page, showing only one of the two at a time below a window width of 900px.
@@ -17,8 +12,6 @@ Localizer.dictionaries.add('de', {
  * @slot sidebar - The navigation beside the content page
  *
  * @cssprop --mo-split-page-host-sidebar-width - The width of the sidebar
- *
- * @i18n "Select a page"
  */
 @component('mo-split-page-host')
 export class SplitPageHost extends Component {

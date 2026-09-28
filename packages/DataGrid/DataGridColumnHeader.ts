@@ -1,21 +1,10 @@
 import { bind, Component, component, css, html, join, property, style, unsafeCSS, type HTMLTemplateResult } from '@a11d/lit'
 import { tooltip } from '@3mo/tooltip'
-import { Localizer } from '@3mo/localization'
+import '@3mo/localization'
 import { ResizeController } from '@3mo/resize-observer'
 import { ReorderabilityState } from '@3mo/reorderability'
 import { DataGridColumn } from './controller/DataGridColumn.js'
 import { DataGridSortingStrategy } from './controller/DataGridSortingController.js'
-
-Localizer.dictionaries.add('de', {
-	'Sorting': 'Sortierung',
-	'Sort descending': 'Absteigend sortieren',
-	'Sort ascending': 'Aufsteigend sortieren',
-	'Stickiness': 'Fixierung',
-	'Stick to start': 'Anfang fixieren',
-	'Stick to both': 'Beide fixieren',
-	'Stick to end': 'Ende fixieren',
-	'Hide': 'Ausblenden',
-})
 
 @component('mo-data-grid-column-header')
 export class DataGridColumnHeader extends Component {

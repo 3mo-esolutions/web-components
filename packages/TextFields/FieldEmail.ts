@@ -1,10 +1,6 @@
 import { component, html, live, property } from '@a11d/lit'
-import { Localizer } from '@3mo/localization'
+import '@3mo/localization'
 import { InputFieldComponent } from '@3mo/field'
-
-Localizer.dictionaries.add('de', {
-	'Email': 'E-Mail'
-})
 
 /**
  * A text field for an email address, which offers the email keyboard on touch devices.

@@ -1,15 +1,8 @@
 import { component, property } from '@a11d/lit'
-import { Localizer } from '@3mo/localization'
+import '@3mo/localization'
 import { FieldDateTimeBase } from './FieldDateTimeBase.js'
 import { FieldDateTimeController } from './FieldDateTimeController.js'
 import { FieldDateTimePrecision } from '../FieldDateTimePrecision.js'
-
-Localizer.dictionaries.add('de', {
-	'Date & Time': 'Datum & Uhrzeit',
-	'Date': 'Datum',
-	'Year': 'Jahr',
-	'Month': 'Monat',
-})
 
 /**
  * A date and time field, typed into segments in the language's order or picked from a calendar and time lists.

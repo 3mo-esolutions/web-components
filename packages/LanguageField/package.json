@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/language-field",
-	"version": "0.3.1",
+	"version": "0.3.2",
 	"description": "A web component for multilingual fields holding one value per language, with a language picker and an all-languages dialog.",
 	"repository": {
 		"type": "git",
@@ -22,6 +22,20 @@
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"source": "./index.ts",
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		},
+		"./translations/*": {
+			"source": "./translations/*.ts",
+			"types": "./dist/translations/*.d.ts",
+			"default": "./dist/translations/*.js"
+		},
+		"./dist/*": "./dist/*",
+		"./package.json": "./package.json"
+	},
 	"customElements": "dist/custom-elements.json",
 	"files": [
 		"dist",

@@ -1,14 +1,9 @@
 import { eventListener, type PropertyValues } from '@a11d/lit'
 import { DialogActionKey, type DialogParameters, NotificationComponent } from '@a11d/lit-application'
-import { Localizer } from '@3mo/localization'
+import '@3mo/localization'
 import { type FetchableDialogComponentParameters, FetchableDialogComponent } from '@3mo/fetchable-dialog'
 import { EntityDialog } from './EntityDialog.js'
 import { getEntityLabel } from './getEntityLabel.js'
-
-Localizer.dictionaries.add('de', {
-	'${label:string} saved successfully.': '${label:string} erfolgreich gespeichert.',
-	'Open': 'Öffnen',
-})
 
 export abstract class EntityDialogComponent<
 	TEntity extends object,

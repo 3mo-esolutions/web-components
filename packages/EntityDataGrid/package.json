@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/entity-data-grid",
-	"version": "0.4.2",
+	"version": "0.4.3",
 	"description": "A web component for fetchable data grids that create, edit and delete entities through dialogs and a context menu.",
 	"repository": {
 		"type": "git",
@@ -22,6 +22,20 @@
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"source": "./index.ts",
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		},
+		"./translations/*": {
+			"source": "./translations/*.ts",
+			"types": "./dist/translations/*.d.ts",
+			"default": "./dist/translations/*.js"
+		},
+		"./dist/*": "./dist/*",
+		"./package.json": "./package.json"
+	},
 	"customElements": "dist/custom-elements.json",
 	"files": [
 		"dist",
@@ -41,6 +55,7 @@
 		"@3mo/tooltip": "x",
 		"@3mo/loading-button": "x",
 		"@3mo/icon": "x",
-		"@3mo/data-grid": "x"
+		"@3mo/data-grid": "x",
+		"@3mo/localization": "x"
 	}
 }

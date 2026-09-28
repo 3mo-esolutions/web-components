@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/fetchable-data-grid",
-	"version": "0.8.1",
+	"version": "0.8.2",
 	"description": "A web component for data grids that fetch their own rows, with server-side sorting, paging, infinite scrolling and auto-refetch.",
 	"repository": {
 		"type": "git",
@@ -24,6 +24,20 @@
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"source": "./index.ts",
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		},
+		"./translations/*": {
+			"source": "./translations/*.ts",
+			"types": "./dist/translations/*.d.ts",
+			"default": "./dist/translations/*.js"
+		},
+		"./dist/*": "./dist/*",
+		"./package.json": "./package.json"
+	},
 	"customElements": "dist/custom-elements.json",
 	"files": [
 		"dist",
@@ -42,6 +56,7 @@
 		"@3mo/data-grid": ">=0.36.0",
 		"@3mo/fetcher-controller": "0.2.x",
 		"@3mo/tooltip": "x",
-		"@3mo/grid": "x"
+		"@3mo/grid": "x",
+		"@3mo/localization": "x"
 	}
 }

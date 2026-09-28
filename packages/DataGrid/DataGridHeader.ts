@@ -10,18 +10,6 @@ Localizer.dictionaries.add('en', {
 	],
 })
 
-Localizer.dictionaries.add('de', {
-	'Actions for ${count:pluralityNumber} selected entries': [
-		'Optionen für den ausgewählten Eintrag',
-		'Optionen für ${count} ausgewählte Einträge',
-	],
-	'Settings': 'Einstellungen',
-	'Columns': 'Spalten',
-	'Font Size': 'Schriftgröße',
-	'Row Height': 'Zeilenhöhe',
-	'Design': 'Design',
-})
-
 @component('mo-data-grid-header')
 export class DataGridHeader<TData> extends Component {
 	@event() readonly pageChange!: EventDispatcher<number>

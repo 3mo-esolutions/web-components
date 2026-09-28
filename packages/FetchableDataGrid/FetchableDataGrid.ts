@@ -1,6 +1,6 @@
 import { Binder, component, css, event, html, property, bind } from '@a11d/lit'
 import { hasChanged } from '@a11d/equals'
-import { Localizer } from '@3mo/localization'
+import '@3mo/localization'
 import { tooltip } from '@3mo/tooltip'
 import { InfiniteScrollController } from '@3mo/infinite-scroll-controller'
 import { DataGrid } from '@3mo/data-grid'
@@ -20,12 +20,6 @@ type PaginatedResult<TData> = Readonly<{ data: NonPaginatedResult<TData> } & ({
 })>
 
 export type FetchableDataGridResult<TData> = PaginatedResult<TData> | NonPaginatedResult<TData>
-
-Localizer.dictionaries.add('de', {
-	'Make a filter selection': 'Filterauswahl vornehmen',
-	'Loading more entries failed': 'Weitere Einträge konnten nicht geladen werden',
-	'Retry': 'Erneut versuchen',
-})
 
 /**
  * A data grid that fetches its rows through a function of its parameters, a page at a time if the server paginates.

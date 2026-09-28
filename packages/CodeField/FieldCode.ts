@@ -1,11 +1,7 @@
 import { component, css, html, property } from '@a11d/lit'
 import { FieldComponent } from '@3mo/field'
-import { Localizer } from '@3mo/localization'
+import '@3mo/localization'
 import { SegmentedDisplayController } from '@3mo/segmented-input'
-
-Localizer.dictionaries.add('de', {
-	'Code': 'Code',
-})
 
 export type FieldCodeType = 'numeric' | 'alphanumeric' | 'alphabetic'
 

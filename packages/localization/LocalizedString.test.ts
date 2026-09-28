@@ -102,6 +102,19 @@ describe('LocalizedString', () => {
 		expect(ls.value).toBe(key)
 	})
 
+	it('should fall back to the source language\'s dictionary with its plural rules when the language has no localization', () => {
+		vi.spyOn(console, 'warn').mockReturnValue(undefined)
+		const key = '${count:pluralityNumber} fallback items'
+		Localizer.dictionaries.add('en', {
+			'✂Fallback': 'F',
+			[key]: ['One item', '${count} items'],
+		})
+
+		expect(LocalizedString.get('✂Fallback', 'ar', {}).value).toBe('F')
+		expect(LocalizedString.get(key, 'ar', { count: 0 }).value).toBe('0 items')
+		expect(LocalizedString.get(key, 'ar', { count: 1 }).value).toBe('One item')
+	})
+
 	it('should format parameters if format() method is available', () => {
 		const key = 'Formatted number ${number:number} and date ${date:Date}'
 		Localizer.dictionaries.add('de', { [key]: 'Formatierte Nummer ${number} und Datum ${date}' })

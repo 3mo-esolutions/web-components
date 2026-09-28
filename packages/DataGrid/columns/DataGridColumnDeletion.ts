@@ -1,12 +1,8 @@
 import { component, html, event, property, style } from '@a11d/lit'
 import { type MaterialIcon } from '@3mo/icon'
-import { Localizer } from '@3mo/localization'
+import '@3mo/localization'
 import { tooltip } from '@3mo/tooltip'
 import { DataGridColumnComponent } from './DataGridColumnComponent.js'
-
-Localizer.dictionaries.add('de', {
-	'Delete position': 'Position entfernen'
-})
 
 /**
  * @element mo-data-grid-column-deletion

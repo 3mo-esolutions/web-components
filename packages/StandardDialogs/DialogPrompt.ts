@@ -1,23 +1,9 @@
 import { state, component, html, ifDefined, query, style, type HTMLTemplateResult } from '@a11d/lit'
 import { type FieldText, type FieldTextArea } from '@3mo/text-fields'
 import { DialogComponent } from '@a11d/lit-application'
-import { Localizer } from '@3mo/localization'
+import '@3mo/localization'
 import { getContentTemplate } from '@3mo/dialog'
 import { type StandardDialogParameters } from './StandardDialogParameters.js'
-
-Localizer.dictionaries.add('de', {
-	'OK': 'OK',
-	'Cancel': 'Abbrechen',
-	'Apply': 'Übernehmen',
-	'Input': 'Eingabe'
-})
-
-Localizer.dictionaries.add('fa', {
-	'OK': 'تایید',
-	'Cancel': 'لغو',
-	'Apply': 'اعمال',
-	'Input': 'ورودی'
-})
 
 type Parameters = StandardDialogParameters<DialogPrompt>
 	& { readonly inputLabel?: string, readonly value?: string }

@@ -6,14 +6,8 @@ import { Localizer } from '@3mo/localization'
 import { type ModdableDataGrid } from './ModdableDataGrid.js'
 import type * as CSS from 'csstype'
 
-Localizer.dictionaries.add({
-	en: {
-		'ModdableDataGridMode.Copy': 'Copy',
-	},
-	de: {
-		'View "${name:string}" moved to archive': 'Ansicht "${name}" ins Archiv verschoben',
-		'ModdableDataGridMode.Copy': 'Kopie',
-	}
+Localizer.dictionaries.add('en', {
+	'ModdableDataGridMode.Copy': 'Copy',
 })
 
 export class ModdableDataGridModeColumn<T> implements DataGridColumnModification<T> {

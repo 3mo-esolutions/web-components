@@ -1,20 +1,9 @@
 import { css, html, ifDefined, type HTMLTemplateResult } from '@a11d/lit'
 import { Application, PwaHelper } from '@a11d/lit-application'
-import { Localizer } from '@3mo/localization'
 import { Icon, IconVariant } from '@3mo/icon'
 import { Authentication, BusinessSuiteAuthenticationDialogComponent, type INavigation, type NavigationPresentation, type User } from './index.js'
 
 Icon.defaultVariant = IconVariant.Sharp
-
-Localizer.dictionaries.add('de', {
-	'Close': 'Schließen',
-	'Open as Tab': 'Als Tab öffnen',
-	'Cancel': 'Abbrechen',
-	'Expand': 'Erweitern',
-	'Collapse': 'Reduzieren',
-	'Loading': 'Lädt',
-	'Navigation': 'Navigation',
-})
 
 export abstract class BusinessSuiteApplication extends Application {
 	protected abstract get navigations(): Array<INavigation>

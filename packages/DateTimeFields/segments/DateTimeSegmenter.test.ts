@@ -3,6 +3,7 @@ import { FieldDateTimePrecision } from '../FieldDateTimePrecision.js'
 import { DateTimeSegmenter } from './DateTimeSegmenter.js'
 import { isEditableSegment } from '@3mo/segmented-input'
 import { type DateTimeSegment, type EditableDateTimeSegmentType } from './DateTimeSegment.js'
+import '../translations/de.js'
 
 describe('DateTimeSegmenter', () => {
 	const utc = (isoDateTime: string, calendar = 'gregory') => DateTime.from(Date.parse(`${isoDateTime}.000Z`), calendar, 'UTC')

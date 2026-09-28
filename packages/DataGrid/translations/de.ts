@@ -1,0 +1,32 @@
+import { Localizer } from '@3mo/localization'
+
+Localizer.dictionaries.add('de', {
+	'Copied to clipboard': 'In die Zwischenablage kopiert',
+	'No results': 'Kein Ergebnis',
+	'selected': 'ausgewählt',
+	'More Filters': 'Weitere Filter',
+	'Sorting': 'Sortierung',
+	'Sort descending': 'Absteigend sortieren',
+	'Sort ascending': 'Aufsteigend sortieren',
+	'Stickiness': 'Fixierung',
+	'Stick to start': 'Anfang fixieren',
+	'Stick to both': 'Beide fixieren',
+	'Stick to end': 'Ende fixieren',
+	'Hide': 'Ausblenden',
+	'${page:number} of ${maxPage:number}': '${page} von ${maxPage}',
+	'Auto': 'Auto',
+	'Export to CSV': 'Ansicht nach CSV exportieren',
+	'Exporting file...': 'Datei wird exportiert...',
+	'Actions for ${count:pluralityNumber} selected entries': [
+		'Optionen für den ausgewählten Eintrag',
+		'Optionen für ${count} ausgewählte Einträge',
+	],
+	'Design': 'Design',
+	'Font Size': 'Schriftgröße',
+	'Row Height': 'Zeilenhöhe',
+	'Columns': 'Spalten',
+	'Delete position': 'Position entfernen',
+	'Currency': 'Währung',
+	'Reordering is unavailable while the grid is sorted.': 'Die Reihenfolge kann nicht geändert werden, solange die Tabelle sortiert ist.',
+	'Clear sorting': 'Sortierung zurücksetzen',
+})

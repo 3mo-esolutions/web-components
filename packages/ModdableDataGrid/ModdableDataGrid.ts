@@ -2,25 +2,13 @@ import { css, html, style, event, property, repeat, queryAll } from '@a11d/lit'
 import { tooltip } from '@3mo/tooltip'
 import { ReorderabilityController } from '@3mo/reorderability'
 import { FetchableDataGrid, type FetchableDataGridParametersType } from '@3mo/fetchable-data-grid'
-import { Localizer } from '@3mo/localization'
+import '@3mo/localization'
 import { DialogDeletion } from '@3mo/standard-dialogs'
 import { ModdableDataGridMode, ModdableDataGridModeColumn } from './ModdableDataGridMode.js'
 import { DialogMode } from './DialogMode.js'
 import { equals } from '@a11d/equals'
 import { IndexedDbAdapter, type ModdableDataGridChip, type ModdableDataGridModesAdapter } from './index.js'
 import { DataGridModesController } from './DataGridModesController.js'
-
-Localizer.dictionaries.add({
-	de: {
-		'Add new view': 'Neue Ansicht erstellen',
-		'Archive': 'Archiv',
-		'Edit view': 'Ansicht bearbeiten',
-		'Delete view': 'Ansicht löschen',
-		'view "${name:string}"': 'Ansicht "${name}"',
-		'Keep in Dock': 'Ansicht im Dock anheften',
-		'Archive view': 'Archivansicht',
-	}
-})
 
 /**
  * A fetchable data grid whose users save its filters, sorting, columns and pagination as named views, in a bar above it.

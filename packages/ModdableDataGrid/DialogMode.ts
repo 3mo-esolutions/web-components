@@ -1,22 +1,9 @@
 import { html, style, state, component, Binder } from '@a11d/lit'
 import { DialogComponent } from '@a11d/lit-application'
 import { type FetchableDataGridParametersType } from '@3mo/fetchable-data-grid'
-import { Localizer } from '@3mo/localization'
+import '@3mo/localization'
 import { ModdableDataGridMode } from './ModdableDataGridMode.js'
 import { type ModdableDataGrid } from './ModdableDataGrid.js'
-
-Localizer.dictionaries.add({
-	de: {
-		'View "${name:string}"': 'Ansicht "${name}"',
-		'New view': 'Neue Ansicht',
-		'Name': 'Bezeichnung',
-		'Archive': 'Archivieren',
-		'Save': 'Speichern',
-		'Edit': 'Bearbeiten',
-		'Delete': 'Löschen',
-		'Please enter a valid name!': 'Bitte eine Bezeichnung eingeben!',
-	}
-})
 
 type Parameters<TData, TParameters extends FetchableDataGridParametersType> = {
 	readonly dataGrid: ModdableDataGrid<TData, TParameters, any>

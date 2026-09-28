@@ -1,15 +1,8 @@
 import { component, html, css, ifDefined, type HTMLTemplateResult } from '@a11d/lit'
 import { DialogComponent, NotificationComponent } from '@a11d/lit-application'
 import { LocalStorage } from '@a11d/local-storage'
-import { Localizer } from '@3mo/localization'
+import '@3mo/localization'
 import { getContentTemplate, type DialogContent, type DialogSize } from '@3mo/dialog'
-
-Localizer.dictionaries.add('de', {
-	'Confirm Deletion': 'Löschen bestätigen',
-	'Are you sure you want to delete ${label:string}?': '${label} sicher löschen?',
-	'Delete': 'Löschen',
-	'this': 'das',
-})
 
 interface Parameters {
 	readonly heading?: string

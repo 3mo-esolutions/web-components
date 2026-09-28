@@ -1,17 +1,12 @@
 import { css, property, Component, html, isServer, query, queryAll, type HTMLTemplateResult, LitElement, live, style, unsafeCSS } from '@a11d/lit'
 import { equals } from '@a11d/equals'
-import { Localizer } from '@3mo/localization'
+import '@3mo/localization'
 import { popover } from '@3mo/popover'
 import { tooltip } from '@3mo/tooltip'
 import { ContextMenu } from '@3mo/context-menu'
 import { ReorderabilityState } from '@3mo/reorderability'
 import { type DataGridColumn } from '../controller/DataGridColumn.js'
 import { type DataGrid, type DataGridCell, DataGridPrimaryContextMenuItem, type DataRecord } from '../index.js'
-
-Localizer.dictionaries.add('de', {
-	'Reordering is unavailable while the grid is sorted.': 'Die Reihenfolge kann nicht geändert werden, solange die Tabelle sortiert ist.',
-	'Clear sorting': 'Sortierung zurücksetzen'
-})
 
 export abstract class DataGridRow<TData, TDetailsElement extends Element | undefined = undefined> extends Component {
 	@queryAll('mo-data-grid-cell') readonly cells!: Array<DataGridCell<any, TData, TDetailsElement>>

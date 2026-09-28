@@ -6,7 +6,6 @@ import { Memoize as memoize } from 'typescript-memoize'
 import { type ParsingParameters, extractParsingParameters } from './extractParsingParameters.js'
 
 Localizer.dictionaries.add('en', { '✂Week': 'W' })
-Localizer.dictionaries.add('de', { 'Week': 'KW', '✂Week': 'KW' })
 
 // Keyed rather than tagged: a tagged memoize appends its cache to a module-level list on every read, which is never shortened.
 // The current language is keyed by a generation rather than resolved, which on every construction would cost more than the cache saves.

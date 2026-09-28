@@ -1,20 +1,8 @@
 import { component, property, Component, css, state, html, query, style, ifDefined, join } from '@a11d/lit'
 import { type FieldNumber } from '@3mo/number-fields'
-import { Localizer } from '@3mo/localization'
+import '@3mo/localization'
 import { TooltipPlacement, tooltip } from '@3mo/tooltip'
 import { type DataGrid, type DataGridPaginationSize } from './index.js'
-
-Localizer.dictionaries.add('de', {
-	'${page:number} of ${maxPage:number}': '${page} von ${maxPage}',
-	'Export to CSV': 'Ansicht nach CSV exportieren',
-	'Exporting file...': 'Datei wird exportiert...',
-	'Auto': 'Auto'
-})
-
-Localizer.dictionaries.add('fa', {
-	'${page:number} of ${maxPage:number}': '${page} از ${maxPage}',
-	'Auto': 'خودکار',
-})
 
 /**
  * @element mo-data-grid-footer

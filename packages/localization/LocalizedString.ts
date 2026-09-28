@@ -32,13 +32,15 @@ export class LocalizedString<Key extends LocalizableStringKey> {
 			console.warn(`[Localizer] No "${this.language}" localization found for "${this.key}".`)
 		}
 
-		const localizationOrLocalizations = languageDictionary.get(this.key) ?? this.key
+		const [language, localizationOrLocalizations]: [LanguageCode, string | Array<string>] = languageDictionary.has(this.key)
+			? [this.language, languageDictionary.get(this.key)!]
+			: [LocalizedString.defaultLanguage, Localizer.dictionaries.get(LocalizedString.defaultLanguage).get(this.key) ?? this.key]
 		if (!Array.isArray(localizationOrLocalizations)) {
 			return this._value = this.substituteVariables(localizationOrLocalizations)
 		}
 		const pluralityIndexParameterKey = this.matchedParameters.find(p => p.type === LocalizedString.pluralityIdentityType)?.key
 		const pluralityValue = !pluralityIndexParameterKey ? 0 : (this.parameters as any)[pluralityIndexParameterKey] || 0
-		const pluralityIndex = CardinalPluralizationRulesByLanguage.get(this.language)(pluralityValue)
+		const pluralityIndex = CardinalPluralizationRulesByLanguage.get(language)(pluralityValue)
 		// A dictionary may provide fewer forms than the language distinguishes, in which case the trailing categories collapse onto the last form.
 		const localization = localizationOrLocalizations[pluralityIndex] ?? localizationOrLocalizations.at(-1)
 		return this._value = this.substituteVariables(localization as string)

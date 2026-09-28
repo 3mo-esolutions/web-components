@@ -1,12 +1,7 @@
 import { component, html, property } from '@a11d/lit'
-import { Localizer } from '@3mo/localization'
+import '@3mo/localization'
 import { FetchableDialog } from '@3mo/fetchable-dialog'
 import { getEntityLabel } from './getEntityLabel.js'
-
-Localizer.dictionaries.add('de', {
-	'Create ${label:string}': '${label:string} erstellen',
-	'Edit ${label:string}': '${label:string} bearbeiten',
-})
 
 /**
  * A dialog that fetches an entity to edit, saves it with its primary button or Ctrl+S, and deletes it with its secondary one.

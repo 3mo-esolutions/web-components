@@ -1,16 +1,10 @@
 import { Component, component, css, event, eventListener, html, property, query, state } from '@a11d/lit'
 import { tooltip } from '@3mo/tooltip'
 import { disabledProperty } from '@3mo/disabled-property'
-import { Localizer } from '@3mo/localization'
+import '@3mo/localization'
 import { type MaterialIcon } from '@3mo/icon'
 import { type IconButton } from '@3mo/icon-button'
 import { type Swap } from '@3mo/swap'
-
-Localizer.dictionaries.add('de', {
-	'Copy': 'Kopieren',
-	'Copied': 'Kopiert',
-	'Could not copy': 'Kopieren fehlgeschlagen',
-})
 
 /**
  * An icon-button which writes a value to the clipboard and confirms it by briefly turning into a check mark.

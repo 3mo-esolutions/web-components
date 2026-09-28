@@ -1,7 +1,7 @@
 import { fileURLToPath } from 'node:url'
 import { dirname, resolve } from 'path'
 import { readFileSync, readdirSync, existsSync } from 'fs'
-import { mergeConfig, type ViteDevServer } from 'vite'
+import { defaultClientConditions, mergeConfig, type ViteDevServer } from 'vite'
 import type { StorybookConfig } from '@storybook/web-components-vite'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -45,21 +45,20 @@ export default {
 		const packagesPath = resolve(__dirname, '../packages')
 		const packageFolders = readdirSync(packagesPath)
 
-		const packageAliases = packageFolders.reduce((aliases, pkg) => {
+		const packageAliases = packageFolders.flatMap(pkg => {
 			const pkgJsonPath = resolve(packagesPath, pkg, 'package.json')
-			if (existsSync(pkgJsonPath)) {
-				const pkgJson = JSON.parse(readFileSync(pkgJsonPath, 'utf8'))
-				const entryPoint = resolve(packagesPath, pkg, 'index.ts')
-				if (existsSync(entryPoint)) {
-					aliases[pkgJson.name] = entryPoint
-				}
+			const entryPoint = resolve(packagesPath, pkg, 'index.ts')
+			if (!existsSync(pkgJsonPath) || !existsSync(entryPoint)) {
+				return []
 			}
-			return aliases
-		}, {} as Record<string, string>)
+			// Exact, so that subpaths resolve through the "source" condition of the package's exports.
+			return [{ find: new RegExp(`^${JSON.parse(readFileSync(pkgJsonPath, 'utf8')).name}$`), replacement: entryPoint }]
+		})
 
 		return mergeConfig(config, {
 			resolve: {
 				alias: packageAliases,
+				conditions: ['source', ...defaultClientConditions],
 			},
 			plugins: [{
 				// Custom elements cannot be redefined, so hot-replacing a module that registers one throws.

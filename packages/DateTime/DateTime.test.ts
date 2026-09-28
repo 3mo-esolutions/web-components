@@ -3,6 +3,7 @@ import { DateTime } from './DateTime.js'
 import { DateTimeParser } from './parsers/index.js'
 import { expectDateTimesEquals } from './expectDateTimesEquals.test.js'
 import './index.js'
+import './translations/de.js'
 
 class SentinelParser extends DateTimeParser {
 	static readonly text = '@@sentinel-parser@@'

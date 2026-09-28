@@ -38,8 +38,19 @@ Localizer.dictionaries.add({
 })
 ```
 
-- The translation added last wins, so yours can replace the ones the components bring along.
-- A missing translation falls back to the key and logs a warning.
+- The translation added last wins, so yours can replace the ones of the components.
+- A missing translation falls back to the source language, then to the key, and logs a warning.
+
+## Translations of the components
+
+The components render the source language until you import the languages you support. `@3mo/del` gathers every package's translations of a language in one file:
+
+```ts
+import '@3mo/del'
+import '@3mo/del/translations/de'
+```
+
+Without `@3mo/del`, import each package's file instead, such as `@3mo/data-grid/translations/de`. Import them before your own dictionaries, so that yours win.
 
 ## Plurals
 

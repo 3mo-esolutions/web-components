@@ -1,14 +1,10 @@
 import { bind, cache, component, css, html, property, style } from '@a11d/lit'
 import { FieldComponent } from '@3mo/field'
-import { Localizer } from '@3mo/localization'
+import '@3mo/localization'
 import { FieldDateTimePrecision } from '../FieldDateTimePrecision.js'
 import { dateTimeConverter } from '../dateTimeConverter.js'
 import { FieldTimeController } from './FieldTimeController.js'
 import { hourCycleConverter, segmentsStyles, type HourCycle } from '../segments/index.js'
-
-Localizer.dictionaries.add('de', {
-	'Time': 'Uhrzeit',
-})
 
 /**
  * A time-of-day field whose value is the `HH:mm` string of a native time input, while its segments follow the language's clock.

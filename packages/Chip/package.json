@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/chip",
-	"version": "0.4.1",
+	"version": "0.4.2",
 	"description": "Web components for selectable, removable and linking chips, and chip sets that share one selection and one tab stop.",
 	"repository": {
 		"type": "git",
@@ -23,6 +23,20 @@
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"source": "./index.ts",
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		},
+		"./translations/*": {
+			"source": "./translations/*.ts",
+			"types": "./dist/translations/*.d.ts",
+			"default": "./dist/translations/*.js"
+		},
+		"./dist/*": "./dist/*",
+		"./package.json": "./package.json"
+	},
 	"customElements": "dist/custom-elements.json",
 	"files": [
 		"dist",

@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/moddable-data-grid",
-	"version": "0.8.5",
+	"version": "0.8.6",
 	"description": "A web component for fetchable data grids with user-saved views of columns, sorting and filters, stored in IndexedDB.",
 	"repository": {
 		"type": "git",
@@ -25,6 +25,20 @@
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"source": "./index.ts",
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		},
+		"./translations/*": {
+			"source": "./translations/*.ts",
+			"types": "./dist/translations/*.d.ts",
+			"default": "./dist/translations/*.js"
+		},
+		"./dist/*": "./dist/*",
+		"./package.json": "./package.json"
+	},
 	"customElements": "dist/custom-elements.json",
 	"files": [
 		"dist",

@@ -3,6 +3,7 @@ import { Localizer } from '@3mo/localization'
 import { type FieldEmail } from './FieldEmail.js'
 import { expectFieldPropertyTunnelsToInput, expectInputEventTunnelsToField, expectSlotRendersOnlyWithAssignedContent } from '../Field/InputFieldComponent.test.js'
 import './index.js'
+import './translations/de.js'
 
 describe('FieldEmail', () => {
 	const fixture = new ComponentTestFixture<FieldEmail>('mo-field-email')

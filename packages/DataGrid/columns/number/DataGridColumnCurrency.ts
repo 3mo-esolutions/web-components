@@ -1,11 +1,7 @@
 import { component, html, ifDefined, property } from '@a11d/lit'
-import { Localizer, Currency, type CurrencyCode } from '@3mo/localization'
+import { Currency, type CurrencyCode } from '@3mo/localization'
 import { FieldCurrency } from '@3mo/number-fields'
 import { DataGridColumnNumberBase } from './DataGridColumnNumberBase.js'
-
-Localizer.dictionaries.add('de', {
-	'Currency': 'Währung',
-})
 
 /**
  * @element mo-data-grid-column-currency

@@ -1,10 +1,6 @@
 import { html, component, Component, css, join, bind, property, event } from '@a11d/lit'
 import { Authentication } from '@a11d/lit-application-authentication'
-import { Localizer } from '@3mo/localization'
-
-Localizer.dictionaries.add('de', {
-	'Sign out': 'Abmelden'
-})
+import '@3mo/localization'
 
 /**
  * The signed-in user's initials, which open a menu with their name, their email and menu items of your own.
@@ -50,7 +46,6 @@ export class UserAvatar extends Component {
 			}
 		`
 	}
-
 
 	private get initials() {
 		return this.name

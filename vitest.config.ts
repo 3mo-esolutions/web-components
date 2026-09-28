@@ -1,17 +1,19 @@
 import { defineConfig } from 'vitest/config'
 import { playwright } from '@vitest/browser-playwright'
+import { defaultClientConditions } from 'vite'
 import { readdirSync, readFileSync, existsSync } from 'fs'
 import { resolve } from 'path'
 
 const packagesPath = resolve(import.meta.dirname, 'packages')
 
 // Every package resolves to its source rather than to the "main" it publishes, which points at a
-// dist that is absent until a build runs. Storybook aliases the same way.
-const alias = Object.fromEntries(readdirSync(packagesPath).flatMap(directory => {
+// dist that is absent until a build runs. Subpaths do so through the "source" condition of their
+// exports, which is why each alias matches the name exactly. Storybook resolves the same way.
+const alias = readdirSync(packagesPath).flatMap(directory => {
 	const manifest = resolve(packagesPath, directory, 'package.json')
 	const entry = resolve(packagesPath, directory, 'index.ts')
-	return !existsSync(manifest) || !existsSync(entry) ? [] : [[JSON.parse(readFileSync(manifest, 'utf8')).name, entry]]
-}))
+	return !existsSync(manifest) || !existsSync(entry) ? [] : [{ find: new RegExp(`^${JSON.parse(readFileSync(manifest, 'utf8')).name}$`), replacement: entry }]
+})
 
 const browser = {
 	enabled: true,
@@ -23,7 +25,7 @@ const browser = {
 }
 
 export default defineConfig({
-	resolve: { alias },
+	resolve: { alias, conditions: ['source', ...defaultClientConditions] },
 	test: {
 		globals: true,
 		setupFiles: ['./scripts/vitest-setup.ts'],
