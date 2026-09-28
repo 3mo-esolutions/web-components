@@ -7,7 +7,7 @@ const column = (dataSelector: KeyPath.Of<Person>) => new DataGridColumn<Person>(
 
 const columnsWith = (...dataSelectors: Array<KeyPath.Of<Person>>) => {
 	const columns = new DataGridColumns<Person>()
-	columns.definitions.extracted = dataSelectors.map(column)
+	columns.definitions = dataSelectors.map(column)
 	return columns
 }
 
@@ -42,7 +42,7 @@ describe('DataGridColumns', () => {
 
 		it('should follow the definition for fields a modification leaves undefined', () => {
 			const columns = new DataGridColumns<Person>()
-			columns.definitions.extracted = [new DataGridColumn<Person>({ dataSelector: 'id', heading: 'Id', width: '80px', sticky: 'start' })]
+			columns.definitions = [new DataGridColumn<Person>({ dataSelector: 'id', heading: 'Id', width: '80px', sticky: 'start' })]
 
 			columns.modifications.set([{ dataSelector: 'id', hidden: true }])
 
@@ -53,7 +53,7 @@ describe('DataGridColumns', () => {
 
 		it('should let a modification pin a column as not sticky through null', () => {
 			const columns = new DataGridColumns<Person>()
-			columns.definitions.extracted = [new DataGridColumn<Person>({ dataSelector: 'id', heading: 'Id', sticky: 'start' })]
+			columns.definitions = [new DataGridColumn<Person>({ dataSelector: 'id', heading: 'Id', sticky: 'start' })]
 
 			columns.modifications.set([{ dataSelector: 'id', sticky: null }])
 
@@ -73,7 +73,7 @@ describe('DataGridColumns', () => {
 			const columns = columnsWith('id')
 			columns.modifications.set([{ dataSelector: 'balance', width: '321px' }, { dataSelector: 'id' }])
 
-			columns.definitions.extracted = [column('id'), column('balance')]
+			columns.definitions = [column('id'), column('balance')]
 
 			expect(columns.map(c => c.dataSelector)).toEqual(['balance', 'id'])
 			expect(columns.get('balance')?.width).toBe('321px')
@@ -83,7 +83,7 @@ describe('DataGridColumns', () => {
 			const columns = columnsWith('id', 'name')
 			columns.modifications.set([{ dataSelector: 'name', width: '200px' }])
 
-			columns.definitions.extracted = [column('id'), new DataGridColumn<Person>({ dataSelector: 'name', heading: 'Full Name' })]
+			columns.definitions = [column('id'), new DataGridColumn<Person>({ dataSelector: 'name', heading: 'Full Name' })]
 
 			expect(columns[0]?.heading).toBe('Full Name')
 			expect(columns[0]?.width).toBe('200px')
@@ -104,7 +104,7 @@ describe('DataGridColumns', () => {
 			const prepare = vi.fn()
 			const columns = new DataGridColumns<Person>({ prepare })
 
-			columns.definitions.extracted = [column('id'), column('name')]
+			columns.definitions = [column('id'), column('name')]
 
 			expect(prepare).toHaveBeenCalledTimes(2)
 			expect(prepare).toHaveBeenCalledWith(columns[0]!)
@@ -152,7 +152,7 @@ describe('DataGridColumns', () => {
 		it('should notify', () => {
 			const updated = vi.fn()
 			const columns = new DataGridColumns<Person>({ updated })
-			columns.definitions.extracted = [column('id')]
+			columns.definitions = [column('id')]
 			updated.mockClear()
 
 			columns.modify('id', { hidden: true })
@@ -230,14 +230,12 @@ describe('DataGridColumns', () => {
 	})
 
 	describe('update', () => {
-		it('should compose anew and notify', () => {
+		it('should compose anew and notify when the definitions are given', () => {
 			const updated = vi.fn()
-			let generated = new Array<DataGridColumn<Person>>()
-			const columns = new DataGridColumns<Person>({ generate: () => generated, updated })
+			const columns = new DataGridColumns<Person>({ updated })
 			expect(columns.length).toBe(0)
 
-			generated = [column('id')]
-			columns.update()
+			columns.definitions = [column('id')]
 
 			expect(columns.map(c => c.dataSelector)).toEqual(['id'])
 			expect(updated).toHaveBeenCalledTimes(1)
@@ -246,7 +244,7 @@ describe('DataGridColumns', () => {
 		it('should not notify while being constructed', () => {
 			const updated = vi.fn()
 
-			new DataGridColumns<Person>({ generate: () => [column('id')], updated })
+			new DataGridColumns<Person>({ updated })
 
 			expect(updated).not.toHaveBeenCalled()
 		})

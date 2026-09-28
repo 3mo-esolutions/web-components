@@ -1,6 +1,8 @@
 import { css, type CSSResult, type HTMLTemplateResult } from '@a11d/lit'
 import { equals } from '@a11d/equals'
-import type { DataGridController, DataGridColumns, DataGridSortingStrategy } from './index.js'
+import type { DataGridController } from './DataGridController.js'
+import type { DataGridColumns } from './DataGridColumns.js'
+import type { DataGridSortingStrategy } from './DataGridSortingController.js'
 import type * as CSS from 'csstype'
 
 export type DataGridColumnContentStyle<TData, TValue> =

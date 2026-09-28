@@ -168,6 +168,18 @@ describe('DataGrid', () => {
 		describe('auto-generated', () => {
 			const fixture = new ComponentTestFixture<TestDataGrid>(html`<test-data-grid></test-data-grid>`)
 
+			it('should keep the generated columns while new data has the same shape', async () => {
+				const columns = fixture.component.columns
+				const columnsChange = vi.fn()
+				fixture.component.addEventListener('columnsChange', columnsChange)
+
+				fixture.component.data = [...fixture.component.data]
+				await fixture.updateComplete
+
+				expect(columnsChange).not.toHaveBeenCalled()
+				expect(fixture.component.columns).toEqual(columns)
+			})
+
 			it('should auto-generate columns', () => {
 				const [firstColumn, secondColumn, thirdColumn] = fixture.component.columns
 
@@ -260,8 +272,14 @@ describe('DataGrid', () => {
 				await fixture.updateComplete
 
 				expect(fixture.component.columns.map(c => c.dataSelector)).toEqual(['name'])
-				expect(fixture.component.columnsController.columns.definitions.programmatic.length).toBe(1)
-				expect(fixture.component.columnsController.columns.definitions.generated.length).toBe(0)
+				expect(fixture.component.columnDefinitions.programmatic.length).toBe(1)
+				expect(fixture.component.columnDefinitions.generated.length).toBe(0)
+			})
+
+			it('should take effect at once, before the next update', () => {
+				fixture.component.columns = [new DataGridColumn({ heading: 'Name', dataSelector: 'name' })]
+
+				expect(fixture.component.columns.map(c => c.dataSelector)).toEqual(['name'])
 			})
 
 			it('should be providable through the deprecated setColumns as well', async () => {
@@ -303,7 +321,7 @@ describe('DataGrid', () => {
 				const col = fixture.component.querySelector('mo-data-grid-column-number')!
 				col.heading = 'Identifier'
 				await col.updateComplete
-				fixture.component.columnsController.extractColumns()
+				fixture.component.extractColumns()
 				await fixture.updateComplete
 				expect(fixture.component.columns.find(c => c.dataSelector === 'id')?.heading).toEqual('Identifier')
 			})
@@ -311,7 +329,7 @@ describe('DataGrid', () => {
 			it('should update columns when columns connect or disconnect', async () => {
 				const column = fixture.component.querySelector('mo-data-grid-column-number')
 				column?.remove()
-				fixture.component.columnsController.extractColumns()
+				fixture.component.extractColumns()
 				await fixture.updateComplete
 				expect(fixture.component.columns.map(c => c.dataSelector)).toContain('name')
 
@@ -322,15 +340,15 @@ describe('DataGrid', () => {
 				fixture.component.appendChild(newCol)
 				await new Promise(r => setTimeout(r, 20))
 				await newCol.updateComplete
-				fixture.component.columnsController.extractColumns()
+				fixture.component.extractColumns()
 				await fixture.updateComplete
 				expect(fixture.component.columns.map(c => c.dataSelector)).toContain('id')
 				expect(fixture.component.columns.map(c => c.dataSelector)).toContain('name')
 			})
 
 			it('should expose the definition sources with extracted definitions winning', () => {
-				fixture.component.columnsController.extractColumns()
-				const definitions = fixture.component.columnsController.columns.definitions
+				fixture.component.extractColumns()
+				const definitions = fixture.component.columnDefinitions
 
 				expect(definitions.extracted.map(c => c.dataSelector)).toContain('id')
 				expect(definitions.extracted.map(c => c.dataSelector)).toContain('name')
@@ -338,7 +356,7 @@ describe('DataGrid', () => {
 			})
 
 			it('should be iterable and array-like over the effective definitions', () => {
-				const definitions = fixture.component.columnsController.columns.definitions
+				const definitions = fixture.component.columnDefinitions
 
 				expect(definitions.length).toBeGreaterThanOrEqual(2)
 				expect(definitions.find(c => c.dataSelector === 'name')?.heading).toBe('Name')
@@ -346,7 +364,7 @@ describe('DataGrid', () => {
 			})
 
 			it('should compose anew and update the data grid when a source is assigned', async () => {
-				const definitions = fixture.component.columnsController.columns.definitions
+				const definitions = fixture.component.columnDefinitions
 				const columnsChange = vi.fn()
 				fixture.component.addEventListener('columnsChange', columnsChange)
 
@@ -423,7 +441,7 @@ describe('DataGrid', () => {
 				colText.heading = 'Full Name'
 				await fixture.updateComplete
 				await colText.updateComplete
-				fixture.component.columnsController.extractColumns()
+				fixture.component.extractColumns()
 				await fixture.updateComplete
 
 				expect(fixture.component.columns.find(c => c.dataSelector === 'name')?.heading).toBe('Full Name')
@@ -1195,7 +1213,7 @@ describe('DataGrid', () => {
 			get updateCompleted() {
 				return (async () => {
 					await this.balanceColumnElement.updateComplete
-					this.component.columnsController.extractColumns()
+					this.component.extractColumns()
 					this.component.requestUpdate()
 					await this.component.updateComplete
 					for (const row of this.component.rows) {
@@ -1754,6 +1772,86 @@ describe('DataGrid', () => {
 			expect(fixture.component.navigabilityController).toBe(controller.navigability)
 			expect(fixture.component.recordsController).toBe(controller.records)
 			expect(fixture.component.virtualizationController).toBe(controller.virtualization)
+		})
+	})
+
+	describe('Column tracks', () => {
+		const fixture = new ComponentTestFixture<DataGrid<{ a: number, b: number }>>(html`
+			<mo-data-grid .data=${[{ a: 1, b: 2 }]}>
+				<mo-data-grid-column-number heading='A' dataSelector='a'></mo-data-grid-column-number>
+				<mo-data-grid-column-number heading='B' dataSelector='b' width='50px'></mo-data-grid-column-number>
+			</mo-data-grid>
+		`)
+
+		const tracks = async () => {
+			await fixture.updateComplete
+			await new Promise(r => setTimeout(r, 30))
+			await fixture.updateComplete
+			return fixture.component.renderRoot.querySelector('#content')?.getAttribute('columns') ?? ''
+		}
+
+		const dataTrackCount = (value: string) => value.match(/\[data\]/g)?.length ?? 0
+
+		it('should provide a named track per visible column and none for hidden ones, as a zero track would still render a gap', async () => {
+			const value = await tracks()
+
+			expect(dataTrackCount(value)).toBe(2)
+			expect(value).toContain('[data] max-content')
+			expect(value).toContain('[data] 50px')
+			expect(value).toContain('[padding] 1fr')
+			expect(value).toContain('[actions]')
+
+			fixture.component.columns.find(c => c.dataSelector === 'b')!.hide()
+			const hidden = await tracks()
+
+			expect(dataTrackCount(hidden)).toBe(1)
+			expect(hidden).not.toContain('50px')
+		})
+
+		it('should include the selection, details and reorder tracks only while the corresponding feature is active', async () => {
+			const initial = await tracks()
+			expect(initial).not.toContain('[selection]')
+			expect(initial).not.toContain('[details]')
+			expect(initial).not.toContain('[order]')
+
+			fixture.component.selectability = DataGridSelectability.Multiple
+			expect(await tracks()).toContain('[selection]')
+
+			fixture.component.getRowDetailsTemplate = () => html`<div>Details</div>`
+			expect(await tracks()).toContain('[details]')
+
+			fixture.component.getRowDetailsTemplate = undefined
+			fixture.component.reorderability = true
+			const reorderable = await tracks()
+
+			expect(reorderable).toContain('[order]')
+			expect(reorderable).not.toContain('[details]')
+		})
+
+		it('should lay out the tracks of a grid which first rendered outside the flat tree, such as slotted into a host yet to render its slot', async () => {
+			const host = document.createElement('div')
+			const root = host.attachShadow({ mode: 'open' })
+			const grid = document.createElement('mo-data-grid') as DataGrid<{ a: number, b: number }>
+			grid.selectability = DataGridSelectability.Multiple
+			grid.data = [{ a: 1, b: 2 }]
+			const column = document.createElement('mo-data-grid-column-number')
+			Object.assign(column, { heading: 'A', dataSelector: 'a', width: '50px' })
+			grid.append(column)
+			host.append(grid)
+			document.body.append(host)
+			try {
+				await grid.updateComplete
+				await new Promise(r => setTimeout(r, 30))
+				await grid.updateComplete
+
+				root.append(document.createElement('slot'))
+				await new Promise(requestAnimationFrame)
+
+				const tracks = getComputedStyle(grid.renderRoot.querySelector('#content')!).gridTemplateColumns
+				expect(tracks).toMatch(/^\[selection\] 40px \[data\] 50px \[padding\] [\d.]+px \[actions\] 28px/)
+			} finally {
+				host.remove()
+			}
 		})
 	})
 })

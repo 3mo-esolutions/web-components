@@ -12,6 +12,11 @@ export abstract class ArrayLikeView<T> implements ArrayLike<T>, Iterable<T> {
 
 	get length() { return this.items.length }
 
+	/** The items as they stand: the same array until they are replaced. */
+	toArray() {
+		return this.items
+	}
+
 	protected setItems(items: ReadonlyArray<T>) {
 		for (let index = items.length; index < this.items.length; ++index) {
 			Reflect.deleteProperty(this, index)

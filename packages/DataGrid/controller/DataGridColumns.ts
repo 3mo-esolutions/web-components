@@ -1,12 +1,9 @@
-import { type DataGridColumn } from '../index.js'
+import { type DataGridColumn } from './DataGridColumn.js'
 import { ArrayLikeView } from './ArrayLikeView.js'
-import { DataGridColumnDefinitions } from './DataGridColumnDefinitions.js'
 import { DataGridColumnModifications } from './DataGridColumnModifications.js'
 import { type DataGridColumnModification } from './DataGridColumnModification.js'
 
 type DataGridColumnsInit<TData> = {
-	/** Generates definitions from the data grid's data. Only called while no other definition source provides any. */
-	readonly generate?: () => ReadonlyArray<DataGridColumn<TData>>
 	/** Called for each composed column, so that the data grid can attach itself to it */
 	readonly prepare?: (column: DataGridColumn<TData>) => void
 	/** Called whenever the columns have been composed anew */
@@ -16,7 +13,7 @@ type DataGridColumnsInit<TData> = {
 /**
  * The columns of a data grid, composed as `columns = modifications ⊗ definitions`:
  *
- * - `definitions` — which columns exist and how they present by default. @see DataGridColumnDefinitions
+ * - `definitions` — which columns exist and how they present by default, as the host gives them.
  * - `modifications` — the intent about their order and presentation. @see DataGridColumnModifications
  *
  * The columns are composed by applying the modifications onto the definitions they know, in their
@@ -29,10 +26,12 @@ type DataGridColumnsInit<TData> = {
  * composed anew whenever either layer changes, so they are never stale and never stored twice.
  */
 export class DataGridColumns<TData> extends ArrayLikeView<DataGridColumn<TData>> {
-	readonly definitions = new DataGridColumnDefinitions<TData>({
-		generate: () => this.init?.generate?.() ?? [],
-		updated: () => this.updated(),
-	})
+	private _definitions: ReadonlyArray<DataGridColumn<TData>> = []
+	get definitions() { return this._definitions }
+	set definitions(value) {
+		this._definitions = [...value]
+		this.updated()
+	}
 
 	readonly modifications = new DataGridColumnModifications<TData>({
 		updated: () => this.updated()
@@ -71,10 +70,9 @@ export class DataGridColumns<TData> extends ArrayLikeView<DataGridColumn<TData>>
 		this.modifications.set(modifications)
 	}
 
-	/** Composes the columns and their definitions anew, e.g. after the data grid's data changed */
+	/** Composes the columns anew from the same layers. */
 	update() {
-		// Cascades back through the definitions' update notification, which composes the columns anew
-		this.definitions.update()
+		this.updated()
 	}
 
 	private updated() {
@@ -111,7 +109,7 @@ export class DataGridColumns<TData> extends ArrayLikeView<DataGridColumn<TData>>
 	private composedWith(modifications: ReadonlyArray<DataGridColumnModification<TData>>) {
 		return [
 			...modifications.flatMap(modification => {
-				const definition = this.definitions.get(modification.dataSelector)
+				const definition = this.definitions.find(definition => definition.dataSelector === modification.dataSelector)
 				return !definition ? [] : [{ modification, definition }]
 			}),
 			...this.definitions

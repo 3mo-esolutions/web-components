@@ -1,4 +1,4 @@
-import { type DataGridColumnSticky } from '../index.js'
+import { type DataGridColumnSticky } from './DataGridColumn.js'
 import type * as CSS from 'csstype'
 
 /**

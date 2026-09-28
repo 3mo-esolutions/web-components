@@ -1,7 +1,7 @@
 import { type HTMLTemplateResult, property } from '@a11d/lit'
 import { hasChanged } from '@a11d/equals'
 import { DataGridColumnComponent } from '../DataGridColumnComponent.js'
-import { DataGridColumn, type DataGridColumnAlignment } from '../../DataGridColumn.js'
+import { DataGridColumn, type DataGridColumnAlignment } from '../../controller/DataGridColumn.js'
 
 export abstract class DataGridColumnNumberBase<TData> extends DataGridColumnComponent<TData, number> {
 	@property({ type: Object, hasChanged }) formatOptions?: Intl.NumberFormatOptions

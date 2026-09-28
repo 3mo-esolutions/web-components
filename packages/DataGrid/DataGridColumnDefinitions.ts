@@ -1,5 +1,5 @@
-import { type DataGridColumn } from '../index.js'
-import { ArrayLikeView } from './ArrayLikeView.js'
+import { type DataGridColumn } from './controller/index.js'
+import { ArrayLikeView } from './controller/ArrayLikeView.js'
 
 type DataGridColumnDefinitionsInit<TData> = {
 	/** Generates definitions from the data grid's data. Only called while no other source provides any definitions. */
@@ -9,7 +9,8 @@ type DataGridColumnDefinitionsInit<TData> = {
 }
 
 /**
- * The column definitions of a data grid: which columns exist and how they present by default.
+ * The column definitions of a `mo-data-grid`: which columns exist and how they present by default, which
+ * it hands its controller as the `columns` option.
  *
  * Definitions originate from three sources whose precedence this class owns: the first source
  * providing any definitions wins — `extracted` before `programmatic` before `generated`. Assigning

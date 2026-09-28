@@ -4,7 +4,7 @@ import { IndexabilityController, type IndexabilityItem } from '@3mo/indexability
 import { type ExpandabilityItemOptions } from '@3mo/expandability'
 import { type DataRecord } from './DataRecord.js'
 import { type DataGridColumn } from './DataGridColumn.js'
-import { DataGridColumnsController } from './DataGridColumnsController/index.js'
+import { DataGridColumnsController } from './DataGridColumnsController.js'
 import { DataGridSelectability, type DataGridSelectionBehaviorOnDataChange, DataGridSelectionController } from './DataGridSelectionController.js'
 import { type DataGridRankedSortDefinition, type DataGridSorting, DataGridSortingController } from './DataGridSortingController.js'
 import { DataGridContextMenuController } from './DataGridContextMenuController.js'
@@ -28,8 +28,8 @@ type DataGridColumnHeaderPart<TData> = {
 export interface DataGridControllerOptions<TData> {
 	/** Every datum, rendered or not. */
 	readonly data: ReadonlyArray<TData>
-	/** Columns given in code, beside those the host extracts from its markup. */
-	readonly columns?: ReadonlyArray<DataGridColumn<TData>>
+	/** The columns' definitions. A new array re-syncs them, so a host keeps the array while nothing changed. */
+	readonly columns: ReadonlyArray<DataGridColumn<TData>>
 	/** Where a datum keeps its sub data, which makes the grid a tree grid. */
 	readonly subDataGridDataSelector?: KeyPath.Of<TData>
 

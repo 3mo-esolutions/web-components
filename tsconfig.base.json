@@ -14,6 +14,7 @@
 		],
 		"module": "NodeNext",
 		"moduleResolution": "NodeNext",
+		"customConditions": ["source"],
 		"strict": true,
 		"importHelpers": true,
 		"noUnusedLocals": true,

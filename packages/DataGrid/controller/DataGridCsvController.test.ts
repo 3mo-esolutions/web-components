@@ -1,7 +1,7 @@
 import { DataGridColumn } from './DataGridColumn.js'
 import { DataGridCsvController } from './DataGridCsvController.js'
 import { DataRecord } from './DataRecord.js'
-import './index.js'
+import '../index.js'
 
 type Person = { id: number, name: string, age: number, birthDate: DateTime }
 

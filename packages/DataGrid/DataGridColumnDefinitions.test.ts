@@ -1,4 +1,4 @@
-import { DataGridColumn } from '../index.js'
+import { DataGridColumn } from './index.js'
 import { DataGridColumnDefinitions } from './DataGridColumnDefinitions.js'
 
 type Person = { id: number, name: string }
