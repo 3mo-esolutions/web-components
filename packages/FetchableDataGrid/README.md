@@ -64,7 +64,7 @@ import '@3mo/fetchable-data-grid'
 | `rows` |  | `DataGridRow<TData, TDetailsElement>[]` |  | The rendered rows, sub rows included, in the order of their records. |
 | `resolvedPagination` |  | `{ readonly strategy: DataGridPaginationStrategy; readonly size: DataGridPaginationSize; } \| undefined` |  | Resolves effective pagination configuration from property, static default, and fallback. |
 | `data` | `data` | `TData[]` | `"new Array<TData>()"` | The data to be displayed in the DataGrid. It is an array of objects, where each object represents a row. |
-| `columns` | `columns` | `DataGridColumn<TData, any>[]` |  | The read-only columns of the DataGrid, composed of their definitions and modifications. Provide columns programmatically via `columns.definitions.programmatic`. |
+| `columns` | `columns` | `DataGridColumn<TData, any>[]` |  | The columns of the DataGrid, composed of their definitions and modifications. Assigning it gives the definitions in code, which column elements override. |
 | `headerHidden` | `headerHidden` | `boolean` | `false` | Whether the header should be hidden. |
 | `page` | `page` | `number` | `1` | The current page. |
 | `pagination` | `pagination` | `DataGridPagination \| undefined` |  | How the rows are paged: a strategy, `pages` or `scroll`, and a size, a number or `auto` to fit the height, e.g. `pages`, `pages 50` or `50`. |

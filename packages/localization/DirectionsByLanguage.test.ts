@@ -5,8 +5,8 @@ import { Localizer } from './Localizer.js'
 describe('DirectionsByLanguage', () => {
 	const storageKey = 'Localizer.Language'
 
-	const rightToLeftLanguages: Array<LanguageCode> = ['ar', 'hy', 'az', 'fa', 'he', 'ku', 'mdv', 'ur']
-	const leftToRightLanguages: Array<LanguageCode> = ['en', 'de', 'fr', 'es', 'ru', 'zh', 'ja', 'hi']
+	const rightToLeftLanguages: Array<LanguageCode> = ['ar', 'fa', 'he', 'ks', 'ps', 'sd', 'ug', 'ur', 'yi']
+	const leftToRightLanguages: Array<LanguageCode> = ['en', 'de', 'fr', 'es', 'ru', 'zh', 'ja', 'hi', 'hy', 'az', 'ku', 'mdv']
 
 	let originalEntry: string | null
 
