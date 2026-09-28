@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/fab-group",
-	"version": "0.0.9",
+	"version": "0.0.10",
 	"description": "A web component for floating action buttons that unfold a stack of further actions and close on an outside click.",
 	"repository": {
 		"type": "git",

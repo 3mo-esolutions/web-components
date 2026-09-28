@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/flex",
-	"version": "1.2.2",
+	"version": "1.2.3",
 	"description": "A web component for flexbox layouts with direction, wrap, gap and alignment as attributes.",
 	"repository": {
 		"type": "git",

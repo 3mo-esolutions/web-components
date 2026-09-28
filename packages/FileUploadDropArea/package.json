@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/file-upload-drop-area",
-	"version": "0.3.1",
+	"version": "0.3.2",
 	"description": "A web component for drop areas that upload the files dropped onto them, or picked in the file dialog on click.",
 	"repository": {
 		"type": "git",

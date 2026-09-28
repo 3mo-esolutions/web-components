@@ -13,6 +13,8 @@ import { hourCycleConverter, segmentsStyles, type HourCycle } from '../segments/
  *
  * @element mo-field-time
  *
+ * @ssr true
+ *
  * @attr value - The time as `HH:mm` or `HH:mm:ss`
  * @attr open - Whether the time picker is open
  * @attr pickerHidden - Hide the time picker

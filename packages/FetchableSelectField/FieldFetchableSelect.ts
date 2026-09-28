@@ -10,6 +10,8 @@ export type FieldFetchableSelectParametersType = Record<string, unknown> | void
  *
  * @element mo-field-fetchable-select
  *
+ * @ssr true
+ *
  * @attr optionsRenderLimit - The maximum number of fetched options to render.
  * @attr parameters - The parameters to pass to the fetch function; a change fetches again.
  * @attr searchParameters - A function turning the typed text into parameters for the fetch function when searching.

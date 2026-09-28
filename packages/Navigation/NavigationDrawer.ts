@@ -8,6 +8,8 @@ import './NavigationTree.js'
  *
  * @element mo-navigation-drawer
  *
+ * @ssr true
+ *
  * @attr navigations - The navigations to present.
  * @attr open - Whether the drawer is open.
  * @attr heading - Placed above the tree.

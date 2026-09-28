@@ -1,4 +1,4 @@
-import { component, property, css, Component, html, event } from '@a11d/lit'
+import { component, property, css, Component, html, event, type PropertyValues } from '@a11d/lit'
 import { disabledProperty } from '@3mo/disabled-property'
 import '@3mo/theme'
 import { MdSwitch } from '@material/web/switch/switch.js'
@@ -7,6 +7,8 @@ import { MdSwitch } from '@material/web/switch/switch.js'
  * A switch that turns a single setting on or off, with an optional label.
  *
  * @element mo-switch
+ *
+ * @ssr true
  *
  * @attr label - The label beside the switch
  * @attr disabled - Fades the switch and makes it ignore input
@@ -138,9 +140,12 @@ export class Switch extends Component {
 	}
 }
 
-MdSwitch.addInitializer(s => s.addController({
-	hostUpdated: () => s.renderRoot.querySelector('.track')?.part.add('track'),
-}))
+// Server-rendered switches are constructed once Material defines them, before an initializer could be added.
+const updated = MdSwitch.prototype['updated']
+MdSwitch.prototype['updated'] = function (this: MdSwitch, changedProperties: PropertyValues) {
+	updated.call(this, changedProperties)
+	this.renderRoot.querySelector('.track')?.part.add('track')
+}
 
 declare global {
 	interface HTMLElementTagNameMap {

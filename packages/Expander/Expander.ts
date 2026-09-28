@@ -6,6 +6,8 @@ import * as System from 'detect-browser'
  *
  * @element mo-expander
  *
+ * @ssr true
+ *
  * @attr open - Whether the expander is open.
  * @attr heading - The heading of the expander.
  *

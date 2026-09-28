@@ -30,6 +30,14 @@ npm install @3mo/date-time-fields
 import '@3mo/date-time-fields'
 ```
 
+[Server-side rendering](https://3mo-esolutions.github.io/web-components/?path=/docs/getting-started-installation--overview#server-side-rendering):
+
+- `<mo-field-date>`: Renders with Lit SSR and hydrates.
+- `<mo-field-date-range>`: Renders with Lit SSR and hydrates.
+- `<mo-field-date-time>`: Renders with Lit SSR and hydrates.
+- `<mo-field-date-time-range>`: Renders with Lit SSR and hydrates.
+- `<mo-field-time>`: Renders with Lit SSR and hydrates.
+
 ## Usage
 
 ```html

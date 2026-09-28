@@ -18,6 +18,8 @@ interface Parameters {
  * A dialog that asks to confirm a deletion, then runs it.
  *
  * @element mo-dialog-deletion
+ *
+ * @ssr true
  */
 @component('mo-dialog-deletion')
 export class DialogDeletion extends DialogComponent<Parameters> {

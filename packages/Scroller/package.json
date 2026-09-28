@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/scroller",
-	"version": "0.5.1",
+	"version": "0.5.2",
 	"description": "A web component for scrollable content with thin, themeable scrollbars and optional scroll snapping.",
 	"repository": {
 		"type": "git",

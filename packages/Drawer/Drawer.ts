@@ -6,6 +6,8 @@ import { Sheet, type SheetPlacement } from '@3mo/sheet'
  *
  * @element mo-drawer
  *
+ * @ssr true
+ *
  * @attr open - Whether the drawer is open.
  * @attr placement - The edge the drawer is anchored to. Defaults to `inline-start`.
  * @attr label - The accessible name of the drawer.

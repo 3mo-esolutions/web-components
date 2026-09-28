@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/expand-collapse-icon-button",
-	"version": "1.0.4",
+	"version": "1.0.5",
 	"description": "A web component for chevron icon buttons that rotate to show whether something is expanded or collapsed.",
 	"repository": {
 		"type": "git",

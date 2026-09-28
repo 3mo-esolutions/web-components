@@ -1,11 +1,12 @@
 import { Component, component, css, html } from '@a11d/lit'
-import { dependsOnScreenSize } from '@3mo/screen-size'
 import { CommandPalette } from './CommandPalette.js'
 
 /**
  * A search button that opens the command palette and shows its shortcut on wide screens.
  *
  * @element mo-command-palette-button
+ *
+ * @ssr true
  */
 @component('mo-command-palette-button')
 export class CommandPaletteButton extends Component {
@@ -33,23 +34,28 @@ export class CommandPaletteButton extends Component {
 				opacity: 0.75;
 				font-size: small;
 			}
+
+			@media (max-width: 1024px) {
+				mo-key {
+					display: none;
+				}
+			}
+
+			@media (max-width: 640px) {
+				#label {
+					display: none;
+				}
+			}
 		`
 	}
 
 	protected override get template() {
-		const searchLabelTemplate = html`<span id='label'>${t('Search')}</span>`
 		return html`
 			<mo-button @click=${() => CommandPalette.open()}>
 				<mo-flex direction='horizontal' gap='6px' alignItems='center'>
 					<mo-icon icon='search'></mo-icon>
-					${dependsOnScreenSize({
-						desktop: html`
-							${searchLabelTemplate}
-							<mo-key>Meta+P</mo-key>
-						`,
-						tablet: searchLabelTemplate,
-						mobile: html.nothing,
-					})}
+					<span id='label'>${t('Search')}</span>
+					<mo-key>Meta+P</mo-key>
 				</mo-flex>
 			</mo-button>
 		`

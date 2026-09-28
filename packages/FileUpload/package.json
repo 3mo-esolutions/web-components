@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/file-upload",
-	"version": "0.4.3",
+	"version": "0.4.4",
 	"description": "A web component for uploading files chosen in the file picker, plus a directive that accepts dropped files.",
 	"repository": {
 		"type": "git",

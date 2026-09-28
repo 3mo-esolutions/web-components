@@ -152,6 +152,13 @@ export class ModuleExports {
 		return ts.getTextOfJSDocComment(tag?.comment)?.trim() || undefined
 	}
 
+	/** The declaration's `@ssr true` or `@ssr false` JSDoc tag, with the caveat that may follow it as `@ssr true - <caveat>`. */
+	static ssrOf(node: ts.Node) {
+		const tag = ts.getJSDocTags(node).find(tag => tag.tagName.text === 'ssr')
+		const [, supported, caveat] = ts.getTextOfJSDocComment(tag?.comment)?.trim().match(/^(true|false)\b(?:\s*-\s*)?([\s\S]*)$/) ?? []
+		return !supported ? undefined : { supported: supported === 'true', caveat: caveat?.trim() || undefined }
+	}
+
 	private static descriptionOf(node: ts.Node) {
 		const text = ts.getJSDocCommentsAndTags(node)
 			.filter(ts.isJSDoc)

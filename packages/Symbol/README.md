@@ -16,6 +16,8 @@ npm install @3mo/symbol
 import '@3mo/symbol'
 ```
 
+[Server-side rendering](https://3mo-esolutions.github.io/web-components/?path=/docs/getting-started-installation--overview#server-side-rendering): Renders with Lit SSR and hydrates. The font should be provided manually when using SSR.
+
 ## Usage
 
 ```html

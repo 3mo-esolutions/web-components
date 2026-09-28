@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/field",
-	"version": "0.7.1",
+	"version": "0.7.2",
 	"description": "A web component for the shared field frame with a floating label and start and end slots, plus the base classes of every field.",
 	"repository": {
 		"type": "git",

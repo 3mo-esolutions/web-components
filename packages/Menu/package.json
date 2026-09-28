@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/menu",
-	"version": "0.14.3",
+	"version": "0.14.4",
 	"description": "Web components for popup menus with plain, selectable, nested and navigation items, plus an ARIA menu button controller.",
 	"repository": {
 		"type": "git",

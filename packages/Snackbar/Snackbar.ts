@@ -15,6 +15,8 @@ import '@3mo/theme'
  *
  * @element mo-snackbar
  *
+ * @ssr true
+ *
  * @attr open - Whether the snack-bar is currently shown
  * @attr type - The notification type which controls the accent color and icon
  * @attr text - The message, taken from the notification.

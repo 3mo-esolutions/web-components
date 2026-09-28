@@ -2,6 +2,11 @@ import { component, html, range } from '@a11d/lit'
 import { type SelectionListItemChangeEvent } from '@3mo/list'
 import { DateList } from './DateList.js'
 
+/**
+ * @element mo-minute-list
+ *
+ * @ssr true
+ */
 @component('mo-minute-list')
 export class MinuteList extends DateList {
 	protected override get listItemsTemplate() {

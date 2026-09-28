@@ -7,6 +7,8 @@ import { DataGridColumnComponent } from './DataGridColumnComponent.js'
 /**
  * @element mo-data-grid-column-deletion
  *
+ * @ssr true
+ *
  * @attr prevent - Prevents the deletion button from being displayed
  * @attr icon - The icon to display. Defaults to 'delete'
  * @attr tooltip - The tooltip to display. Defaults to 'Delete position'

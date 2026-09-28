@@ -16,6 +16,8 @@ npm install @3mo/icon
 import '@3mo/icon'
 ```
 
+[Server-side rendering](https://3mo-esolutions.github.io/web-components/?path=/docs/getting-started-installation--overview#server-side-rendering): Renders with Lit SSR and hydrates. The font should be provided manually when using SSR.
+
 ## Usage
 
 ```html
@@ -40,7 +42,7 @@ It is read out as its icon's name, such as "delete", unless something around it 
 
 | Name | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
-| `variant` | `variant` | `IconVariant` | `"defaultVariant"` | The style, each a font of its own: `filled` (default), `outlined`, `rounded` or `sharp`. |
+| `variant` | `variant` | `IconVariant` |  | The style, each a font of its own: `filled` (default), `outlined`, `rounded` or `sharp`. |
 | `icon` | `icon` | `MaterialIcon \| undefined` |  | The name of the icon, e.g. `delete`. |
 
 ## Links

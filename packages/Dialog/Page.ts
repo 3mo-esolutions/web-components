@@ -5,6 +5,8 @@ import { SlotController } from '@3mo/slot-controller'
 /**
  * @element mo-page
  *
+ * @ssr true
+ *
  * @attr heading - The page heading
  * @attr fullHeight - Whether the page should take up the full height of the viewport
  * @attr headerHidden - Whether the page header should be hidden

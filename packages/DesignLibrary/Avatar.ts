@@ -5,6 +5,8 @@ import { html, component, Component, css } from '@a11d/lit'
  *
  * @element mo-avatar
  *
+ * @ssr true
+ *
  * @slot - The initials or icon.
  */
 @component('mo-avatar')

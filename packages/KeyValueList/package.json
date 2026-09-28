@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/key-value-list",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"description": "A web component for key-value pairs laid out as a description list in as many columns as fit.",
 	"repository": {
 		"type": "git",

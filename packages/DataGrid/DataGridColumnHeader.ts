@@ -6,6 +6,11 @@ import { ReorderabilityState } from '@3mo/reorderability'
 import { DataGridColumn } from './controller/DataGridColumn.js'
 import { DataGridSortingStrategy } from './controller/DataGridSortingController.js'
 
+/**
+ * @element mo-data-grid-column-header
+ *
+ * @ssr true
+ */
 @component('mo-data-grid-column-header')
 export class DataGridColumnHeader extends Component {
 	@property({ type: Object }) column!: DataGridColumn<unknown>

@@ -26,6 +26,7 @@ import { SlotController } from '@3mo/slot-controller'
 
 | Name | Kind | Description |
 | --- | --- | --- |
+| `HydrationController` | class | Tracks whether a server-rendered host is hydrating, i.e. rendering its first update in the browser. |
 | `SlotController` | class | A controller that re-renders its host when its slotted content changes and tells what each slot holds. |
 
 ## Links

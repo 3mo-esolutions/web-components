@@ -6,6 +6,8 @@ import { SliderBase } from './SliderBase.js'
  *
  * @element mo-slider
  *
+ * @ssr true
+ *
  * @attr value - The selected number
  * @attr disabled - Turns the slider gray and makes it ignore input
  * @attr discrete - Shows the value above the thumb while it is dragged

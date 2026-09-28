@@ -7,6 +7,8 @@ import { type TooltipPlacement } from './TooltipPlacement.js'
  *
  * @element mo-tooltip
  *
+ * @ssr true
+ *
  * @attr placement - The side of the anchor the tooltip shows on: `block-start`, `block-end`, `inline-start` or `inline-end`.
  * @attr anchor - The element the tooltip is anchored to, set as a property.
  * @attr rich - Set by the tooltip itself when its content holds elements, which gives it a surface that can be interacted with.

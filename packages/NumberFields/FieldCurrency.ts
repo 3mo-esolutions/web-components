@@ -7,6 +7,8 @@ import { FieldNumber } from './FieldNumber.js'
  *
  * @element mo-field-currency
  *
+ * @ssr true
+ *
  * @attr currency - The currency of the field.
  */
 @component('mo-field-currency')

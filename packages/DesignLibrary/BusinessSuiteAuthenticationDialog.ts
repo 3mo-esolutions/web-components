@@ -13,6 +13,11 @@ const queryActionElement = (slotName: string) => {
 	}
 }
 
+/**
+ * @element mo-business-suite-authentication-dialog
+ *
+ * @ssr true
+ */
 @component('mo-business-suite-authentication-dialog')
 @DialogComponent.dialogElement()
 export class BusinessSuiteAuthenticationDialog extends Component implements IDialog {

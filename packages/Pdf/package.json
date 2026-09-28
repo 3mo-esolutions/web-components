@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/pdf",
-	"version": "0.1.8",
+	"version": "0.1.9",
 	"description": "A web component for embedded PDF documents with a loading spinner, falling back to an iframe on Apple platforms.",
 	"repository": {
 		"type": "git",

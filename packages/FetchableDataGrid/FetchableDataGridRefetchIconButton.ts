@@ -6,6 +6,8 @@ import { contextMenu } from '@3mo/context-menu'
 /**
  * @fires requestFetch
  * @fires autoRefetchChange
+ *
+ * @ssr true
  */
 @component('mo-fetchable-data-grid-refetch-icon-button')
 export class FetchableDataGridRefetchIconButton extends Component {

@@ -7,6 +7,8 @@ import '@3mo/circular-progress'
  *
  * @element mo-loading-button
  *
+ * @ssr true
+ *
  * @attr loading - Shows the progress and ignores presses.
  * @attr preventClickEventInference - Ignores the promises returned by `click` handlers, leaving `loading` to the consumer.
  */

@@ -1,7 +1,11 @@
 import { component, html, ifDefined } from '@a11d/lit'
 import { DataGridColumnComponent } from './DataGridColumnComponent.js'
 
-/** @element mo-data-grid-column-text */
+/**
+ * @element mo-data-grid-column-text
+ *
+ * @ssr true
+ */
 @component('mo-data-grid-column-text')
 export class DataGridColumnText<TData> extends DataGridColumnComponent<TData, string> {
 	override getContentTemplate(value: string | undefined, data: TData) {

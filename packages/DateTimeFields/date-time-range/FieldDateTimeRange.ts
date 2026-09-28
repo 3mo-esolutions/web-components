@@ -11,6 +11,8 @@ import { FieldDateTimeRangeController, type FieldDateTimeRangeSelection } from '
  *
  * @element mo-field-date-time-range
  *
+ * @ssr true
+ *
  * @attr value - The selected date range.
  *
  * @csspart segments-range - Both ends' segments and the delimiter between them

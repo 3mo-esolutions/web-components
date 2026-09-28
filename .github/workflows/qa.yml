@@ -42,3 +42,18 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium firefox
       - run: npm run test
+
+  ssr:
+    name: 🖥️ Server-Side Rendering
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 26.x
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run analyze
+      - run: npm run test:ssr
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:ssr:hydration

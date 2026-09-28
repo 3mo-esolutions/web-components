@@ -7,6 +7,8 @@ import { type Popover, PopoverAlignment, PopoverPlacement } from './index.js'
  *
  * @element mo-popover-container
  *
+ * @ssr true
+ *
  * @attr alignment - Passed on to the popover.
  * @attr placement - Passed on to the popover.
  *

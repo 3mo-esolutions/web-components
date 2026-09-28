@@ -16,6 +16,8 @@ npm install @3mo/linear-progress
 import '@3mo/linear-progress'
 ```
 
+[Server-side rendering](https://3mo-esolutions.github.io/web-components/?path=/docs/getting-started-installation--overview#server-side-rendering): Renders with Lit SSR and hydrates.
+
 ## Usage
 
 ```html

@@ -2,7 +2,11 @@ import { component, html, literal } from '@a11d/lit'
 import { FieldDateTimePrecision } from '@3mo/date-time-fields'
 import { DataGridColumnDateTimeBase } from './DataGridColumnDateTimeBase.js'
 
-/** @element mo-data-grid-column-date-time */
+/**
+ * @element mo-data-grid-column-date-time
+ *
+ * @ssr true
+ */
 @component('mo-data-grid-column-date-time')
 export class DataGridColumnDateTime<TData> extends DataGridColumnDateTimeBase<TData, Date> {
 	override getContentTemplate(value: Date | undefined, data: TData) {

@@ -202,6 +202,17 @@ describe('DataGrid', () => {
 				expect(thirdColumn?.hidden).toEqual(false)
 			})
 
+			describe('with data arriving after the first render', () => {
+				const lateFixture = new ComponentTestFixture<DataGrid<{ name: string }>>(html`<mo-data-grid></mo-data-grid>`)
+
+				it('should generate the columns of the data', async () => {
+					lateFixture.component.data = [{ name: 'Ada' }]
+					await lateFixture.updateComplete
+
+					expect(lateFixture.component.columns.map(column => column.dataSelector)).toEqual(['name'])
+				})
+			})
+
 			it('should attach the controller of the grid to its columns', () => {
 				const [firstColumn, secondColumn] = fixture.component.columns
 				expect(firstColumn?.controller).toBe(fixture.component.controller)

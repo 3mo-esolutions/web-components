@@ -11,6 +11,8 @@ import { FieldDateTimePrecision } from '../FieldDateTimePrecision.js'
  *
  * @element mo-field-date-time
  *
+ * @ssr true
+ *
  * @i18n "Date & Time"
  * @i18n "Date"
  * @i18n "Year"

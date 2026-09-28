@@ -9,6 +9,8 @@ export type AccordionValue = string | Array<string> | undefined
  *
  * @element mo-accordion
  *
+ * @ssr true
+ *
  * @attr multiple - Whether several items may be open at the same time.
  * @attr value - The "value" of the open item, or an array of them while "multiple" is set.
  *

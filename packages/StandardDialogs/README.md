@@ -20,6 +20,12 @@ npm install @3mo/standard-dialogs
 import '@3mo/standard-dialogs'
 ```
 
+[Server-side rendering](https://3mo-esolutions.github.io/web-components/?path=/docs/getting-started-installation--overview#server-side-rendering):
+
+- `<mo-generic-dialog>`: Renders with Lit SSR and hydrates.
+- `<mo-dialog-alert>`: Renders with Lit SSR and hydrates.
+- `<mo-dialog-deletion>`: Renders with Lit SSR and hydrates.
+
 ## Usage
 
 ```html

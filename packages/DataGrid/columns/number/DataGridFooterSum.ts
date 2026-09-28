@@ -3,6 +3,8 @@ import { component, property, Component, html, css } from '@a11d/lit'
 /**
  * @element mo-data-grid-footer-sum
  *
+ * @ssr true
+ *
  * @attr heading
  *
  * @slot - Sum of values

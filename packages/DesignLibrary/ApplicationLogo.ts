@@ -1,6 +1,11 @@
 import { Component, component, css, eventListener, html, property, unsafeSVG } from '@a11d/lit'
 import { RoutableComponent } from '@a11d/lit-application'
 
+/**
+ * @element mo-application-logo
+ *
+ * @ssr true
+ */
 @component('mo-application-logo')
 export class ApplicationLogo extends Component {
 	static source?: string

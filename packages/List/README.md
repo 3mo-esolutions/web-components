@@ -16,6 +16,8 @@ npm install @3mo/list
 import '@3mo/list'
 ```
 
+[Server-side rendering](https://3mo-esolutions.github.io/web-components/?path=/docs/getting-started-installation--overview#server-side-rendering): Renders with Lit SSR and hydrates.
+
 ## Usage
 
 ```html

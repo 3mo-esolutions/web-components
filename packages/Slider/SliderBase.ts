@@ -1,4 +1,4 @@
-import { property, css, Component, event, type HTMLTemplateResult, query } from '@a11d/lit'
+import { property, css, Component, event, type HTMLTemplateResult, query, type PropertyValues } from '@a11d/lit'
 import { disabledProperty } from '@3mo/disabled-property'
 import { MdSlider as MdSliderBase, } from '@material/web/slider/slider.js'
 import '@3mo/theme'
@@ -67,8 +67,9 @@ export abstract class SliderBase<T> extends Component {
 	protected abstract updateValue(): void
 }
 
-MdSliderBase.addInitializer(async component => {
-	const slider = component as MdSliderBase
-	await slider.updateComplete
-	slider.renderRoot.querySelectorAll('.handle')?.forEach(thumb => thumb.setAttribute('part', 'thumb'))
-})
+// Server-rendered sliders are constructed once Material defines them, before an initializer could be added.
+const firstUpdated = MdSliderBase.prototype['firstUpdated']
+MdSliderBase.prototype['firstUpdated'] = function (this: MdSliderBase, changedProperties: PropertyValues) {
+	firstUpdated.call(this, changedProperties)
+	this.renderRoot.querySelectorAll('.handle').forEach(thumb => thumb.setAttribute('part', 'thumb'))
+}

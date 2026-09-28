@@ -6,6 +6,8 @@ import { MdPrimaryTab } from '@material/web/tabs/primary-tab.js'
  *
  * @element mo-tab
  *
+ * @ssr true
+ *
  * @attr value - Identifies the tab in the `value` of its bar, and pairs it with the panel of the same value
  * @attr inline-icon - Places the icon beside the label instead of above it
  * @attr icon-only - Marks a tab without a label during server-side rendering; detected on its own otherwise

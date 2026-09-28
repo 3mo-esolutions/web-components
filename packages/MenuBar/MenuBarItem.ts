@@ -8,6 +8,8 @@ import '@3mo/focus-ring'
  *
  * @element mo-menu-bar-item
  *
+ * @ssr true
+ *
  * @attr disabled - Whether the menu can be opened.
  *
  * @slot - The trigger's content, usually its label.

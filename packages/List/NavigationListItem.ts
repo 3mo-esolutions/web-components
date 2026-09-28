@@ -1,7 +1,11 @@
 import { component, css } from '@a11d/lit'
 import { ListItem } from '@3mo/list'
 
-/** @element mo-navigation-list-item */
+/**
+ * @element mo-navigation-list-item
+ *
+ * @ssr true
+ */
 @component('mo-navigation-list-item')
 export class NavigationListItem extends ListItem {
 	get selected() {

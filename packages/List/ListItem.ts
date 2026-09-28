@@ -8,6 +8,8 @@ import './ListItemRipple.js'
  *
  * @element mo-list-item
  *
+ * @ssr true
+ *
  * @attr disabled - Whether the list item is disabled
  * @attr icon - Icon to be displayed in the list item
  * @attr preventClickOnSpace - Whether the list item should prevent click on space

@@ -14,6 +14,8 @@ npm install @3mo/moddable-data-grid
 import '@3mo/moddable-data-grid'
 ```
 
+[Server-side rendering](https://3mo-esolutions.github.io/web-components/?path=/docs/getting-started-installation--overview#server-side-rendering): Renders with Lit SSR and hydrates.
+
 ## Examples
 
 - [Default](https://3mo-esolutions.github.io/web-components/?path=/story/data-data-grids-moddable-data-grid--default) — Pick a view in the bar above the grid and change its filters, sorting or columns: its chip then offers to save or discard the changes, and the add button saves them as a new view.

@@ -6,6 +6,8 @@ import { InputFieldComponent } from '@3mo/field'
  * A field for a color, typed as a hex code or picked from a swatch that opens the browser's color picker.
  *
  * @element mo-field-color
+ *
+ * @ssr true
  */
 @component('mo-field-color')
 export class FieldColor extends InputFieldComponent<Color> {

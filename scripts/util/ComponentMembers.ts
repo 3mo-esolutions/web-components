@@ -173,6 +173,8 @@ export class ComponentMembers {
 			corrections: new Map(shadowed.map(name => [name, this.describe(instanceMembers.get(name)!)])),
 			/** The element's `@accessibility` JSDoc section. */
 			accessibility: !elementClass ? undefined : ModuleExports.accessibilityOf(elementClass.declaration),
+			/** The element's `@ssr` JSDoc tag. */
+			ssr: !elementClass ? undefined : ModuleExports.ssrOf(elementClass.declaration),
 			/** The JSDoc text of the element, or of one of its members. */
 			documentation: (memberName?: string) => this.documentation(memberName === undefined
 				? elementClass?.declaration

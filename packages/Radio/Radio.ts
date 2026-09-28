@@ -11,6 +11,8 @@ import type { MdRadio } from '@material/web/radio/radio.js'
  *
  * @element mo-radio
  *
+ * @ssr true
+ *
  * @attr label - The label of the radio.
  * @attr name - The name of the radio group. Radios sharing a name are mutually exclusive document-wide.
  * @attr disabled - Whether the radio is disabled or not.

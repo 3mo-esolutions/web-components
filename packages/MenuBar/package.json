@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/menu-bar",
-	"version": "0.1.2",
+	"version": "0.1.3",
 	"description": "Web components for application menu bars, like File, Edit and View, with menubar keyboard and hover behavior.",
 	"repository": {
 		"type": "git",

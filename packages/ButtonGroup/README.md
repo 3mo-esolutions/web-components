@@ -16,6 +16,8 @@ npm install @3mo/button-group
 import '@3mo/button-group'
 ```
 
+[Server-side rendering](https://3mo-esolutions.github.io/web-components/?path=/docs/getting-started-installation--overview#server-side-rendering): Renders with Lit SSR and hydrates. In SSR all buttons should get their type explicitly.
+
 ## Usage
 
 ```html

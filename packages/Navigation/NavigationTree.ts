@@ -9,6 +9,8 @@ import './NavigationTreeItem.js'
  *
  * @element mo-navigation-tree
  *
+ * @ssr true
+ *
  * @attr navigations - The navigations to present.
  * @fires invoke - Dispatched with the destination which was invoked.
  *

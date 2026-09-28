@@ -5,11 +5,17 @@ import { FieldText } from './FieldText.js'
  * A multi-line text field.
  *
  * @element mo-field-text-area
+ *
+ * @ssr true
  */
 @component('mo-field-text-area')
 export class FieldTextArea extends FieldText {
 	protected override get elementTag() {
 		return literal`textarea`
+	}
+
+	protected override get elementClosingTag() {
+		return literal`</textarea>`
 	}
 
 	static override get styles() {

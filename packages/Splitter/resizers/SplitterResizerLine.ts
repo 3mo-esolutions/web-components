@@ -6,6 +6,8 @@ import { SplitterResizer } from './index.js'
  *
  * @element mo-splitter-resizer-line
  *
+ * @ssr true
+ *
  * @cssprop --mo-splitter-resizer-line-thickness - The thickness of the line
  * @cssprop --mo-splitter-resizer-line-idle-background - The color of the line
  * @cssprop --mo-splitter-resizer-line-accent-color - The color of the line while hovered or dragged

@@ -8,6 +8,8 @@ import '@3mo/grid'
  *
  * @element mo-section
  *
+ * @ssr true
+ *
  * @attr heading - The heading in the header
  *
  * @slot - Content

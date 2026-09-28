@@ -6,6 +6,8 @@ import * as System from 'detect-browser'
  *
  * @element mo-pdf
  *
+ * @ssr true
+ *
  * @attr source - The URL of the PDF document.
  */
 @component('mo-pdf')

@@ -16,6 +16,8 @@ export function isMenu(element: EventTarget): element is HTMLElement {
  *
  * @element mo-menu
  *
+ * @ssr true
+ *
  * @attr anchor - The element that the menu is anchored to.
  * @attr placement - The placement of the menu.
  * @attr alignment - How the menu lines up with its anchor: `start`, `center` or `end`.

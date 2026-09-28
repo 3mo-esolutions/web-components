@@ -1,4 +1,4 @@
-import { Component, component, css, event, eventListener, html, property } from '@a11d/lit'
+import { Component, component, css, event, eventListener, html, isServer, property } from '@a11d/lit'
 import { Selectability } from '@3mo/selectability'
 import { SlotController } from '@3mo/slot-controller'
 import { TreeController } from './TreeController.js'
@@ -8,6 +8,8 @@ import { TreeItem } from './TreeItem.js'
  * A hierarchy to browse and select from, written as nested `mo-tree-item`s.
  *
  * @element mo-tree
+ *
+ * @ssr true
  *
  * @attr selectability - `single` or `multiple`; unset, items are not selectable and a click opens instead.
  * @attr value - The selected item, or the selected items while `multiple`.
@@ -69,7 +71,7 @@ export class Tree extends Component {
 
 	/** The root items. */
 	get items() {
-		return this.rootItems ??= [...this.children].filter((child): child is TreeItem => child instanceof TreeItem)
+		return this.rootItems ??= isServer ? [] : [...this.children].filter((child): child is TreeItem => child instanceof TreeItem)
 	}
 
 	/** Opens the item's ancestors and puts the cursor on it. */

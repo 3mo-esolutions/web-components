@@ -1,4 +1,4 @@
-import { Component, html, component, property, css, style } from '@a11d/lit'
+import { Component, html, component, property, css, styleMap } from '@a11d/lit'
 import { FontImporter } from '@3mo/font-importer'
 import { type MaterialIcon } from './index.js'
 
@@ -43,7 +43,10 @@ export class Icon extends Component {
 		return font
 	}
 
-	@property({ updated(this: Icon) { FontImporter.import(Icon.get(this.variant).url) } }) variant = Icon.defaultVariant
+	private _variant?: IconVariant
+	@property()
+	get variant() { return this._variant ?? Icon.defaultVariant }
+	set variant(value) { this._variant = value }
 	@property() icon?: MaterialIcon
 
 	static override get styles() {
@@ -72,9 +75,14 @@ export class Icon extends Component {
 		`
 	}
 
+	protected override updated(...parameters: Parameters<Component['updated']>) {
+		super.updated(...parameters)
+		FontImporter.import(Icon.get(this.variant).url)
+	}
+
 	protected override get template() {
 		return html`
-			<span ${style({ fontFamily: Icon.get(this.variant).name })}>${this.icon}</span>
+			<span style=${styleMap({ fontFamily: Icon.get(this.variant).name })}>${this.icon}</span>
 		`
 	}
 }

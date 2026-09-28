@@ -3,7 +3,7 @@ import Path from 'path'
 import ts from 'typescript'
 import type { CustomElementsManifest, Tag } from './CustomElementsManifest.ts'
 import { Package } from './Package.ts'
-import { elementApi, fence, links, paragraphs, prose, summary } from './PackageReadme.ts'
+import { elementApi, fence, links, paragraphs, prose, ssrOf, summary } from './PackageReadme.ts'
 import { type Story, StoriesFile } from './StoriesFile.ts'
 
 /** An entry of the `index.json` of a Storybook. */
@@ -170,6 +170,7 @@ export class DocsPage {
 			[
 				!this.tag ? '' : `- Element: \`<${this.tag.name}>\``,
 				!packageJson ? '' : `- Package: \`${packageJson.name}\` ${packageJson.version}${!status ? '' : ` (${status})`}`,
+				!this.tag?.ssr ? '' : `- Server-side rendering: ${ssrOf(this.tag.ssr)}`,
 				`- Storybook: <${StoriesFile.storybookUrl}?path=/docs/${this.entry.id}>`,
 				!source ? '' : `- Source: <https://github.com/3mo-esolutions/web-components/tree/main/${source}>`,
 			].filter(Boolean).join('\n'),

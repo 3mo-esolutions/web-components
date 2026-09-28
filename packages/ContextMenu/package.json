@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/context-menu",
-	"version": "0.8.1",
+	"version": "0.8.2",
 	"description": "Web components for context menus that open at the pointer on right-click, attachable to any element through a directive.",
 	"repository": {
 		"type": "git",

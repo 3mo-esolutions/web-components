@@ -6,6 +6,8 @@ import { FetcherController } from '@3mo/fetcher-controller'
  * A dialog that fetches what it shows and stays in its loading state until it arrives.
  *
  * @element mo-fetchable-dialog
+ *
+ * @ssr true
  */
 @component('mo-fetchable-dialog')
 export class FetchableDialog<T> extends LoadingDialog {

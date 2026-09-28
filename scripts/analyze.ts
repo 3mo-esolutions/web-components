@@ -15,8 +15,9 @@ ComponentMembers.collect(customElements.tags.map(tag => tag.path))
 customElements.tags = customElements.tags
 	.filter(tag => !tag.path.endsWith('.test.ts') && !tag.path.endsWith('.stories.ts') && !/[\\/]stories[\\/]/.test(tag.path))
 	.map(tag => {
-		const { known, staticOnly, corrections, documentation, accessibility } = ComponentMembers.of(tag.name)
+		const { known, staticOnly, corrections, documentation, accessibility, ssr } = ComponentMembers.of(tag.name)
 		tag.accessibility = accessibility
+		tag.ssr = ssr
 		tag.attributes = tag.attributes?.filter(a => !staticOnly.has(a.name))
 		tag.properties = tag.properties?.filter(p => !staticOnly.has(p.name))
 		if (!known) {

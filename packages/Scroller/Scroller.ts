@@ -7,6 +7,8 @@ import type * as CSS from 'csstype'
  *
  * @element mo-scroller
  *
+ * @ssr true
+ *
  * @slot - The content of the scroller
  *
  * @attr snapType - The scroll snap type, mapped to `scroll-snap-type`

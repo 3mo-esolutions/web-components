@@ -6,6 +6,8 @@ import { type Splitter } from './Splitter.js'
  *
  * @element mo-splitter-item
  *
+ * @ssr true
+ *
  * @attr size - The initial size along the splitter's direction, such as `60%`; the last item takes the rest
  * @attr min - The minimum size along the splitter's direction
  * @attr collapsed - Whether the item shrinks to its content and leaves its space to the others

@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/empty-state",
-	"version": "0.1.9",
+	"version": "0.1.10",
 	"description": "A web component for centered placeholder messages with an optional icon, where there is no content yet.",
 	"repository": {
 		"type": "git",

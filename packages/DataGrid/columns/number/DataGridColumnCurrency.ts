@@ -6,6 +6,8 @@ import { DataGridColumnNumberBase } from './DataGridColumnNumberBase.js'
 /**
  * @element mo-data-grid-column-currency
  *
+ * @ssr true
+ *
  * @attr currency - The currency of the values.
  * @attr currencyDataSelector - The key path to the currency of the values.
 */

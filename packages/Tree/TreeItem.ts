@@ -6,6 +6,8 @@ import type { MaterialIcon } from '@3mo/icon'
  *
  * @element mo-tree-item
  *
+ * @ssr true
+ *
  * @attr value - What the tree reports this item as. An item without one is not in the tree's `value`.
  * @attr open - Whether the nested items are shown.
  * @attr selected - Whether the item starts out selected.

@@ -5,6 +5,8 @@ import { component, Component, css, html, property } from '@a11d/lit'
  *
  * @element mo-line
  *
+ * @ssr true
+ *
  * @attr direction - Whether the line runs horizontally, the default, or vertically
  *
  * @slot - A label in the middle of the line

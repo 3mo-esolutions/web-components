@@ -1,5 +1,4 @@
-import { Component, component, css, eventListener, html, ifDefined, property, query } from '@a11d/lit'
-import './cloudflarestream-sdk.js'
+import { Component, component, css, eventListener, html, ifDefined, isServer, property, query } from '@a11d/lit'
 
 type CloudflareStreamApi = {
 	play(): Promise<void>
@@ -25,6 +24,8 @@ const getViewportShallPausePredicate = (scale: number) => (rect: DOMRect) => {
  * A Cloudflare Stream video player, embedded at a 16:9 ratio.
  *
  * @element mo-cloudflare-stream
+ *
+ * @ssr true
  *
  * @attr source - The URL of the video's Cloudflare Stream player iframe.
  * @attr autoPause - When the video pauses as it is scrolled out of view: `when-not-in-viewport`, `when-quarter-in-viewport` or `when-half-in-viewport`. It plays again when it returns.
@@ -62,11 +63,16 @@ export class CloudflareStream extends Component {
 
 	@query('iframe') readonly iframeElement!: HTMLIFrameElement
 
-	private stream?: CloudflareStreamApi
+	static {
+		if (!isServer) {
+			import('./cloudflarestream-sdk.js')
+		}
+	}
 
-	protected override initialized() {
-		// @ts-expect-error Stream will be injected globally
-		this.stream = Stream(this.iframeElement)
+	private _stream?: CloudflareStreamApi
+	// Created once the SDK, which is loaded asynchronously, has defined "Stream":
+	private get stream() {
+		return this._stream ??= (globalThis as { Stream?: (iframe: HTMLIFrameElement) => CloudflareStreamApi }).Stream?.(this.iframeElement)
 	}
 
 	/* eslint-disable @html-eslint/use-baseline */

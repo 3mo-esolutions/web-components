@@ -7,6 +7,8 @@ import '@3mo/localization'
  *
  * @element mo-user-avatar
  *
+ * @ssr true
+ *
  * @attr open - Whether the menu is open.
  * @attr name - The user's full name, whose first and last initials the avatar shows. Without it, nobody is signed in.
  * @attr email - The email shown under the name in the menu.

@@ -6,6 +6,8 @@ import { FieldDateTimePrecision } from '../FieldDateTimePrecision.js'
 /**
  * @element mo-field-toggleable-date-time-range
  *
+ * @ssr true
+ *
  * @i18n "Include time"
  */
 @component('mo-field-toggleable-date-time-range')
@@ -26,7 +28,7 @@ export class FieldToggleableDateTimeRange extends FieldDateTimeRange {
 
 	private get toggleTemplate() {
 		return html`
-			<mo-switch label=${t('Include time')} ${bind(this, 'includeTime')}></mo-switch>
+			<mo-switch label=${t('Include time')} .selected=${bind(this, 'includeTime')}></mo-switch>
 		`
 	}
 }

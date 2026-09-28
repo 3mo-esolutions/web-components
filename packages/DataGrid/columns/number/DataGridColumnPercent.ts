@@ -1,7 +1,11 @@
 import { component, html, ifDefined } from '@a11d/lit'
 import { DataGridColumnNumberBase } from './DataGridColumnNumberBase.js'
 
-/** @element mo-data-grid-column-percent */
+/**
+ * @element mo-data-grid-column-percent
+ *
+ * @ssr true
+ */
 @component('mo-data-grid-column-percent')
 export class DataGridColumnPercent<TData> extends DataGridColumnNumberBase<TData> {
 	override getContentTemplate(value: number | undefined, data: TData) {

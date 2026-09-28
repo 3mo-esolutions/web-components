@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/standard-dialogs",
-	"version": "0.4.4",
+	"version": "0.4.5",
 	"description": "Web components for ready-made dialogs: alerts, confirmations, text prompts, deletion confirmations and generic ones.",
 	"repository": {
 		"type": "git",

@@ -7,6 +7,8 @@ import '@3mo/switch'
  *
  * @element mo-switch-list-item
  *
+ * @ssr true
+ *
  * @attr selectionControlAlignment - The alignment of the switch relative to the list item content
  * @attr selected - Whether the switch is selected
  *

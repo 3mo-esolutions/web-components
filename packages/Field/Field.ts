@@ -7,6 +7,8 @@ import { SlottedInputDirectionController } from './SlottedInputDirectionControll
  *
  * @element mo-field
  *
+ * @ssr true
+ *
  * @attr label - The label, which floats above the content once it is populated or active
  * @attr readonly - Hides the caret in the content
  * @attr disabled - Fades the field and makes it ignore the pointer

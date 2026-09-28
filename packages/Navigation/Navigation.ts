@@ -10,6 +10,8 @@ import './NavigationDrawer.js'
  *
  * @element mo-navigation
  *
+ * @ssr true
+ *
  * @attr navigations - The navigations to present.
  * @attr presentations - The presentations to choose from, most preferred first. Defaults to `bar` then `drawer`.
  * @attr presentation - The presentation being shown. Derived, and reflected for styling.

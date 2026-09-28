@@ -1,10 +1,12 @@
-import { component, css, html, property } from '@a11d/lit'
+import { component, css, html, isServer, property } from '@a11d/lit'
 import { Dialog } from '@3mo/dialog'
 
 /**
  * A dialog that blurs its content behind a spinner while it is loading.
  *
  * @element mo-loading-dialog
+ *
+ * @ssr true
  *
  * @attr loading - Whether the dialog is loading, which blurs the content and shows the loading slot.
  * @attr loadingHeading - The heading while loading, followed by an ellipsis; "Loading" by default.
@@ -58,7 +60,9 @@ export class LoadingDialog extends Dialog {
 	}
 
 	protected get loadingTemplate() {
-		this.classList.toggle('loading', this.isLoading)
+		if (isServer === false) {
+			this.classList.toggle('loading', this.isLoading)
+		}
 		return !this.isLoading ? html.nothing : html`
 			<slot slot='content' name='loading' part='loading'>
 				<mo-circular-progress></mo-circular-progress>

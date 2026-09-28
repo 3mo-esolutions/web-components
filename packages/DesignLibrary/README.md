@@ -18,6 +18,11 @@ npm install @3mo/del
 import '@3mo/del'
 ```
 
+[Server-side rendering](https://3mo-esolutions.github.io/web-components/?path=/docs/getting-started-installation--overview#server-side-rendering):
+
+- `<mo-avatar>`: Renders with Lit SSR and hydrates.
+- `<mo-user-avatar>`: Renders with Lit SSR and hydrates.
+
 ## Usage
 
 ```html

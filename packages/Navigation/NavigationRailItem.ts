@@ -6,6 +6,8 @@ import { type INavigation } from './INavigation.js'
  *
  * @element mo-navigation-rail-item
  *
+ * @ssr true
+ *
  * @attr navigation - The navigation this item stands for.
  * @attr data-current - Whether this navigation, or one nested in it, is the page being shown.
  * @attr selected - Whether the rail is showing this navigation's destinations.

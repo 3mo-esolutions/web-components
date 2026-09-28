@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/timeline",
-	"version": "0.0.6",
+	"version": "0.0.7",
 	"description": "Web components for vertical or horizontal timelines of items with an icon bullet, meta text and a connecting line.",
 	"repository": {
 		"type": "git",

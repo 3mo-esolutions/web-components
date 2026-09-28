@@ -7,6 +7,8 @@ import '@3mo/icon'
  *
  * @element mo-accordion-item
  *
+ * @ssr true
+ *
  * @attr heading - The text of the summary. The "heading" slot takes precedence over it.
  * @attr value - Identifies the item within an accordion. Items without one are not addressable through the accordion's "value".
  * @attr open - Whether the content is revealed.

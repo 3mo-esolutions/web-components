@@ -5,6 +5,8 @@ import { DataGridColumnComponent } from './DataGridColumnComponent.js'
 /**
  * @element mo-data-grid-column-boolean
  *
+ * @ssr true
+ *
  * @attr trueIcon - Icon to show for true values
  * @attr falseIcon - Icon to show for false values
  * @attr trueIconColor - Color of the true icon

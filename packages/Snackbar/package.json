@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/snackbar",
-	"version": "0.3.1",
+	"version": "0.3.2",
 	"description": "A web component for timed snackbar notifications that stack at the screen edge and pause while being read.",
 	"repository": {
 		"type": "git",

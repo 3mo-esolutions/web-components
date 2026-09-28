@@ -8,6 +8,8 @@ import { ButtonType } from '@3mo/button'
  *
  * @element mo-split-button
  *
+ * @ssr true
+ *
  * @attr open - Whether the menu is open.
  * @attr type - The type of the buttons, which is passed down to the button-group.
  * @attr disabled - Whether the "more" button is disabled.
@@ -64,7 +66,7 @@ export class SplitButton extends Component {
 
 	protected get moreButtonTemplate() {
 		return html`
-			<mo-button ?disabled=${this.disabled} @click=${this.handleMoreClick}>
+			<mo-button type=${this.type} ?disabled=${this.disabled} @click=${this.handleMoreClick}>
 				<mo-icon icon='keyboard_arrow_down'></mo-icon>
 			</mo-button>
 		`

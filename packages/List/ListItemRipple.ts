@@ -3,6 +3,8 @@ import { Component, component, css, html, property } from '@a11d/lit'
 /**
  * @element mo-list-item-ripple
  *
+ * @ssr true
+ *
  * @attr disabled - Whether the ripple is disabled
  */
 @component('mo-list-item-ripple')

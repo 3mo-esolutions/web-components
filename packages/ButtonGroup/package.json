@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/button-group",
-	"version": "0.3.1",
+	"version": "0.3.2",
 	"description": "A web component for segmented rows or columns of buttons with shared corners, separators and one type.",
 	"repository": {
 		"type": "git",

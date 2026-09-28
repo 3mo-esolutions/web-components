@@ -7,6 +7,8 @@ import '@3mo/menu'
  *
  * @element mo-navigation-bar-item
  *
+ * @ssr true
+ *
  * @attr navigation - The navigation this item stands for.
  * @attr open - Whether the group's dropdown is open.
  * @attr data-current - Whether this navigation, or one nested in it, is the page being shown.

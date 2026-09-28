@@ -7,6 +7,8 @@ import { type StandardDialogParameters } from './StandardDialogParameters.js'
  * A dialog that tells something and closes with one button.
  *
  * @element mo-dialog-alert
+ *
+ * @ssr true
  */
 @component('mo-dialog-alert')
 export class DialogAlert extends DialogComponent<StandardDialogParameters<DialogAlert>> {

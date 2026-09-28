@@ -1,6 +1,11 @@
 import { css, component, html } from '@a11d/lit'
 import { DataGridRow } from './DataGridRow.js'
 
+/**
+ * @element mo-data-grid-default-row
+ *
+ * @ssr true
+ */
 @component('mo-data-grid-default-row')
 export class DataGridDefaultRow<TData, TDetailsElement extends Element | undefined = undefined> extends DataGridRow<TData, TDetailsElement> {
 	static override get styles() {

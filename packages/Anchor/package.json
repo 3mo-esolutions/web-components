@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/anchor",
-	"version": "1.0.9",
+	"version": "1.0.10",
 	"description": "A web component for hyperlinks in the theme's accent color, also usable as a link-styled action without an href.",
 	"repository": {
 		"type": "git",

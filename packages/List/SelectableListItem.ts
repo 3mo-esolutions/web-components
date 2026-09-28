@@ -6,6 +6,8 @@ import { SelectionListItem } from './SelectionListItem.js'
  *
  * @element mo-selectable-list-item
  *
+ * @ssr true
+ *
  * @attr selected - Whether the list item is selected
  * @attr toggleable - Whether the list item selection can be toggled on and off
  *

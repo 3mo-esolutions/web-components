@@ -1,5 +1,6 @@
 import { Component, component, css, html, isServer, join, property } from '@a11d/lit'
 import { MutationController } from '@3mo/mutation-observer'
+import { HydrationController } from '@3mo/slot-controller'
 import '@3mo/theme'
 
 export type KeyPresentation = Partial<Record<'apple' | 'other', { display: string, label?: string }>>
@@ -61,10 +62,12 @@ export class Key extends Component {
 		config: { characterData: true, childList: true, subtree: true },
 	})
 
+	protected readonly hydrationController = new HydrationController(this)
+
 	private get chords() {
 		const order = Key.modifiersOrder[this.platform]
 		const orderOf = (key: string) => order.includes(key) ? order.indexOf(key) : order.length
-		return (this.textContent ?? '')
+		return (isServer || this.hydrationController.hydrating ? '' : this.textContent ?? '')
 			.trim()
 			.replace(/\s*\+\s*/g, '+')
 			.split(/\s+/)
@@ -148,10 +151,11 @@ export class Key extends Component {
 	protected override get template() {
 		const separator = this.separator ?? (this.platform === 'apple' ? '' : '+')
 		const separatorTemplate = !separator ? html.nothing : html`<span class='separator'>${separator}</span>`
+		const chords = this.chords
 		return html`
-			<slot hidden></slot>
-			<span class='screen-reader-only'>${this.label}</span>
-			${this.chords.map(chord => html`
+			<slot ?hidden=${chords.length > 0}></slot>
+			<span class='screen-reader-only'>${this.label || html.nothing}</span>
+			${chords.map(chord => html`
 				<span class='chord' aria-hidden='true'>
 					${join(chord.map(key => html`<kbd>${this.getPresentation(key).display}</kbd>`), separatorTemplate)}
 				</span>

@@ -13,6 +13,8 @@ import '@3mo/localization'
  *
  * @element mo-field-select
  *
+ * @ssr true
+ *
  * @attr default - The text of a first menu item that clears the selection.
  * @attr reflectDefault - Whether the input shows the `default` text while nothing is selected.
  * @attr dense - Whether the field is dense.

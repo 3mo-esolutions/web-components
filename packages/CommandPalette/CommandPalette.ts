@@ -10,6 +10,8 @@ import { type CommandPaletteData, type CommandPaletteDataSource } from './Comman
  *
  * @element mo-command-palette
  *
+ * @ssr true
+ *
  * @accessibility
  * `Ctrl` or `⌘` with `K` or `P` opens it with the first result active. The arrows move through the results, `Enter` runs one, `Escape` closes, and `Tab` switches between the data sources rather than leaving.
  * The palette is a popover without a `dialog` role or a name yet.
@@ -253,8 +255,8 @@ export class CommandPalette extends Component {
 		return html`
 			<mo-card type='outlined' ?data-fetching=${fetching} @click=${(e: PointerEvent) => e.stopPropagation()}>
 				<mo-flex style='height: 100%'>
-					<mo-command-palette-search-field ?fetching=${fetching} ${bind(this, 'keyword')}></mo-command-palette-search-field>
-					<mo-tab-bar ${bind(this, 'filteredDataSourceId', { sourceUpdated: () => refocusSearch() })}>
+					<mo-command-palette-search-field ?fetching=${fetching} .value=${bind(this, 'keyword')}></mo-command-palette-search-field>
+					<mo-tab-bar .value=${bind(this, 'filteredDataSourceId', { sourceUpdated: () => refocusSearch() })}>
 						<mo-tab>${t('All')}</mo-tab>
 						${this.dataSources.map(ds => html`
 							<mo-tab value=${ds.id} .inlineIcon=${true}>

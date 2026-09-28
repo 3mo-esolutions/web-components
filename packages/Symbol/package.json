@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/symbol",
-	"version": "0.1.7",
+	"version": "0.1.8",
 	"description": "A web component for typed Material Symbols with adjustable fill, weight, grade and optical size.",
 	"repository": {
 		"type": "git",

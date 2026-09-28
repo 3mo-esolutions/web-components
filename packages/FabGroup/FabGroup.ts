@@ -7,6 +7,8 @@ import { SlotController } from '@3mo/slot-controller'
  *
  * @element mo-fab-group
  *
+ * @ssr true
+ *
  * @attr open - Whether the buttons are unfolded.
  *
  * @slot - The `mo-fab`s it unfolds, from the bottom up, their icons after their labels.

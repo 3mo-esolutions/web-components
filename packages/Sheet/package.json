@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/sheet",
-	"version": "0.1.4",
+	"version": "0.1.5",
 	"description": "A web component for modal sheets anchored to any screen edge with swipe-to-dismiss, built on the native dialog element.",
 	"repository": {
 		"type": "git",

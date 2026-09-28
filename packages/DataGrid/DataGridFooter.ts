@@ -6,6 +6,8 @@ import { type DataGrid, type DataGridPaginationSize } from './index.js'
 
 /**
  * @element mo-data-grid-footer
+ *
+ * @ssr true
  * @attr dataGrid
  * @attr page
  */

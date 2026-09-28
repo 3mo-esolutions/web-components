@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/masonry",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"description": "A web component for native CSS masonry layouts in columns or rows, falling back to a regular grid where unsupported.",
 	"repository": {
 		"type": "git",

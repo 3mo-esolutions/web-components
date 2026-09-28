@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/virtualized-list",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"description": "A web component for virtualized lists that render list items from data only while they are in view.",
 	"repository": {
 		"type": "git",

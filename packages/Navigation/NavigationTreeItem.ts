@@ -6,6 +6,8 @@ import { TreeItem } from '@3mo/tree'
  *
  * @element mo-navigation-tree-item
  *
+ * @ssr true
+ *
  * @attr data-current - Whether this row, or a row nested in it, is the page being shown.
  * @attr data-separator - Whether a divider parts this row from the one before it.
  */

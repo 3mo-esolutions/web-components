@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/chip",
-	"version": "0.4.2",
+	"version": "0.4.3",
 	"description": "Web components for selectable, removable and linking chips, and chip sets that share one selection and one tab stop.",
 	"repository": {
 		"type": "git",

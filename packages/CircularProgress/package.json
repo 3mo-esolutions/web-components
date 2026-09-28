@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/circular-progress",
-	"version": "0.3.1",
+	"version": "0.3.2",
 	"description": "A web component for circular progress indicators that show a value or spin indefinitely, built on Material Web.",
 	"repository": {
 		"type": "git",

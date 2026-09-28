@@ -6,6 +6,8 @@ import type { TimelineItem } from './TimelineItem.js'
  *
  * @element mo-timeline
  *
+ * @ssr true
+ *
  * @attr direction - The direction of the timeline, either 'vertical' or 'horizontal'. Defaults to 'vertical'.
  *
  * @slot - The items of the timeline.

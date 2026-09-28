@@ -11,6 +11,8 @@ import { type Swap } from '@3mo/swap'
  *
  * @element mo-copy-icon-button
  *
+ * @ssr true
+ *
  * @attr value - The text which is written to the clipboard. Copying nothing is treated as a failure.
  * @attr label - The tooltip naming what the button copies. Defaults to "Copy" and is dropped when set to an empty string.
  * @attr icon - The icon of the resting state.

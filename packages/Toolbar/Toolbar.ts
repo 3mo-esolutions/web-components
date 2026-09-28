@@ -11,6 +11,8 @@ import '@3mo/icon-button'
  *
  * @element mo-toolbar
  *
+ * @ssr true
+ *
  * @attr overflowIcon - The icon of the overflow menu button. Defaults to `more_vert`.
  * @attr overflowPosition - Whether the overflow menu button comes at the `start` or the `end` (default).
  * @attr collapsed - Puts every item into the overflow menu.

@@ -1,11 +1,13 @@
 import { Component, component, css, event, html, isServer, property, repeat } from '@a11d/lit'
-import { SlotController } from '@3mo/slot-controller'
+import { HydrationController, SlotController } from '@3mo/slot-controller'
 
 /**
  * A box that transitions between several pieces of content, such as the icon or label of a button, showing one at a time.
  * It takes the size of the largest, so it never resizes while it transitions.
  *
  * @element mo-swap
+ *
+ * @ssr true
  *
  * @attr value - The name of the slot which is shown. Empty, which is the default, shows the default slot.
  * @attr flashDuration - The milliseconds a value flashed through "flash()" is shown before the previous one is restored.
@@ -42,6 +44,7 @@ export class Swap extends Component {
 	@property({ type: Number }) flashDuration = 1500
 
 	protected readonly slotController = new SlotController(this)
+	protected readonly hydrationController = new HydrationController(this)
 
 	/**
 	 * Every value the swap can take, being the empty one of the default slot and the "slot" of each child.
@@ -49,7 +52,7 @@ export class Swap extends Component {
 	 * another update.
 	 */
 	get values() {
-		const slottedValues = isServer ? [] : [...this.children].map(child => child.slot)
+		const slottedValues = isServer || this.hydrationController.hydrating ? [] : [...this.children].map(child => child.slot)
 		return [...new Set(['', ...slottedValues, this.value])]
 	}
 

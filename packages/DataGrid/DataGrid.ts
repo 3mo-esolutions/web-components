@@ -1,4 +1,4 @@
-import { property, component, Component, html, css, query, type PropertyValues, event, style, literal, staticHtml, type HTMLTemplateResult, repeat } from '@a11d/lit'
+import { property, component, Component, html, css, query, type PropertyValues, event, style, literal, staticHtml, type HTMLTemplateResult, repeat, isServer } from '@a11d/lit'
 import { LocalStorage } from '@a11d/local-storage'
 import { NotificationComponent } from '@a11d/lit-application'
 import { Downloader } from '@3mo/downloader'
@@ -19,6 +19,8 @@ import { DataGridPagination, type DataGridPaginationLike, type DataGridPaginatio
  * A table that shows an array of objects as rows, with selection, sorting, pagination, details, editing and CSV export.
  *
  * @element mo-data-grid
+ *
+ * @ssr true
  *
  * @attr data - The data to be displayed in the DataGrid. It is an array of objects, where each object represents a row.
  * @attr columns - The columns of the DataGrid, composed of their definitions and modifications. Assigning it gives the definitions in code, which column elements override.
@@ -331,7 +333,8 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	}
 
 	get hasSums() {
-		const hasSums = !!this.columns.find(c => c.sumHeading) || !!this.querySelector('* [slot="sum"]') || !!this.renderRoot?.querySelector('slot[name="sum"] > *')
+		const hasSums = !!this.columns.find(c => c.sumHeading)
+			|| (isServer === false && (!!this.querySelector('* [slot="sum"]') || !!this.renderRoot?.querySelector('slot[name="sum"] > *')))
 		this.toggleAttribute('hasSums', hasSums)
 		return hasSums
 	}
@@ -495,6 +498,9 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	protected override willUpdate(...parameters: Parameters<Component['willUpdate']>) {
 		super.willUpdate(...parameters)
 		const [properties] = parameters
+		if (properties.has('data')) {
+			this.columnDefinitions.update()
+		}
 		if (properties.has('data') || properties.has('page')) {
 			this.controller.virtualization.handleItemsChange()
 		}

@@ -6,6 +6,8 @@ import { SelectionListItem } from '@3mo/list'
  *
  * @element mo-option
  *
+ * @ssr true
+ *
  * @attr value - The value the field selects the option by.
  * @attr data - The data the option carries.
  * @attr index - The option's position among the field's items, which the field sets.

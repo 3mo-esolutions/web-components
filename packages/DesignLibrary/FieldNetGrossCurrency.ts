@@ -2,6 +2,11 @@ import { component, css, html, ifDefined, live, property, style } from '@a11d/li
 import { Currency } from '@3mo/localization'
 import { InputFieldComponent } from '@3mo/field'
 
+/**
+ * @element mo-field-net-gross-currency
+ *
+ * @ssr true
+ */
 @component('mo-field-net-gross-currency')
 export class FieldNetGrossCurrency extends InputFieldComponent<NetGrossCurrency> {
 	@property({ type: Object, bindingDefault: true }) value: NetGrossCurrency = [undefined, false]

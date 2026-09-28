@@ -7,6 +7,8 @@ import '@3mo/radio'
  *
  * @element mo-radio-list-item
  *
+ * @ssr true
+ *
  * @attr selectionControlAlignment - The alignment of the radio relative to the list item content
  * @attr name - The name of the radio
  * @attr selected - Whether the radio is selected

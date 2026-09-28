@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/navigation",
-	"version": "0.1.6",
+	"version": "0.1.7",
 	"description": "Web components for app shells whose navigation shows as a bar, a rail or a drawer, whichever fits the space.",
 	"repository": {
 		"type": "git",

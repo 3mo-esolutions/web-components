@@ -8,6 +8,8 @@ import { getEntityLabel } from './getEntityLabel.js'
  *
  * @element mo-entity-dialog
  *
+ * @ssr true
+ *
  * @attr preventPrimaryOnCtrlS - Whether Ctrl+S leaves the entity unsaved.
  * @attr entity - The entity being edited. Set by the `EntityDialogComponent` rendering the dialog.
  * @attr save - The function that saves the entity. Set by the `EntityDialogComponent` rendering the dialog.

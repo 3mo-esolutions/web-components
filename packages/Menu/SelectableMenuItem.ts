@@ -5,6 +5,8 @@ import { SelectableListItem } from '@3mo/list'
  * An item of a `mo-menu` that the menu selects and deselects, one at a time or several at once.
  *
  * @element mo-selectable-menu-item
+ *
+ * @ssr true
  */
 @component('mo-selectable-menu-item')
 export class SelectableMenuItem extends SelectableListItem {

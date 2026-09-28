@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/accordion",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"description": "A web component for accordions that stack disclosures and open one or several at a time, built on the native details element.",
 	"repository": {
 		"type": "git",

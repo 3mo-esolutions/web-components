@@ -7,6 +7,8 @@ import { observeResize } from '@3mo/resize-observer'
  *
  * @element mo-key-value-list
  *
+ * @ssr true
+ *
  * @attr minColumnWidth - The width in pixels below which a key–value column may not shrink. The list drops a column instead. Defaults to 380.
  * @attr stackingWidth - The width in pixels at or below which every pair places its key above its value. Defaults to 285.
  * @attr alwaysStacked - Whether every pair places its key above its value regardless of the width available.

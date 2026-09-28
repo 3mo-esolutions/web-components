@@ -5,6 +5,8 @@ import { ListItem } from '@3mo/list'
  * A command in a `mo-menu`.
  *
  * @element mo-menu-item
+ *
+ * @ssr true
  */
 @component('mo-menu-item')
 export class MenuItem extends ListItem {

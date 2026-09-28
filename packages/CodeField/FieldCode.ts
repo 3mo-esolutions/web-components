@@ -17,6 +17,8 @@ const patternsByType: Record<FieldCodeType, RegExp> = {
  *
  * @element mo-field-code
  *
+ * @ssr true
+ *
  * @attr value - The characters entered so far
  * @attr length - How many characters the code has. Defaults to six.
  * @attr type - What the code is made of: "numeric" (default), "alphanumeric" or "alphabetic"

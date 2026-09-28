@@ -7,6 +7,8 @@ import '@3mo/localization'
  *
  * @element mo-field-number
  *
+ * @ssr true
+ *
  * @attr value - The value of the field.
  * @attr min - The minimum value of the field.
  * @attr max - The maximum value of the field.

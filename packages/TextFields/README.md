@@ -24,6 +24,14 @@ npm install @3mo/text-fields
 import '@3mo/text-fields'
 ```
 
+[Server-side rendering](https://3mo-esolutions.github.io/web-components/?path=/docs/getting-started-installation--overview#server-side-rendering):
+
+- `<mo-field-text>`: Renders with Lit SSR and hydrates.
+- `<mo-field-email>`: Renders with Lit SSR and hydrates.
+- `<mo-field-password>`: Renders with Lit SSR and hydrates.
+- `<mo-field-search>`: Renders with Lit SSR and hydrates.
+- `<mo-field-text-area>`: Renders with Lit SSR and hydrates.
+
 ## Usage
 
 ```html

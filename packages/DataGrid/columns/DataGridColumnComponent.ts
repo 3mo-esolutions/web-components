@@ -17,6 +17,8 @@ import { DataGridColumn, type DataGridColumnAlignment, type DataGridColumnConten
  * @attr getContentTemplate - The content template of the column.
  * @attr contentStyle - The content style of the column. It can be a string, CSSResult, or a function that returns either based on the cell value and data.
  * @attr getEditContentTemplate - The edit content template of the column.
+ *
+ * @ssr true
  */
 @component('mo-data-grid-column')
 export class DataGridColumnComponent<TData, TValue> extends Component {

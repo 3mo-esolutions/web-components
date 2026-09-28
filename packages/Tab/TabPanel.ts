@@ -7,6 +7,8 @@ import { Component, component, css, html, property } from '@a11d/lit'
  *
  * @element mo-tab-panel
  *
+ * @ssr true
+ *
  * @attr value - Pairs the panel with the tab of the same `value`
  * @attr active - Whether this is the panel being shown; set by `mo-tabs`, meant to be read and styled
  *

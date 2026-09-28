@@ -9,6 +9,11 @@ import { type ModdableDataGridMode } from './ModdableDataGridMode.js'
 import { DialogMode } from './DialogMode.js'
 import { type ModdableDataGrid } from './ModdableDataGrid.js'
 
+/**
+ * @element mo-moddable-data-grid-chip
+ *
+ * @ssr true
+ */
 @component('mo-moddable-data-grid-chip')
 export class ModdableDataGridChip<TData, TParameters extends FetchableDataGridParametersType> extends Component {
 	@property({ type: Object }) dataGrid!: ModdableDataGrid<TData, TParameters>

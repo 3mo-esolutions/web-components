@@ -9,6 +9,8 @@ import { TabPanel } from './TabPanel.js'
  *
  * @element mo-tabs
  *
+ * @ssr true
+ *
  * @attr value - The `value` of the active tab, and therefore of the panel being shown
  *
  * @slot - The `mo-tab` elements
@@ -59,7 +61,7 @@ export class Tabs extends Component {
 
 	protected override get template() {
 		return html`
-			<mo-tab-bar part='bar' ${bind(this, 'value', { sourceUpdated: () => this.change.dispatch(this.value) })}>
+			<mo-tab-bar part='bar' .value=${bind(this, 'value', { sourceUpdated: () => this.change.dispatch(this.value) })}>
 				<slot @slotchange=${this.handleSlotChange}></slot>
 			</mo-tab-bar>
 			<slot name='panel' @slotchange=${this.handleSlotChange}></slot>

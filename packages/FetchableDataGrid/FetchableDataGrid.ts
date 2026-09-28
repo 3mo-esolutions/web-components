@@ -26,6 +26,8 @@ export type FetchableDataGridResult<TData> = PaginatedResult<TData> | NonPaginat
  *
  * @element mo-fetchable-data-grid
  *
+ * @ssr true
+ *
  * @attr fetch - A function that fetches the data from the server.
  * @attr silentFetch - If set, the DataGrid's content will not be cleared when the fetch is initiated.
  * @attr parameters - The parameters that are passed to the fetch function.

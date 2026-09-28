@@ -10,6 +10,8 @@ export type FileUploadSelection<TMultiple extends boolean = false> = TMultiple e
  *
  * @element mo-file-upload
  *
+ * @ssr true
+ *
  * @attr upload - The mandatory upload function that is called when the user selects one or more files.
  * @attr uploadOnSelection - Uploads the files as soon as they are chosen, instead of when `uploadSelection()` is called
  * @attr multiple - Whether multiple files can be selected at once.

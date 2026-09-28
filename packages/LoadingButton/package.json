@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/loading-button",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"description": "A web component for buttons that show a spinner by themselves while their click handler's promise runs.",
 	"repository": {
 		"type": "git",

@@ -1,6 +1,11 @@
 import { component, css, property } from '@a11d/lit'
 import { FieldSearch } from '@3mo/text-fields'
 
+/**
+ * @element mo-command-palette-search-field
+ *
+ * @ssr true
+ */
 @component('mo-command-palette-search-field')
 export class CommandPaletteSearchField extends FieldSearch {
 	@property({ type: Boolean, reflect: true }) fetching = false

@@ -6,6 +6,8 @@ import { MdFocusRing } from '@material/web/focus/md-focus-ring.js'
  *
  * @element mo-focus-ring
  *
+ * @ssr true
+ *
  * @attr visible - Whether the ring shows; keyboard focus sets it and blur clears it.
  * @attr inward - Draws the ring inside the element instead of around it.
  * @attr for - The id of the element whose focus the ring follows, in place of its parent.

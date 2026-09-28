@@ -9,6 +9,8 @@ import { listItem, listItems } from './extensions.js'
  *
  * @element mo-collapsible-list-item
  *
+ * @ssr true
+ *
  * @attr open - Whether the list item is open
  *
  * @slot - The parent list item
@@ -34,13 +36,13 @@ export class CollapsibleListItem extends Component {
 		}
 	})
 
-	override get [listItem](): Element {
-		return this.slotController.getAssignedElements('').find(e => !!e[listItem])!
+	override get [listItem]() {
+		return this.slotController.getAssignedElements('').find(e => !!e[listItem])
 	}
 
 	override get [listItems](): Array<Element> {
 		return [
-			this[listItem]!,
+			...(this[listItem] ? [this[listItem]] : []),
 			...this.slotController.getAssignedElements('details').flatMap(e => e[listItems] ?? [])
 		]
 	}

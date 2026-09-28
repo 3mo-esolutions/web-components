@@ -7,6 +7,8 @@ import '@3mo/card'
  *
  * @element mo-group-box
  *
+ * @ssr true
+ *
  * @slot footer - Content below the body, inside the card
  *
  * @csspart card - The card element.

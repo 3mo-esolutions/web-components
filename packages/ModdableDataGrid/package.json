@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/moddable-data-grid",
-	"version": "0.8.6",
+	"version": "0.8.7",
 	"description": "A web component for fetchable data grids with user-saved views of columns, sorting and filters, stored in IndexedDB.",
 	"repository": {
 		"type": "git",

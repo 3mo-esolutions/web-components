@@ -10,6 +10,11 @@ Localizer.dictionaries.add('en', {
 	],
 })
 
+/**
+ * @element mo-data-grid-header
+ *
+ * @ssr true
+ */
 @component('mo-data-grid-header')
 export class DataGridHeader<TData> extends Component {
 	@event() readonly pageChange!: EventDispatcher<number>
@@ -223,13 +228,13 @@ export class DataGridHeader<TData> extends Component {
 							<mo-flex>
 								<mo-section heading=${t('Design')}>
 									<mo-flex gap='1rem'>
-										<mo-field-select label=${t('Font Size')} ${bind(this, 'dataGrid', { keyPath: 'cellFontSize' as any })}>
+										<mo-field-select label=${t('Font Size')} .value=${bind(this, 'dataGrid', { keyPath: 'cellFontSize' as any })}>
 											${Array.from({ length: 5 }).map((_, i) => {
 												const value = 0.8 + i * 0.1
 												return html`<mo-option value=${value}>${(value * 100).formatAsPercent()}</mo-option>`
 											})}
 										</mo-field-select>
-										<mo-field-select label=${t('Row Height')} ${bind(this, 'dataGrid', { keyPath: 'rowHeight' as any })}>
+										<mo-field-select label=${t('Row Height')} .value=${bind(this, 'dataGrid', { keyPath: 'rowHeight' as any })}>
 											${Array.from({ length: 7 }).map((_, i) => {
 												const value = 30 + i * 5
 												return html`<mo-option value=${value}>${value.format()}px</mo-option>`

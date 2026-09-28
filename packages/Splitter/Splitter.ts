@@ -1,6 +1,7 @@
-import { component, html, property, Component, css, styleMap, style } from '@a11d/lit'
+import { component, html, property, Component, css, styleMap, style, isServer } from '@a11d/lit'
 import { type Flex } from '@3mo/flex'
 import { MutationController } from '@3mo/mutation-observer'
+import { HydrationController } from '@3mo/slot-controller'
 import { SplitterItem } from './index.js'
 import '@3mo/theme'
 
@@ -8,6 +9,8 @@ import '@3mo/theme'
  * A layout of items the user resizes by dragging the resizers between them.
  *
  * @element mo-splitter
+ *
+ * @ssr true
  *
  * @attr direction - The direction in which the items are laid out; vertical by default
  * @attr resizerTemplate - The template of the resizer between two items; `mo-splitter-resizer-knob` by default
@@ -28,8 +31,10 @@ export class Splitter extends Component {
 	/** What resizing measures once, at its start, so that following the pointer reads no layout. */
 	private resize?: { readonly item: SplitterItem, readonly edge: number, readonly extent: number }
 
+	protected readonly hydrationController = new HydrationController(this)
+
 	get items() {
-		return [...this.children].filter((c): c is SplitterItem => c instanceof SplitterItem)
+		return isServer || this.hydrationController.hydrating ? [] : [...this.children].filter((c): c is SplitterItem => c instanceof SplitterItem)
 	}
 
 	protected readonly mutationController = new MutationController(this, {

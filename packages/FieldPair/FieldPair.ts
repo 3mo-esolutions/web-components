@@ -10,6 +10,8 @@ export enum FieldPairMode {
  *
  * @element mo-field-pair
  *
+ * @ssr true
+ *
  * @attr mode - `attach` places the attachment beside the field, `overlay` lays it over the field's top corner at the end
  * @attr reversed - Puts the attachment before the field
  *

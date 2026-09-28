@@ -9,7 +9,7 @@ import { MenuBarItem } from './MenuBarItem.js'
  *
  * @element mo-menu-bar
  *
- * @ssr false
+ * @ssr true
  *
  * @slot - The items, which are `mo-menu-bar-item`s.
  *

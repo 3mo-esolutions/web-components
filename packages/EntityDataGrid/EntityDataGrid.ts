@@ -14,6 +14,8 @@ type CreateOrEditAction<TEntity extends EntityWithId> = CreateAction | EditActio
  *
  * @element mo-entity-data-grid
  *
+ * @ssr true
+ *
  * @attr create - Creates an entity: a function, or an `EntityDialogComponent` class the grid opens. Adds a create button to the toolbar.
  * @attr edit - Edits an entity: a function, or an `EntityDialogComponent` class the grid opens with the entity's `id`. Adds Edit to the menu of a row.
  * @attr isEntityEditable - A predicate that determines whether an entity is editable.

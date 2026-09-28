@@ -51,6 +51,8 @@ class ConfettiParticle {
  * A canvas that rains a burst of confetti over its nearest positioned ancestor when `rain()` is called.
  *
  * @element mo-confetti
+ *
+ * @ssr true
  */
 @component('mo-confetti')
 export class Confetti extends Component {

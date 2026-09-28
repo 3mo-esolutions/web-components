@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/section",
-	"version": "0.2.1",
+	"version": "0.2.2",
 	"description": "A web component for content sections under a heading, with actions in the header.",
 	"repository": {
 		"type": "git",

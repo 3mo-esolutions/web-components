@@ -13,6 +13,8 @@ export type PopoverMode = 'auto' | 'manual' | 'hint'
  *
  * @element mo-popover
  *
+ * @ssr true
+ *
  * @attr coordinates - A point `[x, y]` in the viewport to open at instead of the anchor.
  * @attr anchor - The element the popover is anchored to and opened by.
  * @attr target - The id of the element within the anchor whose clicks open the popover.

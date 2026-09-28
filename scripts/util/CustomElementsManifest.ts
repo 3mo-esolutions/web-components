@@ -15,12 +15,19 @@ export interface Tag {
 	description?: string
 	/** The element's `@accessibility` JSDoc section: its roles, states and keys, in Markdown. */
 	accessibility?: string
+	/** Whether the element renders with Lit SSR and hydrates, from its `@ssr` JSDoc tag; absent where it declares nothing. */
+	ssr?: Ssr
 	attributes?: Array<Member>
 	properties?: Array<Member>
 	events?: Array<Event>
 	slots?: Array<Described>
 	cssProperties?: Array<Described>
 	cssParts?: Array<Described>
+}
+
+export interface Ssr {
+	supported: boolean
+	caveat?: string
 }
 
 export interface Member {

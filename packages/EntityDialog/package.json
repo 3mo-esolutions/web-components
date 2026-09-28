@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/entity-dialog",
-	"version": "0.6.4",
+	"version": "0.6.5",
 	"description": "A web component for dialogs that fetch an entity to create or edit, then save it with Ctrl+S or delete it.",
 	"repository": {
 		"type": "git",

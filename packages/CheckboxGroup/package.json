@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/checkbox-group",
-	"version": "0.1.6",
+	"version": "0.1.7",
 	"description": "A web component for parent checkboxes that check or clear their nested checkboxes and turn indeterminate when mixed.",
 	"repository": {
 		"type": "git",

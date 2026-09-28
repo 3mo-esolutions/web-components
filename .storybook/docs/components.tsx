@@ -1,7 +1,6 @@
-import React, { useContext, useEffect, useState, type MouseEvent, type PropsWithChildren } from 'react'
-import { DocsContext, Markdown } from '@storybook/addon-docs/blocks'
-import { NAVIGATE_URL } from 'storybook/internal/core-events'
-import { MarkdownLink } from '../blocks.js'
+import React, { useEffect, useState, type PropsWithChildren } from 'react'
+import { Markdown } from '@storybook/addon-docs/blocks'
+import { MarkdownLink, useNavigation } from '../blocks.js'
 import './pages.css'
 
 /** The title and lead of a documentation page, in the look of the component pages. */
@@ -25,13 +24,7 @@ export function Cards({ children }: PropsWithChildren) {
 
 /** A card linking to a page of this Storybook, e.g. `?path=/docs/actions-button--overview`. */
 export function Card({ title, href, children }: PropsWithChildren<{ title: string, href: string }>) {
-	const { channel } = useContext(DocsContext)
-	const navigate = (event: MouseEvent) => {
-		if (event.button === 0 && !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey) {
-			event.preventDefault()
-			channel.emit(NAVIGATE_URL, href)
-		}
-	}
+	const navigate = useNavigation(href)
 	return (
 		<a className='docs-card' href={href} onClick={navigate}>
 			<span className='docs-card-title'>{title}</span>

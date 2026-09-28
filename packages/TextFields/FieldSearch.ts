@@ -7,6 +7,8 @@ import { FieldText } from './FieldText.js'
  *
  * @element mo-field-search
  *
+ * @ssr true
+ *
  * @i18n "Search"
  */
 @component('mo-field-search')

@@ -6,6 +6,8 @@ import { FieldNumber } from './FieldNumber.js'
  *
  * @element mo-field-percent
  *
+ * @ssr true
+ *
  * @attr percentSign - The percent sign of the field.
  */
 @component('mo-field-percent')

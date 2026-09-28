@@ -16,6 +16,8 @@ npm install @3mo/loading-dialog
 import '@3mo/loading-dialog'
 ```
 
+[Server-side rendering](https://3mo-esolutions.github.io/web-components/?path=/docs/getting-started-installation--overview#server-side-rendering): Renders with Lit SSR and hydrates.
+
 ## Examples
 
 - [Default](https://3mo-esolutions.github.io/web-components/?path=/story/feedback-loading-dialog--default) — Press Save: while `loading` is set, the content blurs behind a spinner and the heading reads "Loading ...".

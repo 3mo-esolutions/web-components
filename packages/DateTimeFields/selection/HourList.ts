@@ -2,6 +2,11 @@ import { component, css, html, property, range } from '@a11d/lit'
 import { DateList } from './DateList.js'
 import { type SelectionListItemChangeEvent } from '@3mo/list'
 
+/**
+ * @element mo-hour-list
+ *
+ * @ssr true
+ */
 @component('mo-hour-list')
 export class HourList extends DateList {
 	/** Defaults to the language's convention, so English lists "02 PM" where German lists "14". */

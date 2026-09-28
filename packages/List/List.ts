@@ -7,6 +7,8 @@ import { listItems } from './extensions.js'
  *
  * @element mo-list
  *
+ * @ssr true
+ *
  * @slot - The list items.
  *
  * @fires itemsChange - Dispatched when the list items change

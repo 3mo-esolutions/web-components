@@ -4,6 +4,8 @@ import { DataGridColumnComponent } from './DataGridColumnComponent.js'
 /**
  * @element mo-data-grid-column-image
  *
+ * @ssr true
+ *
  * @attr tooltipSelector - The data selector of the column to use as a tooltip. If a function is provided, it will be called with the data as an argument.
  */
 @component('mo-data-grid-column-image')

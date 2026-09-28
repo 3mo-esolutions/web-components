@@ -8,6 +8,8 @@ import { observeResize } from '@3mo/resize-observer'
  *
  * @element mo-timeline-item
  *
+ * @ssr true
+ *
  * @attr icon - A character, such as an emoji, shown on the line in place of the bullet point.
  * @attr meta - Text shown in a column beside the content, such as the date of the event.
  * @attr line - A function that returns the line drawn to the next item, given the default one.

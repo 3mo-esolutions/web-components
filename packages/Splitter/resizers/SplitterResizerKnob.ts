@@ -6,6 +6,8 @@ import { SplitterResizer } from './index.js'
  *
  * @element mo-splitter-resizer-knob
  *
+ * @ssr true
+ *
  * @cssprop --mo-splitter-resizer-knob-background - The color of the knob
  * @cssprop --mo-splitter-resizer-knob-active-background - The color of the knob while hovered or dragged
  */

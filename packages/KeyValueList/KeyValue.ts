@@ -6,6 +6,8 @@ import { SlotController } from '@3mo/slot-controller'
  *
  * @element mo-key-value
  *
+ * @ssr true
+ *
  * @attr key - The name of the pair. Superseded by the "key" slot.
  * @attr value - The value of the pair, for one which needs no markup. Superseded by the default slot, and the property "bind()" writes into by default.
  * @attr hiddenWhenEmpty - Whether the pair takes itself out of the list while its value is empty, instead of showing a placeholder.

@@ -22,6 +22,9 @@ export class AccentStorage extends LocalStorage<string | undefined> {
 	}
 
 	private setProperty() {
-		globalThis.document.documentElement.style.setProperty('--mo-color-accent-seed', this.value!)
+		if (isServer) {
+			return
+		}
+		document.documentElement.style.setProperty('--mo-color-accent-seed', this.value!)
 	}
 }

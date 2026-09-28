@@ -5,6 +5,8 @@ import { FieldDateTimePrecision } from '../FieldDateTimePrecision.js'
 
 /**
  * @fires dateClick - Dispatched when a date is clicked, with the clicked date as detail.
+ *
+ * @ssr true
  */
 @component('mo-calendar')
 export class Calendar extends Component {

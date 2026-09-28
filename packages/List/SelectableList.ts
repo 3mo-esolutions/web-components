@@ -12,6 +12,8 @@ export { Selectability as SelectableListSelectability } from '@3mo/selectability
  *
  * @element mo-selectable-list
  *
+ * @ssr true
+ *
  * @attr selectability - The selectability of the list
  * @attr value - The selected list items' indices
  *

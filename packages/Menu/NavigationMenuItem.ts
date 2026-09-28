@@ -5,6 +5,8 @@ import { MenuItem } from './MenuItem.js'
  * An item of a `mo-menu` that navigates, highlighted while its route is the current one.
  *
  * @element mo-navigation-menu-item
+ *
+ * @ssr true
  */
 @component('mo-navigation-menu-item')
 export class NavigationMenuItem extends MenuItem {

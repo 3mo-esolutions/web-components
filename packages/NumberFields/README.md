@@ -20,6 +20,12 @@ npm install @3mo/number-fields
 import '@3mo/number-fields'
 ```
 
+[Server-side rendering](https://3mo-esolutions.github.io/web-components/?path=/docs/getting-started-installation--overview#server-side-rendering):
+
+- `<mo-field-number>`: Renders with Lit SSR and hydrates.
+- `<mo-field-currency>`: Renders with Lit SSR and hydrates.
+- `<mo-field-percent>`: Renders with Lit SSR and hydrates.
+
 ## Usage
 
 ```html

@@ -1,4 +1,4 @@
-import { Controller, css, unsafeCSS } from '@a11d/lit'
+import { Controller, css, isServer, unsafeCSS } from '@a11d/lit'
 import { type Popover } from './Popover.js'
 import { PopoverAlignment } from './PopoverAlignment.js'
 import { PopoverPlacement } from './PopoverPlacement.js'
@@ -27,6 +27,9 @@ export class PopoverCssAnchorPositionController extends Controller {
 	 * @see https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/position-anchor
 	 */
 	static get supported() {
+		if (isServer) {
+			return false
+		}
 		return PopoverCssAnchorPositionController.implicitAnchorSupported ??= PopoverCssAnchorPositionController.probeImplicitAnchor()
 	}
 

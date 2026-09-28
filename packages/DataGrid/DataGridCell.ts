@@ -4,6 +4,8 @@ import { DataGridColumn, type DataGridRow } from './index.js'
 /**
  * @element mo-data-grid-cell
  *
+ * @ssr true
+ *
  * @attr value
  * @attr column
  * @attr row
@@ -18,7 +20,14 @@ export class DataGridCell<TValue extends KeyPath.ValueOf<TData>, TData = any, TD
 	get data() { return this.row.data }
 	get dataSelector() { return this.column.dataSelector }
 
-	private get valueTextContent() { return this.renderRoot.textContent?.trim() || '' }
+	// A server-rendered shadow root keeps the server's style elements:
+	private get valueTextContent() {
+		return [...this.renderRoot.childNodes]
+			.filter(node => node instanceof Text || node instanceof Element && !(node instanceof HTMLStyleElement))
+			.map(node => node.textContent)
+			.join('')
+			.trim()
+	}
 
 	get isEditing() {
 		return this.dataGrid.controller.editability.isEditing(this)
@@ -67,10 +76,12 @@ export class DataGridCell<TValue extends KeyPath.ValueOf<TData>, TData = any, TD
 		`
 	}
 
-	private get tooltip() { return this.valueTextContent }
+	protected override updated(...parameters: Parameters<Component['updated']>) {
+		super.updated(...parameters)
+		this.title = this.valueTextContent
+	}
 
 	protected override get template() {
-		this.title = this.tooltip
 		this.toggleAttribute('isEditing', this.isEditing)
 		this.setAttribute('alignment', this.column.alignment || 'start')
 		return this.isEditing ? this.editContentTemplate as HTMLTemplateResult : this.contentTemplate

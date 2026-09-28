@@ -1,11 +1,14 @@
 import { Component, component, css, event, eventListener, html, property } from '@a11d/lit'
 import { type Flex } from '@3mo/flex'
+import { HydrationController } from '@3mo/slot-controller'
 import '@3mo/splitter'
 
 /**
  * A resizable layout of a master pane and a detail pane that takes its share of the space only while it has content.
  *
  * @element mo-master-detail
+ *
+ * @ssr true
  *
  * @attr direction - The direction in which the panes are laid out; 'vertical', the default, places the detail pane below the master pane
  * @attr masterSize - The size of the master pane while both panes share the available space
@@ -29,6 +32,8 @@ export class MasterDetail extends Component {
 	@property() minSize = '300px'
 	@property({ type: Boolean, reflect: true }) collapsed = false
 	@property({ type: Boolean, reflect: true }) open = false
+
+	protected readonly hydrationController = new HydrationController(this)
 
 	/** Whether both panes share the available space and can therefore be resized against each other. */
 	private get split() {

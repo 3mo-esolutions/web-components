@@ -6,6 +6,8 @@ import { FileDropController, type FileUpload, type FileUploadSelection } from '@
  *
  * @element mo-file-upload-drop-area
  *
+ * @ssr true
+ *
  * @slot - The content of the area, such as an icon and a hint
  *
  * @attr upload - The mandatory upload function that is called when the user selects one or more files.

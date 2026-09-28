@@ -7,6 +7,8 @@ import { List, listItem } from '@3mo/list'
  *
  * @element mo-virtualized-list
  *
+ * @ssr true
+ *
  * @attr data - The items, one list item each.
  * @attr getItemTemplate - A function that returns the list item of an item.
  */

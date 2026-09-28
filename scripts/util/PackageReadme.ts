@@ -1,7 +1,7 @@
 import FileSystem from 'fs'
 import Path from 'path'
 import { storyNameFromExport } from 'storybook/internal/csf'
-import type { CustomElementsManifest, Member, Tag } from './CustomElementsManifest.ts'
+import type { CustomElementsManifest, Member, Ssr, Tag } from './CustomElementsManifest.ts'
 import { type ModuleExport, ModuleExports } from './ModuleExports.ts'
 import type { Package } from './Package.ts'
 import { StoriesFile } from './StoriesFile.ts'
@@ -87,6 +87,7 @@ export class PackageReadme {
 			'## Installation',
 			fence('sh', `npm install ${name}`),
 			fence('ts', this.importStatement),
+			...this.serverSideRendering,
 			...!usage ? [] : ['## Usage', fence('html', usage)],
 			...this.examples,
 			...this.accessibility,
@@ -107,6 +108,15 @@ export class PackageReadme {
 		return described
 			.map(tag => paragraphs(prose(tag.description), described.length === 1 ? undefined : tag.name))
 			.join('\n\n')
+	}
+
+	/** What the `@ssr` tags of the featured elements declare, linking to what rendering on the server takes. */
+	private get serverSideRendering() {
+		const declared = [...this.featured].filter(tag => tag.ssr)
+		const link = `[Server-side rendering](${StoriesFile.storybookUrl}?path=/docs/getting-started-installation--overview#server-side-rendering)`
+		return !declared.length ? []
+			: declared.length === 1 ? [`${link}: ${ssrOf(declared[0]!.ssr!)}`]
+				: [`${link}:`, declared.map(tag => `- \`<${tag.name}>\`: ${ssrOf(tag.ssr!)}`).join('\n')]
 	}
 
 	private get importStatement() {
@@ -207,6 +217,11 @@ function declares(tag: Tag) {
 	} catch {
 		return false
 	}
+}
+
+/** What an element's `@ssr` tag declares, as sentences. */
+export function ssrOf({ supported, caveat }: Ssr) {
+	return !supported ? 'Renders in the browser only.' : `Renders with Lit SSR and hydrates.${!caveat ? '' : ` ${caveat.replace(/(?<![.!?])$/, '.')}`}`
 }
 
 /** A description of the manifest, where one the analyzer failed to stringify - JSDoc with an inline tag - counts as none. */

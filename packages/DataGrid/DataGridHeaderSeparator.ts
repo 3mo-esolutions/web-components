@@ -1,7 +1,11 @@
 import { Component, component, property, html, css } from '@a11d/lit'
 import { type DataGridColumn } from './index.js'
 
-/** The handle resizing a column, drawing a line where the pointer is while it drags. */
+/**
+ * The handle resizing a column, drawing a line where the pointer is while it drags.
+ *
+ * @ssr true
+ */
 @component('mo-data-grid-header-separator')
 export class DataGridHeaderSeparator extends Component {
 	@property({ type: Object }) column!: DataGridColumn<unknown>

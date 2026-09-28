@@ -1,4 +1,4 @@
-import { component, property, css, Component, html, literal, staticHtml, unsafeCSS } from '@a11d/lit'
+import { component, property, css, Component, html, literal, staticHtml, unsafeCSS, type PropertyValues } from '@a11d/lit'
 import { InstanceofAttributeController } from '@3mo/instanceof-attribute-controller'
 import { type MaterialIcon } from '@3mo/icon'
 import { MdTextButton } from '@material/web/button/text-button.js'
@@ -303,15 +303,16 @@ export class Button extends Component {
 
 const Buttons = [MdTextButton, MdOutlinedButton, MdFilledButton, MdFilledTonalButton, MdElevatedButton]
 
-Buttons.forEach(Button => Button.addInitializer(element => {
-	element.addController({
-		hostUpdated: () => {
-			element.toggleAttribute('md-button', true)
-			element.renderRoot.querySelector('button')?.setAttribute('part', 'button')
-			element.renderRoot.querySelector('md-ripple')?.setAttribute('part', 'ripple')
-		}
-	})
-}))
+// Server-rendered buttons are constructed once Material defines them, before an initializer could be added.
+for (const Button of Buttons) {
+	const updated = Button.prototype['updated']
+	Button.prototype['updated'] = function (this: InstanceType<typeof Button>, changedProperties: PropertyValues) {
+		updated.call(this, changedProperties)
+		this.toggleAttribute('md-button', true)
+		this.renderRoot.querySelector('button')?.setAttribute('part', 'button')
+		this.renderRoot.querySelector('md-ripple')?.setAttribute('part', 'ripple')
+	}
+}
 
 Buttons.forEach(Button => Button.elementStyles.push(css`
 	:host {

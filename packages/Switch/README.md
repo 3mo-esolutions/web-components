@@ -16,6 +16,8 @@ npm install @3mo/switch
 import '@3mo/switch'
 ```
 
+[Server-side rendering](https://3mo-esolutions.github.io/web-components/?path=/docs/getting-started-installation--overview#server-side-rendering): Renders with Lit SSR and hydrates.
+
 ## Usage
 
 ```html

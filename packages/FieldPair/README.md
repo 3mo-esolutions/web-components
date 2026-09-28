@@ -16,6 +16,8 @@ npm install @3mo/field-pair
 import '@3mo/field-pair'
 ```
 
+[Server-side rendering](https://3mo-esolutions.github.io/web-components/?path=/docs/getting-started-installation--overview#server-side-rendering): Renders with Lit SSR and hydrates.
+
 ## Usage
 
 ```html

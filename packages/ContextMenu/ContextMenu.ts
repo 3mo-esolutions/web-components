@@ -7,6 +7,8 @@ import { Menu } from '@3mo/menu'
  *
  * @element mo-context-menu
  *
+ * @ssr true
+ *
  * @accessibility
  * It opens on the `contextmenu` event, which the context-menu key fires as well, and `Shift` `F10` on some systems, so make its anchor focusable. Inside, it is a [menu](?path=/docs/behaviors-menu-controller--overview).
  */

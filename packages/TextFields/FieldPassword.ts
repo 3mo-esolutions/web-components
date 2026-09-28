@@ -8,6 +8,8 @@ import '@3mo/icon-button'
  *
  * @element mo-field-password
  *
+ * @ssr true
+ *
  * @attr reveal - Shows the password in plain text
  * @attr autoComplete - `current-password` by default; `new-password` lets the browser suggest one
  *

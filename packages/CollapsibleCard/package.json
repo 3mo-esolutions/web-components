@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/collapsible-card",
-	"version": "0.2.2",
+	"version": "0.2.3",
 	"description": "A web component for cards whose body collapses and expands from a toggle in the header.",
 	"repository": {
 		"type": "git",

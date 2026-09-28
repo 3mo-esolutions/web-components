@@ -11,6 +11,8 @@ import './NavigationTree.js'
  *
  * @element mo-navigation-rail
  *
+ * @ssr true
+ *
  * @attr navigations - The navigations to present.
  * @attr docked - Whether the panel stands beside the page rather than over it.
  * @fires invoke - Dispatched with the destination which was invoked.

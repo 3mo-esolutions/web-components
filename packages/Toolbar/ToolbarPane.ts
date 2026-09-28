@@ -8,6 +8,8 @@ import { SlotController } from '@3mo/slot-controller'
  *
  * @element mo-toolbar-pane
  *
+ * @ssr true
+ *
  * @slot - The toolbar items
  */
 @component('mo-toolbar-pane')

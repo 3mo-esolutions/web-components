@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/confetti",
-	"version": "0.0.5",
+	"version": "0.0.6",
 	"description": "A web component for confetti bursts that rain over the page, drawn on a canvas.",
 	"repository": {
 		"type": "git",

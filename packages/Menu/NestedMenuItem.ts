@@ -8,6 +8,8 @@ import { Menu } from './Menu.js'
  *
  * @element mo-nested-menu-item
  *
+ * @ssr true
+ *
  * @attr open - Whether the submenu is open.
  *
  * @slot submenu - The items of the submenu.

@@ -8,6 +8,8 @@ export type RangeSliderValue = [start: number, end: number]
  *
  * @element mo-range-slider
  *
+ * @ssr true
+ *
  * @attr value - The start and end of the selected range, e.g. "[20, 80]"
  * @attr disabled - Turns the slider gray and makes it ignore input
  * @attr discrete - Shows the values above the thumbs while they are dragged

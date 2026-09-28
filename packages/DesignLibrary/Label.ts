@@ -1,5 +1,10 @@
 import { Component, component, css, html } from '@a11d/lit'
 
+/**
+ * @element mo-label
+ *
+ * @ssr true
+ */
 @component('mo-label')
 export class Label extends Component {
 	static override get styles() {

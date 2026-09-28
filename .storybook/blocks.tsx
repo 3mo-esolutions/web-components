@@ -1,5 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState, type MouseEvent } from 'react'
 import { ArgTypes, Controls, DocsContext, Heading, Markdown, Primary, useOf } from '@storybook/addon-docs/blocks'
+import { NAVIGATE_URL } from 'storybook/internal/core-events'
 import { getCustomElements } from '@storybook/web-components-vite'
 
 type PackageJson = { readonly name: string, readonly version: string, readonly description?: string }
@@ -49,6 +50,7 @@ function usePage() {
 /** Title, description, tag, version and links of the documented component. */
 export function Hero() {
 	const { name, section, tag, directory, packageJson, status, lead, details } = usePage()
+	const ssr: { supported: boolean, caveat?: string } | undefined = !tag ? undefined : getCustomElements()?.tags?.find((t: any) => t.name === tag)?.ssr
 	return (
 		<>
 			<header className='docs-hero'>
@@ -59,14 +61,40 @@ export function Hero() {
 					{!tag ? null : <span className='docs-chip docs-chip-mono'>{`<${tag}>`}</span>}
 					{!packageJson ? null : <span className='docs-chip'>v{packageJson.version}</span>}
 					{!status ? null : <span className={`docs-chip docs-chip-${status}`}>{status}</span>}
+					{!ssr ? null : <SsrChip supported={ssr.supported} />}
 					<span className='docs-meta-spacer' />
 					{!packageJson ? null : <a className='docs-link' href={`https://www.npmjs.com/package/${packageJson.name}`} target='_blank' rel='noreferrer'>npm</a>}
 					{!directory ? null : <a className='docs-link' href={`${repository}/tree/main/${directory}`} target='_blank' rel='noreferrer'>Source</a>}
 					<MarkdownLink />
 				</div>
+				{!ssr?.supported || !ssr.caveat ? null : <div className='docs-caveat'><Markdown options={{ forceInline: true }}>{`Server-side rendering: ${ssr.caveat}`}</Markdown></div>}
 			</header>
 			{!details.length ? null : <div className='docs-details'><Markdown>{details.join('\n\n')}</Markdown></div>}
 		</>
+	)
+}
+
+/** A click handler navigating the manager to a page of this Storybook, e.g. `?path=/docs/actions-button--overview`, as a plain link would only navigate the docs frame. */
+export function useNavigation(href: string) {
+	const { channel } = useContext(DocsContext)
+	return (event: MouseEvent) => {
+		if (event.button === 0 && !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey) {
+			event.preventDefault()
+			channel.emit(NAVIGATE_URL, href)
+		}
+	}
+}
+
+const serverSideRendering = '?path=/docs/getting-started-installation--overview#server-side-rendering'
+
+/** Whether the element renders with Lit SSR and hydrates, as its `@ssr` tag declares, linking to what that takes. */
+function SsrChip({ supported }: { supported: boolean }) {
+	const navigate = useNavigation(serverSideRendering)
+	return (
+		<a className={`docs-chip docs-chip-ssr${supported ? '' : ' docs-chip-client'}`} href={serverSideRendering} onClick={navigate}
+			title={supported ? 'Renders on the server with Lit SSR and hydrates in the browser' : 'Renders in the browser only'}>
+			{supported ? 'SSR' : 'Client only'}
+		</a>
 	)
 }
 

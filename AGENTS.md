@@ -29,7 +29,7 @@ A guide for coding agents working in this repository: how it is organized, how t
 | `.storybook/` | Storybook config: `main.ts` (aliases every `@3mo/*` to its `index.ts`, full-reload plugin), `preview.ts`, `blocks.tsx` (docs blocks), `source.ts` (Show code, `sourceOf`), `lazy.ts`, `globals.ts` (theme and language toolbar), `stories.test.ts` (smoke test), `docs/*.mdx` (Getting Started, Contributing). |
 | `scripts/` | `analyze.ts`, `readme.ts`, `changelog.ts`, `bump.ts`, `release.ts`, `pre-commit.ts`, `clean.ts`, `docs-build.ts`, `llms.ts`, `vitest-setup.ts`, helpers in `util/`. |
 | `vitest.config.ts` | Projects `specs` (instances `chromium`, `firefox`) and `stories`. |
-| `.github/workflows/` | `qa.yml` runs `npm run typescript`, `npm run lint` and `npm run test` on every PR and push to main; `development.yml` also deploys the Storybook to GitHub Pages and, after QA, runs `npm run release` on every push to main. |
+| `.github/workflows/` | `qa.yml` runs `npm run typescript`, `npm run lint`, `npm run test` and the SSR harnesses on every PR and push to main; `development.yml` also deploys the Storybook to GitHub Pages and, after QA, runs `npm run release` on every push to main. |
 
 Generated files, never edited by hand:
 
@@ -50,6 +50,7 @@ Generated files, never edited by hand:
 | `npx vitest run --project stories` | Smoke test: renders every story tagged `test` (the default; `tags: ['!test']` opts out) and fails on thrown errors, rejections and elements rendered without a definition. `-t 'Actions / Button'` narrows to one title. |
 | `npm run typescript` | Three checks: `tsc --build --noEmit` over the packages and scripts, `tsc -p packages/tsconfig.json` (specs, stories, demos, samples), `tsc -p .storybook/tsconfig.json`. |
 | `npx eslint <files>` | Lint what you touched; `npm run lint` lints everything. |
+| `npm run test:ssr` then `npm run test:ssr:hydration` | Renders every element with Lit SSR in Node (fixtures in `scripts/test-ssr-components.ts`), then hydrates each package's output in headless Chromium and compares it with a client render; `--tags=mo-a,mo-b` narrows the hydration. The hydration fails when an element's `@ssr` tag is missing or does not hold, and `-- --fix` writes each element's; the render fails when an `@ssr true` element does not render. Need the manifest. |
 | `npm run analyze` | Regenerates the manifest. Needed before Storybook starts in a fresh checkout and after any JSDoc change. |
 | `npm run readme -- <@3mo/name or Directory>` | Regenerates one package's README; no argument regenerates all, `--root` only the root table. |
 | `npm run changelog` | Regenerates the changelogs. |
@@ -144,7 +145,7 @@ declare global {
 | JSDoc on a property | A public property without an attribute appears in the API table only when documented; undocumented members count as internal. `@ignore` hides a member. |
 | `@accessibility` | A Markdown section (tables allowed) on an element or controller class: roles and states it sets, keys it answers, what it needs from the consumer. Becomes the page's and README's Accessibility section. |
 | `@i18n "Key"` | The translation keys the element uses. |
-| `@ssr true` / `@ssr false` | Whether the element renders with Lit SSR, optionally with a caveat: `@ssr true - <caveat>`. |
+| `@ssr true` / `@ssr false` | Whether the element renders with Lit SSR and hydrates, optionally with a caveat: `@ssr true - <caveat>`. Every element carries one, written by `npm run test:ssr:hydration -- --fix`; only the caveat is written by hand. Becomes the page's SSR mark, a line of the README and of the Markdown page. |
 
 Public statics and `{@link}` in descriptions are handled by `scripts/analyze.ts`; do not annotate around them.
 
@@ -190,7 +191,10 @@ Public statics and `{@link}` in descriptions are handled by `scripts/analyze.ts`
 ### SSR
 
 - Guard browser-only work with `isServer`; do not touch `document` or `window` at module scope or in constructors.
-- The server cannot see light DOM and never commits attribute or text values the browser alone knows, so the client's first render must equal the server's. Keep `@ssr` truthful.
+- The server cannot see light DOM, and hydration never commits attribute or text values the browser alone knows, so the client's first render must equal the server's. Derive from slotted content through `SlotController`, or gate it on `HydrationController.hydrating` (both `@3mo/slot-controller`), which also fires `slotchange` once hydrated.
+- A server-rendered element is constructed the moment its class is defined, mid module evaluation: patch a Material class's prototype instead of `addInitializer`, import what a constructor uses from its module rather than the package's `index.js`, and read statics set later (`Icon.defaultVariant`) lazily.
+- Element directives (`<x ${style()}>`, `<x ${bind()}>`, `<x ${tooltip()}>`) do not run on the server. Where a bound value changes what the child renders, bind it by name (`.value=${bind(this, 'value')}`), which the server renders. An empty text binding breaks on its next value, so write `${text || html.nothing}`.
+- Every element declares `@ssr`, and CI fails when one is missing or does not hold. After adding an element or changing what one renders, run the two harnesses; `npm run test:ssr:hydration -- --fix` writes the tags, and a `false` it writes is a bug to fix rather than accept.
 
 ## Writing a controller
 

@@ -7,6 +7,8 @@ import { SplitterResizer } from './index.js'
 /**
  * @element mo-splitter-resizer-host
  *
+ * @ssr true
+ *
  * @attr direction
  * @attr resizing
  * @attr collapsed

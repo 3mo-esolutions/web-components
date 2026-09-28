@@ -7,6 +7,8 @@ import { Button } from './Button.js'
  *
  * @element mo-selectable-button
  *
+ * @ssr true
+ *
  * @attr value - Identifies the button within a `mo-selection-group`.
  * @attr selected - Whether the button is selected.
  *

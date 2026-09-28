@@ -16,6 +16,8 @@ npm install @3mo/entity-dialog
 import '@3mo/entity-dialog'
 ```
 
+[Server-side rendering](https://3mo-esolutions.github.io/web-components/?path=/docs/getting-started-installation--overview#server-side-rendering): Renders with Lit SSR and hydrates.
+
 ## Examples
 
 - [Default](https://3mo-esolutions.github.io/web-components/?path=/story/data-entity-dialog--default)

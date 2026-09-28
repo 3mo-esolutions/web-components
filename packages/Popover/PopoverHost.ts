@@ -1,5 +1,10 @@
 import { component, Component, css, html } from '@a11d/lit'
 
+/**
+ * @element mo-popover-host
+ *
+ * @ssr true
+ */
 @component('mo-popover-host')
 export class PopoverHost extends Component {
 	static get(anchor: HTMLElement): HTMLElement {

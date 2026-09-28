@@ -7,6 +7,8 @@ import type { SheetPlacement } from './SheetPlacement.js'
  *
  * @element mo-sheet
  *
+ * @ssr true
+ *
  * @attr open - Whether the sheet is open.
  * @attr placement - The edge the sheet is anchored to: `block-end` (default), `block-start`, `inline-start` or `inline-end`.
  * @attr label - The accessible name of the sheet.

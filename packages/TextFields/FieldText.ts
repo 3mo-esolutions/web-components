@@ -63,6 +63,8 @@ export type FieldTextAutoComplete =
  *
  * @element mo-field-text
  *
+ * @ssr true
+ *
  * @attr value - The text
  * @attr minLength - The fewest characters a valid value has
  * @attr maxLength - The most characters the field takes, counted down at the end
@@ -93,6 +95,11 @@ export class FieldText extends InputFieldComponent<string> {
 		return literal`input`
 	}
 
+	/** Empty for void elements such as `input`, which a browser repairs but a server renders verbatim. */
+	protected get elementClosingTag() {
+		return literal``
+	}
+
 	protected override get inputTemplate() {
 		return html`
 			${staticHtml`
@@ -110,7 +117,7 @@ export class FieldText extends InputFieldComponent<string> {
 					autocomplete=${ifDefined(this.autoComplete)}
 					@input=${(e: Event) => this.handleInput(this.inputElement.value, e)}
 					@change=${(e: Event) => this.handleChange(this.inputElement.value, e)}
-				>
+				>${this.elementClosingTag}
 			`}
 		`
 	}

@@ -18,6 +18,11 @@ npm install @3mo/slider
 import '@3mo/slider'
 ```
 
+[Server-side rendering](https://3mo-esolutions.github.io/web-components/?path=/docs/getting-started-installation--overview#server-side-rendering):
+
+- `<mo-slider>`: Renders with Lit SSR and hydrates.
+- `<mo-range-slider>`: Renders with Lit SSR and hydrates.
+
 ## Usage
 
 ```html

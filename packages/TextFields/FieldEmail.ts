@@ -7,6 +7,8 @@ import { InputFieldComponent } from '@3mo/field'
  *
  * @element mo-field-email
  *
+ * @ssr true
+ *
  * @attr value - The value of the field.
  *
  * @i18n "Email"

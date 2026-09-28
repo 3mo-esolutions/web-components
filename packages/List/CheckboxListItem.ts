@@ -7,6 +7,8 @@ import { Checkbox } from '@3mo/checkbox'
  *
  * @element mo-checkbox-list-item
  *
+ * @ssr true
+ *
  * @attr selectionControlAlignment - The alignment of the checkbox relative to the list item content
  * @attr indeterminate - Whether the checkbox is indeterminate
  * @attr selected - The value of the checkbox

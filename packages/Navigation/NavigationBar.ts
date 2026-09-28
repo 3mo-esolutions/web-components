@@ -13,6 +13,8 @@ import './NavigationBarItem.js'
  *
  * @element mo-navigation-bar
  *
+ * @ssr true
+ *
  * @attr navigations - The navigations to present.
  * @fires invoke - Dispatched with the navigation which was invoked.
  * @fires overflowChange - Dispatched with the new verdict whenever whether the navigations fit changes.
