@@ -1,5 +1,6 @@
 import { Component, component, html, query, type HTMLTemplateResult } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
+import '@3mo/localization'
 import { type TestContext } from 'vitest'
 import { TooltipPlacement } from './TooltipPlacement.js'
 import { tooltip } from './TooltipDirective.js'

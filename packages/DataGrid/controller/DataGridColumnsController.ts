@@ -1,6 +1,5 @@
 import { Controller, ElementRefs } from '@a11d/lit'
 import { equals } from '@a11d/equals'
-import { DirectionsByLanguage } from '@3mo/localization'
 import { PointerDragController, type PointerDrag } from '@3mo/pointer-controller'
 import { ReorderabilityController } from '@3mo/reorderability'
 import { type DataGridColumn } from './DataGridColumn.js'
@@ -96,7 +95,7 @@ export class DataGridColumnsController<TData> extends Controller implements Even
 	private handleResize({ deltaX, event }: PointerDrag) {
 		const resizing = this.resizing
 		if (resizing) {
-			const inlineDelta = DirectionsByLanguage.get() === 'rtl' ? -deltaX : deltaX
+			const inlineDelta = this.grid.host.matches(':dir(rtl)') ? -deltaX : deltaX
 			resizing.width = Math.max(DataGridColumnsController.minimumWidth, (resizing.initial ?? 0) + inlineDelta)
 			this.stampPointer(event)
 		}
@@ -118,7 +117,7 @@ export class DataGridColumnsController<TData> extends Controller implements Even
 
 	/** Where the pointer is, from the inline start of the viewport, for a host drawing a line there. */
 	private stampPointer({ clientX }: PointerEvent) {
-		const inlineStart = DirectionsByLanguage.get() !== 'rtl' ? clientX : window.innerWidth - clientX
+		const inlineStart = this.grid.host.matches(':dir(rtl)') ? window.innerWidth - clientX : clientX
 		this.resizing?.handle.style.setProperty('--mo-data-grid-column-resizer-pointer', `${inlineStart}px`)
 	}
 

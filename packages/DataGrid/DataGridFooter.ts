@@ -1,6 +1,6 @@
 import { component, property, Component, css, state, html, query, style, ifDefined, join } from '@a11d/lit'
 import { type FieldNumber } from '@3mo/number-fields'
-import { DirectionsByLanguage, Localizer } from '@3mo/localization'
+import { Localizer } from '@3mo/localization'
 import { TooltipPlacement, tooltip } from '@3mo/tooltip'
 import { type DataGrid, type DataGridPaginationSize } from './index.js'
 
@@ -187,7 +187,7 @@ export class DataGridFooter<TData> extends Component {
 	}
 
 	private get pageNavigationTemplate() {
-		const isRtl = DirectionsByLanguage.get() === 'rtl'
+		const isRtl = this.matches(':dir(rtl)')
 		const hasUnknownDataLength = this.dataGrid.dataLength === undefined
 		const pageText = hasUnknownDataLength ? this.page : t('${page:number} of ${maxPage:number}', { page: this.page, maxPage: this.dataGrid.maxPage ?? 0 })
 		return !this.hasPageNavigation ? html.nothing : html`

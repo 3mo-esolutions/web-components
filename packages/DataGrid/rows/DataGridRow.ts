@@ -1,6 +1,6 @@
 import { css, property, Component, html, isServer, query, queryAll, type HTMLTemplateResult, LitElement, live, style, unsafeCSS } from '@a11d/lit'
 import { equals } from '@a11d/equals'
-import { DirectionsByLanguage, Localizer } from '@3mo/localization'
+import { Localizer } from '@3mo/localization'
 import { popover } from '@3mo/popover'
 import { tooltip } from '@3mo/tooltip'
 import { ContextMenu } from '@3mo/context-menu'
@@ -216,7 +216,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				height: var(--mo-data-grid-row-height);
 				transition: transform 250ms;
 
-				&[data-rtl] {
+				&:dir(rtl) {
 					transform: rotate(180deg);
 				}
 			}
@@ -359,7 +359,6 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 				${this.hasDetails === false ? html.nothing : html`
 					<mo-icon-button id='detailsExpanderIconButton'
 						icon='keyboard_arrow_right'
-						?data-rtl=${DirectionsByLanguage.get() === 'rtl'}
 						@click=${() => this.toggleDetails()}
 					></mo-icon-button>
 				`}
