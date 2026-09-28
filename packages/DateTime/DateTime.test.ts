@@ -121,13 +121,35 @@ describe('DateTime', () => {
 			expect(DateTime.getCalendar('fa')).toBe('persian')
 		})
 
-		it('should memoize resolved options per language and invalidate on language change', () => {
-			const resolved = DateTime.getResolvedOptions('en')
-			expect(DateTime.getResolvedOptions('en')).toBe(resolved)
+		it('should memoize resolved options per language', () => {
+			expect(DateTime.getResolvedOptions('en')).toBe(DateTime.getResolvedOptions('en'))
+			expect(DateTime.getResolvedOptions('en')).not.toBe(DateTime.getResolvedOptions('de'))
+		})
 
-			Localizer.languages.current = initialLanguage === 'de' ? 'en' : 'de'
+		it('should resolve the defaults for the current language', () => {
+			Localizer.languages.current = 'fa'
+			expect(DateTime.getCalendar()).toBe('persian')
 
-			expect(DateTime.getResolvedOptions('en')).not.toBe(resolved)
+			Localizer.languages.current = 'de'
+			expect(DateTime.getCalendar()).toBe('gregory')
+		})
+
+		it('should retain nothing per instance for the defaults it caches', () => {
+			// A tagged memoize appends its cache to a module-level list on every read, which is never shortened.
+			const push = Array.prototype.push
+			let retained = 0
+			Array.prototype.push = function (this: Array<unknown>, ...items: Array<unknown>) {
+				retained += items.filter(item => item instanceof Map).length
+				return push.apply(this, items)
+			}
+			try {
+				new DateTime
+				new DateTime
+			} finally {
+				Array.prototype.push = push
+			}
+
+			expect(retained).toBe(0)
 		})
 	})
 

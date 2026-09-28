@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/date-time",
-	"version": "0.10.3",
+	"version": "0.10.4",
 	"description": "Utilities for dates and times on Temporal: global DateTime, DateTimeRange and TimeSpan classes that parse localized input.",
 	"repository": {
 		"type": "git",

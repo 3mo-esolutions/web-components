@@ -1,12 +1,18 @@
-import { extractDateTimeFormatOptions, LocalizableString, Localizer, type FormatOptionsWithLanguage } from '@3mo/localization'
+import { extractDateTimeFormatOptions, LocalizableString, Localizer, type FormatOptionsWithLanguage, type LanguageCode } from '@3mo/localization'
 import './Temporal.js'
 import { TimeSpan } from './TimeSpan.js'
 import { type DateTimeParser, DateTimeLocalParser, DateTimeShortcutParser, DateTimeOperationParser, DateTimeNativeParser, DateTimeZeroParser } from './parsers/index.js'
-import { Memoize as memoize, clear } from 'typescript-memoize'
+import { Memoize as memoize } from 'typescript-memoize'
 import { type ParsingParameters, extractParsingParameters } from './extractParsingParameters.js'
 
 Localizer.dictionaries.add('en', { '✂Week': 'W' })
 Localizer.dictionaries.add('de', { 'Week': 'KW', '✂Week': 'KW' })
+
+// Keyed rather than tagged: a tagged memoize appends its cache to a module-level list on every read, which is never shortened.
+// The current language is keyed by a generation rather than resolved, which on every construction would cost more than the cache saves.
+let generation = 0
+Localizer.languages.change.subscribe(() => generation++)
+const byLanguage = (language?: LanguageCode) => language ?? generation
 
 type DateTimeFromParameters =
 	| [epochMilliseconds?: number, calendar?: string, timeZone?: string]
@@ -19,34 +25,28 @@ type DateTimeFromParameters =
 export class DateTime extends Date {
 	static readonly isoRegularExpression = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*))(?:Z|(\+|-)([\d|:]*))?$/
 
-	private static readonly cacheKey = 'Localizer'
-
 	private static readonly customParsers = new Array<Constructor<DateTimeParser>>()
 
 	static addParser(parser: Constructor<DateTimeParser>) {
 		DateTime.customParsers.push(parser)
 	}
 
-	static {
-		Localizer.languages.change.subscribe(() => clear([DateTime.cacheKey]))
-	}
-
-	@memoize({ tags: [DateTime.cacheKey] })
+	@memoize({ hashFunction: byLanguage })
 	static getResolvedOptions(language = Localizer.languages.current) {
 		return Intl.DateTimeFormat(language).resolvedOptions()
 	}
 
-	@memoize({ tags: [DateTime.cacheKey] })
+	@memoize({ hashFunction: byLanguage })
 	static getCalendar(language = Localizer.languages.current) {
 		return DateTime.getResolvedOptions(language).calendar
 	}
 
-	@memoize({ tags: [DateTime.cacheKey] })
+	@memoize({ hashFunction: byLanguage })
 	static getTimeZone(language = Localizer.languages.current) {
 		return DateTime.getResolvedOptions(language).timeZone
 	}
 
-	@memoize({ tags: [DateTime.cacheKey] })
+	@memoize({ hashFunction: byLanguage })
 	static getDateSeparator(language = Localizer.languages.current) {
 		return Intl.DateTimeFormat(language)
 			.formatToParts(new DateTime)
@@ -54,7 +54,7 @@ export class DateTime extends Date {
 			?.value as string
 	}
 
-	@memoize({ tags: [DateTime.cacheKey] })
+	@memoize({ hashFunction: byLanguage })
 	static getTimeSeparator(language = Localizer.languages.current) {
 		return Intl.DateTimeFormat(language, { timeStyle: 'short' })
 			.formatToParts(new DateTime)
