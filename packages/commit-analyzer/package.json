@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/commit-analyzer",
-	"version": "0.1.2",
+	"version": "0.1.3",
 	"description": "A Node tool for parsing git log output into commits with conventional-commit types, breaking changes and trailers.",
 	"repository": {
 		"type": "git",
@@ -20,7 +20,8 @@
 	"license": "MIT",
 	"homepage": "https://github.com/3mo-esolutions/web-components/tree/main/packages/commit-analyzer",
 	"type": "module",
-	"main": "index.ts",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
 	"files": [
 		"dist",
 		"CHANGELOG.md"

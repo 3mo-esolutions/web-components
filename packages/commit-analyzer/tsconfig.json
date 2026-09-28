@@ -9,7 +9,7 @@
 	],
 	"compilerOptions": {
 		"outDir": "./dist",
-		"noEmit": true,
+		"rewriteRelativeImportExtensions": true,
 		"allowImportingTsExtensions": true
 	}
 }

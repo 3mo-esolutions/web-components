@@ -1,4 +1,4 @@
-import { Commit, type Change, type ChangeType } from '@3mo/commit-analyzer'
+import { Commit, type Change, type ChangeType } from '../packages/commit-analyzer/index.ts'
 import { run, Package } from './util/index.ts'
 import FileSystem from 'fs'
 import Path from 'path'
