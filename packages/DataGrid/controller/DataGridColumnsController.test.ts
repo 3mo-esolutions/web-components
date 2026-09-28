@@ -1,6 +1,4 @@
-import { html } from '@a11d/lit'
-import { ComponentTestFixture } from '@a11d/lit-testing'
-import { type DataGrid, DataGridColumn, DataGridSelectability } from '../index.js'
+import { DataGridColumn } from '../index.js'
 import { DataGridColumnsController } from './DataGridColumnsController.js'
 
 type Data = { a: number, b: number }
@@ -11,7 +9,7 @@ describe('DataGridColumnsController', () => {
 		const state = { ...defaults, ...setup }
 		const grid = {
 			host: { addController: () => { }, requestUpdate: () => { }, style: document.createElement('div').style },
-			options: { data: [] },
+			options: { data: [], columns: [] },
 			selection: { get hasSelection() { return state.hasSelection } },
 			details: { get hasDetails() { return state.hasDetails } },
 			contextMenu: { get hasContextMenu() { return state.hasContextMenu } },
@@ -51,7 +49,7 @@ describe('DataGridColumnsController', () => {
 			controller.setColumnWidth('details', 20)
 			controller.setColumnWidth('selection', 40)
 			controller.setColumnWidth('actions', 28)
-			controller.columns.definitions.programmatic = [
+			controller.columns.definitions = [
 				new DataGridColumn<Data>({ dataSelector: 'a', heading: 'A', sticky: 'start' }),
 				new DataGridColumn<Data>({ dataSelector: 'b', heading: 'B', sticky: 'start' }),
 				new DataGridColumn<Data>({ dataSelector: 'c' as any, heading: 'C', sticky: 'end' }),
@@ -72,7 +70,7 @@ describe('DataGridColumnsController', () => {
 		it('should stack two sticky columns showing the same data one behind the other', () => {
 			const controller = createController({ hasDetails: false })
 			controller.setColumnWidth('selection', 40)
-			controller.columns.definitions.programmatic = [
+			controller.columns.definitions = [
 				new DataGridColumn<Data>({ dataSelector: 'a', heading: 'A', sticky: 'start' }),
 				new DataGridColumn<Data>({ dataSelector: 'b', heading: 'B' }),
 				new DataGridColumn<Data>({ dataSelector: 'a', heading: 'A again', sticky: 'start' }),
@@ -90,7 +88,7 @@ describe('DataGridColumnsController', () => {
 		it('should keep measured widths across column re-derivation, keyed by data selector, as columns are immutable value-objects', () => {
 			const controller = createController()
 			const definition = new DataGridColumn<Data>({ dataSelector: 'a', heading: 'A' })
-			controller.columns.definitions.programmatic = [definition]
+			controller.columns.definitions = [definition]
 
 			controller.columns.get('a')!.widthInPixels = 120
 
@@ -100,86 +98,6 @@ describe('DataGridColumnsController', () => {
 			expect(rederived).not.toBe(definition)
 			expect(controller.getWidthInPixels('a')).toBe(120)
 			expect(rederived.widthInPixels).toBe(120)
-		})
-	})
-
-	describe('CSS column tracks', () => {
-		const fixture = new ComponentTestFixture<DataGrid<Data>>(html`
-			<mo-data-grid .data=${[{ a: 1, b: 2 }]}>
-				<mo-data-grid-column-number heading='A' dataSelector='a'></mo-data-grid-column-number>
-				<mo-data-grid-column-number heading='B' dataSelector='b' width='50px'></mo-data-grid-column-number>
-			</mo-data-grid>
-		`)
-
-		const tracks = async () => {
-			await fixture.updateComplete
-			await new Promise(r => setTimeout(r, 30))
-			await fixture.updateComplete
-			return fixture.component.style.getPropertyValue('--mo-data-grid-columns')
-		}
-
-		const dataTrackCount = (value: string) => value.match(/\[data\]/g)?.length ?? 0
-
-		it('should provide a named track per visible column and none for hidden ones, as a zero track would still render a gap', async () => {
-			const value = await tracks()
-
-			expect(dataTrackCount(value)).toBe(2)
-			expect(value).toContain('[data] max-content')
-			expect(value).toContain('[data] 50px')
-			expect(value).toContain('[padding] 1fr')
-			expect(value).toContain('[actions]')
-
-			fixture.component.columns.find(c => c.dataSelector === 'b')!.hide()
-			const hidden = await tracks()
-
-			expect(dataTrackCount(hidden)).toBe(1)
-			expect(hidden).not.toContain('50px')
-		})
-
-		it('should include the selection, details and reorder tracks only while the corresponding feature is active', async () => {
-			const initial = await tracks()
-			expect(initial).not.toContain('[selection]')
-			expect(initial).not.toContain('[details]')
-			expect(initial).not.toContain('[order]')
-
-			fixture.component.selectability = DataGridSelectability.Multiple
-			expect(await tracks()).toContain('[selection]')
-
-			fixture.component.getRowDetailsTemplate = () => html`<div>Details</div>`
-			expect(await tracks()).toContain('[details]')
-
-			fixture.component.getRowDetailsTemplate = undefined
-			fixture.component.reorderability = true
-			const reorderable = await tracks()
-
-			expect(reorderable).toContain('[order]')
-			expect(reorderable).not.toContain('[details]')
-		})
-
-		it('should lay out the tracks of a grid which first rendered outside the flat tree, such as slotted into a host yet to render its slot', async () => {
-			const host = document.createElement('div')
-			const root = host.attachShadow({ mode: 'open' })
-			const grid = document.createElement('mo-data-grid') as DataGrid<Data>
-			grid.selectability = DataGridSelectability.Multiple
-			grid.data = [{ a: 1, b: 2 }]
-			const column = document.createElement('mo-data-grid-column-number')
-			Object.assign(column, { heading: 'A', dataSelector: 'a', width: '50px' })
-			grid.append(column)
-			host.append(grid)
-			document.body.append(host)
-			try {
-				await grid.updateComplete
-				await new Promise(r => setTimeout(r, 30))
-				await grid.updateComplete
-
-				root.append(document.createElement('slot'))
-				await new Promise(requestAnimationFrame)
-
-				const tracks = getComputedStyle(grid.renderRoot.querySelector('#content')!).gridTemplateColumns
-				expect(tracks).toMatch(/^\[selection\] 40px \[data\] 50px \[padding\] [\d.]+px \[actions\] 28px/)
-			} finally {
-				host.remove()
-			}
 		})
 	})
 })

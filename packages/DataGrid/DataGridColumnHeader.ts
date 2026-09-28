@@ -3,8 +3,8 @@ import { tooltip } from '@3mo/tooltip'
 import { Localizer } from '@3mo/localization'
 import { ResizeController } from '@3mo/resize-observer'
 import { ReorderabilityState } from '@3mo/reorderability'
-import { DataGridColumn } from './DataGridColumn.js'
-import { DataGridSortingStrategy } from './DataGridSortingController.js'
+import { DataGridColumn } from './controller/DataGridColumn.js'
+import { DataGridSortingStrategy } from './controller/DataGridSortingController.js'
 
 Localizer.dictionaries.add('de', {
 	'Sorting': 'Sortierung',

@@ -5,7 +5,7 @@ import { popover } from '@3mo/popover'
 import { tooltip } from '@3mo/tooltip'
 import { ContextMenu } from '@3mo/context-menu'
 import { ReorderabilityState } from '@3mo/reorderability'
-import { type DataGridColumn } from '../DataGridColumn.js'
+import { type DataGridColumn } from '../controller/DataGridColumn.js'
 import { type DataGrid, type DataGridCell, DataGridPrimaryContextMenuItem, type DataRecord } from '../index.js'
 
 Localizer.dictionaries.add('de', {

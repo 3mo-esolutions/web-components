@@ -41,6 +41,11 @@ export class DataGridNavigabilityController<TData> extends Controller {
 
 	/** The one cell in the tab order sits at the cursor, and an edited cell leaves the tab order to its editor. */
 	stampCell(cell: HTMLElement) {
+		if (!cell.isConnected) {
+			// Declared mid-template, before its row holds it: the stamp that asks for the row waits for the render to land.
+			queueMicrotask(() => cell.isConnected && this.stampCell(cell))
+			return
+		}
 		cell.role = 'gridcell'
 		if (this.grid.editability.isEditing(cell)) {
 			cell.removeAttribute('tabindex')
@@ -53,6 +58,11 @@ export class DataGridNavigabilityController<TData> extends Controller {
 	}
 
 	private handleCursorChange() {
+		this.moveTabStop()
+		this.options?.handleChange?.()
+	}
+
+	private moveTabStop() {
 		const previous = this.tabStop
 		const row = this.row.current ?? this.rowElements[0]
 		const column = this.column.current ?? this.visibleColumns[0]
@@ -65,7 +75,6 @@ export class DataGridNavigabilityController<TData> extends Controller {
 				}
 			}
 		}
-		this.options?.handleChange?.()
 	}
 
 	private rowsCache?: ReadonlyArray<HTMLElement>

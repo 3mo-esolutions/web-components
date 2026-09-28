@@ -1,4 +1,4 @@
-import { property, component, Component, html, css, query, type PropertyValues, event, style, literal, staticHtml, type HTMLTemplateResult, repeat, eventListener } from '@a11d/lit'
+import { property, component, Component, html, css, query, type PropertyValues, event, style, literal, staticHtml, type HTMLTemplateResult, repeat } from '@a11d/lit'
 import { LocalStorage } from '@a11d/local-storage'
 import { NotificationComponent } from '@a11d/lit-application'
 import { Downloader } from '@3mo/downloader'
@@ -8,12 +8,10 @@ import { tooltip } from '@3mo/tooltip'
 import { Localizer } from '@3mo/localization'
 import { type Scroller } from '@3mo/scroller'
 import { observeResize } from '@3mo/resize-observer'
-import { DataGridSelectability, DataGridSelectionBehaviorOnDataChange } from './DataGridSelectionController.js'
-import { type DataGridRankedSortDefinition, type DataGridSorting } from './DataGridSortingController.js'
-import { DataGridController } from './DataGridController.js'
-import { DataGridEditability } from './DataGridEditabilityController.js'
+import { DataGridEditability, DataGridController, type DataGridRankedSortDefinition, type DataGridSorting, DataGridSelectability, DataGridSelectionBehaviorOnDataChange, type DataRecord } from './controller/index.js'
+import { DataGridColumnComponentsController } from './DataGridColumnComponentsController.js'
+import { DataGridColumnDefinitions } from './DataGridColumnDefinitions.js'
 import { type DataGridColumn, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, type DataGridReorderChange } from './index.js'
-import { type DataRecord } from './DataRecord.js'
 import { DataGridToolbarElementStyles } from './DataGridToolbarElementStyles.js'
 import { DataGridPagination, type DataGridPaginationLike, type DataGridPaginationSize, type DataGridPaginationStrategy } from './DataGridPagination.js'
 
@@ -31,7 +29,7 @@ Localizer.dictionaries.add('de', {
  * @element mo-data-grid
  *
  * @attr data - The data to be displayed in the DataGrid. It is an array of objects, where each object represents a row.
- * @attr columns - The read-only columns of the DataGrid, composed of their definitions and modifications. Provide columns programmatically via `columns.definitions.programmatic`.
+ * @attr columns - The columns of the DataGrid, composed of their definitions and modifications. Assigning it gives the definitions in code, which column elements override.
  * @attr headerHidden - Whether the header should be hidden.
  * @attr page - The current page.
  * @attr pagination - How the rows are paged: a strategy, `pages` or `scroll`, and a size, a number or `auto` to fit the height, e.g. `pages`, `pages 50` or `50`.
@@ -136,7 +134,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	@property({ type: Array })
 	get columns() { return [...this.controller.columns.columns] }
-	set columns(value) { this.controller.columns.columns.definitions.programmatic = value }
+	set columns(value) { this.columnDefinitions.programmatic = value }
 
 	@property({ type: Boolean, reflect: true }) headerHidden = false
 	@property({ type: Number }) page = 1
@@ -277,18 +275,25 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		this.columns = columns
 	}
 
-	extractColumns(...parameters: Parameters<typeof this.controller.columns.extractColumns>) {
-		return this.controller.columns.extractColumns(...parameters)
-	}
-
-	@eventListener('DataGridColumnComponent:update')
-	protected handleColumnChange(e: CustomEvent) {
-		e.stopPropagation()
-		this.controller.columns.extractColumns()
+	extractColumns() {
+		this.columnComponents.extractColumns()
 	}
 
 	get visibleColumns() {
 		return this.controller.columns.columns.visible
+	}
+
+	// Named tracks for the parts present only: a zero-width track would still render its gap.
+	private get columnTracks() {
+		const { reorderability, details, selection } = this.controller
+		return [
+			['order', !reorderability.enabled ? undefined : 'var(--mo-data-grid-column-reorder-width)'],
+			['details', !details.hasDetails ? undefined : 'var(--mo-data-grid-column-details-width)'],
+			['selection', !selection.hasSelection ? undefined : 'var(--mo-data-grid-column-selection-width)'],
+			...this.visibleColumns.map(column => ['data', column.width]),
+			['padding', '1fr'],
+			['actions', 'var(--mo-data-grid-column-actions-width)'],
+		].filter(([, width]) => width !== undefined).map(([name, width]) => `[${name}] ${width}`).join(' ')
 	}
 
 	getRow(data: TData) {
@@ -416,6 +421,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	readonly controller = new DataGridController<TData, DataGrid<TData, TDetailsElement>>(this, grid => ({
 		get data() { return grid.data },
+		get columns() { return grid.columnDefinitions.toArray() },
 		get subDataGridDataSelector() { return grid.subDataGridDataSelector },
 		get sorting() { return grid.sorting },
 		handleSortingChange: sorting => {
@@ -448,6 +454,13 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		handleCsv: csv => DataGrid.downloadCsv(csv),
 		handleCsvError: error => NotificationComponent.notifyAndThrowError(error.message),
 	}))
+
+	readonly columnComponents = new DataGridColumnComponentsController<TData>(this)
+
+	readonly columnDefinitions = new DataGridColumnDefinitions<TData>({
+		generate: () => this.columnComponents.autoGeneratedColumns,
+		updated: () => this.controller.columns.syncColumns(),
+	})
 
 	/** @deprecated Use `controller.columns`. */
 	get columnsController() { return this.controller.columns }
@@ -713,7 +726,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 					${observeResize(([e]) => this.style.setProperty('--_content-height', `${e?.contentRect.height ?? 0}px`))}
 					${this.controller.virtualization.root.ref()}
 				>
-					<mo-grid id='content' autoRows='min-content' columns='var(--mo-data-grid-columns)'>
+					<mo-grid id='content' autoRows='min-content' columns=${this.columnTracks}>
 						${this.headerTemplate}
 						${this.contentTemplate}
 					</mo-grid>

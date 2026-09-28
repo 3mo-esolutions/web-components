@@ -1,9 +1,9 @@
 import { html, type HTMLTemplateResult } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { type DataGrid } from './DataGrid.js'
+import { type DataGrid } from '../DataGrid.js'
 import { DataGridDetailsController } from './DataGridDetailsController.js'
 import type { DataRecord } from './DataRecord.js'
-import './index.js'
+import '../index.js'
 
 type Data = string
 

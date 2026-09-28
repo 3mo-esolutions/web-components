@@ -1,7 +1,7 @@
 import { component, Component, html } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { userEvent } from 'vitest/browser'
-import { DataGrid, DataGridColumn, DataGridController, DataGridEditability, DataGridSelectability, DataGridSortingStrategy } from './index.js'
+import { DataGrid, DataGridColumn, DataGridController, DataGridEditability, DataGridSelectability, DataGridSortingStrategy } from '../index.js'
 
 type Person = { id: number, name: string, age: number, reports?: Array<Person> }
 

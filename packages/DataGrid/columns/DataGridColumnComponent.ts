@@ -1,7 +1,7 @@
 import { component, Component, event, property, type HTMLTemplateResult, type PropertyValues } from '@a11d/lit'
 import { hasChanged } from '@a11d/equals'
 import { DataGrid } from '../DataGrid.js'
-import { DataGridColumn, type DataGridColumnAlignment, type DataGridColumnContentStyle, type DataGridColumnMenuItems, type DataGridColumnSticky } from '../DataGridColumn.js'
+import { DataGridColumn, type DataGridColumnAlignment, type DataGridColumnContentStyle, type DataGridColumnMenuItems, type DataGridColumnSticky } from '../controller/DataGridColumn.js'
 
 /**
  * @attr width - The width of the column

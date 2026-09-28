@@ -1,5 +1,5 @@
 import { Controller } from '@a11d/lit'
-import { type DataGridController } from './index.js'
+import { type DataGridController } from './DataGridController.js'
 
 export class DataGridContextMenuController<TData> extends Controller {
 	constructor(private readonly grid: DataGridController<TData>) {
