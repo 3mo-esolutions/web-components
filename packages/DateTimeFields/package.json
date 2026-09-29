@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/date-time-fields",
-	"version": "0.17.2",
+	"version": "0.17.3",
 	"description": "Web components for date, date-time, time and range fields with locale-aware segmented entry and a calendar picker.",
 	"repository": {
 		"type": "git",
@@ -29,6 +29,11 @@
 			"source": "./index.ts",
 			"types": "./dist/index.d.ts",
 			"default": "./dist/index.js"
+		},
+		"./controller": {
+			"source": "./controller.ts",
+			"types": "./dist/controller.d.ts",
+			"default": "./dist/controller.js"
 		},
 		"./translations/*": {
 			"source": "./translations/*.ts",

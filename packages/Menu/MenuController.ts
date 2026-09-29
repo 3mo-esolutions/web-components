@@ -1,7 +1,7 @@
 import { Controller, ElementRef, eventListener, type ReactiveElement } from '@a11d/lit'
 import { NavigabilityController } from '@3mo/navigability'
 import { Selectability, SelectabilityController, SelectabilityInteraction } from '@3mo/selectability'
-import { SelectionListItemChangeEvent } from '@3mo/list'
+import { SelectionListItemChangeEvent } from '@3mo/list/controller'
 
 export interface MenuControllerOptions {
 	/** Read on every access. */
