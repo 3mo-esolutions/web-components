@@ -350,7 +350,6 @@ export class ListboxController<T, THost extends ReactiveElement = ReactiveElemen
 const nonTextInputTypes = ['button', 'checkbox', 'color', 'file', 'hidden', 'image', 'radio', 'range', 'reset', 'submit']
 
 function isTextField(element: HTMLElement | null | undefined) {
-	return element instanceof HTMLTextAreaElement
-		|| (element instanceof HTMLInputElement && !nonTextInputTypes.includes(element.type))
+	return ((element instanceof HTMLTextAreaElement || (element instanceof HTMLInputElement && !nonTextInputTypes.includes(element.type))) && !element.readOnly)
 		|| !!element?.isContentEditable
 }

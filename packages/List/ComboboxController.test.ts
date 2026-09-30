@@ -170,6 +170,21 @@ describe('ComboboxController', () => {
 		expect(fixture.component.open).toBe(false)
 	})
 
+	it('should choose the active option on Space where the input takes no typing, and leave Space to typing otherwise', async () => {
+		await configure({ open: true })
+		press('ArrowDown')
+		press('ArrowDown')
+
+		expect(press(' ').defaultPrevented).toBe(false)
+		expect(fixture.component.selection).toEqual([])
+
+		await configure({ readonly: true })
+
+		expect(press(' ').defaultPrevented).toBe(true)
+		expect(fixture.component.selection).toEqual(['Berlin'])
+		expect(fixture.component.open).toBe(false)
+	})
+
 	const active = () => fixture.component.input.ariaActiveDescendantElement
 
 	const open = async (key: string) => {
