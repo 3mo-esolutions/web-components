@@ -2,6 +2,7 @@ import { component, css, property, event, html, type HTMLTemplateResult } from '
 import { hasChanged } from '@a11d/equals'
 import { FetcherController } from '@3mo/fetcher-controller'
 import { FieldSelect } from '@3mo/select-field'
+import '@3mo/localization'
 
 export type FieldFetchableSelectParametersType = Record<string, unknown> | void
 
@@ -15,6 +16,10 @@ export type FieldFetchableSelectParametersType = Record<string, unknown> | void
  * @attr searchParameters - A function turning the typed text into parameters for the fetch function when searching.
  * @attr fetch - The function to fetch the data.
  * @attr optionTemplate - The template to render an option for each fetched item.
+ *
+ * @i18n "Searching"
+ * @i18n "Loading"
+ * @i18n "Type to search"
  *
  * @fires dataFetch - The fetched data.
  */
@@ -41,12 +46,23 @@ export class FieldFetchableSelect<T, TDataFetcherParameters extends FieldFetchab
 		args: () => [this.parameters]
 	})
 
+	/** Its results name the keyword they answer. */
 	private readonly searchFetcherController = new FetcherController(this, {
 		throttle: 500,
 		autoRun: false,
-		fetch: ([parameters]) => !this.hasSearchInput ? Promise.resolve([]) : this.fetch?.(parameters) || Promise.resolve([]),
-		args: () => [{ ...this.parameters, ...this.searchParameters?.(this.searchKeyword) ?? {} } as TDataFetcherParameters] as const
+		fetch: async ([parameters, keyword]) => ({ keyword, data: !this.hasSearchInput ? [] : await this.fetch?.(parameters) ?? [] }),
+		args: () => [{ ...this.parameters, ...this.searchParameters?.(this.searchKeyword) ?? {} } as TDataFetcherParameters, this.searchKeyword] as const
 	})
+
+	private get searchesOnServer() {
+		return !!this.searchParameters && this.hasSearchInput
+	}
+
+	/** Only those of what is typed now, never those of what was typed before. */
+	private get searchResults() {
+		const results = this.searchFetcherController.value
+		return results?.keyword === this.searchKeyword ? results.data : undefined
+	}
 
 	static override get styles() {
 		return css`
@@ -87,8 +103,17 @@ export class FieldFetchableSelect<T, TDataFetcherParameters extends FieldFetchab
 		return this.fetcherController.run()
 	}
 
-	protected override get showNoOptionsHint() {
-		return super.showNoOptionsHint && !this.searchFetcherController.pending && !this.fetcherController.pending
+	protected override get hint() {
+		if (this.searchesOnServer && !this.searchResults) {
+			return t('Searching')
+		}
+		if (this.fetcherController.pending && !this.options.length) {
+			return t('Loading')
+		}
+		if (!this.freeInput && !this.hasSearchInput && !!this.searchParameters && !this.listItems.length) {
+			return t('Type to search')
+		}
+		return super.hint
 	}
 
 	protected override get optionsTemplate() {
@@ -100,7 +125,7 @@ export class FieldFetchableSelect<T, TDataFetcherParameters extends FieldFetchab
 
 	protected get fetchedOptionsTemplate() {
 		return html`
-			${(this.hasSearchInput && !!this.searchParameters ? this.searchFetcherController.value : this.fetcherController.value)?.slice(0, this.optionsRenderLimit)?.map((value, index, data) => this.optionTemplate?.(value, index, data) ?? html`
+			${(this.searchesOnServer ? this.searchResults : this.fetcherController.value)?.slice(0, this.optionsRenderLimit)?.map((value, index, data) => this.optionTemplate?.(value, index, data) ?? html`
 				<mo-option .data=${value} value=${index}>${value}</mo-option>
 			`)}
 		`

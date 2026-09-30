@@ -35,16 +35,16 @@ import '@3mo/select-field'
 - [Option Content](https://3mo-esolutions.github.io/web-components/?path=/story/inputs-select-field--option-content) — An option holds any content, such as a flag, while the input shows its text.
 - [Value Far Down The List](https://3mo-esolutions.github.io/web-components/?path=/story/inputs-select-field--value-far-down-the-list) — Opening the menu scrolls to the selection far down the list, and ArrowDown steps on from it to Uruguay rather than from the top.
 - [Default Option](https://3mo-esolutions.github.io/web-components/?path=/story/inputs-select-field--default-option) — `default` adds a first item that clears the selection; with `reflectDefault` the input shows its text while nothing is selected.
-- [Multiple](https://3mo-esolutions.github.io/web-components/?path=/story/inputs-select-field--multiple) — `multiple` gives every option a checkbox and keeps the menu open while you pick; the input lists the selected options.
-- [Searchable](https://3mo-esolutions.github.io/web-components/?path=/story/inputs-select-field--searchable) — `searchable` filters the options by what you type, and says so when nothing matches.
-- [Free Input](https://3mo-esolutions.github.io/web-components/?path=/story/inputs-select-field--free-input) — `freeInput` keeps text no option matches.
+- [Multiple](https://3mo-esolutions.github.io/web-components/?path=/story/inputs-select-field--multiple) — `multiple` gives every option a checkbox and keeps the menu open while you pick through them; the input lists the selected options, cut short when they do not fit and shown whole on hover.
+- [Searchable](https://3mo-esolutions.github.io/web-components/?path=/story/inputs-select-field--searchable) — `searchable` filters the options to those holding every word you type, in any order and whatever its accents, and says so when none does.
+- [Free Input](https://3mo-esolutions.github.io/web-components/?path=/story/inputs-select-field--free-input) — `freeInput` keeps what you type as the value once you press Enter or leave the field, and fires `change` with the text.
 - [Actions](https://3mo-esolutions.github.io/web-components/?path=/story/inputs-select-field--actions) — A list item that is not an option is an action: the arrow keys reach it, and choosing it runs its click without selecting anything.
-- [States](https://3mo-esolutions.github.io/web-components/?path=/story/inputs-select-field--states) — A disabled field ignores input, a readonly one shows its value without letting it change, and a dense one is shorter.
+- [States](https://3mo-esolutions.github.io/web-components/?path=/story/inputs-select-field--states) — A disabled field ignores input, a readonly one shows its value without letting it change, a required one turns invalid once its selection is cleared, and a dense one is shorter.
 - [Subgrid Layout](https://3mo-esolutions.github.io/web-components/?path=/story/inputs-select-field--subgrid-layout) — The `list` part laid out as a grid, with every option as a subgrid row, lines up flags, dialling codes and names; `inputText` is what the input shows.
 
 ## Accessibility
 
-A [combobox](https://3mo-esolutions.github.io/web-components/?path=/docs/behaviors-combobox--overview) over a listbox of its options: the input and the listbox are named after the `label`, and a `searchable` field adds `aria-autocomplete='list'`. Focus stays in the input while the keys move through the options.
+A [combobox](https://3mo-esolutions.github.io/web-components/?path=/docs/behaviors-combobox--overview) over a listbox of its options: the input and the listbox are named after the `label`, and a `searchable` field adds `aria-autocomplete='list'`. Focus stays in the input while the keys move through the options; a field that cannot be typed in moves to the option whose text starts with the letters typed. When no option shows, the menu says why in a `status` region, which screen readers announce.
 
 ## API
 
@@ -59,8 +59,8 @@ A [combobox](https://3mo-esolutions.github.io/web-components/?path=/docs/behavio
 | `dense` | `dense` | `boolean` | `false` | Whether the field is dense. |
 | `open` | `open` | `boolean` | `false` | Whether the menu is open. |
 | `multiple` | `multiple` | `boolean` | `false` | Whether multiple options can be selected. |
-| `searchable` | `searchable` | `boolean` | `false` | Whether typing filters the options. |
-| `freeInput` | `freeInput` | `boolean` | `false` | Whether the user can input values that are not in the options. |
+| `searchable` | `searchable` | `boolean` | `false` | Whether typing filters the options to those holding every word typed, the first of which Enter takes. |
+| `freeInput` | `freeInput` | `boolean` | `false` | Whether typed text is kept as the value, on Enter or as focus leaves, unless it is an option's text, which selects that option. |
 | `index` | `index` | `Index` |  | The selected index. |
 | `data` | `data` | `Data<T>` |  | The selected data. |
 | `menuAlignment` | `menuAlignment` | `PopoverAlignment \| undefined` |  | Menu popover alignment |
@@ -75,7 +75,7 @@ A [combobox](https://3mo-esolutions.github.io/web-components/?path=/docs/behavio
 
 | Name | Detail | Description |
 | --- | --- | --- |
-| `change` | `T \| undefined` | The selected value, or an array of them when `multiple`. |
+| `change` | `T \| undefined` | The selected value, or an array of them when `multiple`, or the text kept by `freeInput`. |
 | `input` | `T \| undefined` | The input's text, as typed or as it shows the selection. |
 | `dataChange` | `Data<T>` | The selected option's data, or an array of them when `multiple`. |
 | `indexChange` | `Index` | The selected option's position, or an array of them when `multiple`. |

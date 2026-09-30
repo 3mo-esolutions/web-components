@@ -51,8 +51,8 @@ import '@3mo/fetchable-select-field'
 | `dense` | `dense` | `boolean` | `false` | Whether the field is dense. |
 | `open` | `open` | `boolean` | `false` | Whether the menu is open. |
 | `multiple` | `multiple` | `boolean` | `false` | Whether multiple options can be selected. |
-| `searchable` | `searchable` | `boolean` | `false` | Whether typing filters the options. |
-| `freeInput` | `freeInput` | `boolean` | `false` | Whether the user can input values that are not in the options. |
+| `searchable` | `searchable` | `boolean` | `false` | Whether typing filters the options to those holding every word typed, the first of which Enter takes. |
+| `freeInput` | `freeInput` | `boolean` | `false` | Whether typed text is kept as the value, on Enter or as focus leaves, unless it is an option's text, which selects that option. |
 | `index` | `index` | `Index` |  | The selected index. |
 | `data` | `data` | `Data<T>` |  | The selected data. |
 | `menuAlignment` | `menuAlignment` | `PopoverAlignment \| undefined` |  | Menu popover alignment |
@@ -68,7 +68,7 @@ import '@3mo/fetchable-select-field'
 | Name | Detail | Description |
 | --- | --- | --- |
 | `dataFetch` | `T[]` | The fetched data. |
-| `change` | `T \| undefined` | The selected value, or an array of them when `multiple`. |
+| `change` | `T \| undefined` | The selected value, or an array of them when `multiple`, or the text kept by `freeInput`. |
 | `input` | `T \| undefined` | The input's text, as typed or as it shows the selection. |
 | `dataChange` | `Data<T>` | The selected option's data, or an array of them when `multiple`. |
 | `indexChange` | `Index` | The selected option's position, or an array of them when `multiple`. |

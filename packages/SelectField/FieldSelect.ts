@@ -6,6 +6,7 @@ import { Popover, PopoverFloatingUiPositionController, type PopoverAlignment, ty
 import { Selectability } from '@3mo/selectability'
 import { FieldSelectValueController, type Data, type Index, type Value } from './SelectValueController.js'
 import { Option } from './Option.js'
+import { textEquals, textMatches } from './matchText.js'
 import '@3mo/localization'
 
 /**
@@ -18,8 +19,8 @@ import '@3mo/localization'
  * @attr dense - Whether the field is dense.
  * @attr open - Whether the menu is open.
  * @attr multiple - Whether multiple options can be selected.
- * @attr searchable - Whether typing filters the options.
- * @attr freeInput - Whether the user can input values that are not in the options.
+ * @attr searchable - Whether typing filters the options to those holding every word typed, the first of which Enter takes.
+ * @attr freeInput - Whether typed text is kept as the value, on Enter or as focus leaves, unless it is an option's text, which selects that option.
  * @attr value - The selected value, or an array of them when `multiple`.
  * @attr index - The selected index.
  * @attr data - The selected data.
@@ -34,14 +35,15 @@ import '@3mo/localization'
  * @csspart list - The listbox of options.
  *
  * @i18n "No results"
+ * @i18n "No options"
  *
- * @fires change - The selected value, or an array of them when `multiple`.
+ * @fires change - The selected value, or an array of them when `multiple`, or the text kept by `freeInput`.
  * @fires input - The input's text, as typed or as it shows the selection.
  * @fires dataChange - The selected option's data, or an array of them when `multiple`.
  * @fires indexChange - The selected option's position, or an array of them when `multiple`.
  *
  * @accessibility
- * A [combobox](?path=/docs/behaviors-combobox--overview) over a listbox of its options: the input and the listbox are named after the `label`, and a `searchable` field adds `aria-autocomplete='list'`. Focus stays in the input while the keys move through the options.
+ * A [combobox](?path=/docs/behaviors-combobox--overview) over a listbox of its options: the input and the listbox are named after the `label`, and a `searchable` field adds `aria-autocomplete='list'`. Focus stays in the input while the keys move through the options; a field that cannot be typed in moves to the option whose text starts with the letters typed. When no option shows, the menu says why in a `status` region, which screen readers announce.
  */
 @component('mo-field-select')
 export class FieldSelect<T> extends FieldComponent<Value> {
@@ -68,11 +70,21 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 	@query('mo-popover') readonly popoverElement?: Popover
 
 	override get isPopulated() {
+		const hasDefaultOptionAndReflectsDefault = !!this.default && this.reflectDefault
+		return this.hasValue || hasDefaultOptionAndReflectsDefault
+	}
+
+	/** A value, a selected option that has none, or text typed into a free input. */
+	private get hasValue() {
 		const valueNotNullOrEmpty = ['', undefined, null].includes(this.value as any) === false
 			&& (!this.multiple || (this.value instanceof Array && this.value.length > 0))
-		const hasDefaultOptionAndReflectsDefault = !!this.default && this.reflectDefault
-		const hasInputValueInFreeInputMode = this.freeInput && !!this.searchString?.trim()
-		return valueNotNullOrEmpty || hasDefaultOptionAndReflectsDefault || hasInputValueInFreeInputMode
+		return valueNotNullOrEmpty
+			|| this.valueController.selection.some(option => option.normalizedValue === undefined)
+			|| (this.freeInput && !!this.searchString?.trim())
+	}
+
+	private get interactive() {
+		return !this.disabled && !this.readonly
 	}
 
 	protected override get isDense() {
@@ -91,7 +103,11 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 		const field = host as FieldSelect<unknown>
 		return {
 			get expanded() { return field.open },
-			handleExpandedChange: open => field.open = open,
+			handleExpandedChange: open => {
+				if (!open || field.interactive) {
+					field.open = open
+				}
+			},
 			get autocomplete() { return field.searchable },
 			get items() { return field.listItems },
 			get selectability() { return field.multiple ? Selectability.Multiple : Selectability.Single },
@@ -105,15 +121,17 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 		return super.isActive || this.open
 	}
 
-	protected get showNoOptionsHint() {
-		return this.searchable && !this.freeInput && !!this.searchString && !this.default &&
-			!this.options.filter(o => !o.hasAttribute('data-search-no-match')).length
+	protected override willUpdate(props: PropertyValues<this>) {
+		super.willUpdate(props)
+		if (props.get('open') === true && !this.open) {
+			this.resetSearch()
+		}
 	}
 
 	protected override updated(props: PropertyValues) {
 		super.updated(props)
 		this.collectListItems()
-		this.toggleAttribute('data-show-no-options-hint', this.showNoOptionsHint)
+		this.activateFirstMatch()
 	}
 
 	protected override async firstUpdated(props: PropertyValues) {
@@ -135,8 +153,24 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 		}
 	}
 
+	/** An option searched away is hidden rather than disabled, so the option's own `disabled` survives the search. */
 	private updateListItems() {
-		this.combobox.indexability.setItems(this.listItems, (item, index) => ({ index, data: item, disabled: item.disabled }))
+		this.combobox.indexability.setItems(this.listItems, (item, index) => ({ index, data: item, disabled: item.disabled || item.hasAttribute('data-search-no-match') }))
+	}
+
+	private activated?: { readonly keyword: string, readonly option: Option<T> }
+
+	/** Once text is typed, the first option it matches is the active one, so Enter takes it. */
+	private activateFirstMatch() {
+		const option = this.open && !this.freeInput && this.hasSearchInput
+			? this.options.find(option => !option.disabled && !option.hasAttribute('data-search-no-match'))
+			: undefined
+		if (!option) {
+			this.activated = undefined
+		} else if ((option !== this.activated?.option || this.searchKeyword !== this.activated.keyword) && option.checkVisibility()) {
+			this.activated = { keyword: this.searchKeyword, option }
+			this.combobox.goTo(option)
+		}
 	}
 
 	static override get styles() {
@@ -151,6 +185,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 
 			input {
 				cursor: pointer;
+				text-overflow: ellipsis;
 			}
 
 			mo-icon[part=dropDownIcon] {
@@ -186,15 +221,18 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 				grid-column: var(--_grid-column-full-span-in-case);
 			}
 
-			#no-options-hint {
+			mo-list-item[data-search-no-match], mo-list-item[data-search-no-match] + mo-line {
 				display: none;
+			}
+
+			#hint {
 				padding: 10px;
 				color: var(--mo-color-gray);
 				grid-column: var(--_grid-column-full-span-in-case);
-			}
 
-			:host([data-show-no-options-hint]) #no-options-hint {
-				display: block;
+				&:empty {
+					display: none;
+				}
 			}
 		`
 	}
@@ -211,7 +249,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 	}
 
 	protected get hasSearchInput() {
-		return !!this.searchString?.trim() && this.valueToInputValue(this.value) !== this.searchString
+		return this.searching && !!this.searchString?.trim() && this.valueToInputValue(this.value) !== this.searchString
 	}
 
 	protected override get inputTemplate() {
@@ -222,8 +260,9 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 				type='text'
 				autocomplete='off'
 				aria-label=${ifDefined(this.label || undefined)}
+				title=${ifDefined(this.multiple ? this.valueToInputValue(this.value) || undefined : undefined)}
 				${this.combobox.input.ref()}
-				?readonly=${!this.searching || !this.searchable}
+				?readonly=${!this.searching || !this.searchable || this.readonly}
 				?disabled=${this.disabled}
 				.value=${live(this.searching ? this.searchString || '' : this.valueToInputValue(this.value) || '')}
 				@mousedown=${(e: MouseEvent) => this.handleInputMouseDown(e)}
@@ -272,9 +311,9 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 				placement=${ifDefined(this.menuPlacement)}
 				.shouldOpen=${this.shouldOpen}
 				?open=${this.open}
-				@openChange=${(e: CustomEvent<boolean>) => this.open = e.detail}
+				@openChange=${(e: CustomEvent<boolean>) => this.handleOpenChange(e.detail)}
 			>
-				${this.noResultsOptionTemplate}
+				${this.hintTemplate}
 				<div id='listbox' part='list' aria-label=${ifDefined(this.label || undefined)}
 					${this.combobox.listbox.ref()}
 					@slotchange=${() => this.collectListItems()}
@@ -286,7 +325,13 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 		`
 	}
 
-	private readonly shouldOpen = (e: Event) => !this.disabled && Popover.shouldOpen.call({ anchor: this, target: 'field' }, e)
+	private readonly shouldOpen = (e: Event) => this.interactive && Popover.shouldOpen.call({ anchor: this, target: 'field' }, e)
+
+	/** The popover shows its options only now, which is when one of them can become the active one. */
+	private handleOpenChange(open: boolean) {
+		this.open = open
+		this.activateFirstMatch()
+	}
 
 	protected get optionsTemplate() {
 		return html`
@@ -294,15 +339,21 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 		`
 	}
 
-	protected get noResultsOptionTemplate() {
-		return html`
-			<div id='no-options-hint'>${t('No results')}</div>
-		`
+	/** What the menu says while it shows no option: that none matches what was typed, or that there are none. */
+	protected get hint(): string | undefined {
+		if (this.freeInput || this.options.some(option => !option.hasAttribute('data-search-no-match'))) {
+			return undefined
+		}
+		return this.hasSearchInput ? t('No results') : this.listItems.length === 0 ? t('No options') : undefined
+	}
+
+	protected get hintTemplate() {
+		return html`<div id='hint' role='status'>${this.hint ?? html.nothing}</div>`
 	}
 
 	protected get defaultOptionTemplate() {
 		return !this.default ? html.nothing : html`
-			<mo-list-item value='' @click=${() => this.handleSelection([])}>
+			<mo-list-item value='' ?data-search-no-match=${this.hasSearchInput && !textMatches(this.default, this.searchKeyword)} @click=${() => this.handleSelection([])}>
 				${this.default}
 			</mo-list-item>
 			<mo-line role='presentation'></mo-line>
@@ -315,16 +366,27 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 		this.valueController.requestSync()
 	}
 
+	/** The text of the value as last shown, so a free input takes a new value's text but keeps what is typed while only the options change. */
+	private valueText?: string
+
 	requestValueUpdate() {
 		this.options.forEach(o => o.selected = this.valueController.isSelected(o))
-		this.searchString ??= this.valueToInputValue(this.value) || undefined
+		const text = this.valueToInputValue(this.value) || undefined
+		if (this.freeInput && text !== this.valueText) {
+			this.searchString = text
+		} else {
+			this.searchString ??= text
+		}
+		this.valueText = text
 		this.requestUpdate()
 	}
 
 	protected valueToInputValue(value: Value) {
-		const text = this.valueController.selection.map(o => o.text).join(', ')
+		const selection = this.valueController.selection
+		const text = selection.map(o => o.text).join(', ')
+		const freeText = this.freeInput && !this.multiple && !selection.length && value !== undefined && !(value instanceof Array) ? String(value) : ''
 		const empty = value === undefined || (value instanceof Array && value.length === 0)
-		return text || (empty && this.reflectDefault ? this.default ?? '' : '')
+		return text || freeText || (empty && this.reflectDefault ? this.default ?? '' : '')
 	}
 
 	protected override async handleFocus(bubbled: boolean, method: FocusMethod) {
@@ -336,6 +398,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 
 	protected override handleBlur(bubbled: boolean, method: FocusMethod) {
 		super.handleBlur(bubbled, method)
+		this.commitText()
 		this.resetSearch()
 		if (method !== 'pointer' && !this.searchable) {
 			this.open = false
@@ -347,10 +410,54 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 		this.change.dispatch(this.value)
 		this.dataChange.dispatch(this.data)
 		this.indexChange.dispatch(this.index)
-		this.handleInput(this.valueToInputValue(this.value))
-		this.resetSearch()
 		if (!this.multiple) {
 			this.open = false
+		}
+		super.handleInput(this.valueToInputValue(this.value))
+		// Several are picked from one search, which stands until the menu closes.
+		if (!this.multiple || !this.open || !this.hasSearchInput) {
+			this.searchString = this.valueToInputValue(this.value)
+			this.resetSearch()
+		}
+	}
+
+	/** Keeps a free input's text as the value, or selects the option whose text it is. Returns whether there was text to commit. */
+	private commitText() {
+		const text = this.searchString ?? ''
+		if (!this.freeInput || this.multiple || text === this.valueToInputValue(this.value) || (!text && this.value === undefined)) {
+			return false
+		}
+		const option = this.options.find(option => textEquals(option.text, text))
+		if (option && this.valueController.isSelected(option)) {
+			this.searchString = this.valueToInputValue(this.value)
+		} else if (option?.index !== undefined) {
+			this.handleSelection([option.index])
+		} else {
+			this.valueController.selectText(text || undefined)
+			this.change.dispatch(this.value)
+			this.dataChange.dispatch(this.data)
+			this.indexChange.dispatch(this.index)
+		}
+		return true
+	}
+
+	/**
+	 * After the listbox has had its say: Enter commits a free input's text, and Escape with the menu closed takes back what was typed.
+	 * Enter with nothing to commit or close is left to the popover, which opens the menu on it.
+	 */
+	@eventListener('keydown')
+	protected handleKeyDown(event: KeyboardEvent) {
+		if (event.defaultPrevented || !this.freeInput || this.multiple || event.composedPath()[0] !== this.combobox.input.value) {
+			return
+		}
+		if (event.key === 'Enter') {
+			if (this.commitText() || this.open) {
+				event.preventDefault()
+				this.open = false
+			}
+		} else if (event.key === 'Escape' && !this.open && (this.searchString ?? '') !== this.valueToInputValue(this.value)) {
+			event.preventDefault()
+			this.searchString = this.valueToInputValue(this.value)
 		}
 	}
 
@@ -363,14 +470,20 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 		this.valueController.handleItemsChange()
 	}
 
-	override setCustomValidity(error: string) { error }
+	private customValidity = ''
+
+	override setCustomValidity(error: string) {
+		this.customValidity = error
+	}
 
 	override async checkValidity() {
 		await this.updateComplete
-		return true
+		return !this.customValidity && (!this.required || this.hasValue)
 	}
 
-	override reportValidity() { }
+	override reportValidity() {
+		this.combobox.input.value?.focus()
+	}
 
 	protected get searchKeyword() {
 		return this.searchString?.trim() || ''
@@ -386,13 +499,8 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 	}
 
 	protected search() {
-		const matchedValues = this.options
-			.filter(option => option.textMatches(this.searchKeyword))
-			.map(option => option.normalizedValue)
 		for (const option of this.options) {
-			const matches = matchedValues.some(v => option.valueMatches(v))
-			option.toggleAttribute('data-search-no-match', !matches)
-			option.disabled = !matches
+			option.toggleAttribute('data-search-no-match', !option.textMatches(this.searchKeyword))
 		}
 		this.updateListItems()
 		return Promise.resolve()
@@ -404,7 +512,6 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 		}
 		for (const option of this.options) {
 			option.removeAttribute('data-search-no-match')
-			option.disabled = false
 		}
 		this.updateListItems()
 	}

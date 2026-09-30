@@ -114,7 +114,7 @@ export const DefaultOption: Story = {
 	`,
 }
 
-/** `multiple` gives every option a checkbox and keeps the menu open while you pick; the input lists the selected options. */
+/** `multiple` gives every option a checkbox and keeps the menu open while you pick through them; the input lists the selected options, cut short when they do not fit and shown whole on hover. */
 export const Multiple: Story = {
 	render: () => html`
 		<mo-field-select label='Countries' multiple>
@@ -123,7 +123,7 @@ export const Multiple: Story = {
 	`,
 }
 
-/** `searchable` filters the options by what you type, and says so when nothing matches. The arrow keys and Enter pick one without the mouse. */
+/** `searchable` filters the options to those holding every word you type, in any order and whatever its accents, and says so when none does. Enter takes the first match; the arrow keys reach the others. */
 export const Searchable: Story = {
 	render: ({ multiple }) => html`
 		<mo-field-select label='Country' searchable ?multiple=${multiple}>
@@ -133,8 +133,8 @@ export const Searchable: Story = {
 }
 
 /**
- * `freeInput` keeps text no option matches. Typing fires only `input` with the text; picking an option also fires
- * `change`, `dataChange` and `indexChange` with its value, datum and position - watch the Actions panel.
+ * `freeInput` keeps what you type as the value once you press Enter or leave the field, and fires `change` with the text.
+ * Typing an option's text, or picking one, selects that option instead. Escape with the menu closed takes back what was typed - watch the Actions panel.
  */
 export const FreeInput: Story = {
 	render: ({ default: defaultText, multiple }) => html`
@@ -159,7 +159,7 @@ export const Actions: Story = {
 	`,
 }
 
-/** A disabled field ignores input, a readonly one shows its value without letting it change, and a dense one is shorter. */
+/** A disabled field ignores input, a readonly one shows its value without letting it change, a required one turns invalid once its selection is cleared, and a dense one is shorter. */
 export const States: Story = {
 	render: () => html`
 		<mo-field-select label='Disabled' disabled value='DE'>
@@ -167,6 +167,10 @@ export const States: Story = {
 			<mo-option value='FR'>France</mo-option>
 		</mo-field-select>
 		<mo-field-select label='Readonly' readonly value='DE'>
+			<mo-option value='DE'>Germany</mo-option>
+			<mo-option value='FR'>France</mo-option>
+		</mo-field-select>
+		<mo-field-select label='Required' required default='None' value='DE'>
 			<mo-option value='DE'>Germany</mo-option>
 			<mo-option value='FR'>France</mo-option>
 		</mo-field-select>

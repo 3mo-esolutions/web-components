@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/fetchable-select-field",
-	"version": "0.3.2",
+	"version": "0.3.3",
 	"description": "A web component for select fields that fetch their options and search on the server as the user types.",
 	"repository": {
 		"type": "git",
@@ -25,6 +25,20 @@
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"source": "./index.ts",
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		},
+		"./translations/*": {
+			"source": "./translations/*.ts",
+			"types": "./dist/translations/*.d.ts",
+			"default": "./dist/translations/*.js"
+		},
+		"./dist/*": "./dist/*",
+		"./package.json": "./package.json"
+	},
 	"customElements": "dist/custom-elements.json",
 	"files": [
 		"dist",
@@ -37,6 +51,7 @@
 	"peerDependencies": {
 		"@a11d/lit": "x",
 		"@3mo/select-field": "x",
-		"@3mo/fetcher-controller": "0.2.x"
+		"@3mo/fetcher-controller": "0.2.x",
+		"@3mo/localization": "x"
 	}
 }

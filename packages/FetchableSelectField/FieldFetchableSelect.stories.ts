@@ -32,7 +32,7 @@ export const Default: Story = {
 	`,
 }
 
-/** `searchParameters` turns what is typed into parameters for `fetch`, so the server searches, half a second after the last key. A bar runs along the field while it fetches. */
+/** `searchParameters` turns what is typed into parameters for `fetch`, so the server searches, half a second after the last key. A bar runs along the field while it fetches, and the menu says it is searching until the answer to what is typed arrives. */
 export const ServerSearch: Story = {
 	render: () => html`
 		<mo-field-fetchable-select label='Country' searchable

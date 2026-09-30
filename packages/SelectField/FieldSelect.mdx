@@ -32,7 +32,7 @@ With `multiple`, the value, index and data are arrays, and the menu stays open w
 
 ## Search and free input
 
-`searchable` filters the options as the user types. `freeInput` also keeps text that matches none of them.
+`searchable` filters the options as the user types, to those holding every word typed, and Enter takes the first of them. When none matches, the menu says so. `freeInput` keeps the text itself as the value, committed on Enter or when focus leaves, unless it is an option's text.
 
 <DocsStory of={FieldSelectStories.Searchable} />
 <DocsStory of={FieldSelectStories.FreeInput} />

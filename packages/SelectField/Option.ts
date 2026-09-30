@@ -1,5 +1,6 @@
 import { component, property, css, html, eventListener, event } from '@a11d/lit'
 import { SelectionListItem } from '@3mo/list'
+import { textMatches } from './matchText.js'
 
 /**
  * An option of a select field, holding any content and selected by its value, its data or its position.
@@ -53,11 +54,9 @@ export class Option<T> extends SelectionListItem {
 		return this.inputText ?? this.textContent?.trim() ?? ''
 	}
 
-	textMatches(text: string) {
-		return [this.textContent, this.inputText]
-			.map(text => text?.replaceAll(/\s+/g, '').toLowerCase())
-			.filter(Boolean)
-			.some(keyword => keyword!.includes(text.toLowerCase()))
+	/** Whether its content or `inputText` holds every word of the keyword, whatever their case, accents and spacing. */
+	textMatches(keyword: string) {
+		return [this.textContent, this.inputText].some(text => textMatches(text, keyword))
 	}
 
 	static override get styles() {

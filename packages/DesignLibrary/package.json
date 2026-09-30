@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/del",
-	"version": "0.6.6",
+	"version": "0.6.7",
 	"description": "A bundle of the whole library, re-exported with Lit and the application framework, plus a business-suite app shell.",
 	"repository": {
 		"type": "git",

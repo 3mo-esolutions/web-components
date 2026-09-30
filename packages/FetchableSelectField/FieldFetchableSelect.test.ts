@@ -30,8 +30,16 @@ const visibleOptionTexts = (component: FetchableSelect) => component.options
 	.filter(option => !option.hasAttribute('data-search-no-match'))
 	.map(option => option.text)
 
-const isNoResultsHintVisible = (component: FetchableSelect) =>
-	getComputedStyle(component.renderRoot.querySelector('#no-options-hint') as HTMLElement).display !== 'none'
+const hintText = (component: FetchableSelect) => {
+	const hint = component.renderRoot.querySelector('#hint') as HTMLElement
+	return getComputedStyle(hint).display === 'none' ? undefined : hint.textContent?.trim()
+}
+
+async function openMenu(component: FetchableSelect) {
+	component.open = true
+	await settle(component)
+	await waitUntil(() => !!component.popoverElement?.matches(':popover-open'))
+}
 
 async function focusIn(component: FetchableSelect) {
 	component['focusController'].focusIn()
@@ -143,6 +151,24 @@ describe('FieldFetchableSelect', () => {
 			await settle(fixture.component)
 
 			expect(fetchSpy).toHaveBeenCalledExactlyOnceWith(undefined)
+		})
+	})
+
+	describe('while the first fetch is pending', () => {
+		beforeEach(() => {
+			fetchSpy.mockImplementation(() => new Promise(() => { }))
+		})
+
+		const pendingFixture = new ComponentTestFixture<FetchableSelect>(html`
+			<mo-field-fetchable-select label='Select' .fetch=${fetchDelegate}></mo-field-fetchable-select>
+		`)
+
+		afterEach(() => closeMenu(pendingFixture.component))
+
+		it('should say it is loading', async () => {
+			await openMenu(pendingFixture.component)
+
+			expect(hintText(pendingFixture.component)).toBe('Loading')
 		})
 	})
 
@@ -326,7 +352,7 @@ describe('FieldFetchableSelect', () => {
 			expect(optionTexts(searchFixture.component)).toEqual(fruits)
 		})
 
-		it('should not show the no-results hint while a search fetch is pending', async () => {
+		it('should say it is searching until the server answers, and then that nothing matches', async () => {
 			let resolveSearch!: (data: Array<any>) => void
 			fetchSpy.mockImplementation(parameters => parameters?.keyword
 				? new Promise<Array<any>>(resolve => resolveSearch = resolve)
@@ -337,12 +363,56 @@ describe('FieldFetchableSelect', () => {
 			await type(searchFixture.component, 'zzz')
 			await settle(searchFixture.component)
 
-			expect(isNoResultsHintVisible(searchFixture.component)).toBe(false)
+			expect(hintText(searchFixture.component)).toBe('Searching')
 
 			resolveSearch([])
-			await waitUntil(() => isNoResultsHintVisible(searchFixture.component))
+			await waitUntil(() => hintText(searchFixture.component) === 'No results')
 
-			expect(isNoResultsHintVisible(searchFixture.component)).toBe(true)
+			expect(hintText(searchFixture.component)).toBe('No results')
+		})
+
+		it('should not show the results of what was typed before while searching for what is typed now', async () => {
+			let resolveCherry: ((data: Array<any>) => void) | undefined
+			fetchSpy.mockImplementation(parameters => parameters?.keyword === 'cher'
+				? new Promise<Array<any>>(resolve => resolveCherry = resolve)
+				: Promise.resolve(parameters?.keyword ? ['Banana bread'] : [...fruits]))
+			await waitUntil(() => searchFixture.component.options.length === fruits.length)
+			await focusIn(searchFixture.component)
+			await type(searchFixture.component, 'ban')
+			await waitUntil(() => optionTexts(searchFixture.component).join() === 'Banana bread')
+
+			await type(searchFixture.component, 'cher')
+
+			expect(optionTexts(searchFixture.component)).toEqual([])
+			expect(hintText(searchFixture.component)).toBe('Searching')
+
+			await waitUntil(() => !!resolveCherry)
+			resolveCherry!(['Cherry pie'])
+			await waitUntil(() => searchFixture.component.options.length === 1)
+
+			expect(optionTexts(searchFixture.component)).toEqual(['Cherry pie'])
+		})
+
+		it('should make the first search result the active option', async () => {
+			fetchSpy.mockImplementation(parameters => Promise.resolve(parameters?.keyword ? ['Banana bread', 'Banana split'] : [...fruits]))
+			await waitUntil(() => searchFixture.component.options.length === fruits.length)
+			await focusIn(searchFixture.component)
+
+			await type(searchFixture.component, 'ban')
+			const input = searchFixture.component.searchInputElement!
+			await waitUntil(() => !!input.ariaActiveDescendantElement && input.ariaActiveDescendantElement === searchFixture.component.options[0])
+
+			expect(input.ariaActiveDescendantElement?.textContent?.trim()).toBe('Banana bread')
+		})
+
+		it('should say to type when the server has nothing to show before a search', async () => {
+			fetchSpy.mockImplementation(parameters => Promise.resolve(parameters?.keyword ? ['Banana bread'] : []))
+			await searchFixture.component.requestFetch()
+			await waitUntil(() => searchFixture.component.options.length === 0)
+
+			await openMenu(searchFixture.component)
+
+			expect(hintText(searchFixture.component)).toBe('Type to search')
 		})
 
 		it('should restore a clicked selection once the option re-enters the fetched window', async () => {

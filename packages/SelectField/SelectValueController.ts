@@ -9,7 +9,8 @@ export type Value = PluralizeUnion<string | number>
 export type Data<T> = PluralizeUnion<T>
 export type Index = PluralizeUnion<number>
 
-type SelectionRequest = { readonly origin: SelectionOrigin, readonly values: ReadonlyArray<unknown> }
+/** `text` is kept as the value of a single free-input field when no option answers the request. */
+type SelectionRequest = { readonly origin: SelectionOrigin, readonly values: ReadonlyArray<unknown>, readonly text?: string }
 
 type SelectionOrigin = 'value' | 'index' | 'data'
 
@@ -75,9 +76,20 @@ export class FieldSelectValueController<T> extends Controller {
 	accept(origin: SelectionOrigin) {
 		const value = this.host[origin]
 		if (same(value, this.published?.[origin]) === false) {
-			this.request = { origin, values: value === undefined ? [] : value instanceof Array ? value : [value] }
+			this.request = {
+				origin,
+				values: value === undefined ? [] : value instanceof Array ? value : [value],
+				text: origin === 'value' && typeof value === 'string' ? value : undefined,
+			}
 			this.requestSync()
 		}
+	}
+
+	/** Free text in place of an option: kept as the value, and matched against none of the options' values. */
+	selectText(text: string | undefined) {
+		this.selectability.selection = []
+		this.request = { origin: 'value', values: [], text }
+		this.commit()
 	}
 
 	/** Becomes a request itself, so a menu selection survives the options being replaced as a written one does. */
@@ -136,12 +148,13 @@ export class FieldSelectValueController<T> extends Controller {
 	 * than being answered with an empty selection. */
 	private commit() {
 		const options = this.selection
-		if (!this.published && options.length === 0) {
+		const text = options.length === 0 && this.host.freeInput && !this.host.multiple ? this.request?.text : undefined
+		if (!this.published && options.length === 0 && text === undefined) {
 			return
 		}
 		const indices = options.map(option => option.index).filter(index => index !== undefined)
 		const selection = {
-			value: this.pluralize(options.map(option => option.normalizedValue)) as Value,
+			value: text ?? this.pluralize(options.map(option => option.normalizedValue)) as Value,
 			index: this.pluralize(indices) as Index,
 			data: this.pluralize(options.map(option => option.data)) as Data<T>,
 		}
