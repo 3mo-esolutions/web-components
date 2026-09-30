@@ -287,6 +287,31 @@ describe('FetchableDataGrid', () => {
 					expect(slottedFixture.component.renderRoot.querySelector('mo-empty-state')?.checkVisibility()).toBeFalsy()
 				})
 			})
+
+			describe('with a field bound through the parameters binder', () => {
+				class TestParametersBindingGrid extends FetchableDataGrid<Person, Parameters> {
+					protected override get toolbarDefaultTemplate() {
+						return html`<input ${this.parametersBinder.bind('search')}>`
+					}
+				}
+				customElements.define('test-fetchable-data-grid-parameters-binding', TestParametersBindingGrid)
+
+				const bindingFixture = new ComponentTestFixture<TestParametersBindingGrid>(html`
+					<test-fetchable-data-grid-parameters-binding style='height: 300px' .fetch=${fetch}></test-fetchable-data-grid-parameters-binding>
+				` as any)
+
+				const input = () => bindingFixture.component.renderRoot.querySelector('input')
+
+				it('should create the parameters when the field changes and fetch with them', async () => {
+					await advanceUntil(() => !!input())
+
+					input()!.value = 'bound'
+					input()!.dispatchEvent(new Event('change'))
+
+					expect(bindingFixture.component.parameters).toEqual({ search: 'bound' })
+					await advanceUntil(() => fetchesOf('bound').length === 1)
+				})
+			})
 		})
 	})
 

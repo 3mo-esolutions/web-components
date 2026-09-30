@@ -1,4 +1,4 @@
-import { Binder, component, css, event, html, property, bind } from '@a11d/lit'
+import { Binder, BindingMode, component, css, event, html, property, bind, type BindDirectiveParametersOptions } from '@a11d/lit'
 import { hasChanged } from '@a11d/equals'
 import '@3mo/localization'
 import { tooltip } from '@3mo/tooltip'
@@ -20,6 +20,24 @@ type PaginatedResult<TData> = Readonly<{ data: NonPaginatedResult<TData> } & ({
 })>
 
 export type FetchableDataGridResult<TData> = PaginatedResult<TData> | NonPaginatedResult<TData>
+
+class FetchableDataGridParametersBinder<TParameters extends FetchableDataGridParametersType> extends Binder<TParameters> {
+	constructor(override readonly host: { parameters?: TParameters, requestUpdate(): void }) {
+		super(host, 'parameters')
+	}
+
+	protected override getParameters(parameters: BindDirectiveParametersOptions<TParameters>): BindDirectiveParametersOptions<TParameters> {
+		return {
+			// Undefined parameters would otherwise make every binding one-way
+			mode: BindingMode.TwoWay,
+			...parameters,
+			sourceUpdate: value => {
+				this.host.parameters ??= {} as TParameters
+				parameters.sourceUpdate?.call(this.host, value)
+			},
+		}
+	}
+}
 
 /**
  * A data grid that fetches its rows through a function of its parameters, a page at a time if the server paginates.
@@ -74,7 +92,7 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 		return this.fetcherController.fetch(...parameters)
 	}
 
-	protected readonly parametersBinder = new Binder<TDataFetcherParameters>(this, 'parameters')
+	protected readonly parametersBinder = new FetchableDataGridParametersBinder<TDataFetcherParameters>(this)
 
 	static override get styles() {
 		return css`
