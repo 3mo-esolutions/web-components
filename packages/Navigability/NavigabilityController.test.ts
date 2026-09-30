@@ -264,6 +264,20 @@ describe('NavigabilityController', () => {
 			expect(controller().index).toBe(0)
 		})
 
+		it('should take the caret keys and typing of a readonly text field as the keyboard target', async () => {
+			const input = fixture.component.shadowRoot!.appendChild(document.createElement('input'))
+			input.readOnly = true
+			fixture.component.keyboardTarget = input
+			fixture.component.requestUpdate()
+			await fixture.updateComplete
+
+			expect(keyDown(input, 'End').defaultPrevented).toBe(true)
+			expect(controller().index).toBe(4)
+
+			expect(keyDown(input, 'b').defaultPrevented).toBe(true)
+			expect(controller().index).toBe(2)
+		})
+
 		it('should ignore keys while disabled by a prior default prevention', () => {
 			const event = new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true, cancelable: true })
 			event.preventDefault()

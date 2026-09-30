@@ -53,7 +53,7 @@ Generated files, never edited by hand:
 | `npm run analyze` | Regenerates the manifest. Needed before Storybook starts in a fresh checkout and after any JSDoc change. |
 | `npm run readme -- <@3mo/name or Directory>` | Regenerates one package's README; no argument regenerates all, `--root` only the root table. |
 | `npm run changelog` | Regenerates the changelogs. |
-| `npm run bump -- <@3mo/name or Directory>... <patch|minor|major|prerelease>` | Bumps the versions and regenerates the manifest and those READMEs. `premajor`, `preminor` and `prepatch` work too; prereleases are `-preview.<n>`. |
+| `npm run bump -- [<@3mo/name or Directory>...] [<patch|minor|major|prerelease>]` | Bumps the versions and regenerates the manifest and those READMEs. Without names, bumps every package with uncommitted changes whose version is not bumped yet; the type defaults to `patch`. `premajor`, `preminor` and `prepatch` work too; prereleases are `-preview.<n>`. |
 | `npm run peers` | Fails when a package lists another `@3mo/*` package or a shared external under `dependencies` instead of `peerDependencies`; `-- --fix` moves them. Runs in CI. |
 | `npm run release -- --dry-run` | Lists the versions a release would publish, in publish order, and the packages with changes their published version lacks. Reads npm and git only. |
 | `npm run llms -- <directory>` | Writes the Markdown pages, `llms.txt` and `llms-full.txt` into a built Storybook (`docs-dist` by default), from its `index.json`. |

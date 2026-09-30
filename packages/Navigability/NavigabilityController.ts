@@ -618,9 +618,9 @@ export class NavigabilityController<T, THost extends NavigabilityHost = Navigabi
 		target.ariaActiveDescendantElement = element ?? null
 	}
 
+	/** A field taking typing keeps its caret keys and letters; a readonly one does not. */
 	private static isTextField(target: EventTarget | undefined) {
-		return target instanceof HTMLTextAreaElement
-			|| (target instanceof HTMLInputElement && !NavigabilityController.nonTextInputTypes.includes(target.type))
+		return ((target instanceof HTMLTextAreaElement || (target instanceof HTMLInputElement && !NavigabilityController.nonTextInputTypes.includes(target.type))) && !target.readOnly)
 			|| (target instanceof HTMLElement && target.isContentEditable)
 	}
 
