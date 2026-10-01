@@ -30,16 +30,16 @@ export const ItemContent: Story = {
 		<div style='padding: 16px; border: 1px solid var(--mo-color-transparent-gray-3); border-radius: var(--mo-border-radius)'
 			${contextMenu(() => html`
 				<mo-context-menu-item icon='content_cut'>
-					<span style='flex: 1'>Cut</span>
-					<span style='font-size: 13px; opacity: 0.6'>Ctrl + X</span>
+					Cut
+					<span slot='end' style='font-size: 13px; opacity: 0.6'>Ctrl + X</span>
 				</mo-context-menu-item>
 				<mo-context-menu-item icon='content_copy'>
-					<span style='flex: 1'>Copy</span>
-					<span style='font-size: 13px; opacity: 0.6'>Ctrl + C</span>
+					Copy
+					<span slot='end' style='font-size: 13px; opacity: 0.6'>Ctrl + C</span>
 				</mo-context-menu-item>
 				<mo-context-menu-item icon='content_paste'>
-					<span style='flex: 1'>Paste</span>
-					<span style='font-size: 13px; opacity: 0.6'>Ctrl + V</span>
+					Paste
+					<span slot='end' style='font-size: 13px; opacity: 0.6'>Ctrl + V</span>
 				</mo-context-menu-item>
 				<mo-line></mo-line>
 				<mo-context-menu-item>Dictionary</mo-context-menu-item>
