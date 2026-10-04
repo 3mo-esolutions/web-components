@@ -424,6 +424,19 @@ describe('ReorderabilityController', () => {
 			expect(fixture.component.reorders).toEqual([])
 		})
 
+		it('abandons the gesture on request, reporting nothing even when the pointer is released afterwards', async () => {
+			const items = fixture.component.itemElements
+			await drag(items[0]!, center(items[2]!), { release: false })
+
+			fixture.component.controller.abandon()
+			const { x, y } = center(items[2]!)
+			dispatch(items[0]!, 'pointerup', { clientX: x, clientY: y, buttons: 0 })
+
+			expect(fixture.component.hasAttribute('data-reordering')).toBe(false)
+			expect(items.every(item => !item.style.transform)).toBe(true)
+			expect(fixture.component.reorders).toEqual([])
+		})
+
 		it('tears an in-flight drag down when the host disconnects, leaving no preview behind', async () => {
 			const items = previewFixture.component.itemElements
 			await drag(items[0]!, center(items[2]!), { release: false })

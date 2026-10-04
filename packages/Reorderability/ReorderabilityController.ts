@@ -120,6 +120,12 @@ export class ReorderabilityController<TItemOptions extends ReorderabilityControl
 		this.teardown()
 	}
 
+	/** Drops the reorder in flight without reporting it, so the same pointer can go on to another gesture. */
+	abandon() {
+		this.pointerDrag.abandon()
+		this.teardown()
+	}
+
 	private get strategy() { return this.options.strategy ?? 'live' }
 
 	private stateOf(index: number): ReorderabilityState {
