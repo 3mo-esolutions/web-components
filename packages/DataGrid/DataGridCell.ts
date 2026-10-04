@@ -1,4 +1,4 @@
-import { component, Component, html, property, css, type HTMLTemplateResult } from '@a11d/lit'
+import { component, Component, html, property, css, unsafeCSS, type HTMLTemplateResult } from '@a11d/lit'
 import { DataGridColumn, type DataGridRow } from './index.js'
 
 /**
@@ -30,40 +30,43 @@ export class DataGridCell<TValue extends KeyPath.ValueOf<TData>, TData = any, TD
 
 	static override get styles() {
 		return css`
-			:host {
-				display: inline-block;
-				align-content: center;
-				position: relative;
-				padding-inline: var(--mo-data-grid-cell-padding);
-				font-size: var(--mo-data-grid-cell-font-size);
-				outline: none;
-				height: var(--mo-data-grid-row-height);
-				user-select: none;
-			}
+			/* Layered so that a column's contentStyle overrides these defaults */
+			@layer defaults {
+				:host {
+					display: inline-block;
+					align-content: center;
+					position: relative;
+					padding-inline: var(--mo-data-grid-cell-padding);
+					font-size: var(--mo-data-grid-cell-font-size);
+					outline: none;
+					height: var(--mo-data-grid-row-height);
+					user-select: none;
+				}
 
-			:host(:not([isEditing])) {
-				white-space: nowrap;
-				overflow: hidden;
-				text-overflow: ellipsis;
-			}
+				:host(:not([isEditing])) {
+					white-space: nowrap;
+					overflow: hidden;
+					text-overflow: ellipsis;
+				}
 
-			:host(:not([isEditing]):focus) {
-				outline: 2px solid var(--mo-color-accent);
-			}
+				:host(:not([isEditing]):focus) {
+					outline: 2px solid var(--mo-color-accent);
+				}
 
-			:host([alignment=start]) {
-				text-align: start;
-			}
+				:host([alignment=start]) {
+					text-align: start;
+				}
 
-			:host([alignment=center]) {
-				text-align: center;
-			}
+				:host([alignment=center]) {
+					text-align: center;
+				}
 
-			:host([alignment=end]) {
-				text-align: end;
-			}
+				:host([alignment=end]) {
+					text-align: end;
+				}
 
-			${DataGridColumn.stickyStyles}
+				${DataGridColumn.stickyStyles}
+			}
 		`
 	}
 
@@ -84,29 +87,11 @@ export class DataGridCell<TValue extends KeyPath.ValueOf<TData>, TData = any, TD
 	}
 
 	private get contentStyleTemplate() {
-		if (!this.column.contentStyle) {
-			return html.nothing
-		}
-
 		const style = typeof this.column.contentStyle === 'function'
 			? this.column.contentStyle(this.value, this.data)
 			: this.column.contentStyle
 
-		if (!style) {
-			return html.nothing
-		}
-
-		// CSSResult → render as style tag (supports :host, :hover, etc.)
-		if (typeof style === 'object' && 'cssText' in style) {
-			return html`<style>${style}</style>`
-		}
-
-		// String → apply as inline style (performant)
-		if (typeof style === 'string') {
-			this.style.cssText += `;${style}`
-		}
-
-		return html.nothing
+		return !style ? html.nothing : html`<style>${typeof style === 'string' ? unsafeCSS(`:host { ${style} }`) : style}</style>`
 	}
 
 	// Having focus-controller on every cell can lead to performance issues

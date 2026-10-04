@@ -1248,15 +1248,15 @@ describe('DataGrid', () => {
 		})
 
 		describe('string contentStyle', () => {
-			it('should apply function returning string as inline style based on value', async () => {
+			it('should apply function returning string as host style based on value', async () => {
 				fixture.balanceColumnElement.contentStyle = value => value < 0 ? 'color: red' : 'color: green'
 				await fixture.updateCompleted
 
 				const positiveCell = fixture.getBalanceCell(0) // balance: 100
 				const negativeCell = fixture.getBalanceCell(1) // balance: -50
 
-				expect(positiveCell?.style.color).toBe('green')
-				expect(negativeCell?.style.color).toBe('red')
+				expect(getComputedStyle(positiveCell!).color).toBe('rgb(0, 128, 0)')
+				expect(getComputedStyle(negativeCell!).color).toBe('rgb(255, 0, 0)')
 			})
 
 			it('should have access to data object in contentStyle function', async () => {
@@ -1268,6 +1268,47 @@ describe('DataGrid', () => {
 
 				expect(getComputedStyle(johnCell!).fontWeight).toBe('700') // bold
 				expect(getComputedStyle(janeCell!).fontWeight).toBe('400') // normal
+			})
+
+			it('should override the styles of the cell itself', async () => {
+				fixture.balanceColumnElement.sticky = 'end'
+				fixture.balanceColumnElement.contentStyle = 'background: red; text-align: center'
+				await fixture.updateCompleted
+
+				const cell = fixture.getBalanceCell(0)!
+				expect(cell.dataset.sticky).toBe('end')
+				expect(getComputedStyle(cell).backgroundColor).toBe('rgb(255, 0, 0)')
+				expect(getComputedStyle(cell).textAlign).toBe('center')
+			})
+
+			describe('when a cell renders another value', () => {
+				const makeBalancesPositive = () => fixture.component.data = fixture.component.data.map(person => ({ ...person, balance: Math.abs(person.balance) }))
+
+				it('should remove the style the previous value applied', async () => {
+					fixture.balanceColumnElement.contentStyle = value => value < 0 ? 'color: red' : undefined
+					await fixture.updateCompleted
+					const cell = fixture.getBalanceCell(1)! // balance: -50
+					const unstyledColor = getComputedStyle(fixture.getBalanceCell(0)!).color
+					expect(getComputedStyle(cell).color).toBe('rgb(255, 0, 0)')
+
+					makeBalancesPositive()
+					await fixture.updateCompleted
+
+					expect(fixture.getBalanceCell(1)).toBe(cell)
+					expect(getComputedStyle(cell).color).toBe(unstyledColor)
+				})
+
+				it('should replace the declarations of the previous style', async () => {
+					fixture.balanceColumnElement.contentStyle = value => value < 0 ? 'color: red; font-weight: bold' : 'color: green'
+					await fixture.updateCompleted
+					const cell = fixture.getBalanceCell(1)! // balance: -50
+
+					makeBalancesPositive()
+					await fixture.updateCompleted
+
+					expect(getComputedStyle(cell).color).toBe('rgb(0, 128, 0)')
+					expect(getComputedStyle(cell).fontWeight).toBe('400')
+				})
 			})
 		})
 
