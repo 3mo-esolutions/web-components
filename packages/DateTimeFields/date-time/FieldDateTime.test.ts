@@ -362,7 +362,7 @@ describe('FieldDateTime', () => {
 			await plainFixture.updateComplete
 
 			expect(segment('year').textContent).toBe((1404).format('fa'))
-			expect(segment('day').parentElement!.getAttribute('dir')).toBe('rtl')
+			expect(segment('day').parentElement!.matches(':dir(ltr)')).toBe(true)
 		})
 	})
 })

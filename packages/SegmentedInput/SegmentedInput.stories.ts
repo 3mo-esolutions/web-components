@@ -30,9 +30,13 @@ export const Templates: StoryObj = {
 	`,
 }
 
-/** `direction: 'rtl'` keeps the order the language reads the units in, as the segments are text rather than boxes; the digits within a unit still run left to right. */
+/** The group reads in the direction of its own text: digits and punctuation alone read left to right in any script, while a right-to-left word among the separators turns the order of the units around. */
 export const RightToLeft: StoryObj = {
-	render: () => html`<story-template-field dir='rtl' pattern='####/##/##' label='تاریخ'></story-template-field>`,
+	decorators: [story => html`<div dir='rtl' style='display: flex; flex-wrap: wrap; gap: 2rem'>${story()}</div>`],
+	render: () => html`
+		<story-template-field pattern='####/##/##' label='تاریخ'></story-template-field>
+		<story-template-field pattern='##:##' label='زمان'></story-template-field>
+	`,
 }
 
 /** With `handleStep`, the units are spinbuttons: the arrows step, PageUp and PageDown jump, by a quarter of an hour on the minutes, Home and End reach the limits. */

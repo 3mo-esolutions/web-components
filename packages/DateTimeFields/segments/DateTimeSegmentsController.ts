@@ -61,7 +61,6 @@ export class DateTimeSegmentsController<THost extends ReactiveControllerHost = R
 		const controller = this
 		this.input = new SegmentedInputController<DateTimeSegment, THost>(host, {
 			get segments() { return controller.segments },
-			get direction() { return controller.segmenter.direction },
 			get label() { return controller.options.label },
 			get description() { return controller.isEmpty ? undefined : controller.segmenter.describe(controller.date) },
 			get disabled() { return controller.options.disabled },
@@ -271,6 +270,9 @@ export class DateTimeSegmentsController<THost extends ReactiveControllerHost = R
 	}
 
 	private handleCommit() {
+		// A value set from outside since the segments last read it wins over what they hold: a field blurs as it is
+		// removed, before it renders the value it was just given.
+		this.sync()
 		let value: DateTime | undefined
 		if (!this.isEmpty) {
 			this.filled = new Set(this.segmenter.types)

@@ -9,7 +9,6 @@ export class TemplateField extends Component {
 
 	@property() pattern = '#### #### #### ####'
 	@property() label = 'Card number'
-	@property() override dir: 'ltr' | 'rtl' = 'ltr'
 	@property({ type: Boolean }) uppercase = false
 
 	@state() private readonly texts = new Map<string, string>()
@@ -20,7 +19,6 @@ export class TemplateField extends Component {
 
 	readonly controller = new SegmentedInputController(this, host => ({
 		get segments() { return host.segments },
-		get direction() { return host.dir },
 		get label() { return host.label },
 		accept: (segment, typed, character) => takes(segment, character) ? typed + (host.uppercase ? character.toLocaleUpperCase() : character) : undefined,
 		handleSegmentInput: (segment, text) => { text ? host.texts.set(segment.key, text) : host.texts.delete(segment.key) },

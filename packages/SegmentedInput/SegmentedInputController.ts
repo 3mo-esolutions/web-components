@@ -9,8 +9,6 @@ export type SegmentedInputControllerOptions<TSegment extends InputSegment = Inpu
 	readonly label?: string
 	/** The whole value in words, announced when the group is entered. */
 	readonly description?: string
-	/** Written onto the group; in `rtl` the horizontal arrows swap. Defaults to `ltr`. */
-	readonly direction?: 'ltr' | 'rtl'
 	readonly disabled?: boolean
 	readonly readonly?: boolean
 	readonly required?: boolean
@@ -75,6 +73,9 @@ const stepsByKey = new Map<string, SegmentedInputStep>([
  * what the segments mean stays with the host. They are `contenteditable` rather than inputs, which the
  * bidirectional algorithm would reverse in a right-to-left group. A value which must be autofilled needs a
  * real input instead: see {@link SegmentedDisplayController}.
+ *
+ * The group takes its direction from its own text, as `dir="auto"` does: digits and punctuation alone read left to
+ * right in any script, and a right-to-left letter or mark among the separators turns the group right to left.
  *
  * @ssr false
  *
@@ -157,10 +158,6 @@ export class SegmentedInputController<TSegment extends InputSegment = InputSegme
 		return !this.options.disabled && !this.options.readonly
 	}
 
-	private get direction() {
-		return this.options.direction ?? 'ltr'
-	}
-
 	/** The punctuation of the group's own literals: typing the separator which is shown moves on to the next segment. */
 	private get separators() {
 		return new Set(this.segments
@@ -223,7 +220,7 @@ export class SegmentedInputController<TSegment extends InputSegment = InputSegme
 		}
 		const { options } = this
 		element.setAttribute('role', 'group')
-		element.setAttribute('dir', this.direction)
+		element.setAttribute('dir', 'auto')
 		setOrRemove(element, 'aria-label', options.label)
 		setOrRemove(element, 'aria-description', options.description)
 		setOrRemove(element, 'aria-disabled', options.disabled ? 'true' : undefined)
@@ -258,12 +255,8 @@ export class SegmentedInputController<TSegment extends InputSegment = InputSegme
 		setOrRemove(element, 'autocorrect', editable ? 'off' : undefined)
 		element.tabIndex = options.disabled ? -1 : segment.key === this.tabStopKey ? 0 : -1
 
-		// Digits are a left-to-right run even in right-to-left text, but a placeholder word is not: the
-		// isolation keeps every numeric segment from jumping around as it fills — and, unlike an embedding,
-		// keeps the separators between them from fusing the whole group into one left-to-right number.
-		const isolate = this.direction === 'rtl' && segment.inputMode === 'numeric'
-		element.style.direction = isolate ? 'ltr' : ''
-		element.style.unicodeBidi = isolate ? 'isolate' : ''
+		// A left-to-right isolate, so that a placeholder word cannot fuse with the separators, nor decide the group's direction.
+		setOrRemove(element, 'dir', segment.inputMode === 'numeric' ? 'ltr' : undefined)
 
 		options.stamp?.(element, segment)
 	}
@@ -409,7 +402,7 @@ export class SegmentedInputController<TSegment extends InputSegment = InputSegme
 			return
 		}
 
-		const rtl = this.direction === 'rtl'
+		const rtl = !!this.group.value?.matches(':dir(rtl)')
 		const step = stepsByKey.get(event.key)
 
 		if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {

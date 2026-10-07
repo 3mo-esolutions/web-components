@@ -1,4 +1,4 @@
-import { DirectionsByLanguage, LocalizableString, Localizer, type LanguageCode } from '@3mo/localization'
+import { LocalizableString, Localizer, type LanguageCode } from '@3mo/localization'
 import { FieldDateTimePrecision } from '../FieldDateTimePrecision.js'
 import { type DateTimeSegment, type DateTimeSegmentType, type EditableDateTimeSegmentType, isEditableDateTimeSegmentType } from './DateTimeSegment.js'
 
@@ -40,6 +40,7 @@ export class DateTimeSegmenter {
 	readonly timeZone: string
 	readonly hourCycle: HourCycle
 	readonly timeOnly: boolean
+	/** The direction the language writes in, which orders the two ends of a range. */
 	readonly direction: 'ltr' | 'rtl'
 	readonly formatOptions: Intl.DateTimeFormatOptions
 	readonly formatter: Intl.DateTimeFormat
@@ -57,7 +58,7 @@ export class DateTimeSegmenter {
 		this.timeZone = options.timeZone ?? DateTime.getTimeZone(this.language)
 		this.hourCycle = options.hourCycle ?? DateTimeSegmenter.defaultHourCycle(this.language)
 		this.timeOnly = options.timeOnly ?? false
-		this.direction = DirectionsByLanguage.get(this.language)
+		this.direction = new Intl.Locale(this.language).getTextInfo().direction ?? 'ltr'
 		this.formatOptions = this.buildFormatOptions()
 		this.formatter = new Intl.DateTimeFormat(this.language, this.formatOptions)
 		this.monthFormatter = new Intl.DateTimeFormat(this.language, { month: 'long', calendar: this.calendar, timeZone: this.timeZone })
@@ -176,7 +177,8 @@ export class DateTimeSegmenter {
 	private placeholderOf(type: EditableDateTimeSegmentType) {
 		const width = placeholderWidths[type]
 		if (!width) {
-			return timePlaceholder
+			// A mark, so that an empty day period, the only word of a time, keeps its group right to left.
+			return type === 'dayPeriod' && this.direction === 'rtl' ? `\u200F${timePlaceholder}` : timePlaceholder
 		}
 		const word = this.labelOf(type)
 		return /^\p{Script=Latin}/u.test(word) ? word[0]!.toLocaleLowerCase(this.language).repeat(width) : word

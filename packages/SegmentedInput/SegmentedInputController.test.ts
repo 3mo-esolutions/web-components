@@ -20,7 +20,6 @@ const segmentsOf = (pattern: string, texts: ReadonlyMap<string, string>) => {
 @component('segmented-input-test')
 class SegmentedInputTest extends Component {
 	pattern = '##/####'
-	direction: 'ltr' | 'rtl' = 'ltr'
 	disabled = false
 	readonly = false
 	description?: string
@@ -39,7 +38,6 @@ class SegmentedInputTest extends Component {
 	readonly controller = new SegmentedInputController(this, host => ({
 		label: 'Expiry',
 		get segments() { return segmentsOf(host.pattern, host.texts) },
-		get direction() { return host.direction },
 		get disabled() { return host.disabled },
 		get readonly() { return host.readonly },
 		get description() { return host.description },
@@ -102,7 +100,7 @@ describe('SegmentedInputController', () => {
 		it('should stamp the group', () => {
 			expect(group().getAttribute('role')).toBe('group')
 			expect(group().getAttribute('aria-label')).toBe('Expiry')
-			expect(group().getAttribute('dir')).toBe('ltr')
+			expect(group().getAttribute('dir')).toBe('auto')
 		})
 
 		it('should describe the group', async () => {
@@ -145,13 +143,28 @@ describe('SegmentedInputController', () => {
 			expect(segment('segment-0').getAttribute('data-capacity')).toBe('2')
 		})
 
-		it('should mark a right-to-left group and isolate its numeric segments', async () => {
-			await setUp({ direction: 'rtl' })
+		it('should isolate numeric segments as left-to-right runs', async () => {
+			await setUp({ pattern: '##/AAAA' })
 
-			expect(group().getAttribute('dir')).toBe('rtl')
-			expect(segment('segment-0').style.direction).toBe('ltr')
-			expect(segment('segment-0').style.unicodeBidi).toBe('isolate')
+			expect(segment('segment-0').getAttribute('dir')).toBe('ltr')
+			expect(getComputedStyle(segment('segment-0')).unicodeBidi).toBe('isolate')
+			expect(segment('segment-1').hasAttribute('dir')).toBe(false)
 		})
+
+		it('should read left to right from digits and punctuation alone, in any script', async () => {
+			host().texts.set('segment-0', '۱۴۰۵')
+			await setUp({ pattern: '####/##/##' })
+
+			expect(group().matches(':dir(ltr)')).toBe(true)
+		})
+
+		for (const [pattern, holds] of [['## ساعت ##', 'a right-to-left word'], ['##\u200F/##', 'a right-to-left mark']]) {
+			it(`should read right to left once its separators hold ${holds}`, async () => {
+				await setUp({ pattern })
+
+				expect(group().matches(':dir(rtl)')).toBe(true)
+			})
+		}
 
 		it('should not be editable when disabled', async () => {
 			await setUp({ disabled: true })
@@ -266,7 +279,7 @@ describe('SegmentedInputController', () => {
 		})
 
 		it('should reverse the arrow keys in a right-to-left group', async () => {
-			await setUp({ direction: 'rtl' })
+			await setUp({ pattern: '## ساعت ##' })
 			focus(segment('segment-0'))
 			press(segment('segment-0'), 'ArrowLeft')
 

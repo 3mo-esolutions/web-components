@@ -18,7 +18,7 @@ import { SegmentedInputController, SegmentedDisplayController } from '@3mo/segme
 
 - [Default](https://3mo-esolutions.github.io/web-components/?path=/story/behaviors-segmented-input--default) — Type digits and the focus moves on by itself; the arrows walk the units, Backspace empties one and steps back, and the separators stay inert.
 - [Templates](https://3mo-esolutions.github.io/web-components/?path=/story/behaviors-segmented-input--templates) — The segments decide everything: how many units there are, how wide they are and what they take.
-- [Right To Left](https://3mo-esolutions.github.io/web-components/?path=/story/behaviors-segmented-input--right-to-left) — `direction: 'rtl'` keeps the order the language reads the units in, as the segments are text rather than boxes; the digits within a unit still run left to right.
+- [Right To Left](https://3mo-esolutions.github.io/web-components/?path=/story/behaviors-segmented-input--right-to-left) — The group reads in the direction of its own text: digits and punctuation alone read left to right in any script, while a right-to-left word among the separators turns the order of the units around.
 - [Stepping](https://3mo-esolutions.github.io/web-components/?path=/story/behaviors-segmented-input--stepping) — With `handleStep`, the units are spinbuttons: the arrows step, PageUp and PageDown jump, by a quarter of an hour on the minutes, Home and End reach the limits.
 - [Code](https://3mo-esolutions.github.io/web-components/?path=/story/behaviors-segmented-input--code) — `SegmentedDisplayController`: one input, six cells, so the code arrives whole from a keyboard, a paste or the phone's own suggestion.
 

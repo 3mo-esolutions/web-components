@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/segmented-input",
-	"version": "0.2.2",
+	"version": "0.2.3",
 	"description": "Lit controllers for inputs split into typed segments, such as date units or code cells, with keyboard entry and ARIA.",
 	"repository": {
 		"type": "git",

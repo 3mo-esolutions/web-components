@@ -5,6 +5,7 @@ import '@3mo/date-time'
 import { FieldDateTimePrecision } from '../FieldDateTimePrecision.js'
 import { DateTimeSegmentsController, type DateTimeSegmentsControllerOptions } from './DateTimeSegmentsController.js'
 import { type EditableDateTimeSegmentType } from './DateTimeSegment.js'
+import { type HourCycle } from './DateTimeSegmenter.js'
 
 const utc = (isoDateTime: string) => DateTime.from(Date.parse(`${isoDateTime}.000Z`), 'gregory', 'UTC')
 const reference = utc('2026-09-05T00:00:00')
@@ -16,6 +17,7 @@ class DateTimeSegmentsTest extends Component {
 	language: LanguageCode = 'de'
 	calendar = 'gregory'
 	referenceDate = reference
+	hourCycle?: HourCycle
 	disabled = false
 	handleMoveBeyond?: DateTimeSegmentsControllerOptions['handleMoveBeyond']
 	parseShortcut?: DateTimeSegmentsControllerOptions['parseShortcut']
@@ -29,6 +31,7 @@ class DateTimeSegmentsTest extends Component {
 		get referenceDate() { return host.referenceDate },
 		get language() { return host.language },
 		get calendar() { return host.calendar },
+		get hourCycle() { return host.hourCycle },
 		get disabled() { return host.disabled },
 		get handleMoveBeyond() { return host.handleMoveBeyond },
 		get parseShortcut() { return host.parseShortcut },
@@ -91,7 +94,7 @@ describe('DateTimeSegmentsController', () => {
 		it('should stamp the group', () => {
 			expect(group().getAttribute('role')).toBe('group')
 			expect(group().getAttribute('aria-label')).toBe('Lieferdatum')
-			expect(group().getAttribute('dir')).toBe('ltr')
+			expect(group().getAttribute('dir')).toBe('auto')
 			expect(group().hasAttribute('aria-description')).toBe(false)
 		})
 
@@ -155,12 +158,27 @@ describe('DateTimeSegmentsController', () => {
 			expect(host().changes).toEqual([])
 		})
 
-		it('should lay Persian numeric segments out left to right within a right-to-left group', async () => {
+		it('should lay a date of digits out left to right, year first, in a right-to-left language', async () => {
 			await setUp({ language: 'fa', calendar: 'persian' })
 
-			expect(group().getAttribute('dir')).toBe('rtl')
-			expect(segment('year').style.direction).toBe('ltr')
-			expect(segment('year').style.unicodeBidi).toBe('isolate')
+			expect(group().matches(':dir(ltr)')).toBe(true)
+			expect(segment('year').getAttribute('dir')).toBe('ltr')
+
+			focus(segment('year'))
+			press(segment('year'), 'ArrowRight')
+			expect(activeElement()).toBe(segment('month'))
+		})
+
+		it('should lay a date out right to left where the language marks its separators so', async () => {
+			await setUp({ language: 'ar', calendar: 'gregory' })
+
+			expect(group().matches(':dir(rtl)')).toBe(true)
+		})
+
+		it('should keep a right-to-left time right to left while its day period is empty', async () => {
+			await setUp({ language: 'fa', calendar: 'persian', precision: FieldDateTimePrecision.Minute, hourCycle: 'h12' })
+
+			expect(group().matches(':dir(rtl)')).toBe(true)
 		})
 	})
 
@@ -312,6 +330,18 @@ describe('DateTimeSegmentsController', () => {
 	})
 
 	describe('committing', () => {
+		it('should leave a value set from outside alone when the segments are left before they read it', async () => {
+			await setValue(utc('2026-09-05T00:00:00'))
+			focus(segment('day'))
+			// Set without awaiting the update, as a field removed while focused is left before it renders the new value.
+			host().value = utc('2026-09-12T00:00:00')
+			leave()
+
+			expect(host().changes).toEqual([])
+			await fixture.update()
+			expect(segment('day').textContent).toBe('12')
+		})
+
 		it('should complete the units left out from the reference date when the group is left', () => {
 			focus(segment('day'))
 			type(segment('day'), '12')
