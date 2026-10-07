@@ -64,7 +64,7 @@ export class SplitButton extends Component {
 
 	protected get moreButtonTemplate() {
 		return html`
-			<mo-button ?disabled=${this.disabled} @click=${this.handleMoreClick}>
+			<mo-button type=${this.type} ?disabled=${this.disabled} @click=${this.handleMoreClick}>
 				<mo-icon icon='keyboard_arrow_down'></mo-icon>
 			</mo-button>
 		`

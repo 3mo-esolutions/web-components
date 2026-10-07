@@ -16,8 +16,6 @@ export enum HeadingTypography {
  *
  * @element mo-heading
  *
- * @ssr true
- *
  * @attr typography - The level, from `heading1` (largest) to `heading6`, or `subtitle1` and `subtitle2`; `heading3` by default.
  *
  * @slot - The text of the heading.

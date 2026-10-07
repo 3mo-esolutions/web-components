@@ -31,9 +31,12 @@ export class PopoverContainer extends Component {
 	}
 
 	assignSlottedPopovers() {
-		this.popoverElement.anchor = this.anchorElement
-		this.popoverElement.placement = this.placement
-		this.popoverElement.alignment = this.alignment
+		const popover = this.popoverElement as Popover | undefined
+		if (popover) {
+			popover.anchor = this.anchorElement
+			popover.placement = this.placement
+			popover.alignment = this.alignment
+		}
 	}
 
 	static override get styles() {

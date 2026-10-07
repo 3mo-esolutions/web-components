@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/icon",
-	"version": "1.0.17",
+	"version": "1.0.18",
 	"description": "A web component for Material Icons in filled, outlined, sharp or rounded style, with typed names and fonts loaded on demand.",
 	"repository": {
 		"type": "git",

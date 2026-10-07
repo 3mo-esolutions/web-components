@@ -39,8 +39,6 @@ type OptionsOrFactory<THost> = FieldTimeControllerOptions | ((host: THost) => Fi
  *
  * A picker is the host's to render: it opens on `handlePickerOpen`, scrolls with `navigationDate` and
  * hands what was chosen to `pick`.
- *
- * @ssr false
  */
 export class FieldTimeController<THost extends ReactiveControllerHost = ReactiveControllerHost> extends Controller implements EventListenerObject {
 	private static readonly pattern = /^(\d{1,2}):(\d{2})(?::(\d{2}))?$/

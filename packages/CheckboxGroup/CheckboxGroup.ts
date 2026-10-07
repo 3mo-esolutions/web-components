@@ -7,8 +7,6 @@ import type { Flex } from '@3mo/flex'
  *
  * @element mo-checkbox-group
  *
- * @ssr true
- *
  * @attr direction - The direction the nested checkboxes are laid out in
  *
  * @slot - The checkboxes and groups the group selects

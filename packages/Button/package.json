@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/button",
-	"version": "1.2.1",
+	"version": "1.2.2",
 	"description": "Web components for buttons in the five Material 3 types, with start and end icons and a selectable toggle variant.",
 	"repository": {
 		"type": "git",

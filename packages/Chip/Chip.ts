@@ -13,8 +13,6 @@ import '@material/web/ripple/ripple.js'
  *
  * @element mo-chip
  *
- * @ssr true
- *
  * @attr value - Identifies the chip within a `mo-chip-group`.
  * @attr selectable - Makes the chip a toggle, announced as a pressed-state button.
  * @attr selected - Whether the chip is selected. Only meaningful while `selectable`.

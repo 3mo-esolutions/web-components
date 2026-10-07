@@ -22,8 +22,6 @@ export type FieldDateTimeRangeSelection = 'start' | 'end'
  * A picker is the host's to render: it opens on `handlePickerOpen`, edits the `selection` end, scrolls
  * with `navigationDate`, marks `calendarValue`, and hands what was chosen to `pick`. Picking an end at
  * the field's precision moves the selection on to the other end.
- *
- * @ssr false
  */
 export class FieldDateTimeRangeController<THost extends ReactiveControllerHost = ReactiveControllerHost> extends FieldDateTimeControllerBase<DateTimeRange, THost> {
 	private _selection: FieldDateTimeRangeSelection = 'start'

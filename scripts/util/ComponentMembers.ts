@@ -33,6 +33,8 @@ class ClassMembers {
 export class ComponentMembers {
 	private static readonly classesByName = new Map<string, ClassMembers>()
 	private static readonly classesByTagName = new Map<string, ClassMembers>()
+	/** The public members of `@a11d/lit`'s `Component`, which document the base class rather than any element. */
+	private static readonly baseMembers = new Set<string>()
 	private static checker: ts.TypeChecker
 
 	/**
@@ -51,6 +53,12 @@ export class ComponentMembers {
 
 		for (const sourceFile of program.getSourceFiles()) {
 			const fileName = sourceFile.fileName.replace(/\\/g, '/')
+			if (fileName.endsWith('/@a11d/lit/dist/Component/Component.d.ts')) {
+				const component = sourceFile.statements.find((s): s is ts.ClassDeclaration => ts.isClassDeclaration(s) && s.name?.text === 'Component')
+				for (const name of component ? this.getClassMembers(component, sourceFile).instanceMembers.keys() : []) {
+					this.baseMembers.add(name)
+				}
+			}
 			if (sourceFile.isDeclarationFile || !fileName.startsWith(packagesDirectory) || fileName.includes('/node_modules/')) {
 				continue
 			}
@@ -169,6 +177,8 @@ export class ComponentMembers {
 			known: this.classesByTagName.has(tagName),
 			/** Static members which do not share their name with an instance member, so they are no element properties at all. */
 			staticOnly: new Set([...staticMembers].filter(name => !instanceMembers.has(name))),
+			/** Members of `@a11d/lit`'s `Component` no class of the element redeclares, which its own documentation covers. */
+			baseOnly: new Set([...this.baseMembers].filter(name => !instanceMembers.has(name))),
 			/** Corrections for members whose emitted type and default were taken from a static of the same name. */
 			corrections: new Map(shadowed.map(name => [name, this.describe(instanceMembers.get(name)!)])),
 			/** The element's `@accessibility` JSDoc section. */

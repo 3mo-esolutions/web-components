@@ -3,7 +3,7 @@
 	"scripts": {
 		"start": "npm run clean && npm install --loglevel=error && concurrently --raw npm:analyze npm:changelog && storybook dev -p 3000",
 		"dev": "vitest --project chromium",
-		"test": "vitest run",
+		"test": "node ./scripts/test.ts",
 		"lint": "eslint \"**/*.ts\"",
 		"docs:build": "node ./scripts/docs-build.ts",
 		"clean": "node ./scripts/clean.ts",
@@ -26,6 +26,8 @@
 		"@a11d/eslint-config": "x",
 		"@a11d/lit": "x",
 		"@custom-elements-manifest/analyzer": "x",
+		"@lit-labs/ssr": "4.x",
+		"@lit-labs/ssr-client": "1.x",
 		"@storybook/addon-docs": "10.x",
 		"@storybook/addon-links": "10.x",
 		"@storybook/builder-vite": "10.x",
@@ -52,5 +54,10 @@
 	},
 	"dependencies": {
 		"@faker-js/faker": "x"
+	},
+	"overrides": {
+		"@lit-labs/ssr": {
+			"@types/node": "$@types/node"
+		}
 	}
 }

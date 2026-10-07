@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/splitter",
-	"version": "0.2.4",
+	"version": "0.2.5",
 	"description": "Web components for panes resized by dragging a line or knob between them, horizontally or vertically.",
 	"repository": {
 		"type": "git",
@@ -31,7 +31,7 @@
 		"csstype": "x"
 	},
 	"peerDependencies": {
-		"@a11d/lit": "x",
+		"@a11d/lit": ">=0.14.1",
 		"@3mo/pointer-controller": ">=1.6.0",
 		"@3mo/theme": "x",
 		"@3mo/flex": "x",

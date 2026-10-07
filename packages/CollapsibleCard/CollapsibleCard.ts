@@ -7,8 +7,6 @@ import { tooltip } from '@3mo/tooltip'
  *
  * @element mo-collapsible-card
  *
- * @ssr true
- *
  * @attr collapsed - Whether the body is collapsed
  * @attr disableCollapse - Disables the toggle, keeping the card in its current state
  * @attr showSubHeadingOnlyWhenCollapsed - Shows the sub-heading only while the card is collapsed

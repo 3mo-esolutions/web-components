@@ -14,8 +14,6 @@ export enum AlertType {
  *
  * @element mo-alert
  *
- * @ssr true
- *
  * @attr heading - The heading of the alert.
  * @attr type - The type can be 'info', 'success', 'warning', or 'error'.
  * @attr collapsible - Whether the content can be collapsed under the heading.

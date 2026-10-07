@@ -1,4 +1,4 @@
-import { component, property, query, html, css, event, state, Component, ifDefined } from '@a11d/lit'
+import { component, property, query, html, css, event, state, Component, ifDefined, isServer } from '@a11d/lit'
 import { type ApplicationTopLayer, DialogActionKey, DialogComponent, type Dialog as IDialog } from '@a11d/lit-application'
 import { MdDialog } from '@material/web/dialog/dialog.js'
 import { tooltip } from '@3mo/tooltip'
@@ -9,17 +9,6 @@ export enum DialogSize {
 	Large = 'large',
 	Medium = 'medium',
 	Small = 'small',
-}
-
-const queryActionElement = (slotName: string) => {
-	return (prototype: Component, propertyKey: string) => {
-		Object.defineProperty(prototype, propertyKey, {
-			get(this: Component) {
-				return this.querySelector<HTMLElement>(`[slot=${slotName}]`)
-					?? this.renderRoot.querySelector<HTMLElement>(`slot[name=${slotName}] > *`) ?? undefined
-			},
-		})
-	}
 }
 
 /**
@@ -124,9 +113,15 @@ export class Dialog extends Component implements IDialog {
 	}
 
 	@query('lit-application-top-layer') readonly topLayerElement!: ApplicationTopLayer
-	@queryActionElement('primaryAction') readonly primaryActionElement!: HTMLElement
-	@queryActionElement('secondaryAction') readonly secondaryActionElement!: HTMLElement
 	@query('mo-icon-button[icon=close]') readonly cancellationActionElement!: HTMLElement
+
+	get primaryActionElement() { return this.queryActionElement('primaryAction')! }
+	get secondaryActionElement() { return this.queryActionElement('secondaryAction')! }
+
+	private queryActionElement(slotName: string): HTMLElement | undefined {
+		return (this.slotController.getAssignedElements(slotName)[0]
+			?? (isServer ? undefined : this.renderRoot.querySelector(`slot[name=${slotName}] > *`) ?? undefined)) as HTMLElement
+	}
 
 	/** Called with the action taken: primary, secondary or cancellation. A dialog component sets it; without one, the dialog closes itself. */
 	handleAction: (key: DialogActionKey) => void | Promise<void> = key => {
@@ -310,7 +305,7 @@ export class Dialog extends Component implements IDialog {
 				${this.contentTemplate}
 				${this.footerTemplate}
 			</mo-page>
-		` : html`
+		` : isServer || this.hydrating ? html.nothing : html`
 			<md-dialog exportparts='dialog' quick
 				?open=${this.open}
 				?data-bound-to-window=${this.boundToWindow}

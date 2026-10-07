@@ -9,8 +9,6 @@ import { MenuBarItem } from './MenuBarItem.js'
  *
  * @element mo-menu-bar
  *
- * @ssr false
- *
  * @slot - The items, which are `mo-menu-bar-item`s.
  *
  * @fires overflowChange - Dispatched when `hasOverflow` changes.

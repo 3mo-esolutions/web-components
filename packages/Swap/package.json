@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/swap",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"description": "A web component for swapping several pieces of content in one box, transitioning from one to the next.",
 	"repository": {
 		"type": "git",
@@ -32,7 +32,7 @@
 		"tslib": "x"
 	},
 	"peerDependencies": {
-		"@a11d/lit": "x",
+		"@a11d/lit": ">=0.14.1",
 		"@3mo/slot-controller": "x"
 	},
 	"devDependencies": {

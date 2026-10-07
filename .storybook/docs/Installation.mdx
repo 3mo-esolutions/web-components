@@ -107,4 +107,15 @@ Icon.defaultVariant = IconVariant.Outlined
 
 ## Server-side rendering
 
-Elements tagged `@ssr true` in their source render with Lit SSR. On the server, provide the icon font yourself.
+Every element renders with [Lit SSR](https://lit.dev/docs/ssr/overview/) and hydrates in the browser to what a client render gives, which the component pages mark as **SSR**. The tests check it for every element on every change, by rendering it on the server and hydrating it in Chromium.
+
+```ts
+// First, before any element is defined:
+import '@lit-labs/ssr-client/lit-element-hydrate-support.js'
+import '@3mo/button'
+```
+
+- On the server, provide the icon font yourself; `mo-icon` loads it in the browser only.
+- The buttons of a `mo-button-group` take the group's `type` once it hydrates; give each its `type` yourself for the server's render to show it.
+- The server cannot see slotted content, so what an element derives from it, such as a key's chords or a splitter's panes, appears once the element hydrates.
+- Lit's hydration alone keeps every attribute as the server rendered it; `@a11d/lit` makes it write the ones the browser renders differently, so only text and template choices must match the server's.

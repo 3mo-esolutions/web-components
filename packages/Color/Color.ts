@@ -2,8 +2,6 @@ import ColorString from 'color-string'
 
 /**
  * An immutable color parsed from a CSS color string, convertible to hex, RGB, HSL and keyword.
- *
- * @ssr true
  */
 export class Color {
 	readonly color: ColorString.Color

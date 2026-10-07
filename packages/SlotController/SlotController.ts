@@ -5,7 +5,7 @@ import { Controller, isServer, type ReactiveControllerHost } from '@a11d/lit'
  * Before a slot is rendered it answers from the host's children, so a template can decide whether to render the slot at all.
  */
 export class SlotController extends Controller {
-	constructor(protected override readonly host: ReactiveControllerHost & Element, private readonly slotChangeCallback?: () => void) {
+	constructor(protected override readonly host: ReactiveControllerHost & Element & { readonly hydrating?: boolean }, private readonly slotChangeCallback?: () => void) {
 		super(host)
 		if (isServer === false) {
 			new MutationObserver(this.handleMutation.bind(this)).observe(this.host, {
@@ -16,6 +16,9 @@ export class SlotController extends Controller {
 	}
 
 	getAssignedNodes(slotName: string) {
+		if (isServer || this.host.hydrating) {
+			return []
+		}
 		const slot = this.host.shadowRoot?.querySelector<HTMLSlotElement>(slotName ? `slot[name="${slotName}"]` : 'slot:not([name])')
 		return slot
 			? this.extractNodesFromSlot(slot)
@@ -45,7 +48,7 @@ export class SlotController extends Controller {
 	}
 
 	private extractNodesFromChildren(slotName: string) {
-		return isServer ? [] : [...this.host.childNodes]
+		return [...this.host.childNodes]
 			.filter(node => node instanceof Element || (node instanceof Text && !!node.textContent?.trim()))
 			.filter(child => child instanceof Element ? child.slot === slotName : !slotName)
 			.flatMap(child => child instanceof HTMLSlotElement ? child.assignedNodes() : [child])

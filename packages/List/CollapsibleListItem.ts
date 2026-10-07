@@ -34,13 +34,13 @@ export class CollapsibleListItem extends Component {
 		},
 	})
 
-	override get [listItem](): Element {
-		return this.slotController.getAssignedElements('').find(e => !!e[listItem])!
+	override get [listItem](): Element | undefined {
+		return this.slotController.getAssignedElements('').find(e => !!e[listItem])
 	}
 
 	override get [listItems](): Array<Element> {
 		return [
-			this[listItem]!,
+			...(this[listItem] ? [this[listItem]] : []),
 			...this.slotController.getAssignedElements('details').flatMap(e => e[listItems] ?? []),
 		]
 	}

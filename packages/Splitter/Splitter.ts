@@ -1,4 +1,4 @@
-import { component, html, property, Component, css, styleMap, style } from '@a11d/lit'
+import { component, html, property, Component, css, styleMap, style, isServer } from '@a11d/lit'
 import { type Flex } from '@3mo/flex'
 import { MutationController } from '@3mo/mutation-observer'
 import { SplitterItem } from './index.js'
@@ -29,7 +29,7 @@ export class Splitter extends Component {
 	private resize?: { readonly item: SplitterItem, readonly edge: number, readonly extent: number }
 
 	get items() {
-		return [...this.children].filter((c): c is SplitterItem => c instanceof SplitterItem)
+		return isServer || this.hydrating ? [] : [...this.children].filter((c): c is SplitterItem => c instanceof SplitterItem)
 	}
 
 	protected readonly mutationController = new MutationController(this, {

@@ -15,8 +15,6 @@ const lanesConverter = {
  *
  * @element mo-masonry
  *
- * @ssr true
- *
  * @attr columns - Lanes of a vertical »waterfall« masonry, tunneled to `grid-template-columns`. Additionally accepts a bare lane count (e.g. `4` equals `repeat(4, 1fr)`).
  * @attr rows - Lanes of a horizontal »brick« masonry, tunneled to `grid-template-rows`. Defining these instead of `columns` flips the masonry to flow sideways.
  * @attr rowGap - Tunnels `row-gap` CSS property.

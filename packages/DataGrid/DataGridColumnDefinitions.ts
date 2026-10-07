@@ -1,3 +1,4 @@
+import { equals } from '@a11d/equals'
 import { type DataGridColumn } from './controller/index.js'
 import { ArrayLikeView } from './controller/ArrayLikeView.js'
 
@@ -56,7 +57,9 @@ export class DataGridColumnDefinitions<TData> extends ArrayLikeView<DataGridColu
 	}
 
 	private compose() {
-		this._generated = this._extracted.length || this._programmatic.length ? [] : this.init?.generate?.() ?? []
+		const generated = this._extracted.length || this._programmatic.length ? [] : this.init?.generate?.() ?? []
+		// Data of the same shape generates the same definitions, which are kept:
+		this._generated = generated[equals](this._generated) ? this._generated : generated
 		this.setItems([this._extracted, this._programmatic, this._generated].find(source => source.length > 0) ?? [])
 	}
 }

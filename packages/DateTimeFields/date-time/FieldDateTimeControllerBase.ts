@@ -44,8 +44,6 @@ type SegmentsBinding = Pick<DateTimeSegmentsControllerOptions, 'value' | 'handle
 /**
  * What every date field does, whether it holds one date or a range: the groups of segments, where a
  * picker stands and what picking in it means, the presets it offers, and the field's validity.
- *
- * @ssr false
  */
 export abstract class FieldDateTimeControllerBase<T, THost extends ReactiveControllerHost = ReactiveControllerHost> extends Controller implements EventListenerObject {
 	protected readonly options: FieldDateTimeControllerOptions<T>

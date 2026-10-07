@@ -1,4 +1,4 @@
-import { Component, html, component, property, css, style } from '@a11d/lit'
+import { Component, html, component, property, css, styleMap } from '@a11d/lit'
 import { FontImporter } from '@3mo/font-importer'
 import { type MaterialIcon } from './index.js'
 
@@ -13,8 +13,6 @@ export enum IconVariant {
  * A Material icon, drawn from the Material Icons font by name.
  *
  * @element mo-icon
- *
- * @ssr true - The font should be provided manually when using SSR.
  *
  * @attr variant - The style, each a font of its own: `filled` (default), `outlined`, `rounded` or `sharp`.
  * @attr icon - The name of the icon, e.g. `delete`.
@@ -43,7 +41,10 @@ export class Icon extends Component {
 		return font
 	}
 
-	@property({ updated(this: Icon) { FontImporter.import(Icon.get(this.variant).url) } }) variant = Icon.defaultVariant
+	private _variant?: IconVariant
+	@property()
+	get variant(): IconVariant { return this._variant ?? Icon.defaultVariant }
+	set variant(value: IconVariant) { this._variant = value }
 	@property() icon?: MaterialIcon
 
 	static override get styles() {
@@ -72,9 +73,14 @@ export class Icon extends Component {
 		`
 	}
 
+	protected override updated(...parameters: Parameters<Component['updated']>) {
+		super.updated(...parameters)
+		FontImporter.import(Icon.get(this.variant).url)
+	}
+
 	protected override get template() {
 		return html`
-			<span ${style({ fontFamily: Icon.get(this.variant).name })}>${this.icon}</span>
+			<span style=${styleMap({ fontFamily: Icon.get(this.variant).name })}>${this.icon}</span>
 		`
 	}
 }

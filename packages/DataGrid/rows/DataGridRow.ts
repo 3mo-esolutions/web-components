@@ -296,7 +296,9 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 	}
 
 	protected override get template() {
-		this.style.setProperty('--_level', this.level.toString())
+		if (!isServer) {
+			this.style.setProperty('--_level', this.level.toString())
+		}
 		this.toggleAttribute('selected', this.dataRecord.isSelected)
 		this.toggleAttribute('detailsOpen', this.dataRecord.detailsOpen)
 		const isRendered = this.isRendered

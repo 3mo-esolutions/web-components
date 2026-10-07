@@ -4,8 +4,6 @@ const tabIndexBeforeDisabledSymbol = Symbol('tabIndexBeforeDisabledSymbol')
 
 /**
  * A decorator for a reflected `disabled` property that sets `aria-disabled` and, with `blockFocus`, takes the element out of the tab order while disabled.
- *
- * @ssr true
  */
 export const disabledProperty = (options?: {
 	blockFocus?: boolean

@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/theme",
-	"version": "0.5.5",
+	"version": "0.5.6",
 	"description": "Design tokens and utilities for theming, with light and dark palettes derived from one accent color and persisted preferences.",
 	"repository": {
 		"type": "git",

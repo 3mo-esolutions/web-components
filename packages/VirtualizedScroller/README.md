@@ -39,7 +39,7 @@ import '@3mo/virtualized-scroller'
 | Name | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
 | `items` | `items` | `T[]` | `"new Array<T>()"` | The items to render, all of them |
-| `getItemTemplate` | `getItemTemplate` | `GetItemTemplate<T>` | `"(() => html.nothing)"` | Renders an item, given the item and its index |
+| `getItemTemplate` | `getItemTemplate` | `GetItemTemplate<T>` | `"() => html.nothing"` | Renders an item, given the item and its index |
 
 ## Links
 

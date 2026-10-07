@@ -1,4 +1,4 @@
-import { component, Component, css, html, property, query } from '@a11d/lit'
+import { component, Component, css, html, property, query, type PropertyValues } from '@a11d/lit'
 import { disabledProperty } from '@3mo/disabled-property'
 import { type MaterialIcon } from '@3mo/icon'
 import { MdIconButton } from '@material/web/iconbutton/icon-button.js'
@@ -7,8 +7,6 @@ import { MdIconButton } from '@material/web/iconbutton/icon-button.js'
  * A round button showing only an icon, sized by its `font-size` and colored by the inherited `color`.
  *
  * @element mo-icon-button
- *
- * @ssr true
  *
  * @attr icon - The icon to display.
  * @attr disabled - Disables the icon-button.
@@ -124,13 +122,14 @@ MdIconButton.elementStyles.push(css`
 	}
 `)
 
-MdIconButton.addInitializer(instance => instance.addController({
-	hostUpdated() {
-		instance.renderRoot.querySelector('button')?.part.add('button')
-		instance.renderRoot.querySelector('md-ripple')?.part.add('ripple')
-		instance.renderRoot.querySelector('md-focus-ring')?.part.add('focus-ring')
-	},
-}))
+// Server-rendered icon buttons are constructed once Material defines them, before an initializer could be added.
+const updated = MdIconButton.prototype['updated']
+MdIconButton.prototype['updated'] = function (this: MdIconButton, changedProperties: PropertyValues) {
+	updated.call(this, changedProperties)
+	this.renderRoot.querySelector('button')?.part.add('button')
+	this.renderRoot.querySelector('md-ripple')?.part.add('ripple')
+	this.renderRoot.querySelector('md-focus-ring')?.part.add('focus-ring')
+}
 
 declare global {
 	interface HTMLElementTagNameMap {

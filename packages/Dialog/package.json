@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/dialog",
-	"version": "0.8.4",
+	"version": "0.8.5",
 	"description": "Web components for modal dialogs and application pages with a heading, actions and sizes, built on Material Web.",
 	"repository": {
 		"type": "git",
@@ -45,7 +45,7 @@
 		"tslib": "x"
 	},
 	"peerDependencies": {
-		"@a11d/lit": "x",
+		"@a11d/lit": ">=0.14.1",
 		"@a11d/lit-application": ">=0.8.x",
 		"@material/web": "1.x",
 		"@3mo/slot-controller": "x",

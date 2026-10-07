@@ -63,7 +63,9 @@ export class DataGridColumnComponentsController<TData> extends Controller {
 		return Object.keys(sampleData || {})
 			.filter(key => !key.startsWith('_'))
 			.map(key => {
-				const columnElement = document.createElement(getDefaultColumnElement(KeyPath.get(sampleData, key as any)))
+				const tag = getDefaultColumnElement(KeyPath.get(sampleData, key as any))
+				// Constructed through the registry, as a server's "document.createElement" creates no custom elements:
+				const columnElement = new (customElements.get(tag) as new () => HTMLElementTagNameMap[typeof tag])()
 				columnElement.heading = key.replace(/([A-Z])/g, ' $1').charAt(0).toUpperCase() + key.replace(/([A-Z])/g, ' $1').slice(1)
 				columnElement.dataSelector = key
 				columnElement.dataGrid = this.grid as unknown as DataGrid<unknown, any>

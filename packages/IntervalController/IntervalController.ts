@@ -2,8 +2,6 @@ import { type ReactiveControllerHost, Controller } from '@a11d/lit'
 
 /**
  * A controller that runs a task as soon as its host connects and then at a fixed interval until it disconnects.
- *
- * @ssr true
  */
 export class IntervalController extends Controller {
 	private timerId = -1

@@ -46,4 +46,4 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npx playwright install chromium firefox
-      - run: npm run test
+      - run: npm test -- --all
