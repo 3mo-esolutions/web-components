@@ -19,7 +19,7 @@ class ObserveResizeTestComponent extends Component {
 }
 
 describe('observeResize', () => {
-	const fixture = new ComponentTestFixture(() => new ObserveResizeTestComponent)
+	const fixture = new ComponentTestFixture(() => new ObserveResizeTestComponent())
 
 	const tick = () => new Promise(resolve => setTimeout(resolve, 50))
 

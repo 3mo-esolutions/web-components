@@ -129,7 +129,7 @@ MdIconButton.addInitializer(instance => instance.addController({
 		instance.renderRoot.querySelector('button')?.part.add('button')
 		instance.renderRoot.querySelector('md-ripple')?.part.add('ripple')
 		instance.renderRoot.querySelector('md-focus-ring')?.part.add('focus-ring')
-	}
+	},
 }))
 
 declare global {

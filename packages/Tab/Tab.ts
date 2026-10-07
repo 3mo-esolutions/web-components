@@ -57,7 +57,7 @@ export class Tab extends MdPrimaryTab {
 				.button {
 					height: 100%;
 				}
-			`
+			`,
 		]
 	}
 }

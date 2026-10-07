@@ -476,7 +476,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		return this.dataGrid.getContextMenuContentTemplate(
 			!this.dataGrid.selectability || !this.dataGrid.selectedData.length || !this.dataRecord.isSelected
 				? [this.data]
-				: this.dataGrid.selectedData
+				: this.dataGrid.selectedData,
 		)
 	}
 

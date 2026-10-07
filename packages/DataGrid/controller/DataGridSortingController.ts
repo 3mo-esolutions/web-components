@@ -89,7 +89,7 @@ export class DataGridSortingController<TData> {
 					sortings.map(x => x.selector !== selector ? x : {
 						selector,
 						strategy: DataGridSortingStrategy.Ascending,
-					})
+					}),
 				)
 				break
 			case allowMultiple:

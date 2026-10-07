@@ -36,7 +36,7 @@ export class Swap extends Component {
 			if (previousValue !== undefined && previousValue !== value) {
 				this.change.dispatch(value)
 			}
-		}
+		},
 	}) value = ''
 
 	@property({ type: Number }) flashDuration = 1500

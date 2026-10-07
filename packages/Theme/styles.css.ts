@@ -107,8 +107,8 @@ RootCssInjector.inject(css`
 			*/
 		--mo-color-accent: var(--mo-color-accent-seed);
 		--mo-color-on-accent: var(--mo-color-on-accent-seed);
-		--mo-color-accent-container: ${deriveColor('var(--mo-color-accent)', { light: { lightness: 91, maximumChroma: .05 }, dark: { lightness: 40, maximumChroma: .085 } })};
-		--mo-color-on-accent-container: ${deriveColor('var(--mo-color-accent)', { light: { lightness: 40, maximumChroma: .085 }, dark: { lightness: 91, maximumChroma: .05 } })};
+		--mo-color-accent-container: ${deriveColor('var(--mo-color-accent)', { light: { lightness: 91, maximumChroma: 0.05 }, dark: { lightness: 40, maximumChroma: 0.085 } })};
+		--mo-color-on-accent-container: ${deriveColor('var(--mo-color-accent)', { light: { lightness: 40, maximumChroma: 0.085 }, dark: { lightness: 91, maximumChroma: 0.05 } })};
 
 		--mo-color-accent-transparent: color-mix(in srgb, var(--mo-color-accent), transparent 75%);
 

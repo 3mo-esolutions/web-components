@@ -19,7 +19,7 @@ const parameterize = (label: string, expectations: ReadonlyArray<Expectation>) =
 
 describe('DateTimeKeywordParser', () => {
 	it('should return undefined for unrecognized text', () => {
-		const parser = new DateTimeKeywordParser
+		const parser = new DateTimeKeywordParser()
 		expect(parser.parse('', referenceDate)).toBeUndefined()
 		expect(parser.parse('   ', referenceDate)).toBeUndefined()
 		expect(parser.parse('tomorrow', referenceDate)).toBeUndefined()

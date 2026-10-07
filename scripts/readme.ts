@@ -8,7 +8,7 @@ const names = options.filter(option => !option.startsWith('--'))
 const packages = names.map(name => Package.all.find(p => p.name === name || p.directoryName === name) ?? unknown(name))
 
 if (!names.length) {
-	await FileSystem.writeFile('README.md', PackageReadme.root(Package.all))
+	await FileSystem.writeFile('README.md', `${PackageReadme.root(Package.all)}\n`)
 }
 
 if (!options.includes('--root')) {
@@ -16,7 +16,7 @@ if (!options.includes('--root')) {
 		await run('npm run --silent analyze', { reject: true })
 	}
 	const manifest = JSON.parse(await FileSystem.readFile('./custom-elements.json', 'utf8')) as CustomElementsManifest
-	await Promise.all((names.length ? packages : Package.all).map(p => FileSystem.writeFile(`${p.path}/README.md`, PackageReadme.of(p, manifest))))
+	await Promise.all((names.length ? packages : Package.all).map(p => FileSystem.writeFile(`${p.path}/README.md`, `${PackageReadme.of(p, manifest)}\n`)))
 }
 
 function unknown(name: string): never {

@@ -16,14 +16,14 @@ export function closeWhenOutOfViewport(options?: { readonly padding?: number }):
 				return {}
 			}
 			const padding = options?.padding ?? 0
-			if (overflow.bottom > height - padding ||
-				overflow.top > height - padding ||
-				overflow.left > width - padding ||
-				overflow.right > width - padding
+			if (overflow.bottom > height - padding
+				|| overflow.top > height - padding
+				|| overflow.left > width - padding
+				|| overflow.right > width - padding
 			) {
 				popover.open = false
 			}
 			return {}
-		}
+		},
 	}
 }

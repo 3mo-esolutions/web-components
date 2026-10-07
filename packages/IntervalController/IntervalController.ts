@@ -11,7 +11,7 @@ export class IntervalController extends Controller {
 	constructor(
 		protected override readonly host: ReactiveControllerHost,
 		protected readonly periodInMilliseconds: number,
-		protected readonly tickTask: () => void | Promise<void>
+		protected readonly tickTask: () => void | Promise<void>,
 	) {
 		super(host)
 	}

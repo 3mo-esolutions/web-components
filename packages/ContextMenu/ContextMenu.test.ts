@@ -44,7 +44,7 @@ describe('ContextMenu', () => {
 		}
 	}
 
-	const fixture = new ComponentTestFixture(() => new TestContextMenuAnchor)
+	const fixture = new ComponentTestFixture(() => new TestContextMenuAnchor())
 
 	beforeEach(() => new Promise(resolve => setTimeout(resolve)))
 

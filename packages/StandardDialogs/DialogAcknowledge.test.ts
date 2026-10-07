@@ -11,7 +11,7 @@ describe('DialogAcknowledge', () => {
 		primaryButtonText: 'Primary Button',
 		blocking: true,
 		size: DialogSize.Medium,
-		secondaryButtonText: 'Secondary Button'
+		secondaryButtonText: 'Secondary Button',
 	}
 
 	it('should have used parameters to customize dialog', () => {

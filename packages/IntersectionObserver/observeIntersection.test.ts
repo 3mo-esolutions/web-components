@@ -42,7 +42,7 @@ describe('observeIntersection', () => {
 
 	afterEach(() => window.IntersectionObserver = originalIntersectionObserver)
 
-	const fixture = new ComponentTestFixture(() => new ObserveIntersectionTestComponent)
+	const fixture = new ComponentTestFixture(() => new ObserveIntersectionTestComponent())
 
 	it('should register an IntersectionObserver on the element', () => {
 		expect(currentObserver.observe).toHaveBeenCalledExactlyOnceWith(fixture.component.elementWithObserver)

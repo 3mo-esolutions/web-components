@@ -11,8 +11,8 @@ describe('InstanceofAttributeController', () => {
 	@component('test-instanceof-derived')
 	class TestDerived extends TestBase { }
 
-	const base = new ComponentTestFixture<TestBase>(() => new TestBase)
-	const derived = new ComponentTestFixture<TestDerived>(() => new TestDerived)
+	const base = new ComponentTestFixture<TestBase>(() => new TestBase())
+	const derived = new ComponentTestFixture<TestDerived>(() => new TestDerived())
 
 	it('should set the "instanceof" attribute to the host\'s tag name on connect', () => {
 		expect(base.component.getAttribute('instanceof')).toBe('test-instanceof-base')

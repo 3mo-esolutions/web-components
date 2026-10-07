@@ -32,8 +32,8 @@ export class Masonry extends Component {
 	static get supported() {
 		return isServer === false && (
 			globalThis.CSS.supports('display', 'grid-lanes')
-				|| globalThis.CSS.supports('display', 'masonry')
-				|| globalThis.CSS.supports('grid-template-rows', 'masonry')
+			|| globalThis.CSS.supports('display', 'masonry')
+			|| globalThis.CSS.supports('grid-template-rows', 'masonry')
 		)
 	}
 

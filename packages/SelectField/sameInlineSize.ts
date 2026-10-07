@@ -13,6 +13,6 @@ export function sameInlineSize(): import('@floating-ui/dom').Middleware {
 			}
 			popover.style.setProperty('--_popover-min-width', `${state.rects.reference.width}px`)
 			return {}
-		}
+		},
 	}
 }

@@ -16,7 +16,7 @@ export function extractDateTimeFormatOptions(calendarId?: string, timeZoneId?: s
 	return [language, {
 		calendar: calendarId,
 		timeZone: timeZoneId,
-		...(otherExplicitOptions ?? defaultOptions)
+		...(otherExplicitOptions ?? defaultOptions),
 	}] as const
 }
 

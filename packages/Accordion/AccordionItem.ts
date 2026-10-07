@@ -41,7 +41,7 @@ export class AccordionItem extends Component {
 			if (previousOpen !== undefined && previousOpen !== open) {
 				this.openChange.dispatch(open)
 			}
-		}
+		},
 	}) open = false
 
 	@disabledProperty() disabled = false

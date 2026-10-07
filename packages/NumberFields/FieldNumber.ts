@@ -56,9 +56,9 @@ export class FieldNumber extends InputFieldComponent<number> {
 		return Math.max(
 			Math.min(
 				value,
-				this.max ?? Number.POSITIVE_INFINITY
+				this.max ?? Number.POSITIVE_INFINITY,
 			),
-			this.min ?? Number.NEGATIVE_INFINITY
+			this.min ?? Number.NEGATIVE_INFINITY,
 		)
 	}
 }

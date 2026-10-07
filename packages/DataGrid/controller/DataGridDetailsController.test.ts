@@ -14,7 +14,7 @@ const dataRecords = [
 		data: 'record3', hasSubData: true, level: 0, subDataRecords: [
 			{ data: 'record3-1', hasSubData: true, level: 1 },
 			{ data: 'record3-2', hasSubData: false, level: 1 },
-		]
+		],
 	},
 	{ data: 'record3-1', hasSubData: true, level: 1 },
 	{ data: 'record3-2', hasSubData: false, level: 1 },

@@ -402,7 +402,7 @@ export class ReorderabilityController<TItemOptions extends ReorderabilityControl
 	/** On a line, an item flips when the dragged item's leading edge crosses its midpoint. Comparing
 	 * midpoints instead leaves a small outermost item unreachable for a large dragged one within the clamp. */
 	private targetOf(drag: ReorderabilityDrag, dx: number, dy: number, pointer: { x: number, y: number }): number {
-		let target = drag.position
+		let target: number
 		if (drag.line) {
 			const { vertical, sign } = drag.line
 			const startOf = (slot: ReorderabilitySlot, travel = 0) => {

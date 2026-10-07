@@ -11,7 +11,7 @@ describe('updateAllComponentsOnDispatch', () => {
 	let element: TestUpdateTarget
 
 	beforeEach(async () => {
-		element = new TestUpdateTarget
+		element = new TestUpdateTarget()
 		document.body.appendChild(element)
 		await element.updateComplete
 	})

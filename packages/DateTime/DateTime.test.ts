@@ -144,8 +144,8 @@ describe('DateTime', () => {
 				return push.apply(this, items)
 			}
 			try {
-				new DateTime
-				new DateTime
+				new DateTime()
+				new DateTime()
 			} finally {
 				Array.prototype.push = push
 			}

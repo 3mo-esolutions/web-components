@@ -37,7 +37,7 @@ export class EntityDataGrid<TEntity extends EntityWithId, TDataFetcherParameters
 				this.create = this.createOrEdit as CreateAction
 				this.edit = this.createOrEdit
 			}
-		}
+		},
 	}) createOrEdit?: CreateOrEditAction<TEntity> | Constructor<EntityDialogComponent<TEntity>>
 
 	@property({ type: Object }) delete?: (...entities: Array<TEntity>) => void | PromiseLike<void>

@@ -210,7 +210,7 @@ export class DataGridColumnsController<TData> extends Controller implements Even
 			reordering: !this.grid.reorderability.visible ? 0 : this.columnWidths.reordering,
 			details: !this.grid.details.hasDetails ? 0 : this.columnWidths.details,
 			selection: !this.grid.selection.hasSelection ? 0 : this.columnWidths.selection,
-			actions: !this.grid.contextMenu.hasContextMenu ? 0 : this.columnWidths.actions
+			actions: !this.grid.contextMenu.hasContextMenu ? 0 : this.columnWidths.actions,
 		}
 		const insets = new Map<unknown, string>([
 			['reordering', '0px'],

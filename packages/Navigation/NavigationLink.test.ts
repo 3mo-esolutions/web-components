@@ -16,7 +16,7 @@ class TestNavigationTarget {
 class TestLabelledNavigationTarget extends TestNavigationTarget { }
 label('Dashboard')(TestLabelledNavigationTarget)
 
-const createNavigationLink = (options: object) => new NavigationLink({ component: new TestNavigationTarget, ...options } as any)
+const createNavigationLink = (options: object) => new NavigationLink({ component: new TestNavigationTarget(), ...options } as any)
 
 const containers = new Array<HTMLElement>()
 
@@ -45,7 +45,7 @@ describe('NavigationLink', () => {
 		})
 
 		it('should fall back to the component\'s label metadata when no label option is given', () => {
-			const link = new NavigationLink({ component: new TestLabelledNavigationTarget } as any)
+			const link = new NavigationLink({ component: new TestLabelledNavigationTarget() } as any)
 
 			expect(labelText(link)).toBe('Dashboard')
 		})
@@ -74,7 +74,7 @@ describe('NavigationLink', () => {
 	})
 
 	it('should be current while the router matches its component\'s url', () => {
-		const component = new TestNavigationTarget
+		const component = new TestNavigationTarget()
 		const link = new NavigationLink({ component } as any)
 
 		expect(link.current).toBe(false)
@@ -86,7 +86,7 @@ describe('NavigationLink', () => {
 
 	describe('link', () => {
 		it('should make the element it is applied to a link to its component', () => {
-			const link = new NavigationLink({ component: new TestNavigationTarget } as any)
+			const link = new NavigationLink({ component: new TestNavigationTarget() } as any)
 			const container = renderTemplate(html`<button ${link.link()}>Home</button>`)
 
 			expect(container.querySelector('button')!.getAttribute('href')).toBe('/home')
@@ -125,7 +125,7 @@ describe('NavigationGroup', () => {
 				children: [
 					createNavigationLink({ label: 'Home', hidden: true }),
 					createNavigationLink({ label: 'Settings', hidden: true }),
-				]
+				],
 			})
 
 			expect(group.hidden).toBe(true)
@@ -136,7 +136,7 @@ describe('NavigationGroup', () => {
 				children: [
 					createNavigationLink({ label: 'Home', hidden: true }),
 					createNavigationLink({ label: 'Settings' }),
-				]
+				],
 			})
 
 			expect(group.hidden).toBe(false)
@@ -149,13 +149,13 @@ describe('NavigationGroup', () => {
 		})
 
 		it('should be current while one of its children is', () => {
-			const component = new TestNavigationTarget
+			const component = new TestNavigationTarget()
 			component.matchedUrl = true
 			const group = createGroup({
 				children: [
 					createNavigationLink({ label: 'Home' }),
 					new NavigationLink({ component } as any),
-				]
+				],
 			})
 
 			expect(group.current).toBe(true)

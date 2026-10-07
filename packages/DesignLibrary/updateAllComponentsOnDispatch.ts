@@ -5,5 +5,5 @@ export function updateAllComponentsOnDispatch(eventDispatcher: EventDispatcher<a
 		hostConnected = () => eventDispatcher.subscribe(this.handleChange)
 		hostDisconnected = () => eventDispatcher.unsubscribe(this.handleChange)
 		private readonly handleChange = () => element.requestUpdate()
-	}))
+	}()))
 }

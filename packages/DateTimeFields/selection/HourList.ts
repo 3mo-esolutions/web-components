@@ -35,7 +35,7 @@ export class HourList extends DateList {
 					?selected=${this.value?.hour === hour}
 					?data-navigating=${this.navigationDate.hour === hour}
 					@navigate=${() => this.navigate.dispatch(this.navigationDate.with({ hour }))}
-					@change=${(e: SelectionListItemChangeEvent<void>) => !e.selected ? void 0 : this.change.dispatch((this.value ?? new DateTime).with({ hour }))}
+					@change=${(e: SelectionListItemChangeEvent<void>) => !e.selected ? void 0 : this.change.dispatch((this.value ?? new DateTime()).with({ hour }))}
 				>${this.labelTemplate(hour)}</mo-selectable-list-item>
 			`)}
 		`

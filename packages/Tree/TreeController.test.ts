@@ -216,7 +216,6 @@ describe('TreeController', () => {
 
 			expect(tree().navigability.current).toBe(item('Music'))
 		})
-
 	})
 
 	describe('keyboard', () => {

@@ -32,7 +32,7 @@ export class NavigationLink implements INavigation {
 			invocationHandler: () => {
 				options?.invocationHandler?.()
 				this.routerLinkParameters.invocationHandler?.()
-			}
+			},
 		})
 	}
 }

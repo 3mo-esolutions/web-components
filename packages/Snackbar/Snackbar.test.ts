@@ -3,7 +3,7 @@ import { NotificationType, type Notification } from '@a11d/lit-application'
 import { Snackbar, SnackbarStackController } from './index.js'
 
 describe('Snackbar', () => {
-	const fixture = new ComponentTestFixture(() => new Snackbar)
+	const fixture = new ComponentTestFixture(() => new Snackbar())
 
 	const settle = async () => {
 		for (let index = 0; index < 20; index++) {
@@ -125,7 +125,7 @@ describe('Snackbar', () => {
 	describe('auto-dismissal', () => {
 		beforeEach(() => {
 			vi.useFakeTimers()
-			vi.setSystemTime(new Date)
+			vi.setSystemTime(new Date())
 		})
 
 		afterEach(() => vi.useRealTimers())
@@ -228,7 +228,7 @@ describe('Snackbar', () => {
 		beforeEach(async () => {
 			await nextLayoutPass()
 			vi.useFakeTimers()
-			vi.setSystemTime(new Date)
+			vi.setSystemTime(new Date())
 		})
 
 		afterEach(async () => {

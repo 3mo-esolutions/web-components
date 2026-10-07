@@ -8,7 +8,7 @@ export class Currency {
 	static {
 		for (const code of currencyCodes) {
 			Object.defineProperty(Currency, code, {
-				get() { return new Currency(code) }
+				get() { return new Currency(code) },
 			})
 		}
 	}

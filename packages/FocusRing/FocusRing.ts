@@ -23,7 +23,7 @@ export class FocusRing extends MdFocusRing {
 					--md-focus-ring-color: var(--mo-focus-ring-color, var(--mo-color-accent));
 					--md-focus-ring-shape: var(--mo-border-radius);
 				}
-			`
+			`,
 		]
 	}
 

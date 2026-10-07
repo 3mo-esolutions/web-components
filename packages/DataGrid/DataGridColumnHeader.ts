@@ -172,7 +172,7 @@ export class DataGridColumnHeader extends Component {
 	}
 
 	readonly resizeController = new ResizeController(this, {
-		callback: () => requestIdleCallback(() => this.column.widthInPixels = this.getBoundingClientRect().width)
+		callback: () => requestIdleCallback(() => this.column.widthInPixels = this.getBoundingClientRect().width),
 	})
 
 	override get template() {

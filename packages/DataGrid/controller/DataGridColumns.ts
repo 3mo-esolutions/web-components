@@ -34,7 +34,7 @@ export class DataGridColumns<TData> extends ArrayLikeView<DataGridColumn<TData>>
 	}
 
 	readonly modifications = new DataGridColumnModifications<TData>({
-		updated: () => this.updated()
+		updated: () => this.updated(),
 	})
 
 	constructor(private readonly init?: DataGridColumnsInit<TData>) {
@@ -129,5 +129,4 @@ export class DataGridColumns<TData> extends ArrayLikeView<DataGridColumn<TData>>
 			...this.modifications.filter(modification => !this.get(modification.dataSelector)),
 		]
 	}
-
 }

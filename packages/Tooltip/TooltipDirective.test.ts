@@ -27,7 +27,7 @@ describe('tooltip directive', () => {
 	beforeEach(() => document.dispatchEvent(new PointerEvent('pointerdown', { pointerType: 'mouse' })))
 
 	const create = (host: Partial<TestTooltipDirectiveHost>) =>
-		new ComponentTestFixture<TestTooltipDirectiveHost>(() => Object.assign(new TestTooltipDirectiveHost, host))
+		new ComponentTestFixture<TestTooltipDirectiveHost>(() => Object.assign(new TestTooltipDirectiveHost(), host))
 
 	const plain = create({ content: 'Directive tooltip' })
 	const templated = create({ content: () => html`<span>Rich directive</span>` })
@@ -115,7 +115,7 @@ describe('tooltip directive lazy materialization', () => {
 	// drive it to "touch", which would send the tooltip down its touch path.
 	beforeEach(() => document.dispatchEvent(new PointerEvent('pointerdown', { pointerType: 'mouse' })))
 
-	const fixture = new ComponentTestFixture(() => new LazyTooltipAnchor)
+	const fixture = new ComponentTestFixture(() => new LazyTooltipAnchor())
 
 	const queryMaterializedTooltip = () => fixture.component.renderRoot
 		.querySelector('mo-popover-host')
@@ -150,7 +150,7 @@ describe('tooltip directive lazy materialization', () => {
 			}
 		}
 
-		const localized = new ComponentTestFixture(() => new LocalizedTooltipAnchor)
+		const localized = new ComponentTestFixture(() => new LocalizedTooltipAnchor())
 
 		it('should label the anchor, as localized strings are objects rather than primitive strings', () => {
 			expect(localized.component.button.getAttribute('aria-label')).toBe('Copy')

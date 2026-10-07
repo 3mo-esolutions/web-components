@@ -31,7 +31,7 @@ export class CollapsibleListItem extends Component {
 			if (this[listItems].some(d => 'selected' in d && d.selected === true)) {
 				this.open = true
 			}
-		}
+		},
 	})
 
 	override get [listItem](): Element {
@@ -41,7 +41,7 @@ export class CollapsibleListItem extends Component {
 	override get [listItems](): Array<Element> {
 		return [
 			this[listItem]!,
-			...this.slotController.getAssignedElements('details').flatMap(e => e[listItems] ?? [])
+			...this.slotController.getAssignedElements('details').flatMap(e => e[listItems] ?? []),
 		]
 	}
 

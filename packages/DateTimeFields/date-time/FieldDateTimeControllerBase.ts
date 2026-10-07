@@ -114,7 +114,7 @@ export abstract class FieldDateTimeControllerBase<T, THost extends ReactiveContr
 		return this.datesOf(value).some(date =>
 			(!!min && precision.isSmallerThan(date, min) && !precision.equals(date, min))
 			|| (!!max && precision.isSmallerThan(max, date) && !precision.equals(max, date))
-			|| (dateDisabled?.(date) ?? false)
+			|| (dateDisabled?.(date) ?? false),
 		)
 	}
 

@@ -17,7 +17,7 @@ export class ModdableDataGridChip<TData, TParameters extends FetchableDataGridPa
 		type: Object,
 		updated(this: ModdableDataGridChip<TData, TParameters>, mode?: ModdableDataGridMode<TData, TParameters>) {
 			this.toggleAttribute('data-archived', mode?.archived)
-		}
+		},
 	}) mode!: ModdableDataGridMode<TData, TParameters>
 
 	@property({ type: Boolean, reflect: true }) selected = false

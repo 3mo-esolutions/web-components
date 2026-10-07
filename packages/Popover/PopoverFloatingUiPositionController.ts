@@ -75,7 +75,6 @@ export class PopoverFloatingUiPositionController extends Controller {
 		this.updatePosition()
 	}
 
-
 	private readonly customMiddlewares = new Set<import('@floating-ui/dom').Middleware>()
 
 	addMiddleware(middleware: import('@floating-ui/dom').Middleware) {
@@ -101,7 +100,7 @@ export class PopoverFloatingUiPositionController extends Controller {
 				flip(),
 				!this.host.offset ? undefined : offset(this.host.offset),
 				!this.host.arrowElement ? undefined : arrow({ element: this.host.arrowElement, padding: 4 }),
-			].filter(Boolean)
+			].filter(Boolean),
 		})
 
 		this.host.style.left = `${response.x}px`

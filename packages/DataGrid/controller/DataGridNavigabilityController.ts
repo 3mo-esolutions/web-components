@@ -150,7 +150,7 @@ export class DataGridNavigabilityController<TData> extends Controller {
 		const options = { method: 'keyboard' as const, event }
 		const rowIndex = this.row.index
 		const columnIndex = this.column.index
-		let handled = false
+		let handled: boolean
 
 		switch (event.key) {
 			case 'Home':

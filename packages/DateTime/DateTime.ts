@@ -48,7 +48,7 @@ export class DateTime extends Date {
 	@memoize({ hashFunction: byLanguage })
 	static getDateSeparator(language = Localizer.languages.current) {
 		return Intl.DateTimeFormat(language)
-			.formatToParts(new DateTime)
+			.formatToParts(new DateTime())
 			.find(part => part.type === 'literal')
 			?.value as string
 	}
@@ -56,7 +56,7 @@ export class DateTime extends Date {
 	@memoize({ hashFunction: byLanguage })
 	static getTimeSeparator(language = Localizer.languages.current) {
 		return Intl.DateTimeFormat(language, { timeStyle: 'short' })
-			.formatToParts(new DateTime)
+			.formatToParts(new DateTime())
 			.find(part => part.type === 'literal')
 			?.value as string
 	}
@@ -93,7 +93,7 @@ export class DateTime extends Date {
 			return DateTime.from(zonedDateTime.epochMilliseconds, zonedDateTime.calendarId, zonedDateTime.timeZoneId)
 		}
 		const [epochMilliseconds, calendar, timeZone] = parameters
-		const dateTime = typeof epochMilliseconds === 'number' ? new DateTime(epochMilliseconds) : new DateTime
+		const dateTime = typeof epochMilliseconds === 'number' ? new DateTime(epochMilliseconds) : new DateTime()
 		// @ts-expect-error Setting readonly property while initialization
 		!calendar ? void 0 : dateTime.calendar = calendar
 		// @ts-expect-error Setting readonly property while initialization
@@ -169,13 +169,13 @@ export class DateTime extends Date {
 		return this.temporalInstant.epochNanoseconds > comparisonDate.temporalInstant.epochNanoseconds
 	}
 
-	since(comparisonDate: Parameters<Temporal.Instant['since']>[0] | DateTime = new DateTime) {
+	since(comparisonDate: Parameters<Temporal.Instant['since']>[0] | DateTime = new DateTime()) {
 		const other = comparisonDate instanceof DateTime ? comparisonDate.temporalInstant : comparisonDate
 		const milliseconds = this.temporalInstant.since(other, { largestUnit: 'milliseconds' }).milliseconds
 		return new TimeSpan(milliseconds)
 	}
 
-	until(comparisonDate: Parameters<Temporal.Instant['until']>[0] | DateTime = new DateTime) {
+	until(comparisonDate: Parameters<Temporal.Instant['until']>[0] | DateTime = new DateTime()) {
 		const other = comparisonDate instanceof DateTime ? comparisonDate.temporalInstant : comparisonDate
 		const milliseconds = this.temporalInstant.until(other, { largestUnit: 'milliseconds' }).milliseconds
 		return new TimeSpan(milliseconds)

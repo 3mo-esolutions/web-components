@@ -35,7 +35,7 @@ export class TreeItem extends Component {
 			if (previous !== undefined) {
 				this.openChange.dispatch(open)
 			}
-		}
+		},
 	}) open = false
 	@property({ type: Boolean, reflect: true }) selected = false
 	@property({ type: Boolean, reflect: true }) disabled = false

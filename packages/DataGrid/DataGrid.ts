@@ -170,7 +170,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		updated(this: DataGrid<TData, TDetailsElement>) {
 			const fontSize = Math.max(0.8, Math.min(1.2, this.cellFontSize))
 			this.style.setProperty('--mo-data-grid-cell-font-size', `${fontSize}rem`)
-		}
+		},
 	}) cellFontSize = DataGrid.cellRelativeFontSize.value
 
 	@property({
@@ -178,7 +178,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		updated(this: DataGrid<TData, TDetailsElement>) {
 			const rowHeight = Math.max(30, Math.min(60, this.rowHeight))
 			this.style.setProperty('--mo-data-grid-row-height', `${rowHeight}px`)
-		}
+		},
 	}) rowHeight = DataGrid.rowHeight.value
 
 	@query('mo-data-grid-header') private readonly header?: DataGridHeader<TData>
@@ -856,7 +856,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		const sum = (this.selectedData.length ? this.selectedData : this.renderDataRecords.map(r => r.data))
 			.map(data => parseFloat(KeyPath.get(data, column.dataSelector) as unknown as string))
 			.filter(n => isNaN(n) === false)
-			.reduce(((a, b) => a + b), 0)
+			.reduce((a, b) => a + b, 0)
 			|| 0
 
 		return html`

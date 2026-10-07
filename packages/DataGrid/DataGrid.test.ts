@@ -1227,7 +1227,7 @@ describe('DataGrid', () => {
 					await new Promise(r => setTimeout(r, 30))
 				})()
 			}
-		}
+		}()
 
 		describe('no contentStyle', () => {
 			it('should not render style tag when contentStyle is undefined', async () => {
@@ -1712,7 +1712,7 @@ describe('DataGrid', () => {
 
 		describe('with another scroller preceding the content', () => {
 			const fixture = new ComponentTestFixture<TestDataGridWithLeadingScroller>(
-				html`<test-data-grid-with-leading-scroller></test-data-grid-with-leading-scroller>`
+				html`<test-data-grid-with-leading-scroller></test-data-grid-with-leading-scroller>`,
 			)
 
 			it('should resolve to the scroller containing the content', () => {

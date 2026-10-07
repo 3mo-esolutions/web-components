@@ -43,7 +43,7 @@ export class FieldFetchableSelect<T, TDataFetcherParameters extends FieldFetchab
 			this.dataFetch.dispatch(data)
 			return data
 		},
-		args: () => [this.parameters]
+		args: () => [this.parameters],
 	})
 
 	/** Its results name the keyword they answer. */
@@ -51,7 +51,7 @@ export class FieldFetchableSelect<T, TDataFetcherParameters extends FieldFetchab
 		throttle: 500,
 		autoRun: false,
 		fetch: async ([parameters, keyword]) => ({ keyword, data: !this.hasSearchInput ? [] : await this.fetch?.(parameters) ?? [] }),
-		args: () => [{ ...this.parameters, ...this.searchParameters?.(this.searchKeyword) ?? {} } as TDataFetcherParameters, this.searchKeyword] as const
+		args: () => [{ ...this.parameters, ...this.searchParameters?.(this.searchKeyword) ?? {} } as TDataFetcherParameters, this.searchKeyword] as const,
 	})
 
 	private get searchesOnServer() {

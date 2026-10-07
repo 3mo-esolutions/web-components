@@ -48,7 +48,7 @@ export class DataGridReorderabilityController<T> extends ReorderabilityControlle
 					record: records[i]!,
 					oldIndex: isMovingDown ? i + 1 : i - 1,
 					type: 'shift',
-				} as const))
+				} as const)),
 		])
 	}
 }

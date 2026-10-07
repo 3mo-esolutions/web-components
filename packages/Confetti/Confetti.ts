@@ -14,7 +14,7 @@ class ConfettiParticle {
 		private waveAngle = 0,
 		private x = 0,
 		private y = 0,
-		private readonly color = Math.floor(Math.random() * 360)
+		private readonly color = Math.floor(Math.random() * 360),
 	) {
 		this.reset()
 	}

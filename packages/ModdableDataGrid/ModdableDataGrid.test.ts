@@ -67,7 +67,7 @@ class ModdableDataGridStory extends ModdableDataGrid<User, Parameters> {
 						.includes(parameters.keyword.toLowerCase())
 				}
 				return matches
-			})
+			}),
 		)
 	}
 
@@ -124,7 +124,7 @@ class ModdableDataGridTestFixture extends ComponentTestFixture<ModdableDataGridS
 				id: '1',
 				name: 'Mode 1',
 				parameters: { keyword: 'Friedrich Nietzsche' } as Parameters,
-				columns: ModdableDataGridTestFixture.columns
+				columns: ModdableDataGridTestFixture.columns,
 			}),
 			new ModdableDataGridMode({
 				id: '2',
@@ -135,7 +135,7 @@ class ModdableDataGridTestFixture extends ComponentTestFixture<ModdableDataGridS
 					ModdableDataGridTestFixture.columns[1]!,
 					new ModdableDataGridModeColumn({ dataSelector: 'lastName', width: '200px', hidden: false, sticky: undefined }), // Changed width to 200px
 					ModdableDataGridTestFixture.columns[3]!,
-				]
+				],
 			}),
 		]
 	}
@@ -145,7 +145,7 @@ class ModdableDataGridTestFixture extends ComponentTestFixture<ModdableDataGridS
 		readonly selectedModeId?: '1' | '2'
 	}) {
 		super(() => {
-			const dataGrid = new ModdableDataGridStory
+			const dataGrid = new ModdableDataGridStory()
 			// Cloned per construction: a reorder assigns indices ON the modes, and specs run in random
 			// order, so sharing the instances would leak one spec's reorder into another's seed.
 			dataGrid.modesAdapter.modes = options.modes.map(m => m.clone())
@@ -207,7 +207,7 @@ describe('ModdableDataGrid', () => {
 		}
 
 		const fixture = new ComponentTestFixture<ModdableDataGridStory>(
-			() => serverSidePaginated(new ModdableDataGridStory)
+			() => serverSidePaginated(new ModdableDataGridStory()),
 		)
 
 		it('should be the default, as for any fetchable data grid', () => {
@@ -226,7 +226,7 @@ describe('ModdableDataGrid', () => {
 
 			describe('and opted back in by a single grid', () => {
 				const optedInFixture = new ComponentTestFixture<ModdableDataGridStoryWithInfiniteScroll>(
-					() => serverSidePaginated(new ModdableDataGridStoryWithInfiniteScroll)
+					() => serverSidePaginated(new ModdableDataGridStoryWithInfiniteScroll()),
 				)
 
 				it('should stream its pages', () => {
@@ -366,7 +366,6 @@ describe('ModdableDataGrid', () => {
 			expect(fixture.component.modesController.delete).toHaveBeenCalledWith(chip.mode)
 		})
 
-
 		it('should archive or unarchive a mode when "archive" icon-button is clicked', async () => {
 			const chip = fixture.modeChips[0]!
 			await fixture.selectChip(chip)
@@ -483,7 +482,7 @@ describe('ModdableDataGrid', () => {
 				modes: ModdableDataGridTestFixture.modes.map((m, i) => {
 					m.archived = i === 1
 					return m
-				})
+				}),
 			})
 
 			beforeEach(() => new Promise<void>(r => setTimeout(r)))
@@ -664,7 +663,7 @@ describe('ModdableDataGrid', () => {
 				].map((m, i) => {
 					m.index = 2 - i // stored in the opposite of the adapter's order
 					return m
-				})
+				}),
 			})
 
 			beforeEach(() => new Promise<void>(r => setTimeout(r)))

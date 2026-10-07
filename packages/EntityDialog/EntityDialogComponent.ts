@@ -8,7 +8,7 @@ import { getEntityLabel } from './getEntityLabel.js'
 export abstract class EntityDialogComponent<
 	TEntity extends object,
 	TParameters extends Exclude<DialogParameters, void> = FetchableDialogComponentParameters,
-	TResult = TEntity
+	TResult = TEntity,
 > extends FetchableDialogComponent<TEntity, TParameters, TResult | undefined> {
 	protected abstract save(entity: TEntity): (TEntity | void) | PromiseLike<TEntity | void>
 	protected abstract delete?(entity: TEntity): void | PromiseLike<void>

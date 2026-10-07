@@ -42,7 +42,7 @@ export class DateTimeRange {
 		}
 		const parts = getDateTimeFormatter(language).formatRangeToParts(
 			new Date('2010-01-01T00:00:00.000Z'),
-			new Date('2020-01-01T00:00:00.000Z')
+			new Date('2020-01-01T00:00:00.000Z'),
 		)
 		const delimiter = parts.find(part => part.source === 'shared')?.value.trim()
 		DateTimeRange.untilDelimiters.set(language, delimiter)
@@ -85,8 +85,8 @@ export class DateTimeRange {
 	}
 
 	equals(other: DateTimeRange) {
-		return (other.start && this.start?.equals(other.start) || this.start === other.start) &&
-			(other.end && this.end?.equals(other.end) || this.end === other.end)
+		return (other.start && this.start?.equals(other.start) || this.start === other.start)
+			&& (other.end && this.end?.equals(other.end) || this.end === other.end)
 	}
 
 	toString() {
@@ -102,7 +102,7 @@ export class DateTimeRange {
 		return this._format({
 			options,
 			formatter: (dateTime, ...options) => dateTime.formatAsDate(...options),
-			defaultOptions: { dateStyle: 'medium' }
+			defaultOptions: { dateStyle: 'medium' },
 		})
 	}
 
@@ -110,7 +110,7 @@ export class DateTimeRange {
 		return this._format({
 			options,
 			formatter: (dateTime, ...options) => dateTime.format(...options),
-			defaultOptions: { dateStyle: 'medium', timeStyle: 'medium' }
+			defaultOptions: { dateStyle: 'medium', timeStyle: 'medium' },
 		})
 	}
 
@@ -118,7 +118,7 @@ export class DateTimeRange {
 		formatter: (dateTime: DateTime, ...options: Parameters<DateTime['format']>) => string
 		options: Parameters<DateTime['format']>
 		defaultOptions: Intl.DateTimeFormatOptions
-	}
+	},
 	) {
 		if (!this.start && !this.end) {
 			return ''

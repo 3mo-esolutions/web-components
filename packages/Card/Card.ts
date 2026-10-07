@@ -6,7 +6,7 @@ import '@3mo/flex'
 
 export enum CardType {
 	Filled = 'filled',
-	Outlined = 'outlined'
+	Outlined = 'outlined',
 }
 
 /**

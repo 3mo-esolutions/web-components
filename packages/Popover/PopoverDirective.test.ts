@@ -84,7 +84,7 @@ describe('popover directive', () => {
 	})
 
 	describe('hosting', () => {
-		const fixture = new ComponentTestFixture(() => new TestPopoverDirectiveHost)
+		const fixture = new ComponentTestFixture(() => new TestPopoverDirectiveHost())
 
 		const getPopoverHosts = () => [...fixture.component.renderRoot.querySelectorAll('mo-popover-host')]
 
@@ -190,7 +190,7 @@ describe('popover directive lazy triggers', () => {
 			}
 		}
 
-		const fixture = new ComponentTestFixture(() => new LazyClickPopover)
+		const fixture = new ComponentTestFixture(() => new LazyClickPopover())
 
 		const queryMaterializedPopover = () => fixture.component.renderRoot
 			.querySelector('mo-popover-host')
@@ -260,7 +260,7 @@ describe('popover directive lazy triggers', () => {
 			}
 		}
 
-		const fixture = new ComponentTestFixture(() => new LazyContextMenuPopover)
+		const fixture = new ComponentTestFixture(() => new LazyContextMenuPopover())
 
 		const queryMaterializedPopover = () => fixture.component.renderRoot
 			.querySelector('mo-popover-host')
@@ -291,7 +291,7 @@ describe('popover directive lazy triggers', () => {
 			}
 		}
 
-		const fixture = new ComponentTestFixture(() => new LazyInterestPopover)
+		const fixture = new ComponentTestFixture(() => new LazyInterestPopover())
 
 		const queryMaterializedPopover = () => fixture.component.renderRoot
 			.querySelector('mo-popover-host')

@@ -12,7 +12,7 @@ class FocusControllerTestComponent extends Component {
 			this.focused = focused
 			this.bubbled = bubbled
 			this.method = method
-		}
+		},
 	})
 
 	protected override get template() {

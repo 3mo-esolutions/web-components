@@ -14,7 +14,7 @@ export class FetchableDialog<T> extends LoadingDialog {
 
 	readonly fetcherController = new FetcherController(this, {
 		fetch: () => this.fetch(),
-		args: () => [this.fetch]
+		args: () => [this.fetch],
 	})
 
 	protected override get isLoading() {

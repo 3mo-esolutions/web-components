@@ -7,7 +7,6 @@ import type { StorybookConfig } from '@storybook/web-components-vite'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
-
 export default {
 	stories: [
 		'./docs/**/*.mdx',
@@ -25,7 +24,7 @@ export default {
 
 	framework: {
 		name: '@storybook/web-components-vite',
-		options: {}
+		options: {},
 	},
 
 	docs: {
@@ -66,7 +65,7 @@ export default {
 				handleHotUpdate({ server }: { server: ViteDevServer }) {
 					server.ws.send({ type: 'full-reload' })
 					return []
-				}
+				},
 			}, {
 				// What the documentation build writes for language models, rendered on request here instead.
 				name: 'llms',
@@ -86,10 +85,10 @@ export default {
 						response.setHeader('Content-Type', `${path.endsWith('.md') ? 'text/markdown' : 'text/plain'}; charset=utf-8`)
 						response.end(content)
 					})
-				}
-			}]
+				},
+			}],
 		})
-	}
+	},
 } as StorybookConfig
 
 function getAbsolutePath(value: string): any {

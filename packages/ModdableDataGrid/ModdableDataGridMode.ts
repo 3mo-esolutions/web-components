@@ -150,7 +150,7 @@ export class ModdableDataGridMode<TData, TDataFetcherParameters extends Fetchabl
 	private get definedParameters() {
 		return Object.fromEntries(
 			Object.entries(this.parameters ?? {})
-				.filter(([, value]) => value !== undefined && value !== null && value !== '' && (Array.isArray(value) ? value.length > 0 : true))
+				.filter(([, value]) => value !== undefined && value !== null && value !== '' && (Array.isArray(value) ? value.length > 0 : true)),
 		)
 	}
 

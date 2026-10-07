@@ -27,6 +27,6 @@ export function extractFormatOptions<T>(options: FormatOptionsWithLanguage<T> | 
 
 	return [
 		language ?? Localizer.languages.current,
-		Object.keys(explicitOptions ?? {}).length === 0 ? undefined : explicitOptions
+		Object.keys(explicitOptions ?? {}).length === 0 ? undefined : explicitOptions,
 	]
 }

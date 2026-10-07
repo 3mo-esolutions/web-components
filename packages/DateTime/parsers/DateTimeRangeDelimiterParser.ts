@@ -9,7 +9,7 @@ export class DateTimeRangeDelimiterParser extends DateTimeRangeParser {
 	private static getUntilDelimiter(language = Localizer.languages.current) {
 		const parts = Intl.DateTimeFormat(language).formatRangeToParts(
 			new Date('2010-01-01T00:00:00.000Z'),
-			new Date('2020-01-01T00:00:00.000Z')
+			new Date('2020-01-01T00:00:00.000Z'),
 		)
 		return parts.find(part => part.source === 'shared')?.value.trim()
 	}
@@ -25,7 +25,7 @@ export class DateTimeRangeDelimiterParser extends DateTimeRangeParser {
 		const [start, end] = text.split(this.regex).map(date => date.trim())
 		return new DateTimeRange(
 			start ? DateTime.parseAsDateTime(start, referenceDate) : undefined,
-			end ? DateTime.parseAsDateTime(end, referenceDate) : undefined
+			end ? DateTime.parseAsDateTime(end, referenceDate) : undefined,
 		)
 	}
 }

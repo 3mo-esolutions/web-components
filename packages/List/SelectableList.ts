@@ -65,7 +65,6 @@ export class SelectableList extends List {
 			}
 		}
 	}
-
 }
 
 declare global {

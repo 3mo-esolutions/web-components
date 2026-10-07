@@ -35,7 +35,7 @@ export class Fab extends Component {
 			subtree: true,
 			characterData: true,
 			childList: true,
-		}
+		},
 	})
 
 	protected override initialized() {
@@ -100,14 +100,13 @@ MdFab.addInitializer(fab => fab.addController({
 		fab.renderRoot.querySelector('button')?.part.add('button')
 		fab.renderRoot.querySelector('md-ripple')?.part.add('ripple')
 		fab.renderRoot.querySelector('md-focus-ring')?.part.add('focus-ring')
-	}
+	},
 }))
 
 MdFab.elementStyles.push(css`
 	button { background: var(--md-fab-background-color) !important; }
 	.icon, .label { color: var(--md-fab-foreground-color) !important; }
 `)
-
 
 declare global {
 	interface HTMLElementTagNameMap {

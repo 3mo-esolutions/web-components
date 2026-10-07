@@ -14,7 +14,7 @@ export class FetchableDataGridFetcherController<TData> extends FetcherController
 			fetch: ([parameters]) => this.fetchStream(parameters),
 			// While infinite-scrolling, "fetchNextPage" fetches the pages after the first one,
 			// so they must not be part of the arguments which trigger a run of this task.
-			args: () => [this.getParameters(this.host.hasInfiniteScroll ? 1 : this.host.page)]
+			args: () => [this.getParameters(this.host.hasInfiniteScroll ? 1 : this.host.page)],
 		})
 	}
 

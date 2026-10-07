@@ -91,7 +91,6 @@ export abstract class DateList extends Component {
 		}
 	}
 
-
 	@eventOptions({ passive: true })
 	protected handleScroll(e: Event) {
 		if (e.type === 'scroll' && 'onscrollend' in HTMLElement.prototype) {

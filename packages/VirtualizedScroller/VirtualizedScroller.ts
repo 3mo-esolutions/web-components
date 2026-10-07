@@ -22,7 +22,7 @@ export interface VirtualizedElement {
 @component('mo-virtualized-scroller')
 export class VirtualizedScroller<T = unknown> extends Component {
 	@property({ type: Array }) items = new Array<T>()
-	@property({ type: Object }) getItemTemplate: GetItemTemplate<T> = (() => html.nothing)
+	@property({ type: Object }) getItemTemplate: GetItemTemplate<T> = () => html.nothing
 
 	static override get styles() {
 		return css`

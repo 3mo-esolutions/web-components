@@ -13,9 +13,9 @@ export const fakeScreenSizeMedia = () => {
 	const media = DependsOnScreenSizeDirective.media as unknown as Record<ScreenSize, MediaQueryList | undefined>
 	const original = { ...media } as Record<ScreenSize, MediaQueryList | undefined>
 	const fakes = {
-		[ScreenSize.Mobile]: new FakeMediaQueryList,
-		[ScreenSize.Tablet]: new FakeMediaQueryList,
-		[ScreenSize.Desktop]: new FakeMediaQueryList,
+		[ScreenSize.Mobile]: new FakeMediaQueryList(),
+		[ScreenSize.Tablet]: new FakeMediaQueryList(),
+		[ScreenSize.Desktop]: new FakeMediaQueryList(),
 	}
 
 	beforeEach(() => {

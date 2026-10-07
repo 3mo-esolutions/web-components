@@ -8,7 +8,7 @@ class PointerPressControllerTestComponent extends Component {
 	readonly spy = vi.fn()
 
 	readonly pointerPressController = new PointerPressController(this, {
-		handlePressChange: this.spy
+		handlePressChange: this.spy,
 	})
 
 	protected override get template() {

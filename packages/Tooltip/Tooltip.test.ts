@@ -41,7 +41,7 @@ describe('Tooltip', () => {
 	// drive it to "touch", which would send the tooltip down its touch path.
 	beforeEach(() => document.dispatchEvent(new PointerEvent('pointerdown', { pointerType: 'mouse' })))
 
-	const fixture = new ComponentTestFixture(() => new TestTooltipAnchor)
+	const fixture = new ComponentTestFixture(() => new TestTooltipAnchor())
 
 	/** The controllers subscribe asynchronously and the slot change lands in its own task. */
 	const settle = () => new Promise(resolve => setTimeout(resolve, 30))

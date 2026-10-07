@@ -90,9 +90,9 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 		this.change.dispatch(this.value)
 
 		if (LanguageField.applyDefaultLanguageBehavior) {
-			if (!!value &&
-				language === this.defaultLanguage &&
-				[...this.value].filter(([key]) => key !== this.defaultLanguage?.[this.valueKey]).every(v => v === undefined)
+			if (!!value
+				&& language === this.defaultLanguage
+				&& [...this.value].filter(([key]) => key !== this.defaultLanguage?.[this.valueKey]).every(v => v === undefined)
 			) {
 				this._languages.forEach(lang => this.value.set(lang[this.valueKey], value))
 			}

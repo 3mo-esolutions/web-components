@@ -27,7 +27,7 @@ describe('CommandPaletteDataSource', () => {
 
 	let source: TestDataSource
 
-	beforeEach(() => source = new TestDataSource)
+	beforeEach(() => source = new TestDataSource())
 
 	it('should fetch once and serve fetchData\'s mapped items from memory afterwards', async () => {
 		const first = await source.fetchData()

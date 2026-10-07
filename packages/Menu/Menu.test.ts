@@ -229,7 +229,7 @@ describe('Menu', () => {
 			}
 		}
 
-		const fixture = new ComponentTestFixture(() => new TestMenuAnchor)
+		const fixture = new ComponentTestFixture(() => new TestMenuAnchor())
 
 		beforeEach(tick)
 

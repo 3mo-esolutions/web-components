@@ -74,7 +74,7 @@ describe('CommandPalette', () => {
 		for (const source of sources) {
 			CommandPalette.dataSources.add(source)
 		}
-		palette = document.body.appendChild(new CommandPalette)
+		palette = document.body.appendChild(new CommandPalette())
 		await palette.updateComplete
 		await new Promise(resolve => setTimeout(resolve))
 	}

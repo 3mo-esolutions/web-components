@@ -46,7 +46,7 @@ export abstract class FieldComponent<T> extends Component {
 		handleChange: (focused, bubbled, method) => {
 			this.focused = focused
 			focused ? this.handleFocus(bubbled, method) : this.handleBlur(bubbled, method)
-		}
+		},
 	})
 
 	protected override update(props: PropertyValues<this>) {

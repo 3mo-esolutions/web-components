@@ -33,7 +33,7 @@ export class DataRecord<TData> {
 	get flattenedRecords(): Array<DataRecord<TData>> {
 		return [
 			this,
-			...(this.subDataRecords?.flatMap(r => r.flattenedRecords) ?? [])
+			...(this.subDataRecords?.flatMap(r => r.flattenedRecords) ?? []),
 		]
 	}
 

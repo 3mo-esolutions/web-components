@@ -74,7 +74,7 @@ describe('DataGridVirtualizationController', () => {
 		await element.updateComplete
 		FakeResizeObserver.instances.at(-1)!.callback(
 			[{ contentRect: { height: 500 } }] as unknown as Array<ResizeObserverEntry>,
-			FakeResizeObserver.instances.at(-1) as unknown as ResizeObserver
+			FakeResizeObserver.instances.at(-1) as unknown as ResizeObserver,
 		)
 		const observerWith = (margin: number) => FakeIntersectionObserver.instances.find(observer => observer.options.rootMargin === `${margin}px 0px`)!
 		const { margin, hysteresis } = DataGridVirtualizationController

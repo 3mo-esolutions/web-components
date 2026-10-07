@@ -80,7 +80,7 @@ describe('SlotController', () => {
 				const [div, span, text] = [
 					document.createElement('div'),
 					document.createElement('span'),
-					document.createTextNode('Hello, World!')
+					document.createTextNode('Hello, World!'),
 				]
 
 				fixture.component.append(div, span, text)

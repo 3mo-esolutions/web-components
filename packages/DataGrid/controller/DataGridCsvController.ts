@@ -72,9 +72,9 @@ export class DataGridCsvController<TData> {
 						...nestedPadding,
 						first,
 						...childrenPadding,
-						...rest
+						...rest,
 					]
-				})
+				}),
 			]
 
 			const csvContent = rows.map(row => row.join(',')).join('\n')

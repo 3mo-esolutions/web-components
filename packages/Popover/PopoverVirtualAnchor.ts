@@ -11,7 +11,7 @@ export class PopoverVirtualAnchor extends Component {
 			// but updating the CSS properties does not lead to this issue
 			this.style.setProperty('--x', `${x}px`)
 			this.style.setProperty('--y', `${y}px`)
-		}
+		},
 	}) coordinates?: PopoverCoordinates
 
 	static override get styles() {

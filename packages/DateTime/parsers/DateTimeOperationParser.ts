@@ -37,7 +37,7 @@ export class DateTimeOperationParser extends DateTimeParser {
 		}
 	}
 
-	parse(text: string, referenceDate = new DateTime) {
+	parse(text: string, referenceDate = new DateTime()) {
 		const { operation, number, unitSuffix } = text.match(DateTimeOperationParser.splitterRegex)?.groups ?? {}
 
 		const signedNumber = Number(`${operation}${number}`)

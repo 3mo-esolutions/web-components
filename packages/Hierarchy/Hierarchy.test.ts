@@ -86,7 +86,6 @@ describe('Hierarchy', () => {
 
 			expect(names(visible)).toEqual(['Documents', 'Taxes', '2025', '2026', 'Letters', 'Music'])
 		})
-
 	})
 
 	describe('filter', () => {

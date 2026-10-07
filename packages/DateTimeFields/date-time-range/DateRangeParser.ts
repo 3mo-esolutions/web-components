@@ -2,7 +2,7 @@ export class DateRangeParser {
 	static readonly dateRangeSeparator = ' – '
 	static readonly userDateRangeSeparators = [DateRangeParser.dateRangeSeparator, ' ', '-', '~']
 
-	static parse(dateRangeText: string, referenceDate = new DateTime) {
+	static parse(dateRangeText: string, referenceDate = new DateTime()) {
 		const keywordResult = DateRangeParser.parseDateRangeFromKeyword(dateRangeText, referenceDate)
 		if (keywordResult) {
 			return keywordResult
@@ -23,7 +23,7 @@ export class DateRangeParser {
 		return new DateTimeRange(startDate, endDate)
 	}
 
-	private static parseDateRangeFromKeyword(keyword: string, referenceDate = new DateTime): DateTimeRange | undefined {
+	private static parseDateRangeFromKeyword(keyword: string, referenceDate = new DateTime()): DateTimeRange | undefined {
 		switch (keyword) {
 			case 'w':
 			case 'dw': return new DateTimeRange(referenceDate.weekStart, referenceDate.weekEnd)

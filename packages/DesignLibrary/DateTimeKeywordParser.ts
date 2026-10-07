@@ -1,7 +1,7 @@
 import { DateTime, DateTimeParser } from '@3mo/date-time'
 
 export class DateTimeKeywordParser extends DateTimeParser {
-	override parse(text: string, referenceDate = new DateTime) {
+	override parse(text: string, referenceDate = new DateTime()) {
 		text = text.trim().toLowerCase()
 		switch (text) {
 			case 'h': return new DateTime(referenceDate)

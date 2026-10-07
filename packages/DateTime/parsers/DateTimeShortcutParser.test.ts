@@ -83,15 +83,15 @@ describe('DateTimeShortcutParser', () => {
 
 	describe('parsing by day, month and year', () => {
 		it('should work for gregory calendar', () => {
-			expectDateTimesEquals(gregorianEnglishParser.parse('020122'), DateTime.from(undefined, 'gregory').with({ year: 2022, month: 2, day: 1, }))
-			expectDateTimesEquals(gregorianEnglishParser.parse('02012022'), DateTime.from(undefined, 'gregory').with({ year: 2022, month: 2, day: 1, }))
-			expectDateTimesEquals(gregorianGermanParser.parse('020122'), DateTime.from(undefined, 'gregory').with({ year: 2022, month: 1, day: 2, }))
-			expectDateTimesEquals(gregorianGermanParser.parse('02012022'), DateTime.from(undefined, 'gregory').with({ year: 2022, month: 1, day: 2, }))
+			expectDateTimesEquals(gregorianEnglishParser.parse('020122'), DateTime.from(undefined, 'gregory').with({ year: 2022, month: 2, day: 1 }))
+			expectDateTimesEquals(gregorianEnglishParser.parse('02012022'), DateTime.from(undefined, 'gregory').with({ year: 2022, month: 2, day: 1 }))
+			expectDateTimesEquals(gregorianGermanParser.parse('020122'), DateTime.from(undefined, 'gregory').with({ year: 2022, month: 1, day: 2 }))
+			expectDateTimesEquals(gregorianGermanParser.parse('02012022'), DateTime.from(undefined, 'gregory').with({ year: 2022, month: 1, day: 2 }))
 		})
 
 		it('should work for persian calendar', () => {
-			expectDateTimesEquals(persianParser.parse('030201'), DateTime.from(undefined, 'persian').with({ year: 1403, month: 2, day: 1, }))
-			expectDateTimesEquals(persianParser.parse('14030201'), DateTime.from(undefined, 'persian').with({ year: 1403, month: 2, day: 1, }))
+			expectDateTimesEquals(persianParser.parse('030201'), DateTime.from(undefined, 'persian').with({ year: 1403, month: 2, day: 1 }))
+			expectDateTimesEquals(persianParser.parse('14030201'), DateTime.from(undefined, 'persian').with({ year: 1403, month: 2, day: 1 }))
 		})
 	})
 })

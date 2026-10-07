@@ -25,7 +25,7 @@ export class DataGridFooter<TData> extends Component {
 				this.pageNumberField?.focus()
 				this.pageNumberField?.select()
 			}
-		}
+		},
 	}) private manualPagination = false
 
 	@query('mo-field-number') private readonly pageNumberField!: FieldNumber
@@ -224,7 +224,7 @@ export class DataGridFooter<TData> extends Component {
 					this.dataGrid.selectedData.length
 						? html`<span id='selected-length'>${this.dataGrid.selectedData.length.format()}</span>`
 						: html`<span id='range' tabindex='0'>${rangeText}</span>`,
-					this.dataGrid.dataLength === undefined ? undefined : html`<span id='length'>${this.dataGrid.dataLength.format()}</span>`
+					this.dataGrid.dataLength === undefined ? undefined : html`<span id='length'>${this.dataGrid.dataLength.format()}</span>`,
 				].filter(Boolean), html`<span id='separator'> / </span>`)}
 			</mo-flex>
 		`

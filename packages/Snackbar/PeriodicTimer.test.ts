@@ -5,7 +5,7 @@ describe('PeriodicTimer', () => {
 	// make every case here a five-second wait.
 	beforeEach(() => {
 		vi.useFakeTimers()
-		vi.setSystemTime(new Date)
+		vi.setSystemTime(new Date())
 	})
 
 	afterEach(() => vi.useRealTimers())

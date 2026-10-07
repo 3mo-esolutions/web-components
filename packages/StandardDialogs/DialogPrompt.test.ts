@@ -35,7 +35,7 @@ describe('DialogPrompt', () => {
 		{
 			...parameters,
 			inputLabel: undefined,
-			isTextArea: false
+			isTextArea: false,
 		},
 		{
 			...parameters,
@@ -45,12 +45,12 @@ describe('DialogPrompt', () => {
 		{
 			...parameters,
 			inputLabel: undefined,
-			isTextArea: true
+			isTextArea: true,
 		},
 		{
 			...parameters,
 			inputLabel: 'Input Label',
-			isTextArea: true
+			isTextArea: true,
 		},
 	]
 

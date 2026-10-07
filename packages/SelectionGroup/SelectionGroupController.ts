@@ -87,7 +87,7 @@ export class SelectionGroupController<T extends SelectionGroupItem = SelectionGr
 
 	constructor(
 		protected override readonly host: THost,
-		options: SelectionGroupControllerOptions<T> | ((host: THost) => SelectionGroupControllerOptions<T>)
+		options: SelectionGroupControllerOptions<T> | ((host: THost) => SelectionGroupControllerOptions<T>),
 	) {
 		super(host)
 		this.options = typeof options === 'function' ? options(host) : options

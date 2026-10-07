@@ -1,6 +1,6 @@
 import { property, css, Component, event, type HTMLTemplateResult, query } from '@a11d/lit'
 import { disabledProperty } from '@3mo/disabled-property'
-import { MdSlider as MdSliderBase, } from '@material/web/slider/slider.js'
+import { MdSlider as MdSliderBase } from '@material/web/slider/slider.js'
 import '@3mo/theme'
 
 export abstract class SliderBase<T> extends Component {

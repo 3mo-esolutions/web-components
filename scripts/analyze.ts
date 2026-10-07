@@ -68,7 +68,7 @@ if (unknownTags.length) {
 	process.stderr.write(
 		'\nThe following tags are declared in an "HTMLElementTagNameMap" without a class registering them through'
 		+ ' "@component", which usually means the two names do not match:\n'
-		+ unknownTags.map(t => `  - ${t}`).join('\n') + '\n'
+		+ unknownTags.map(t => `  - ${t}`).join('\n') + '\n',
 	)
 }
 
@@ -78,11 +78,11 @@ await Promise.all(
 		.filter(({ package: p, tags }) => tags.length && existsSync(`./${p.relativePath}/dist`))
 		.map(({ package: p, tags }) => FileSystem.writeFile(
 			`./${p.relativePath}/dist/custom-elements.json`,
-			JSON.stringify({ version: 'experimental', tags }, null, '\t'),
-		))
+			`${JSON.stringify({ version: 'experimental', tags }, null, '\t')}\n`,
+		)),
 )
 
-await FileSystem.writeFile('./custom-elements.json', JSON.stringify(customElements, null, '\t'))
+await FileSystem.writeFile('./custom-elements.json', `${JSON.stringify(customElements, null, '\t')}\n`)
 
 /**
  * The analyzer's CLI compiles with fixed options, under which a file without imports or exports is a script, so its

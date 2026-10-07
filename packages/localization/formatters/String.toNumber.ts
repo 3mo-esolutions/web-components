@@ -36,7 +36,7 @@ String.prototype.toNumber = function (this: string, language = Localizer.languag
 
 	const number = parseFloat([...this.replace(ignoredRegex, '')]
 		.map(character => substitutions.get(character) ?? character)
-		.join('')
+		.join(''),
 	)
 
 	return Number.isNaN(number)

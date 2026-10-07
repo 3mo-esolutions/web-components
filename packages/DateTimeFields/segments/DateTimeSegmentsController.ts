@@ -106,7 +106,7 @@ export class DateTimeSegmentsController<THost extends ReactiveControllerHost = R
 
 	/** The reference the unfilled units are taken from. */
 	get referenceDate() {
-		return this.segmenter.adopt(this.options.referenceDate ?? new DateTime)
+		return this.segmenter.adopt(this.options.referenceDate ?? new DateTime())
 	}
 
 	get isEmpty() {

@@ -34,7 +34,7 @@ export class OverflowController<TItem extends Element = Element, THost extends R
 
 	constructor(
 		protected override readonly host: THost,
-		options: OverflowControllerOptions<TItem> | ((host: THost) => OverflowControllerOptions<TItem>) = {}
+		options: OverflowControllerOptions<TItem> | ((host: THost) => OverflowControllerOptions<TItem>) = {},
 	) {
 		super(host)
 		this.options = typeof options === 'function' ? options(host) : options

@@ -66,7 +66,7 @@ export class UserAvatar extends Component {
 					${join([
 						this.avatarTemplate,
 						html`<slot></slot>`,
-						this.signOutTemplate
+						this.signOutTemplate,
 					].filter(t => !!t && t !== html.nothing), html`<mo-line></mo-line>`)}
 				</mo-menu>
 			</mo-popover-container>

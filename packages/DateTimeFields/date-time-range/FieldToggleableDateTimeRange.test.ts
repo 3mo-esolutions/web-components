@@ -7,7 +7,7 @@ import '../index.js'
 
 describe('FieldToggleableDateTimeRange', () => {
 	const fixture = new ComponentTestFixture<FieldToggleableDateTimeRange>(
-		html`<mo-field-toggleable-date-time-range open></mo-field-toggleable-date-time-range>`
+		html`<mo-field-toggleable-date-time-range open></mo-field-toggleable-date-time-range>`,
 	)
 
 	const list = (tagName: string) => fixture.component.renderRoot.querySelector(tagName)

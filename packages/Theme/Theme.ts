@@ -7,8 +7,8 @@ import { AccentStorage } from './Accent.js'
  * @ssr true
  */
 export class Theme {
-	static readonly background = new BackgroundStorage
-	static readonly accent = new AccentStorage
+	static readonly background = new BackgroundStorage()
+	static readonly accent = new AccentStorage()
 }
 
 globalThis.Theme = Theme

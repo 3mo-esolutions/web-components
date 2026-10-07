@@ -46,7 +46,7 @@ export class MenuBarController<T extends MenuBarItemElement = MenuBarItemElement
 
 	constructor(
 		protected override readonly host: THost,
-		options: MenuBarControllerOptions<T> | ((host: THost) => MenuBarControllerOptions<T>)
+		options: MenuBarControllerOptions<T> | ((host: THost) => MenuBarControllerOptions<T>),
 	) {
 		super(host)
 		this.options = typeof options === 'function' ? options(host) : options

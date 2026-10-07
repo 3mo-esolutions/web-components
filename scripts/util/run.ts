@@ -7,7 +7,7 @@ export async function run(command: string, options?: { directory?: string, rejec
 			shell: true,
 			reject: !options?.reject,
 			all: options?.captureOutput ? true : undefined,
-			stdio: options?.captureOutput ? undefined : 'inherit'
+			stdio: options?.captureOutput ? undefined : 'inherit',
 		})
 		return !options?.captureOutput ? '' : (all ?? stdout)?.toString() ?? ''
 	} catch (error) {

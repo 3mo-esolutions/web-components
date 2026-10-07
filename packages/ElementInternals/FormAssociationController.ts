@@ -47,7 +47,7 @@ export class FormAssociationController<THost extends ReactiveElement = ReactiveE
 
 	constructor(
 		protected override readonly host: THost,
-		options?: FormAssociationControllerOptions | ((host: THost) => FormAssociationControllerOptions)
+		options?: FormAssociationControllerOptions | ((host: THost) => FormAssociationControllerOptions),
 	) {
 		super(host)
 		this.options = typeof options === 'function' ? options(host) : options

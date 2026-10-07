@@ -24,7 +24,7 @@ class ObserveMutationTestComponent extends Component {
 }
 
 describe('observeMutation', () => {
-	const fixture = new ComponentTestFixture(() => new ObserveMutationTestComponent)
+	const fixture = new ComponentTestFixture(() => new ObserveMutationTestComponent())
 
 	const tick = () => new Promise(resolve => setTimeout(resolve, 10))
 

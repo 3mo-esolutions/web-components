@@ -268,12 +268,12 @@ The full rules are in `.storybook/docs/WritingStories.mdx` (Contributing / Writi
 
 ## Code style
 
-- Tabs, LF, no final newline (`.editorconfig`, and `@stylistic/js/eol-last: never` in lint). Single quotes, no semicolons, `1tbs` braces, no `public` keyword, `import { type X }` for types, no `console`. Attribute values in templates use single quotes.
+- Tabs, LF, a final newline in every file (`.editorconfig`, and `@stylistic/eol-last` in lint). Single quotes, no semicolons, `1tbs` braces, no `public` keyword, `import { type X }` for types, no `console`. Attribute values in templates use single quotes.
 - `@html-eslint` checks `html` templates, including `use-baseline`: a non-Baseline attribute (`popover`) fails; bind it as a property.
 - Relative imports carry the `.js` extension.
 - Comments: the class JSDoc header in full, one line per public option or member where the name does not say it. Inside methods and `css` blocks, a comment only where a reader would otherwise undo the line, in one line. No narration, no history of how the code came about. Trim existing narration in files you touch.
 - Prefer deleting machinery to adding it, and fix root causes in the base class over mitigations in subclasses.
-- Scripts that rewrite files on Windows must keep LF and add no final newline.
+- Scripts that rewrite files on Windows must keep LF and end every file with a newline.
 
 ## Commits, changelogs and releases
 

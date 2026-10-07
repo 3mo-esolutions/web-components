@@ -8,7 +8,7 @@ const countries = [...new Set(people.map(person => person.country))]
 
 const searchPeople = (keyword: string, country: string) => respond(people.filter(person =>
 	[person.name, person.occupation].some(text => text.toLowerCase().includes(keyword.toLowerCase()))
-	&& (!country || person.country === country)
+	&& (!country || person.country === country),
 ), 400)
 
 /** The people of a company as cards, searched by name or job and filtered by country. */

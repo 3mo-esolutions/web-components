@@ -8,7 +8,7 @@ Number.prototype.formatAsUnit = function (this: number, unit: Unit, ...options: 
 		useGrouping: true,
 		...explicitOptions,
 		style: 'unit',
-		unit
+		unit,
 	})
 }
 

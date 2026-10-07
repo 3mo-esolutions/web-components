@@ -39,7 +39,7 @@ describe('BusinessSuiteAuthenticationDialogComponent', () => {
 
 	beforeEach(() => {
 		storedUserBeforeTest = storage.value
-		component = new TestAuthenticationDialogComponent
+		component = new TestAuthenticationDialogComponent()
 		vi.spyOn(NotificationComponent, 'notifySuccess').mockResolvedValue()
 	})
 
@@ -92,7 +92,7 @@ describe('BusinessSuiteAuthenticationDialogComponent', () => {
 		afterEach(() => observer?.remove())
 
 		it('should trigger an update of connected components when the stored user changes', async () => {
-			observer = new TestStorageObserver
+			observer = new TestStorageObserver()
 			document.body.appendChild(observer)
 			await observer.updateComplete
 			const requestUpdate = vi.spyOn(observer, 'requestUpdate').mockReturnValue(undefined)

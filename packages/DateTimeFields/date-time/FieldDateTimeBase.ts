@@ -244,7 +244,7 @@ export abstract class FieldDateTimeBase<T> extends FieldComponent<T> {
 		const groups = this.controller.presets
 		return !groups.length ? html.nothing : join(
 			groups.map(group => html`${group.map(preset => this.getPresetTemplate(preset.label, () => preset.value))}`),
-			html`<mo-line></mo-line>`
+			html`<mo-line></mo-line>`,
 		) as unknown as HTMLTemplateResult
 	}
 

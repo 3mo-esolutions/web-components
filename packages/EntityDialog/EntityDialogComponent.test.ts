@@ -6,7 +6,7 @@ import { type FetchableDialogComponentParameters } from '@3mo/fetchable-dialog'
 import { EntityDialogComponent } from './index.js'
 
 class Entity { }
-const entity = new Entity
+const entity = new Entity()
 const fetchSpy = vi.fn().mockReturnValue(Promise.resolve(entity))
 const saveSpy = vi.fn()
 const deleteSpy = vi.fn()
@@ -158,7 +158,7 @@ describe('EntityDialogComponent', () => {
 })
 
 class LabeledEntity { }
-const labeledEntity = new LabeledEntity
+const labeledEntity = new LabeledEntity()
 
 @component('mo-dialog-entity-labeled-test')
 @label('Labeled Dialog')

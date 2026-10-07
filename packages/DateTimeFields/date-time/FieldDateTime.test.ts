@@ -309,7 +309,7 @@ describe('FieldDateTime', () => {
 
 	describe('attribute converters', () => {
 		const fixtureWithAttributes = new ComponentTestFixture<FieldDateTime>(
-			html`<mo-field-date-time open precision='day' min='2025-06-10' max='2025-06-20'></mo-field-date-time>`
+			html`<mo-field-date-time open precision='day' min='2025-06-10' max='2025-06-20'></mo-field-date-time>`,
 		)
 
 		it('should convert min string attribute to Date', () => {

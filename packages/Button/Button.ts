@@ -309,7 +309,7 @@ Buttons.forEach(Button => Button.addInitializer(element => {
 			element.toggleAttribute('md-button', true)
 			element.renderRoot.querySelector('button')?.setAttribute('part', 'button')
 			element.renderRoot.querySelector('md-ripple')?.setAttribute('part', 'ripple')
-		}
+		},
 	})
 }))
 

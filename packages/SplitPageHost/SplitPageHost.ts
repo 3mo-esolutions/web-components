@@ -22,7 +22,7 @@ export class SplitPageHost extends Component {
 			if (this.contentPageHeading) {
 				this.isContentOpen = true
 			}
-		}
+		},
 	}) contentPageHeading?: string
 
 	static override get styles() {

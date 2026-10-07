@@ -47,7 +47,7 @@ export class Sheet extends Component {
 			if (previousOpen !== undefined && previousOpen !== open) {
 				this.openChange.dispatch(open)
 			}
-		}
+		},
 	}) open = false
 
 	@property({ reflect: true }) placement: SheetPlacement = 'block-end'

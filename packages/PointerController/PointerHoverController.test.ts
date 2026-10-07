@@ -7,7 +7,7 @@ class PointerHoverControllerTestComponent extends Component {
 	readonly spy = vi.fn()
 
 	readonly pointerHoverController = new PointerHoverController(this, {
-		handleHoverChange: this.spy
+		handleHoverChange: this.spy,
 	})
 
 	protected override get template() {

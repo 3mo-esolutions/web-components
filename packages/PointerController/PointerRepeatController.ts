@@ -24,7 +24,7 @@ export class PointerRepeatController<THost extends ReactiveElement = ReactiveEle
 
 	constructor(
 		protected override readonly host: THost,
-		options?: PointerRepeatControllerOptions | ((host: THost) => PointerRepeatControllerOptions)
+		options?: PointerRepeatControllerOptions | ((host: THost) => PointerRepeatControllerOptions),
 	) {
 		super(host, typeof options === 'function' ? options(host) : options)
 	}

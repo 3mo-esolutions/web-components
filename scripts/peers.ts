@@ -19,7 +19,7 @@ if (fix) {
 		const entries = Object.entries(json).flatMap(([key, value]) => key === 'peerDependencies' ? []
 			: key !== 'dependencies' ? [[key, value]]
 				: [...!Object.keys(dependencies).length ? [] : [['dependencies', dependencies]], ['peerDependencies', { ...json.peerDependencies, ...moved }]])
-		FileSystem.writeFileSync(p.packageJsonPath, JSON.stringify(Object.fromEntries(entries), undefined, '\t') + (text.endsWith('\n') ? '\n' : ''))
+		FileSystem.writeFileSync(p.packageJsonPath, `${JSON.stringify(Object.fromEntries(entries), undefined, '\t')}\n`)
 	}
 	process.stdout.write(`Moved into peerDependencies in ${misplaced.length} packages.\n`)
 } else if (misplaced.length) {

@@ -7,7 +7,7 @@ class PointerTypeControllerTestComponent extends Component {
 	readonly spy = vi.fn()
 
 	readonly pointerTypeController = new PointerTypeController(this, {
-		handleTypeChange: this.spy
+		handleTypeChange: this.spy,
 	})
 
 	protected override get template() {

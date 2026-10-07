@@ -13,7 +13,7 @@ import { List, listItem } from '@3mo/list'
 @component('mo-virtualized-list')
 export class VirtualizedList<T = unknown> extends List {
 	@property({ type: Array }) data = new Array<T>()
-	@property({ type: Object }) getItemTemplate: GetItemTemplate<T> = (() => html.nothing)
+	@property({ type: Object }) getItemTemplate: GetItemTemplate<T> = () => html.nothing
 
 	@query('mo-virtualized-scroller') protected readonly virtualizedScroller!: VirtualizedScroller
 

@@ -37,7 +37,7 @@ export class Splitter extends Component {
 		callback: () => {
 			this.items.forEach((item, index) => item.slot = `${Splitter.itemSlotPrefix}${index}`)
 			this.requestUpdate()
-		}
+		},
 	})
 
 	static override get styles() {

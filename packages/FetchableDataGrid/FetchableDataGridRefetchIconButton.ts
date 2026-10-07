@@ -52,7 +52,7 @@ export class FetchableDataGridRefetchIconButton extends Component {
 	override get template() {
 		const tooltipText = [
 			t('Refetch'),
-			!this.autoRefetch ? undefined : t('automatically every ${seconds:string}', { seconds: this.autoRefetch.formatAsUnit('second', { unitDisplay: 'long' }) })
+			!this.autoRefetch ? undefined : t('automatically every ${seconds:string}', { seconds: this.autoRefetch.formatAsUnit('second', { unitDisplay: 'long' }) }),
 		].filter(Boolean).join(' - ')
 		return html`
 			<mo-grid ?data-fetching=${this.fetching}>

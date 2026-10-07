@@ -182,7 +182,7 @@ describe('DataGridColumn', () => {
 			const [col1, col2, col3] = createColumnsWithDataGrid(
 				new DataGridColumn<Person>({ heading: 'A', sticky: 'start' }),
 				new DataGridColumn<Person>({ heading: 'B', sticky: 'start' }),
-				new DataGridColumn<Person>({ heading: 'C' })
+				new DataGridColumn<Person>({ heading: 'C' }),
 			)
 			expect(col1!.stickyEdge).toBeUndefined()
 			expect(col2!.stickyEdge).toBe('end')
@@ -193,7 +193,7 @@ describe('DataGridColumn', () => {
 			const [col1, col2, col3] = createColumnsWithDataGrid(
 				new DataGridColumn<Person>({ heading: 'A' }),
 				new DataGridColumn<Person>({ heading: 'B', sticky: 'end' }),
-				new DataGridColumn<Person>({ heading: 'C', sticky: 'end' })
+				new DataGridColumn<Person>({ heading: 'C', sticky: 'end' }),
 			)
 			expect(col1!.stickyEdge).toBeUndefined()
 			expect(col2!.stickyEdge).toBe('start')
@@ -203,7 +203,7 @@ describe('DataGridColumn', () => {
 		it('should return "end" when there is only one sticky="start" column', () => {
 			const [col1, col2] = createColumnsWithDataGrid(
 				new DataGridColumn<Person>({ heading: 'A', sticky: 'start' }),
-				new DataGridColumn<Person>({ heading: 'B' })
+				new DataGridColumn<Person>({ heading: 'B' }),
 			)
 			expect(col1!.stickyEdge).toBe('end')
 			expect(col2!.stickyEdge).toBeUndefined()
@@ -212,7 +212,7 @@ describe('DataGridColumn', () => {
 		it('should return "start" when there is only one sticky="end" column', () => {
 			const [col1, col2] = createColumnsWithDataGrid(
 				new DataGridColumn<Person>({ heading: 'A' }),
-				new DataGridColumn<Person>({ heading: 'B', sticky: 'end' })
+				new DataGridColumn<Person>({ heading: 'B', sticky: 'end' }),
 			)
 			expect(col1!.stickyEdge).toBeUndefined()
 			expect(col2!.stickyEdge).toBe('start')

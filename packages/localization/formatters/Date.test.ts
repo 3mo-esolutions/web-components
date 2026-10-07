@@ -25,7 +25,7 @@ describe('Date', () => {
 					{ type: 'minute', value: '00' },
 					{ type: 'literal', value: ':' },
 					{ type: 'second', value: '00' },
-				]
+				],
 			)
 		}
 	})

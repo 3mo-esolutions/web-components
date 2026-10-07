@@ -65,7 +65,7 @@ export class ChangeLog {
 			.filter(([, releases]) => releases?.length)
 			.map(([dateString, releases]) => `# ${dateString}\n\n${releases?.join('\n\n')}`) as Array<string>
 
-		FileSystem.writeFileSync(Path.resolve('CHANGELOG.md'), releaseNotes.join('\n\n'))
+		FileSystem.writeFileSync(Path.resolve('CHANGELOG.md'), `${releaseNotes.join('\n\n')}\n`)
 	}
 
 	/** The commits that changed each package's `package.json`, newest first, each as `git show` prints it for that file. */
@@ -112,7 +112,7 @@ export class ChangeLog {
 			.map(release => release.toString())
 			.filter(s => !!s.trim().length)
 			.join('\n\n')
-		FileSystem.writeFileSync(Path.resolve(p.path, 'CHANGELOG.md'), changelog)
+		FileSystem.writeFileSync(Path.resolve(p.path, 'CHANGELOG.md'), !changelog ? '' : `${changelog}\n`)
 
 		return releases
 	}

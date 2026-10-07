@@ -22,7 +22,7 @@ describe('ButtonGroup', () => {
 		})
 
 		it('should assign the type to buttons slotted in later', async () => {
-			const button = new Button
+			const button = new Button()
 			expect(button.type).toBe(ButtonType.Text)
 
 			fixture.component.appendChild(button)
@@ -82,7 +82,7 @@ describe('ButtonGroup', () => {
 
 		it('should re-evaluate the first and the last button when buttons are added or removed', async () => {
 			const [, , last] = buttonsOf(threeButtonFixture.component)
-			const appended = new Button
+			const appended = new Button()
 
 			threeButtonFixture.component.appendChild(appended)
 			await settle()

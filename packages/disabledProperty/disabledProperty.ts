@@ -35,7 +35,7 @@ export const disabledProperty = (options?: {
 						element[tabIndexBeforeDisabledSymbol] = undefined
 					}
 				}
-			}
+			},
 		})(prototype, propertyKey)
 	}
 }

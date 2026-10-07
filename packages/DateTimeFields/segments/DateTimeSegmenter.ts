@@ -107,7 +107,7 @@ export class DateTimeSegmenter {
 
 	/** The editable unit types present, in rendering order. */
 	get types(): ReadonlyArray<EditableDateTimeSegmentType> {
-		return this.parts(new DateTime).map(part => part.type).filter(isEditableDateTimeSegmentType)
+		return this.parts(new DateTime()).map(part => part.type).filter(isEditableDateTimeSegmentType)
 	}
 
 	segments(date: DateTime, filled: ReadonlySet<EditableDateTimeSegmentType>): Array<DateTimeSegment> {

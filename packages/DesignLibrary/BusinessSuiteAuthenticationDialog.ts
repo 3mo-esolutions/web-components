@@ -8,7 +8,7 @@ const queryActionElement = (slotName: string) => {
 			get(this: Component) {
 				const slot = this.shadowRoot?.querySelector<HTMLSlotElement>(`slot[name=${slotName}]`)
 				return slot?.assignedElements()?.[0] ?? slot?.children[0] ?? undefined
-			}
+			},
 		})
 	}
 }
@@ -23,7 +23,7 @@ export class BusinessSuiteAuthenticationDialog extends Component implements IDia
 	@property({
 		updated(this: BusinessSuiteAuthenticationDialog, value: boolean) {
 			this.style.display = value ? 'block' : 'none'
-		}
+		},
 	}) open = false
 
 	@state({
@@ -32,7 +32,7 @@ export class BusinessSuiteAuthenticationDialog extends Component implements IDia
 				const PrimaryButtonConstructor = this.primaryActionElement.constructor as Constructor<HTMLElement>
 				Dialog.executingActionAdaptersByComponent.get(PrimaryButtonConstructor)?.(this.primaryActionElement, this.executingAction === DialogActionKey.Primary)
 			}
-		}
+		},
 	}) executingAction?: DialogActionKey
 
 	readonly preventCancellationOnEscape = true

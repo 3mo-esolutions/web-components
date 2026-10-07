@@ -18,7 +18,7 @@ class TestMenu extends EventTarget implements MenuBarMenuElement {
 
 @component('menu-bar-controller-test-item')
 class TestItem extends Component {
-	readonly menu = new TestMenu
+	readonly menu = new TestMenu()
 
 	@property() label = ''
 	@property({ type: Boolean }) disabled = false

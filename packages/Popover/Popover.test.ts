@@ -33,8 +33,8 @@ describe('Popover', () => {
 			}
 		}
 
-		const generic = new ComponentTestFixture(() => new GenericPopover)
-		const customTarget = new ComponentTestFixture(() => new CustomTargetPopover)
+		const generic = new ComponentTestFixture(() => new GenericPopover())
+		const customTarget = new ComponentTestFixture(() => new CustomTargetPopover())
 
 		it('should ignore "display: flex" when not opened', () => {
 			expect(getComputedStyle(generic.component.popoverElement).display).toBe('none')
@@ -160,7 +160,7 @@ describe('Popover', () => {
 			}
 		}
 
-		const fixture = new ComponentTestFixture(() => new NativeInvokerPopover)
+		const fixture = new ComponentTestFixture(() => new NativeInvokerPopover())
 
 		it('should be togglable by a native "popovertarget" invoker button, keeping the "open" property in sync', async () => {
 			fixture.component.button.click()
@@ -215,8 +215,8 @@ describe('Popover', () => {
 	})
 
 	describe('light-dismiss', () => {
-		const fixture1 = new ComponentTestFixture(() => new GenericPopover)
-		const fixture2 = new ComponentTestFixture(() => new GenericPopover)
+		const fixture1 = new ComponentTestFixture(() => new GenericPopover())
+		const fixture2 = new ComponentTestFixture(() => new GenericPopover())
 
 		it('should close the popover when clicked outside of the popover', async () => {
 			fixture1.component.popoverElement.open = true
@@ -274,7 +274,7 @@ describe('Popover', () => {
 	})
 
 	describe('mode', () => {
-		const fixture = new ComponentTestFixture(() => new GenericPopover)
+		const fixture = new ComponentTestFixture(() => new GenericPopover())
 
 		for (const mode of ['auto', 'manual', 'hint'] as Array<PopoverMode>) {
 			it(`should map mode to the native popover attribute - ${mode}`, async () => {
@@ -288,7 +288,7 @@ describe('Popover', () => {
 	})
 
 	describe('keyboard interaction', () => {
-		const fixture = new ComponentTestFixture(() => new GenericPopover)
+		const fixture = new ComponentTestFixture(() => new GenericPopover())
 
 		const pressEnterOnAnchor = () => {
 			const event = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, composed: true, cancelable: true })
@@ -325,7 +325,7 @@ describe('Popover', () => {
 	})
 
 	describe('shouldOpen', () => {
-		const fixture = new ComponentTestFixture(() => new GenericPopover)
+		const fixture = new ComponentTestFixture(() => new GenericPopover())
 
 		// Closed popovers listen on their anchor, not on the document
 		it('should consult the custom shouldOpen predicate instead of the default anchor check', async () => {

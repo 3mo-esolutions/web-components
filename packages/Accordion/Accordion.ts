@@ -28,7 +28,7 @@ export class Accordion extends Component {
 		event: 'change',
 		updated(this: Accordion) {
 			this.applyValue()
-		}
+		},
 	}) value?: AccordionValue
 
 	// Declared after "value", so that a value handed over in the same update is what this re-reads.
@@ -40,7 +40,7 @@ export class Accordion extends Component {
 				this.enforceExclusivity()
 				this.commitValue()
 			}
-		}
+		},
 	}) multiple = false
 
 	get items() {

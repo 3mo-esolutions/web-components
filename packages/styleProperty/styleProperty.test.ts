@@ -12,12 +12,12 @@ describe('styleProperty', () => {
 			styleConverter: {
 				fromStyle: (value: string) => value === '100%' ? '*' : value,
 				toStyle: (value: string) => value === '*' ? '100%' : value,
-			}
+			},
 		}) withCustomConverter?: string
 		@styleProperty({ styleKey: '--custom-property' }) withCustomProperty?: string
 	}
 
-	const fixture = new ComponentTestFixture(() => new TestComponent)
+	const fixture = new ComponentTestFixture(() => new TestComponent())
 
 	it('should handle property with same name as style key', () => {
 		vi.spyOn(fixture.component, 'requestUpdate').mockReturnValue(undefined)

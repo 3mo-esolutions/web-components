@@ -155,7 +155,7 @@ describe('SheetController', () => {
 
 		const pointer = (type: string, y: number, timeStamp = 0) => Object.defineProperty(
 			new PointerEvent(type, { clientX: 0, clientY: y, pointerId: 1, isPrimary: true, buttons: type === 'pointerup' ? 0 : 1, bubbles: true, composed: true }),
-			'timeStamp', { value: timeStamp }
+			'timeStamp', { value: timeStamp },
 		)
 
 		const swipe = async (distances: Array<number>, { timeStep = 100 } = {}) => {

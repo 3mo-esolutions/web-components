@@ -14,18 +14,18 @@ export class PointerController extends Controller {
 	get hover() { return this.hoverController.hover }
 	private readonly hoverController = new PointerHoverController(this.host, {
 		target: this.options?.target,
-		handleHoverChange: this.options?.handleHoverChange
+		handleHoverChange: this.options?.handleHoverChange,
 	})
 
 	get press() { return this.pressController.press }
 	private readonly pressController = new PointerPressController(this.host, {
 		target: this.options?.target,
-		handlePressChange: this.options?.handlePressChange
+		handlePressChange: this.options?.handlePressChange,
 	})
 
 	get type() { return this.typeController.type }
 	private readonly typeController = new PointerTypeController(this.host, {
-		handleTypeChange: this.options?.handleTypeChange
+		handleTypeChange: this.options?.handleTypeChange,
 	})
 
 	resubscribe() {

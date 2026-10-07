@@ -51,7 +51,7 @@ export const departments: ReadonlyArray<Department> = [
 		id: 1, name: 'Engineering', headcount: 24, teams: [
 			{ id: 11, name: 'Platform', headcount: 9, teams: [{ id: 111, name: 'Build', headcount: 4 }, { id: 112, name: 'Runtime', headcount: 5 }] },
 			{ id: 12, name: 'Product', headcount: 15 },
-		]
+		],
 	},
 	{ id: 2, name: 'Sales', headcount: 11, teams: [{ id: 21, name: 'Inbound', headcount: 6 }] },
 	{ id: 3, name: 'Support', headcount: 7 },

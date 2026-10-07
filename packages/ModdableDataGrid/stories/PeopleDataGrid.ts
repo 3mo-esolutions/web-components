@@ -18,7 +18,7 @@ export class PeopleDataGrid extends ModdableDataGrid<Person, PeopleParameters> {
 	override fetch = ({ keyword, city, birthDate }: PeopleParameters) => respond(people.filter(person =>
 		(!keyword || person.name.toLowerCase().includes(keyword.toLowerCase()))
 		&& (!city || person.city === city)
-		&& (!birthDate || birthDate.includes(person.birthDate))
+		&& (!birthDate || birthDate.includes(person.birthDate)),
 	), 250)
 
 	override get hasToolbar() {

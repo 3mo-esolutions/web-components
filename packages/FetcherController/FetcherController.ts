@@ -16,7 +16,7 @@ export class FetcherController<T = unknown, A extends ReadonlyArray<unknown> = r
 			readonly args?: TaskConfig<A, T>['args']
 			readonly autoRun?: TaskConfig<A, T>['autoRun']
 			readonly throttle?: number
-		}
+		},
 	) {
 		super(host, {
 			task: options.fetch,

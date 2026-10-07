@@ -17,7 +17,7 @@ const queryActionElement = (slotName: string) => {
 			get(this: Component) {
 				return this.querySelector<HTMLElement>(`[slot=${slotName}]`)
 					?? this.renderRoot.querySelector<HTMLElement>(`slot[name=${slotName}] > *`) ?? undefined
-			}
+			},
 		})
 	}
 }
@@ -91,7 +91,7 @@ export class Dialog extends Component implements IDialog {
 				await new Promise(requestAnimationFrame)
 				this.querySelector<any>('[autofocus]')?.focus()
 			}
-		}
+		},
 	}) open = false
 	@property({ updated(this: Dialog) { this.pageHeadingChange.dispatch(this.heading) } }) heading = ''
 	@property({ reflect: true }) size?: DialogSize
@@ -114,7 +114,7 @@ export class Dialog extends Component implements IDialog {
 				const SecondaryButtonConstructor = this.secondaryActionElement.constructor as Constructor<HTMLElement>
 				Dialog.executingActionAdaptersByComponent.get(SecondaryButtonConstructor)?.(this.secondaryActionElement, this.executingAction === DialogActionKey.Secondary)
 			}
-		}
+		},
 	}) executingAction?: DialogActionKey
 
 	@state() private showTopLayer = false
@@ -530,7 +530,7 @@ MdDialog.addInitializer(element => {
 				element.renderRoot.querySelector('dialog')?.appendChild(topLayerSlot)
 			}
 		}
-	})
+	}())
 })
 
 declare global {

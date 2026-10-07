@@ -53,7 +53,7 @@ function raisePrereleaseFloors(prereleases: ReadonlyArray<Package>) {
 			return !ranges?.[p.name] ? false : !!(ranges[p.name] = `>=${p.version}`)
 		}))
 		if (raised.length) {
-			FileSystem.writeFileSync(dependent.packageJsonPath, JSON.stringify(json, undefined, '\t') + (text.endsWith('\n') ? '\n' : ''))
+			FileSystem.writeFileSync(dependent.packageJsonPath, `${JSON.stringify(json, undefined, '\t')}\n`)
 			process.stdout.write(`${dependent.name} now requires ${raised.map(p => `${p.name}@>=${p.version}`).join(', ')}\n`)
 		}
 	}

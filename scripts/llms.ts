@@ -17,4 +17,4 @@ if (!existsSync(Path.join(directory, 'index.json'))) {
 const index = JSON.parse(await FileSystem.readFile(Path.join(directory, 'index.json'), 'utf8'))
 
 await FileSystem.mkdir(Path.join(directory, 'docs'), { recursive: true })
-await Promise.all([...LlmsText.files(index, manifest)].map(([path, content]) => FileSystem.writeFile(Path.join(directory, path), content)))
+await Promise.all([...LlmsText.files(index, manifest)].map(([path, content]) => FileSystem.writeFile(Path.join(directory, path), `${content}\n`)))

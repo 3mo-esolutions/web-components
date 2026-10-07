@@ -70,7 +70,6 @@ describe('DataGridCsvController', () => {
 
 	describe('generateCsv', () => {
 		it('should generate csv from data', async () => {
-
 			await controller.generateCsv()
 
 			expect(handleCsv).toHaveBeenCalledWith('Name,Age,Birth Date\nJohn,30,1990-01-01\nJane,25,1991-01-01\nJohn,30,1992-01-01')

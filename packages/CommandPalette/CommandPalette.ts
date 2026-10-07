@@ -99,7 +99,7 @@ export class CommandPalette extends Component {
 	private readonly fetcherController = new FetcherController(this, {
 		throttle: 500,
 		fetch: ([keyword]) => keyword ? this.getKeywordDataTemplate() : this.getInitialDataTemplate(),
-		args: () => [this.keyword]
+		args: () => [this.keyword],
 	})
 
 	private async getInitialDataTemplate() {

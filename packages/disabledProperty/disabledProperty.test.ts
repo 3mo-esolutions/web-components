@@ -15,12 +15,12 @@ describe('disabledProperty', () => {
 		@disabledProperty({
 			updated(this: TestComponentWithUpdatedCallback, value: boolean, oldValue: boolean) {
 				this.calls.push([value, oldValue])
-			}
+			},
 		}) disabled?: boolean
 	}
 
-	const baseFixture = new ComponentTestFixture(() => new TestComponent)
-	const updatedFixture = new ComponentTestFixture(() => new TestComponentWithUpdatedCallback)
+	const baseFixture = new ComponentTestFixture(() => new TestComponent())
+	const updatedFixture = new ComponentTestFixture(() => new TestComponentWithUpdatedCallback())
 
 	it('sets up the "disabled" property which reflects to the "disabled" attribute', async () => {
 		expect(baseFixture.component.hasAttribute('disabled')).toBe(false)
@@ -62,7 +62,7 @@ describe('disabledProperty', () => {
 			@disabledProperty({ blockFocus: true }) disabled?: boolean
 		}
 
-		const blockFocusFixture = new ComponentTestFixture(() => new TestComponentBlockFocus)
+		const blockFocusFixture = new ComponentTestFixture(() => new TestComponentBlockFocus())
 
 		it('"blockFocus" option prevents focus when disabled', async () => {
 			const setDisabled = async (disabled: boolean) => {

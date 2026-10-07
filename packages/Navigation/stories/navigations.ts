@@ -64,22 +64,22 @@ export const navigations = [
 				label: 'Quarterly', children: [
 					new Navigation({ label: 'First quarter', path: '/reports/quarterly/q1' }),
 					new Navigation({ label: 'Second quarter', path: '/reports/quarterly/q2' }),
-				]
+				],
 			}),
 			new Navigation({ label: 'Annual', path: '/reports/annual' }),
-		]
+		],
 	}),
 	new Navigation({
 		label: 'Records', icon: 'inventory_2', hasSeparator: true, children: [
 			new Navigation({ label: 'Products', path: '/products' }),
 			new Navigation({ label: 'Customers', path: '/customers' }),
-		]
+		],
 	}),
 	new Navigation({
 		label: 'Logistics', icon: 'local_shipping', children: [
 			new Navigation({ label: 'Shipments', path: '/shipments' }),
 			new Navigation({ label: 'Warehouses', path: '/warehouses' }),
-		]
+		],
 	}),
 	new Navigation({ label: 'Settings', path: '/settings', icon: 'settings' }),
 	new Navigation({ label: 'Help', path: '/help', icon: 'help', hasSeparator: true }),

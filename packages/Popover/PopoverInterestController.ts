@@ -80,7 +80,7 @@ export class PopoverInterestController extends Controller {
 		// document and latches to "touch" until the next mouse interaction anywhere on it
 		const interested = this.focusedViaKeyboard || (this.pointerTypeController.type === 'touch'
 			? this.anchorPressController.press
-			: this.anchorHoverController.hover || this	.hostHoverController.hover)
+			: this.anchorHoverController.hover || this.hostHoverController.hover)
 		if (this._interested !== interested) {
 			this._interested = interested
 			this.options?.handleChange?.(interested)

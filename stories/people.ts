@@ -112,14 +112,14 @@ export class Person {
 	static generateFamilies(count: number) {
 		return Array.from({ length: count }, (_, family) => Person.next('adult', family, undefined,
 			parent => Array.from({ length: 2 + family % 2 }, (_, child) => Person.next('young', child, parent.lastName,
-				grandparent => Array.from({ length: child % 3 }, (_, grandchild) => Person.next('young', grandchild, grandparent.lastName))
-			))
+				grandparent => Array.from({ length: child % 3 }, (_, grandchild) => Person.next('young', grandchild, grandparent.lastName)),
+			)),
 		))
 	}
 
 	static generateLargeFamilies(count: number, childrenPerFamily: number) {
 		return Array.from({ length: count }, (_, family) => Person.next('adult', family, undefined,
-			parent => Array.from({ length: childrenPerFamily }, (_, child) => Person.next('young', child, parent.lastName))
+			parent => Array.from({ length: childrenPerFamily }, (_, child) => Person.next('young', child, parent.lastName)),
 		))
 	}
 

@@ -57,7 +57,7 @@ export class LocalizedString<Key extends LocalizableStringKey> {
 					`\${${match.key}}`,
 					typeof (parameterValue as any)?.format === 'function'
 						? (parameterValue as any).format(this.language)
-						: parameterValue
+						: parameterValue,
 				)
 		}, text)
 	}
@@ -68,8 +68,8 @@ export class LocalizedString<Key extends LocalizableStringKey> {
 				.map(([group, key, type]) => ({
 					group: group!,
 					key: key!,
-					type: type as keyof LocalizationFormatterTypeMap
-				}))
+					type: type as keyof LocalizationFormatterTypeMap,
+				})),
 			)
 		}
 

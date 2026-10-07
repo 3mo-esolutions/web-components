@@ -25,7 +25,7 @@ export class TabBar extends Component {
 		bindingDefault: true,
 		updated(this: TabBar) {
 			this.syncActiveTab()
-		}
+		},
 	}) value?: string
 
 	@query('md-tabs') private readonly tabsElement!: MdTabs
@@ -69,7 +69,7 @@ export class TabBar extends Component {
 		await Promise.all([
 			this.updateComplete,
 			this.tabsElement.updateComplete,
-			...this.tabs.map(tab => tab.updateComplete)
+			...this.tabs.map(tab => tab.updateComplete),
 		])
 		// Every change counts, as a slot fills one tab at a time while the markup around it is parsed.
 		this.syncActiveTab()

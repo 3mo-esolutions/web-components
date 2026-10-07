@@ -1,7 +1,6 @@
 import { LocalizedString } from './LocalizedString.js'
 import { Localizer } from './index.js'
 
-
 describe('LocalizedString', () => {
 	describe('caching', () => {
 		it('should cache same instances', () => {
@@ -57,8 +56,8 @@ describe('LocalizedString', () => {
 		Localizer.dictionaries.add('de', {
 			[key]: [
 				'Ein Element',
-				'${count} Elemente'
-			]
+				'${count} Elemente',
+			],
 		})
 
 		expect(LocalizedString.get(key, 'de', { count: 0 }).toString()).toBe('0 Elemente')
@@ -72,8 +71,8 @@ describe('LocalizedString', () => {
 		Localizer.dictionaries.add('es', {
 			[key]: [
 				'Un elemento',
-				'${count} elementos'
-			]
+				'${count} elementos',
+			],
 		})
 
 		expect(LocalizedString.get(key, 'es', { count: 0 }).toString()).toBe('0 elementos')
@@ -87,8 +86,8 @@ describe('LocalizedString', () => {
 		Localizer.dictionaries.add('fa', {
 			[key]: [
 				'پیام',
-				'پیام‌ها'
-			]
+				'پیام‌ها',
+			],
 		})
 
 		expect(LocalizedString.get(key, 'fa', { count: 0 }).toString()).toBe('پیام')

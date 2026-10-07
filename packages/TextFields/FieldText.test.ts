@@ -91,7 +91,6 @@ describe('FieldText', () => {
 			fixture.component.value = ''
 			expect(await fixture.component.checkValidity()).toBe(false)
 
-
 			fixture.component.value = 'Test'
 			expect(await fixture.component.checkValidity()).toBe(true)
 		})

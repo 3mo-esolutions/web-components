@@ -11,9 +11,9 @@ import '../index.js'
 const navigationInstant = Date.parse('2025-06-15T10:37:52.000Z')
 
 const variants = [
-	{ name: 'HourList', unit: 'hour', count: 24, create: () => new HourList },
-	{ name: 'MinuteList', unit: 'minute', count: 60, create: () => new MinuteList },
-	{ name: 'SecondList', unit: 'second', count: 60, create: () => new SecondList },
+	{ name: 'HourList', unit: 'hour', count: 24, create: () => new HourList() },
+	{ name: 'MinuteList', unit: 'minute', count: 60, create: () => new MinuteList() },
+	{ name: 'SecondList', unit: 'second', count: 60, create: () => new SecondList() },
 ] as const
 
 for (const variant of variants) {
@@ -66,7 +66,7 @@ for (const variant of variants) {
 
 			items()[7]!.click()
 
-			const expected = withUnit(new DateTime, 7)
+			const expected = withUnit(new DateTime(), 7)
 			expect(dispatched('change')[variant.unit]).toBe(7)
 			expect(Math.abs(dispatched('change').valueOf() - expected.valueOf())).toBeLessThan(1000)
 		})

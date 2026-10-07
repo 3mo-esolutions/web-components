@@ -5,7 +5,7 @@ export type ParsingParameters =
 	| [text: string, language?: LanguageCode]
 	| [text: string, referenceDate: DateTime, language?: LanguageCode]
 
-export function extractParsingParameters(parameters: ParsingParameters): [text: string, language: LanguageCode, referenceDate: DateTime | undefined,] {
+export function extractParsingParameters(parameters: ParsingParameters): [text: string, language: LanguageCode, referenceDate: DateTime | undefined] {
 	let text: string
 	let referenceDate: DateTime | undefined
 	let language: LanguageCode | undefined
@@ -28,5 +28,5 @@ export function extractParsingParameters(parameters: ParsingParameters): [text: 
 		[text, referenceDate, language] = parameters
 	}
 
-	return [text!, language ?? Localizer.languages.current, referenceDate ?? new DateTime]
+	return [text!, language ?? Localizer.languages.current, referenceDate ?? new DateTime()]
 }

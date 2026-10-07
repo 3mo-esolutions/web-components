@@ -26,7 +26,7 @@ describe('EntityDialog', () => {
 	const fixture = new ComponentTestFixture<EntityDialog<Entity>>(html`
 		<mo-entity-dialog
 			.parameters=${{ id: 1 }}
-			.entity=${new Entity}
+			.entity=${new Entity()}
 			.fetch=${deferredFetch}
 		></mo-entity-dialog>
 	`)
@@ -54,7 +54,7 @@ describe('EntityDialog', () => {
 
 	it('should use the entity heading for the page heading when bound to a window', async () => {
 		fixture.component['boundToWindow'] = true
-		resolvers[0]?.(new Entity)
+		resolvers[0]?.(new Entity())
 		await waitUntil(() => fixture.component.fetcherController.pending === false)
 		await fixture.updateComplete
 
@@ -69,7 +69,7 @@ describe('EntityDialog', () => {
 		expect(primaryButton()?.hasAttribute('disabled')).toBe(true)
 		expect(secondaryButton()?.hasAttribute('disabled')).toBe(true)
 
-		resolvers[0]!(new Entity)
+		resolvers[0]!(new Entity())
 		await waitUntil(() => fixture.component.fetcherController.pending === false)
 		await fixture.updateComplete
 

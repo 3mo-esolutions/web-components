@@ -60,7 +60,7 @@ export class SwipeabilityController<THost extends ReactiveControllerHost = React
 
 	constructor(
 		protected override readonly host: THost,
-		options: SwipeabilityControllerOptions | ((host: THost) => SwipeabilityControllerOptions)
+		options: SwipeabilityControllerOptions | ((host: THost) => SwipeabilityControllerOptions),
 	) {
 		super(host)
 		this.options = typeof options === 'function' ? options(host) : options

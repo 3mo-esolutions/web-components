@@ -31,7 +31,7 @@ export class ToolbarController extends Controller {
 		readonly options?: {
 			readonly paneSlotName: string
 			readonly overflowContentSlotName: string
-		}
+		},
 	) {
 		super(host)
 		const controller = this

@@ -13,7 +13,6 @@ class MenuControllerTest extends Component {
 	@property({ type: Object }) trigger?: HTMLElement
 	@state() open = false
 
-
 	readonly menu = new MenuController(this, host => ({
 		get items() { return [...host.children] as Array<HTMLElement> },
 		get expanded() { return (host as MenuControllerTest).open },
@@ -379,7 +378,6 @@ describe('MenuController without a popover', () => {
 		expect(fixture.component.open).toBe(false)
 		expect(active()).toBe(trigger)
 	})
-
 })
 
 describe('MenuController in a native popover', () => {

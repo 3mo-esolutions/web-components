@@ -158,14 +158,14 @@ export class FetchableDataGrid<TData, TDataFetcherParameters extends FetchableDa
 		return !this.hasServerSidePagination ? super.dataTake : Number.MAX_SAFE_INTEGER
 	}
 
-	override async * getCsvData() {
+	override async *getCsvData() {
 		const data = new Array<TData>()
 		const pageSize = 500
 		const parameters = { ...this.parameters } as TDataFetcherParameters
 		const sortParameters = this.sortParameters?.() ?? {} as TDataFetcherParameters
 
-		let dataLength = this.dataLength
-		let hasNextPage = true
+		let dataLength: number
+		let hasNextPage: boolean
 		let page = 1
 		while (true) {
 			const paginationParameters = this.paginationParameters?.({ page, pageSize }) ?? {}

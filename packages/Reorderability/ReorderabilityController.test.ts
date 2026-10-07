@@ -220,7 +220,7 @@ describe('ReorderabilityController', () => {
 					expect(items[0]!.dataset.reorderability).toBe(ReorderabilityState.Dragging)
 					expect(items[0]!.style.transform).not.toBe('')
 					expect(items[1]!.style.transform).not.toBe('')
-				}
+				},
 			})
 			expect(fixture.component.hasAttribute('data-reordering')).toBe(false)
 			expect(items.every(item => !item.style.transform)).toBe(true)
@@ -231,7 +231,7 @@ describe('ReorderabilityController', () => {
 			const items = fixture.component.itemElements
 			const { x, y } = center(items[0]!)
 			await drag(items[0]!, { x: x + 300, y: y + 1000 }, {
-				midway: () => expect(items[0]!.style.transform).toMatch(/translate\(0px/)
+				midway: () => expect(items[0]!.style.transform).toMatch(/translate\(0px/),
 			})
 			expect(fixture.component.reorders).toEqual([[0, 3]])
 		})
@@ -271,7 +271,7 @@ describe('ReorderabilityController', () => {
 					expect(items.some(item => item.dataset.reorderability === ReorderabilityState.DropAfter)).toBe(true)
 					expect(items.every(item => !item.style.transform)).toBe(true)
 					expect(document.body.lastElementChild?.textContent).toContain('Preview of 0')
-				}
+				},
 			})
 			expect(document.body.lastElementChild?.textContent).not.toContain('Preview of 0')
 			expect(fixture.component.reorders).toEqual([[0, 2]])
@@ -509,7 +509,7 @@ describe('ReorderabilityController', () => {
 		it('keeps every list to its own geometry — dragging in one column leaves the others untouched', async () => {
 			const second = fixture.component.itemsOf(1)
 			await drag(second[2]!, center(second[0]!), {
-				midway: () => expect(fixture.component.itemsOf(0).every(item => !item.style.transform)).toBe(true)
+				midway: () => expect(fixture.component.itemsOf(0).every(item => !item.style.transform)).toBe(true),
 			})
 			expect(fixture.component.reorders).toEqual([[1, 2, 0]])
 		})
@@ -536,7 +536,7 @@ describe('ReorderabilityController', () => {
 		it('drags items the OWNER registered, stamping its state onto them', async () => {
 			const items = fixture.component.itemElements
 			await drag(items[0]!, center(items[2]!), {
-				midway: () => expect(items[0]!.dataset.reorderability).toBe(ReorderabilityState.Dragging)
+				midway: () => expect(items[0]!.dataset.reorderability).toBe(ReorderabilityState.Dragging),
 			})
 			expect(fixture.component.reorders.length).toBeGreaterThan(0)
 			expect(fixture.component.items.length).toBe(4)

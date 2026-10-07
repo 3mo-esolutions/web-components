@@ -20,7 +20,7 @@ export class InfiniteScrollController<THost extends ReactiveControllerHost = Rea
 
 	constructor(
 		protected override readonly host: THost,
-		options: InfiniteScrollControllerOptions | ((host: THost) => InfiniteScrollControllerOptions)
+		options: InfiniteScrollControllerOptions | ((host: THost) => InfiniteScrollControllerOptions),
 	) {
 		super(host)
 		this.options = typeof options === 'function' ? options(host) : options

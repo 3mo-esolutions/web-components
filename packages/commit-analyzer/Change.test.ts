@@ -22,14 +22,14 @@ describe('Change', () => {
 			heading: 'This is a non-conventional change (#123)',
 			description: undefined,
 			isBreaking: false,
-			references: ['#123']
+			references: ['#123'],
 		}))
 
 		expect(Change.parse('This is a non-conventional change (#123) \n\nFixed #456')).toEqual(new Change({
 			heading: 'This is a non-conventional change (#123)',
 			description: 'Fixed #456',
 			isBreaking: false,
-			references: ['#123', '#456']
+			references: ['#123', '#456'],
 		}))
 	})
 
@@ -39,7 +39,7 @@ describe('Change', () => {
 			scope: undefined,
 			heading: 'This is a conventional change',
 			description: undefined,
-			isBreaking: false
+			isBreaking: false,
 		}))
 	})
 
@@ -49,7 +49,7 @@ describe('Change', () => {
 			scope: 'scope',
 			heading: 'This is a conventional change',
 			description: undefined,
-			isBreaking: false
+			isBreaking: false,
 		}))
 	})
 
@@ -59,7 +59,7 @@ describe('Change', () => {
 			scope: undefined,
 			heading: 'This is a breaking change',
 			description: undefined,
-			isBreaking: true
+			isBreaking: true,
 		}))
 	})
 
@@ -69,7 +69,7 @@ describe('Change', () => {
 			scope: 'scope',
 			heading: 'This is a breaking change',
 			description: undefined,
-			isBreaking: true
+			isBreaking: true,
 		}))
 	})
 
@@ -80,7 +80,7 @@ describe('Change', () => {
 			heading: 'This is a conventional change (#123)',
 			description: undefined,
 			isBreaking: false,
-			references: ['#123']
+			references: ['#123'],
 		}))
 
 		expect(Change.parse('feat: This is a conventional change (#123) Fixed #456')).toEqual(new Change({
@@ -89,7 +89,7 @@ describe('Change', () => {
 			heading: 'This is a conventional change (#123) Fixed #456',
 			description: undefined,
 			isBreaking: false,
-			references: ['#123', '#456']
+			references: ['#123', '#456'],
 		}))
 	})
 
@@ -100,7 +100,7 @@ describe('Change', () => {
 			heading: 'This is a conventional change (ABC-123)',
 			description: undefined,
 			isBreaking: false,
-			references: ['ABC-123']
+			references: ['ABC-123'],
 		}))
 
 		expect(Change.parse('feat: DEV-1234: This is a conventional change (Regression introduced by ABC-123)')).toEqual(new Change({
@@ -109,7 +109,7 @@ describe('Change', () => {
 			heading: 'DEV-1234: This is a conventional change (Regression introduced by ABC-123)',
 			description: undefined,
 			isBreaking: false,
-			references: ['DEV-1234', 'ABC-123']
+			references: ['DEV-1234', 'ABC-123'],
 		}))
 	})
 
@@ -119,7 +119,7 @@ describe('Change', () => {
 			scope: undefined,
 			heading: 'This is a conventional change',
 			description: 'This feature can do magic!\nYou can enable it in settings.',
-			isBreaking: false
+			isBreaking: false,
 		}))
 	})
 

@@ -38,7 +38,7 @@ export class TimeSpan {
 		const { language, ...explicitOptions } = options ?? {}
 		const formatter = new Intl.RelativeTimeFormat(
 			language ?? Localizer.languages.current,
-			explicitOptions ?? { style: 'long', numeric: 'auto' }
+			explicitOptions ?? { style: 'long', numeric: 'auto' },
 		)
 		const format = (value: number, unit: Intl.RelativeTimeFormatUnit) => formatter.format(Math.sign(value) * Math.floor(Math.abs(value)), unit)
 		switch (true) {
@@ -59,7 +59,6 @@ export class TimeSpan {
 		}
 	}
 }
-
 
 globalThis.TimeSpan = TimeSpan
 type TimeSpanClass = typeof TimeSpan

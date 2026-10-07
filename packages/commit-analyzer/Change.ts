@@ -23,14 +23,14 @@ export class Change {
 				heading,
 				description: description?.trim(),
 				references,
-				isBreaking: !!isBreakingMarker
+				isBreaking: !!isBreakingMarker,
 			})
 		}
 		const [heading, ...description] = message.split('\n').map(line => line.trim())
 		return new Change({
 			heading,
 			description: description.join('\n').trim() || undefined,
-			references
+			references,
 		})
 	}
 
