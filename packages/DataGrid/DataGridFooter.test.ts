@@ -308,5 +308,17 @@ describe('DataGridFooter', () => {
 			expect(fixture.component.csvController.generationProgress).toBeUndefined()
 			expect(footer.renderRoot.querySelector('#exporting-text')).toBeNull()
 		})
+
+		it('should name the exported file after the name attribute', async () => {
+			const download = vi.spyOn(DataGrid, 'downloadCsv').mockResolvedValue()
+			fixture.component.exportable = true
+			fixture.component.setAttribute('name', 'Value of goods history')
+			const footer = await settle(fixture)
+
+			exportButtonOf(footer)!.click()
+			await settle(fixture)
+
+			expect(download.mock.lastCall![1]).toBe('Value of goods history')
+		})
 	})
 })

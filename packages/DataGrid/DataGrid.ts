@@ -443,7 +443,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		get editability() { return grid.editability },
 		handleCopy: () => NotificationComponent.notifySuccess(t('Copied to clipboard')),
 		getCsvData: () => grid.getCsvData(),
-		handleCsv: csv => DataGrid.downloadCsv(csv),
+		handleCsv: csv => DataGrid.downloadCsv(csv, grid.getAttribute('name') || undefined),
 		handleCsvError: error => NotificationComponent.notifyAndThrowError(error.message),
 	}))
 
@@ -831,9 +831,9 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		`
 	}
 
-	static async downloadCsv(csv: string) {
+	static async downloadCsv(csv: string, name = document.title.split(' | ')[0]) {
 		const fileName = [
-			document.title.split(' | ')[0],
+			name,
 			new Date().toISOString().replace(/[-:.T]/g, '').slice(0, 14),
 		].filter(Boolean).join('_')
 

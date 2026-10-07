@@ -50,10 +50,10 @@ describe('DataGridColumnDateTime', () => {
 		expect(container.textContent).toBe('')
 	})
 
-	it('should export the full ISO timestamp in CSV', () => {
+	it('should export the ISO date and time in local time in CSV', () => {
 		const column = new DataGridColumnDateTime<Item>()
 
-		expect([...column.generateCsvValue(dateTime)]).toEqual(['2023-01-15T12:34:56.000Z'])
+		expect([...column.generateCsvValue(new Date(2023, 0, 15, 8, 4, 5))]).toEqual(['2023-01-15 08:04:05'])
 		expect([...column.generateCsvValue(undefined)]).toEqual([''])
 	})
 

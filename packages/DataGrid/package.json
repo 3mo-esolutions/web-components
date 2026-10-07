@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/data-grid",
-	"version": "0.38.6",
+	"version": "0.38.7",
 	"description": "A web component for data grids with typed columns, sorting, selection, pagination, row details and inline editing.",
 	"repository": {
 		"type": "git",

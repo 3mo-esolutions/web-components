@@ -15,6 +15,12 @@ export abstract class DataGridColumnDateTimeBase<TData, TDate extends { format(.
 	@property({ type: String, converter: value => FieldDateTimePrecision.parse(value || undefined) }) precision = FieldDateTimePrecision.Minute
 	@property({ type: Boolean }) pickerHidden = false
 
+	/** An ISO 8601 date and time in local time, unlike `toISOString()`, which shifts it to UTC. */
+	protected static toLocalIsoString(value: Date) {
+		const pad = (number: number) => String(number).padStart(2, '0')
+		return `${value.getFullYear()}-${pad(value.getMonth() + 1)}-${pad(value.getDate())} ${pad(value.getHours())}:${pad(value.getMinutes())}:${pad(value.getSeconds())}`
+	}
+
 	protected getFormatOptions(defaultPrecision: FieldDateTimePrecision) {
 		return this.formatOptions || (this.precision === defaultPrecision ? undefined : this.precision.formatOptions)
 	}

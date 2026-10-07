@@ -36,8 +36,14 @@ describe('DataGridColumnDate', () => {
 	it('should export the ISO date without a time part in CSV', () => {
 		const column = new DataGridColumnDate<Item>()
 
-		expect([...column.generateCsvValue(date)]).toEqual(['2023-01-15'])
+		expect([...column.generateCsvValue(new Date(2023, 0, 15, 12))]).toEqual(['2023-01-15'])
 		expect([...column.generateCsvValue(undefined)]).toEqual([''])
+	})
+
+	it('should export the date in local time, not shifted to UTC, in CSV', () => {
+		const column = new DataGridColumnDate<Item>()
+
+		expect([...column.generateCsvValue(new Date(2023, 0, 15))]).toEqual(['2023-01-15'])
 	})
 
 	it('should edit through a mo-field-date carrying value, precision and pickerHidden', () => {
