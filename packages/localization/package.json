@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/localization",
-	"version": "0.9.7",
+	"version": "0.10.0",
 	"description": "Utilities for localization: typed translation keys with plurals, and locale-aware number, date and currency formatting.",
 	"repository": {
 		"type": "git",

@@ -1,6 +1,6 @@
-import { Localizer } from '@3mo/localization'
+import { Localizer, type Locale } from '@3mo/localization'
 
 export abstract class DateTimeParser {
-	constructor(readonly language = Localizer.languages.current) { }
+	constructor(readonly language: Locale = Localizer.locales.current) { }
 	abstract parse(text: string, referenceDate?: DateTime): DateTime | undefined
 }

@@ -33,6 +33,11 @@ jobs:
   test:
     name: 🧪 Test
     runs-on: ubuntu-latest
+    # Ships the browsers' system libraries, which `--with-deps` would fetch through the runner's slow apt mirror
+    container: mcr.microsoft.com/playwright:v1.63.0-noble
+    env:
+      # Firefox refuses to start as root under another user's home
+      HOME: /root
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v6
@@ -40,5 +45,5 @@ jobs:
           node-version: 26.x
           cache: 'npm'
       - run: npm ci
-      - run: npx playwright install --with-deps chromium firefox
+      - run: npx playwright install chromium firefox
       - run: npm run test

@@ -1,4 +1,4 @@
-import { type LanguageCode, Localizer, extractDateTimeFormatOptions, getDateTimeFormatter } from '@3mo/localization'
+import { type Locale, Localizer, extractDateTimeFormatOptions, getDateTimeFormatter } from '@3mo/localization'
 import { type DateTimeRangeParser } from './parsers/DateTimeRangeParser.js'
 import { DateTimeRangeDelimiterParser } from './index.js'
 import { type ParsingParameters, extractParsingParameters } from './extractParsingParameters.js'
@@ -33,19 +33,20 @@ export class DateTimeRange {
 		return undefined
 	}
 
-	private static readonly untilDelimiters = new Map<LanguageCode, string | undefined>()
+	private static readonly untilDelimiters = new Map<string, string | undefined>()
 
-	/** The language's delimiter between the two ends of a range, e.g. "–". */
-	static getUntilDelimiter(language: LanguageCode = Localizer.languages.current) {
-		if (DateTimeRange.untilDelimiters.has(language)) {
-			return DateTimeRange.untilDelimiters.get(language)
+	/** The locale's delimiter between the two ends of a range, e.g. "–". */
+	static getUntilDelimiter(locale: Locale = Localizer.locales.current) {
+		const key = String(locale)
+		if (DateTimeRange.untilDelimiters.has(key)) {
+			return DateTimeRange.untilDelimiters.get(key)
 		}
-		const parts = getDateTimeFormatter(language).formatRangeToParts(
+		const parts = getDateTimeFormatter(key).formatRangeToParts(
 			new Date('2010-01-01T00:00:00.000Z'),
 			new Date('2020-01-01T00:00:00.000Z'),
 		)
 		const delimiter = parts.find(part => part.source === 'shared')?.value.trim()
-		DateTimeRange.untilDelimiters.set(language, delimiter)
+		DateTimeRange.untilDelimiters.set(key, delimiter)
 		return delimiter
 	}
 

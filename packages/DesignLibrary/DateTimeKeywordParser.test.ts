@@ -1,4 +1,5 @@
 import { DateTime } from '@3mo/date-time'
+import { Localizer } from '@3mo/localization'
 import { DateTimeKeywordParser } from './DateTimeKeywordParser.js'
 
 const referenceDate = new DateTime('2024-06-13T10:30:00')
@@ -18,6 +19,14 @@ const parameterize = (label: string, expectations: ReadonlyArray<Expectation>) =
 }
 
 describe('DateTimeKeywordParser', () => {
+	// The keywords are German, and so are the weeks they name: they start on Monday.
+	let initialLocale: Intl.Locale
+	beforeEach(() => {
+		initialLocale = Localizer.locales.current
+		Localizer.locales.current = 'de'
+	})
+	afterEach(() => { Localizer.locales.current = initialLocale })
+
 	it('should return undefined for unrecognized text', () => {
 		const parser = new DateTimeKeywordParser()
 		expect(parser.parse('', referenceDate)).toBeUndefined()

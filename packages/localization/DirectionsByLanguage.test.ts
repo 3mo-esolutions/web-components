@@ -20,7 +20,7 @@ describe('DirectionsByLanguage', () => {
 		} else {
 			localStorage.setItem(storageKey, originalEntry)
 		}
-		Localizer.languages.change.dispatch(Localizer.languages.current)
+		Localizer.locales.change.dispatch(Localizer.locales.current)
 	})
 
 	it('should return rtl for right-to-left languages', () => {
@@ -36,7 +36,7 @@ describe('DirectionsByLanguage', () => {
 		expect(DirectionsByLanguage.get('zz' as LanguageCode)).toBe('ltr')
 	})
 
-	it('should stamp lang and dir attributes on document.body when the language changes', () => {
+	it('should stamp lang and dir attributes on document.body when the locale changes', () => {
 		Localizer.languages.current = 'fa'
 
 		expect(document.body.getAttribute('lang')).toBe('fa')

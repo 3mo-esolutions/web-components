@@ -1,4 +1,4 @@
-import { extractDateTimeFormatOptions, LocalizableString, Localizer, type FormatOptionsWithLanguage, type LanguageCode } from '@3mo/localization'
+import { extractDateTimeFormatOptions, LocalizableString, Localizer, type FormatOptionsWithLanguage, type Locale } from '@3mo/localization'
 import './Temporal.js'
 import { TimeSpan } from './TimeSpan.js'
 import { type DateTimeParser, DateTimeLocalParser, DateTimeShortcutParser, DateTimeOperationParser, DateTimeNativeParser, DateTimeZeroParser } from './parsers/index.js'
@@ -8,10 +8,15 @@ import { type ParsingParameters, extractParsingParameters } from './extractParsi
 Localizer.dictionaries.add('en', { '✂Week': 'W' })
 
 // Keyed rather than tagged: a tagged memoize appends its cache to a module-level list on every read, which is never shortened.
-// The current language is keyed by a generation rather than resolved, which on every construction would cost more than the cache saves.
+// The current locale is keyed by a generation rather than resolved, which on every construction would cost more than the cache saves.
 let generation = 0
-Localizer.languages.change.subscribe(() => generation++)
-const byLanguage = (language?: LanguageCode) => language ?? generation
+let firstDayOfWeek: number | undefined
+Localizer.locales.change.subscribe(() => {
+	generation++
+	firstDayOfWeek = undefined
+})
+const byLocale = (locale?: Locale) => locale === undefined ? generation : String(locale)
+const byFirstDayOfWeek = () => firstDayOfWeek ??= Localizer.locales.current.getWeekInfo().firstDay
 
 type DateTimeFromParameters =
 	| [epochMilliseconds?: number, calendar?: string, timeZone?: string]
@@ -30,32 +35,32 @@ export class DateTime extends Date {
 		DateTime.customParsers.push(parser)
 	}
 
-	@memoize({ hashFunction: byLanguage })
-	static getResolvedOptions(language = Localizer.languages.current) {
-		return Intl.DateTimeFormat(language).resolvedOptions()
+	@memoize({ hashFunction: byLocale })
+	static getResolvedOptions(locale: Locale = Localizer.locales.current) {
+		return Intl.DateTimeFormat(locale).resolvedOptions()
 	}
 
-	@memoize({ hashFunction: byLanguage })
-	static getCalendar(language = Localizer.languages.current) {
-		return DateTime.getResolvedOptions(language).calendar
+	@memoize({ hashFunction: byLocale })
+	static getCalendar(locale: Locale = Localizer.locales.current) {
+		return DateTime.getResolvedOptions(locale).calendar
 	}
 
-	@memoize({ hashFunction: byLanguage })
-	static getTimeZone(language = Localizer.languages.current) {
-		return DateTime.getResolvedOptions(language).timeZone
+	@memoize({ hashFunction: byLocale })
+	static getTimeZone(locale: Locale = Localizer.locales.current) {
+		return DateTime.getResolvedOptions(locale).timeZone
 	}
 
-	@memoize({ hashFunction: byLanguage })
-	static getDateSeparator(language = Localizer.languages.current) {
-		return Intl.DateTimeFormat(language)
+	@memoize({ hashFunction: byLocale })
+	static getDateSeparator(locale: Locale = Localizer.locales.current) {
+		return Intl.DateTimeFormat(locale)
 			.formatToParts(new DateTime())
 			.find(part => part.type === 'literal')
 			?.value as string
 	}
 
-	@memoize({ hashFunction: byLanguage })
-	static getTimeSeparator(language = Localizer.languages.current) {
-		return Intl.DateTimeFormat(language, { timeStyle: 'short' })
+	@memoize({ hashFunction: byLocale })
+	static getTimeSeparator(locale: Locale = Localizer.locales.current) {
+		return Intl.DateTimeFormat(locale, { timeStyle: 'short' })
 			.formatToParts(new DateTime())
 			.find(part => part.type === 'literal')
 			?.value as string
@@ -144,9 +149,9 @@ export class DateTime extends Date {
 	@memoize() get dayEnd() { return DateTime.from(this.zonedDateTime.add({ days: 1 }).startOfDay().add({ nanoseconds: -1 })) }
 	@memoize() get dayRange() { return new DateTimeRange(this.dayStart, this.dayEnd) }
 
-	@memoize() get weekStart() { return this.subtract({ days: this.dayOfWeek - 1 }) }
-	@memoize() get weekEnd() { return this.weekStart.add({ days: this.daysInWeek - 1 }) }
-	@memoize() get weekRange() { return new DateTimeRange(this.weekStart, this.weekEnd) }
+	@memoize({ hashFunction: byFirstDayOfWeek }) get weekStart() { return this.subtract({ days: (this.dayOfWeek - byFirstDayOfWeek() + this.daysInWeek) % this.daysInWeek }) }
+	@memoize({ hashFunction: byFirstDayOfWeek }) get weekEnd() { return this.weekStart.add({ days: this.daysInWeek - 1 }) }
+	@memoize({ hashFunction: byFirstDayOfWeek }) get weekRange() { return new DateTimeRange(this.weekStart, this.weekEnd) }
 
 	@memoize() get monthStart() { return this.with({ day: 1 }) }
 	@memoize() get monthEnd() { return this.with({ day: this.daysInMonth }) }

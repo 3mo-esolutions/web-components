@@ -297,13 +297,20 @@ describe('DateTime', () => {
 			expect(dayRange.includes(dayEnd.add({ milliseconds: 1 }))).toBe(false)
 		})
 
-		it('should return weekStart/weekEnd respecting the locale\'s day-of-week numbering', () => {
-			const dateTime = DateTime.from(Date.parse('2025-06-11T00:00:00.000Z'), 'gregory', 'UTC')
+		it('should return weekStart/weekEnd respecting the locale\'s first day of the week', () => {
+			const dateTime = () => DateTime.from(Date.parse('2025-06-11T00:00:00.000Z'), 'gregory', 'UTC')
 
-			expect(dateTime.weekStart.dayOfWeek).toBe(1)
-			expect(dateTime.weekStart.day).toBe(9)
-			expect(dateTime.weekEnd.dayOfWeek).toBe(dateTime.daysInWeek)
-			expect(dateTime.weekEnd.day).toBe(15)
+			// The 11th of June 2025 is a Wednesday, so a German week runs from the 9th and an English one from the 8th.
+			const initialLocale = Localizer.locales.current
+			onTestFinished(() => { Localizer.locales.current = initialLocale })
+
+			Localizer.locales.current = 'de'
+			expect(dateTime().weekStart.day).toBe(9)
+			expect(dateTime().weekEnd.day).toBe(15)
+
+			Localizer.locales.current = 'en'
+			expect(dateTime().weekStart.day).toBe(8)
+			expect(dateTime().weekEnd.day).toBe(14)
 		})
 
 		it('should return monthStart/monthEnd respecting the calendar\'s days in month', () => {

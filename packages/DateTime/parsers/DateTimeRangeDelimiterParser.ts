@@ -1,13 +1,13 @@
 import { DateTime } from '../DateTime.js'
 import { DateTimeRange } from '../DateTimeRange.js'
 import { DateTimeRangeParser } from './DateTimeRangeParser.js'
-import { Localizer } from '@3mo/localization'
+import { Localizer, type Locale } from '@3mo/localization'
 
 export class DateTimeRangeDelimiterParser extends DateTimeRangeParser {
 	private static readonly delimiters = ['–', '~'] as const
 
-	private static getUntilDelimiter(language = Localizer.languages.current) {
-		const parts = Intl.DateTimeFormat(language).formatRangeToParts(
+	private static getUntilDelimiter(locale: Locale = Localizer.locales.current) {
+		const parts = Intl.DateTimeFormat(locale).formatRangeToParts(
 			new Date('2010-01-01T00:00:00.000Z'),
 			new Date('2020-01-01T00:00:00.000Z'),
 		)
@@ -16,7 +16,7 @@ export class DateTimeRangeDelimiterParser extends DateTimeRangeParser {
 
 	private readonly regex: RegExp
 
-	constructor(override readonly language = Localizer.languages.current) {
+	constructor(override readonly language: Locale = Localizer.locales.current) {
 		super(language)
 		this.regex = new RegExp(`\s*(?:${[...new Set([...DateTimeRangeDelimiterParser.delimiters, DateTimeRangeDelimiterParser.getUntilDelimiter(language)])].join('|')})\s*`)
 	}

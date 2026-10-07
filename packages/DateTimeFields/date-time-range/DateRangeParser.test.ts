@@ -1,9 +1,18 @@
 import '@3mo/date-time'
+import { Localizer } from '@3mo/localization'
 import { DateRangeParser } from './DateRangeParser.js'
 
 describe('DateRangeParser', () => {
 	const referenceDate = DateTime.from(Date.parse('2020-06-15T00:00:00.000Z'), 'gregory', 'UTC')
 	const instant = (isoDate: string) => Date.parse(`${isoDate}T00:00:00.000Z`)
+
+	// The keywords are German, and so are the weeks they name: they start on Monday.
+	let initialLocale: Intl.Locale
+	beforeEach(() => {
+		initialLocale = Localizer.locales.current
+		Localizer.locales.current = 'de'
+	})
+	afterEach(() => { Localizer.locales.current = initialLocale })
 
 	describe('parse', () => {
 		for (const separator of [' – ', ' ', '-', '~']) {

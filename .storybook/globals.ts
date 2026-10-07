@@ -1,6 +1,6 @@
 import type { Decorator, Preview } from '@storybook/web-components-vite'
 import { Theme } from '@3mo/theme'
-import { Localizer, type LanguageCode } from '@3mo/localization'
+import { Localizer, type Locale } from '@3mo/localization'
 
 const applied = new Map<string, unknown>()
 
@@ -12,7 +12,7 @@ export function applyGlobals(globals: Record<string, unknown>) {
 	}
 	if ('locale' in globals && applied.get('locale') !== globals.locale) {
 		applied.set('locale', globals.locale)
-		Localizer.languages.current = globals.locale as LanguageCode
+		Localizer.locales.current = globals.locale as Locale
 	}
 }
 

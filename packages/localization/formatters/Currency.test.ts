@@ -39,12 +39,26 @@ describe('Currency', () => {
 		expect(Currency.USD.getSymbol('de')).toBe('$')
 	})
 
-	it('should default the symbol to the current language', () => {
-		expect(Currency.EUR.symbol).toBe(Currency.EUR.getSymbol(Localizer.languages.current))
+	it('should default the symbol to the current locale', () => {
+		expect(Currency.EUR.symbol).toBe(Currency.EUR.getSymbol(Localizer.locales.current))
 	})
 
 	// Regression: the ISO 4217 list was missing XCG (Caribbean guilder, replaced ANG in 2025)
 	// and ZWG (Zimbabwe Gold, replaced ZWL in 2024).
+	it('should resolve a name in the given locale', () => {
+		expect(Currency.EUR.getName('en')).toBe('Euro')
+		expect(Currency.USD.getName('de')).toBe('US-Dollar')
+		expect(Currency.USD.getName(new Intl.Locale('en-US'))).toBe('US Dollar')
+	})
+
+	it('should fall back to the code when no name exists', () => {
+		expect(Currency.BTC.getName('en')).toBe('BTC')
+	})
+
+	it('should default the name to the current locale', () => {
+		expect(Currency.EUR.name).toBe(Currency.EUR.getName(Localizer.locales.current))
+	})
+
 	it('should include the currently circulating codes that replaced ANG and ZWL', () => {
 		expect(Currency.XCG.code).toBe('XCG')
 		expect(Currency.ZWG.code).toBe('ZWG')

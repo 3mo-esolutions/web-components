@@ -65,17 +65,18 @@ Localizer.dictionaries.add('en', {
 t('${count:pluralityNumber} new messages', { count: 1 })   // "1 new message"
 ```
 
-The array holds one form per plural category of the language, in the order of `CardinalPluralizationRulesByLanguage`.
+The array holds one form per plural category of the language, in the order `zero`, `one`, `two`, `few`, `many`, `other` of the categories it distinguishes, as `Intl.PluralRules` reports them.
 
-## The current language
+## The current locale
 
 ```ts
-Localizer.languages.current          // e.g. 'de'
-Localizer.languages.current = 'fa'   // stored, and every Lit element re-renders
-Localizer.languages.change.subscribe(language => console.log(language))
+Localizer.locales.current                     // an Intl.Locale, e.g. de-CH
+Localizer.locales.current.language            // 'de'
+Localizer.locales.current = 'fa'              // stored, and every Lit element re-renders
+Localizer.locales.change.subscribe(locale => console.log(locale.baseName))
 ```
 
-It comes from the `?lang=` URL parameter, the stored choice, the browser's language or `en`, in that order.
+It comes from the `?lang=` URL parameter, the stored choice, the browser's language or `en`, in that order. A choice without a region adopts the one of the browser's matching language, so `de` on a Swiss browser is `de-CH`.
 
 ## Formatting
 

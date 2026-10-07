@@ -1,7 +1,6 @@
 export * from './LanguageCode.js'
 export * from './Localizer.js'
 export * from './DirectionsByLanguage.js'
-export * from './CardinalPluralizationRulesByLanguage.js'
 export * from './LocalizableString.js'
 export * from './LocalizedString.js'
 export * from './LanguageController.js'

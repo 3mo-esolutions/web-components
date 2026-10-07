@@ -1,16 +1,16 @@
-import { type LanguageCode } from '../LanguageCode.js'
+import { type Locale } from '../LanguageCode.js'
 import { Localizer } from '../Localizer.js'
 
 export type FormatOptionsWithLanguage<T> =
-	| [options?: T & { readonly language?: LanguageCode }]
-	| [language: LanguageCode, options?: T]
+	| [options?: T & { readonly language?: Locale }]
+	| [language: Locale, options?: T]
 
-export function extractFormatOptions<T>(options: FormatOptionsWithLanguage<T> | undefined): [language: LanguageCode, explicitOptions?: T | undefined] {
-	let language: LanguageCode | undefined
+export function extractFormatOptions<T>(options: FormatOptionsWithLanguage<T> | undefined): [language: string, explicitOptions?: T | undefined] {
+	let language: Locale | undefined
 	let explicitOptions: T | undefined
 
 	if (options?.length === 1) {
-		if (typeof options[0] === 'string') {
+		if (typeof options[0] === 'string' || options[0] instanceof Intl.Locale) {
 			language = options[0]
 		} else {
 			explicitOptions = { ...options[0] } as T
@@ -26,7 +26,8 @@ export function extractFormatOptions<T>(options: FormatOptionsWithLanguage<T> | 
 	}
 
 	return [
-		language ?? Localizer.languages.current,
+		// A tag rather than an `Intl.Locale`, as the formatters are cached by it.
+		String(language ?? Localizer.locales.current),
 		Object.keys(explicitOptions ?? {}).length === 0 ? undefined : explicitOptions,
 	]
 }

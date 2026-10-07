@@ -1,12 +1,13 @@
-import { type LanguageCode } from './LanguageCode.js'
 import { Localizer } from './Localizer.js'
 
 describe('Localizer', () => {
-	describe('languages', () => {
+	describe('locales', () => {
 		const storageKey = 'Localizer.Language'
 
 		let originalEntry: string | null
 		let originalSearch: string
+
+		const mockPreferences = (...languages: Array<string>) => Object.defineProperty(navigator, 'languages', { get: () => languages, configurable: true })
 
 		beforeEach(() => {
 			originalEntry = localStorage.getItem(storageKey)
@@ -20,40 +21,77 @@ describe('Localizer', () => {
 				localStorage.setItem(storageKey, originalEntry)
 			}
 			history.replaceState(null, '', `${window.location.pathname}${originalSearch}${window.location.hash}`)
-			delete (navigator as any).language
-			Localizer.languages.change.dispatch(Localizer.languages.current)
+			delete (navigator as any).languages
+			Localizer.locales.change.dispatch(Localizer.locales.current)
 		})
 
-		it('should prefer the lang URL parameter over storage and navigator', () => {
+		it('should prefer the lang URL parameter over storage and the browser', () => {
 			localStorage.setItem(storageKey, JSON.stringify('fr'))
 			history.replaceState(null, '', `${window.location.pathname}?lang=de`)
 
-			expect(Localizer.languages.current).toBe('de')
+			expect(Localizer.locales.current.language).toBe('de')
 		})
 
-		it('should fall back from storage to the navigator language to "en"', () => {
+		it('should fall back from storage to the browser\'s first language to "en"', () => {
 			localStorage.setItem(storageKey, JSON.stringify('fr'))
-			expect(Localizer.languages.current).toBe('fr')
+			expect(Localizer.locales.current.language).toBe('fr')
 
 			localStorage.removeItem(storageKey)
-			expect(Localizer.languages.current).toBe(navigator.language.split('-')[0] as LanguageCode)
+			mockPreferences('pt-BR', 'en-US')
+			expect(Localizer.locales.current.baseName).toBe('pt-BR')
 
-			Object.defineProperty(navigator, 'language', { get: () => '', configurable: true })
-			expect(Localizer.languages.current).toBe('en')
+			mockPreferences()
+			expect(Localizer.locales.current.baseName).toBe('en')
 		})
 
-		it('should persist an assigned language and dispatch a change event to subscribers', () => {
+		it('should adopt the region of the browser language matching a selection without one', () => {
+			mockPreferences('en-US', 'de-CH')
+
+			localStorage.setItem(storageKey, JSON.stringify('de'))
+			expect(Localizer.locales.current.baseName).toBe('de-CH')
+
+			localStorage.setItem(storageKey, JSON.stringify('fr'))
+			expect(Localizer.locales.current.baseName).toBe('fr')
+
+			localStorage.setItem(storageKey, JSON.stringify('de-AT'))
+			expect(Localizer.locales.current.baseName).toBe('de-AT')
+		})
+
+		it('should resolve a tag which is not a locale to "en"', () => {
+			localStorage.setItem(storageKey, JSON.stringify('not a tag'))
+
+			expect(Localizer.locales.current.language).toBe('en')
+		})
+
+		it('should persist an assigned tag or locale and dispatch the locale in effect', () => {
+			const handler = vi.fn()
+			Localizer.locales.change.subscribe(handler)
+
+			try {
+				Localizer.locales.current = 'de'
+				expect(localStorage.getItem(storageKey)).toBe(JSON.stringify('de'))
+				expect(handler).toHaveBeenLastCalledWith(expect.objectContaining({ language: 'de' }))
+
+				Localizer.locales.current = new Intl.Locale('fa-IR')
+				expect(localStorage.getItem(storageKey)).toBe(JSON.stringify('fa-IR'))
+				expect(handler).toHaveBeenLastCalledWith(expect.objectContaining({ baseName: 'fa-IR' }))
+			} finally {
+				Localizer.locales.change.unsubscribe(handler)
+			}
+		})
+
+		it('should keep the deprecated languages API in step', () => {
 			const handler = vi.fn()
 			Localizer.languages.change.subscribe(handler)
 
 			try {
 				Localizer.languages.current = 'de'
+				expect(Localizer.locales.current.language).toBe('de')
+				expect(Localizer.languages.current).toBe('de')
+				expect(handler).toHaveBeenCalledExactlyOnceWith('de')
 			} finally {
 				Localizer.languages.change.unsubscribe(handler)
 			}
-
-			expect(localStorage.getItem(storageKey)).toBe(JSON.stringify('de'))
-			expect(handler).toHaveBeenCalledExactlyOnceWith('de')
 		})
 	})
 

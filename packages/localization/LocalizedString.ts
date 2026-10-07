@@ -1,4 +1,3 @@
-import { CardinalPluralizationRulesByLanguage } from './CardinalPluralizationRulesByLanguage.js'
 import { Localizer } from './Localizer.js'
 import { type LanguageCode, type LocalizableStringKey, type LocalizationFormatterTypeMap, type LocalizationParameters } from './index.js'
 
@@ -6,6 +5,21 @@ export class LocalizedString<Key extends LocalizableStringKey> {
 	static readonly cache = new Map<string, LocalizedString<any>>()
 	static readonly defaultLanguage = 'en'
 	static readonly pluralityIdentityType = 'pluralityNumber'
+
+	private static readonly pluralCategories: ReadonlyArray<Intl.LDMLPluralRule> = ['zero', 'one', 'two', 'few', 'many', 'other']
+	private static readonly pluralIndexByLanguage = new Map<LanguageCode, (count: number) => number>()
+
+	/** The index of the form a count selects, in the fixed order of the categories the language distinguishes. */
+	private static getPluralIndex(language: LanguageCode, count: number) {
+		if (!LocalizedString.pluralIndexByLanguage.has(language)) {
+			// A language without plural data would otherwise follow whichever locale the runtime defaults to.
+			const rules = new Intl.PluralRules(Intl.PluralRules.supportedLocalesOf(language).length > 0 ? language : 'en')
+			// `pluralCategories` is deliberately unordered, so it cannot be indexed into directly.
+			const categories = LocalizedString.pluralCategories.filter(category => rules.resolvedOptions().pluralCategories.includes(category))
+			LocalizedString.pluralIndexByLanguage.set(language, count => categories.indexOf(rules.select(count)))
+		}
+		return LocalizedString.pluralIndexByLanguage.get(language)!(count)
+	}
 
 	private static readonly matchedParametersCache = new Map<string, ReadonlyArray<{ readonly group: string, readonly key: string, type: keyof LocalizationFormatterTypeMap }>>()
 	private static readonly regex = /\${(.+?)(?::(.+?))?}/g
@@ -40,7 +54,7 @@ export class LocalizedString<Key extends LocalizableStringKey> {
 		}
 		const pluralityIndexParameterKey = this.matchedParameters.find(p => p.type === LocalizedString.pluralityIdentityType)?.key
 		const pluralityValue = !pluralityIndexParameterKey ? 0 : (this.parameters as any)[pluralityIndexParameterKey] || 0
-		const pluralityIndex = CardinalPluralizationRulesByLanguage.get(language)(pluralityValue)
+		const pluralityIndex = LocalizedString.getPluralIndex(language, pluralityValue)
 		// A dictionary may provide fewer forms than the language distinguishes, in which case the trailing categories collapse onto the last form.
 		const localization = localizationOrLocalizations[pluralityIndex] ?? localizationOrLocalizations.at(-1)
 		return this._value = this.substituteVariables(localization as string)

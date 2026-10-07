@@ -29,7 +29,8 @@ class CheckboxTestFixture extends ComponentTestFixture<Checkbox> {
 
 describe('Checkbox', () => {
 	describe('styles', () => {
-		const fixture = new CheckboxTestFixture(html`<mo-checkbox label="Label"></mo-checkbox>`)
+		// A line height of its own, as the fallback font's `normal` exceeds 18px on some machines
+		const fixture = new CheckboxTestFixture(html`<mo-checkbox label='Label' style='line-height: 16px'></mo-checkbox>`)
 
 		it('should have a height of 18px when one-line', () => {
 			expect(getComputedStyle(fixture.component).height).toBe('18px')

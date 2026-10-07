@@ -1,14 +1,13 @@
-import { type LanguageCode, Localizer } from '@3mo/localization'
+import { type Locale, Localizer } from '@3mo/localization'
 
 export type ParsingParameters =
-	| [text: string, language?: LanguageCode]
-	| [text: string, language?: LanguageCode]
-	| [text: string, referenceDate: DateTime, language?: LanguageCode]
+	| [text: string, language?: Locale]
+	| [text: string, referenceDate?: DateTime, language?: Locale]
 
-export function extractParsingParameters(parameters: ParsingParameters): [text: string, language: LanguageCode, referenceDate: DateTime | undefined] {
+export function extractParsingParameters(parameters: ParsingParameters): [text: string, language: Locale, referenceDate: DateTime | undefined] {
 	let text: string
 	let referenceDate: DateTime | undefined
-	let language: LanguageCode | undefined
+	let language: Locale | undefined
 
 	if (parameters.length === 1) {
 		text = parameters[0]
@@ -28,5 +27,5 @@ export function extractParsingParameters(parameters: ParsingParameters): [text: 
 		[text, referenceDate, language] = parameters
 	}
 
-	return [text!, language ?? Localizer.languages.current, referenceDate ?? new DateTime()]
+	return [text!, language ?? Localizer.locales.current, referenceDate ?? new DateTime()]
 }

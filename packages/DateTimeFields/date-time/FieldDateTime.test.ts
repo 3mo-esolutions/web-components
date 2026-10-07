@@ -84,6 +84,11 @@ describe('FieldDateTime', () => {
 		}
 
 		it('should set the value to the week start when a week is picked at week precision', async () => {
+			// Pinned, as the expected start is the Monday of that week.
+			const initialLocale = Localizer.locales.current
+			onTestFinished(() => { Localizer.locales.current = initialLocale })
+
+			Localizer.locales.current = 'de'
 			fixture.component.precision = FieldDateTimePrecision.Week
 			fixture.component.controller.navigationDate = utc('2025-05-21T00:00:00')
 			await fixture.updateComplete

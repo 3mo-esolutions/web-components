@@ -1,5 +1,5 @@
 import { Localizer } from './Localizer.js'
-import { type LanguageCode } from './LanguageCode.js'
+import { type LanguageCode, type Locale } from './LanguageCode.js'
 import { LocalizedString } from './LocalizedString.js'
 
 type ExtractProperties<T extends LocalizableStringKey> =
@@ -49,9 +49,12 @@ export class LocalizableString<Key extends LocalizableStringKey> {
 
 	private constructor(readonly key: Key) { }
 
-	localize(...parameters: [parameters?: LocalizationParameters<Key>] | [language: LanguageCode, parameters?: LocalizationParameters<Key>]): LocalizedString<Key> {
-		const language = typeof parameters[0] === 'string' ? parameters[0] : Localizer.languages.current
-		const params = (typeof parameters[0] === 'object' ? parameters[0] : parameters[1] ?? {}) as LocalizationParameters<Key>
+	localize(...parameters: [parameters?: LocalizationParameters<Key>] | [locale: Locale, parameters?: LocalizationParameters<Key>]): LocalizedString<Key> {
+		const [first, second] = parameters
+		const locale = typeof first === 'string' || first instanceof Intl.Locale ? first : undefined
+		// Dictionaries are keyed by language, so a locale such as `de-CH` has to be reduced before it is looked up.
+		const language = (locale === undefined ? Localizer.locales.current : new Intl.Locale(locale)).language as LanguageCode
+		const params = ((locale === undefined ? first : second) ?? {}) as LocalizationParameters<Key>
 		return LocalizedString.get(this.key, language, params)
 	}
 }

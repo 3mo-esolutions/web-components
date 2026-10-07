@@ -62,11 +62,11 @@ export abstract class FieldDateTimeBase<T> extends FieldComponent<T> {
 	}
 
 	protected override connected() {
-		Localizer.languages.change.subscribe(this.handleLanguageChange)
+		Localizer.locales.change.subscribe(this.handleLanguageChange)
 	}
 
 	protected override disconnected() {
-		Localizer.languages.change.unsubscribe(this.handleLanguageChange)
+		Localizer.locales.change.unsubscribe(this.handleLanguageChange)
 	}
 
 	private handleLanguageChange = () => {

@@ -4,6 +4,7 @@ import { FieldDateTimeRangeController } from './FieldDateTimeRangeController.js'
 import { FieldDateTimePrecision } from '../FieldDateTimePrecision.js'
 import type { DateTimeSegmentsController } from '../segments/index.js'
 import '@3mo/date-time'
+import { Localizer } from '@3mo/localization'
 
 const utc = (isoDateTime: string) => DateTime.from(Date.parse(`${isoDateTime}.000Z`), 'gregory', 'UTC')
 
@@ -114,6 +115,10 @@ describe('FieldDateTimeRangeController', () => {
 	})
 
 	it('should set both ends from a range keyword typed into either end', async () => {
+		// Pinned, as the keyword names a Monday-to-Sunday week.
+		const initialLocale = Localizer.locales.current
+		onTestFinished(() => { Localizer.locales.current = initialLocale })
+		Localizer.locales.current = 'de'
 		focus(segment('end', 'day'))
 		type(segment('end', 'day'), 'lw')
 		press(segment('end', 'day'), 'Enter')

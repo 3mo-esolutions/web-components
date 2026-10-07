@@ -1,4 +1,4 @@
-import { LocalizableString, Localizer, type LanguageCode } from '@3mo/localization'
+import { LocalizableString, Localizer, type Locale } from '@3mo/localization'
 import { FieldDateTimePrecision } from '../FieldDateTimePrecision.js'
 import { type DateTimeSegment, type DateTimeSegmentType, type EditableDateTimeSegmentType, isEditableDateTimeSegmentType } from './DateTimeSegment.js'
 
@@ -11,7 +11,7 @@ export const hourCycleConverter = (value: unknown) => hourCycles.includes(value 
 
 export type DateTimeSegmenterOptions = {
 	readonly precision: FieldDateTimePrecision
-	readonly language?: LanguageCode
+	readonly language?: Locale
 	readonly calendar?: string
 	readonly timeZone?: string
 	readonly hourCycle?: HourCycle
@@ -30,12 +30,12 @@ const timePlaceholder = '--'
 export class DateTimeSegmenter {
 	static readonly pageSteps: Partial<Record<EditableDateTimeSegmentType, number>> = { year: 5, month: 2, week: 4, day: 7, hour: 2, minute: 15, second: 15 }
 
-	static defaultHourCycle(language: LanguageCode): HourCycle {
+	static defaultHourCycle(language: Locale): HourCycle {
 		return (new Intl.DateTimeFormat(language, { hour: 'numeric' }).resolvedOptions().hourCycle ?? 'h23') as HourCycle
 	}
 
 	readonly precision: FieldDateTimePrecision
-	readonly language: LanguageCode
+	readonly language: Locale
 	readonly calendar: string
 	readonly timeZone: string
 	readonly hourCycle: HourCycle
@@ -53,7 +53,7 @@ export class DateTimeSegmenter {
 
 	constructor(options: DateTimeSegmenterOptions) {
 		this.precision = options.precision
-		this.language = options.language ?? Localizer.languages.current
+		this.language = options.language ?? Localizer.locales.current
 		this.calendar = options.calendar ?? DateTime.getCalendar(this.language)
 		this.timeZone = options.timeZone ?? DateTime.getTimeZone(this.language)
 		this.hourCycle = options.hourCycle ?? DateTimeSegmenter.defaultHourCycle(this.language)

@@ -23,6 +23,14 @@ describe('LocalizableString', () => {
 		expect(de.value).toBe('Hallo')
 	})
 
+	it('should reduce a locale to its language before looking up the dictionary', () => {
+		const key = 'LocalizableString.test.locale'
+		Localizer.dictionaries.add('de', { [key]: 'Gefunden' })
+
+		expect(LocalizableString.get(key).localize('de-CH').toString()).toBe('Gefunden')
+		expect(LocalizableString.get(key).localize(new Intl.Locale('de-CH'), {}).toString()).toBe('Gefunden')
+	})
+
 	it('should convert to string implicitly', () => {
 		const key = 'simple'
 		Localizer.dictionaries.add(Localizer.languages.current, { [key]: 'Just a simple string' })

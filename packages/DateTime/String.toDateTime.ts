@@ -1,12 +1,12 @@
-import { Localizer, type LanguageCode } from '@3mo/localization'
+import { Localizer, type Locale } from '@3mo/localization'
 import { DateTime } from './DateTime.js'
 
-String.prototype.toDateTime = function (this: string, language = Localizer.languages.current) {
+String.prototype.toDateTime = function (this: string, language: Locale = Localizer.locales.current) {
 	return DateTime.parseAsDateTime(this, language)
 }
 
 declare global {
 	interface String {
-		toDateTime(language?: LanguageCode): DateTime | undefined
+		toDateTime(language?: Locale): DateTime | undefined
 	}
 }

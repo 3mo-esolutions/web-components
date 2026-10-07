@@ -1,4 +1,4 @@
-import { type LanguageCode, Localizer } from '@3mo/localization'
+import { type Locale, Localizer } from '@3mo/localization'
 
 /** A duration in milliseconds, formatted as relative time such as "in 3 days". */
 export class TimeSpan {
@@ -34,10 +34,10 @@ export class TimeSpan {
 
 	toString() { return this.format() }
 
-	format(options?: Intl.RelativeTimeFormatOptions & { readonly language?: LanguageCode }) {
+	format(options?: Intl.RelativeTimeFormatOptions & { readonly language?: Locale }) {
 		const { language, ...explicitOptions } = options ?? {}
 		const formatter = new Intl.RelativeTimeFormat(
-			language ?? Localizer.languages.current,
+			language ?? Localizer.locales.current,
 			explicitOptions ?? { style: 'long', numeric: 'auto' },
 		)
 		const format = (value: number, unit: Intl.RelativeTimeFormatUnit) => formatter.format(Math.sign(value) * Math.floor(Math.abs(value)), unit)

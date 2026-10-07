@@ -13,10 +13,10 @@ describe('LocalizerController', () => {
 		expect(LocalizerController.connectedComponents.has(fixture.component)).toBe(true)
 	})
 
-	it('should request an update of connected components when the language changes', () => {
+	it('should request an update of connected components when the locale changes', () => {
 		const requestUpdate = vi.spyOn(fixture.component, 'requestUpdate').mockReturnValue(undefined)
 
-		Localizer.languages.change.dispatch(Localizer.languages.current)
+		Localizer.locales.change.dispatch(Localizer.locales.current)
 
 		expect(requestUpdate).toHaveBeenCalledTimes(1)
 	})
@@ -25,7 +25,7 @@ describe('LocalizerController', () => {
 		fixture.component.remove()
 		const requestUpdate = vi.spyOn(fixture.component, 'requestUpdate').mockReturnValue(undefined)
 
-		Localizer.languages.change.dispatch(Localizer.languages.current)
+		Localizer.locales.change.dispatch(Localizer.locales.current)
 
 		expect(LocalizerController.connectedComponents.has(fixture.component)).toBe(false)
 		expect(requestUpdate).not.toHaveBeenCalled()

@@ -1,5 +1,5 @@
 import { Controller, type ReactiveControllerHost } from '@a11d/lit'
-import { type LanguageCode } from '@3mo/localization'
+import { type Locale } from '@3mo/localization'
 import { SegmentedInputController, type SegmentedInputStep } from '@3mo/segmented-input'
 import { type FieldDateTimePrecision } from '../FieldDateTimePrecision.js'
 import { type DateTimeSegment, type EditableDateTimeSegment, type EditableDateTimeSegmentType } from './DateTimeSegment.js'
@@ -10,7 +10,7 @@ export type DateTimeSegmentsControllerOptions = {
 	readonly precision: FieldDateTimePrecision
 	/** Completes the units the user leaves out, and anchors relative shortcuts. Defaults to now. */
 	readonly referenceDate?: DateTime
-	readonly language?: LanguageCode
+	readonly language?: Locale
 	readonly calendar?: string
 	readonly timeZone?: string
 	readonly hourCycle?: HourCycle

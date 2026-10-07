@@ -183,3 +183,6 @@ export type LanguageCode =
 	| /** Yoruba */ 'yo'
 	| /** Zarma */ 'dje'
 	| /** Zulu */ 'zu'
+
+/** A locale identifier such as `de` or `de-CH`, as a tag or an `Intl.Locale`. A `LanguageCode` is its bare language. */
+export type Locale = LanguageCode | (string & {}) | Intl.Locale

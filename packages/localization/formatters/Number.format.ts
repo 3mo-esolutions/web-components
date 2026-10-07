@@ -1,5 +1,4 @@
 import memoizeFormatConstructor from 'intl-format-cache'
-import { Localizer } from '../Localizer.js'
 import { extractFormatOptions, type FormatOptionsWithLanguage } from './OptionsWithLanguage.js'
 
 type NumberFormatOptions = FormatOptionsWithLanguage<Intl.NumberFormatOptions>
@@ -9,7 +8,7 @@ const getFormatter = memoizeFormatConstructor(Intl.NumberFormat)
 
 Number.prototype.format = function (this: number, ...options: NumberFormatOptions) {
 	const [language, explicitOptions] = extractFormatOptions(options)
-	return getFormatter(language ?? Localizer.languages.current, {
+	return getFormatter(language, {
 		minimumFractionDigits: 0,
 		maximumFractionDigits: 16,
 		useGrouping: false,
@@ -19,7 +18,7 @@ Number.prototype.format = function (this: number, ...options: NumberFormatOption
 
 Number.prototype.formatToParts = function (this: number, ...options: NumberFormatOptions) {
 	const [language, explicitOptions] = extractFormatOptions(options)
-	return getFormatter(language ?? Localizer.languages.current, {
+	return getFormatter(language, {
 		minimumFractionDigits: 0,
 		maximumFractionDigits: 16,
 		useGrouping: false,

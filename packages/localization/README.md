@@ -36,7 +36,6 @@ import { Localizer } from '@3mo/localization'
 | --- | --- | --- |
 | `Localizer` | class |  |
 | `DirectionsByLanguage` | class | Provides direction for a given language code. |
-| `CardinalPluralizationRulesByLanguage` | class | Provides cardinal pluralization rules based on the Unicode Common Locale Data Repository. |
 | `LocalizableString` | class |  |
 | `LocalizedString` | class |  |
 | `LocalizerController` | class |  |
@@ -44,6 +43,7 @@ import { Localizer } from '@3mo/localization'
 | `extractDateTimeFormatOptions` | function |  |
 | `extractFormatOptions` | function |  |
 | `getDateTimeFormatter` | const | Constructing a formatter costs far more than using one, so they are kept and reused. |
+| `Locale` | type | A locale identifier such as `de` or `de-CH`, as a tag or an `Intl.Locale`. |
 
 ## Links
 

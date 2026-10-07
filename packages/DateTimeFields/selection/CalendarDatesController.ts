@@ -1,4 +1,4 @@
-// First, so that `DateTime` has adopted a new language by the time this regenerates its dates for it.
+// First, so that `DateTime` has adopted a new locale by the time this regenerates its dates for it.
 import '@3mo/date-time'
 import { Controller, html, type DirectiveResult } from '@a11d/lit'
 import { observeIntersection } from '@3mo/intersection-observer'
@@ -8,7 +8,7 @@ import type { Calendar } from './Calendar.js'
 import { FieldDateTimePrecision } from '../FieldDateTimePrecision.js'
 
 export class CalendarDatesController extends Controller {
-	/** Changes with the language, so that `today` is resolved again in its calendar. */
+	/** Changes with the locale, so that `today` is resolved again in its calendar. */
 	private static generation = 0
 
 	@memoize({ expiring: 60_000, hashFunction: () => CalendarDatesController.generation })
@@ -25,7 +25,7 @@ export class CalendarDatesController extends Controller {
 
 	private static generateWeek(): ReadonlyArray<DateTime> {
 		const sample = [...CalendarDatesController.generate(CalendarDatesController.today, CalendarDatesController.today.daysInWeek * 2, 'days')]
-		const indexOfFirstWeekStart = sample.findIndex(d => d.dayOfWeek === 1)
+		const indexOfFirstWeekStart = sample.findIndex(d => d.dayOfWeek === Localizer.locales.current.getWeekInfo().firstDay)
 		const daysInWeek = sample[0]!.daysInWeek
 		return sample.slice(indexOfFirstWeekStart, indexOfFirstWeekStart + daysInWeek).map(d => d.dayStart)
 	}
@@ -36,7 +36,7 @@ export class CalendarDatesController extends Controller {
 		// `DateTime` freezes its calendar and time zone at construction, so every date which has already
 		// been generated still belongs to the previous language's calendar. Without discarding them,
 		// switching language only re-formats the existing Gregorian grid instead of rebuilding it.
-		Localizer.languages.change.subscribe(() => {
+		Localizer.locales.change.subscribe(() => {
 			CalendarDatesController.generation++
 			CalendarDatesController._sampleWeek = undefined
 			for (const controller of CalendarDatesController.connectedControllers) {
