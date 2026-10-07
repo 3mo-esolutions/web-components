@@ -10,6 +10,8 @@ export type FieldDateTimeControllerOptions<T> = {
 	readonly hourCycle?: HourCycle
 	/** Where the units the user leaves out are taken from, and what relative shortcuts count from. Defaults to now. */
 	readonly referenceDate?: DateTime
+	/** The zone the field reads and writes its dates in, the segments and a picker alike. Defaults to the reference date's. */
+	readonly timeZone?: string
 	/** The earliest date which may be chosen, inclusive. */
 	readonly min?: DateTime
 	/** The latest date which may be chosen, inclusive. */
@@ -79,12 +81,21 @@ export abstract class FieldDateTimeControllerBase<T, THost extends ReactiveContr
 
 	/** Where a picker stands: at the selected date, until it is scrolled elsewhere, and back there whenever the value changes. */
 	get navigationDate() {
-		return this._navigationDate ??= this.selectedDate ?? new DateTime()
+		return this._navigationDate ??= this.selectedDate ?? this.zoned(new DateTime())
 	}
 
 	set navigationDate(value) {
 		this._navigationDate = value
 		this.host.requestUpdate()
+	}
+
+	get timeZone() {
+		return this.options.timeZone ?? this.options.referenceDate?.timeZoneId
+	}
+
+	/** A date as the field reads it: in its zone, so that a picker marks the day the segments show. */
+	protected zoned(date: Date) {
+		return DateTime.from(date.valueOf(), undefined, this.timeZone)
 	}
 
 	protected resetNavigationDate(date = this.selectedDate) {
@@ -109,7 +120,8 @@ export abstract class FieldDateTimeControllerBase<T, THost extends ReactiveContr
 
 	/** Whether the value holds a date before `min`, after `max`, or refused by `dateDisabled`. */
 	isDisabled(value: T) {
-		const { min, max, dateDisabled } = this.options
+		const { dateDisabled } = this.options
+		const [min, max] = [this.options.min, this.options.max].map(date => date && this.zoned(date))
 		const precision = this.precision > FieldDateTimePrecision.Day ? FieldDateTimePrecision.Day : this.precision
 		return this.datesOf(value).some(date =>
 			(!!min && precision.isSmallerThan(date, min) && !precision.equals(date, min))
@@ -162,6 +174,7 @@ export abstract class FieldDateTimeControllerBase<T, THost extends ReactiveContr
 			get value() { return bound.value },
 			get precision() { return controller.precision },
 			get referenceDate() { return controller.options.referenceDate },
+			get timeZone() { return controller.options.timeZone },
 			get hourCycle() { return controller.options.hourCycle },
 			get label() { return controller.options.label },
 			get disabled() { return controller.options.disabled },

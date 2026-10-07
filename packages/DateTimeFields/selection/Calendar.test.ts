@@ -11,12 +11,9 @@ describe('Calendar', () => {
 	// The rendered grid follows the language's calendar system and first day of week, so every
 	// expectation here needs a known language rather than whatever a neighbouring suite left behind.
 	let ambientLanguage: LanguageCode
-	beforeEach(async () => {
+	beforeEach(() => {
 		ambientLanguage = Localizer.languages.current
 		Localizer.languages.current = 'de'
-		// The language settles a microtask later, and a component built before it carries the previous
-		// calendar — whose year, month and day then disagree with dates made after it.
-		await new Promise<void>(resolve => queueMicrotask(() => resolve()))
 	})
 	afterEach(() => Localizer.languages.current = ambientLanguage)
 
@@ -243,7 +240,7 @@ describe('Calendar', () => {
 			await settle()
 		})
 
-		it.skip('should dispatch dateClick for the week\'s start when a week row is clicked', async () => {
+		it('should dispatch dateClick for the week\'s start when a week row is clicked', async () => {
 			const target = weekTarget()
 			await navigateTo(target)
 			vi.spyOn(fixture.component.dateClick, 'dispatch').mockReturnValue(undefined)
@@ -254,12 +251,7 @@ describe('Calendar', () => {
 			expect(FieldDateTimePrecision.Day.equals(dispatchedDate(), target)).toBe(true)
 		})
 
-		// Skipped: flaky under a loaded suite, and it was before the runner changed too. The component
-		// adopts a new language's calendar a tick after the language itself, so a calendar built during
-		// that window dispatches dates whose year, month and day belong to the previous calendar even
-		// though the instant is right — and this assertion compares exactly those fields. Fixing it
-		// means giving the calendar an observable signal for "the new calendar is in effect".
-		it.skip('should not react to individual day clicks', async () => {
+		it('should not react to individual day clicks', async () => {
 			const target = weekTarget()
 			await navigateTo(target)
 			// A week spanning two months is rendered once per month, each carrying only that month's
@@ -273,6 +265,18 @@ describe('Calendar', () => {
 
 			expect(fixture.component.dateClick.dispatch).toHaveBeenCalledTimes(1)
 			expect(FieldDateTimePrecision.Day.equals(dispatchedDate(), target)).toBe(true)
+		})
+
+		it('should render each week of a month as one row beginning on the first day of the week', async () => {
+			// June 2025 begins on a Sunday and ends on a Monday, so a Monday week splits it 1, 7, 7, 7, 7, 1.
+			const june = DateTime.from(Date.parse('2025-06-15T00:00:00.000Z'), CalendarDatesController.today.calendarId, CalendarDatesController.today.timeZoneId)
+			await navigateTo(june)
+
+			const month = await until(() => queryAll<HTMLElement>('.month-container').find(container => container.querySelector('.month')!.textContent!.trim() === june.format({ year: 'numeric', month: 'long' })))
+			const days = [...month.querySelectorAll('.week')].map(week => [...week.querySelectorAll('.day')].map(day => Number(day.textContent!.trim())))
+
+			expect(days.map(week => week.length)).toEqual([1, 7, 7, 7, 7, 1])
+			expect(days.map(week => week[0])).toEqual([1, 2, 9, 16, 23, 30])
 		})
 
 		it('should show week numbers automatically', async () => {

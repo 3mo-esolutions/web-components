@@ -294,20 +294,27 @@ export class Calendar extends Component {
 				${this.view < FieldDateTimePrecision.Week ? html.nothing : html`
 					<mo-grid justifyContent='center' autoRows='var(--mo-calendar-item-size)' columns=${this.view > FieldDateTimePrecision.Month ? this.columns : 'auto'}>
 						${Calendar.weekDaysTemplate}
-						${this.datesController.data.filter(d => d.year === date.year && d.month === date.month).map((day, _, month) => this.getWeekTemplate(day, month))}
+						${this.datesController.data.filter(d => d.year === date.year && d.month === date.month).map((day, index, month) => index === 0 || day.dayOfWeek === Calendar.firstDayOfWeek ? this.getWeekTemplate(Calendar.getWeek(month, index)) : html.nothing)}
 					</mo-grid>
 				`}
 			</mo-flex>
 		`
 	}
 
-	protected getWeekTemplate(date: DateTime, month: ReadonlyArray<DateTime>) {
-		if (date.yearOfWeek === undefined || date.weekOfYear === undefined) {
-			return this.getDayTemplate(date)
-		}
+	/** The day the weeks begin on, which is the first column of the header row. */
+	private static get firstDayOfWeek() { return CalendarDatesController.sampleWeek[0]!.dayOfWeek }
 
-		if (date !== month.find(d => d.weekOfYear === date.weekOfYear && d.yearOfWeek === date.yearOfWeek)) {
-			return html.nothing
+	/** The days of a month from the one at the index up to the end of its week. */
+	private static getWeek(month: ReadonlyArray<DateTime>, index: number) {
+		const day = month[index]!
+		const position = (day.dayOfWeek - Calendar.firstDayOfWeek + day.daysInWeek) % day.daysInWeek
+		return month.slice(index, index + day.daysInWeek - position)
+	}
+
+	protected getWeekTemplate(week: ReadonlyArray<DateTime>) {
+		const date = week[0]!
+		if (date.yearOfWeek === undefined || date.weekOfYear === undefined) {
+			return week.map(day => this.getDayTemplate(day))
 		}
 
 		return html`
@@ -322,7 +329,7 @@ export class Calendar extends Component {
 				@click=${this.precision === FieldDateTimePrecision.Day ? html.nothing : this.handleItemClick(date, FieldDateTimePrecision.Week)}
 				${this.datesController.observerIntersectionNavigation(date, FieldDateTimePrecision.Week)}
 			>
-				${month.filter(d => d.weekOfYear === date.weekOfYear && d.yearOfWeek === date.yearOfWeek).map(day => this.getDayTemplate(day))}
+				${week.map(day => this.getDayTemplate(day))}
 			</mo-grid>
 		`
 	}
@@ -382,8 +389,7 @@ export class Calendar extends Component {
 		}
 
 		if (precision === FieldDateTimePrecision.Week) {
-			return this.navigationDate.yearOfWeek === date.yearOfWeek
-				&& this.navigationDate.weekOfYear === date.weekOfYear
+			return this.navigationDate.weekStart.valueOf() === date.weekStart.valueOf()
 		}
 
 		return this.navigationDate.year === date.year

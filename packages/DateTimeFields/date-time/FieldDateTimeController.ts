@@ -38,7 +38,7 @@ export class FieldDateTimeController<THost extends ReactiveControllerHost = Reac
 	}
 
 	get selectedDate() {
-		return this.options.value ? new DateTime(this.options.value) : undefined
+		return this.options.value ? this.zoned(this.options.value) : undefined
 	}
 
 	get calendarValue() {
@@ -52,7 +52,7 @@ export class FieldDateTimeController<THost extends ReactiveControllerHost = Reac
 	}
 
 	protected datesOf(value: Date) {
-		return [new DateTime(value)]
+		return [this.zoned(value)]
 	}
 
 	protected get defaultPresets(): ReadonlyArray<ReadonlyArray<FieldDateTimePreset<Date>>> {

@@ -156,3 +156,51 @@ describe('FieldDateTimeController', () => {
 		expect(fixture.component.opened).toBe(1)
 	})
 })
+
+@component('test-field-date-time-controller-zoned')
+class TestFieldDateTimeControllerZoned extends Component {
+	@property({ type: Object }) value?: Date
+	readonly changes = new Array<Date | undefined>()
+
+	readonly controller = new FieldDateTimeController(this, host => ({
+		precision: FieldDateTimePrecision.Day,
+		timeZone: 'Pacific/Kiritimati',
+		get value() { return host.value },
+		handleChange: value => host.changes.push(value),
+	}))
+
+	protected override get template() {
+		return html`
+			<div ${this.controller.group.ref()}>
+				${this.controller.segments.segments.map(segment => html`<span ${this.controller.segment.ref(segment)}></span>`)}
+			</div>
+		`
+	}
+}
+
+describe('FieldDateTimeController in a time zone', () => {
+	const fixture = new ComponentTestFixture<TestFieldDateTimeControllerZoned>(html`<test-field-date-time-controller-zoned></test-field-date-time-controller-zoned>`)
+
+	it('should hand a picker the day the segments show, in the field\'s zone', async () => {
+		// 22:30 UTC on the 5th is already the 6th at UTC+14.
+		fixture.component.value = new Date(Date.UTC(2026, 8, 5, 22, 30))
+		await fixture.updateComplete
+
+		const { selectedDate, navigationDate } = fixture.component.controller
+		expect(selectedDate!.timeZoneId).toBe('Pacific/Kiritimati')
+		expect(selectedDate!.day).toBe(6)
+		expect(navigationDate.day).toBe(6)
+		expect(fixture.component.renderRoot.querySelector('[data-segment=day]')!.textContent).toContain('6')
+	})
+
+	it('should stand a picker on today in the field\'s zone while empty', () => {
+		expect(fixture.component.controller.navigationDate.timeZoneId).toBe('Pacific/Kiritimati')
+	})
+
+	it('should commit a picked day as its start in the field\'s zone', () => {
+		// A day of a picker standing in the field's zone: the 12th there.
+		fixture.component.controller.pick(DateTime.from(Date.UTC(2026, 8, 11, 12), undefined, 'Pacific/Kiritimati'))
+
+		expect(fixture.component.changes.at(-1)!.valueOf()).toBe(Date.UTC(2026, 8, 12) - 14 * 60 * 60 * 1000)
+	})
+})

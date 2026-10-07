@@ -64,7 +64,8 @@ export class FieldDateTimeRangeController<THost extends ReactiveControllerHost =
 	}
 
 	get selectedDate() {
-		return this.selection === 'start' ? this.options.value?.start : this.options.value?.end
+		const date = this.selection === 'start' ? this.options.value?.start : this.options.value?.end
+		return date && this.zoned(date)
 	}
 
 	get calendarValue() {
@@ -106,7 +107,7 @@ export class FieldDateTimeRangeController<THost extends ReactiveControllerHost =
 	}
 
 	protected datesOf(value: DateTimeRange) {
-		return [value.start, value.end].filter((date): date is DateTime => !!date)
+		return [value.start, value.end].filter((date): date is DateTime => !!date).map(date => this.zoned(date))
 	}
 
 	protected get defaultPresets(): ReadonlyArray<ReadonlyArray<FieldDateTimePreset<DateTimeRange>>> {

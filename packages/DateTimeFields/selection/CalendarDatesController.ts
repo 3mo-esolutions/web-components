@@ -1,14 +1,17 @@
+// First, so that `DateTime` has adopted a new language by the time this regenerates its dates for it.
+import '@3mo/date-time'
 import { Controller, html, type DirectiveResult } from '@a11d/lit'
 import { observeIntersection } from '@3mo/intersection-observer'
-import { Memoize as memoize, clear } from 'typescript-memoize'
+import { Memoize as memoize } from 'typescript-memoize'
 import { Localizer } from '@3mo/localization'
 import type { Calendar } from './Calendar.js'
 import { FieldDateTimePrecision } from '../FieldDateTimePrecision.js'
 
 export class CalendarDatesController extends Controller {
-	private static readonly cacheKey = 'CalendarDatesController'
+	/** Changes with the language, so that `today` is resolved again in its calendar. */
+	private static generation = 0
 
-	@memoize({ expiring: 60_000, tags: [CalendarDatesController.cacheKey] })
+	@memoize({ expiring: 60_000, hashFunction: () => CalendarDatesController.generation })
 	static get today() { return new DateTime().dayStart }
 
 	private static *generate(start: DateTime, count: number, step: 'days' | 'months' | 'years') {
@@ -34,16 +37,11 @@ export class CalendarDatesController extends Controller {
 		// been generated still belongs to the previous language's calendar. Without discarding them,
 		// switching language only re-formats the existing Gregorian grid instead of rebuilding it.
 		Localizer.languages.change.subscribe(() => {
-			// Deferred so that every other subscriber has run first — in particular `DateTime`, which
-			// clears its own memoized calendar and time zone on the very same event. Regenerating any
-			// date before that happens would just reproduce the outgoing calendar.
-			queueMicrotask(() => {
-				clear([CalendarDatesController.cacheKey])
-				CalendarDatesController._sampleWeek = undefined
-				for (const controller of CalendarDatesController.connectedControllers) {
-					controller.invalidate()
-				}
-			})
+			CalendarDatesController.generation++
+			CalendarDatesController._sampleWeek = undefined
+			for (const controller of CalendarDatesController.connectedControllers) {
+				controller.invalidate()
+			}
 		})
 	}
 

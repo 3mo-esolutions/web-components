@@ -48,7 +48,7 @@ export class FieldDateTimePrecision {
 
 	equals(left: DateTime, right: DateTime): boolean {
 		if (this === FieldDateTimePrecision.Week) {
-			return left.yearOfWeek === right.yearOfWeek && left.weekOfYear === right.weekOfYear
+			return left.weekStart.valueOf() === right.weekStart.valueOf()
 		}
 
 		return left.year === right.year
@@ -61,8 +61,7 @@ export class FieldDateTimePrecision {
 
 	isSmallerThan(left: DateTime, right: DateTime): boolean {
 		if (this === FieldDateTimePrecision.Week) {
-			return (left.yearOfWeek ?? 0) < (right.yearOfWeek ?? 0)
-				|| (left.yearOfWeek === right.yearOfWeek && (left.weekOfYear ?? 0) < (right.weekOfYear ?? 0))
+			return left.weekStart.valueOf() < right.weekStart.valueOf()
 		}
 
 		return left.year < right.year
