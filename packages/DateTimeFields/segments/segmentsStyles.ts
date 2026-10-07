@@ -9,6 +9,8 @@ export const segmentsStyles = css`
 		font-size: 13.333px;
 		line-height: normal;
 		font-variant-numeric: tabular-nums;
+		/* Unlike an <input>, a <div> does not center its text in the fixed height fields up to v0.5 give their content. */
+		align-content: center;
 	}
 
 	[part=segments] {

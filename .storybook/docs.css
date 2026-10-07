@@ -254,8 +254,23 @@
 	font-size: 13px;
 	line-height: 1.4;
 
+	/* Storybook lays the list out with physical left properties */
 	.toc-list {
+		padding: 0 !important;
+		border: none !important;
 		border-inline-start: 1px solid var(--docs-border) !important;
+	}
+
+	.toc-list-item {
+		margin: 0 !important;
+		margin-inline-start: 20px !important;
+
+		&::before {
+			inset-inline: -22px auto !important;
+			transform: none !important;
+			border: none !important;
+			border-inline-start: 2px solid var(--docs-muted) !important;
+		}
 	}
 
 	.toc-link {
