@@ -24,10 +24,14 @@ const browser = {
 	provider: playwright(),
 }
 
+// The package directories `npm test -- Button Tab` narrows every kind of test to, none meaning every package.
+const testedPackages = process.env.TEST_PACKAGES?.split(',').filter(Boolean) ?? []
+
 export default defineConfig({
 	resolve: { alias, conditions: ['source', ...defaultClientConditions] },
 	test: {
 		globals: true,
+		provide: { testedPackages },
 		setupFiles: ['./scripts/vitest-setup.ts'],
 		// A later beforeEach may rely on an earlier one having built its fixture, so hooks of the same
 		// kind run in the order they were registered rather than together.
@@ -39,7 +43,7 @@ export default defineConfig({
 				extends: true,
 				test: {
 					name: 'specs',
-					include: ['packages/**/*.test.ts'],
+					include: !testedPackages.length ? ['packages/**/*.test.ts'] : testedPackages.map(directory => `packages/${directory}/**/*.test.ts`),
 					exclude: [
 						'**/node_modules/**',
 						// Helpers that carry the extension without declaring a suite.
@@ -55,6 +59,18 @@ export default defineConfig({
 							{ browser: 'firefox', name: 'firefox' },
 						],
 					},
+				},
+			},
+			{
+				test: {
+					name: 'ssr',
+					include: ['scripts/ssr/**/*.test.ts'],
+					provide: { testedPackages },
+					environment: 'node',
+					// Renders each element in a Node process of its own and hydrates each package on a Chromium page of its own.
+					maxConcurrency: 16,
+					testTimeout: 180_000,
+					hookTimeout: 30_000,
 				},
 			},
 			{

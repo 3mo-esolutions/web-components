@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/command-palette",
-	"version": "0.2.3",
+	"version": "0.2.4",
 	"description": "A web component for a Ctrl+K command palette that searches registered data sources and runs the chosen command.",
 	"repository": {
 		"type": "git",
@@ -60,7 +60,6 @@
 		"@3mo/card": "x",
 		"@3mo/text-fields": "x",
 		"@3mo/button": "x",
-		"@3mo/screen-size": "x",
 		"@3mo/localization": "x"
 	}
 }

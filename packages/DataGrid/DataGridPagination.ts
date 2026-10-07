@@ -31,8 +31,6 @@ const isStrategy = (value: unknown): value is DataGridPaginationStrategy =>
 
 /**
  * Represents data grid pagination configuration (strategy: 'scroll' | 'pages', size: number | 'auto').
- *
- * @ssr true
  */
 export class DataGridPagination implements Slots {
 	/** Parses whitespace-separated pagination string tokens (e.g. 'pages 100', 'scroll'). */

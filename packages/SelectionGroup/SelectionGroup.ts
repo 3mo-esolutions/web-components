@@ -12,8 +12,6 @@ export type SelectionGroupValue = string | undefined | Array<string>
  *
  * @element mo-selection-group
  *
- * @ssr true
- *
  * @attr value - The selected items' values: the value itself in single selectability, an array of them in multiple.
  * @attr selectability - `single`, `multiple`, or omitted for a row of commands.
  * @attr deselectable - Re-activating the selected item clears it. Also makes a single group a toggle group rather than a radio group.

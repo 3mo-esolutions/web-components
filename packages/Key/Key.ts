@@ -9,8 +9,6 @@ export type KeyPresentation = Partial<Record<'apple' | 'other', { display: strin
  *
  * @element mo-key
  *
- * @ssr true
- *
  * @attr platform - The platform to present the keys for. Defaults to the detected platform; override for previews or tests.
  * @attr separator - The visual separator between the keys of a chord. Defaults to the platform convention, i.e. none on Apple platforms and `+` elsewhere.
  *
@@ -64,7 +62,7 @@ export class Key extends Component {
 	private get chords() {
 		const order = Key.modifiersOrder[this.platform]
 		const orderOf = (key: string) => order.includes(key) ? order.indexOf(key) : order.length
-		return (this.textContent ?? '')
+		return (isServer || this.hydrating ? '' : this.textContent ?? '')
 			.trim()
 			.replace(/\s*\+\s*/g, '+')
 			.split(/\s+/)
@@ -148,10 +146,11 @@ export class Key extends Component {
 	protected override get template() {
 		const separator = this.separator ?? (this.platform === 'apple' ? '' : '+')
 		const separatorTemplate = !separator ? html.nothing : html`<span class='separator'>${separator}</span>`
+		const chords = this.chords
 		return html`
-			<slot hidden></slot>
-			<span class='screen-reader-only'>${this.label}</span>
-			${this.chords.map(chord => html`
+			<slot ?hidden=${chords.length > 0}></slot>
+			<span class='screen-reader-only'>${this.label || html.nothing}</span>
+			${chords.map(chord => html`
 				<span class='chord' aria-hidden='true'>
 					${join(chord.map(key => html`<kbd>${this.getPresentation(key).display}</kbd>`), separatorTemplate)}
 				</span>

@@ -8,8 +8,6 @@ import type { Flex } from '@3mo/flex'
  *
  * @element mo-button-group
  *
- * @ssr true - In SSR all buttons should get their type explicitly.
- *
  * @attr direction - The direction of the buttons.
  * @attr type - The type of the buttons which will be passed down to all buttons.
  *

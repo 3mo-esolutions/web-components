@@ -1,4 +1,4 @@
-import { Component, component, css, html, property, query, queryAll } from '@a11d/lit'
+import { Component, component, css, html, isServer, property, query, queryAll } from '@a11d/lit'
 import { LitVirtualizer } from '@lit-labs/virtualizer'
 import { type RenderItemFunction, virtualizerRef } from '@lit-labs/virtualizer/virtualize.js'
 import { Scroller } from '@3mo/scroller'
@@ -67,7 +67,9 @@ export class VirtualizedScroller<T = unknown> extends Component {
 	protected override get template() {
 		return html`
 			<mo-scroller>
-				<lit-virtualizer .items=${this.items} .renderItem=${this.getItemTemplate}></lit-virtualizer>
+				${isServer || this.hydrating ? html.nothing : html`
+					<lit-virtualizer .items=${this.items} .renderItem=${this.getItemTemplate}></lit-virtualizer>
+				`}
 			</mo-scroller>
 		`
 	}

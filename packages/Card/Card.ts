@@ -14,8 +14,6 @@ export enum CardType {
  *
  * @element mo-card
  *
- * @ssr true
- *
  * @attr type - Whether the card is filled with a shadow or outlined with a border
  * @attr heading - The heading in the header
  * @attr subHeading - The secondary line below the heading

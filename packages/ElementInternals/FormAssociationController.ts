@@ -31,8 +31,6 @@ export interface FormAssociationControllerOptions {
 /**
  * Makes the host a form control: it submits a value, blocks submission while invalid, and follows
  * resets, fieldsets and restorations as a native control does. Its class needs {@link formAssociated}.
- *
- * @ssr true
  */
 export class FormAssociationController<THost extends ReactiveElement = ReactiveElement> extends Controller {
 	/** Stands in when the host reports a violation without a message, which the platform refuses. */

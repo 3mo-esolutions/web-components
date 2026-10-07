@@ -6,8 +6,6 @@ import '@3mo/icon-button'
  *
  * @element mo-expand-collapse-icon-button
  *
- * @ssr true
- *
  * @attr disabled - Disables the button.
  * @attr open - Whether the controlled content is open, which turns the chevron up.
  */

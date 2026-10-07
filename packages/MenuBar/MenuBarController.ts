@@ -35,8 +35,6 @@ export interface MenuBarControllerOptions<T extends MenuBarItemElement> {
  *   get items() { return host.items },
  * }))
  * ```
- *
- * @ssr false
  */
 export class MenuBarController<T extends MenuBarItemElement = MenuBarItemElement, THost extends ReactiveElement = ReactiveElement> extends Controller {
 	private readonly navigability: NavigabilityController<T>

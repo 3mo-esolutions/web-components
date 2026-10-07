@@ -77,8 +77,6 @@ const stepsByKey = new Map<string, SegmentedInputStep>([
  * The group takes its direction from its own text, as `dir="auto"` does: digits and punctuation alone read left to
  * right in any script, and a right-to-left letter or mark among the separators turns the group right to left.
  *
- * @ssr false
- *
  * @accessibility
  * The group is a `group`, and each segment a `spinbutton` with `aria-valuenow`, `aria-valuemin`, `aria-valuemax` and `aria-valuetext`, which says "Empty" while it is. Name the group, and each segment after its part.
  * The group is one tab stop, on the segment focused last.

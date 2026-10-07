@@ -7,8 +7,6 @@ import '@3mo/theme'
  *
  * @element mo-circular-progress
  *
- * @ssr true
- *
  * @attr progress - The progress from `0` to `1`. Unset to display an indeterminate progress indicator.
  *
  * @cssprop --mo-circular-progress-accent-color - The color of the indicator, the accent color by default.

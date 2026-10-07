@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/key",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"description": "A web component for keyboard keys and shortcuts rendered the platform's way, as ⌘K on Apple and Ctrl + K elsewhere.",
 	"repository": {
 		"type": "git",
@@ -33,7 +33,7 @@
 		"tslib": "x"
 	},
 	"peerDependencies": {
-		"@a11d/lit": "x",
+		"@a11d/lit": ">=0.14.1",
 		"@3mo/theme": "x",
 		"@3mo/mutation-observer": "x"
 	},

@@ -7,8 +7,6 @@ import { Tab } from './Tab.js'
  *
  * @element mo-tab-bar
  *
- * @ssr true
- *
  * @attr value - The `value` of the active tab
  *
  * @cssprop --mo-tab-divider-color - The color of the line below the tabs

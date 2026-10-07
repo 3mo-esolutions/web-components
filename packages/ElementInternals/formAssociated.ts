@@ -20,8 +20,6 @@ const applied = Symbol('formAssociated')
 /**
  * Declares that the element takes part in forms, which the platform reads while the class is being defined,
  * and hands the form callbacks to its `FormAssociationController`. Applied to a base class, it covers every subclass.
- *
- * @ssr true
  */
 export function formAssociated(ElementConstructor: AbstractConstructor<ReactiveElement> & { prototype: ReactiveElement }) {
 	if (applied in ElementConstructor) {

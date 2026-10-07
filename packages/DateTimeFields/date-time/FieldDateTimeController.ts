@@ -15,8 +15,6 @@ import { FieldDateTimePrecision } from '../FieldDateTimePrecision.js'
  *
  * A picker is the host's to render: it opens on `handlePickerOpen`, scrolls with `navigationDate`,
  * marks `calendarValue`, and hands what was chosen to `pick`.
- *
- * @ssr false
  */
 export class FieldDateTimeController<THost extends ReactiveControllerHost = ReactiveControllerHost> extends FieldDateTimeControllerBase<Date, THost> {
 	readonly segments = this.createSegments(controller => ({

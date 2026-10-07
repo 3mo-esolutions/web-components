@@ -12,8 +12,6 @@ export { type SelectionGroupValue as ChipGroupValue } from '@3mo/selection-group
  *
  * @element mo-chip-group
  *
- * @ssr true
- *
  * @attr value - The selected chips' values: the value itself in single selectability, an array of them in multiple.
  * @attr selectability - `single`, `multiple`, or omitted for a row of action chips.
  * @attr deselectable - Re-activating the selected chip clears it. Also makes a single set a toggle group rather than a radio group.

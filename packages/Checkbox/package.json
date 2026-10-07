@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/checkbox",
-	"version": "1.2.1",
+	"version": "1.2.2",
 	"description": "A web component for labelled checkboxes with an indeterminate state, built on Material Web.",
 	"repository": {
 		"type": "git",

@@ -125,6 +125,14 @@
 		font-size: 0.78rem;
 	}
 
+	&.docs-chip-ssr {
+		--tone: #2e9d5b;
+		border-color: color-mix(in srgb, var(--tone) 45%, transparent);
+		background: color-mix(in srgb, var(--tone) 12%, transparent);
+		color: light-dark(#1d6b3c, #7fd6a2);
+		text-decoration: none !important;
+	}
+
 	&:is(.docs-chip-preview, .docs-chip-deprecated) {
 		border-color: color-mix(in srgb, var(--tone) 45%, transparent);
 		background: color-mix(in srgb, var(--tone) 12%, transparent);

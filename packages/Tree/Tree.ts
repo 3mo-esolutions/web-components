@@ -1,4 +1,4 @@
-import { Component, component, css, event, eventListener, html, property } from '@a11d/lit'
+import { Component, component, css, event, eventListener, html, isServer, property } from '@a11d/lit'
 import { Selectability } from '@3mo/selectability'
 import { SlotController } from '@3mo/slot-controller'
 import { TreeController } from './TreeController.js'
@@ -69,7 +69,7 @@ export class Tree extends Component {
 
 	/** The root items. */
 	get items() {
-		return this.rootItems ??= [...this.children].filter((child): child is TreeItem => child instanceof TreeItem)
+		return this.rootItems ??= isServer ? [] : [...this.children].filter((child): child is TreeItem => child instanceof TreeItem)
 	}
 
 	/** Opens the item's ancestors and puts the cursor on it. */

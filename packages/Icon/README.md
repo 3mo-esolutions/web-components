@@ -40,7 +40,7 @@ It is read out as its icon's name, such as "delete", unless something around it 
 
 | Name | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
-| `variant` | `variant` | `IconVariant` | `"defaultVariant"` | The style, each a font of its own: `filled` (default), `outlined`, `rounded` or `sharp`. |
+| `variant` | `variant` | `IconVariant` |  | The style, each a font of its own: `filled` (default), `outlined`, `rounded` or `sharp`. |
 | `icon` | `icon` | `MaterialIcon \| undefined` |  | The name of the icon, e.g. `delete`. |
 
 ## Links

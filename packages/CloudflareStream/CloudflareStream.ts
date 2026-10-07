@@ -1,5 +1,4 @@
-import { Component, component, css, eventListener, html, ifDefined, property, query } from '@a11d/lit'
-import './cloudflarestream-sdk.js'
+import { Component, component, css, eventListener, html, ifDefined, isServer, property, query } from '@a11d/lit'
 
 type CloudflareStreamApi = {
 	play(): Promise<void>
@@ -62,11 +61,16 @@ export class CloudflareStream extends Component {
 
 	@query('iframe') readonly iframeElement!: HTMLIFrameElement
 
-	private stream?: CloudflareStreamApi
+	static {
+		if (!isServer) {
+			import('./cloudflarestream-sdk.js')
+		}
+	}
 
-	protected override initialized() {
-		// @ts-expect-error Stream will be injected globally
-		this.stream = Stream(this.iframeElement)
+	private _stream?: CloudflareStreamApi
+	// Created once the SDK, which is loaded asynchronously, has defined "Stream":
+	private get stream() {
+		return this._stream ??= (globalThis as { Stream?: (iframe: HTMLIFrameElement) => CloudflareStreamApi }).Stream?.(this.iframeElement)
 	}
 
 	/* eslint-disable @html-eslint/use-baseline */

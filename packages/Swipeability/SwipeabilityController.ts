@@ -39,8 +39,6 @@ export type SwipeabilityControllerOptions = {
 /**
  * Drags a surface along one axis between rest positions, called detents.
  * It measures and decides only - placing and animating the surface is up to the host.
- *
- * @ssr true
  */
 export class SwipeabilityController<THost extends ReactiveControllerHost = ReactiveControllerHost> extends Controller {
 	static readonly threshold = 0.25

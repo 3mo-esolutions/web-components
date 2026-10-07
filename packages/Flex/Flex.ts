@@ -22,8 +22,6 @@ const flexDirectionConverter = {
  *
  * @element mo-flex
  *
- * @ssr true
- *
  * @attr direction - The direction items flow in, mapped to `flex-direction`; vertical by default
  * @attr wrap - Whether items wrap onto multiple lines, mapped to `flex-wrap`
  * @attr gap - The gap between items, mapped to `gap`

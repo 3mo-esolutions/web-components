@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/data-grid",
-	"version": "0.38.7",
+	"version": "0.38.8",
 	"description": "A web component for data grids with typed columns, sorting, selection, pagination, row details and inline editing.",
 	"repository": {
 		"type": "git",
@@ -53,7 +53,7 @@
 		"requestidlecallback-polyfill": "x"
 	},
 	"peerDependencies": {
-		"@a11d/lit": ">=0.13.0",
+		"@a11d/lit": ">=0.14.1",
 		"@3mo/pointer-controller": ">=1.6.0",
 		"@a11d/lit-application": "x",
 		"@3mo/flex": "x",

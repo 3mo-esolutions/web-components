@@ -1,4 +1,4 @@
-import { beforeAll, describe, it } from 'vitest'
+import { beforeAll, describe, inject, it } from 'vitest'
 import type { ReactiveElement } from '@a11d/lit'
 import { composeStories, composeStory } from 'storybook/preview-api'
 import { setProjectAnnotations } from '@storybook/web-components-vite'
@@ -8,6 +8,15 @@ import { decorators, globalTypes, initialGlobals } from './globals.js'
 type StoryModule = Parameters<typeof composeStories>[0]
 type Story = ReturnType<typeof composeStory>
 
+declare module 'vitest' {
+	interface ProvidedContext {
+		/** The package directories `npm test -- Button Tab` narrows the tests to, none meaning every package. */
+		testedPackages: Array<string>
+	}
+}
+
+const testedPackages = inject('testedPackages')
+
 const annotations = setProjectAnnotations([{ decorators, globalTypes, initialGlobals }])
 
 beforeAll(() => annotations.beforeAll?.())
@@ -16,7 +25,13 @@ beforeAll(() => annotations.beforeAll?.())
 const compose: Parameters<typeof composeStories>[2] = (story, meta, project, name) => composeStory(story, meta, project, undefined, name)
 
 // Imported one by one after the library, as Storybook does, rather than eagerly, which would hoist them above it.
-for (const [path, load] of Object.entries(import.meta.glob<StoryModule>(['../packages/**/*.stories.ts', '../samples/**/*.stories.ts']))) {
+// A run narrowed to packages loads only their stories, the recipes being no package's.
+const storyModules = Object.entries(import.meta.glob<StoryModule>(['../packages/**/*.stories.ts', '../samples/**/*.stories.ts']))
+	.filter(([path]) => !testedPackages.length || testedPackages.some(directory => path.startsWith(`../packages/${directory}/`)))
+if (!storyModules.length) {
+	it.skip('The packages tested have no stories')
+}
+for (const [path, load] of storyModules) {
 	const module = await load()
 	describe(module.default.title ?? path, () => {
 		for (const [name, story] of Object.entries(composeStories(module, {}, compose) as Record<string, Story>)) {

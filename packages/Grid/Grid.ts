@@ -12,8 +12,6 @@ const asteriskSyntaxConverter = {
  *
  * @element mo-grid
  *
- * @ssr true
- *
  * @attr rows - The row tracks, mapped to `grid-template-rows`; `*` stands for `1fr` and `2*` for `2fr`
  * @attr columns - The column tracks, mapped to `grid-template-columns`; `*` stands for `1fr` and `2*` for `2fr`
  * @attr autoRows - The size of implicitly created rows, mapped to `grid-auto-rows`

@@ -3,8 +3,6 @@ import { isServer, property, type ReactiveElement } from '@a11d/lit'
 /**
  * A decorator for a property stored in one of the host's inline styles, CSS custom properties included.
  *
- * @ssr true
- *
  * @param options - Options for configuring the property.
  * @param options.styleKey - The name of the style property to reflect. Also supports custom CSS properties (e.g. `--custom-property`).
  * @param options.styleConverter - An object with two functions to convert the value to and from the style property.

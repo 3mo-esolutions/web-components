@@ -16,8 +16,6 @@ import { SlotController } from '@3mo/slot-controller'
  * ```
  *
  * Items opt out of overflowing via the `data-no-overflow` attribute.
- *
- * @ssr false
  */
 export class ToolbarController extends Controller {
 	readonly slotController = this.host.slotController ?? new SlotController(this.host)

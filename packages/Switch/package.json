@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/switch",
-	"version": "0.2.1",
+	"version": "0.2.2",
 	"description": "A web component for labelled on/off switches, built on Material Web.",
 	"repository": {
 		"type": "git",

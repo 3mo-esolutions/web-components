@@ -49,7 +49,7 @@ export class Swap extends Component {
 	 * another update.
 	 */
 	get values() {
-		const slottedValues = isServer ? [] : [...this.children].map(child => child.slot)
+		const slottedValues = isServer || this.hydrating ? [] : [...this.children].map(child => child.slot)
 		return [...new Set(['', ...slottedValues, this.value])]
 	}
 

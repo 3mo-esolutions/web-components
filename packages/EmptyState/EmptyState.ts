@@ -6,8 +6,6 @@ import type { MaterialIcon } from '@3mo/icon'
  *
  * @element mo-empty-state
  *
- * @ssr true
- *
  * @attr icon - The Material icon shown above the message.
  *
  * @slot - The message, and any action that fills the view.

@@ -59,8 +59,6 @@ export type SegmentedDisplaySegment = LiteralSegment | EditableSegment & { reado
  * A code is one value, not several: autofill, paste, undo and a screen reader all work on the one input,
  * which the host places over the cells and paints transparent, its `::selection` included. The cells are
  * hidden from assistive technology and mark the selected range through `data-active`.
- *
- * @ssr false
  */
 export class SegmentedDisplayController<THost extends ReactiveControllerHost = ReactiveControllerHost> extends Controller implements EventListenerObject {
 	private static readonly inputEventTypes = ['input', 'change', 'focus', 'blur', 'select', 'keyup', 'pointerup']

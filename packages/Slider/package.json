@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/slider",
-	"version": "0.1.4",
+	"version": "0.1.5",
 	"description": "Web components for sliders that pick a single value or a range, continuous or in discrete steps, built on Material Web.",
 	"repository": {
 		"type": "git",

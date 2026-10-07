@@ -8,7 +8,6 @@ import '@3mo/list'
 import '@3mo/text-fields'
 import '@3mo/card'
 import '@3mo/button'
-import '@3mo/screen-size'
 import '@3mo/key'
 
 export * from './CommandPaletteSearchField.js'

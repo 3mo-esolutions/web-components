@@ -3,8 +3,6 @@ import { AccentStorage } from './Accent.js'
 
 /**
  * Utilities to control the theme of the application.
- *
- * @ssr true
  */
 export class Theme {
 	static readonly background = new BackgroundStorage()

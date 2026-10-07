@@ -1,4 +1,4 @@
-import { Component, component, css, html, ifDefined, isServer, property } from '@a11d/lit'
+import { Component, component, css, html, ifDefined, isServer, property, type PropertyValues } from '@a11d/lit'
 import { MutationController } from '@3mo/mutation-observer'
 import { InstanceofAttributeController } from '@3mo/instanceof-attribute-controller'
 import { type MaterialIcon } from '@3mo/icon'
@@ -9,8 +9,6 @@ import '@3mo/theme'
  * A floating action button for the primary action of a screen, extended with a label when it has text.
  *
  * @element mo-fab
- *
- * @ssr true
  *
  * @attr icon - The Material icon to display.
  * @attr dense - Makes it the small FAB.
@@ -74,7 +72,7 @@ export class Fab extends Component {
 	}
 
 	protected get label() {
-		return [...this.childNodes]
+		return isServer || this.hydrating ? undefined : [...this.childNodes]
 			.filter(node => !(node instanceof Element && node.slot))
 			.map(node => node.textContent)
 			.join('')
@@ -95,13 +93,14 @@ export class Fab extends Component {
 	}
 }
 
-MdFab.addInitializer(fab => fab.addController({
-	hostUpdated: () => {
-		fab.renderRoot.querySelector('button')?.part.add('button')
-		fab.renderRoot.querySelector('md-ripple')?.part.add('ripple')
-		fab.renderRoot.querySelector('md-focus-ring')?.part.add('focus-ring')
-	},
-}))
+// Server-rendered fabs are constructed once Material defines them, before an initializer could be added.
+const updated = MdFab.prototype['updated']
+MdFab.prototype['updated'] = function (this: MdFab, changedProperties: PropertyValues) {
+	updated.call(this, changedProperties)
+	this.renderRoot.querySelector('button')?.part.add('button')
+	this.renderRoot.querySelector('md-ripple')?.part.add('ripple')
+	this.renderRoot.querySelector('md-focus-ring')?.part.add('focus-ring')
+}
 
 MdFab.elementStyles.push(css`
 	button { background: var(--md-fab-background-color) !important; }

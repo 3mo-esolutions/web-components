@@ -13,8 +13,6 @@ export enum SymbolVariant {
  *
  * @element mo-symbol
  *
- * @ssr true - The font should be provided manually when using SSR.
- *
  * @attr variant - The style, each a font of its own: `rounded` (default), `outlined` or `sharp`.
  * @attr icon - The name of the symbol, e.g. `delete`.
  * @attr fill - `1` fills the symbol, `0` outlines it.

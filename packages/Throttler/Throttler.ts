@@ -1,8 +1,6 @@
 /**
  * Throttles a burst of calls to `throttle()`: the first resolves at once and the last once the delay has passed without another call.
  * The calls in between never resolve.
- *
- * @ssr true
  */
 export class Throttler {
 	private timerId?: number

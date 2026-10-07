@@ -26,8 +26,6 @@ const tolerance = 0.5
 /**
  * Works out which items of a single-line container fit and which overflow - the "Priority+" pattern.
  * Where the overflowing ones go is up to the host.
- *
- * @ssr false
  */
 export class OverflowController<TItem extends Element = Element, THost extends ReactiveControllerHost = ReactiveControllerHost> extends Controller {
 	protected readonly options: OverflowControllerOptions<TItem>

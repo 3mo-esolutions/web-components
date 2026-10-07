@@ -27,9 +27,9 @@ A guide for coding agents working in this repository: how it is organized, how t
 | `stories/` | Central sample data for stories and demos: `people`, `employees`, `companies`, `countries`, `photos`, and `respond()` to fake a request. |
 | `samples/<recipe>/` | Recipes: complete screens built from the pieces, `recipe-*` elements, a private `package.json`. Shown under Recipes. |
 | `.storybook/` | Storybook config: `main.ts` (aliases every `@3mo/*` to its `index.ts`, full-reload plugin), `preview.ts`, `blocks.tsx` (docs blocks), `source.ts` (Show code, `sourceOf`), `lazy.ts`, `globals.ts` (theme and language toolbar), `stories.test.ts` (smoke test), `docs/*.mdx` (Getting Started, Contributing). |
-| `scripts/` | `analyze.ts`, `readme.ts`, `changelog.ts`, `bump.ts`, `release.ts`, `pre-commit.ts`, `clean.ts`, `docs-build.ts`, `llms.ts`, `vitest-setup.ts`, helpers in `util/`. |
-| `vitest.config.ts` | Projects `specs` (instances `chromium`, `firefox`) and `stories`. |
-| `.github/workflows/` | `qa.yml` runs `npm run typescript`, `npm run lint` and `npm run test` on every PR and push to main; `development.yml` also deploys the Storybook to GitHub Pages and, after QA, runs `npm run release` on every push to main. |
+| `scripts/` | `analyze.ts`, `readme.ts`, `changelog.ts`, `bump.ts`, `release.ts`, `pre-commit.ts`, `clean.ts`, `docs-build.ts`, `llms.ts`, `vitest-setup.ts`, `test.ts`, helpers in `util/`, the SSR test in `ssr/`. |
+| `vitest.config.ts` | Projects `specs` (instances `chromium`, `firefox`), `stories` and `ssr`. |
+| `.github/workflows/` | `qa.yml` runs `npm run typescript`, `npm run lint` and `npm test -- --all` on every PR and push to main; `development.yml` also deploys the Storybook to GitHub Pages and, after QA, runs `npm run release` on every push to main. |
 
 Generated files, never edited by hand:
 
@@ -46,7 +46,7 @@ Generated files, never edited by hand:
 | `npx vitest run --project chromium packages/<Name>/<File>.test.ts` | The spec you are writing. A path filter narrows to files; `-t '<name>'` to tests. |
 | `npx vitest run --project chromium packages/<Name>` then `--project firefox` | A package, and its direct consumers when the change reaches them. |
 | `npm run dev` | Vitest watch mode, Chromium only. |
-| `npm test` | The whole suite in both browsers (several minutes). Only before handing over a branch. |
+| `npm test -- <@3mo/name or Directory>...` | Every kind of test of those packages: specs, stories, SSR. `--all` runs everything, as CI does. |
 | `npx vitest run --project stories` | Smoke test: renders every story tagged `test` (the default; `tags: ['!test']` opts out) and fails on thrown errors, rejections and elements rendered without a definition. `-t 'Actions / Button'` narrows to one title. |
 | `npm run typescript` | Three checks: `tsc --build --noEmit` over the packages and scripts, `tsc -p packages/tsconfig.json` (specs, stories, demos, samples), `tsc -p .storybook/tsconfig.json`. |
 | `npx eslint <files>` | Lint what you touched; `npm run lint` lints everything. |
@@ -144,7 +144,6 @@ declare global {
 | JSDoc on a property | A public property without an attribute appears in the API table only when documented; undocumented members count as internal. `@ignore` hides a member. |
 | `@accessibility` | A Markdown section (tables allowed) on an element or controller class: roles and states it sets, keys it answers, what it needs from the consumer. Becomes the page's and README's Accessibility section. |
 | `@i18n "Key"` | The translation keys the element uses. |
-| `@ssr true` / `@ssr false` | Whether the element renders with Lit SSR, optionally with a caveat: `@ssr true - <caveat>`. |
 
 Public statics and `{@link}` in descriptions are handled by `scripts/analyze.ts`; do not annotate around them.
 
@@ -190,7 +189,10 @@ Public statics and `{@link}` in descriptions are handled by `scripts/analyze.ts`
 ### SSR
 
 - Guard browser-only work with `isServer`; do not touch `document` or `window` at module scope or in constructors.
-- The server cannot see light DOM and never commits attribute or text values the browser alone knows, so the client's first render must equal the server's. Keep `@ssr` truthful.
+- The server cannot see light DOM, and the first render in the browser must match the server's text and template choices. Read slotted content through `SlotController`, or gate it on `this.hydrating`.
+- A server-rendered element is constructed when its class is defined: patch a Material class's prototype instead of `addInitializer`, and read later-set statics lazily.
+- Element directives (`${bind()}`, `${style()}`) do not run on the server. Where one changes text or a template branch, bind by name: `.value=${bind(this, 'value')}`.
+- Every element must render on the server and hydrate like a client render; `npm test` checks it, and a failure is a bug to fix.
 
 ## Writing a controller
 
@@ -292,7 +294,7 @@ The full rules are in `.storybook/docs/WritingStories.mdx` (Contributing / Writi
 | Specs or stories only | The affected spec files; `npm run typescript` (it covers specs and stories); the smoke test for changed stories. |
 | JSDoc, `package.json`, stories | `npm run analyze`, `npm run readme -- <package>`, and a look at the docs page. |
 | New package | All of the above, plus the root `tsconfig.json` reference and the `@3mo/del` entries. |
-| Before opening a PR or handing over a branch | `npm test` once. |
+| Before opening a PR or handing over a branch | `npm test -- <every package the branch changed>`; CI runs the rest. |
 
 - Before diagnosing, establish which code is actually running: which file versions are live and what imports what. Reproduce the exact symptom, prove the fix in the browser, and revert speculative changes made while chasing the wrong cause. Stated causes need evidence.
 - Look at the result in Storybook on a free port: `iframe.html?id=<story-id>&viewMode=story` renders a story alone.

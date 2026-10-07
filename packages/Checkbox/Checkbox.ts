@@ -1,14 +1,12 @@
-import { component, property, css, Component, html, event } from '@a11d/lit'
+import { component, property, css, Component, html, event, isServer, type PropertyValues } from '@a11d/lit'
 import { disabledProperty } from '@3mo/disabled-property'
-import '@material/web/checkbox/checkbox.js'
+import { MdCheckbox } from '@material/web/checkbox/checkbox.js'
 import '@3mo/theme'
 
 /**
  * A checkbox with an optional label, which can also show a partial selection.
  *
  * @element mo-checkbox
- *
- * @ssr true
  *
  * @attr label - The label of the checkbox.
  * @attr disabled - Whether the checkbox is disabled or not.
@@ -111,6 +109,15 @@ export class Checkbox extends Component {
 		this.selected = selection
 		this.change.dispatch(selection)
 	}
+}
+
+// A server calls "willUpdate" but not "update", in which "md-checkbox" records the previous state its classes show.
+const willUpdate = MdCheckbox.prototype['willUpdate']
+MdCheckbox.prototype['willUpdate'] = function (this: MdCheckbox, changedProperties: PropertyValues) {
+	if (isServer) {
+		Object.assign(this, { prevChecked: this.checked, prevDisabled: this.disabled, prevIndeterminate: this.indeterminate })
+	}
+	willUpdate.call(this, changedProperties)
 }
 
 declare global {

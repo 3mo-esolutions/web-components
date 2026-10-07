@@ -12,8 +12,6 @@ export interface InfiniteScrollControllerOptions {
 /**
  * Fetches the next chunk of data whenever a container is scrolled near its end, one chunk at a time.
  * It only decides when to fetch; what a chunk is and where it goes is up to the host.
- *
- * @ssr false
  */
 export class InfiniteScrollController<THost extends ReactiveControllerHost = ReactiveControllerHost> extends Controller {
 	protected readonly options: InfiniteScrollControllerOptions

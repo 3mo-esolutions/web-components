@@ -1,7 +1,5 @@
 /**
  * Tracks globally whether Ctrl, Shift, Alt or Meta is held down, for code that has no keyboard event at hand.
- *
- * @ssr true
  */
 export class KeyboardController {
 	private static _ctrl = false

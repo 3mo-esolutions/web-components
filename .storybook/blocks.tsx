@@ -1,5 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState, type MouseEvent } from 'react'
 import { ArgTypes, Controls, DocsContext, Heading, Markdown, Primary, useOf } from '@storybook/addon-docs/blocks'
+import { NAVIGATE_URL } from 'storybook/internal/core-events'
 import { getCustomElements } from '@storybook/web-components-vite'
 
 type PackageJson = { readonly name: string, readonly version: string, readonly description?: string }
@@ -59,6 +60,7 @@ export function Hero() {
 					{!tag ? null : <span className='docs-chip docs-chip-mono'>{`<${tag}>`}</span>}
 					{!packageJson ? null : <span className='docs-chip'>v{packageJson.version}</span>}
 					{!status ? null : <span className={`docs-chip docs-chip-${status}`}>{status}</span>}
+					{!tag ? null : <SsrChip />}
 					<span className='docs-meta-spacer' />
 					{!packageJson ? null : <a className='docs-link' href={`https://www.npmjs.com/package/${packageJson.name}`} target='_blank' rel='noreferrer'>npm</a>}
 					{!directory ? null : <a className='docs-link' href={`${repository}/tree/main/${directory}`} target='_blank' rel='noreferrer'>Source</a>}
@@ -67,6 +69,29 @@ export function Hero() {
 			</header>
 			{!details.length ? null : <div className='docs-details'><Markdown>{details.join('\n\n')}</Markdown></div>}
 		</>
+	)
+}
+
+/** A click handler navigating the manager to a page of this Storybook, e.g. `?path=/docs/actions-button--overview`, as a plain link would only navigate the docs frame. */
+export function useNavigation(href: string) {
+	const { channel } = useContext(DocsContext)
+	return (event: MouseEvent) => {
+		if (event.button === 0 && !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey) {
+			event.preventDefault()
+			channel.emit(NAVIGATE_URL, href)
+		}
+	}
+}
+
+const serverSideRendering = '?path=/docs/getting-started-installation--overview#server-side-rendering'
+
+/** That the element renders with Lit SSR and hydrates, which the tests require of every element, linking to what that takes. */
+function SsrChip() {
+	const navigate = useNavigation(serverSideRendering)
+	return (
+		<a className='docs-chip docs-chip-ssr' href={serverSideRendering} onClick={navigate} title='Renders on the server with Lit SSR and hydrates in the browser'>
+			SSR
+		</a>
 	)
 }
 

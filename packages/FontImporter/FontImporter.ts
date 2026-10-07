@@ -1,14 +1,14 @@
+import { isServer } from '@a11d/lit'
+
 /**
  * Imports web font stylesheets into the document by URL, each only once.
- *
- * @ssr true
  */
 export class FontImporter {
-	private static readonly styleElement = globalThis.document?.createElement('style') as HTMLStyleElement | undefined
+	private static readonly styleElement = isServer ? undefined : document.createElement('style')
 
 	static {
 		if (FontImporter.styleElement) {
-			globalThis.document?.head.appendChild(FontImporter.styleElement)
+			document.head.appendChild(FontImporter.styleElement)
 		}
 	}
 
