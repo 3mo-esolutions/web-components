@@ -81,7 +81,7 @@ export class DateTimeSegmentsController<THost extends ReactiveControllerHost = R
 	}
 
 	get segmenter() {
-		const segmenter = new DateTimeSegmenter({
+		const segmenter = DateTimeSegmenter.of({
 			precision: this.options.precision,
 			language: this.options.language,
 			calendar: this.options.calendar,

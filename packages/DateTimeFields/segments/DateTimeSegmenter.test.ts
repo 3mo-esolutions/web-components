@@ -1,4 +1,5 @@
 import '@3mo/date-time'
+import { Localizer } from '@3mo/localization'
 import { FieldDateTimePrecision } from '../FieldDateTimePrecision.js'
 import { DateTimeSegmenter } from './DateTimeSegmenter.js'
 import { isEditableSegment } from '@3mo/segmented-input'
@@ -17,6 +18,46 @@ describe('DateTimeSegmenter', () => {
 	const fa = (precision = FieldDateTimePrecision.Minute) => new DateTimeSegmenter({ precision, language: 'fa', calendar: 'persian', timeZone: 'UTC' })
 
 	const date = utc('2026-09-05T14:07:09')
+
+	describe('sharing', () => {
+		const options = { precision: FieldDateTimePrecision.Minute, language: 'de', calendar: 'gregory', timeZone: 'UTC' } as const
+
+		it('should share one segmenter between equal options', () => {
+			expect(DateTimeSegmenter.of({ ...options })).toBe(DateTimeSegmenter.of({ ...options }))
+		})
+
+		it('should build another one when any option differs', () => {
+			const shared = DateTimeSegmenter.of(options)
+			for (const other of [
+				{ ...options, precision: FieldDateTimePrecision.Day },
+				{ ...options, language: 'en' },
+				{ ...options, calendar: 'persian' },
+				{ ...options, timeZone: 'Asia/Tehran' },
+				{ ...options, hourCycle: 'h12' as const },
+				{ ...options, timeOnly: true },
+			]) {
+				const segmenter = DateTimeSegmenter.of(other)
+				expect(segmenter).not.toBe(shared)
+				expect(segmenter.key).toBe(new DateTimeSegmenter(other).key)
+				expect(DateTimeSegmenter.of({ ...other })).toBe(segmenter)
+			}
+		})
+
+		it('should follow a language switch while no language is given', () => {
+			const locale = Localizer.locales.current
+			try {
+				Localizer.locales.current = 'en'
+				const english = DateTimeSegmenter.of({ precision: FieldDateTimePrecision.Minute })
+				Localizer.locales.current = 'fa'
+				const persian = DateTimeSegmenter.of({ precision: FieldDateTimePrecision.Minute })
+				expect(persian).not.toBe(english)
+				expect(persian.key).toBe(new DateTimeSegmenter({ precision: FieldDateTimePrecision.Minute }).key)
+				expect(persian.direction).toBe('rtl')
+			} finally {
+				Localizer.locales.current = locale
+			}
+		})
+	})
 
 	describe('derivation from the language', () => {
 		it('should order German segments day.month.year, hour:minute', () => {

@@ -1,4 +1,5 @@
 import { LocalizableString, Localizer, type Locale } from '@3mo/localization'
+import { Memoize as memoize } from 'typescript-memoize'
 import { FieldDateTimePrecision } from '../FieldDateTimePrecision.js'
 import { type DateTimeSegment, type DateTimeSegmentType, type EditableDateTimeSegmentType, isEditableDateTimeSegmentType } from './DateTimeSegment.js'
 
@@ -29,6 +30,15 @@ const timePlaceholder = '--'
  */
 export class DateTimeSegmenter {
 	static readonly pageSteps: Partial<Record<EditableDateTimeSegmentType, number>> = { year: 5, month: 2, week: 4, day: 7, hour: 2, minute: 15, second: 15 }
+
+	/**
+	 * The segmenter of these options, shared by every caller asking for it: a segmenter never changes once built, and
+	 * building one builds several Intl formatters. Keyed by the options as given, as the defaults follow the language alone.
+	 */
+	@memoize({ hashFunction: (options: DateTimeSegmenterOptions) => [options.precision.key, String(options.language ?? Localizer.locales.current), options.calendar, options.timeZone, options.hourCycle, options.timeOnly].join('|') })
+	static of(options: DateTimeSegmenterOptions) {
+		return new DateTimeSegmenter(options)
+	}
 
 	static defaultHourCycle(language: Locale): HourCycle {
 		return (new Intl.DateTimeFormat(language, { hour: 'numeric' }).resolvedOptions().hourCycle ?? 'h23') as HourCycle

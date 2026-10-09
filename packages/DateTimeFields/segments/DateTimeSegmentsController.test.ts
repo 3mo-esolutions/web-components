@@ -90,6 +90,26 @@ describe('DateTimeSegmentsController', () => {
 	}
 	const type = (element: HTMLElement, characters: string) => [...characters].forEach(character => press(element, character))
 
+	describe('segmenter', () => {
+		it('should share one segmenter across reads and with every field of the same configuration', async () => {
+			const segmenter = controller().segmenter
+			await fixture.update()
+			expect(controller().segmenter).toBe(segmenter)
+			expect((document.createElement('date-time-segments-test') as DateTimeSegmentsTest).controller.segmenter).toBe(segmenter)
+		})
+
+		it('should take the shared segmenter of its new configuration when it changes, and of its old one when it changes back', async () => {
+			const day = controller().segmenter
+			await setUp({ precision: FieldDateTimePrecision.Minute })
+			const minute = controller().segmenter
+			expect(minute).not.toBe(day)
+			expect(minute.precision).toBe(FieldDateTimePrecision.Minute)
+			expect(minute.types).toEqual(['day', 'month', 'year', 'hour', 'minute'])
+			await setUp({ precision: FieldDateTimePrecision.Day })
+			expect(controller().segmenter).toBe(day)
+		})
+	})
+
 	describe('stamping', () => {
 		it('should stamp the group', () => {
 			expect(group().getAttribute('role')).toBe('group')
