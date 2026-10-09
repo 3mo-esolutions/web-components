@@ -1,4 +1,5 @@
 import { html, render, type ReactiveController } from '@a11d/lit'
+import { userEvent } from 'vitest/browser'
 import { SheetController, type SheetControllerHost } from './SheetController.js'
 import { type SheetPlacement } from './SheetPlacement.js'
 
@@ -123,17 +124,63 @@ describe('SheetController', () => {
 		expect(dialog().open).toBe(true)
 	})
 
-	it('should close on a backdrop click but not on a click within the panel', async () => {
-		await open()
+	describe('closing from the backdrop', () => {
+		const panel = () => container.querySelector<HTMLElement>('#panel')!
+		const touch = { pointerId: 1, pointerType: 'touch', isPrimary: true, button: 0, bubbles: true, composed: true }
+		const press = (target: Element) => target.dispatchEvent(new PointerEvent('pointerdown', { ...touch, buttons: 1 }))
+		const click = (target: Element) => target.dispatchEvent(new PointerEvent('click', { ...touch, buttons: 0 }))
 
-		container.querySelector<HTMLElement>('#panel')!.click()
-		await host.updateComplete
-		expect(host.open).toBe(true)
+		it('should close on a click on the backdrop but not on one within the panel', async () => {
+			await open()
 
-		const hasClosed = closed()
-		dialog().click()
-		await hasClosed
-		expect(host.open).toBe(false)
+			await userEvent.click(panel())
+			await host.updateComplete
+			expect(host.open).toBe(true)
+
+			const hasClosed = closed()
+			await userEvent.click(dialog(), { position: { x: 2, y: 2 } })
+			await hasClosed
+			expect(host.open).toBe(false)
+		})
+
+		it('should stay open for the click of a tap pressed before it opened, as a touch delivers it a frame later', async () => {
+			const trigger = document.createElement('button')
+			container.append(trigger)
+			press(trigger)
+			await open()
+
+			click(dialog())
+			await host.updateComplete
+
+			expect(host.open).toBe(true)
+			expect(dialog().open).toBe(true)
+		})
+
+		it('should stay open for a press which began in the panel and was released on the backdrop', async () => {
+			await open()
+
+			press(panel())
+			click(dialog())
+			await host.updateComplete
+
+			expect(host.open).toBe(true)
+			expect(dialog().open).toBe(true)
+		})
+
+		it('should not carry a press on the backdrop over to its next opening', async () => {
+			await open()
+			const hasClosed = closed()
+			press(dialog())
+			click(dialog())
+			await hasClosed
+
+			await open()
+			click(dialog())
+			await host.updateComplete
+
+			expect(host.open).toBe(true)
+			expect(dialog().open).toBe(true)
+		})
 	})
 
 	it('should close when the handle is clicked, naming "handle" as the source', async () => {

@@ -1,5 +1,6 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { html } from '@a11d/lit'
+import { userEvent } from 'vitest/browser'
 import { type Sheet } from './Sheet.js'
 import './index.js'
 
@@ -122,13 +123,23 @@ describe('Sheet', () => {
 	it('should close on a backdrop click but not on a click within the panel', async () => {
 		await open()
 
-		fixture.component.renderRoot.querySelector<HTMLElement>('[part=panel]')!.click()
+		await userEvent.click(fixture.component.renderRoot.querySelector<HTMLElement>('[part=panel]')!)
 		await fixture.updateComplete
 		expect(fixture.component.open).toBe(true)
 
-		fixture.component.dialogElement.click()
+		await userEvent.click(fixture.component.dialogElement, { position: { x: 2, y: 2 } })
 		await fixture.updateComplete
 		expect(fixture.component.open).toBe(false)
+	})
+
+	it('should stay open for a click on the backdrop whose press it never saw, such as that of the tap which opened it', async () => {
+		await open()
+
+		fixture.component.dialogElement.click()
+		await fixture.updateComplete
+
+		expect(fixture.component.open).toBe(true)
+		expect(fixture.component.dialogElement.open).toBe(true)
 	})
 
 	it('should close when the handle is clicked', async () => {

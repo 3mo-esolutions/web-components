@@ -20,7 +20,7 @@ export type SheetControllerOptions = {
  * coordinating open/close transitions, cancelable `requestClose` events, and swipe gestures.
  */
 export class SheetController extends Controller implements EventListenerObject {
-	private static readonly dialogEventTypes = ['cancel', 'close', 'click']
+	private static readonly dialogEventTypes = ['cancel', 'close', 'pointerdown', 'click']
 
 	readonly dialog = new ElementRef<HTMLDialogElement>({
 		updated: element => this.listen(element, SheetController.dialogEventTypes, 'addEventListener'),
@@ -38,6 +38,7 @@ export class SheetController extends Controller implements EventListenerObject {
 	readonly swipe: SwipeabilityController
 
 	private reconciledOpen = false
+	private pressedOnBackdrop = false
 
 	constructor(protected override readonly host: SheetControllerHost, protected readonly options: SheetControllerOptions = {}) {
 		super(host)
@@ -73,6 +74,7 @@ export class SheetController extends Controller implements EventListenerObject {
 		switch (event.type) {
 			case 'cancel': return this.handleCancel(event)
 			case 'close': return this.handleClose()
+			case 'pointerdown': return this.handlePointerDown(event)
 			case 'click': return this.handleClick(event)
 		}
 	}
@@ -112,6 +114,7 @@ export class SheetController extends Controller implements EventListenerObject {
 		if (this.host.open) {
 			const shown = dialog.open
 			if (!shown) {
+				this.pressedOnBackdrop = false
 				dialog.showModal()
 			}
 			this.motion.enter()
@@ -143,10 +146,15 @@ export class SheetController extends Controller implements EventListenerObject {
 		}
 	}
 
+	private handlePointerDown(event: Event) {
+		this.pressedOnBackdrop = event.composedPath()[0] === this.dialog.value
+	}
+
 	private handleClick(event: Event) {
 		if (event.currentTarget === this.handle.value) {
 			this.requestClose('handle')
-		} else if (event.composedPath()[0] === this.dialog.value) {
+		} else if (event.composedPath()[0] === this.dialog.value && this.pressedOnBackdrop) {
+			// Its press must have begun there: a touch's click can follow the frame that opened the sheet, and a press dragged out of the panel clicks the dialog.
 			this.requestClose('backdrop')
 		}
 	}
