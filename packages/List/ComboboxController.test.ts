@@ -1,6 +1,7 @@
-import { Component, component, html, state } from '@a11d/lit'
+import { Component, component, ElementRef, html, state } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { ComboboxController } from './ComboboxController.js'
+import { IndexabilityController, type IndexabilityItemOptions } from '@3mo/indexability'
+import { ComboboxController, type ComboboxPopup } from './ComboboxController.js'
 import { userEvent } from 'vitest/browser'
 
 const cities = ['Amsterdam', 'Berlin', 'Cairo']
@@ -333,5 +334,122 @@ describe('ComboboxController', () => {
 			await configure({ filter: 'a' })
 			expect(activeName()).toBeUndefined()
 		})
+	})
+})
+
+/** A combobox over a popup it is given instead of its own listbox: a tree, standing in as a stub that records the cursor. */
+@component('combobox-popup-test')
+class ComboboxPopupTest extends Component {
+	@state() open = false
+	selected = false
+
+	readonly popup = {
+		element: new ElementRef<HTMLElement>(),
+		indexability: new IndexabilityController<string, IndexabilityItemOptions<string> & { readonly data: string }>(this),
+		goTo: vi.fn(),
+		goFirst: vi.fn(),
+		goLast: vi.fn(),
+		goToSelection: vi.fn(() => this.selected),
+	} satisfies ComboboxPopup<string>
+
+	readonly combobox = new ComboboxController<string, ComboboxPopupTest>(this, host => ({
+		get expanded() { return host.open },
+		handleExpandedChange: open => host.open = open,
+		popup: host.popup,
+	}))
+
+	get button() { return this.renderRoot.querySelector('button')! }
+	get popupElement() { return this.renderRoot.querySelector<HTMLElement>('[role=tree]')! }
+	item(name: string) { return this.renderRoot.querySelector<HTMLElement>(`[data-name=${name}]`)! }
+
+	protected override get template() {
+		return html`
+			<button ${this.combobox.input.ref()}>City</button>
+			<div role='tree' ?hidden=${!this.open} ${this.popup.element.ref()}>
+				${cities.map((city, index) => html`
+					<div role='treeitem' data-name=${city} ${this.popup.indexability.item({ index, data: city })}><span part='indicator'></span>${city}</div>
+				`)}
+			</div>
+		`
+	}
+}
+
+ComboboxPopupTest
+
+/** A listbox whose input says itself what pops up, and whose options carry an indicator of their own. */
+@component('combobox-own-popup-test')
+class ComboboxOwnPopupTest extends Component {
+	@state() open = true
+
+	readonly combobox = new ComboboxController<string, ComboboxOwnPopupTest>(this, host => ({
+		get expanded() { return host.open },
+		handleExpandedChange: open => host.open = open,
+	}))
+
+	get input() { return this.renderRoot.querySelector('input')! }
+	get indicator() { return this.renderRoot.querySelector<HTMLElement>('[part=indicator]')! }
+
+	protected override get template() {
+		return html`
+			<input aria-haspopup='dialog' ${this.combobox.input.ref()}>
+			<div ?hidden=${!this.open} ${this.combobox.listbox.ref()}>
+				${cities.map((city, index) => html`<div ${this.combobox.option({ index, data: city })}><span part='indicator'></span>${city}</div>`)}
+			</div>
+		`
+	}
+}
+
+ComboboxOwnPopupTest
+
+describe('ComboboxController with its own listbox, as before popups', () => {
+	const fixture = new ComponentTestFixture<ComboboxOwnPopupTest>(html`<combobox-own-popup-test></combobox-own-popup-test>`)
+
+	it('should leave an aria-haspopup it did not write', () => {
+		expect(fixture.component.input.getAttribute('aria-haspopup')).toBe('dialog')
+	})
+
+	it('should take a press on an option’s indicator as a choice, as only a tree item’s indicator opens it', async () => {
+		fixture.component.indicator.dispatchEvent(new MouseEvent('click', { bubbles: true, composed: true }))
+		await fixture.updateComplete
+		expect(fixture.component.open).toBe(false)
+	})
+})
+
+describe('ComboboxController with a popup of its own', () => {
+	const fixture = new ComponentTestFixture<ComboboxPopupTest>(html`<combobox-popup-test></combobox-popup-test>`)
+
+	const press = (key: string) => fixture.component.button.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, composed: true, cancelable: true }))
+	const open = async () => {
+		fixture.component.open = true
+		await fixture.updateComplete
+		await vi.waitFor(() => expect(fixture.component.popup.goToSelection).toHaveBeenCalled())
+	}
+
+	it('should control the popup it is given and say which kind it is', () => {
+		expect(fixture.component.button.ariaControlsElements).toEqual([fixture.component.popupElement])
+		expect(fixture.component.button.getAttribute('aria-haspopup')).toBe('tree')
+	})
+
+	it('should open on the selection of the popup, else on its first item', async () => {
+		press('ArrowDown')
+		await fixture.updateComplete
+		await vi.waitFor(() => expect(fixture.component.popup.goFirst).toHaveBeenCalled())
+		expect(fixture.component.popup.goToSelection).toHaveBeenCalled()
+
+		press('Escape')
+		await fixture.updateComplete
+		expect(fixture.component.popup.goTo).toHaveBeenLastCalledWith(undefined)
+	})
+
+	it('should close on a choice, but not on the indicator that opens an item', async () => {
+		await open()
+
+		fixture.component.item('Berlin').querySelector('[part=indicator]')!.dispatchEvent(new MouseEvent('click', { bubbles: true, composed: true }))
+		await fixture.updateComplete
+		expect(fixture.component.open).toBe(true)
+
+		fixture.component.item('Berlin').dispatchEvent(new MouseEvent('click', { bubbles: true, composed: true }))
+		await fixture.updateComplete
+		expect(fixture.component.open).toBe(false)
 	})
 })

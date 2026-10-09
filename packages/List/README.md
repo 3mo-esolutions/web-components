@@ -99,6 +99,9 @@ Focus stays in the input: the active option is named by `aria-activedescendant`,
 
 Name the input and the listbox, for example after a visible label.
 
+Another popup takes the listbox's place through `popup`: a tree's controller given the input as its `combobox`, for
+options nested under others. Its keys and roles are the tree's own.
+
 ## API
 
 ### `mo-list`

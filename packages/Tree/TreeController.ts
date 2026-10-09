@@ -1,4 +1,4 @@
-import { Controller, eventListener, type ReactiveControllerHost, type ReactiveElement } from '@a11d/lit'
+import { Controller, ElementRef, eventListener, type ReactiveControllerHost, type ReactiveElement } from '@a11d/lit'
 import { IndexabilityController, type IndexabilityItem, type IndexabilityItemOptions } from '@3mo/indexability'
 import { NavigabilityController } from '@3mo/navigability'
 import { ExpandabilityController, type ExpandabilityChange } from '@3mo/expandability'
@@ -18,6 +18,8 @@ export interface TreeControllerOptions<T extends HTMLElement> {
 	readonly handleExpandedChange?: (expanded: ReadonlyArray<T>) => void
 	/** Whether the row toggles a parent, not only its indicator. Defaults to `true`. */
 	readonly expandOnClick?: boolean
+	/** The element that keeps focus while the items are browsed, such as a combobox's input. The current item is then announced on it instead of receiving focus. */
+	readonly combobox?: HTMLElement
 }
 
 export interface TreeItemOptions<T> extends IndexabilityItemOptions<T> {
@@ -44,6 +46,9 @@ type TreeHost = ReactiveControllerHost & EventTarget
  *
  * A click on `part~=indicator` toggles without selecting; anything else selects. Hiding a closed item's
  * children is the host's.
+ *
+ * Given a `combobox`, it is a combobox's popup: focus stays in that input, the keys arrive there, and the tree (`tree`,
+ * else the host) is what the input controls.
  */
 export class TreeController<T extends HTMLElement, THost extends TreeHost = TreeHost> extends Controller {
 	protected readonly model: Hierarchy<T>
@@ -53,6 +58,12 @@ export class TreeController<T extends HTMLElement, THost extends TreeHost = Tree
 	readonly navigability: NavigabilityController<T, THost>
 
 	protected readonly options: TreeControllerOptions<T>
+
+	/** The tree itself, whose role the host gives it. Without it, the host is the tree. */
+	readonly tree = new ElementRef<HTMLElement>()
+
+	/** The tree, as the popup of a combobox. */
+	get element() { return this.tree }
 
 	private visibleCache?: {
 		readonly nodes: ReadonlyArray<HierarchyNode<T>>
@@ -93,6 +104,8 @@ export class TreeController<T extends HTMLElement, THost extends TreeHost = Tree
 
 		this.navigability = new NavigabilityController<T, THost>(host, {
 			get items() { return controller.visibleItems },
+			get focus() { return controller.options.combobox ? 'activedescendant' : 'roving' },
+			get keyboardTarget() { return controller.options.combobox ?? controller.tree.value ?? host },
 			isNavigable: item => !controller.isDisabled(item),
 			typeahead: true,
 			handleChange: change => controller.selectability.follow(change.item, change.event),
@@ -149,6 +162,32 @@ export class TreeController<T extends HTMLElement, THost extends TreeHost = Tree
 	/** The current item, or the first navigable one. */
 	get focusableElement(): T | undefined {
 		return this.navigability.current ?? this.visibleItems.find(item => !this.isDisabled(item))
+	}
+
+	/** Makes the item the current one, or leaves none current. */
+	goTo(item: T | undefined) {
+		if (item === undefined) {
+			this.navigability.clear()
+		} else {
+			this.navigability.goTo(item, { method: 'programmatic' })
+		}
+	}
+
+	goFirst() {
+		this.navigability.goFirst({ method: 'programmatic' })
+	}
+
+	goLast() {
+		this.navigability.goLast({ method: 'programmatic' })
+	}
+
+	/** Reveals the first selected item, inside closed parents too, and makes it the current one. Returns whether there was one. */
+	goToSelection() {
+		const selected = this.nodes.find(node => this.selectability.isSelected(node.data) && !this.isDisabled(node.data))?.data
+		if (selected !== undefined) {
+			void this.reveal(selected)
+		}
+		return selected !== undefined
 	}
 
 	/** Opens the item's ancestors and puts the cursor on it. */
@@ -226,6 +265,14 @@ export class TreeController<T extends HTMLElement, THost extends TreeHost = Tree
 		this.selectability.select(node.data, { event })
 		if ((this.options.expandOnClick ?? true) && node.hasChildren) {
 			this.expandability.toggle(node.data)
+		}
+	}
+
+	/** A press on an item would otherwise take focus away from the combobox. */
+	@eventListener('mousedown')
+	protected handleMouseDown(event: MouseEvent) {
+		if (this.options.combobox && this.indexability.itemAt(event.composedPath())) {
+			event.preventDefault()
 		}
 	}
 

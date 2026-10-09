@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/tree",
-	"version": "0.1.4",
+	"version": "0.1.5",
 	"description": "Web components for ARIA tree views of nested items to browse, open and select, plus the controller for custom trees.",
 	"repository": {
 		"type": "git",

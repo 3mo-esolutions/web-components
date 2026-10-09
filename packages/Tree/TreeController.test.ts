@@ -337,3 +337,90 @@ describe('TreeController', () => {
 		})
 	})
 })
+
+/** The tree as a combobox's popup: a button keeps focus, which the arrows reach the tree through. */
+@component('tree-controller-combobox-test')
+class TreeControllerComboboxTest extends Component {
+	roots = TreeControllerTest.build(folders())
+	selection: ReadonlyArray<HTMLElement> = []
+
+	readonly controller = new TreeController<HTMLElement, TreeControllerComboboxTest>(this, host => ({
+		get items() { return host.roots },
+		children: item => [...item.querySelectorAll<HTMLElement>(':scope > .children > .item')],
+		selectability: Selectability.Single,
+		get selection() { return host.selection },
+		get combobox() { return host.button },
+	}))
+
+	get button() { return this.renderRoot.querySelector('button') ?? undefined }
+	get popup() { return this.renderRoot.querySelector<HTMLElement>('[role=tree]')! }
+	item(name: string) { return this.controller.nodes.find(node => node.data.dataset.name === name)!.data }
+
+	protected override get template() {
+		return html`
+			<button>Folder</button>
+			<div role='tree' ${this.controller.tree.ref()}>${this.roots}</div>
+		`
+	}
+
+	protected override updated() {
+		for (const node of this.controller.nodes) {
+			node.data.querySelector<HTMLElement>(':scope > .children')?.toggleAttribute('hidden', !this.controller.expandability.isExpanded(node.data))
+		}
+	}
+}
+
+describe('TreeController as a combobox popup', () => {
+	const fixture = new ComponentTestFixture<TreeControllerComboboxTest>(html`<tree-controller-combobox-test></tree-controller-combobox-test>`)
+
+	const tree = () => fixture.component.controller
+	const item = (name: string) => fixture.component.item(name)
+	const button = () => fixture.component.button!
+
+	it('should be the popup a combobox controls, through its tree part', () => {
+		expect(tree().element.value).toBe(fixture.component.popup)
+	})
+
+	it('should take the arrows from the combobox and name the current item there, keeping focus', async () => {
+		button().focus()
+		tree().goFirst()
+		await fixture.updateComplete
+
+		keyDown(button(), 'ArrowRight')
+		await fixture.updateComplete
+		keyDown(button(), 'ArrowDown')
+		await fixture.updateComplete
+
+		expect(tree().expandability.isExpanded(item('Documents'))).toBe(true)
+		expect(tree().navigability.current).toBe(item('Taxes'))
+		expect(button().ariaActiveDescendantElement).toBe(item('Taxes'))
+		expect(document.activeElement).not.toBe(item('Taxes'))
+		expect(fixture.component.shadowRoot?.activeElement ?? document.activeElement).toBe(button())
+	})
+
+	it('should keep focus in the combobox when an item is pressed', () => {
+		const event = new MouseEvent('mousedown', { bubbles: true, composed: true, cancelable: true })
+		item('Music').dispatchEvent(event)
+
+		expect(event.defaultPrevented).toBe(true)
+	})
+
+	it('should reveal the selected item inside closed parents and make it current', async () => {
+		await tree().expandability.expand(item('Documents'))
+		await tree().expandability.expand(item('Taxes'))
+		fixture.component.selection = [item('2025')]
+		tree().expandability.collapse(item('Documents'))
+		tree().expandability.collapse(item('Taxes'))
+		await fixture.updateComplete
+
+		expect(tree().goToSelection()).toBe(true)
+		await vi.waitFor(() => expect(tree().navigability.current).toBe(item('2025')))
+
+		expect(tree().expandability.isExpanded(item('Documents'))).toBe(true)
+		expect(tree().expandability.isExpanded(item('Taxes'))).toBe(true)
+	})
+
+	it('should answer that there is no selection to go to', () => {
+		expect(tree().goToSelection()).toBe(false)
+	})
+})

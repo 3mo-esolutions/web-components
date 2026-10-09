@@ -67,6 +67,9 @@ export class ListboxController<T, THost extends ReactiveElement = ReactiveElemen
 		updated: () => this.stampListbox(),
 	})
 
+	/** The listbox, as the popup of a combobox. */
+	get element() { return this.listbox }
+
 	readonly indexability = new IndexabilityController<T, SelectabilityItemOptions<T>>(this.host)
 
 	protected readonly options: ListboxControllerOptions<T>
