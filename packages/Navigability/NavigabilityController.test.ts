@@ -19,11 +19,15 @@ class NavigabilityTest extends Component {
 	handleKeyDown?: (event: KeyboardEvent, item: Fruit | undefined) => boolean | void
 
 	readonly changes = new Array<NavigabilityChange<Fruit>>()
+	navigableChecks = 0
 
 	readonly controller = new NavigabilityController<Fruit, NavigabilityTest>(this, host => ({
 		get items() { return host.items },
 		key: fruit => fruit.id,
-		isNavigable: fruit => !fruit.disabled,
+		isNavigable: fruit => {
+			host.navigableChecks++
+			return !fruit.disabled
+		},
 		get focus() { return host.navigabilityFocus },
 		get wrap() { return host.wrap },
 		get typeahead() { return host.typeahead },
@@ -410,6 +414,17 @@ describe('NavigabilityController', () => {
 			keyDown(input, 'ArrowDown')
 
 			expect(input.ariaActiveDescendantElement).toBe(fixture.component.elements[1]!)
+		})
+
+		it('should not look for the first navigable item while registering items in that strategy, where none takes the tab order', async () => {
+			await announceOnListbox()
+			fixture.component.navigableChecks = 0
+
+			fixture.component.items = Array.from({ length: 50 }, (_, index): Fruit => ({ id: index + 100, name: `Fruit ${index}`, disabled: true }))
+			await fixture.updateComplete
+
+			expect(fixture.component.elements.length).toBe(50)
+			expect(fixture.component.navigableChecks).toBe(0)
 		})
 
 		it('should withdraw the announcement once the cursor is cleared', async () => {

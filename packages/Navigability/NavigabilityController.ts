@@ -601,7 +601,7 @@ export class NavigabilityController<T, THost extends NavigabilityHost = Navigabi
 		if (!this.stamping) {
 			return
 		}
-		const firstNavigable = this._index === -1 ? this.closestNavigable(0, 1, false) : -1
+		const firstNavigable = this.firstNavigable
 		for (const item of this.registered.values()) {
 			this.stampItem(item, firstNavigable)
 		}
@@ -624,7 +624,12 @@ export class NavigabilityController<T, THost extends NavigabilityHost = Navigabi
 			|| (target instanceof HTMLElement && target.isContentEditable)
 	}
 
-	private stampItem({ element, options }: IndexabilityItem<T>, firstNavigable = this._index === -1 ? this.closestNavigable(0, 1, false) : -1) {
+	/** The item a roving list keeps in the tab order while none is current. Only that strategy reads it, and finding it may visit every item, for each one registered. */
+	private get firstNavigable() {
+		return this.focusStrategy === 'roving' && this._index === -1 ? this.closestNavigable(0, 1, false) : -1
+	}
+
+	private stampItem({ element, options }: IndexabilityItem<T>, firstNavigable = this.firstNavigable) {
 		if (!this.stamping) {
 			return
 		}
