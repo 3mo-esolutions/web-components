@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/navigability",
-	"version": "0.1.5",
+	"version": "0.2.0",
 	"description": "A Lit controller for the current item of a composite widget, moved by arrow keys, Home, End, paging and typeahead.",
 	"repository": {
 		"type": "git",

@@ -277,6 +277,11 @@ export class TreeController<T extends HTMLElement, THost extends TreeHost = Tree
 	}
 
 	private handleKeyDown(event: KeyboardEvent, item: T | undefined): boolean {
+		// A combobox's text field keeps the keys it types and edits with, Right and Left moving its caret.
+		if (this.navigability.editing && event.key !== 'Enter') {
+			return false
+		}
+
 		const rtl = this.host instanceof Element && getComputedStyle(this.host).direction === 'rtl'
 		const right = rtl ? 'ArrowLeft' : 'ArrowRight'
 		const left = rtl ? 'ArrowRight' : 'ArrowLeft'

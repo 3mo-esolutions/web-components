@@ -124,6 +124,9 @@ export class NavigabilityController<T, THost extends NavigabilityHost = Navigabi
 	private get stamping() { return this.options.stamping ?? true }
 	private get keyboardTarget() { return this.options.keyboardTarget === undefined ? this.host : this.options.keyboardTarget ?? undefined }
 
+	/** Whether the keys arrive in a field that takes typing, which keeps its caret keys and letters. */
+	get editing() { return NavigabilityController.isTextField(this.keyboardTarget) }
+
 	override hostConnected() {
 		if (!this.options || this.listening) {
 			return
@@ -223,7 +226,7 @@ export class NavigabilityController<T, THost extends NavigabilityHost = Navigabi
 		if (event.ctrlKey || event.metaKey || event.altKey) {
 			return false
 		}
-		const editing = NavigabilityController.isTextField(this.keyboardTarget)
+		const editing = this.editing
 		if (editing && (event.key === 'Home' || event.key === 'End')) {
 			return false
 		}

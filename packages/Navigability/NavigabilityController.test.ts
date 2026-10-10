@@ -282,6 +282,30 @@ describe('NavigabilityController', () => {
 			expect(controller().index).toBe(2)
 		})
 
+		it('should tell whether the keys arrive in a field that takes typing', () => {
+			expect(controller().editing).toBe(false)
+
+			const target = (element: HTMLElement) => {
+				fixture.component.keyboardTarget = fixture.component.shadowRoot!.appendChild(element)
+				return controller().editing
+			}
+			const input = (configure: (input: HTMLInputElement) => void) => {
+				const element = document.createElement('input')
+				configure(element)
+				return element
+			}
+			const editable = document.createElement('div')
+			editable.contentEditable = 'true'
+
+			expect(target(input(() => {}))).toBe(true)
+			expect(target(input(element => element.type = 'search'))).toBe(true)
+			expect(target(document.createElement('textarea'))).toBe(true)
+			expect(target(editable)).toBe(true)
+			expect(target(input(element => element.readOnly = true))).toBe(false)
+			expect(target(input(element => element.type = 'checkbox'))).toBe(false)
+			expect(target(document.createElement('button'))).toBe(false)
+		})
+
 		it('should ignore keys while disabled by a prior default prevention', () => {
 			const event = new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true, cancelable: true })
 			event.preventDefault()

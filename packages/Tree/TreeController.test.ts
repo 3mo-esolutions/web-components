@@ -1,4 +1,4 @@
-import { component, Component, html } from '@a11d/lit'
+import { component, Component, html, property } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { Selectability } from '@3mo/selectability'
 import { TreeController } from './TreeController.js'
@@ -338,27 +338,30 @@ describe('TreeController', () => {
 	})
 })
 
-/** The tree as a combobox's popup: a button keeps focus, which the arrows reach the tree through. */
+/** The tree as a combobox's popup: a button, or with `editable` a text field, keeps focus, which the arrows reach the tree through. */
 @component('tree-controller-combobox-test')
 class TreeControllerComboboxTest extends Component {
+	@property({ type: Boolean }) editable = false
+	@property() selectability = Selectability.Single
+
 	roots = TreeControllerTest.build(folders())
 	selection: ReadonlyArray<HTMLElement> = []
 
 	readonly controller = new TreeController<HTMLElement, TreeControllerComboboxTest>(this, host => ({
 		get items() { return host.roots },
 		children: item => [...item.querySelectorAll<HTMLElement>(':scope > .children > .item')],
-		selectability: Selectability.Single,
+		get selectability() { return host.selectability },
 		get selection() { return host.selection },
-		get combobox() { return host.button },
+		get combobox() { return host.field },
 	}))
 
-	get button() { return this.renderRoot.querySelector('button') ?? undefined }
+	get field() { return this.renderRoot.querySelector<HTMLElement>('button, input') ?? undefined }
 	get popup() { return this.renderRoot.querySelector<HTMLElement>('[role=tree]')! }
 	item(name: string) { return this.controller.nodes.find(node => node.data.dataset.name === name)!.data }
 
 	protected override get template() {
 		return html`
-			<button>Folder</button>
+			${this.editable ? html`<input aria-label='Folder'>` : html`<button>Folder</button>`}
 			<div role='tree' ${this.controller.tree.ref()}>${this.roots}</div>
 		`
 	}
@@ -375,27 +378,27 @@ describe('TreeController as a combobox popup', () => {
 
 	const tree = () => fixture.component.controller
 	const item = (name: string) => fixture.component.item(name)
-	const button = () => fixture.component.button!
+	const field = () => fixture.component.field!
 
 	it('should be the popup a combobox controls, through its tree part', () => {
 		expect(tree().element.value).toBe(fixture.component.popup)
 	})
 
 	it('should take the arrows from the combobox and name the current item there, keeping focus', async () => {
-		button().focus()
+		field().focus()
 		tree().goFirst()
 		await fixture.updateComplete
 
-		keyDown(button(), 'ArrowRight')
+		keyDown(field(), 'ArrowRight')
 		await fixture.updateComplete
-		keyDown(button(), 'ArrowDown')
+		keyDown(field(), 'ArrowDown')
 		await fixture.updateComplete
 
 		expect(tree().expandability.isExpanded(item('Documents'))).toBe(true)
 		expect(tree().navigability.current).toBe(item('Taxes'))
-		expect(button().ariaActiveDescendantElement).toBe(item('Taxes'))
+		expect(field().ariaActiveDescendantElement).toBe(item('Taxes'))
 		expect(document.activeElement).not.toBe(item('Taxes'))
-		expect(fixture.component.shadowRoot?.activeElement ?? document.activeElement).toBe(button())
+		expect(fixture.component.shadowRoot?.activeElement ?? document.activeElement).toBe(field())
 	})
 
 	it('should keep focus in the combobox when an item is pressed', () => {
@@ -422,5 +425,39 @@ describe('TreeController as a combobox popup', () => {
 
 	it('should answer that there is no selection to go to', () => {
 		expect(tree().goToSelection()).toBe(false)
+	})
+})
+
+describe('TreeController as the popup of a text field', () => {
+	const fixture = new ComponentTestFixture<TreeControllerComboboxTest>(html`<tree-controller-combobox-test editable selectability='multiple'></tree-controller-combobox-test>`)
+
+	const tree = () => fixture.component.controller
+	const item = (name: string) => fixture.component.item(name)
+	const field = () => fixture.component.field!
+
+	beforeEach(async () => {
+		field().focus()
+		tree().goFirst()
+		await fixture.updateComplete
+	})
+
+	it('should leave the keys the field types and edits with to it', () => {
+		for (const init of [{ key: 'ArrowRight' }, { key: 'ArrowLeft' }, { key: ' ' }, { key: '*' }, { key: 'a', ctrlKey: true }]) {
+			expect(keyDown(field(), init.key, init).defaultPrevented).toBe(false)
+		}
+
+		expect(tree().expandability.expanded).toEqual([])
+		expect(tree().navigability.current).toBe(item('Documents'))
+	})
+
+	it('should still walk the items with the vertical arrows and click the current one with Enter', () => {
+		const clicked = new Array<EventTarget>()
+		fixture.component.addEventListener('click', event => clicked.push(event.composedPath()[0]!))
+
+		expect(keyDown(field(), 'ArrowDown').defaultPrevented).toBe(true)
+		expect(tree().navigability.current).toBe(item('Pictures'))
+
+		expect(keyDown(field(), 'Enter').defaultPrevented).toBe(true)
+		expect(clicked).toEqual([item('Pictures')])
 	})
 })
