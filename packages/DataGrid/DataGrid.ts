@@ -524,10 +524,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	protected override firstUpdated(props: PropertyValues) {
 		super.firstUpdated(props)
-		this.cellEdit.subscribe(() => {
-			this.controller.records.invalidate()
-			this.requestUpdate()
-		})
+		this.cellEdit.subscribe(() => this.requestUpdate())
 		this.setPage(1)
 	}
 

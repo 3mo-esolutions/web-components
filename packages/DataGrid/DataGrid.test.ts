@@ -119,6 +119,47 @@ describe('DataGrid', () => {
 			expect(fixture.component.dataRecords[0]?.subDataRecords?.map(r => r.data.name)).toEqual(['Joe', 'Jane'])
 		})
 
+		describe('when the data is mutated in place', () => {
+			const fixture = new ComponentTestFixture<TestDataGrid>(html`<test-data-grid></test-data-grid>`)
+			const added: Person = { id: 4, name: 'Jill', birthDate: new DateTime(2000, 0, 0), balance: 10 }
+			const renderedNames = () => fixture.component.rows.map(row => row.data.name)
+
+			it('should render data pushed into the array once the grid updates for whatever reason', async () => {
+				fixture.component.data.push(added)
+				fixture.component.selectability = DataGridSelectability.Multiple
+				await fixture.updateComplete
+
+				expect(renderedNames()).toEqual(['John', 'Jane', 'Joe', 'Jill'])
+			})
+
+			it('should render data spliced out of the array once the grid updates for whatever reason', async () => {
+				fixture.component.data.splice(1, 1)
+				fixture.component.selectability = DataGridSelectability.Multiple
+				await fixture.updateComplete
+
+				expect(renderedNames()).toEqual(['John', 'Joe'])
+			})
+
+			it('should render data replaced within the array once the grid is asked to update', async () => {
+				fixture.component.data[0] = added
+				fixture.component.requestUpdate()
+				await fixture.updateComplete
+
+				expect(renderedNames()).toEqual(['Jill', 'Jane', 'Joe'])
+			})
+
+			it('should keep the records while only the selection changes', async () => {
+				fixture.component.selectability = DataGridSelectability.Multiple
+				await fixture.updateComplete
+				const records = fixture.component.dataRecords
+
+				fixture.component.select([fixture.component.data[0]!])
+				await fixture.updateComplete
+
+				expect(fixture.component.dataRecords).toBe(records)
+			})
+		})
+
 		describe('setData', () => {
 			const replacementData = () => [{ id: 9, name: 'Jack', birthDate: new DateTime(2000, 0, 0), balance: 1 }]
 

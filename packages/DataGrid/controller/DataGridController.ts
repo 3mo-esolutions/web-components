@@ -289,8 +289,8 @@ export class DataGridController<TData, THost extends ReactiveElement = ReactiveE
 	}
 
 	/*
-	 * Row elements re-render with the host, which consumers who change data in place and call `requestUpdate`
-	 * rely on, unless only the selection, the details or the cursor changed: those re-render only the rows they changed.
+	 * Records are derived again and row elements re-render with the host, which consumers who change data in place rely on,
+	 * unless only the selection, the details or the cursor changed: those re-render only the rows they changed.
 	 */
 	private refreshRequested = true
 	private stampedRequest = false
@@ -314,6 +314,9 @@ export class DataGridController<TData, THost extends ReactiveElement = ReactiveE
 	override hostUpdate() {
 		this.refreshesRows = this.refreshRequested
 		this.refreshRequested = false
+		if (this.refreshesRows) {
+			this.records.invalidate()
+		}
 	}
 
 	override hostUpdated() {
