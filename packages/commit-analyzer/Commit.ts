@@ -3,7 +3,7 @@ import { Trailer } from './Trailer.ts'
 
 export class Commit {
 	static readonly regex = /commit (?<hash>\w+)(?:\s\((?<branch>.+)\))?[\s\S]+?Author: (?<authorName>.+?) <(?<authorEmail>.+?)>[\s\S]+?Date:\s*(?<date>.+?)\n\n\s*(?<body>[\s\S]+)/
-	static readonly changeSetsSplitRegex = /(?=\n(?=\w+(?:\(\w+\))?(!?):\s))/
+	static readonly changeSetsSplitRegex = /(?=\n\w+(?:\([\w-]+\))?!?:\s)/
 
 	/**
 	 * Parses the commit message output from format

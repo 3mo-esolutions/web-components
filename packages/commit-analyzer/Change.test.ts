@@ -53,6 +53,16 @@ describe('Change', () => {
 		}))
 	})
 
+	it('should parse conventional changes with a hyphenated scope', () => {
+		expect(Change.parse('feat(commit-analyzer): This is a conventional change')).toEqual(new Change({
+			type: 'feat',
+			scope: 'commit-analyzer',
+			heading: 'This is a conventional change',
+			description: undefined,
+			isBreaking: false,
+		}))
+	})
+
 	it('should parse conventional changes with breaking change marker', () => {
 		expect(Change.parse('feat!: This is a breaking change')).toEqual(new Change({
 			type: 'feat',

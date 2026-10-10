@@ -127,4 +127,24 @@ Date:   Wed Apr 3 21:07:48 2024 +0200
 		expect(commit.changes.length).toBe(1)
 		expect(commit.changes[0]!.description).toBe('Do note that: it has to be enabled in the settings')
 	})
+
+	it('should split changes before a breaking or hyphen-scoped change without leaving fragments', () => {
+		const commit = Commit.parse(`
+commit c2b80b96119829801c5b0de375f8155f46389c4c
+Author: a11delavar <a11delavar@outlook.com>
+Date:   Wed Apr 3 21:07:48 2024 +0200
+
+    feat: New feature
+
+    fix!: Breaking fix
+
+    perf(commit-analyzer): Faster parsing
+	`)
+
+		expect(commit.changes.map(change => [change.type, change.scope, change.heading, change.isBreaking])).toEqual([
+			['feat', undefined, 'New feature', false],
+			['fix', undefined, 'Breaking fix', true],
+			['perf', 'commit-analyzer', 'Faster parsing', false],
+		])
+	})
 })

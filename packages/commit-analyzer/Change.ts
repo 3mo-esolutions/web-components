@@ -6,7 +6,7 @@ export type ChangeType = 'feat' | 'fix' | 'chore' | 'docs' | 'style' | 'refactor
 export class Change {
 	private static readonly order: Array<ChangeType> = ['feat', 'fix', 'chore', 'refactor', 'test', 'docs', 'perf', 'style', 'build', 'ci', 'revert', 'release']
 
-	private static readonly conventionalFormatRegex = /(?<type>\w+)(\((?<scope>\w+)\))?(?<isBreakingMarker>!?):\s(?<heading>.+)(\n+(?<description>(.|\n)+))?/
+	private static readonly conventionalFormatRegex = /(?<type>\w+)(\((?<scope>[\w-]+)\))?(?<isBreakingMarker>!?):\s(?<heading>.+)(\n+(?<description>(.|\n)+))?/
 	private static readonly referenceRegex = /(?:#(?<github>\d+)|(?<jira>[A-Z]+-\d+))/g
 
 	/** Parses the change from a commit message */
