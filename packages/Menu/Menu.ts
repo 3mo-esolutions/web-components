@@ -125,6 +125,13 @@ export class Menu extends Component {
 				border-radius: var(--mo-toolbar-border-radius, var(--mo-border-radius));
 				background: color-mix(in srgb, var(--mo-color-surface), var(--mo-color-gray) 8%);
 				border-radius: var(--mo-border-radius);
+				/* Keeps a cramped position area overflowing so the inline flip is chosen instead of squishing the menu: */
+				min-width: max-content;
+				/* Scrolls a menu taller than its position area instead of running past the viewport: */
+				max-height: 100%;
+				overflow-y: auto;
+				scrollbar-width: thin;
+				scrollbar-color: var(--mo-scroller-thumb-color, rgba(128, 128, 128, 0.75)) var(--mo-scroller-track-color, transparent);
 			}
 
 			[part=list] {

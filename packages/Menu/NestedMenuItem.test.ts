@@ -1,5 +1,6 @@
 import { html } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
+import { userEvent } from 'vitest/browser'
 import './index.js'
 // eslint-disable-next-line no-duplicate-imports
 import type { NestedMenuItem, Menu } from './index.js'
@@ -33,5 +34,40 @@ describe('NestedMenuItem', () => {
 		expect(rootMenu.items.length).toBe(3)
 		expect(firstSubMenu.items.length).toBe(3)
 		expect(secondSubMenu.items.length).toBe(2)
+	})
+
+	describe('Submenu', () => {
+		describe('with more items than fit in the viewport', () => {
+			const fixture = new ComponentTestFixture(html`
+				<div>
+					<button>Anchor</button>
+					<mo-menu>
+						<mo-nested-menu-item>
+							Item
+							${[...new Array(60).keys()].map(index => html`<mo-menu-item slot='submenu'>Item ${index}</mo-menu-item>`)}
+						</mo-nested-menu-item>
+					</mo-menu>
+				</div>
+			`)
+
+			const getPopover = (menu: Menu) => menu.renderRoot.querySelector('mo-popover')!
+
+			it('should scroll within the viewport instead of running past it', async () => {
+				const menu = fixture.component.querySelector('mo-menu')!
+				const item = menu.querySelector<NestedMenuItem>('mo-nested-menu-item')!
+				menu.anchor = fixture.component.querySelector('button')!
+				menu.open = true
+				await expect.poll(() => getPopover(menu).matches(':popover-open')).toBe(true)
+
+				await userEvent.click(item)
+				const popover = getPopover(item.subMenu)
+				await expect.poll(() => popover.getBoundingClientRect().height).toBeGreaterThan(0)
+
+				const rect = popover.getBoundingClientRect()
+				expect(rect.top).toBeGreaterThanOrEqual(0)
+				expect(rect.bottom).toBeLessThanOrEqual(innerHeight)
+				expect(popover.scrollHeight).toBeGreaterThan(popover.clientHeight)
+			})
+		})
 	})
 })
