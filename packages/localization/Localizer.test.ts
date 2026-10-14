@@ -7,7 +7,20 @@ describe('Localizer', () => {
 		let originalEntry: string | null
 		let originalSearch: string
 
-		const mockPreferences = (...languages: Array<string>) => Object.defineProperty(navigator, 'languages', { get: () => languages, configurable: true })
+		// The locale is kept until one of its inputs announces a change, so each change here is announced as the browser would.
+		/** Stores a selection as another tab does, which the storage event announces. */
+		const store = (tag: string | undefined) => {
+			tag === undefined ? localStorage.removeItem(storageKey) : localStorage.setItem(storageKey, JSON.stringify(tag))
+			window.dispatchEvent(new StorageEvent('storage', { key: storageKey }))
+		}
+		const mockPreferences = (...languages: Array<string>) => {
+			Object.defineProperty(navigator, 'languages', { get: () => languages, configurable: true })
+			window.dispatchEvent(new Event('languagechange'))
+		}
+		const navigate = (search: string) => {
+			history.replaceState(null, '', `${window.location.pathname}${search}${window.location.hash}`)
+			window.dispatchEvent(new PopStateEvent('popstate'))
+		}
 
 		beforeEach(() => {
 			originalEntry = localStorage.getItem(storageKey)
@@ -20,23 +33,26 @@ describe('Localizer', () => {
 			} else {
 				localStorage.setItem(storageKey, originalEntry)
 			}
-			history.replaceState(null, '', `${window.location.pathname}${originalSearch}${window.location.hash}`)
+			window.dispatchEvent(new StorageEvent('storage', { key: storageKey }))
+			navigate(originalSearch)
 			delete (navigator as any).languages
+			window.dispatchEvent(new Event('languagechange'))
 			Localizer.locales.change.dispatch(Localizer.locales.current)
 		})
 
 		it('should prefer the lang URL parameter over storage and the browser', () => {
-			localStorage.setItem(storageKey, JSON.stringify('fr'))
-			history.replaceState(null, '', `${window.location.pathname}?lang=de`)
+			store('fr')
+			expect(Localizer.locales.current.language).toBe('fr')
+			navigate('?lang=de')
 
 			expect(Localizer.locales.current.language).toBe('de')
 		})
 
 		it('should fall back from storage to the browser\'s first language to "en"', () => {
-			localStorage.setItem(storageKey, JSON.stringify('fr'))
+			store('fr')
 			expect(Localizer.locales.current.language).toBe('fr')
 
-			localStorage.removeItem(storageKey)
+			store(undefined)
 			mockPreferences('pt-BR', 'en-US')
 			expect(Localizer.locales.current.baseName).toBe('pt-BR')
 
@@ -47,18 +63,18 @@ describe('Localizer', () => {
 		it('should adopt the region of the browser language matching a selection without one', () => {
 			mockPreferences('en-US', 'de-CH')
 
-			localStorage.setItem(storageKey, JSON.stringify('de'))
+			store('de')
 			expect(Localizer.locales.current.baseName).toBe('de-CH')
 
-			localStorage.setItem(storageKey, JSON.stringify('fr'))
+			store('fr')
 			expect(Localizer.locales.current.baseName).toBe('fr')
 
-			localStorage.setItem(storageKey, JSON.stringify('de-AT'))
+			store('de-AT')
 			expect(Localizer.locales.current.baseName).toBe('de-AT')
 		})
 
 		it('should resolve a tag which is not a locale to "en"', () => {
-			localStorage.setItem(storageKey, JSON.stringify('not a tag'))
+			store('not a tag')
 
 			expect(Localizer.locales.current.language).toBe('en')
 		})
@@ -78,6 +94,33 @@ describe('Localizer', () => {
 			} finally {
 				Localizer.locales.change.unsubscribe(handler)
 			}
+		})
+
+		it('should keep the locale until one of its inputs announces a change, however often it is asked', async () => {
+			Localizer.locales.current
+			const getItem = vi.spyOn(Storage.prototype, 'getItem')
+			try {
+				for (let i = 0; i < 1000; i++) {
+					Localizer.locales.current
+				}
+				await new Promise(resolve => setTimeout(resolve))
+				Localizer.locales.current
+				expect(getItem).not.toHaveBeenCalled()
+
+				window.dispatchEvent(new Event('languagechange'))
+				Localizer.locales.current
+				Localizer.locales.current
+				expect(getItem).toHaveBeenCalledTimes(1)
+			} finally {
+				getItem.mockRestore()
+			}
+		})
+
+		it('should follow a selection another tab stores', () => {
+			Localizer.locales.current = 'de'
+			localStorage.setItem(storageKey, JSON.stringify('it'))
+			window.dispatchEvent(new StorageEvent('storage', { key: storageKey }))
+			expect(Localizer.locales.current.language).toBe('it')
 		})
 
 		it('should keep the deprecated languages API in step', () => {

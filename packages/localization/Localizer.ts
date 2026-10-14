@@ -1,30 +1,46 @@
 import './polyfills/Intl.Locale.js'
-import { PureEventDispatcher } from '@a11d/lit'
+import { PureEventDispatcher, isServer } from '@a11d/lit'
 import { LocalStorage } from '@a11d/local-storage'
 import { type LanguageCode, type Locale } from './LanguageCode.js'
 
 class Locales {
 	private readonly storage = new LocalStorage<string | undefined>('Localizer.Language', undefined)
-	private resolved?: { readonly tag: string, readonly locale: Intl.Locale }
+
+	/**
+	 * The locale in effect, kept until one of its inputs announces a change: views ask for it thousands of times a frame,
+	 * and working it out reads the URL, the storage and the browser's languages.
+	 */
+	private resolved?: Intl.Locale
 
 	/** Dispatched with the locale in effect after one is assigned. */
 	readonly change = new PureEventDispatcher<Intl.Locale>()
 
+	constructor() {
+		if (!isServer) {
+			window.addEventListener('storage', ({ key }) => (key === this.storage['name'] || key === null) && this.forget())
+			window.addEventListener('languagechange', () => this.forget())
+			window.addEventListener('popstate', () => this.forget())
+		}
+	}
+
 	/**
 	 * The locale the application runs in: the one selected through the `lang` URL parameter or assigned here,
 	 * otherwise the browser's. A selection that names no region adopts the one of the browser's matching language.
+	 * A change shows once announced: an assignment here, another tab's, the browser's languages, or a navigation through
+	 * the history (`history.pushState` and a write to the storage in this tab announce nothing).
 	 */
 	get current(): Intl.Locale {
-		const tag = this.tag
-		if (this.resolved?.tag !== tag) {
-			this.resolved = { tag, locale: Locales.resolve(tag) }
-		}
-		return this.resolved.locale
+		return this.resolved ??= Locales.resolve(this.tag)
 	}
 
 	set current(value: Locale) {
 		this.storage.value = String(new Intl.Locale(value))
+		this.forget()
 		this.change.dispatch(this.current)
+	}
+
+	private forget() {
+		this.resolved = undefined
 	}
 
 	private get tag() {
