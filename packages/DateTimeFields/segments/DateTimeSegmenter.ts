@@ -191,7 +191,7 @@ export class DateTimeSegmenter {
 			return type === 'dayPeriod' && this.direction === 'rtl' ? `\u200F${timePlaceholder}` : timePlaceholder
 		}
 		const word = this.labelOf(type)
-		return /^\p{Script=Latin}/u.test(word) ? word[0]!.toLocaleLowerCase(this.language).repeat(width) : word
+		return /^[\p{Script=Latin}\p{Script=Cyrillic}\p{Script=Greek}]/u.test(word) ? word[0]!.toLocaleLowerCase(this.language).repeat(width) : word
 	}
 
 	limits(date: DateTime, type: EditableDateTimeSegmentType): { min: number, max: number } {

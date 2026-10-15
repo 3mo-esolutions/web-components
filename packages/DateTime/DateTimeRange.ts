@@ -41,11 +41,13 @@ export class DateTimeRange {
 		if (DateTimeRange.untilDelimiters.has(key)) {
 			return DateTimeRange.untilDelimiters.get(key)
 		}
-		const parts = getDateTimeFormatter(key).formatRangeToParts(
-			new Date('2010-01-01T00:00:00.000Z'),
-			new Date('2020-01-01T00:00:00.000Z'),
-		)
-		const delimiter = parts.find(part => part.source === 'shared')?.value.trim()
+		const formatter = getDateTimeFormatter(key)
+		const start = new Date('2010-01-01T00:00:00.000Z')
+		const shared = formatter.formatRangeToParts(start, new Date('2020-01-01T00:00:00.000Z')).find(part => part.source === 'shared')?.value
+		// The shared part also carries what the language writes after a date, e.g. the " г." of Bulgarian "1.01.2010 г. – 1.01.2020 г.".
+		const lastPartOfStart = formatter.formatToParts(start).at(-1)
+		const suffix = lastPartOfStart?.type === 'literal' ? lastPartOfStart.value : ''
+		const delimiter = (suffix && shared?.startsWith(suffix) ? shared.slice(suffix.length) : shared)?.trim()
 		DateTimeRange.untilDelimiters.set(key, delimiter)
 		return delimiter
 	}

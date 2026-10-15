@@ -101,9 +101,11 @@ describe('DateTimeSegmenter', () => {
 	})
 
 	describe('placeholders', () => {
-		it('should derive letter placeholders from the unit names for Latin scripts', () => {
+		it('should derive letter placeholders from the unit names for alphabetic scripts', () => {
+			const bg = new DateTimeSegmenter({ precision: FieldDateTimePrecision.Day, language: 'bg', calendar: 'gregory', timeZone: 'UTC' })
 			expect(texts(de(FieldDateTimePrecision.Day), date, none)).toEqual(['tt', '.', 'mm', '.', 'jjjj'])
 			expect(texts(en(FieldDateTimePrecision.Day), date, none)).toEqual(['mm', '/', 'dd', '/', 'yyyy'])
+			expect(texts(bg, date, none)).toEqual(['дд', '.', 'мм', '.', 'гггг', ' г.'])
 		})
 
 		it('should use the whole unit name for other scripts', () => {

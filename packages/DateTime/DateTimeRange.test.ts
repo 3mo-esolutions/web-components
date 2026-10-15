@@ -91,6 +91,16 @@ describe('DateTimeRange', () => {
 		})
 	})
 
+	describe('static getUntilDelimiter()', () => {
+		it('should return the delimiter between the two ends of a range', () => {
+			expect(DateTimeRange.getUntilDelimiter('de')).toBe('–')
+		})
+
+		it('should leave out what the language writes after a date', () => {
+			expect(DateTimeRange.getUntilDelimiter('bg')).toBe('–')
+		})
+	})
+
 	describe('formatAsDateRange()', () => {
 		it('should return an empty string for an infinite range', () => {
 			const range = new DateTimeRange()
