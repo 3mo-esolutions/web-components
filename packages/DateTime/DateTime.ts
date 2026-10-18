@@ -45,9 +45,10 @@ export class DateTime extends Date {
 		return DateTime.getResolvedOptions(locale).calendar
 	}
 
-	@memoize({ hashFunction: byLocale })
+	// The zone is the device's whatever the locale and can change while the page is open, which the offset of now reveals cheaply.
+	@memoize({ hashFunction: () => new Date().getTimezoneOffset() })
 	static getTimeZone(locale: Locale = Localizer.locales.current) {
-		return DateTime.getResolvedOptions(locale).timeZone
+		return Intl.DateTimeFormat(locale).resolvedOptions().timeZone
 	}
 
 	@memoize({ hashFunction: byLocale })

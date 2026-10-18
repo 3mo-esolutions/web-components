@@ -1,9 +1,11 @@
+/// <reference types="@vitest/browser-playwright" />
 import { type LanguageCode, Localizer } from '@3mo/localization'
 import { DateTime } from './DateTime.js'
 import { DateTimeParser } from './parsers/index.js'
 import { expectDateTimesEquals } from './expectDateTimesEquals.test.js'
 import './index.js'
 import './translations/de.js'
+import { cdp, server } from 'vitest/browser'
 
 class SentinelParser extends DateTimeParser {
 	static readonly text = '@@sentinel-parser@@'
@@ -133,6 +135,23 @@ describe('DateTime', () => {
 
 			Localizer.languages.current = 'de'
 			expect(DateTime.getCalendar()).toBe('gregory')
+		})
+
+		it('should follow the device\'s time zone when it changes', async context => {
+			if (server.browser !== 'chromium') {
+				context.skip('Only Chromium changes the time zone of a running page')
+			}
+			const session = cdp()
+			try {
+				await session.send('Emulation.setTimezoneOverride', { timezoneId: 'Asia/Tehran' })
+				expect(new DateTime().timeZone).toBe('Asia/Tehran')
+
+				await session.send('Emulation.setTimezoneOverride', { timezoneId: 'America/New_York' })
+				expect(new DateTime().timeZone).toBe('America/New_York')
+				expect(DateTime.getTimeZone()).toBe('America/New_York')
+			} finally {
+				await session.send('Emulation.setTimezoneOverride', { timezoneId: '' })
+			}
 		})
 
 		it('should retain nothing per instance for the defaults it caches', () => {
