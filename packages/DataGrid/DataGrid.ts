@@ -33,6 +33,7 @@ import { DataGridPagination, type DataGridPaginationLike, type DataGridPaginatio
  * @attr selectionBehaviorOnDataChange - The behavior of the selection when the data changes.
  * @attr reorderability - Whether rows can be dragged into another order, which works while nothing is sorted and no row has details or sub rows.
  * @attr multipleDetails - Whether multiple details can be opened at the same time.
+ * @attr detailsOpen - Opens the details of rows as they arrive, until it is turned off. The user may still close them. Requires "multipleDetails".
  * @attr subDataGridDataSelector - The key path of the sub data grid data.
  * @attr hasDataDetail - Whether the data has a detail.
  * @attr detailsOnClick - Whether the details should be opened on click.
@@ -150,6 +151,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 	@property({ type: Object }) getRowDetailsTemplate?: (data: TData) => HTMLTemplateResult
 	@property({ type: Boolean }) multipleDetails = false
+	@property({ type: Boolean }) detailsOpen = false
 	@property() subDataGridDataSelector?: KeyPath.Of<TData>
 	@property({ type: Object }) hasDataDetail?: (data: TData) => boolean
 	@property({ type: Boolean }) detailsOnClick = false
@@ -431,6 +433,7 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		get selectionBehaviorOnDataChange() { return grid.selectionBehaviorOnDataChange },
 		get selectOnClick() { return grid.selectOnClick },
 		get multipleDetails() { return grid.multipleDetails },
+		get detailsOpen() { return grid.detailsOpen },
 		get hasDataDetail() { return grid.hasDataDetail },
 		get getRowDetailsTemplate() { return grid.getRowDetailsTemplate },
 		get hasDefaultRowElements() { return grid.hasDefaultRowElements },

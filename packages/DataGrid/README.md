@@ -45,7 +45,7 @@ import '@3mo/data-grid'
 - [Primary Action With Split Button](https://3mo-esolutions.github.io/web-components/?path=/story/data-data-grids-data-grid--primary-action-with-split-button) — Composite actions fit the slot as well, such as a split button with more options.
 - [Context Menu](https://3mo-esolutions.github.io/web-components/?path=/story/data-data-grids-data-grid--context-menu) — `getRowContextMenuTemplate` gives each row a menu, opened by a right click or its ⋮ button; `primaryContextMenuItemOnDoubleClick` runs the bold item on a double click.
 - [Virtualization](https://3mo-esolutions.github.io/web-components/?path=/story/data-data-grids-data-grid--virtualization) — A thousand rows on one page: scroll through them, select them all or export them.
-- [Virtualized Sub Rows](https://3mo-esolutions.github.io/web-components/?path=/story/data-data-grids-data-grid--virtualized-sub-rows) — 25 rows open into 40 sub rows each, like a products page with every variant expanded; scroll through it and watch the scrollbar hold still.
+- [Virtualized Sub Rows](https://3mo-esolutions.github.io/web-components/?path=/story/data-data-grids-data-grid--virtualized-sub-rows) — 25 rows open into 40 sub rows each, like a products page with every variant expanded through `detailsOpen`; scroll through it and watch the scrollbar hold still.
 - [Min Visible Rows](https://3mo-esolutions.github.io/web-components/?path=/story/data-data-grids-data-grid--min-visible-rows) — Without a height of its own, the grid shows at least `--mo-data-grid-min-visible-rows` rows, 2.5 by default and 10 here.
 - [Export](https://3mo-esolutions.github.io/web-components/?path=/story/data-data-grids-data-grid--export) — `exportable` adds a button to the footer that downloads the rows as CSV, sub rows included.
 - [Empty State](https://3mo-esolutions.github.io/web-components/?path=/story/data-data-grids-data-grid--empty-state) — Without data, the grid shows an empty state, which the `error-no-content` slot replaces.
@@ -98,6 +98,7 @@ rather than opening and closing rows.
 | `selectionBehaviorOnDataChange` | `selectionBehaviorOnDataChange` | `SelectabilityBehaviorOnItemsChange` | `"reset"` | The behavior of the selection when the data changes. |
 | `reorderability` | `reorderability` | `boolean \| undefined` |  | Whether rows can be dragged into another order, which works while nothing is sorted and no row has details or sub rows. |
 | `multipleDetails` | `multipleDetails` | `boolean` | `false` | Whether multiple details can be opened at the same time. |
+| `detailsOpen` | `detailsOpen` | `boolean` | `false` | Opens the details of rows as they arrive, until it is turned off. The user may still close them. Requires "multipleDetails". |
 | `subDataGridDataSelector` | `subDataGridDataSelector` | `` (object extends Required<TData> ? string : TData extends readonly any[] ? Extract<keyof TData, `${number}`> \| Extract<keyof TData, string> \| SubKeyPathOf<...> : TData extends object ? Extract<...> \| SubKeyPathOf<...> : never) \| undefined `` |  | The key path of the sub data grid data. |
 | `hasDataDetail` | `hasDataDetail` | `((data: TData) => boolean) \| undefined` |  | Whether the data has a detail. |
 | `detailsOnClick` | `detailsOnClick` | `boolean` | `false` | Whether the details should be opened on click. |

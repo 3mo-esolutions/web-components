@@ -891,6 +891,83 @@ describe('DataGrid', () => {
 				expect(subRows).toBe(1)
 			})
 		})
+
+		describe('with details opening as rows arrive', () => {
+			const person = (id: number, children?: Array<Person>): Person => ({ id, name: `Person ${id}`, birthDate: new DateTime(2000, 0, 0), balance: 0, children })
+			const families = () => [person(1, [person(11, [person(111)])]), person(2)]
+			const fixture = new ComponentTestFixture<TestDataGrid>(html`
+				<test-data-grid multipleDetails detailsOpen subDataGridDataSelector='children' .data=${families()}></test-data-grid>
+			`)
+
+			const settle = async () => {
+				await fixture.updateComplete
+				for (let pass = 0; pass < 3; pass++) {
+					await Promise.all(fixture.component.rows.map(row => row.updateComplete))
+				}
+			}
+			const levels = () => fixture.component.rows.map(row => row.level)
+			const rowOf = (id: number) => fixture.component.rows.find(row => row.data.id === id)!
+			const open = () => fixture.component.rows.filter(row => row.detailsOpen).map(row => row.data.id)
+
+			beforeEach(settle)
+
+			it('should open the details of every row, sub rows included', () => {
+				expect(levels()).toEqual([0, 1, 2, 0])
+				expect(open()).toEqual([1, 11])
+			})
+
+			it('should open the rows of new data, set through setData or assigned', async () => {
+				fixture.component.setData([...families(), person(3, [person(31)])])
+				await settle()
+				expect(levels()).toEqual([0, 1, 2, 0, 0, 1])
+
+				fixture.component.data = [person(4, [person(41)])]
+				await settle()
+				expect(levels()).toEqual([0, 1])
+			})
+
+			it('should keep a row the user closed closed across new data, while opening the new rows', async () => {
+				rowOf(11).toggleDetails()
+				await settle()
+				expect(open()).toEqual([1])
+
+				fixture.component.setData([...families(), person(3, [person(31)])])
+				await settle()
+
+				expect(open()).toEqual([1, 3])
+				expect(fixture.component.detailsOpen).toBe(true)
+			})
+
+			it('should leave the rows as they are once turned off, and open every row once turned on again', async () => {
+				fixture.component.detailsOpen = false
+				await settle()
+				fixture.component.setData([...families(), person(3, [person(31)])])
+				await settle()
+				expect(open()).toEqual([1, 11])
+
+				fixture.component.detailsOpen = true
+				await settle()
+				expect(open()).toEqual([1, 11, 3])
+			})
+
+			it('should not open a new row while details are single', async () => {
+				fixture.component.multipleDetails = false
+				await settle()
+				fixture.component.setData([...families(), person(3, [person(31)])])
+				await settle()
+
+				expect(open()).toEqual([1, 11])
+			})
+
+			it('should hold while no row has details, as data to come may have them', async () => {
+				fixture.component.setData([])
+				await settle()
+
+				fixture.component.setData(families())
+				await settle()
+				expect(levels()).toEqual([0, 1, 2, 0])
+			})
+		})
 	})
 
 	describe('Editability', () => {

@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite'
-import { html, ref } from '@a11d/lit'
+import { html } from '@a11d/lit'
 import { sourceOf } from '../../.storybook/source.js'
 import { DialogAlert } from '../StandardDialogs/index.js'
-import { DataGridEditability, DataGridSelectability, DataGridSortingStrategy, type DataGrid } from './index.js'
+import { DataGridEditability, DataGridSelectability, DataGridSortingStrategy } from './index.js'
 import { fiftyPeople, fiveFamilies, fivePeople, hundredPeople, thousandPeople, twentyFiveLargeFamilies, twentyPeople, type Person } from '../../stories/index.js'
 import addressColumnSource from './stories/AddressColumn.ts?raw'
 import customDataGridSource from './stories/CustomDataGrid.ts?raw'
@@ -328,12 +328,11 @@ export const Virtualization: Story = {
 	`,
 }
 
-/** 25 rows open into 40 sub rows each, like a products page with every variant expanded; scroll through it and watch the scrollbar hold still. */
+/** 25 rows open into 40 sub rows each, like a products page with every variant expanded through `detailsOpen`; scroll through it and watch the scrollbar hold still. */
 export const VirtualizedSubRows: Story = {
 	render: () => html`
-		<mo-data-grid .data=${twentyFiveLargeFamilies} subDataGridDataSelector='children' selectability='multiple' multipleDetails detailsOnClick style='height: 500px'
+		<mo-data-grid .data=${twentyFiveLargeFamilies} subDataGridDataSelector='children' selectability='multiple' multipleDetails detailsOpen detailsOnClick style='height: 500px'
 			.getRowContextMenuTemplate=${() => html`<mo-context-menu-item icon='edit'>Edit</mo-context-menu-item>`}
-			${ref(grid => (grid as DataGrid<Person> | undefined)?.openRowDetails())}
 		>
 			<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
 			<mo-data-grid-column-number heading='Age' dataSelector='age'></mo-data-grid-column-number>

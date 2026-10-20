@@ -18,6 +18,32 @@ export class DataGridDetailsController<TData> extends ExpandabilityController<Da
 		const controller = this
 	}
 
+	private synced: { records?: ReadonlyArray<DataRecord<TData>>, autoOpen?: boolean } = {}
+
+	private get autoOpen() {
+		return !!this.grid.options.detailsOpen && !!this.grid.options.multipleDetails
+	}
+
+	/** Follows a data change before the rows render, as the data may have been assigned instead of set. */
+	override hostUpdate() {
+		if (this.grid.records.records !== this.synced.records || this.autoOpen !== this.synced.autoOpen) {
+			this.handleItemsChange()
+		}
+	}
+
+	/** With `detailsOpen`, the records that were not there before open, while the ones the user closed stay closed. */
+	override handleItemsChange() {
+		const { records: previous, autoOpen: wasAutoOpen } = this.synced
+		const records = this.grid.records.records
+		const autoOpen = this.autoOpen
+		this.synced = { records, autoOpen }
+		super.handleItemsChange()
+		if (autoOpen) {
+			const known = new Set(!wasAutoOpen ? [] : previous?.map(record => this.keyOf(record)))
+			this.expanded = [...this.expanded, ...records.filter(record => !known.has(this.keyOf(record)))]
+		}
+	}
+
 	private memo = { template: undefined as unknown, hasDataDetail: undefined as unknown, answers: new WeakMap<DataRecord<TData>, boolean>(), records: undefined as ReadonlyArray<DataRecord<TData>> | undefined, detailed: new Array<DataRecord<TData>>() }
 
 	get hasDetails() {

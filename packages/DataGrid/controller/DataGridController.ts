@@ -47,6 +47,8 @@ export interface DataGridControllerOptions<TData> {
 	readonly selectOnClick?: boolean
 
 	readonly multipleDetails?: boolean
+	/** Opens the details of rows as they arrive, until it is turned off. The user may still close them. Needs `multipleDetails`. */
+	readonly detailsOpen?: boolean
 	/** Narrows which records have details. */
 	readonly hasDataDetail?: (data: TData) => boolean
 	/** Details content, which gives a record details on top of its sub records. */
