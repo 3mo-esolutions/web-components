@@ -313,6 +313,13 @@ describe('ComboboxController', () => {
 			expect(activeName()).toBe('Berlin')
 		})
 
+		it('should land on the selected option when the options arrive only after it opened', async () => {
+			await configure({ activateFirst: true, selection: ['Berlin'], filter: 'none', open: true })
+			await configure({ filter: '' })
+
+			expect(activeName()).toBe('Berlin')
+		})
+
 		it('should make the first option active whenever the options change, and leave the cursor alone otherwise', async () => {
 			await configure({ activateFirst: true, open: true })
 			press('ArrowDown')

@@ -214,6 +214,10 @@ export class ComboboxController<T, THost extends ReactiveElement = ReactiveEleme
 			return
 		}
 		this.shownOptions = options
+		// The first options of a list that showed none land as an opening does, on the selection where there is one.
+		if (!shown?.length && this.popup.goToSelection()) {
+			return
+		}
 		this.popup.goFirst()
 	}
 
