@@ -1,5 +1,5 @@
 import { Localizer } from './Localizer.js'
-import { type LanguageCode, type LocalizableStringKey, type LocalizationFormatterTypeMap, type LocalizationParameters } from './index.js'
+import { type LanguageCode, type Locale, type LocalizableStringKey, type LocalizationFormatterTypeMap, type LocalizationParameters } from './index.js'
 
 export class LocalizedString<Key extends LocalizableStringKey> {
 	static readonly cache = new Map<string, LocalizedString<any>>()
@@ -24,11 +24,19 @@ export class LocalizedString<Key extends LocalizableStringKey> {
 	private static readonly matchedParametersCache = new Map<string, ReadonlyArray<{ readonly group: string, readonly key: string, type: keyof LocalizationFormatterTypeMap }>>()
 	private static readonly regex = /\${(.+?)(?::(.+?))?}/g
 
-	static get<Key extends LocalizableStringKey>(key: Key, language: LanguageCode, parameters: LocalizationParameters<Key>) {
+	/** Each `Intl.Locale` written out once, as the cache keys by it: writing one out costs a microsecond, more than the rest of `t()`. */
+	private static readonly tags = new WeakMap<Intl.Locale, string>()
+
+	static get<Key extends LocalizableStringKey>(key: Key, locale: Locale, parameters: LocalizationParameters<Key>) {
+		if (typeof locale !== 'string' && !LocalizedString.tags.has(locale)) {
+			LocalizedString.tags.set(locale, String(locale))
+		}
+		const tag = typeof locale === 'string' ? locale : LocalizedString.tags.get(locale)!
 		const sortedParameters = Object.entries(parameters).sort(([a], [b]) => a.localeCompare(b))
-		const cacheKey = `${key}:${language}:${JSON.stringify(sortedParameters)}`
+		const cacheKey = `${key}:${tag}:${JSON.stringify(sortedParameters)}`
 		if (!LocalizedString.cache.has(cacheKey)) {
-			LocalizedString.cache.set(cacheKey, new LocalizedString(key, language, parameters))
+			const language = (typeof locale === 'string' ? new Intl.Locale(locale) : locale).language as LanguageCode
+			LocalizedString.cache.set(cacheKey, new LocalizedString(key, tag, language, parameters))
 		}
 		return LocalizedString.cache.get(cacheKey) as LocalizedString<Key>
 	}
@@ -69,14 +77,19 @@ export class LocalizedString<Key extends LocalizableStringKey> {
 				.replace(match.group, `\${${match.key}}`)
 				.replace(
 					`\${${match.key}}`,
+					// Formatted in the whole locale, which the language alone loses: `ar-EG` writes Arabic-Indic digits where `ar` writes Latin ones.
 					typeof (parameterValue as any)?.format === 'function'
-						? (parameterValue as any).format(this.language)
+						? (parameterValue as any).format(this.locale)
 						: parameterValue,
 				)
 		}, text)
 	}
 
-	private constructor(readonly key: Key, readonly language: LanguageCode, readonly parameters?: LocalizationParameters<Key>) {
+	/**
+	 * @param locale The locale written out, which the parameters are formatted in: a tag, as the formatters key their own caches by it.
+	 * @param language The locale's language, whose dictionary and plural rules the string reads by.
+	 */
+	private constructor(readonly key: Key, readonly locale: string, readonly language: LanguageCode, readonly parameters?: LocalizationParameters<Key>) {
 		if (!LocalizedString.matchedParametersCache.has(this.key)) {
 			LocalizedString.matchedParametersCache.set(this.key, [...this.key.matchAll(LocalizedString.regex)]
 				.map(([group, key, type]) => ({

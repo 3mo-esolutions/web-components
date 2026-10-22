@@ -126,6 +126,19 @@ describe('LocalizedString', () => {
 		expect(ls.toString()).toContain('Formatierte Nummer 520,11 und Datum 27.08.2024') // followed by "21:49:13 GMT GMT" or other timezone where the test is run
 	})
 
+	it('should format parameters in the whole locale while reading the dictionary and the plural rules by its language', () => {
+		const key = '${count:pluralityNumber} LocalizedString.test.locale'
+		Localizer.dictionaries.add('ar', { [key]: ['${count} zero', '${count} one', '${count} two', '${count} few', '${count} many', '${count} other'] })
+		Localizer.dictionaries.add('de', { [key]: ['${count} Eintrag', '${count} Einträge'] })
+
+		// Egypt writes Arabic-Indic digits and Morocco Latin ones; both read the Arabic dictionary and its six forms.
+		expect(LocalizedString.get(key, 'ar-EG', { count: 3 }).value).toBe('٣ few')
+		expect(LocalizedString.get(key, new Intl.Locale('ar-EG'), { count: 11 }).value).toBe('١١ many')
+		expect(LocalizedString.get(key, 'ar-MA', { count: 3 }).value).toBe('3 few')
+		// Keywords travel with the locale, so a numbering system asked for is the one written.
+		expect(LocalizedString.get(key, 'de-u-nu-arab', { count: 2 }).value).toBe('٢ Einträge')
+	})
+
 	describe('plural forms', () => {
 		const key = '${count:pluralityNumber} forms'
 		const forms = ['0', '1', '2', '3', '4', '5']

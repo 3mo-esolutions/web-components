@@ -31,6 +31,14 @@ describe('LocalizableString', () => {
 		expect(LocalizableString.get(key).localize(new Intl.Locale('de-CH'), {}).toString()).toBe('Gefunden')
 	})
 
+	it('should hand the whole locale on, so its region decides how numbers are written', () => {
+		const key = '${count:pluralityNumber} LocalizableString.test.digits'
+		Localizer.dictionaries.add('ar', { [key]: ['${count} zero', '${count} one', '${count} two', '${count} few', '${count} many', '${count} other'] })
+
+		expect(LocalizableString.get(key).localize('ar-EG', { count: 5 }).toString()).toBe('٥ few')
+		expect(LocalizableString.get(key).localize(new Intl.Locale('ar-SA'), { count: 5 }).toString()).toBe('٥ few')
+	})
+
 	it('should convert to string implicitly', () => {
 		const key = 'simple'
 		Localizer.dictionaries.add(Localizer.languages.current, { [key]: 'Just a simple string' })
