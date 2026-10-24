@@ -303,6 +303,60 @@ describe('InfiniteScrollController', () => {
 		expect(fixture.component.itemCount).toBe(10)
 	})
 
+	describe('with a container as tall as its content, which the document scrolls', () => {
+		const viewportHeight = () => document.documentElement.clientHeight
+
+		/** Filling a viewport takes many more chunks than filling the fixed container, and Firefox paces their frames slower. */
+		const settleStream = async (component: InfiniteScrollTestComponent) => {
+			for (let i = 0; i < 10; i++) {
+				const loadCount = component.loadCount
+				await settle(component)
+				if (component.loadCount === loadCount) {
+					return
+				}
+			}
+		}
+
+		beforeEach(() => {
+			fixture.component.container.style.cssText = 'height: auto; overflow: visible'
+			window.scrollTo(0, 0)
+		})
+
+		afterEach(() => window.scrollTo(0, 0))
+
+		it('should fill the viewport and stop half a viewport below its end instead of streaming everything', async () => {
+			await settleStream(fixture.component)
+			const loadCount = fixture.component.loadCount
+
+			expect(fixture.component.itemCount).toBeGreaterThan(10)
+			expect(fixture.component.itemCount).toBeLessThan(fixture.component.total)
+			expect(fixture.component.container.getBoundingClientRect().bottom).toBeGreaterThan(viewportHeight() * 1.5 - itemHeight * fixture.component.chunkSize)
+
+			await settle(fixture.component)
+			expect(fixture.component.loadCount).toBe(loadCount)
+		})
+
+		it('should stop as well when what its items hold overhangs them, such as a taller line of text', async () => {
+			const style = document.createElement('style')
+			style.textContent = '.item { line-height: 26px }'
+			fixture.component.renderRoot.append(style)
+			await settleStream(fixture.component)
+
+			expect(fixture.component.itemCount).toBeGreaterThan(10)
+			expect(fixture.component.itemCount).toBeLessThan(fixture.component.total)
+		})
+
+		it('should load the next chunk once the document is scrolled towards its end', async () => {
+			await settleStream(fixture.component)
+			const itemCount = fixture.component.itemCount
+
+			window.scrollTo(0, document.documentElement.scrollHeight)
+			await settleStream(fixture.component)
+
+			expect(fixture.component.itemCount).toBeGreaterThan(itemCount)
+		})
+	})
+
 	it('should scroll the container back to the start via scrollToStart()', async () => {
 		await settle(fixture.component)
 		fixture.component.container.scrollTop = fixture.component.container.scrollHeight

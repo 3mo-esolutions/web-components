@@ -109,6 +109,8 @@ export class InfiniteScrollController<THost extends ReactiveControllerHost = Rea
 
 		if (container) {
 			container.addEventListener('scroll', this.handleContainerChange, { passive: true })
+			// Whoever scrolls a container which is as tall as its content reports to the window, the document itself included.
+			window.addEventListener('scroll', this.handleContainerChange, { passive: true })
 			this.resizeObserver = new ResizeObserver(this.handleContainerChange)
 			this.resizeObserver.observe(container)
 		}
@@ -116,6 +118,7 @@ export class InfiniteScrollController<THost extends ReactiveControllerHost = Rea
 
 	private unobserve() {
 		this.observedContainer?.removeEventListener('scroll', this.handleContainerChange)
+		window.removeEventListener('scroll', this.handleContainerChange)
 		this.resizeObserver?.disconnect()
 		this.resizeObserver = undefined
 		this.observedContainer = undefined
@@ -145,15 +148,31 @@ export class InfiniteScrollController<THost extends ReactiveControllerHost = Rea
 			&& this.busy === false
 			&& this.ended === false
 			&& container !== undefined
-			// A container without a layout is either not rendered yet or hidden, e.g. inside a closed popover.
-			&& container.clientHeight > 0
+			// A container without a box is either not rendered yet or hidden, e.g. inside a closed popover. An empty one as tall as its content has a box, of no height.
+			&& container.getClientRects().length > 0
 			&& this.options.disabled !== true
 			// Half a viewport of remaining content is close enough to the end to load the next chunk.
-			&& this.distanceToEnd(container) <= container.clientHeight / 2
+			&& this.distanceToEnd(container) <= this.viewportHeight(container) / 2
+	}
+
+	/**
+	 * Whether the container scrolls its content itself. One which is as tall as its content is
+	 * scrolled by whoever contains it, the document at the last, and its end is measured against the viewport.
+	 */
+	private scrollsItself(container: Element) {
+		// Content which merely overhangs a container that does not scroll, such as a tall line of text, raises its scroll height all the same.
+		return /auto|scroll|overlay/.test(getComputedStyle(container).overflowY)
+			&& container.scrollHeight > container.clientHeight
+	}
+
+	private viewportHeight(container: Element) {
+		return this.scrollsItself(container) ? container.clientHeight : container.ownerDocument.documentElement.clientHeight
 	}
 
 	private distanceToEnd(container: Element) {
-		return container.scrollHeight - container.scrollTop - container.clientHeight
+		return this.scrollsItself(container)
+			? container.scrollHeight - container.scrollTop - container.clientHeight
+			: container.getBoundingClientRect().bottom - container.ownerDocument.documentElement.clientHeight
 	}
 
 	/**
@@ -162,7 +181,7 @@ export class InfiniteScrollController<THost extends ReactiveControllerHost = Rea
 	 * and therefore stands still while the first chunks are still filling up the container.
 	 */
 	private contentHeight(container: Element) {
-		if (container.scrollHeight > container.clientHeight) {
+		if (this.scrollsItself(container)) {
 			return container.scrollHeight
 		}
 		const top = container.getBoundingClientRect().top - container.scrollTop
