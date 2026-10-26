@@ -29,6 +29,28 @@ describe('SplitPageHost', () => {
 		await settle()
 	}
 
+	describe('with content taller than the host', () => {
+		const tallFixture = new ComponentTestFixture<SplitPageHost>(html`
+			<mo-split-page-host style='display: block; width: ${width}px; height: 400px'>
+				<div slot='sidebar' style='height: 100%'>Sidebar</div>
+				<div id='content' style='height: 100%; display: flex; flex-direction: column'>
+					<div style='flex: 1 1 auto; min-height: 0; overflow: auto'>
+						<div style='height: 2000px'></div>
+					</div>
+				</div>
+			</mo-split-page-host>
+		`)
+
+		it('should let the content shrink to the height of the host, rather than to as tall as what it scrolls', async context => {
+			if (isBelowBreakpoint()) {
+				context.skip()
+			}
+			await settle()
+			const content = tallFixture.component.querySelector('#content')!
+			expect(content.getBoundingClientRect().bottom).toBeLessThanOrEqual(tallFixture.component.getBoundingClientRect().bottom + 1)
+		})
+	})
+
 	it('should reflect "isContentOpen" as an attribute', async () => {
 		expect(fixture.component.hasAttribute('isContentOpen')).toBe(false)
 

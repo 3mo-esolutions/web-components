@@ -68,6 +68,7 @@ export class Page extends Component {
 			:host([fullHeight]) ::slotted(*:not([slot])) {
 				height: 100%;
 				width: 100%;
+				min-height: 0;
 			}
 
 			slot[name=action] {

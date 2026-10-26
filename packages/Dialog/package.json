@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/dialog",
-	"version": "0.8.5",
+	"version": "0.8.6",
 	"description": "Web components for modal dialogs and application pages with a heading, actions and sizes, built on Material Web.",
 	"repository": {
 		"type": "git",

@@ -29,6 +29,23 @@ describe('Page', () => {
 		expect(getComputedStyle(fixture.component).boxSizing).toBe('border-box')
 	})
 
+	describe('with full height', () => {
+		const fullHeightFixture = new ComponentTestFixture<Page>(html`
+			<mo-page fullHeight heading='Invoices' style='display: block; height: 400px'>
+				<div id='content' style='display: flex; flex-direction: column'>
+					<div style='flex: 1 1 auto; min-height: 0; overflow: auto'>
+						<div style='height: 2000px'></div>
+					</div>
+				</div>
+			</mo-page>
+		`)
+
+		it('should let its content shrink to the height the header leaves, rather than to as tall as what it scrolls', () => {
+			const content = fullHeightFixture.component.querySelector('#content')!
+			expect(content.getBoundingClientRect().bottom).toBeLessThanOrEqual(fullHeightFixture.component.getBoundingClientRect().bottom + 1)
+		})
+	})
+
 	describe('header', () => {
 		it('should not render the header when there is neither a heading nor action content', () => {
 			expect(header()).toBeNull()

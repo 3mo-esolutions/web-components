@@ -32,7 +32,8 @@ export class SplitPageHost extends Component {
 			}
 
 			lit-page-host {
-				min-height: 100%;
+				min-height: 0;
+				grid-template-rows: minmax(0, 1fr);
 				padding-inline-start: 14px;
 				width: calc(100% - 14px);
 			}
@@ -41,6 +42,11 @@ export class SplitPageHost extends Component {
 				width: 100%;
 				height: 100%;
 				grid-template-columns: var(--mo-split-page-host-sidebar-width, clamp(200px, 30%, 500px)) 1fr;
+				grid-template-rows: minmax(0, 1fr);
+			}
+
+			#content, #content > mo-flex {
+				min-height: 0;
 			}
 
 			#contentToolbar {

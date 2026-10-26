@@ -267,6 +267,9 @@ export class Dialog extends Component implements IDialog {
 				&[data-bound-to-window] {
 					margin-inline: var(--_margin-alteration);
 				}
+				&:not([data-bound-to-window]) {
+					min-height: 0;
+				}
 			}
 
 			#footer {

@@ -29,6 +29,19 @@ export abstract class BusinessSuiteApplication extends Application {
 				background-color: var(--mo-color-background);
 				color: var(--mo-color-foreground);
 			}
+
+			/* The viewport is the page's height, so that a page of full height gives its content a definite one. */
+			[application] {
+				height: 100dvh;
+
+				lit-page-host {
+					min-height: 0;
+					overflow: auto;
+					scrollbar-width: thin;
+					grid-template-rows: minmax(0, 1fr);
+				}
+			}
+
 		`
 	}
 

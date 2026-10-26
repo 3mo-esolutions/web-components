@@ -136,6 +136,7 @@ export class Navigation extends Component {
 			:host {
 				display: grid;
 				grid-template-columns: auto minmax(0, 1fr);
+				grid-template-rows: minmax(0, 1fr);
 				flex: 1;
 				min-block-size: 0;
 			}

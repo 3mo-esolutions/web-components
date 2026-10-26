@@ -1,4 +1,4 @@
-import { Component, component, html } from '@a11d/lit'
+import { Component, component, html, render } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { type SplitterItem } from '@3mo/splitter'
 import { type MasterDetail } from './MasterDetail.js'
@@ -49,6 +49,33 @@ describe('MasterDetail', () => {
 		await updateComplete()
 		return detail
 	}
+
+	describe('in a container of a definite height', () => {
+		it('should let the master shrink to the space left, rather than to as tall as what it scrolls', async () => {
+			const container = document.createElement('div')
+			container.style.cssText = 'height: 400px; display: flex; flex-direction: column'
+			render(html`
+				<mo-master-detail>
+					<div slot='master' id='master' style='display: flex; flex-direction: column'>
+						<div style='flex: 1 1 auto; min-height: 0; overflow: auto'>
+							<div style='height: 2000px'></div>
+						</div>
+					</div>
+				</mo-master-detail>
+				<div style='height: 50px; flex-shrink: 0'></div>
+			`, container)
+			document.body.append(container)
+			try {
+				const masterDetail = container.querySelector('mo-master-detail')!
+				await masterDetail.updateComplete
+				await masterDetail.renderRoot.querySelector('mo-splitter')!.updateComplete
+				const master = container.querySelector('#master')!
+				expect(master.getBoundingClientRect().bottom).toBeLessThanOrEqual(container.getBoundingClientRect().bottom - 50 + 1)
+			} finally {
+				container.remove()
+			}
+		})
+	})
 
 	describe('without detail content', () => {
 		it('should not be open', () => {

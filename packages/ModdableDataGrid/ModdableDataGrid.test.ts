@@ -236,6 +236,19 @@ describe('ModdableDataGrid', () => {
 		})
 	})
 
+	describe('Height', () => {
+		const fixture = new ModdableDataGridTestFixture({ modes: ModdableDataGridTestFixture.modes })
+
+		it('should keep its rows within the height it is given, beneath the modebar', async () => {
+			fixture.component.style.height = '400px'
+			await vi.waitFor(() => expect(fixture.component.rows.length).toBe(100))
+			await fixture.updateComplete
+			const card = fixture.component.renderRoot.querySelector('mo-card')!
+			expect(fixture.component.hasAttribute('hasModebar')).toBe(true)
+			expect(card.getBoundingClientRect().bottom).toBeLessThanOrEqual(fixture.component.getBoundingClientRect().bottom + 1)
+		})
+	})
+
 	describe('No modes', () => {
 		const fixture = new ModdableDataGridTestFixture({ modes: [] })
 

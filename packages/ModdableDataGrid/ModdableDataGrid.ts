@@ -56,6 +56,7 @@ export abstract class ModdableDataGrid<TData, TParameters extends FetchableDataG
 				--mo-card-body-padding: 0;
 				border-radius: 0 0 var(--mo-border-radius) var(--mo-border-radius);
 				height: 100%;
+				min-height: 0;
 				/* Follows the modebar appearing above, which squares off the card's upper corners. */
 				transition: border-radius var(--mo-duration-quick, 250ms) ease;
 			}

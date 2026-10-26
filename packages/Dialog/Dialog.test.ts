@@ -86,6 +86,30 @@ describe('Dialog', () => {
 		})
 	})
 
+	describe('content', () => {
+		const fixture = new ComponentTestFixture<Dialog>(html`
+			<mo-dialog heading='Positions' style='height: 500px'>
+				<div id='content' style='height: 100%; display: flex; flex-direction: column'>
+					<div style='flex: 1 1 auto; min-height: 0; overflow: auto'>
+						<div style='height: 2000px'></div>
+					</div>
+				</div>
+			</mo-dialog>
+		`)
+
+		it('should shrink to the height of a dialog with a height, rather than to as tall as what it scrolls', async () => {
+			fixture.component.open = true
+			await fixture.updateComplete
+			await new Promise(r => setTimeout(r, 300))
+			const md = fixture.component.renderRoot.querySelector('md-dialog')!
+			// "showModal" is stubbed for this file, so the dialog is shown as a non-modal one to be laid out at all.
+			md.renderRoot.querySelector('dialog')!.show()
+			const scroller = md.renderRoot.querySelector('.scroller')!
+			await vi.waitFor(() => expect(scroller.clientHeight).toBeGreaterThan(0))
+			expect(scroller.scrollHeight).toBeLessThanOrEqual(scroller.clientHeight + 1)
+		})
+	})
+
 	describe('footer', () => {
 		const fixture = new ComponentTestFixture<Dialog>('mo-dialog')
 

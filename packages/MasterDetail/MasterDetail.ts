@@ -40,6 +40,7 @@ export class MasterDetail extends Component {
 			:host {
 				display: block;
 				height: 100%;
+				min-height: 0;
 			}
 
 			mo-splitter {
@@ -71,7 +72,7 @@ export class MasterDetail extends Component {
 	protected override get template() {
 		return html`
 			<mo-splitter exportparts='resizer-host' direction=${this.direction}>
-				<mo-splitter-item .size=${this.split ? this.masterSize : undefined} .min=${this.split ? this.minSize : undefined}>
+				<mo-splitter-item .size=${this.split ? this.masterSize : undefined} .min=${this.split ? this.minSize : '0'}>
 					<slot name='master'></slot>
 				</mo-splitter-item>
 

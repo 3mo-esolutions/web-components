@@ -1,4 +1,4 @@
-import { html } from '@a11d/lit'
+import { html, render } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import './index.js'
 import { fakeNavigation as navigation } from './fakeNavigation.test.js'
@@ -34,6 +34,26 @@ describe('Navigation', () => {
 		]
 		return component
 	}
+
+	describe('content', () => {
+		const fixture = new ComponentTestFixture(() => {
+			const component = create(['bar', 'drawer'])()
+			render(html`
+				<div id='content' style='height: 100%; display: flex; flex-direction: column'>
+					<div style='flex: 1 1 auto; min-height: 0; overflow: auto'>
+						<div style='height: 2000px'></div>
+					</div>
+				</div>
+			`, component)
+			return component
+		})
+
+		it('should keep the content within its height, rather than growing to as tall as what the content scrolls', async () => {
+			await settle(fixture.component)
+			const content = fixture.component.querySelector('#content')!
+			expect(content.getBoundingClientRect().bottom).toBeLessThanOrEqual(fixture.component.getBoundingClientRect().bottom + 1)
+		})
+	})
 
 	describe('choosing a presentation', () => {
 		const fixture = new ComponentTestFixture(create(['bar', 'drawer']))
