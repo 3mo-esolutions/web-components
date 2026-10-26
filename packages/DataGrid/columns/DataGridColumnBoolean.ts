@@ -1,29 +1,32 @@
 import { component, html, property, style } from '@a11d/lit'
-import { type MaterialIcon } from '@3mo/icon'
+import '@3mo/localization'
+import { type DataGridColumnAlignment } from '../controller/DataGridColumn.js'
 import { DataGridColumnComponent } from './DataGridColumnComponent.js'
 
 /**
+ * A column showing a boolean as a dot, colored for true and for false, and nothing for undefined.
+ *
  * @element mo-data-grid-column-boolean
  *
- * @attr trueIcon - Icon to show for true values
- * @attr falseIcon - Icon to show for false values
- * @attr trueIconColor - Color of the true icon
- * @attr falseIconColor - Color of the false icon
+ * @attr trueColor - The color of the dot for true values
+ * @attr falseColor - The color of the dot for false values
+ *
+ * @i18n "Yes"
+ * @i18n "No"
  */
 @component('mo-data-grid-column-boolean')
 export class DataGridColumnBoolean<TData> extends DataGridColumnComponent<TData, boolean> {
-	@property() trueIcon: MaterialIcon = 'done'
-	@property() falseIcon: MaterialIcon = 'clear'
+	@property() trueColor = 'var(--mo-color-green)'
+	@property() falseColor = 'var(--mo-color-red)'
 
-	@property() trueIconColor = 'var(--mo-color-accent)'
-	@property() falseIconColor = 'var(--mo-color-gray)'
+	override textAlign: DataGridColumnAlignment = 'center'
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	override getContentTemplate(value: boolean | undefined, _data: TData) {
-		return html`
-			<mo-flex justifyContent='center' ${style({ height: '100%' })}>
-				<mo-icon icon=${value ? this.trueIcon : this.falseIcon} ${style({ color: value ? this.trueIconColor : this.falseIconColor })}></mo-icon>
-			</mo-flex>
+		return value === undefined ? html.nothing : html`
+			<span title=${value ? t('Yes') : t('No')}
+				${style({ display: 'inline-block', verticalAlign: 'middle', width: '8px', height: '8px', borderRadius: '50%', background: value ? this.trueColor : this.falseColor })}
+			></span>
 		`
 	}
 
@@ -38,7 +41,7 @@ export class DataGridColumnBoolean<TData> extends DataGridColumnComponent<TData,
 	}
 
 	override *generateCsvValue(value: boolean) {
-		yield value ? 'TRUE' : 'FALSE'
+		yield value ? '1' : '0'
 	}
 }
 

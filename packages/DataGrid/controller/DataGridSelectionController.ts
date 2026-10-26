@@ -4,7 +4,7 @@ import type { DataGridController } from './DataGridController.js'
 export { Selectability as DataGridSelectability, SelectabilityBehaviorOnItemsChange as DataGridSelectionBehaviorOnDataChange } from '@3mo/selectability'
 
 export class DataGridSelectionController<TData> extends SelectabilityController<TData> {
-	private static readonly keys = new WeakMap<object, string>()
+	private static readonly keys = new WeakMap<object, unknown>()
 
 	static keyOf(data: unknown) {
 		if (typeof data !== 'object' || data === null) {
@@ -15,7 +15,12 @@ export class DataGridSelectionController<TData> extends SelectabilityController<
 		}
 		let key = DataGridSelectionController.keys.get(data)
 		if (key === undefined) {
-			key = JSON.stringify(data)
+			try {
+				key = JSON.stringify(data)
+			} catch {
+				// Circular data cannot be serialized, so the object itself is its key.
+				key = data
+			}
 			DataGridSelectionController.keys.set(data, key)
 		}
 		return key

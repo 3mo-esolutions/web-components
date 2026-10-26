@@ -10,32 +10,45 @@ describe('DataGridColumnBoolean', () => {
 
 	afterEach(() => render(html.nothing, container))
 
-	const makeColumn = () => {
-		const column = new DataGridColumnBoolean<Item>()
-		column.trueIcon = 'star'
-		column.falseIcon = 'block'
-		column.trueIconColor = 'var(--test-true-color)'
-		column.falseIconColor = 'var(--test-false-color)'
-		return column
-	}
+	const dot = () => container.querySelector<HTMLElement>('span')
 
-	for (const value of [true, false]) {
-		it(`should render the configured ${value} icon with its color`, () => {
-			const column = makeColumn()
+	it('should center its content', () => {
+		expect(new DataGridColumnBoolean<Item>().textAlign).toBe('center')
+	})
 
-			render(column.getContentTemplate(value, datum), container)
-			const icon = container.querySelector('mo-icon')!
+	for (const [value, color, title] of [[true, 'var(--mo-color-green)', 'Yes'], [false, 'var(--mo-color-red)', 'No']] as const) {
+		it(`should render ${value} as a dot in its color, named after it`, () => {
+			render(new DataGridColumnBoolean<Item>().getContentTemplate(value, datum), container)
 
-			expect(icon.getAttribute('icon')).toBe(value ? 'star' : 'block')
-			expect(icon.style.color).toBe(value ? 'var(--test-true-color)' : 'var(--test-false-color)')
+			expect(dot()!.style.background).toBe(color)
+			expect(dot()!.title).toBe(title)
 		})
 	}
 
-	it('should export TRUE/FALSE in CSV', () => {
+	it('should color the dot as configured', () => {
+		const column = new DataGridColumnBoolean<Item>()
+		column.trueColor = 'var(--test-true-color)'
+		column.falseColor = 'var(--test-false-color)'
+
+		render(column.getContentTemplate(true, datum), container)
+		expect(dot()!.style.background).toBe('var(--test-true-color)')
+
+		render(column.getContentTemplate(false, datum), container)
+		expect(dot()!.style.background).toBe('var(--test-false-color)')
+	})
+
+	it('should render nothing for undefined', () => {
+		render(new DataGridColumnBoolean<Item>().getContentTemplate(undefined, datum), container)
+
+		expect(container.textContent!.trim()).toBe('')
+		expect(dot()).toBeNull()
+	})
+
+	it('should export 1/0 in CSV', () => {
 		const column = new DataGridColumnBoolean<Item>()
 
-		expect([...column.generateCsvValue(true)]).toEqual(['TRUE'])
-		expect([...column.generateCsvValue(false)]).toEqual(['FALSE'])
+		expect([...column.generateCsvValue(true)]).toEqual(['1'])
+		expect([...column.generateCsvValue(false)]).toEqual(['0'])
 	})
 
 	it('should apply a checkbox edit through the grid', () => {

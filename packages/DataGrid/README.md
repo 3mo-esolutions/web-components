@@ -6,6 +6,8 @@ A web component for data grids with typed columns, sorting, selection, paginatio
 
 A table that shows an array of objects as rows, with selection, sorting, pagination, details, editing and CSV export.
 
+The grid is as tall as its rows, and scrolls them within a `height`, a `max-height` or a share of a container of a definite size.
+
 ## Installation
 
 ```sh
@@ -19,7 +21,7 @@ import '@3mo/data-grid'
 ## Usage
 
 ```html
-<mo-data-grid .data=${twentyPeople} style='height: 500px' editability='never'>
+<mo-data-grid .data=${twentyPeople} editability='never'>
 	<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
 	<mo-data-grid-column-number heading='Age' dataSelector='age'></mo-data-grid-column-number>
 	<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
@@ -46,7 +48,7 @@ import '@3mo/data-grid'
 - [Context Menu](https://3mo-esolutions.github.io/web-components/?path=/story/data-data-grids-data-grid--context-menu) — `getRowContextMenuTemplate` gives each row a menu, opened by a right click or its ⋮ button; `primaryContextMenuItemOnDoubleClick` runs the bold item on a double click.
 - [Virtualization](https://3mo-esolutions.github.io/web-components/?path=/story/data-data-grids-data-grid--virtualization) — A thousand rows on one page: scroll through them, select them all or export them.
 - [Virtualized Sub Rows](https://3mo-esolutions.github.io/web-components/?path=/story/data-data-grids-data-grid--virtualized-sub-rows) — 25 rows open into 40 sub rows each, like a products page with every variant expanded through `detailsOpen`; scroll through it and watch the scrollbar hold still.
-- [Min Visible Rows](https://3mo-esolutions.github.io/web-components/?path=/story/data-data-grids-data-grid--min-visible-rows) — Without a height of its own, the grid shows at least `--mo-data-grid-min-visible-rows` rows, 2.5 by default and 10 here.
+- [Constrained Height](https://3mo-esolutions.github.io/web-components/?path=/story/data-data-grids-data-grid--constrained-height) — A `height`, a `max-height` or a share of a flex or grid container of a definite size gives the grid a height, which it takes and scrolls its rows in.
 - [Export](https://3mo-esolutions.github.io/web-components/?path=/story/data-data-grids-data-grid--export) — `exportable` adds a button to the footer that downloads the rows as CSV, sub rows included.
 - [Empty State](https://3mo-esolutions.github.io/web-components/?path=/story/data-data-grids-data-grid--empty-state) — Without data, the grid shows an empty state, which the `error-no-content` slot replaces.
 - [In A Card](https://3mo-esolutions.github.io/web-components/?path=/story/data-data-grids-data-grid--in-a-card) — In a `mo-card`, the grid spans the card's full width under its heading.
@@ -89,7 +91,7 @@ rather than opening and closing rows.
 | `columns` | `columns` | `DataGridColumn<TData, any>[]` |  | The columns of the DataGrid, composed of their definitions and modifications. Assigning it gives the definitions in code, which column elements override. |
 | `headerHidden` | `headerHidden` | `boolean` | `false` | Whether the header should be hidden. |
 | `page` | `page` | `number` | `1` | The current page. |
-| `pagination` | `pagination` | `DataGridPagination \| undefined` |  | How the rows are paged: a strategy, `pages` or `scroll`, and a size, a number or `auto` to fit the height, e.g. `pages`, `pages 50` or `50`. |
+| `pagination` | `pagination` | `DataGridPagination \| undefined` |  | How the rows are paged: a strategy, `pages` or `scroll`, and a size, a number or `auto`, e.g. `pages`, `pages 50` or `50`. `auto` pages as many rows as fit the grid's height, or |
 | `sorting` | `sorting` | `DataGridSorting<TData> \| undefined` |  | The sorting mode. It is an object with `selector` and `strategy` properties. |
 | `selectability` | `selectability` | `Selectability \| undefined` |  | The selection mode. Defaults to 'single' if context menus available, 'undefined' otherwise. |
 | `isDataSelectable` | `isDataSelectable` | `((data: TData) => boolean) \| undefined` |  | Whether data of a given row is selectable. |
@@ -146,7 +148,6 @@ rather than opening and closing rows.
 
 | Name | Description |
 | --- | --- |
-| `--mo-data-grid-min-visible-rows` | The minimum number of visible rows. Defaults to 2.5. |
 | `--mo-data-grid-footer-background` | The background of the footer. |
 | `--mo-data-grid-cell-padding` | The inline padding of the cells. Defaults to 0.5rem. |
 | `--mo-data-grid-column-sub-row-indentation` | The indentation of the first column in the sub row. Defaults to 20px. |
@@ -225,19 +226,19 @@ The handle resizing a column, drawing a line where the pointer is while it drags
 
 ### `mo-data-grid-column-boolean`
 
+A column showing a boolean as a dot, colored for true and for false, and nothing for undefined.
+
 #### Properties
 
 | Name | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
-| `trueIcon` | `trueIcon` | `MaterialIcon` | `"done"` | Icon to show for true values |
-| `falseIcon` | `falseIcon` | `MaterialIcon` | `"clear"` | Icon to show for false values |
-| `trueIconColor` | `trueIconColor` | `string` | `"var(--mo-color-accent)"` | Color of the true icon |
-| `falseIconColor` | `falseIconColor` | `string` | `"var(--mo-color-gray)"` | Color of the false icon |
+| `trueColor` | `trueColor` | `string` | `"var(--mo-color-green)"` | The color of the dot for true values |
+| `falseColor` | `falseColor` | `string` | `"var(--mo-color-red)"` | The color of the dot for false values |
 | `dataGrid` | `dataGrid` | `DataGrid<TData, any> \| undefined` |  |  |
 | `width` | `width` | `string` | `"max-content"` | The width of the column |
 | `hidden` | `hidden` | `boolean` | `false` | Whether the column is hidden. The column can be made visible by the user in the settings panel if available. |
 | `heading` | `heading` | `string` | `""` | The heading of the column |
-| `textAlign` | `textAlign` | `DataGridColumnAlignment` | `"start"` | The text alignment of the column |
+| `textAlign` | `textAlign` | `DataGridColumnAlignment` | `"center"` | The text alignment of the column |
 | `description` | `description` | `string \| undefined` |  | The description of the column. It will be displayed as a tooltip on the heading. |
 | `dataSelector` | `dataSelector` | `` object extends Required<TData> ? string : TData extends readonly any[] ? Extract<keyof TData, `${number}`> \| Extract<keyof TData, string> \| SubKeyPathOf<...> : TData extends object ? Extract<...> \| SubKeyPathOf<...> : never `` |  | The data selector of the column |
 | `sortDataSelector` | `sortDataSelector` | `` (object extends Required<TData> ? string : TData extends readonly any[] ? Extract<keyof TData, `${number}`> \| Extract<keyof TData, string> \| SubKeyPathOf<...> : TData extends object ? Extract<...> \| SubKeyPathOf<...> : never) \| undefined `` |  | The data selector of the column |

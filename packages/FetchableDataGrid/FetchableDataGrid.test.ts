@@ -816,13 +816,11 @@ describe('FetchableDataGrid', () => {
 		` as any)
 
 		it('should keep loading pages until the visible area is filled and stop thereafter', async () => {
-			await waitUntil(() => fixture.component.data.length > 0)
+			const scroller = () => fixture.component.renderRoot.querySelector('mo-scroller#scroller')!
 			// Every page waits a frame, and a loaded browser throttles frames.
-			await waitUntil(() => fixture.component.infiniteScrollController.pending === false
-				&& fixture.component.data.length > 2, 12000)
+			await waitUntil(() => scroller().scrollHeight - scroller().clientHeight > scroller().clientHeight / 2, 12000)
 
 			const filled = fixture.component.data.length
-			expect(filled).toBeGreaterThan(2)
 			expect(filled).toBeLessThan(total)
 
 			await new Promise(resolve => setTimeout(resolve, 200))

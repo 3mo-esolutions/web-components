@@ -18,7 +18,6 @@ type Args = {
 	readonly exportable: boolean
 	readonly multipleDetails: boolean
 	readonly detailsOnClick: boolean
-	readonly minVisibleRows: number
 }
 
 export default {
@@ -42,7 +41,7 @@ type Story = StoryObj<Args>
 
 export const Default: Story = {
 	render: ({ headerHidden, selectability, selectOnClick, editability, hasAlternatingBackground, exportable }) => html`
-		<mo-data-grid .data=${twentyPeople} style='height: 500px'
+		<mo-data-grid .data=${twentyPeople}
 			?headerHidden=${headerHidden}
 			selectability=${selectability}
 			?selectOnClick=${selectOnClick}
@@ -54,6 +53,7 @@ export const Default: Story = {
 			<mo-data-grid-column-number heading='Age' dataSelector='age'></mo-data-grid-column-number>
 			<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
 			<mo-data-grid-column-date heading='Birth Date' dataSelector='birthDate'></mo-data-grid-column-date>
+			<mo-data-grid-column-boolean heading='Underage' dataSelector='underage'></mo-data-grid-column-boolean>
 		</mo-data-grid>
 	`,
 }
@@ -61,7 +61,7 @@ export const Default: Story = {
 /** `sticky` pins a column to the `start`, to the `end` or to `both` while the others scroll by; the selection and menu columns stick as well. */
 export const StickyColumns: Story = {
 	render: () => html`
-		<mo-data-grid .data=${twentyPeople} selectability='multiple' style='height: 500px'
+		<mo-data-grid .data=${twentyPeople} selectability='multiple'
 			.getRowContextMenuTemplate=${() => html`
 				<mo-context-menu-item icon='edit'>Edit</mo-context-menu-item>
 				<mo-context-menu-item icon='delete'>Delete</mo-context-menu-item>
@@ -88,7 +88,7 @@ export const StickyColumns: Story = {
 /** `contentStyle` styles a cell by its value: negative balances in red, positive ones in green. */
 export const CustomCellStyle: Story = {
 	render: () => html`
-		<mo-data-grid .data=${twentyPeople} style='height: 500px'>
+		<mo-data-grid .data=${twentyPeople}>
 			<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
 			<mo-data-grid-column-currency currency='EUR' heading='Balance' dataSelector='balance'
 				.contentStyle=${(value: number) => {
@@ -107,7 +107,7 @@ export const CustomCellStyle: Story = {
 export const ColumnMenuItems: Story = {
 	parameters: sourceOf(addressColumnSource),
 	render: () => html`
-		<mo-data-grid .data=${twentyPeople} style='height: 500px'>
+		<mo-data-grid .data=${twentyPeople}>
 			<story-address-column heading='Address' dataSelector='address'></story-address-column>
 			<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
 			<mo-data-grid-column-number heading='Age' dataSelector='age'></mo-data-grid-column-number>
@@ -119,7 +119,7 @@ export const ColumnMenuItems: Story = {
 /** `sumHeading` totals a number column in the footer, over the selected rows while there are any; the `sum` slot takes totals of your own. */
 export const Sums: Story = {
 	render: () => html`
-		<mo-data-grid .data=${fiftyPeople} selectability='multiple' selectOnClick style='height: 500px; --mo-data-grid-footer-background: var(--mo-color-transparent-gray-3)'>
+		<mo-data-grid .data=${fiftyPeople} selectability='multiple' selectOnClick style='height: 1000px; --mo-data-grid-footer-background: var(--mo-color-transparent-gray-3)'>
 			<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
 			<mo-data-grid-column-number heading='Age' dataSelector='age' sumHeading='Ages Total'></mo-data-grid-column-number>
 			<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
@@ -135,7 +135,7 @@ export const Selection: Story = {
 		selectability: DataGridSelectability.Single,
 	},
 	render: ({ selectability, selectOnClick }) => html`
-		<mo-data-grid .data=${fivePeople} selectability=${selectability} ?selectOnClick=${selectOnClick} style='height: 500px'
+		<mo-data-grid .data=${fivePeople} selectability=${selectability} ?selectOnClick=${selectOnClick}
 			.isDataSelectable=${(person: Person) => person.age >= 18}
 		>
 			<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
@@ -153,7 +153,7 @@ export const Details: Story = {
 		detailsOnClick: false,
 	},
 	render: ({ multipleDetails, detailsOnClick }) => html`
-		<mo-data-grid .data=${fivePeople} selectability='multiple' ?multipleDetails=${multipleDetails} ?detailsOnClick=${detailsOnClick} style='height: 500px'
+		<mo-data-grid .data=${fivePeople} selectability='multiple' ?multipleDetails=${multipleDetails} ?detailsOnClick=${detailsOnClick}
 			.hasDataDetail=${(person: Person) => person.age >= 18}
 			.getRowDetailsTemplate=${(person: Person) => html`
 				<div style='opacity: 0.5'>${person.address}</div>
@@ -173,7 +173,7 @@ export const SubDataGrid: Story = {
 		detailsOnClick: false,
 	},
 	render: ({ multipleDetails, detailsOnClick }) => html`
-		<mo-data-grid .data=${fiveFamilies} selectability='multiple' ?multipleDetails=${multipleDetails} ?detailsOnClick=${detailsOnClick} style='height: 500px'
+		<mo-data-grid .data=${fiveFamilies} selectability='multiple' ?multipleDetails=${multipleDetails} ?detailsOnClick=${detailsOnClick}
 			.getRowDetailsTemplate=${(person: Person) => html`
 				<mo-data-grid .data=${person.children}>
 					<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
@@ -197,7 +197,7 @@ export const SubRows: Story = {
 		detailsOnClick: false,
 	},
 	render: ({ multipleDetails, detailsOnClick }) => html`
-		<mo-data-grid .data=${fiveFamilies} subDataGridDataSelector='children' selectability='multiple' ?multipleDetails=${multipleDetails} ?detailsOnClick=${detailsOnClick} style='height: 500px'>
+		<mo-data-grid .data=${fiveFamilies} subDataGridDataSelector='children' selectability='multiple' ?multipleDetails=${multipleDetails} ?detailsOnClick=${detailsOnClick}>
 			<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
 			<mo-data-grid-column-number heading='Age' dataSelector='age'></mo-data-grid-column-number>
 			<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
@@ -212,7 +212,7 @@ export const Editing: Story = {
 		editability: DataGridEditability.Always,
 	},
 	render: ({ editability }) => html`
-		<mo-data-grid .data=${fivePeople} editability=${editability} style='height: 500px'>
+		<mo-data-grid .data=${fivePeople} editability=${editability}>
 			<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
 			<mo-data-grid-column-number heading='Age' dataSelector='age' .nonEditable=${(person: Person) => person.age > 30}></mo-data-grid-column-number>
 			<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
@@ -224,7 +224,7 @@ export const Editing: Story = {
 /** `sorting` sets the order to start with, by name and then by age; the arrow of a heading sorts by its column, and Shift+click adds it to the order. */
 export const Sorting: Story = {
 	render: () => html`
-		<mo-data-grid .data=${hundredPeople} pagination='pages' selectability='multiple' selectOnClick style='height: 500px'
+		<mo-data-grid .data=${hundredPeople} pagination='pages' selectability='multiple' selectOnClick
 			.sorting=${[{ selector: 'name', strategy: DataGridSortingStrategy.Ascending }, { selector: 'age', strategy: DataGridSortingStrategy.Descending }]}
 		>
 			<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
@@ -238,7 +238,7 @@ export const Sorting: Story = {
 /** `reorderability` adds a grip to drag rows by, and each drop fires `reorder`, which the Actions panel logs. */
 export const Reordering: Story = {
 	render: () => html`
-		<mo-data-grid .data=${hundredPeople} pagination='pages' reorderability style='height: 500px'>
+		<mo-data-grid .data=${hundredPeople} pagination='pages' reorderability>
 			<mo-data-grid-column-number sticky='start' heading='ID' dataSelector='id'></mo-data-grid-column-number>
 			<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
 			<mo-data-grid-column-number heading='Age' dataSelector='age' sumHeading='Ages Total'></mo-data-grid-column-number>
@@ -269,7 +269,7 @@ export const Filters: Story = {
 /** The `primary-action` slot places an element at the very end of the toolbar, after its icon buttons. */
 export const PrimaryAction: Story = {
 	render: () => html`
-		<mo-data-grid .data=${hundredPeople} style='height: 500px'>
+		<mo-data-grid .data=${hundredPeople}>
 			<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
 			<mo-data-grid-column-number heading='Age' dataSelector='age'></mo-data-grid-column-number>
 			<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
@@ -284,7 +284,7 @@ export const PrimaryAction: Story = {
 /** Composite actions fit the slot as well, such as a split button with more options. */
 export const PrimaryActionWithSplitButton: Story = {
 	render: () => html`
-		<mo-data-grid .data=${hundredPeople} style='height: 500px'>
+		<mo-data-grid .data=${hundredPeople}>
 			<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
 			<mo-data-grid-column-number heading='Age' dataSelector='age'></mo-data-grid-column-number>
 			<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
@@ -302,7 +302,7 @@ export const PrimaryActionWithSplitButton: Story = {
 /** `getRowContextMenuTemplate` gives each row a menu, opened by a right click or its ⋮ button; `primaryContextMenuItemOnDoubleClick` runs the bold item on a double click. */
 export const ContextMenu: Story = {
 	render: () => html`
-		<mo-data-grid .data=${hundredPeople} pagination='pages' primaryContextMenuItemOnDoubleClick style='height: 500px'
+		<mo-data-grid .data=${hundredPeople} pagination='pages' primaryContextMenuItemOnDoubleClick
 			.getRowContextMenuTemplate=${(people: Array<Person>) => html`
 				<mo-data-grid-primary-context-menu-item icon='visibility' @click=${() => new DialogAlert({ heading: people.map(person => person.name).join(', ') }).confirm()}>View</mo-data-grid-primary-context-menu-item>
 				<mo-context-menu-item icon='edit'>Edit</mo-context-menu-item>
@@ -319,7 +319,7 @@ export const ContextMenu: Story = {
 /** A thousand rows on one page: scroll through them, select them all or export them. */
 export const Virtualization: Story = {
 	render: () => html`
-		<mo-data-grid .data=${thousandPeople} pagination='100000' selectability='multiple' exportable style='height: 500px'>
+		<mo-data-grid .data=${thousandPeople} pagination='100000' selectability='multiple' exportable>
 			<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
 			<mo-data-grid-column-number heading='Age' dataSelector='age'></mo-data-grid-column-number>
 			<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
@@ -331,7 +331,7 @@ export const Virtualization: Story = {
 /** 25 rows open into 40 sub rows each, like a products page with every variant expanded through `detailsOpen`; scroll through it and watch the scrollbar hold still. */
 export const VirtualizedSubRows: Story = {
 	render: () => html`
-		<mo-data-grid .data=${twentyFiveLargeFamilies} subDataGridDataSelector='children' selectability='multiple' multipleDetails detailsOpen detailsOnClick style='height: 500px'
+		<mo-data-grid .data=${twentyFiveLargeFamilies} subDataGridDataSelector='children' selectability='multiple' multipleDetails detailsOpen detailsOnClick
 			.getRowContextMenuTemplate=${() => html`<mo-context-menu-item icon='edit'>Edit</mo-context-menu-item>`}
 		>
 			<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
@@ -342,25 +342,32 @@ export const VirtualizedSubRows: Story = {
 	`,
 }
 
-/** Without a height of its own, the grid shows at least `--mo-data-grid-min-visible-rows` rows, 2.5 by default and 10 here. */
-export const MinVisibleRows: Story = {
-	args: {
-		minVisibleRows: 10,
-	},
-	render: ({ minVisibleRows }) => html`
-		<mo-data-grid .data=${hundredPeople} style='--mo-data-grid-min-visible-rows: ${minVisibleRows}'>
+/** A `height`, a `max-height` or a share of a flex or grid container of a definite size gives the grid a height, which it takes and scrolls its rows in. Paging without a size, as many rows as fit make a page. */
+export const ConstrainedHeight: Story = {
+	decorators: [story => html`<div style='display: flex; gap: 1rem; align-items: start'>${story()}</div>`],
+	render: () => html`
+		<mo-data-grid .data=${hundredPeople} pagination='pages' style='flex: 1; max-height: 400px'>
 			<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
 			<mo-data-grid-column-number heading='Age' dataSelector='age'></mo-data-grid-column-number>
 			<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
 			<mo-data-grid-column-date heading='Birth Date' dataSelector='birthDate'></mo-data-grid-column-date>
 		</mo-data-grid>
+		<mo-flex style='flex: 1; height: 400px'>
+			<mo-heading typography='heading5'>People</mo-heading>
+			<mo-data-grid .data=${hundredPeople}>
+				<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
+				<mo-data-grid-column-number heading='Age' dataSelector='age'></mo-data-grid-column-number>
+				<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
+				<mo-data-grid-column-date heading='Birth Date' dataSelector='birthDate'></mo-data-grid-column-date>
+			</mo-data-grid>
+		</mo-flex>
 	`,
 }
 
 /** `exportable` adds a button to the footer that downloads the rows as CSV, sub rows included. */
 export const Export: Story = {
 	render: () => html`
-		<mo-data-grid .data=${fiveFamilies} subDataGridDataSelector='children' pagination='pages' exportable style='height: 500px'>
+		<mo-data-grid .data=${fiveFamilies} subDataGridDataSelector='children' pagination='pages' exportable>
 			<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
 			<mo-data-grid-column-number heading='Age' dataSelector='age'></mo-data-grid-column-number>
 			<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
@@ -372,7 +379,7 @@ export const Export: Story = {
 /** Without data, the grid shows an empty state, which the `error-no-content` slot replaces. */
 export const EmptyState: Story = {
 	render: () => html`
-		<mo-data-grid style='height: 500px'>
+		<mo-data-grid>
 			<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
 			<mo-data-grid-column-number heading='Age' dataSelector='age'></mo-data-grid-column-number>
 			<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>

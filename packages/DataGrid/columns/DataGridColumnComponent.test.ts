@@ -69,11 +69,11 @@ describe('DataGridColumnComponent', () => {
 			const columnComponent = new DataGridColumnBoolean<Person>()
 
 			const getContentTemplate = columnComponent.column.getContentTemplate!
-			columnComponent.trueIcon = 'star'
+			columnComponent.trueColor = 'var(--test-color)'
 
 			render(getContentTemplate(true, { id: 1, name: 'Alice' }), container)
 
-			expect(container.querySelector('mo-icon')!.getAttribute('icon')).toBe('star')
+			expect(container.querySelector('span')!.style.background).toBe('var(--test-color)')
 		})
 	})
 

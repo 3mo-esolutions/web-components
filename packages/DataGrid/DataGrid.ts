@@ -11,6 +11,7 @@ import { observeResize } from '@3mo/resize-observer'
 import { DataGridEditability, DataGridController, type DataGridRankedSortDefinition, type DataGridSorting, DataGridSelectability, DataGridSelectionBehaviorOnDataChange, type DataRecord } from './controller/index.js'
 import { DataGridColumnComponentsController } from './DataGridColumnComponentsController.js'
 import { DataGridColumnDefinitions } from './DataGridColumnDefinitions.js'
+import { DataGridPageSizeController } from './DataGridPageSizeController.js'
 import { type DataGridColumn, type DataGridCell, type DataGridFooter, type DataGridHeader, type DataGridRow, type DataGridReorderChange } from './index.js'
 import { DataGridToolbarElementStyles } from './DataGridToolbarElementStyles.js'
 import { DataGridPagination, type DataGridPaginationLike, type DataGridPaginationSize, type DataGridPaginationStrategy } from './DataGridPagination.js'
@@ -18,13 +19,15 @@ import { DataGridPagination, type DataGridPaginationLike, type DataGridPaginatio
 /**
  * A table that shows an array of objects as rows, with selection, sorting, pagination, details, editing and CSV export.
  *
+ * The grid is as tall as its rows, and scrolls them within a `height`, a `max-height` or a share of a container of a definite size.
+ *
  * @element mo-data-grid
  *
  * @attr data - The data to be displayed in the DataGrid. It is an array of objects, where each object represents a row.
  * @attr columns - The columns of the DataGrid, composed of their definitions and modifications. Assigning it gives the definitions in code, which column elements override.
  * @attr headerHidden - Whether the header should be hidden.
  * @attr page - The current page.
- * @attr pagination - How the rows are paged: a strategy, `pages` or `scroll`, and a size, a number or `auto` to fit the height, e.g. `pages`, `pages 50` or `50`.
+ * @attr pagination - How the rows are paged: a strategy, `pages` or `scroll`, and a size, a number or `auto`, e.g. `pages`, `pages 50` or `50`. `auto` pages as many rows as fit the grid's height, or @see DataGrid.pageSize 's value where the grid is as tall as its rows.
  * @attr sorting - The sorting mode. It is an object with `selector` and `strategy` properties.
  * @attr selectability - The selection mode. Defaults to 'single' if context menus available, 'undefined' otherwise.
  * @attr isDataSelectable - Whether data of a given row is selectable.
@@ -55,7 +58,6 @@ import { DataGridPagination, type DataGridPaginationLike, type DataGridPaginatio
  * @slot primary-action - A slot at the very end of the toolbar expecting primary action elements (e.g. an "add" button) to be placed in. Slotted elements replace the slot's default content, but complement primary actions generated outside of it e.g. EntityDataGrid's create button, which is suppressed via "primaryActionHidden" instead.
  * @slot error-no-content - A slot for displaying an error message when no data is available.
  *
- * @cssprop --mo-data-grid-min-visible-rows - The minimum number of visible rows. Defaults to 2.5.
  * @cssprop --mo-data-grid-footer-background - The background of the footer.
  * @cssprop --mo-data-grid-cell-padding - The inline padding of the cells. Defaults to 0.5rem.
  * @cssprop --mo-data-grid-column-sub-row-indentation - The indentation of the first column in the sub row. Defaults to 20px.
@@ -383,14 +385,17 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		}
 
 		if (size === 'auto') {
-			const rowsHeight = (this.scroller?.clientHeight ?? 0) - (this.header?.clientHeight ?? 0)
-			const rowHeight = this.rowHeight + 1
-			const pageSize = Math.floor(rowsHeight / rowHeight) || 1
-			return dynamicPageSize(pageSize)
+			return dynamicPageSize(this.pageSizeController.automatic ?? DataGrid.pageSize.value)
 		}
 
 		return size
 	}
+
+	private readonly pageSizeController = new DataGridPageSizeController(this, grid => ({
+		get rowHeight() { return grid.rowHeight },
+		get header() { return grid.controller.header.value },
+		get disabled() { return !grid.supportsDynamicPageSize || grid.resolvedPagination?.size !== 'auto' },
+	}))
 
 	get hasFooter() {
 		const value = this.hasPagination || this.hasSums || this.exportable
@@ -560,15 +565,28 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 
 				--mo-data-grid-selection-background: var(--mo-color-accent-container);
 
-				--_content-min-height-default: calc(var(--mo-data-grid-min-visible-rows, 2.5) * (var(--mo-data-grid-row-height) + 1px) + var(--mo-data-grid-header-height));
 				display: flex;
 				flex-direction: column;
 				height: 100%;
-				overflow-x: hidden;
+				min-height: 0;
+				/* "clip" rather than "hidden", which would make the grid itself scroll whatever overflows it vertically. */
+				overflow-x: clip;
 			}
 
-			:not(:has([mo-data-grid-row])) {
-				--_content-min-height-default: 150px;
+			#body {
+				position: relative;
+				flex: 1 1 auto;
+				min-height: 0;
+			}
+
+			#scroller {
+				flex: 1 1 auto;
+				min-height: 0;
+			}
+
+			/* Only the rows give way to a constrained height, as the scroller's basis is all of them. */
+			mo-data-grid-footer {
+				flex-shrink: 0;
 			}
 
 			:host([data-reordering]) {
@@ -583,7 +601,12 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 				width: 0;
 				min-width: 100%;
 				height: min-content;
-				min-height: 100%;
+				/* What overhangs a row, such as a checkbox's touch target, would otherwise scroll the rows by that much */
+				overflow-y: clip;
+
+				&:not(:has([mo-data-grid-row])) {
+					min-height: 150px;
+				}
 			}
 
 			/*
@@ -716,11 +739,11 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 	protected get dataGridTemplate() {
 		this.toggleAttribute('hasDetails', this.hasDetails)
 		return html`
-			<mo-flex ${style({ position: 'relative', flex: '1' })}>
+			<mo-flex id='body'>
 				<mo-scroller id='scroller'
-					${style({ flex: '1 0 var(--mo-data-grid-content-min-height, var(--_content-min-height-default))' })}
 					${observeResize(([e]) => this.style.setProperty('--_content-height', `${e?.contentRect.height ?? 0}px`))}
 					${this.controller.virtualization.root.ref()}
+					${this.pageSizeController.scroller.ref()}
 				>
 					<mo-grid id='content' autoRows='min-content' columns=${this.columnTracks}>
 						${this.headerTemplate}

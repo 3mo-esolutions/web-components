@@ -65,6 +65,7 @@ export class DataGridVirtualizationController extends Controller {
 	private readonly renderedRows = new WeakSet<VirtualizableRow>()
 	private readonly decidedRows = new WeakSet<VirtualizableRow>()
 	private rootElement?: Element
+	private rootScrolls = false
 	private observer?: IntersectionObserver
 	private retentionObserver?: IntersectionObserver
 	private rootResizeObserver?: ResizeObserver
@@ -116,9 +117,11 @@ export class DataGridVirtualizationController extends Controller {
 	 * renders. @see DataGridVirtualizationController.eagerRenders until both are known.
 	 */
 	private get eagerAllowance() {
-		return !this.rootHeight || !this.partHeight
+		const viewportHeight = this.rootElement?.ownerDocument.documentElement.clientHeight ?? 0
+		const height = this.rootScrolls || !viewportHeight ? this.rootHeight : Math.min(this.rootHeight, viewportHeight)
+		return !height || !this.partHeight
 			? DataGridVirtualizationController.eagerRenders
-			: Math.ceil((this.rootHeight + DataGridVirtualizationController.margin) / this.partHeight)
+			: Math.ceil((height + DataGridVirtualizationController.margin) / this.partHeight)
 	}
 
 	override hostDisconnected() {
@@ -153,11 +156,7 @@ export class DataGridVirtualizationController extends Controller {
 			return
 		}
 		this.rootElement = root
-		this.observer?.disconnect()
-		this.observer = undefined
-		this.retentionObserver?.disconnect()
-		this.retentionObserver = undefined
-		this.observedParts.clear()
+		this.unobserveParts()
 		this.rootResizeObserver?.disconnect()
 		this.rootResizeObserver = undefined
 
@@ -168,22 +167,44 @@ export class DataGridVirtualizationController extends Controller {
 		// The parts are observed only once the root has a box of its own. An observer whose root has
 		// none reports every part as hidden, once and never again — leaving the rows as they were,
 		// which is how a row rendered by the eager allowance would stay rendered for good.
-		this.rootResizeObserver = new ResizeObserver(entries => {
-			const height = entries.at(-1)?.contentRect.height ?? 0
-			if (height > 0) {
-				// Kept while the root is hidden and reports none, as it is the height it will have again.
-				this.rootHeight = height
-				this.observeParts()
-			}
-		})
+		this.rootResizeObserver = new ResizeObserver(entries => this.handleRootResize(entries.find(entry => entry.target === root)?.contentRect.height ?? this.rootHeight))
 		this.rootResizeObserver.observe(root)
+		// A root of a fixed size starts scrolling without resizing, when only its content grows.
+		if (root.firstElementChild) {
+			this.rootResizeObserver.observe(root.firstElementChild)
+		}
+	}
+
+	private handleRootResize(height: number) {
+		const root = this.rootElement
+		if (!root || height <= 0) {
+			return
+		}
+		// Kept while the root is hidden and reports none, as it is the height it will have again.
+		this.rootHeight = height
+		const rootScrolls = root.scrollHeight > root.clientHeight
+		if (rootScrolls !== this.rootScrolls) {
+			this.rootScrolls = rootScrolls
+			this.unobserveParts()
+		}
+		this.observeParts()
+	}
+
+	private unobserveParts() {
+		this.observer?.disconnect()
+		this.observer = undefined
+		this.retentionObserver?.disconnect()
+		this.retentionObserver = undefined
+		this.observedParts.clear()
 	}
 
 	private observeParts() {
-		const root = this.rootElement
-		if (!root) {
+		const rootElement = this.rootElement
+		if (!rootElement) {
 			return
 		}
+		// A root that does not scroll is as tall as its parts, so they are measured against the viewport instead.
+		const root = this.rootScrolls ? rootElement : rootElement.ownerDocument
 		const { margin, hysteresis } = DataGridVirtualizationController
 		// One observer per edge of the hysteresis: the narrow band says what to render, the wide one
 		// what to empty, and a part between them is left alone.

@@ -29,4 +29,6 @@ Localizer.dictionaries.add('de', {
 	'Currency': 'Währung',
 	'Reordering is unavailable while the grid is sorted.': 'Die Reihenfolge kann nicht geändert werden, solange die Tabelle sortiert ist.',
 	'Clear sorting': 'Sortierung zurücksetzen',
+	'Yes': 'Ja',
+	'No': 'Nein',
 })

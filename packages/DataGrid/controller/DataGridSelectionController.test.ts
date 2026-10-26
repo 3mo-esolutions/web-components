@@ -41,6 +41,20 @@ describe('DataGridSelectionController', () => {
 	const create = (setup: Partial<TestHost> = {}) => new ComponentTestFixture(() =>
 		Object.assign(new TestHost(), { source: [...data], selectability: DataGridSelectability.Multiple }, setup))
 
+	describe('keys', () => {
+		it('should key data without an id by its content', () => {
+			expect(DataGridSelectionController.keyOf({ name: 'Ada' })).toBe(DataGridSelectionController.keyOf({ name: 'Ada' }))
+		})
+
+		it('should key circular data by itself rather than throw', () => {
+			const order = { requests: new Array<object>() }
+			const request = { order }
+			order.requests.push(request)
+
+			expect(DataGridSelectionController.keyOf(request)).toBe(request)
+		})
+	})
+
 	describe('hasSelection', () => {
 		const fixture = create()
 

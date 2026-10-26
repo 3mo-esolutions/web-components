@@ -67,7 +67,7 @@ import '@3mo/fetchable-data-grid'
 | `columns` | `columns` | `DataGridColumn<TData, any>[]` |  | The columns of the DataGrid, composed of their definitions and modifications. Assigning it gives the definitions in code, which column elements override. |
 | `headerHidden` | `headerHidden` | `boolean` | `false` | Whether the header should be hidden. |
 | `page` | `page` | `number` | `1` | The current page. |
-| `pagination` | `pagination` | `DataGridPagination \| undefined` |  | How the rows are paged: a strategy, `pages` or `scroll`, and a size, a number or `auto` to fit the height, e.g. `pages`, `pages 50` or `50`. |
+| `pagination` | `pagination` | `DataGridPagination \| undefined` |  | How the rows are paged: a strategy, `pages` or `scroll`, and a size, a number or `auto`, e.g. `pages`, `pages 50` or `50`. `auto` pages as many rows as fit the grid's height, or |
 | `sorting` | `sorting` | `DataGridSorting<TData> \| undefined` |  | The sorting mode. It is an object with `selector` and `strategy` properties. |
 | `selectability` | `selectability` | `Selectability \| undefined` |  | The selection mode. Defaults to 'single' if context menus available, 'undefined' otherwise. |
 | `isDataSelectable` | `isDataSelectable` | `((data: TData) => boolean) \| undefined` |  | Whether data of a given row is selectable. |
@@ -76,6 +76,7 @@ import '@3mo/fetchable-data-grid'
 | `selectionBehaviorOnDataChange` | `selectionBehaviorOnDataChange` | `SelectabilityBehaviorOnItemsChange` | `"reset"` | The behavior of the selection when the data changes. |
 | `reorderability` | `reorderability` | `boolean \| undefined` |  | Whether rows can be dragged into another order, which works while nothing is sorted and no row has details or sub rows. |
 | `multipleDetails` | `multipleDetails` | `boolean` | `false` | Whether multiple details can be opened at the same time. |
+| `detailsOpen` | `detailsOpen` | `boolean` | `false` | Opens the details of rows as they arrive, until it is turned off. The user may still close them. Requires "multipleDetails". |
 | `subDataGridDataSelector` | `subDataGridDataSelector` | `` (object extends Required<TData> ? string : TData extends readonly any[] ? Extract<keyof TData, `${number}`> \| Extract<keyof TData, string> \| SubKeyPathOf<...> : TData extends object ? Extract<...> \| SubKeyPathOf<...> : never) \| undefined `` |  | The key path of the sub data grid data. |
 | `hasDataDetail` | `hasDataDetail` | `((data: TData) => boolean) \| undefined` |  | Whether the data has a detail. |
 | `detailsOnClick` | `detailsOnClick` | `boolean` | `false` | Whether the details should be opened on click. |
@@ -126,7 +127,6 @@ import '@3mo/fetchable-data-grid'
 
 | Name | Description |
 | --- | --- |
-| `--mo-data-grid-min-visible-rows` | The minimum number of visible rows. Defaults to 2.5. |
 | `--mo-data-grid-footer-background` | The background of the footer. |
 | `--mo-data-grid-cell-padding` | The inline padding of the cells. Defaults to 0.5rem. |
 | `--mo-data-grid-column-sub-row-indentation` | The indentation of the first column in the sub row. Defaults to 20px. |

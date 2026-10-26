@@ -2,7 +2,7 @@
 import { component, css, html, render, state, type HTMLTemplateResult } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import '@3mo/localization'
-import { DataGrid, DataGridPagination, type DataGridPaginationLike, type DataGridRow, DataGridColumn, type DataGridColumnComponent, DataRecord, DataGridSelectability, DataGridSelectionBehaviorOnDataChange, DataGridSortingStrategy } from './index.js'
+import { DataGrid, DataGridPagination, type DataGridPaginationLike, type DataGridRow, DataGridColumn, type DataGridColumnComponent, DataRecord, DataGridSelectability, DataGridSelectionBehaviorOnDataChange, DataGridSortingStrategy, DataGridEditability } from './index.js'
 
 type Person = { id: number, name: string, birthDate: DateTime, children?: Array<Person>, balance: number }
 
@@ -288,8 +288,8 @@ describe('DataGrid', () => {
 
 					const boolean = columnOf('flag')!
 					expect(boolean.getSumTemplate).toBeUndefined()
-					expect(contentOf(boolean, true).querySelector('mo-icon')?.getAttribute('icon')).toBe('done')
-					expect(contentOf(boolean, false).querySelector('mo-icon')?.getAttribute('icon')).toBe('clear')
+					expect(contentOf(boolean, true).querySelector('span')?.title).toBe('Yes')
+					expect(contentOf(boolean, false).querySelector('span')?.title).toBe('No')
 
 					const text = columnOf('label')!
 					expect(text.alignment).toBe('start')
@@ -1711,11 +1711,9 @@ describe('DataGrid', () => {
 		})
 
 		it('should compute an \'auto\' page size from the scroller height and row height', async () => {
-			fixture.component.style.setProperty('--mo-data-grid-content-min-height', '400px')
+			fixture.component.style.height = '400px'
 			fixture.component.setPagination('pages auto')
 			fixture.component.rowHeight = 30
-			await fixture.updateComplete
-			await new Promise(r => setTimeout(r, 30))
 
 			const expectedPageSize = () => {
 				const scroller = fixture.component.renderRoot.querySelector('mo-scroller#scroller')!
@@ -1723,22 +1721,20 @@ describe('DataGrid', () => {
 				return Math.floor((scroller.clientHeight - header.clientHeight) / (fixture.component.rowHeight + 1)) || 1
 			}
 
+			// Measured once the resized rows have been observed, which a loaded machine renders late.
+			await vi.waitFor(() => expect(fixture.component.pageSize).toBe(expectedPageSize()))
 			const smallRows = expectedPageSize()
-			expect(fixture.component.pageSize).toBe(smallRows)
 			expect(smallRows).toBeGreaterThan(5)
 
 			fixture.component.rowHeight = 60
-			await fixture.updateComplete
-			await new Promise(r => setTimeout(r, 30))
 
-			const largeRows = expectedPageSize()
-			expect(fixture.component.pageSize).toBe(largeRows)
-			expect(largeRows).toBeLessThan(smallRows)
+			await vi.waitFor(() => expect(fixture.component.pageSize).toBe(expectedPageSize()))
+			expect(expectedPageSize()).toBeLessThan(smallRows)
 		})
 
 		it('should fall back to the static default page size where dynamic page size is unsupported', async () => {
 			const grid = new DataGridWithoutDynamicPageSize()
-			grid.style.setProperty('--mo-data-grid-content-min-height', '400px')
+			grid.style.height = '400px'
 			document.body.appendChild(grid)
 			try {
 				grid.setPagination('pages auto')
@@ -2022,6 +2018,206 @@ describe('DataGrid', () => {
 			} finally {
 				host.remove()
 			}
+		})
+	})
+
+	describe('Height', () => {
+		const people = (count: number): Array<Person> => Array.from({ length: count }, (_, i) => ({ id: i, name: `Person ${i}`, birthDate: new DateTime(2000, 0, 0), balance: i }))
+		const settle = () => new Promise(r => setTimeout(r, 60))
+		const scrollerOf = (grid: DataGrid<Person>) => grid.renderRoot.querySelector('mo-scroller#scroller')!
+		const rowsHeight = (grid: DataGrid<Person>) => grid.rows.length * (grid.rowHeight + 1)
+
+		describe('as tall as its rows where the container gives it no height', () => {
+			const fixture = new ComponentTestFixture<TestDataGrid>(html`<test-data-grid .data=${people(20)}></test-data-grid>`)
+
+			it('should not scroll its rows', async () => {
+				await settle()
+				const scroller = scrollerOf(fixture.component)
+				expect(scroller.scrollHeight).toBe(scroller.clientHeight)
+				expect(fixture.component.offsetHeight).toBeGreaterThanOrEqual(rowsHeight(fixture.component))
+			})
+
+			it('should not scroll its rows by what overhangs the last one, such as a checkbox\'s touch target', async () => {
+				const grid = document.createElement('mo-data-grid') as DataGrid<{ active: boolean }>
+				render(html`<mo-data-grid-column-boolean heading='Active' dataSelector='active'></mo-data-grid-column-boolean>`, grid)
+				grid.editability = DataGridEditability.Always
+				grid.data = [{ active: true }, { active: false }]
+				document.body.append(grid)
+				try {
+					await grid.updateComplete
+					await settle()
+					const scroller = scrollerOf(grid as any)
+					expect(grid.rows[0]!.renderRoot.querySelector('mo-data-grid-cell')!.renderRoot.querySelector('mo-checkbox')).not.toBeNull()
+					expect(scroller.scrollHeight).toBe(scroller.clientHeight)
+				} finally {
+					grid.remove()
+				}
+			})
+
+			it('should grow with its rows', async () => {
+				await settle()
+				const height = fixture.component.offsetHeight
+
+				fixture.component.setData(people(40))
+				await fixture.updateComplete
+				await settle()
+
+				expect(fixture.component.offsetHeight).toBeGreaterThanOrEqual(height + 20 * (fixture.component.rowHeight + 1) - 1)
+			})
+
+			it('should page as many rows as the static page size, as their space is no measure of how many fit', async () => {
+				fixture.component.setPagination('pages auto')
+				await fixture.updateComplete
+				await settle()
+				await fixture.updateComplete
+
+				expect(fixture.component.pageSize).toBe(DataGrid.pageSize.value)
+				expect(fixture.component.rows.length).toBe(Math.min(DataGrid.pageSize.value, 20))
+			})
+		})
+
+		describe('constrained to the height its container gives it', () => {
+			const fixture = new ComponentTestFixture<TestDataGrid>(html`<test-data-grid .data=${people(50)} style='height: 300px'></test-data-grid>`)
+
+			it('should take that height and scroll its rows', async () => {
+				await settle()
+				const scroller = scrollerOf(fixture.component)
+				expect(fixture.component.offsetHeight).toBe(300)
+				expect(scroller.scrollHeight).toBeGreaterThan(scroller.clientHeight)
+			})
+
+			it('should shrink below its rows in a flex container of a definite size', async () => {
+				const container = document.createElement('div')
+				container.style.cssText = 'display: flex; flex-direction: column; height: 400px'
+				const sibling = document.createElement('div')
+				sibling.style.cssText = 'height: 100px; flex-shrink: 0'
+				container.append(sibling, fixture.component)
+				fixture.component.style.height = ''
+				document.body.appendChild(container)
+				try {
+					await fixture.updateComplete
+					await settle()
+					expect(fixture.component.offsetHeight).toBe(300)
+					expect(scrollerOf(fixture.component).scrollHeight).toBeGreaterThan(scrollerOf(fixture.component).clientHeight)
+				} finally {
+					container.remove()
+				}
+			})
+
+			it('should page as many rows as fit a maximum height without oscillating', async () => {
+				fixture.component.style.height = ''
+				fixture.component.style.maxHeight = '400px'
+				fixture.component.setPagination('pages auto')
+				await fixture.updateComplete
+				await settle()
+				await fixture.updateComplete
+				await settle()
+
+				const pageSize = fixture.component.pageSize
+				expect(pageSize).toBeGreaterThan(1)
+				expect(pageSize).toBeLessThan(DataGrid.pageSize.value)
+				expect(fixture.component.offsetHeight).toBeLessThanOrEqual(400)
+
+				await settle()
+				await fixture.updateComplete
+				expect(fixture.component.pageSize).toBe(pageSize)
+				expect(fixture.component.rows.length).toBe(pageSize)
+			})
+		})
+
+		describe('automatic page size', () => {
+			const fit = (grid: DataGrid<Person>) => {
+				const header = grid.renderRoot.querySelector('mo-data-grid-header')!
+				return Math.floor((scrollerOf(grid).clientHeight - header.clientHeight) / (grid.rowHeight + 1))
+			}
+
+			const connect = async (grid: TestDataGrid, run: (grid: TestDataGrid) => Promise<void>) => {
+				document.body.appendChild(grid)
+				try {
+					await run(grid)
+				} finally {
+					grid.remove()
+				}
+			}
+
+			it('should page the static page size until the grid has been measured, and as many rows as fit afterwards', () => connect(new TestDataGrid(), async grid => {
+				grid.data = people(50)
+				grid.setPagination('pages')
+				grid.style.height = '400px'
+				await grid.updateComplete
+
+				expect(grid.pageSize).toBe(DataGrid.pageSize.value)
+
+				await settle()
+				await grid.updateComplete
+
+				expect(grid.pageSize).toBe(fit(grid))
+				expect(grid.pageSize).toBeLessThan(DataGrid.pageSize.value)
+			}))
+
+			it('should not measure the layout when the page size is read', () => connect(new TestDataGrid(), async grid => {
+				grid.data = people(50)
+				grid.setPagination('pages')
+				grid.style.height = '400px'
+				await grid.updateComplete
+				await settle()
+				const clientHeight = vi.spyOn(scrollerOf(grid), 'clientHeight', 'get')
+
+				void grid.pageSize
+				void grid.pageSize
+
+				expect(clientHeight).not.toHaveBeenCalled()
+			}))
+
+			it('should not measure a grid which does not page automatically', () => connect(new TestDataGrid(), async grid => {
+				grid.data = people(50)
+				grid.style.height = '400px'
+				await grid.updateComplete
+				await settle()
+
+				expect(grid['pageSizeController'].automatic).toBeUndefined()
+			}))
+
+			it('should not take the minimum height of an empty grid for a height its container gives it', () => connect(new TestDataGrid(), async grid => {
+				grid.data = []
+				grid.setPagination('pages')
+				await grid.updateComplete
+				await settle()
+
+				grid.setData(people(40))
+				await grid.updateComplete
+				await settle()
+				await grid.updateComplete
+
+				expect(grid.pageSize).toBe(DataGrid.pageSize.value)
+				expect(grid.rows.length).toBe(DataGrid.pageSize.value)
+			}))
+		})
+
+		describe('virtualization where the document scrolls the grid', () => {
+			const fixture = new ComponentTestFixture<TestDataGrid>(html`<test-data-grid .data=${people(500)}></test-data-grid>`)
+
+			it('should leave the rows far below the viewport without cells', async () => {
+				await settle()
+				await settle()
+				const rows = fixture.component.rows
+				expect(rows.length).toBe(500)
+				expect(rows[0]!.renderRoot.querySelector('mo-data-grid-cell')).not.toBeNull()
+				expect(rows.at(-1)!.renderRoot.querySelector('mo-data-grid-cell')).toBeNull()
+			})
+
+			it('should render the rows scrolled into the viewport', async () => {
+				await settle()
+				const lastRow = fixture.component.rows.at(-1)!
+				expect(lastRow.renderRoot.querySelector('mo-data-grid-cell')).toBeNull()
+
+				lastRow.scrollIntoView()
+				await settle()
+				await settle()
+
+				expect(lastRow.renderRoot.querySelector('mo-data-grid-cell')).not.toBeNull()
+				window.scrollTo(0, 0)
+			})
 		})
 	})
 })
