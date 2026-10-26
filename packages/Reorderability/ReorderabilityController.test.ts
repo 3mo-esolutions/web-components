@@ -169,7 +169,7 @@ describe('ReorderabilityController', () => {
 		return x === undefined ? undefined : { x: Number(x), y: Number(y ?? 0) }
 	}
 
-	const frame = () => new Promise(resolve => setTimeout(resolve, 10))
+	const frame = () => new Promise(resolve => requestAnimationFrame(resolve))
 
 	/** A synthetic mouse drag: press on `from`, glide to `to` through a midpoint (so mid-drag hooks
 	 * can observe the in-flight state), release unless told otherwise. */
@@ -201,6 +201,17 @@ describe('ReorderabilityController', () => {
 			await drag(items[0]!, center(items[2]!))
 			expect(fixture.component.reorders).toEqual([[0, 2]])
 			expect(fixture.component.items).toEqual([1, 2, 0, 3])
+		})
+
+		it('drops where the pointer is released, even before a frame has painted the last move', () => {
+			const items = fixture.component.itemElements
+			const start = center(items[0]!)
+			const end = center(items[2]!)
+			dispatch(items[0]!, 'pointerdown', { clientX: start.x, clientY: start.y, pointerType: 'mouse' })
+			dispatch(items[0]!, 'pointermove', { clientX: start.x, clientY: start.y + 10, pointerType: 'mouse' })
+			dispatch(items[0]!, 'pointermove', { clientX: end.x, clientY: end.y, pointerType: 'mouse' })
+			dispatch(items[0]!, 'pointerup', { clientX: end.x, clientY: end.y, buttons: 0, pointerType: 'mouse' })
+			expect(fixture.component.reorders).toEqual([[0, 2]])
 		})
 
 		it('treats a press within the dead zone as a plain click — nothing is lifted or reordered', async () => {

@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/reorderability",
-	"version": "0.4.0",
+	"version": "0.4.1",
 	"description": "A Lit controller for reordering items by dragging with mouse, touch or pen, reading the layout from the items themselves.",
 	"repository": {
 		"type": "git",

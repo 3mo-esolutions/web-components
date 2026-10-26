@@ -595,7 +595,7 @@ describe('ModdableDataGrid', () => {
 		const dispatch = (target: EventTarget, type: string, options: PointerEventInit = {}) =>
 			target.dispatchEvent(new PointerEvent(type, { bubbles: true, composed: true, pointerId: 1, isPrimary: true, button: 0, buttons: 1, ...options }))
 
-		const frame = () => new Promise(resolve => setTimeout(resolve, 10))
+		const frame = () => new Promise(resolve => requestAnimationFrame(resolve))
 
 		/** A synthetic mouse drag: press on `from`, glide past the dead zone to `to`, release. */
 		const drag = async (from: Element, to: { x: number, y: number }, midway?: () => unknown) => {

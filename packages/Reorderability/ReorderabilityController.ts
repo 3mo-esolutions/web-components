@@ -107,7 +107,7 @@ export class ReorderabilityController<TItemOptions extends ReorderabilityControl
 			handlePress: event => this.handlePress(event),
 			handleDragStart: drag => this.handleDragStart(drag),
 			handleDrag: drag => this.handleDrag(drag),
-			handleDragEnd: () => this.handleDragEnd(),
+			handleDragEnd: drag => this.handleDragEnd(drag),
 			handleDragCancel: () => this.teardown(),
 		})
 	}
@@ -438,8 +438,13 @@ export class ReorderabilityController<TItemOptions extends ReorderabilityControl
 		return target
 	}
 
-	private handleDragEnd() {
+	private handleDragEnd({ event }: PointerDrag) {
 		const drag = this.drag
+		if (drag) {
+			// The last moves may still await their frame.
+			drag.point = { x: event.clientX, y: event.clientY }
+			this.paint()
+		}
 		this.teardown()
 		if (drag && drag.target !== drag.position) {
 			this.handleReorder(drag.slots[drag.position]!.index, drag.slots[drag.target]!.index)

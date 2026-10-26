@@ -69,11 +69,11 @@ class OverflowTestComponent extends Component {
 	}
 }
 
-/** Awaits the resize observations and microtask-batched measurements the controller settles through. */
-const settle = async (component: OverflowTestComponent) => {
-	for (let i = 0; i < 10; i++) {
+/** Awaits the frames in which the controller observes resizes and measures, however late a loaded machine renders them. */
+const settle = async (component: Component) => {
+	for (let i = 0; i < 4; i++) {
 		await component.updateComplete
-		await new Promise(resolve => setTimeout(resolve, 10))
+		await new Promise(resolve => requestAnimationFrame(resolve))
 	}
 	await component.updateComplete
 }
@@ -276,15 +276,7 @@ class OverflowDeclarativeTestComponent extends Component {
 describe('OverflowController declared through directives', () => {
 	const fixture = new ComponentTestFixture(() => new OverflowDeclarativeTestComponent())
 
-	const settleDeclarative = async (component: OverflowDeclarativeTestComponent) => {
-		for (let i = 0; i < 10; i++) {
-			await component.updateComplete
-			await new Promise(resolve => setTimeout(resolve, 10))
-		}
-		await component.updateComplete
-	}
-
-	beforeEach(() => settleDeclarative(fixture.component))
+	beforeEach(() => settle(fixture.component))
 
 	it('should take the container from the element the directive is rendered on', () => {
 		expect(fixture.component.controller.containerElement).toBe(fixture.component.renderRoot.querySelector('#container') ?? undefined)
@@ -297,7 +289,7 @@ describe('OverflowController declared through directives', () => {
 	it('should overflow the items which do not fit from the end', async () => {
 		fixture.component.containerWidth = itemWidth * 3 + 10
 
-		await settleDeclarative(fixture.component)
+		await settle(fixture.component)
 
 		expect(fixture.component.overflowedItems.map(item => item.dataset.index)).toEqual(['3', '4'])
 	})
@@ -306,7 +298,7 @@ describe('OverflowController declared through directives', () => {
 		fixture.component.pinnedIndex = 4
 		fixture.component.containerWidth = itemWidth * 3 + 10
 
-		await settleDeclarative(fixture.component)
+		await settle(fixture.component)
 
 		expect(fixture.component.overflowedItems.map(item => item.dataset.index)).toEqual(['2', '3'])
 	})
@@ -314,18 +306,18 @@ describe('OverflowController declared through directives', () => {
 	it('should forget an item which is no longer rendered', async () => {
 		fixture.component.itemCount = 3
 
-		await settleDeclarative(fixture.component)
+		await settle(fixture.component)
 
 		expect(fixture.component.controller.items.map(item => item.dataset.index)).toEqual(['0', '1', '2'])
 	})
 
 	it('should judge items which are rendered later', async () => {
 		fixture.component.containerWidth = itemWidth * 3 + 10
-		await settleDeclarative(fixture.component)
+		await settle(fixture.component)
 		expect(fixture.component.overflowedItems.length).toBe(2)
 
 		fixture.component.itemCount = 7
-		await settleDeclarative(fixture.component)
+		await settle(fixture.component)
 
 		expect(fixture.component.overflowedItems.map(item => item.dataset.index)).toEqual(['3', '4', '5', '6'])
 	})
