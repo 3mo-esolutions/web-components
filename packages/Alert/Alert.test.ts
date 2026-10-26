@@ -124,6 +124,20 @@ describe('Alert', () => {
 
 			expect(parseFloat(slotHeight())).toBeCloseTo(contentHeight, 0)
 		})
+
+		it('should center the first line of the content on the icon without heading', async () => {
+			fixture.component.style.lineHeight = '20px'
+			fixture.component.textContent = 'Test content'
+			await fixture.update()
+			await settleContentTransition()
+
+			const icon = fixture.component.renderRoot.querySelector('mo-icon')!.getBoundingClientRect()
+			const range = document.createRange()
+			range.selectNodeContents(fixture.component)
+			const [firstLine] = range.getClientRects()
+
+			expect(Math.abs((firstLine!.top + firstLine!.height / 2) - (icon.top + icon.height / 2))).toBeLessThan(1)
+		})
 	})
 
 	describe('Collapsible content', () => {

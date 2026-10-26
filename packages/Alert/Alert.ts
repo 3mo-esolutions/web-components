@@ -125,9 +125,14 @@ export class Alert extends Component {
 				&[data-has-heading] {
 					margin-block-start: 8px;
 				}
+				&:not([data-has-heading]) {
+					/* Centers the first line on the 24px icon */
+					padding-block-start: max(0px, (24px - 1lh) / 2);
+				}
 				&[data-collapsed], &[data-empty] {
 					height: 0;
 					margin-block-start: 0;
+					padding-block-start: 0;
 				}
 			}
 		`
