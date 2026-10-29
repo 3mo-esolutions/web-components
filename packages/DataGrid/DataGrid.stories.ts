@@ -2,8 +2,8 @@ import type { Meta, StoryObj } from '@storybook/web-components-vite'
 import { html } from '@a11d/lit'
 import { sourceOf } from '../../.storybook/source.js'
 import { DialogAlert } from '../StandardDialogs/index.js'
-import { DataGridEditability, DataGridSelectability, DataGridSortingStrategy } from './index.js'
-import { fiftyPeople, fiveFamilies, fivePeople, hundredPeople, thousandPeople, twentyFiveLargeFamilies, twentyPeople, type Person } from '../../stories/index.js'
+import { DataGridColumnBinder, DataGridEditability, DataGridSelectability, DataGridSortingStrategy } from './index.js'
+import { fiftyPeople, fiveFamilies, fivePeople, hundredPeople, thousandPeople, twentyFiveLargeFamilies, twentyPeople, Person } from '../../stories/index.js'
 import addressColumnSource from './stories/AddressColumn.ts?raw'
 import customDataGridSource from './stories/CustomDataGrid.ts?raw'
 import './stories/AddressColumn.js'
@@ -49,13 +49,33 @@ export const Default: Story = {
 			?hasAlternatingBackground=${hasAlternatingBackground}
 			?exportable=${exportable}
 		>
+			<mo-data-grid-column-image heading='Avatar' dataSelector='avatar' tooltipSelector='name'></mo-data-grid-column-image>
 			<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
 			<mo-data-grid-column-number heading='Age' dataSelector='age'></mo-data-grid-column-number>
 			<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
 			<mo-data-grid-column-date heading='Birth Date' dataSelector='birthDate'></mo-data-grid-column-date>
-			<mo-data-grid-column-boolean heading='Underage' dataSelector='underage'></mo-data-grid-column-boolean>
 		</mo-data-grid>
 	`,
+}
+
+/**
+ * `DataGridColumnBinder.for(Person).bind(keyPath)` takes a column's data selector from the key path, its heading from `@label` and its description from `@description`.
+ * A `@label.short` becomes the heading instead and the full label moves into the description, as for Job and Born.
+ */
+export const BoundColumns: Story = {
+	render: () => {
+		const { bind } = DataGridColumnBinder.for(Person)
+		return html`
+			<mo-data-grid .data=${twentyPeople}>
+				<mo-data-grid-column-image ${bind('avatar')} tooltipSelector='name'></mo-data-grid-column-image>
+				<mo-data-grid-column-text ${bind('name')}></mo-data-grid-column-text>
+				<mo-data-grid-column-text ${bind('occupation')}></mo-data-grid-column-text>
+				<mo-data-grid-column-date ${bind('birthDate')}></mo-data-grid-column-date>
+				<mo-data-grid-column-text ${bind('country')}></mo-data-grid-column-text>
+				<mo-data-grid-column-currency currency='EUR' ${bind('balance')}></mo-data-grid-column-currency>
+			</mo-data-grid>
+		`
+	},
 }
 
 /** `sticky` pins a column to the `start`, to the `end` or to `both` while the others scroll by; the selection and menu columns stick as well. */

@@ -1,8 +1,7 @@
-import { component, html, event, property, style } from '@a11d/lit'
+import { component, html, event, property } from '@a11d/lit'
 import { type MaterialIcon } from '@3mo/icon'
 import '@3mo/localization'
-import { tooltip } from '@3mo/tooltip'
-import { DataGridColumnComponent } from './DataGridColumnComponent.js'
+import { DataGridColumnIconButton } from './DataGridColumnIconButton.js'
 
 /**
  * @element mo-data-grid-column-deletion
@@ -16,23 +15,26 @@ import { DataGridColumnComponent } from './DataGridColumnComponent.js'
  * @fires delete
  */
 @component('mo-data-grid-column-deletion')
-export class DataGridColumnDeletion<TData> extends DataGridColumnComponent<TData, never> {
+export class DataGridColumnDeletion<TData> extends DataGridColumnIconButton<TData> {
 	@event() readonly delete!: EventDispatcher<TData>
 
 	@property({ type: Boolean }) prevent = false
-	@property() icon: MaterialIcon = 'delete'
-	@property() tooltip?: string
+	@property() override icon: MaterialIcon = 'delete'
 
-	override nonSortable = true
 	override nonEditable = true
 
-	override getContentTemplate = (_: never, data?: TData) => this.prevent ? html.nothing : html`
-		<mo-icon-button icon=${this.icon}
-			${tooltip(this.tooltip ?? t('Delete position'))}
-			${style({ color: 'var(--mo-color-gray)', height: '40px', display: 'flex' })}
-			@click=${() => !data ? void 0 : this.delete.dispatch(data)}
-		></mo-icon-button>
-	`
+	override getContentTemplate(value: unknown, data?: TData) {
+		return this.prevent ? html.nothing : super.getContentTemplate(value, data)
+	}
+
+	protected override get tooltipText() {
+		return this.tooltip ?? t('Delete position')
+	}
+
+	protected override handleClick(data: TData) {
+		super.handleClick(data)
+		this.delete.dispatch(data)
+	}
 }
 
 declare global {

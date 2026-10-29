@@ -22,6 +22,7 @@ import '@3mo/data-grid'
 
 ```html
 <mo-data-grid .data=${twentyPeople} editability='never'>
+	<mo-data-grid-column-image heading='Avatar' dataSelector='avatar' tooltipSelector='name'></mo-data-grid-column-image>
 	<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
 	<mo-data-grid-column-number heading='Age' dataSelector='age'></mo-data-grid-column-number>
 	<mo-data-grid-column-text heading='Address' dataSelector='address'></mo-data-grid-column-text>
@@ -31,6 +32,7 @@ import '@3mo/data-grid'
 
 ## Examples
 
+- [Bound Columns](https://3mo-esolutions.github.io/web-components/?path=/story/data-data-grids-data-grid--bound-columns) — `DataGridColumnBinder.for(Person).bind(keyPath)` takes a column's data selector from the key path, its heading from `@label` and its description from `@description`.
 - [Sticky Columns](https://3mo-esolutions.github.io/web-components/?path=/story/data-data-grids-data-grid--sticky-columns) — `sticky` pins a column to the `start`, to the `end` or to `both` while the others scroll by; the selection and menu columns stick as well.
 - [Custom Cell Style](https://3mo-esolutions.github.io/web-components/?path=/story/data-data-grids-data-grid--custom-cell-style) — `contentStyle` styles a cell by its value: negative balances in red, positive ones in green.
 - [Column Menu Items](https://3mo-esolutions.github.io/web-components/?path=/story/data-data-grids-data-grid--column-menu-items) — A column element of your own adds items to the menu under its heading - click the heading of the colored Address column.
@@ -278,7 +280,8 @@ A column showing a boolean as a dot, colored for true and for false, and nothing
 | --- | --- | --- | --- | --- |
 | `prevent` | `prevent` | `boolean` | `false` | Prevents the deletion button from being displayed |
 | `icon` | `icon` | `MaterialIcon` | `"delete"` | The icon to display. Defaults to 'delete' |
-| `tooltip` | `tooltip` | `string \| undefined` |  | The tooltip to display. Defaults to 'Delete position' |
+| `tooltip` | `tooltip` | `string \| undefined` |  | The tooltip of the buttons |
+| `disabled` | `disabled` | `((data: TData) => boolean) \| undefined` |  | Whether the button of a row is disabled |
 | `dataGrid` | `dataGrid` | `DataGrid<TData, any> \| undefined` |  |  |
 | `width` | `width` | `string` | `"max-content"` | The width of the column |
 | `hidden` | `hidden` | `boolean` | `false` | Whether the column is hidden. The column can be made visible by the user in the settings panel if available. |
@@ -291,14 +294,47 @@ A column showing a boolean as a dot, colored for true and for false, and nothing
 | `nonEditable` | `nonEditable` | `boolean` | `true` | Whether the column is editable |
 | `sticky` | `sticky` | `DataGridColumnSticky \| undefined` |  | The sticky position of the column, either 'start', 'end', or 'both' |
 | `contentStyle` | `contentStyle` | `DataGridColumnContentStyle<TData, TValue> \| undefined` |  | The content style of the column. It can be a string, CSSResult, or a function that returns either based on the cell value and data. |
-| `getContentTemplate` | `getContentTemplate` | `(_: never, data?: TData \| undefined) => HTMLTemplateResult` |  | The content template of the column. |
-|  | `getEditContentTemplate` |  |  | The edit content template of the column. |
+| `getEditContentTemplate` | `getEditContentTemplate` | `(_: unknown, data?: TData \| undefined) => HTMLTemplateResult` | `"getContentTemplate"` | The edit content template of the column. |
+|  | `getContentTemplate` |  |  | The content template of the column. |
 
 #### Events
 
-| Name | Detail |
-| --- | --- |
-| `delete` | `TData` |
+| Name | Detail | Description |
+| --- | --- | --- |
+| `delete` | `TData` |  |
+| `iconClick` | `TData` | Dispatched with the row's data when its button is clicked |
+
+### `mo-data-grid-column-icon-button`
+
+A column with an icon button per row, which stays clickable while the row is edited.
+
+#### Properties
+
+| Name | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `icon` | `icon` | `MaterialIcon` |  | The icon of the buttons |
+| `tooltip` | `tooltip` | `string \| undefined` |  | The tooltip of the buttons |
+| `disabled` | `disabled` | `((data: TData) => boolean) \| undefined` |  | Whether the button of a row is disabled |
+| `dataGrid` | `dataGrid` | `DataGrid<TData, any> \| undefined` |  |  |
+| `width` | `width` | `string` | `"max-content"` | The width of the column |
+| `hidden` | `hidden` | `boolean` | `false` | Whether the column is hidden. The column can be made visible by the user in the settings panel if available. |
+| `heading` | `heading` | `string` | `""` | The heading of the column |
+| `textAlign` | `textAlign` | `DataGridColumnAlignment` | `"start"` | The text alignment of the column |
+| `description` | `description` | `string \| undefined` |  | The description of the column. It will be displayed as a tooltip on the heading. |
+| `dataSelector` | `dataSelector` | `` object extends Required<TData> ? string : TData extends readonly any[] ? Extract<keyof TData, `${number}`> \| Extract<keyof TData, string> \| SubKeyPathOf<...> : TData extends object ? Extract<...> \| SubKeyPathOf<...> : never `` |  | The data selector of the column |
+| `sortDataSelector` | `sortDataSelector` | `` (object extends Required<TData> ? string : TData extends readonly any[] ? Extract<keyof TData, `${number}`> \| Extract<keyof TData, string> \| SubKeyPathOf<...> : TData extends object ? Extract<...> \| SubKeyPathOf<...> : never) \| undefined `` |  | The data selector of the column |
+| `nonSortable` | `nonSortable` | `boolean` | `true` | Whether the column is sortable |
+| `nonEditable` | `nonEditable` | `boolean \| Predicate<TData>` | `false` | Whether the column is editable |
+| `sticky` | `sticky` | `DataGridColumnSticky \| undefined` |  | The sticky position of the column, either 'start', 'end', or 'both' |
+| `contentStyle` | `contentStyle` | `DataGridColumnContentStyle<TData, TValue> \| undefined` |  | The content style of the column. It can be a string, CSSResult, or a function that returns either based on the cell value and data. |
+| `getEditContentTemplate` | `getEditContentTemplate` | `(_: unknown, data?: TData \| undefined) => HTMLTemplateResult` | `"getContentTemplate"` | The edit content template of the column. |
+|  | `getContentTemplate` |  |  | The content template of the column. |
+
+#### Events
+
+| Name | Detail | Description |
+| --- | --- | --- |
+| `iconClick` | `TData` | Dispatched with the row's data when its button is clicked |
 
 ### `mo-data-grid-column-image`
 
@@ -438,6 +474,63 @@ A column showing a boolean as a dot, colored for true and for false, and nothing
 | `contentStyle` | `contentStyle` | `DataGridColumnContentStyle<TData, TValue> \| undefined` |  | The content style of the column. It can be a string, CSSResult, or a function that returns either based on the cell value and data. |
 |  | `getContentTemplate` |  |  | The content template of the column. |
 |  | `getEditContentTemplate` |  |  | The edit content template of the column. |
+
+### `mo-data-grid-column-image-preview`
+
+A column with a button per row which previews the row's image in a popover.
+Its value is the image source unless `getSource` resolves it, e.g. from a file ID.
+
+#### Properties
+
+| Name | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `getSource` |  | `(value: TValue) => DataGridImagePreviewSource` |  | Resolves a value to its image source, possibly asynchronously, when its preview opens. |
+| `dataGrid` | `dataGrid` | `DataGrid<TData, any> \| undefined` |  |  |
+| `width` | `width` | `string` | `"max-content"` | The width of the column |
+| `hidden` | `hidden` | `boolean` | `false` | Whether the column is hidden. The column can be made visible by the user in the settings panel if available. |
+| `heading` | `heading` | `string` | `""` | The heading of the column |
+| `textAlign` | `textAlign` | `DataGridColumnAlignment` | `"start"` | The text alignment of the column |
+| `description` | `description` | `string \| undefined` |  | The description of the column. It will be displayed as a tooltip on the heading. |
+| `dataSelector` | `dataSelector` | `` object extends Required<TData> ? string : TData extends readonly any[] ? Extract<keyof TData, `${number}`> \| Extract<keyof TData, string> \| SubKeyPathOf<...> : TData extends object ? Extract<...> \| SubKeyPathOf<...> : never `` |  | The data selector of the column |
+| `sortDataSelector` | `sortDataSelector` | `` (object extends Required<TData> ? string : TData extends readonly any[] ? Extract<keyof TData, `${number}`> \| Extract<keyof TData, string> \| SubKeyPathOf<...> : TData extends object ? Extract<...> \| SubKeyPathOf<...> : never) \| undefined `` |  | The data selector of the column |
+| `nonSortable` | `nonSortable` | `boolean` | `true` | Whether the column is sortable |
+| `nonEditable` | `nonEditable` | `boolean` | `true` | Whether the column is editable |
+| `sticky` | `sticky` | `DataGridColumnSticky \| undefined` |  | The sticky position of the column, either 'start', 'end', or 'both' |
+| `contentStyle` | `contentStyle` | `DataGridColumnContentStyle<TData, TValue> \| undefined` |  | The content style of the column. It can be a string, CSSResult, or a function that returns either based on the cell value and data. |
+|  | `getContentTemplate` |  |  | The content template of the column. |
+|  | `getEditContentTemplate` |  |  | The edit content template of the column. |
+
+### `mo-data-grid-image-preview`
+
+#### Properties
+
+| Name | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `value` | `value` | `unknown` |  | The value whose image is previewed, resolved to an image source by `getSource`. |
+| `getSource` | `getSource` | `((value: unknown) => DataGridImagePreviewSource) \| undefined` |  | Resolves the value to an image source, which is the value itself by default. |
+| `imageHidden` | `imageHidden` | `boolean` | `false` | Whether to show only the slotted content without the image. |
+
+#### Slots
+
+| Name | Description |
+| --- | --- |
+| (default) | Content shown above the image. |
+| `close` | An action to close the preview, shown next to the content. |
+
+### `mo-data-grid-image-preview-button`
+
+#### Properties
+
+| Name | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `value` | `value` | `unknown` |  | The value whose image is previewed. |
+| `getSource` | `getSource` | `((value: unknown) => DataGridImagePreviewSource) \| undefined` |  | Resolves the value to an image source. |
+
+#### Slots
+
+| Name | Description |
+| --- | --- |
+| (default) | Content shown above the image in the preview. |
 
 ### `mo-data-grid-column-currency`
 

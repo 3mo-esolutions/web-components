@@ -40,7 +40,7 @@ export class DataGridColumnBoolean<TData> extends DataGridColumnComponent<TData,
 		`
 	}
 
-	override *generateCsvValue(value: boolean) {
+	override *generateCsvValue(value: boolean): Generator<string> {
 		yield value ? '1' : '0'
 	}
 }

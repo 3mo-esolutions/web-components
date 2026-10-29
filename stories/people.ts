@@ -1,4 +1,5 @@
 import '@3mo/date-time'
+import { description, label } from '@a11d/metadata'
 import { countryOf } from './countries.js'
 
 type Generation = 'any' | 'adult' | 'young'
@@ -97,6 +98,7 @@ const places = Object.values(locations)
 const youngAges = [16, 13, 21, 8, 17, 11, 19, 6, 22, 14]
 
 /** A person with a job, a home and a bank balance; a parent carries their children. */
+@label('Person')
 export class Person {
 	private static count = 0
 
@@ -147,8 +149,17 @@ export class Person {
 			city,
 			country: countryCode,
 			balance: index % 7 === 3 ? 0 : (index * 137 % 41 - 12) * 75,
+			avatar: Person.avatar(name, index * 47 % 360),
 		})
 		return !childrenOf ? person : new Person({ ...person, children: childrenOf(person) })
+	}
+
+	private static avatar(name: string, hue: number) {
+		const initials = name.split(' ').map(word => word[0]).filter((_, index, letters) => index === 0 || index === letters.length - 1).join('')
+		return `data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'>`
+			+ `<circle cx='16' cy='16' r='16' fill='hsl(${hue} 45% 50%)'/>`
+			+ `<text x='16' y='16' text-anchor='middle' dominant-baseline='central' font-family='sans-serif' font-size='13' fill='white'>${initials}</text>`
+			+ `</svg>`)}`
 	}
 
 	private static birthDate(yearsAgo: number, daysAgo: number) {
@@ -158,18 +169,20 @@ export class Person {
 		return new DateTime(date.toISOString().slice(0, 10))
 	}
 
-	readonly id!: number
-	readonly name!: string
-	readonly occupation!: string
-	readonly age!: number
-	readonly birthDate!: DateTime
-	readonly email!: string
-	readonly phone!: string
-	readonly address!: string
-	readonly city!: string
+	@label('ID') readonly id!: number
+	@label('Name') readonly name!: string
+	@label('Occupation') @label.short('Job') readonly occupation!: string
+	@label('Age') readonly age!: number
+	@label('Date of birth') @label.short('Born') readonly birthDate!: DateTime
+	@label('Email') readonly email!: string
+	@label('Phone') readonly phone!: string
+	@label('Address') readonly address!: string
+	@label('City') readonly city!: string
 	/** The ISO 3166 code of one of the `countries`. */
-	readonly country!: string
-	readonly balance!: number
+	@label('Country') @description('ISO 3166 code') readonly country!: string
+	@label('Balance') @description('Negative when overdrawn') readonly balance!: number
+	/** A circle with the initials, as an image URL. */
+	@label('Avatar') readonly avatar!: string
 	readonly children?: Array<Person>
 
 	get firstName() { return this.name.split(' ')[0]! }
