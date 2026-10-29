@@ -1,9 +1,8 @@
-import memoizeFormatConstructor from 'intl-format-cache'
 import { extractFormatOptions, type FormatOptionsWithLanguage } from './OptionsWithLanguage.js'
+import { memoizeFormatConstructor } from './memoizeFormatConstructor.js'
 
 type NumberFormatOptions = FormatOptionsWithLanguage<Intl.NumberFormatOptions>
 
-// @ts-ignore The default export is the function itself
 const getFormatter = memoizeFormatConstructor(Intl.NumberFormat)
 
 Number.prototype.format = function (this: number, ...options: NumberFormatOptions) {

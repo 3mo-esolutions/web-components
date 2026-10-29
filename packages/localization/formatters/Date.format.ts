@@ -1,9 +1,8 @@
-import memoizeFormatConstructor from 'intl-format-cache'
 import { extractFormatOptions, type FormatOptionsWithLanguage } from './OptionsWithLanguage.js'
+import { memoizeFormatConstructor } from './memoizeFormatConstructor.js'
 
 type DateFormatOptions = FormatOptionsWithLanguage<Intl.DateTimeFormatOptions>
 
-// @ts-ignore The default export is the function itself
 const memoized = memoizeFormatConstructor(Intl.DateTimeFormat)
 
 /** Constructing a formatter costs far more than using one, so they are kept and reused. */
