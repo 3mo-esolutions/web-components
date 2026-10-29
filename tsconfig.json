@@ -334,6 +334,9 @@
 			"path": "./packages/Selectability"
 		},
 		{
+			"path": "./packages/SelectionDialog"
+		},
+		{
 			"path": "./packages/SelectionGroup"
 		},
 		{

@@ -1,0 +1,58 @@
+{
+	"name": "@3mo/selection-dialog",
+	"version": "0.1.0",
+	"description": "A dialog for picking one or several entries from a data grid.",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/SelectionDialog"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
+	},
+	"keywords": [
+		"lit",
+		"web-component",
+		"material",
+		"dialog",
+		"selection",
+		"data-grid"
+	],
+	"author": "3MO GmbH",
+	"license": "MIT",
+	"homepage": "https://github.com/3mo-esolutions/web-components/tree/main/packages/SelectionDialog",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"source": "./index.ts",
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		},
+		"./translations/*": {
+			"source": "./translations/*.ts",
+			"types": "./dist/translations/*.d.ts",
+			"default": "./dist/translations/*.js"
+		},
+		"./dist/*": "./dist/*",
+		"./package.json": "./package.json"
+	},
+	"customElements": "dist/custom-elements.json",
+	"files": [
+		"dist",
+		"CHANGELOG.md"
+	],
+	"dependencies": {
+		"tslib": "x",
+		"@a11d/metadata": ">=0.6.0"
+	},
+	"peerDependencies": {
+		"@a11d/lit": "x",
+		"@a11d/lit-application": "x",
+		"@3mo/localization": "x",
+		"@3mo/dialog": "x",
+		"@3mo/loading-button": "x",
+		"@3mo/data-grid": "x"
+	}
+}

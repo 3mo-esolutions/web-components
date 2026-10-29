@@ -46,6 +46,7 @@ const fixtures: Record<string, string> = {
 	'mo-option': '<mo-option value="1">One</mo-option>',
 	'mo-page': '<mo-page heading="Heading"><mo-icon-button slot="action" icon="more_vert"></mo-icon-button>Content</mo-page>',
 	'mo-section': '<mo-section heading="Heading"><mo-icon-button slot="action" icon="more_vert"></mo-icon-button>Content</mo-section>',
+	'mo-selection-dialog': '<mo-selection-dialog .parameters=${{ data: Object, dataGridTemplate: html`<mo-data-grid .data=${[{ name: "Ada" }]}></mo-data-grid>` }}></mo-selection-dialog>',
 	'mo-selection-group': '<mo-selection-group><mo-selectable-button value="one">One</mo-selectable-button><mo-selectable-button value="two">Two</mo-selectable-button></mo-selection-group>',
 	'mo-split-button': '<mo-split-button><mo-button type="filled">Save</mo-button><mo-menu-item slot="more">Save as</mo-menu-item></mo-split-button>',
 	'mo-splitter': '<mo-splitter><mo-splitter-item>Master</mo-splitter-item><mo-splitter-item>Detail</mo-splitter-item></mo-splitter>',

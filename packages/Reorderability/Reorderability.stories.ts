@@ -4,9 +4,11 @@ import { sourceOf } from '../../.storybook/source.js'
 import reorderableItemsSource from './stories/ReorderableItems.ts?raw'
 import taskListSource from './stories/TaskList.ts?raw'
 import boardSource from './stories/Board.ts?raw'
+import photoGridSource from './stories/PhotoGrid.ts?raw'
 import './stories/ReorderableItems.js'
 import './stories/TaskList.js'
 import './stories/Board.js'
+import './stories/PhotoGrid.js'
 
 export default {
 	title: 'Behaviors / Reorderability',
@@ -21,6 +23,12 @@ export const Default: StoryObj = {
 /** Items that wrap onto several lines are hit-tested rather than ordered along one axis. */
 export const WrappingGrid: StoryObj = {
 	render: () => html`<story-reorderable-items layout='grid' count='14'></story-reorderable-items>`,
+}
+
+/** Photos of one tile size in as many columns as fit, as for the images of a product; the cover stays first. */
+export const PhotoGrid: StoryObj = {
+	parameters: sourceOf(photoGridSource),
+	render: () => html`<story-photo-grid></story-photo-grid>`,
 }
 
 /** A horizontal scroller, which scrolls by itself as a drag nears its edges. */

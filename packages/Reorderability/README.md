@@ -18,6 +18,7 @@ import { ReorderabilityController } from '@3mo/reorderability'
 
 - [Default](https://3mo-esolutions.github.io/web-components/?path=/story/behaviors-reorderability--default) — Drag an item, or on touch hold it first, so a plain swipe still scrolls.
 - [Wrapping Grid](https://3mo-esolutions.github.io/web-components/?path=/story/behaviors-reorderability--wrapping-grid) — Items that wrap onto several lines are hit-tested rather than ordered along one axis.
+- [Photo Grid](https://3mo-esolutions.github.io/web-components/?path=/story/behaviors-reorderability--photo-grid) — Photos of one tile size in as many columns as fit, as for the images of a product; the cover stays first.
 - [Horizontal Row](https://3mo-esolutions.github.io/web-components/?path=/story/behaviors-reorderability--horizontal-row) — A horizontal scroller, which scrolls by itself as a drag nears its edges.
 - [Right To Left](https://3mo-esolutions.github.io/web-components/?path=/story/behaviors-reorderability--right-to-left) — The same row written right to left: the order is read off the items' positions, so nothing about direction is configured.
 - [Indicator Strategy](https://3mo-esolutions.github.io/web-components/?path=/story/behaviors-reorderability--indicator-strategy) — `strategy: 'indicator'` leaves the items in place, stamps `drop-before` or `drop-after` on the target and drags a `dragImage` preview.
