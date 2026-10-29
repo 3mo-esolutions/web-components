@@ -15,6 +15,7 @@ class TestNavigationTarget {
 
 class TestLabelledNavigationTarget extends TestNavigationTarget { }
 label('Dashboard')(TestLabelledNavigationTarget)
+icon('dashboard')(TestLabelledNavigationTarget)
 
 const createNavigationLink = (options: object) => new NavigationLink({ component: new TestNavigationTarget(), ...options } as any)
 
@@ -71,6 +72,12 @@ describe('NavigationLink', () => {
 		expect(link.hidden).toBe(true)
 		expect(link.hasSeparator).toBe(true)
 		expect(createNavigationLink({ label: 'Home' }).hidden).toBe(false)
+	})
+
+	it('should fall back to the component\'s icon metadata when no icon option is given', () => {
+		expect(new NavigationLink({ component: new TestLabelledNavigationTarget() } as any).icon).toBe('dashboard')
+		expect(new NavigationLink({ component: new TestLabelledNavigationTarget(), icon: 'home' } as any).icon).toBe('home')
+		expect(createNavigationLink({}).icon).toBeUndefined()
 	})
 
 	it('should be current while the router matches its component\'s url', () => {

@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/navigation",
-	"version": "0.1.7",
+	"version": "0.1.8",
 	"description": "Web components for app shells whose navigation shows as a bar, a rail or a drawer, whichever fits the space.",
 	"repository": {
 		"type": "git",
@@ -45,7 +45,7 @@
 		"CHANGELOG.md"
 	],
 	"dependencies": {
-		"@a11d/metadata": "x",
+		"@a11d/metadata": ">=0.5.0",
 		"tslib": "x"
 	},
 	"peerDependencies": {

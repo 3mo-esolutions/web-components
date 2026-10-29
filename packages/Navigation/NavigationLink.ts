@@ -1,15 +1,16 @@
 import { html, type DirectiveResult } from '@a11d/lit'
 import { routerLink, type RoutableComponent, NavigationStrategy } from '@a11d/lit-application'
 import { type INavigation, type NavigationInvocationOptions, type NavigationOptions } from './INavigation.js'
+import { icon } from './icon.js'
 
 type RouterLinkParameters = Exclude<Parameters<typeof routerLink>[0], RoutableComponent>
 
 /**
  * A destination of the application's router.
  *
- * Almost everything it reports is derived rather than stored: the label falls back to the component's
- * own `label` metadata, `current` is answered by the router per read, and `link` hands `routerLink` the
- * whole parameter set. Applications subclass it to layer their own gates onto `hidden` and `icon`.
+ * Almost everything it reports is derived rather than stored: the label and the icon fall back to the
+ * component's own `label` and `icon` metadata, `current` is answered by the router per read, and `link`
+ * hands `routerLink` the whole parameter set. Applications subclass it to layer their own gates onto `hidden`.
  */
 export class NavigationLink implements INavigation {
 	constructor(readonly options: NavigationOptions & RouterLinkParameters) { }
@@ -20,7 +21,7 @@ export class NavigationLink implements INavigation {
 		return html`${value}${appendedEllipsis}`
 	}
 
-	get icon() { return this.options.icon }
+	get icon() { return this.options.icon ?? icon.resolve(this.options.component) }
 	get hidden() { return this.options.hidden ?? false }
 	get hasSeparator() { return this.options.hasSeparator }
 	get current() { return this.options.component.urlMatches({ mode: this.options.matchMode }) }
