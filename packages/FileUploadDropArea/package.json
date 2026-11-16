@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/file-upload-drop-area",
-	"version": "0.3.1",
+	"version": "0.4.0",
 	"description": "A web component for drop areas that upload the files dropped onto them, or picked in the file dialog on click.",
 	"repository": {
 		"type": "git",
@@ -24,6 +24,20 @@
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"source": "./index.ts",
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		},
+		"./translations/*": {
+			"source": "./translations/*.ts",
+			"types": "./dist/translations/*.d.ts",
+			"default": "./dist/translations/*.js"
+		},
+		"./dist/*": "./dist/*",
+		"./package.json": "./package.json"
+	},
 	"customElements": "dist/custom-elements.json",
 	"files": [
 		"dist",
@@ -33,6 +47,13 @@
 		"tslib": "x"
 	},
 	"peerDependencies": {
+		"@a11d/lit": "x",
+		"@a11d/lit-application": "x",
+		"@3mo/theme": "x",
+		"@3mo/localization": "x",
+		"@3mo/focus-ring": "x",
+		"@3mo/icon": "x",
+		"@3mo/circular-progress": "x",
 		"@3mo/file-upload": ">=0.4.1"
 	}
 }

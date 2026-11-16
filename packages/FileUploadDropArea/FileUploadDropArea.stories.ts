@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite'
 import { html } from '@a11d/lit'
 import { fn } from 'storybook/test'
+import { respond } from '../../stories/index.js'
 import './index.js'
 
 type Args = {
@@ -19,36 +20,40 @@ type Story = StoryObj<Args>
 
 export const Default: Story = {
 	render: ({ upload }) => html`
-		<mo-file-upload-drop-area .upload=${upload}>
-			<mo-flex alignItems='center' gap='0.5rem'>
-				<mo-icon icon='backup' style='font-size: 50px; color: var(--mo-color-gray)'></mo-icon>
-				<span>Drop a file here or click to choose one</span>
-			</mo-flex>
-		</mo-file-upload-drop-area>
+		<mo-file-upload-drop-area .upload=${upload}></mo-file-upload-drop-area>
 	`,
 }
 
 /** `multiple` accepts several files at once and passes them to `upload` as an array. */
 export const Multiple: Story = {
 	render: ({ upload }) => html`
-		<mo-file-upload-drop-area multiple .upload=${upload}>
-			<mo-flex alignItems='center' gap='0.5rem'>
-				<mo-icon icon='backup' style='font-size: 50px; color: var(--mo-color-gray)'></mo-icon>
-				<span>Drop files here or click to choose them</span>
-			</mo-flex>
-		</mo-file-upload-drop-area>
+		<mo-file-upload-drop-area multiple .upload=${upload}></mo-file-upload-drop-area>
 	`,
 }
 
 /** `accept` filters both the file dialog and the dropped files - drop anything but an image and nothing is uploaded. */
 export const Accept: Story = {
 	render: ({ upload }) => html`
+		<mo-file-upload-drop-area accept='image/*' .upload=${upload}></mo-file-upload-drop-area>
+	`,
+}
+
+/** Slotted content takes the place of the icon and the hint. */
+export const Slots: Story = {
+	render: ({ upload }) => html`
 		<mo-file-upload-drop-area accept='image/*' .upload=${upload}>
-			<mo-flex alignItems='center' gap='0.5rem'>
-				<mo-icon icon='image' style='font-size: 50px; color: var(--mo-color-gray)'></mo-icon>
-				<span>Drop an image here or click to choose one</span>
+			<mo-flex direction='horizontal' alignItems='center' justifyContent='center' gap='0.5rem'>
+				<mo-icon icon='image' style='font-size: 2rem; color: var(--mo-color-gray)'></mo-icon>
+				<span>Drop the product image here or click to choose it</span>
 			</mo-flex>
 		</mo-file-upload-drop-area>
+	`,
+}
+
+/** The area carries a `loading` attribute while `upload` is pending and ignores presses and drops meanwhile - choose a file. */
+export const Loading: Story = {
+	render: ({ upload }) => html`
+		<mo-file-upload-drop-area .upload=${(file: File) => respond(upload(file), 3000)}></mo-file-upload-drop-area>
 	`,
 }
 
