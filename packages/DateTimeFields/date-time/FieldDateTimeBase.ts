@@ -18,6 +18,7 @@ import type { Calendar } from '../selection/index.js'
  * @attr min - The minimum selectable date (inclusive). Dates before this are disabled.
  * @attr max - The maximum selectable date (inclusive). Dates after this are disabled.
  * @attr dateDisabled - A function that determines whether a date should be disabled. Receives a DateTime object and should return a boolean.
+ * @attr weekNumbers - Whether the date picker shows the calendar week beside each row of days
  *
  * @csspart segments - The group of segments making up one date-time value
  * @csspart segment - An editable unit of the value
@@ -33,6 +34,7 @@ export abstract class FieldDateTimeBase<T> extends FieldComponent<T> {
 	@property({ type: Object, converter: dateTimeConverter }) min?: DateTime
 	@property({ type: Object, converter: dateTimeConverter }) max?: DateTime
 	@property({ type: Object, hasChanged }) dateDisabled?: (date: DateTime) => boolean
+	@property({ type: Boolean }) weekNumbers = false
 
 	@query('mo-calendar') protected readonly calendar?: Calendar
 
@@ -272,6 +274,7 @@ export abstract class FieldDateTimeBase<T> extends FieldComponent<T> {
 				.min=${this.min}
 				.max=${this.max}
 				.dateDisabled=${this.dateDisabled}
+				?weekNumbers=${this.weekNumbers}
 				@dateClick=${(e: CustomEvent<DateTime>) => this.controller.pick(e.detail, this.precision)}
 			></mo-calendar>
 		`

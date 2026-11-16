@@ -102,6 +102,7 @@ The segments follow the [segmented input](https://3mo-esolutions.github.io/web-c
 | `min` | `min` | `DateTime \| undefined` |  | The minimum selectable date (inclusive). Dates before this are disabled. |
 | `max` | `max` | `DateTime \| undefined` |  | The maximum selectable date (inclusive). Dates after this are disabled. |
 | `dateDisabled` | `dateDisabled` | `((date: DateTime) => boolean) \| undefined` |  | A function that determines whether a date should be disabled. Receives a DateTime object and should return a boolean. |
+| `weekNumbers` | `weekNumbers` | `boolean` | `false` | Whether the date picker shows the calendar week beside each row of days |
 | `value` | `value` | `Date \| undefined` |  | The field's value |
 | `label` | `label` | `string` | `""` | The field's label |
 | `readonly` | `readonly` | `boolean` | `false` | Whether the field is readonly |
@@ -149,6 +150,7 @@ The segments follow the [segmented input](https://3mo-esolutions.github.io/web-c
 | `min` | `min` | `DateTime \| undefined` |  | The minimum selectable date (inclusive). Dates before this are disabled. |
 | `max` | `max` | `DateTime \| undefined` |  | The maximum selectable date (inclusive). Dates after this are disabled. |
 | `dateDisabled` | `dateDisabled` | `((date: DateTime) => boolean) \| undefined` |  | A function that determines whether a date should be disabled. Receives a DateTime object and should return a boolean. |
+| `weekNumbers` | `weekNumbers` | `boolean` | `false` | Whether the date picker shows the calendar week beside each row of days |
 | `value` | `value` | `DateTimeRange \| undefined` |  | The selected date range. |
 | `label` | `label` | `string` | `""` | The field's label |
 | `readonly` | `readonly` | `boolean` | `false` | Whether the field is readonly |
@@ -197,6 +199,7 @@ The segments follow the [segmented input](https://3mo-esolutions.github.io/web-c
 | `min` | `min` | `DateTime \| undefined` |  | The minimum selectable date (inclusive). Dates before this are disabled. |
 | `max` | `max` | `DateTime \| undefined` |  | The maximum selectable date (inclusive). Dates after this are disabled. |
 | `dateDisabled` | `dateDisabled` | `((date: DateTime) => boolean) \| undefined` |  | A function that determines whether a date should be disabled. Receives a DateTime object and should return a boolean. |
+| `weekNumbers` | `weekNumbers` | `boolean` | `false` | Whether the date picker shows the calendar week beside each row of days |
 | `value` | `value` | `Date \| undefined` |  | The field's value |
 | `label` | `label` | `string` | `""` | The field's label |
 | `readonly` | `readonly` | `boolean` | `false` | Whether the field is readonly |
@@ -244,6 +247,7 @@ The segments follow the [segmented input](https://3mo-esolutions.github.io/web-c
 | `min` | `min` | `DateTime \| undefined` |  | The minimum selectable date (inclusive). Dates before this are disabled. |
 | `max` | `max` | `DateTime \| undefined` |  | The maximum selectable date (inclusive). Dates after this are disabled. |
 | `dateDisabled` | `dateDisabled` | `((date: DateTime) => boolean) \| undefined` |  | A function that determines whether a date should be disabled. Receives a DateTime object and should return a boolean. |
+| `weekNumbers` | `weekNumbers` | `boolean` | `false` | Whether the date picker shows the calendar week beside each row of days |
 | `value` | `value` | `DateTimeRange \| undefined` |  | The selected date range. |
 | `label` | `label` | `string` | `""` | The field's label |
 | `readonly` | `readonly` | `boolean` | `false` | Whether the field is readonly |
@@ -335,6 +339,7 @@ The segments follow the [segmented input](https://3mo-esolutions.github.io/web-c
 | `min` | `min` | `DateTime \| undefined` |  | The minimum selectable date (inclusive). Dates before this are disabled. |
 | `max` | `max` | `DateTime \| undefined` |  | The maximum selectable date (inclusive). Dates after this are disabled. |
 | `dateDisabled` | `dateDisabled` | `((date: DateTime) => boolean) \| undefined` |  | A function that determines whether a date should be disabled. Receives a DateTime object and should return a boolean. |
+| `weekNumbers` | `weekNumbers` | `boolean` | `false` | Whether the date picker shows the calendar week beside each row of days |
 | `value` | `value` | `DateTimeRange \| undefined` |  | The selected date range. |
 | `label` | `label` | `string` | `""` | The field's label |
 | `readonly` | `readonly` | `boolean` | `false` | Whether the field is readonly |
@@ -371,14 +376,14 @@ The segments follow the [segmented input](https://3mo-esolutions.github.io/web-c
 
 #### Properties
 
-| Name | Attribute | Type | Default |
-| --- | --- | --- | --- |
-| `value` | `value` | `DateTimeRange \| undefined` |  |
-| `precision` | `precision` | `FieldDateTimePrecision` |  |
-| `includeWeek` | `includeWeek` | `boolean` | `false` |
-| `min` | `min` | `DateTime \| undefined` |  |
-| `max` | `max` | `DateTime \| undefined` |  |
-| `dateDisabled` | `dateDisabled` | `((date: DateTime) => boolean) \| undefined` |  |
+| Name | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `value` | `value` | `DateTimeRange \| undefined` |  |  |
+| `precision` | `precision` | `FieldDateTimePrecision` |  |  |
+| `weekNumbers` | `weekNumbers` | `boolean` | `false` | Whether each row of days shows its calendar week. Always shown at week precision. |
+| `min` | `min` | `DateTime \| undefined` |  |  |
+| `max` | `max` | `DateTime \| undefined` |  |  |
+| `dateDisabled` | `dateDisabled` | `((date: DateTime) => boolean) \| undefined` |  |  |
 
 #### Events
 

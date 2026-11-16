@@ -12,7 +12,8 @@ export class Calendar extends Component {
 
 	@property({ type: Object }) value?: DateTimeRange
 	@property({ type: Object, updated(this: Calendar) { this.setView(this.precision) } }) precision!: FieldDateTimePrecision
-	@property({ type: Boolean, reflect: true }) includeWeek = false
+	/** Whether each row of days shows its calendar week. Always shown at week precision. */
+	@property({ type: Boolean, reflect: true }) weekNumbers = false
 	@property({ type: Object }) min?: DateTime
 	@property({ type: Object }) max?: DateTime
 	@property({ type: Object, hasChanged }) dateDisabled?: (date: DateTime) => boolean
@@ -212,7 +213,7 @@ export class Calendar extends Component {
 	}
 
 	private get includeWeekNumber() {
-		return this.includeWeek || FieldDateTimePrecision.Week === this.precision
+		return this.weekNumbers || FieldDateTimePrecision.Week === this.precision
 	}
 
 	private get columns() {
@@ -329,6 +330,9 @@ export class Calendar extends Component {
 				@click=${this.precision === FieldDateTimePrecision.Day ? html.nothing : this.handleItemClick(date, FieldDateTimePrecision.Week)}
 				${this.datesController.observerIntersectionNavigation(date, FieldDateTimePrecision.Week)}
 			>
+				${!this.includeWeekNumber ? html.nothing : html`
+					<div class='week-number' style='grid-column: week-number'>${(week.find(day => day.dayOfWeek === 1) ?? date).weekOfYear?.format()}</div>
+				`}
 				${week.map(day => this.getDayTemplate(day))}
 			</mo-grid>
 		`
@@ -336,9 +340,6 @@ export class Calendar extends Component {
 
 	private getDayTemplate(day: DateTime) {
 		return html`
-			${this.includeWeekNumber === false || day.dayOfWeek !== 1 ? html.nothing : html`
-				<div class='week-number' style='grid-column: week-number'>${day.weekOfYear?.format()}</div>
-			`}
 			<div tabindex='0' role='button' class='day'
 				style='grid-column: ${this.getColumnName(day)}'
 				data-view=${this.view.key}

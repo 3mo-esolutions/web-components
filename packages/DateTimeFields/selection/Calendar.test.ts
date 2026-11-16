@@ -288,15 +288,28 @@ describe('Calendar', () => {
 			expect(weekNumbers).toContain(target.weekOfYear!.format())
 		})
 
-		it('should show week numbers at other precisions when includeWeek is set', async () => {
+		it('should show week numbers at other precisions when weekNumbers is set', async () => {
 			fixture.component.precision = FieldDateTimePrecision.Day
 			await settle()
 			expect(queryAll('.week-number').length).toBe(0)
 
-			fixture.component.includeWeek = true
+			fixture.component.weekNumbers = true
 			await settle()
 
 			expect(queryAll('.week-number').length).toBeGreaterThan(0)
+		})
+
+		it('should number every row, including a first row without a Monday', async () => {
+			fixture.component.precision = FieldDateTimePrecision.Day
+			fixture.component.weekNumbers = true
+			// June 2025 begins on a Sunday, which is the last day of ISO week 22.
+			const june = DateTime.from(Date.parse('2025-06-15T00:00:00.000Z'), CalendarDatesController.today.calendarId, CalendarDatesController.today.timeZoneId)
+			await navigateTo(june)
+
+			const month = await until(() => queryAll<HTMLElement>('.month-container').find(container => container.querySelector('.month')!.textContent!.trim() === june.format({ year: 'numeric', month: 'long' })))
+			const weekNumbers = [...month.querySelectorAll('.week')].map(week => week.querySelector('.week-number')?.textContent!.trim())
+
+			expect(weekNumbers).toEqual(['22', '23', '24', '25', '26', '27'])
 		})
 	})
 
