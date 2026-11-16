@@ -32,4 +32,8 @@ Localizer.dictionaries.add('de', {
 	'Password reset instructions have been sent to your email address': 'Anweisungen zum Zurücksetzen des Passworts wurden an Ihre E-Mail-Adresse gesendet',
 	'Password could not be reset': 'Passwort konnte nicht zurückgesetzt werden',
 	'Sign out': 'Abmelden',
+	'Authenticated successfully': 'Erfolgreich angemeldet',
+	'Unauthenticated successfully': 'Erfolgreich abgemeldet',
+	'Something went wrong. Try again.': 'Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.',
+	'Incorrect Credentials': 'Benutzername oder Passwort ist falsch',
 })

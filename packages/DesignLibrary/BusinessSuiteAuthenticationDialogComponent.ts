@@ -21,6 +21,11 @@ export abstract class BusinessSuiteAuthenticationDialogComponent extends DialogA
 
 	@state() primaryButtonText = t('Login')
 
+	protected override get authenticatedMessage(): string { return t('Authenticated successfully') }
+	protected override get unauthenticatedMessage(): string { return t('Unauthenticated successfully') }
+	protected override get unverifiedMessage(): string { return t('Something went wrong. Try again.') }
+	protected override get failedMessage(): string { return t('Incorrect Credentials') }
+
 	protected override get template() {
 		return html`
 			<mo-business-suite-authentication-dialog>
