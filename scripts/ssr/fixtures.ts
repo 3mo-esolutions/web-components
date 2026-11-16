@@ -31,6 +31,7 @@ const fixtures: Record<string, string> = {
 	'mo-data-grid': '<mo-data-grid exportable .data=${[{ name: "Ada", balance: 1 }, { name: "Grace", balance: 2 }]}></mo-data-grid>',
 	'mo-dialog-alert': '<mo-dialog-alert .parameters=${{ heading: "Heading", content: "Message" }}></mo-dialog-alert>',
 	'mo-dialog-deletion': '<mo-dialog-deletion .parameters=${{ label: "Ada" }}></mo-dialog-deletion>',
+	'mo-dialog-progress': '<mo-dialog-progress .parameters=${{ heading: "Exporting…", content: "Message", action: () => new Promise(() => {}) }}></mo-dialog-progress>',
 	'mo-generic-dialog': '<mo-generic-dialog .parameters=${{ heading: "Heading", content: "Message" }}></mo-generic-dialog>',
 	'mo-moddable-data-grid-chip': '<mo-moddable-data-grid-chip .mode=${{ name: "Mine" }} .dataGrid=${{ hasUnsavedChanges: false }}></mo-moddable-data-grid-chip>',
 	'mo-collapsible-list-item': '<mo-collapsible-list-item><mo-list-item>Parent</mo-list-item><mo-list-item slot="details">Child</mo-list-item></mo-collapsible-list-item>',

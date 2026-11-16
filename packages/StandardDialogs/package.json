@@ -1,7 +1,7 @@
 {
 	"name": "@3mo/standard-dialogs",
-	"version": "0.4.4",
-	"description": "Web components for ready-made dialogs: alerts, confirmations, text prompts, deletion confirmations and generic ones.",
+	"version": "0.5.0",
+	"description": "Web components for ready-made dialogs: alerts, confirmations, text prompts, deletions, task progress and generic ones.",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/3mo-esolutions/web-components",
@@ -52,7 +52,8 @@
 		"@3mo/dialog": "x",
 		"@3mo/localization": "x",
 		"@3mo/text-fields": "x",
-		"@3mo/loading-button": "x"
+		"@3mo/loading-button": "x",
+		"@3mo/circular-progress": "x"
 	},
 	"devDependencies": {
 		"@a11d/lit-testing": "x"
