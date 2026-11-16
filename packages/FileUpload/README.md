@@ -1,6 +1,6 @@
 # File Upload
 
-A web component for uploading files chosen in the file picker, plus a directive that accepts dropped files.
+A web component for uploading files chosen in the file picker, plus directives that open the picker and accept dropped files.
 
 [![npm](https://img.shields.io/npm/v/@3mo/file-upload?style=flat-square&color=0077c8)](https://www.npmjs.com/package/@3mo/file-upload) [![Documentation](https://img.shields.io/badge/docs-storybook-ff4785?style=flat-square&logo=storybook&logoColor=white)](https://3mo-esolutions.github.io/web-components/?path=/docs/inputs-file-upload--overview)
 
@@ -29,6 +29,7 @@ import '@3mo/file-upload'
 - [Accept](https://3mo-esolutions.github.io/web-components/?path=/story/inputs-file-upload--accept) — `accept` limits the choice to MIME types or file extensions, as on a native file input.
 - [Upload Later](https://3mo-esolutions.github.io/web-components/?path=/story/inputs-file-upload--upload-later) — Without `uploadOnSelection`, choosing a file only dispatches `selectionChange`, and `uploadSelection()` uploads it later.
 - [Drop](https://3mo-esolutions.github.io/web-components/?path=/story/inputs-file-upload--drop) — `fileDrop` makes any element accept dropped files and stamps `dragover` on it while they are dragged over - drop a file on the field.
+- [Picker](https://3mo-esolutions.github.io/web-components/?path=/story/inputs-file-upload--picker) — `filePicker` makes any element open the file dialog when clicked.
 
 ## API
 

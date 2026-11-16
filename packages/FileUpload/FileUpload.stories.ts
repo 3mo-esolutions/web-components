@@ -1,12 +1,15 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite'
 import { html } from '@a11d/lit'
 import { fn } from 'storybook/test'
+import { respond } from '../../stories/index.js'
 import { fileDrop } from './fileDrop.js'
+import { filePicker } from './filePicker.js'
 import './index.js'
 
 type Args = {
 	readonly upload: (selection: File | Array<File> | undefined) => Promise<void>
 	readonly handleDrop: (files: Array<File>) => void
+	readonly handlePick: (files: Array<File>) => void
 }
 
 export default {
@@ -65,5 +68,17 @@ export const Drop: Story = {
 			}
 		</style>
 		<mo-field-text-area label='Message' style='flex: 1' ${fileDrop({ multiple: true, handleDrop })}></mo-field-text-area>
+	`,
+}
+
+/** `filePicker` makes any element open the file dialog when clicked. A loading button shows its progress until `handlePick` settles. */
+export const Picker: Story = {
+	args: {
+		handlePick: fn(),
+	},
+	render: ({ handlePick }) => html`
+		<mo-loading-button type='outlined' startIcon='upload'
+			${filePicker({ multiple: true, handlePick: files => respond(handlePick(files)) })}
+		>Choose files</mo-loading-button>
 	`,
 }

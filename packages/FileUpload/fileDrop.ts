@@ -1,5 +1,6 @@
 import { AsyncDirective, directive, type ElementPart, type PartInfo, PartType, type ReactiveController, type ReactiveElement } from '@a11d/lit'
 import { type FileUploadSelection } from './FileUpload.js'
+import { accepts } from './accepts.js'
 
 export type FileDropOptions<TMultiple extends boolean = false> = {
 	readonly multiple?: TMultiple
@@ -12,21 +13,6 @@ export type FileDropOptions<TMultiple extends boolean = false> = {
 /** Makes an element accept dropped files, stamping a "dragover" attribute on it while files are dragged over it. */
 class FileDropTarget<TMultiple extends boolean = false> implements EventListenerObject {
 	private static readonly eventTypes = ['dragenter', 'dragover', 'dragleave', 'drop']
-
-	static accepts(file: File, accept?: string) {
-		const tokens = accept?.split(',').map(token => token.trim().toLowerCase()).filter(Boolean) ?? []
-		const name = file.name.toLowerCase()
-		const type = file.type.toLowerCase()
-		return tokens.length === 0 || tokens.some(token => {
-			if (token.startsWith('.')) {
-				return name.endsWith(token)
-			}
-			if (token.endsWith('/*')) {
-				return type.startsWith(token.slice(0, -1))
-			}
-			return type === token
-		})
-	}
 
 	private readonly resolveOptions: () => FileDropOptions<TMultiple>
 
@@ -97,7 +83,7 @@ class FileDropTarget<TMultiple extends boolean = false> implements EventListener
 
 	protected drop(files: Array<File>) {
 		const options = this.options
-		const accepted = files.filter(file => FileDropTarget.accepts(file, options.accept))
+		const accepted = files.filter(file => accepts(file, options.accept))
 		if (accepted.length > 0) {
 			const selection = options.multiple ? accepted : accepted[0]
 			options.handleDrop(selection as NonNullable<FileUploadSelection<TMultiple>>)
