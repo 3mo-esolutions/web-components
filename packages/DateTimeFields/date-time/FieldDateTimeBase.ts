@@ -86,7 +86,8 @@ export abstract class FieldDateTimeBase<T> extends FieldComponent<T> {
 	}
 
 	protected override get isPopulated() {
-		return this.controller.isPopulated
+		// The segments draw their own placeholders while active, which a dense label would overlap.
+		return this.controller.isPopulated || (this.dense && this.isActive)
 	}
 
 	override focus() {

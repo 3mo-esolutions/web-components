@@ -82,6 +82,20 @@ describe('FieldTime', () => {
 		expect(fixture.component.value).toBe('04:45')
 	})
 
+	describe('label', () => {
+		const denseFixture = new ComponentTestFixture<FieldTime>(html`<mo-field-time label='Time' dense .pickerHidden=${true}></mo-field-time>`)
+		const labelVisibility = () => getComputedStyle(denseFixture.component.renderRoot.querySelector('mo-field')!.renderRoot.querySelector('span')!).visibility
+
+		it('should hide the label of a dense field while active, as the placeholders take its place', async () => {
+			expect(labelVisibility()).toBe('visible')
+
+			focus(denseFixture.component.renderRoot.querySelector<HTMLElement>('[data-segment=hour]')!)
+			await denseFixture.updateComplete
+
+			expect(labelVisibility()).toBe('hidden')
+		})
+	})
+
 	describe('the picker', () => {
 		const press = (element: HTMLElement, key: string, init: KeyboardEventInit = {}) => {
 			const event = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...init })

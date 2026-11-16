@@ -232,6 +232,46 @@ describe('FieldDateTime', () => {
 		})
 	})
 
+	describe('label', () => {
+		const labelVisibility = (field: FieldDateTime) => getComputedStyle(field.renderRoot.querySelector('mo-field')!.renderRoot.querySelector('span')!).visibility
+
+		describe('when dense', () => {
+			const denseFixture = new ComponentTestFixture<FieldDateTime>(html`<mo-field-date-time label='Date' dense precision='day' .pickerHidden=${true}></mo-field-date-time>`)
+			const denseSegment = (type: string) => denseFixture.component.renderRoot.querySelector<HTMLElement>(`[data-segment=${type}]`)!
+
+			it('should show the label while empty and inactive', () => {
+				expect(labelVisibility(denseFixture.component)).toBe('visible')
+			})
+
+			it('should hide the label while active, as the placeholders take its place', async () => {
+				focus(denseSegment('day'))
+				await denseFixture.updateComplete
+
+				expect(denseFixture.component.renderRoot.querySelector('mo-field')!.populated).toBe(true)
+				expect(labelVisibility(denseFixture.component)).toBe('hidden')
+			})
+
+			it('should show the label again once left empty', async () => {
+				focus(denseSegment('day'))
+				await denseFixture.updateComplete
+				denseSegment('day').blur()
+				denseFixture.component.dispatchEvent(new FocusEvent('focusout', { bubbles: true, relatedTarget: null }))
+				await denseFixture.updateComplete
+
+				expect(labelVisibility(denseFixture.component)).toBe('visible')
+			})
+		})
+
+		it('should keep the label visible above the placeholders while active when not dense', async () => {
+			plainFixture.component.label = 'Date'
+			focus(segment('day'))
+			await plainFixture.updateComplete
+
+			expect(plainFixture.component.renderRoot.querySelector('mo-field')!.populated).toBe(false)
+			expect(labelVisibility(plainFixture.component)).toBe('visible')
+		})
+	})
+
 	describe('clearing', () => {
 		it('should clear the value and dispatch input and change via the clear icon button', async () => {
 			plainFixture.component.value = new DateTime(Date.parse('2025-05-19T12:00:00.000Z'))
