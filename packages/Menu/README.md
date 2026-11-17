@@ -100,7 +100,7 @@ Items take real focus. Opened by the keyboard, the menu focuses its selected ite
 
 | Name | Description |
 | --- | --- |
-| (default) | The menu items. |
+| (default) | The menu items. Their icons, content and end line up in columns. |
 
 #### CSS parts
 
@@ -111,7 +111,7 @@ Items take real focus. Opened by the keyboard, the menu focuses its selected ite
 
 ### `mo-menu-item`
 
-A command in a `mo-menu`.
+A command in a `mo-menu`. Its start, content and end line up with those of the other items of the menu.
 
 #### Properties
 
@@ -125,7 +125,9 @@ A command in a `mo-menu`.
 
 | Name | Description |
 | --- | --- |
-| (default) | Default slot for content |
+| (default) | The content. |
+| `start` | Content before the content, in the column of the icons, replacing the icon. |
+| `end` | Content after the content, such as a keyboard shortcut. |
 
 #### CSS parts
 
@@ -149,7 +151,9 @@ An item of a `mo-menu` that navigates, highlighted while its route is the curren
 
 | Name | Description |
 | --- | --- |
-| (default) | Default slot for content |
+| (default) | The content. |
+| `start` | Content before the content, in the column of the icons, replacing the icon. |
+| `end` | Content after the content, such as a keyboard shortcut. |
 
 #### CSS parts
 
@@ -175,7 +179,9 @@ An item of a `mo-menu` that opens the items in its `submenu` slot as a menu besi
 | Name | Description |
 | --- | --- |
 | `submenu` | The items of the submenu. |
-| (default) | Default slot for content |
+| (default) | The content. |
+| `start` | Content before the content, in the column of the icons, replacing the icon. |
+| `end` | Content after the content, such as a keyboard shortcut. |
 
 #### CSS parts
 
@@ -207,7 +213,9 @@ An item of a `mo-menu` that the menu selects and deselects, one at a time or sev
 
 | Name | Description |
 | --- | --- |
-| (default) | Default slot for content |
+| (default) | The content. |
+| `start` | Content before the content, in the column of the icons, replacing the icon. |
+| `end` | Content after the content. |
 
 #### CSS parts
 

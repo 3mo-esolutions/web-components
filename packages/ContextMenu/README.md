@@ -72,7 +72,7 @@ It opens on the `contextmenu` event, which the context-menu key fires as well, a
 
 | Name | Description |
 | --- | --- |
-| (default) | The menu items. |
+| (default) | The menu items. Their icons, content and end line up in columns. |
 
 #### CSS parts
 
@@ -99,7 +99,9 @@ An item of a `mo-context-menu`, which opens the items in its `submenu` slot as a
 | Name | Description |
 | --- | --- |
 | `submenu` | The items of the submenu. |
-| (default) | Default slot for content |
+| (default) | The content. |
+| `start` | Content before the content, in the column of the icons, replacing the icon. |
+| `end` | Content after the content, such as a keyboard shortcut. |
 
 #### CSS parts
 

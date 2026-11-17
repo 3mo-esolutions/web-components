@@ -27,7 +27,7 @@ export function isMenu(element: EventTarget): element is HTMLElement {
  * @attr value - The value of the menu.
  * @attr disabled - Whether the menu is disabled.
  *
- * @slot - The menu items.
+ * @slot - The menu items. Their icons, content and end line up in columns.
  *
  * @fires change - Dispatched when the menu value changes.
  * @fires openChange - Dispatched when the menu open state changes.
@@ -136,6 +136,16 @@ export class Menu extends Component {
 
 			[part=list] {
 				outline: none;
+				display: grid;
+				grid-template-columns: auto 1fr auto;
+			}
+
+			::slotted(*) {
+				grid-column: 1 / -1;
+			}
+
+			::slotted([role^=menuitem]) {
+				grid-template-columns: subgrid;
 			}
 		`
 	}
