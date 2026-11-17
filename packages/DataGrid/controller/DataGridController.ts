@@ -193,7 +193,7 @@ export class DataGridController<TData, THost extends ReactiveElement = ReactiveE
 		if (!column.sortable) {
 			element.removeAttribute('aria-sort')
 		} else {
-			element.setAttribute('aria-sort', primary?.selector === column.sortDataSelector ? primary.strategy : 'none')
+			element.setAttribute('aria-sort', primary && primary.selector === column.sortDataSelector ? primary.strategy : 'none')
 		}
 		this.columns.stampSticky(element, column)
 	}

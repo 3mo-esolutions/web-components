@@ -150,6 +150,14 @@ describe('DataGridColumnHeader', () => {
 			expect(itemOf('arrow_downward')?.selected).toBe(false)
 		})
 
+		it('should announce no sorting on a sortable column without a data selector while the grid is unsorted', async () => {
+			const [name, actions] = await withColumns(nameColumn(), new DataGridColumn<Person>({ heading: 'Actions' }))
+
+			expect(fixture.component.getSorting()).toEqual([])
+			expect(name!.getAttribute('aria-sort')).toBe('none')
+			expect(actions!.getAttribute('aria-sort')).toBe('none')
+		})
+
 		it('should not offer sorting for a non-sortable column', async () => {
 			const [name] = await withColumns(nameColumn({ sortable: false }), ageColumn())
 
