@@ -1,5 +1,6 @@
 import { Component, component, html, query, render } from '@a11d/lit'
 import { ComponentTestFixture } from '@a11d/lit-testing'
+import { userEvent } from 'vitest/browser'
 import { SelectableListSelectability } from '@3mo/list'
 import { MenuAlignment } from './MenuAlignment.js'
 import { MenuPlacement } from './MenuPlacement.js'
@@ -531,6 +532,114 @@ describe('Menu', () => {
 
 			expect(other.hasAttribute('aria-haspopup')).toBe(false)
 			expect(anchor.hasAttribute('aria-haspopup')).toBe(false)
+		})
+	})
+
+	describe('columns', () => {
+		const rect = (element: Element) => element.getBoundingClientRect()
+		const content = (item: Element) => rect(item.shadowRoot!.querySelector('slot:not([name])')!)
+		const end = (item: Element) => rect(item.shadowRoot!.querySelector('slot[name=end]')!)
+
+		async function open(menu: Menu) {
+			const anchor = document.body.appendChild(document.createElement('button'))
+			menu.anchor = anchor
+			menu.open = true
+			await vi.waitFor(() => expect(rect(menu.querySelector('*')!).width).toBeGreaterThan(0))
+			return () => anchor.remove()
+		}
+
+		describe('with items with and without icons', () => {
+			const fixture = new ComponentTestFixture<Menu>(html`
+				<mo-menu>
+					<mo-menu-item id='icon' icon='content_cut'>Cut<span slot='end'>Ctrl + X</span></mo-menu-item>
+					<mo-menu-item id='plain'>Dictionary</mo-menu-item>
+					<mo-line></mo-line>
+					<mo-selectable-menu-item id='selectable'>Selectable</mo-selectable-menu-item>
+					<mo-menu-item id='start'><span slot='start' style='display: inline-block; width: 24px'></span>Flag</mo-menu-item>
+					<mo-nested-menu-item id='nested' icon='share'>
+						Share
+						<mo-menu-item slot='submenu' id='sub-icon' icon='mail'>Mail</mo-menu-item>
+						<mo-menu-item slot='submenu' id='sub-plain'>Link</mo-menu-item>
+						<mo-line slot='submenu'></mo-line>
+					</mo-nested-menu-item>
+				</mo-menu>
+			`)
+
+			beforeEach(() => open(fixture.component))
+
+			const item = (id: string) => fixture.component.querySelector(`#${id}`)!
+
+			it('should start the content of every item in the same column, after the icons', () => {
+				const left = content(item('icon')).left
+
+				expect(left).toBeGreaterThan(rect(item('icon').shadowRoot!.querySelector('[part=icon]')!).right)
+				for (const id of ['plain', 'selectable', 'start', 'nested']) {
+					expect(content(item(id)).left).toBe(left)
+				}
+			})
+
+			it('should place start content in the column of the icons', () => {
+				const start = rect(item('start').querySelector('[slot=start]')!)
+
+				expect(start.left).toBe(rect(item('icon').shadowRoot!.querySelector('[part=icon]')!).left)
+				expect(start.right).toBeLessThan(content(item('start')).left)
+			})
+
+			it('should place end content and the submenu chevron in a shared column after the content', () => {
+				const left = end(item('icon')).left
+
+				expect(left).toBeGreaterThanOrEqual(content(item('icon')).right)
+				expect(end(item('nested')).left).toBe(left)
+				expect(item('nested').shadowRoot!.querySelector('slot[name=end] > mo-icon')?.getAttribute('icon')).toBe('chevron_right')
+			})
+
+			it('should span separators over every column', () => {
+				const line = rect(fixture.component.querySelector('mo-line')!)
+
+				expect(line.left).toBe(rect(item('plain')).left)
+				expect(line.right).toBe(rect(item('plain')).right)
+			})
+
+			it('should line up the items of a submenu among themselves', async () => {
+				await userEvent.click(item('nested'))
+				await expect.poll(() => rect(item('sub-plain')).width).toBeGreaterThan(0)
+
+				expect(content(item('sub-plain')).left).toBe(content(item('sub-icon')).left)
+				expect(content(item('sub-plain')).left).toBeGreaterThan(rect(item('sub-plain')).left + 16)
+				expect(rect(fixture.component.querySelector('mo-line[slot=submenu]')!).width).toBe(rect(item('sub-plain')).width)
+			})
+		})
+
+		describe('with items without icons', () => {
+			const fixture = new ComponentTestFixture<Menu>(html`
+				<mo-menu>
+					<mo-menu-item>One</mo-menu-item>
+					<mo-menu-item>Two</mo-menu-item>
+				</mo-menu>
+			`)
+
+			beforeEach(() => open(fixture.component))
+
+			it('should not indent the content for the empty column of the icons', () => {
+				const item = fixture.component.querySelector('mo-menu-item')!
+
+				expect(content(item).left - rect(item).left).toBe(parseFloat(getComputedStyle(item).paddingInlineStart))
+			})
+		})
+
+		describe('with an item outside a menu', () => {
+			const fixture = new ComponentTestFixture<MenuItem>(html`
+				<mo-menu-item icon='home' style='width: 300px'>Home<span slot='end'>X</span></mo-menu-item>
+			`)
+
+			it('should give its content the space between the icon and the end', () => {
+				const item = fixture.component
+				const icon = rect(item.shadowRoot!.querySelector('[part=icon]')!)
+
+				expect(content(item).left).toBe(icon.right + 16)
+				expect(content(item).right).toBe(end(item).left)
+				expect(end(item).right).toBe(rect(item).right - parseFloat(getComputedStyle(item).paddingInlineEnd))
+			})
 		})
 	})
 })
