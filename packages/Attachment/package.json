@@ -1,0 +1,60 @@
+{
+	"name": "@3mo/attachment",
+	"version": "0.1.0",
+	"description": "A web component for a file shown by its name, type, size and thumbnail, with a link to open it and a button to remove it.",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/3mo-esolutions/web-components",
+		"directory": "packages/Attachment"
+	},
+	"bugs": {
+		"url": "https://github.com/3mo-esolutions/web-components/issues"
+	},
+	"keywords": [
+		"lit",
+		"web-component",
+		"attachment",
+		"file",
+		"upload"
+	],
+	"author": "3MO GmbH",
+	"license": "MIT",
+	"homepage": "https://3mo-esolutions.github.io/web-components/?path=/docs/data-attachment--overview",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"source": "./index.ts",
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		},
+		"./translations/*": {
+			"source": "./translations/*.ts",
+			"types": "./dist/translations/*.d.ts",
+			"default": "./dist/translations/*.js"
+		},
+		"./dist/*": "./dist/*",
+		"./package.json": "./package.json"
+	},
+	"customElements": "dist/custom-elements.json",
+	"files": [
+		"dist",
+		"CHANGELOG.md"
+	],
+	"dependencies": {
+		"tslib": "x"
+	},
+	"peerDependencies": {
+		"@a11d/lit": "x",
+		"@3mo/theme": "x",
+		"@3mo/localization": "x",
+		"@3mo/focus-ring": "x",
+		"@3mo/icon": "x",
+		"@3mo/slot-controller": "x",
+		"@material/web": "1.x"
+	},
+	"devDependencies": {
+		"@a11d/lit-testing": "x"
+	}
+}

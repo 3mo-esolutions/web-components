@@ -1,3 +1,4 @@
+import '@3mo/attachment/translations/de'
 import '@3mo/chip/translations/de'
 import '@3mo/code-field/translations/de'
 import '@3mo/collapsible-card/translations/de'

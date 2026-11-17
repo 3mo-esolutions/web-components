@@ -21,6 +21,7 @@ export function entryPointOf(path: string) {
 const fixtures: Record<string, string> = {
 	'mo-accordion': '<mo-accordion><mo-accordion-item heading="One">First</mo-accordion-item><mo-accordion-item heading="Two">Second</mo-accordion-item></mo-accordion>',
 	'mo-alert': '<mo-alert heading="Heading">Message</mo-alert>',
+	'mo-attachment': '<mo-attachment name="invoice.pdf" size="248832" href="/invoice.pdf" removable><mo-icon-button slot="action" icon="download"></mo-icon-button></mo-attachment>',
 	'mo-button-group': '<mo-button-group type="outlined"><mo-button type="outlined">One</mo-button><mo-button type="outlined">Two</mo-button></mo-button-group>',
 	'mo-card': '<mo-card heading="Heading"><mo-icon-button slot="action" icon="more_vert"></mo-icon-button>Content<mo-button slot="footer">Action</mo-button></mo-card>',
 	'mo-checkbox-group': '<mo-checkbox-group label="Group"><mo-checkbox label="One"></mo-checkbox><mo-checkbox label="Two"></mo-checkbox></mo-checkbox-group>',

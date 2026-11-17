@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/del",
-	"version": "0.6.11",
+	"version": "0.6.12",
 	"description": "A bundle of the whole library, re-exported with Lit and the application framework, plus a business-suite app shell.",
 	"repository": {
 		"type": "git",
@@ -146,6 +146,7 @@
 		"@3mo/split-page-host": "x",
 		"@3mo/file-upload": ">=0.4.3",
 		"@3mo/file-upload-drop-area": "x",
+		"@3mo/attachment": "x",
 		"@3mo/safe-round": "x",
 		"@3mo/expander": "x",
 		"@3mo/accordion": "x",

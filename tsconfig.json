@@ -58,6 +58,9 @@
 			"path": "./packages/Anchor"
 		},
 		{
+			"path": "./packages/Attachment"
+		},
+		{
 			"path": "./packages/Button"
 		},
 		{
