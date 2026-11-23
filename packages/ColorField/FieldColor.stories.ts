@@ -21,7 +21,7 @@ export default {
 		disabled: false,
 		readonly: false,
 	},
-	decorators: [story => html`<div style='display: flex; flex-direction: column; gap: 16px; max-width: 320px'>${story()}</div>`],
+	decorators: [story => html`<mo-flex gap='1rem' alignItems='flex-start'>${story()}</mo-flex>`],
 } satisfies Meta<Args>
 
 type Story = StoryObj<Args>

@@ -32,8 +32,9 @@ export class DataGridToolbarElementStyles {
 		this.set('[instanceof~=mo-field-select]', css`max-width: 13rem; flex: 1.3 1 auto;`)
 		this.set('[instanceof~=mo-field-select][multiple]', css`max-width: 15rem; flex: 1.5 1 auto;`)
 
-		this.set('[instanceof~=mo-field-date-time]', css`max-width: 13rem; flex: 1.3 1 auto;`)
-		this.set('[instanceof~=mo-field-date-time-range]', css`max-width: 15rem; flex: 1.5 1 auto;`)
+		// A date cannot be shortened, so date fields take the width of their content where there is room for it.
+		this.set('[instanceof~=mo-field-date-time]', css`max-width: max-content; flex: 1.3 1 auto;`)
+		this.set('[instanceof~=mo-field-date-time-range]', css`max-width: max-content; flex: 1.5 1 auto;`)
 
 		this.set('[instanceof~=mo-field-search]', css`max-width: 20rem; flex: 2 1 auto;`)
 	}

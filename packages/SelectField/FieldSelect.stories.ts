@@ -210,3 +210,40 @@ export const SubgridLayout: Story = {
 		</mo-field-select>
 	`,
 }
+
+/** A select is as wide as its label or its widest option, as a native select is, and keeps that width whatever is picked, typed or cleared. The first row sizes the fields to their content; the second stretches them. */
+export const Sizing: Story = {
+	decorators: [story => html`<div style='grid-column: 1 / -1; display: grid; gap: 1.5rem'>${story()}</div>`],
+	render: ({ default: defaultText, multiple, searchable }) => html`
+		<style>
+			.content-sized, .stretching { display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-start; }
+			.content-sized > mo-field-select { width: auto; }
+			.stretching > mo-field-select { flex: 1; }
+		</style>
+		<div class='content-sized'>
+			<mo-field-select label='Size'>
+				${['S', 'M', 'L', 'XL'].map(size => html`<mo-option value=${size}>${size}</mo-option>`)}
+			</mo-field-select>
+			<mo-field-select label='Country' ?searchable=${searchable} ?multiple=${multiple} default=${defaultText} .value=${multiple ? ['DE'] : 'DE'}>
+				${countries.map(country => html`<mo-option value=${country.code}>${country.label}</mo-option>`)}
+			</mo-field-select>
+			<mo-field-select label='A label wider than any of its options'>
+				${['Yes', 'No'].map(answer => html`<mo-option value=${answer}>${answer}</mo-option>`)}
+			</mo-field-select>
+			<mo-field-select label='Countries' multiple searchable .value=${['DE', 'FR']}>
+				${countries.map(country => html`<mo-option value=${country.code}>${country.label}</mo-option>`)}
+			</mo-field-select>
+			<mo-field-select label='Size' dense>
+				${['S', 'M', 'L', 'XL'].map(size => html`<mo-option value=${size}>${size}</mo-option>`)}
+			</mo-field-select>
+		</div>
+		<div class='stretching'>
+			<mo-field-select label='Size'>
+				${['S', 'M', 'L', 'XL'].map(size => html`<mo-option value=${size}>${size}</mo-option>`)}
+			</mo-field-select>
+			<mo-field-select label='Country' ?searchable=${searchable} ?multiple=${multiple} default=${defaultText}>
+				${countries.map(country => html`<mo-option value=${country.code}>${country.label}</mo-option>`)}
+			</mo-field-select>
+		</div>
+	`,
+}

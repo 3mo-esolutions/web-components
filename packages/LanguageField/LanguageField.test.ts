@@ -4,6 +4,8 @@ import { LanguageField, type LanguageFieldTemplateParameter } from './LanguageFi
 import { DialogLanguageField } from './DialogLanguageField.js'
 import { type Language } from './Language.js'
 import './index.js'
+import '@3mo/text-fields'
+import { FieldPairMode } from '@3mo/field-pair'
 
 type TestLanguage = Language & { readonly id: number, readonly name: string }
 
@@ -139,6 +141,80 @@ describe('LanguageField', () => {
 			parameters.handleChange('Hello')
 
 			expect(multilingual.component.value.get(1)).toBe('Hello')
+		})
+	})
+
+	describe('layout', () => {
+		describe('in a container of definite height', () => {
+			const fixture = new ComponentTestFixture<TestLanguageField>(() => {
+				const component = new TestLanguageField()
+				component.languagesToFetch = [english, german]
+				component.mode = FieldPairMode.Overlay
+				component.fieldTemplate = () => html`<div style='height: 100%'></div>`
+				return component
+			})
+
+			const container = document.createElement('div')
+			container.style.cssText = 'height: 300px; width: 500px'
+
+			beforeEach(async () => {
+				fixture.component.before(container)
+				container.append(fixture.component)
+				await new Promise<void>(resolve => setTimeout(resolve))
+				await fixture.updateComplete
+			})
+
+			afterEach(() => container.remove())
+
+			it('should let its field fill the container when the selector overlays it', async () => {
+				await vi.waitFor(() => expect(fixture.component.renderRoot.querySelector('mo-field-pair')).not.toBeNull())
+				const editor = fixture.component.renderRoot.querySelector('mo-field-pair > div')!
+
+				expect(editor.getBoundingClientRect().height).toBe(300)
+			})
+		})
+
+		describe('when dense, in a cell taller than the field', () => {
+			const fixture = new ComponentTestFixture<TestLanguageField>(() => {
+				const component = new TestLanguageField()
+				component.languagesToFetch = [english, german]
+				component.dense = true
+				component.fieldTemplate = () => html`<mo-field-text dense></mo-field-text>`
+				return component
+			})
+
+			const cell = document.createElement('div')
+			cell.style.cssText = 'height: 60px; width: 500px; display: flex; flex-direction: column; justify-content: center'
+
+			beforeEach(async () => {
+				fixture.component.before(cell)
+				cell.append(fixture.component)
+				await new Promise<void>(resolve => setTimeout(resolve))
+				await fixture.updateComplete
+			})
+
+			afterEach(() => cell.remove())
+
+			const frames = () => {
+				const pair = fixture.component.renderRoot.querySelector('mo-field-pair')!
+				const field = pair.querySelector('mo-field-text')!.renderRoot.querySelector('mo-field')!
+				const selector = pair.querySelector('mo-field-select')!.renderRoot.querySelector('mo-field')!
+				return { pair: pair.getBoundingClientRect(), field: field.getBoundingClientRect(), selector: selector.getBoundingClientRect() }
+			}
+
+			it('should give the language selector the height of the field', async () => {
+				await vi.waitFor(() => expect(frames().selector.height).toBeGreaterThan(0))
+				const { field, selector } = frames()
+				expect(selector.height).toBe(field.height)
+			})
+
+			it('should leave the cell to center the pair rather than stretch it', async () => {
+				await vi.waitFor(() => expect(frames().selector.height).toBeGreaterThan(0))
+				const { pair, field } = frames()
+				const box = cell.getBoundingClientRect()
+				expect(pair.height).toBe(field.height)
+				expect(Math.abs((pair.top - box.top) - (box.bottom - pair.bottom))).toBeLessThanOrEqual(1)
+			})
 		})
 	})
 

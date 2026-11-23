@@ -1,5 +1,10 @@
-import { css } from '@a11d/lit'
+import { component, css, html } from '@a11d/lit'
+import { ComponentTestFixture } from '@a11d/lit-testing'
+import '@3mo/date-time-fields'
+import '@3mo/field-pair'
+import '@3mo/text-fields'
 import { DataGridToolbarElementStyles } from './DataGridToolbarElementStyles.js'
+import { DataGrid } from './index.js'
 
 describe('DataGridToolbarElementStyles', () => {
 	const cssTextOf = (styles: DataGridToolbarElementStyles) => [...styles.styleSheet!.cssRules]
@@ -60,5 +65,46 @@ describe('DataGridToolbarElementStyles', () => {
 		expect(styles.styleSheet!.cssRules.length).toBe(ruleCount)
 		expect(cssTextOf(styles)).toContain('color: blue')
 		expect(cssTextOf(styles)).not.toContain('color: red')
+	})
+
+	describe('with a date range in the toolbar', () => {
+		const fixture = new ComponentTestFixture<HTMLElementTagNameMap['mo-data-grid']>(html`
+			<mo-data-grid style='width: 1200px' .data=${[]}>
+				<mo-field-date-range slot='toolbar' label='Period' .value=${new DateTimeRange(new DateTime(2026, 10, 23), new DateTime(2026, 11, 31))}></mo-field-date-range>
+			</mo-data-grid>
+		`)
+
+		it('should show the whole range rather than cut it off at the convention\'s maximum width', async () => {
+			const field = fixture.component.querySelector('mo-field-date-range')!
+			await field.updateComplete
+			const range = field.renderRoot.querySelector<HTMLElement>('[part=segments-range]')!
+
+			await vi.waitFor(() => expect(range.scrollWidth).toBeGreaterThan(0))
+			expect(range.scrollWidth).toBeLessThanOrEqual(range.clientWidth)
+		})
+	})
+
+	describe('with a date range in a field pair narrower than the range', () => {
+		@component('test-data-grid-toolbar-element-styles')
+		class TestDataGrid extends DataGrid<unknown> {
+			override get toolbarDefaultTemplate() {
+				return html`
+					<mo-field-pair style='width: 300px; --mo-field-pair-attachment-width: 140px'>
+						<mo-field-date-range label='Period' .value=${new DateTimeRange(new DateTime(2026, 10, 23), new DateTime(2026, 11, 31))}></mo-field-date-range>
+						<mo-field-text slot='attachment' label='By'></mo-field-text>
+					</mo-field-pair>
+				`
+			}
+		}
+
+		const fixture = new ComponentTestFixture(() => new TestDataGrid())
+
+		it('should stay within the pair', async () => {
+			const pair = fixture.component.renderRoot.querySelector('mo-field-pair')!
+			const field = pair.querySelector('mo-field-date-range')!
+			await field.updateComplete
+
+			expect(field.getBoundingClientRect().right).toBeLessThanOrEqual(pair.getBoundingClientRect().right)
+		})
 	})
 })

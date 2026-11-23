@@ -132,6 +132,21 @@ describe('DataGridCell', () => {
 		})
 	})
 
+	describe('Editing', () => {
+		it('should let the edit field grow with what is typed, beyond the column\'s width', async () => {
+			fixture.component.editability = DataGridEditability.Always
+			await settle()
+			const field = getCell(0, 0).renderRoot.querySelector('mo-field-text')!
+			const width = field.getBoundingClientRect().width
+
+			field.inputElement.value = 'A name which is a good deal longer than any column of this grid is wide, so that it cannot fit'
+			field.inputElement.dispatchEvent(new Event('input'))
+			await field.updateComplete
+
+			expect(field.getBoundingClientRect().width).toBeGreaterThan(width + 100)
+		})
+	})
+
 	describe('Rendering', () => {
 		it('should render the column\'s content template with value and data', async () => {
 			const columnElement = fixture.component.querySelector('mo-data-grid-column-text')!

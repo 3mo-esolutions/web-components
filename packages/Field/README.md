@@ -26,7 +26,7 @@ import '@3mo/field'
 
 ## Examples
 
-- [States](https://3mo-esolutions.github.io/web-components/?path=/story/inputs-field--states) — The frame draws only what its host tells it: `populated` lifts the label, `active` adds the accent line, `invalid` turns it red and `dense` makes the label a placeholder.
+- [States](https://3mo-esolutions.github.io/web-components/?path=/story/inputs-field--states) — The frame draws what its host tells it: `populated` lifts the label, `active` adds the accent line as focus inside it does, `invalid` turns it red and `dense` makes the label a placeholder.
 - [Slots](https://3mo-esolutions.github.io/web-components/?path=/story/inputs-field--slots) — `start` and `end` hold icons, units or buttons beside the content.
 - [Custom Content](https://3mo-esolutions.github.io/web-components/?path=/story/inputs-field--custom-content) — The default slot takes any control, here a native `<select>`, restyled to match.
 - [Custom Field](https://3mo-esolutions.github.io/web-components/?path=/story/inputs-field--custom-field) — A field of your own extends `InputFieldComponent`, which renders this frame and brings the value, events, focus and validation.
@@ -47,7 +47,7 @@ import '@3mo/field'
 | `dense` | `dense` | `boolean` | `false` | Drops the padding and turns the label into a placeholder |
 | `populated` | `populated` | `boolean` | `false` | Whether the content holds a value, which lifts the label |
 | `invalid` | `invalid` | `boolean` | `false` | Turns the label, caret and underline red |
-| `active` | `active` | `boolean` | `false` | Whether the content has focus, which draws the label and underline in the accent color |
+| `active` | `active` | `boolean` | `false` | Whether the content is being used, which draws the label and underline in the accent color. Focus inside the field draws them as well. |
 
 #### Slots
 

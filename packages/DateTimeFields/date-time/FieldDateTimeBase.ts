@@ -191,16 +191,17 @@ export abstract class FieldDateTimeBase<T> extends FieldComponent<T> {
 		`
 	}
 
+	/** Hidden rather than absent while there is nothing to clear, so that focusing the field does not widen it. */
 	private get clearIconButtonTemplate() {
 		const clear = (e: PointerEvent) => {
 			e.stopPropagation()
 			this.handleInput(undefined)
 			this.handleChange(undefined)
 		}
-		return !this.value || !this.focusController.focused ? html.nothing : html`
+		return html`
 			<mo-icon-button tabindex='-1' dense slot='end' icon='cancel'
 				@click=${clear}
-				${style({ color: 'var(--mo-color-gray)', fontSize: '20px', cursor: 'pointer', userSelect: 'none', marginBlockStart: '2.75px', marginInlineEnd: '5px' })}
+				${style({ color: 'var(--mo-color-gray)', fontSize: '20px', cursor: 'pointer', userSelect: 'none', marginBlockStart: '2.75px', marginInlineEnd: '5px', visibility: this.value && this.focusController.focused ? 'visible' : 'hidden' })}
 			></mo-icon-button>
 		`
 	}

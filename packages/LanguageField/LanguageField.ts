@@ -106,6 +106,23 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 
 	static override get styles() {
 		return css`
+			/* Fills a container of definite height, which editors overlaid by the selector rely on. */
+			:host {
+				display: flex;
+				flex-direction: column;
+				height: 100%;
+			}
+
+			mo-field-pair {
+				flex: 1 1 auto;
+			}
+
+			/* A field beside the selector keeps its own height and is centered. */
+			mo-field-pair[mode=attach] {
+				flex: none;
+				margin-block: auto;
+			}
+
 			mo-field-select {
 				background-color: color-mix(in srgb, var(--mo-color-gray) 10%, transparent);
 			}
@@ -116,14 +133,6 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 
 			:host([single]) mo-field-select::part(dropDownIcon) {
 				display: none;
-			}
-
-			mo-field-pair {
-				--mo-field-pair-attachment-width: 110px;
-			}
-
-			:host([single]) mo-field-pair {
-				--mo-field-pair-attachment-width: 50px;
 			}
 
 			:host([single]) mo-field-select {
@@ -142,7 +151,7 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 				return this.getFieldTemplateByLanguage(this.selectedLanguage)
 			default:
 				return html`
-					<mo-field-pair mode=${this.mode} ${style({ height: '100%' })}>
+					<mo-field-pair mode=${this.mode}>
 						${this.getFieldTemplateByLanguage(this.selectedLanguage)}
 						${this.languageSelectorTemplate}
 					</mo-field-pair>
@@ -197,7 +206,7 @@ export abstract class LanguageField<TValue, TLanguage extends Language> extends 
 
 	protected get dialogIconButtonTemplate() {
 		return this._languages.length === 1 ? html.nothing : html`
-			<mo-icon-button icon='launch' part='dialog-icon-button' ${style({ display: 'flex', alignItems: 'center' })}
+			<mo-icon-button icon='launch' part='dialog-icon-button' ?dense=${this.dense} ${style({ display: 'flex', alignItems: 'center' })}
 				@click=${(e: PointerEvent) => { e.stopPropagation(); this.openDialog() }}
 			></mo-icon-button>
 		`

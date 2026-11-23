@@ -20,7 +20,7 @@ export default {
 		disabled: false,
 		readonly: false,
 	},
-	decorators: [story => html`<div style='display: flex; flex-direction: column; gap: 16px; max-width: 400px'>${story()}</div>`],
+	decorators: [story => html`<mo-flex gap='1rem' alignItems='flex-start'>${story()}</mo-flex>`],
 } satisfies Meta<Args>
 
 type Story = StoryObj<Args>
@@ -44,4 +44,20 @@ export const Slots: Story = {
 /** `maxLength` counts down the characters left. */
 export const Length: Story = {
 	render: () => html`<mo-field-text-area label='Bio' maxLength='160' value='Writes web components.'></mo-field-text-area>`,
+}
+
+/** The field grows with its text from two lines on. A `min-height` on the element makes it start higher, and a `max-height` on the `input` part makes it scroll - type past eight lines. */
+export const Height: Story = {
+	render: () => html`
+		<style>
+			#notes {
+				min-height: 8rem;
+			}
+
+			#notes::part(input) {
+				max-height: 8lh;
+			}
+		</style>
+		<mo-field-text-area id='notes' label='Notes'></mo-field-text-area>
+	`,
 }

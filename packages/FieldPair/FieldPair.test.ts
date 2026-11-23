@@ -45,8 +45,9 @@ describe('FieldPair', () => {
 	})
 
 	describe('attachment sizing', () => {
-		it('should size the attachment slot to 100px by default and honor --mo-field-pair-attachment-width', async () => {
-			expect(getComputedStyle(attachmentSlot()).width).toBe('100px')
+		it('should size the attachment to its content by default and honor --mo-field-pair-attachment-width', async () => {
+			const button = fixture.component.querySelector('button')!
+			expect(attachmentSlot().getBoundingClientRect().width).toBe(button.getBoundingClientRect().width)
 
 			fixture.component.style.setProperty('--mo-field-pair-attachment-width', '250px')
 			await fixture.updateComplete
@@ -57,14 +58,20 @@ describe('FieldPair', () => {
 
 	describe('overlay mode', () => {
 		it('should overlay the attachment on the field instead of laying them out side by side', async () => {
-			expect(getComputedStyle(fixture.component).display).toBe('flex')
-			expect(getComputedStyle(attachmentSlot()).position).toBe('static')
+			const input = fixture.component.querySelector('input')!
+			fixture.component.style.width = '400px'
+			input.style.cssText = 'box-sizing: border-box; height: 80px'
+			expect(input.getBoundingClientRect().right).toBeCloseTo(attachmentSlot().getBoundingClientRect().left, 0)
 
 			fixture.component.mode = FieldPairMode.Overlay
 			await fixture.updateComplete
 
-			expect(getComputedStyle(fixture.component).display).toBe('block')
-			expect(getComputedStyle(attachmentSlot()).position).toBe('absolute')
+			const field = fixture.component.querySelector('input')!.getBoundingClientRect()
+			const attachment = attachmentSlot().getBoundingClientRect()
+			const pair = fixture.component.getBoundingClientRect()
+			expect(field.width).toBeCloseTo(pair.width, 0)
+			expect(attachment.right).toBeCloseTo(pair.right, 0)
+			expect(attachment.top).toBeCloseTo(pair.top, 0)
 		})
 	})
 

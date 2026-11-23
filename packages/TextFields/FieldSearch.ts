@@ -35,10 +35,11 @@ export class FieldSearch extends FieldText {
 		`
 	}
 
+	/** Hidden rather than absent while empty, so that typing does not widen the field. */
 	protected get clearIconButtonTemplate() {
-		return !this.inputStringValue ? html.nothing : html`
+		return html`
 			<mo-icon-button slot='end' icon='cancel' dense
-				style='color: var(--mo-color-gray)'
+				${style({ color: 'var(--mo-color-gray)', visibility: this.inputStringValue ? 'visible' : 'hidden' })}
 				@click=${() => this.clear()}
 			></mo-icon-button>
 		`

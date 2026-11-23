@@ -41,6 +41,7 @@ import '@3mo/select-field'
 - [Actions](https://3mo-esolutions.github.io/web-components/?path=/story/inputs-select-field--actions) — A list item that is not an option is an action: the arrow keys reach it, and choosing it runs its click without selecting anything.
 - [States](https://3mo-esolutions.github.io/web-components/?path=/story/inputs-select-field--states) — A disabled field ignores input, a readonly one shows its value without letting it change, a required one turns invalid once its selection is cleared, and a dense one is shorter.
 - [Subgrid Layout](https://3mo-esolutions.github.io/web-components/?path=/story/inputs-select-field--subgrid-layout) — The `list` part laid out as a grid, with every option as a subgrid row, lines up flags, dialling codes and names; `inputText` is what the input shows.
+- [Sizing](https://3mo-esolutions.github.io/web-components/?path=/story/inputs-select-field--sizing) — A select is as wide as its label or its widest option, as a native select is, and keeps that width whatever is picked, typed or cleared.
 
 ## Accessibility
 

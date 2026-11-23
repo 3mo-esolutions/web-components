@@ -91,7 +91,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 		return this.dense
 	}
 
-	private _listItems = new Array<ListItem>()
+	@state() private _listItems = new Array<ListItem>()
 	get listItems() { return this._listItems }
 	get options() { return this.listItems.filter(i => i instanceof Option) as Array<Option<T>> }
 	get selectedOptions() { return this.options.filter(o => o.selected) }
@@ -183,9 +183,60 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 				--_grid-column-full-span-in-case: 1 / -1;
 			}
 
+			#input-container {
+				display: grid;
+				grid-template-columns: minmax(0, 1fr);
+				align-items: center;
+				position: relative;
+			}
+
+			input, #sizer {
+				grid-area: 1 / 1;
+			}
+
 			input {
 				cursor: pointer;
+				border: 0;
+				padding: 0;
+				outline: none;
+				background: transparent;
+				color: inherit;
+				font-family: inherit;
+				text-align: inherit;
 				text-overflow: ellipsis;
+			}
+
+			input {
+				font-size: inherit;
+				height: max(1rem, 1.1em);
+			}
+
+			/* Without a sizer, the 20 characters every field's input counts as. */
+			input {
+				width: 20ch;
+				min-width: 100%;
+				max-width: 100%;
+			}
+
+			#input-container:has(#sizer) input {
+				width: 0;
+			}
+
+			#sizer {
+				display: grid;
+				visibility: hidden;
+				height: 0;
+				overflow: hidden;
+				white-space: nowrap;
+				user-select: none;
+			}
+
+			mo-icon-button[icon=cancel] {
+				position: absolute;
+				inset-inline-end: 0;
+				top: 50%;
+				translate: 0 -50%;
+				color: var(--mo-color-gray);
 			}
 
 			mo-icon[part=dropDownIcon] {
@@ -254,21 +305,48 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 
 	protected override get inputTemplate() {
 		return html`
-			<input
-				part='input'
-				id=${this.searching ? 'search' : 'value'}
-				type='text'
-				autocomplete='off'
-				aria-label=${ifDefined(this.label || undefined)}
-				title=${ifDefined(this.multiple ? this.valueToInputValue(this.value) || undefined : undefined)}
-				${this.combobox.input.ref()}
-				?readonly=${!this.searching || !this.searchable || this.readonly}
-				?disabled=${this.disabled}
-				.value=${live(this.searching ? this.searchString || '' : this.valueToInputValue(this.value) || '')}
-				@mousedown=${(e: MouseEvent) => this.handleInputMouseDown(e)}
-				@input=${(e: Event) => { this.handleInput((e.target as HTMLInputElement).value, e) }}
-			>
+			<div id='input-container'>
+				<input
+					part='input'
+					id=${this.searching ? 'search' : 'value'}
+					type='text'
+					autocomplete='off'
+					aria-label=${ifDefined(this.label || undefined)}
+					title=${ifDefined(this.multiple ? this.valueToInputValue(this.value) || undefined : undefined)}
+					${this.combobox.input.ref()}
+					?readonly=${!this.searching || !this.searchable || this.readonly}
+					?disabled=${this.disabled}
+					.value=${live(this.searching ? this.searchString || '' : this.valueToInputValue(this.value) || '')}
+					@mousedown=${(e: MouseEvent) => this.handleInputMouseDown(e)}
+					@input=${(e: Event) => { this.handleInput((e.target as HTMLInputElement).value, e) }}
+				>
+				${this.sizerTemplate}
+				${this.clearIconButtonTemplate}
+			</div>
 		`
+	}
+
+	/**
+	 * Sizes the field to its widest option rather than to the current value, the way a native select does:
+	 * the sizer shares the input's grid cell while the input itself contributes no width. Option texts that
+	 * change without the select updating stay stale here, as they do in the input.
+	 */
+	protected get sizerTemplate() {
+		return html`
+			<div id='sizer'>
+				${this.sizingTexts.map(text => html`<span>${text}</span>`)}
+			</div>
+		`
+	}
+
+	private static readonly sizingTextsLimit = 20
+
+	/** Every option's text, or above the limit the longest ones by character count. */
+	protected get sizingTexts() {
+		const texts = [this.default, ...this.options.map(option => option.text)].filter((text): text is string => !!text)
+		return texts.length <= FieldSelect.sizingTextsLimit
+			? texts
+			: texts.sort((a, b) => b.length - a.length).slice(0, FieldSelect.sizingTextsLimit)
 	}
 
 	// Focusing turns this input into the search one and selects all of it. The browser places a caret on
@@ -283,22 +361,19 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 
 	protected override get endSlotTemplate() {
 		return html`
-			${this.clearIconButtonTemplate}
 			${super.endSlotTemplate}
 			<mo-icon slot='end' part='dropDownIcon' icon='unfold_more'></mo-icon>
 		`
 	}
 
+	/** Overlaid on the input's end, so that appearing while searching moves nothing. */
 	private get clearIconButtonTemplate() {
 		const clear = () => {
 			this.handleSelection([])
 			this.searchInputElement?.focus()
 		}
 		return !this.searching || !this.hasSearchInput ? html.nothing : html`
-			<mo-icon-button tabindex='-1' dense slot='end' icon='cancel'
-				style='color: var(--mo-color-gray)'
-				@click=${() => clear()}
-			></mo-icon-button>
+			<mo-icon-button tabindex='-1' dense icon='cancel' @click=${() => clear()}></mo-icon-button>
 		`
 	}
 
@@ -406,6 +481,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 	}
 
 	protected handleSelection(menuValue: Array<number>) {
+		const searched = this.hasSearchInput
 		this.valueController.selectFromMenu(menuValue)
 		this.change.dispatch(this.value)
 		this.dataChange.dispatch(this.data)
@@ -415,7 +491,7 @@ export class FieldSelect<T> extends FieldComponent<Value> {
 		}
 		super.handleInput(this.valueToInputValue(this.value))
 		// Several are picked from one search, which stands until the menu closes.
-		if (!this.multiple || !this.open || !this.hasSearchInput) {
+		if (!this.multiple || !this.open || !searched) {
 			this.searchString = this.valueToInputValue(this.value)
 			this.resetSearch()
 		}

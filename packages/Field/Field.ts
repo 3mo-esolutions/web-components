@@ -14,7 +14,7 @@ import { SlottedInputDirectionController } from './SlottedInputDirectionControll
  * @attr dense - Drops the padding and turns the label into a placeholder
  * @attr populated - Whether the content holds a value, which lifts the label
  * @attr invalid - Turns the label, caret and underline red
- * @attr active - Whether the content has focus, which draws the label and underline in the accent color
+ * @attr active - Whether the content is being used, which draws the label and underline in the accent color. Focus inside the field draws them as well.
  *
  * @slot - The field's content
  * @slot start - Content to be placed at the start of the field
@@ -40,18 +40,21 @@ export class Field extends Component {
 	@property({ type: Boolean, reflect: true }) active = false
 
 	readonly slotController = new SlotController(this)
-	readonly inputDirectionController = new SlottedInputDirectionController(this, () => this.slotController.getAssignedElements('')[0])
+	readonly inputDirectionController = new SlottedInputDirectionController(this, (): Element | undefined => {
+		const [element] = this.slotController.getAssignedElements('')
+		return element?.querySelector('input, textarea') ?? element
+	})
 
 	static override get styles() {
 		return css`
 			:host {
-				--mo-field-label-font-size-on-focus: 0.75rem;
 				position: relative;
 				overflow: clip;
 				display: flex;
-				padding: 0.375rem 0.675rem;
+				padding: 0.25rem 0.675rem;
 				gap: 0.375rem;
 				min-width: 0;
+				min-height: 2.375rem;
 
 				border-start-start-radius: var(--mo-field-border-start-start-radius, var(--mo-border-radius));
 				border-start-end-radius: var(--mo-field-border-start-end-radius, var(--mo-border-radius));
@@ -64,12 +67,12 @@ export class Field extends Component {
 				align-items: center;
 			}
 
-			:host([active]) {
-				outline: none;
+			:host([dense]) {
+				min-height: 1.75rem;
 			}
 
-			:host([dense]) {
-				--mo-field-label-font-size-on-focus: 1rem;
+			:host([active]), :host(:focus-within) {
+				outline: none;
 			}
 
 			:host([disabled]) {
@@ -86,20 +89,48 @@ export class Field extends Component {
 				overflow-x: hidden;
 			}
 
-			span, slot:not([name]) {
+			span, slot:not([name]), div::before {
 				grid-area: 1 / 1;
+			}
+
+			/* Reserves the label's resting width, so the field keeps its width once the label floats and shrinks. */
+			div::before {
+				content: attr(data-label) / '';
+				font-size: 0.875rem;
+				height: 0;
+				visibility: hidden;
+				overflow: hidden;
+				white-space: nowrap;
 			}
 
 			slot:not([name])::slotted(*) {
 				border: 0px;
 				width: 100%;
-				field-sizing: content;
 				font-family: inherit;
+				font-size: 0.875rem;
 				outline: none;
-				padding: 0.8rem 0 0 0;
+				padding: 0.8125rem 0 0 0;
 				color: var(--mo-color-foreground);
 				background-color: transparent;
 				text-align: inherit;
+			}
+
+			/* Fills the field, and counts as 20 characters where the field is sized by its content, whatever the value. */
+			slot:not([name])::slotted(:is(input, textarea)) {
+				width: 20ch;
+				min-width: 100%;
+				max-width: 100%;
+			}
+
+			/* Engines give an input lines of different heights, which would change the field's height; a larger font still fits. */
+			slot:not([name])::slotted(input) {
+				box-sizing: content-box;
+				height: max(1rem, 1.1em);
+			}
+
+			/* Without a label, its room is split above and below, so the content is centered at the same height. */
+			:host(:is(:not([label]), [label=''])) slot:not([name])::slotted(*) {
+				padding: 0.40625rem 0;
 			}
 
 			:host([dense]) slot:not([name])::slotted(*) {
@@ -116,35 +147,48 @@ export class Field extends Component {
 				justify-content: center;
 				align-items: center;
 			}
+
+			/* Start and end content may use the room of the padding and the underline, so an icon button does not make the field taller. */
+			slot[name] {
+				margin-block: -0.25rem calc(-0.25rem - 1px);
+				min-height: 1.75rem;
+				align-items: var(--_mo-field-slot-align-items, center);
+			}
 		`
 	}
 
 	private static get labelStyles() {
 		return css`
+			/* At rest as large as the content it stands for. Sticky "top" is measured from the container, so it can slide the label from its center to its top. It shrinks by font size, as Chrome draws scaled text without subpixel antialiasing. */
 			span {
 				position: sticky;
 				inset-inline-start: 0;
-				align-self: center;
+				top: var(--_mo-field-label-rest-top, calc(50% - 0.5lh));
+				align-self: start;
+				font-size: 0.875rem;
+				line-height: 1;
 				color: var(--mo-color-gray);
-				transition: font-size .1s ease-out, color .1s ease-out;
+				transition: calc(var(--mo-duration-quick) * 0.6) ease-out;
+				transition-property: top, font-size, color;
 				pointer-events: none;
 				white-space: nowrap;
-				overflow: hidden !important;
+				/* Clipped only inline, as the tight line box would cut the descenders. */
+				overflow-x: clip !important;
 				text-overflow: ellipsis;
 				user-select: none;
-				line-height: 1rem;
 			}
 
 			:host([dense][populated]) span {
 				visibility: hidden;
 			}
 
-			:host([active]) span, :host([populated]) span {
-				align-self: start;
-				font-size: var(--mo-field-label-font-size-on-focus);
+			:host(:not([dense])[active]) span, :host(:not([dense]):focus-within) span, :host(:not([dense])[populated]) span {
+				/* 12px is the smallest size Roboto renders cleanly at; it sits a pixel below the top, just clear of the content. */
+				top: 0.0625rem;
+				font-size: 0.75rem;
 			}
 
-			:host([active]) span {
+			:host([active]) span, :host(:focus-within) span {
 				color: var(--mo-color-accent);
 			}
 
@@ -161,26 +205,22 @@ export class Field extends Component {
 			}
 
 			:host::after {
-				--mo-field-initial-outline-width: 10px;
 				content: '';
 				position: absolute;
 				bottom: -1px;
 				height: 2px;
-				inset-inline-start: calc(calc(100% - var(--mo-field-initial-outline-width)) / 2);
-				width: var(--mo-field-initial-outline-width);
-				visibility: hidden;
+				inset-inline: 0;
+				scale: 0 1;
 				background-color: var(--mo-color-accent);
-				transition: 0.2s ease all;
+				transition: scale calc(var(--mo-duration-quick) * 0.6) ease-out;
 			}
 
-			:host(:focus), :host([active]) {
+			:host(:focus), :host(:focus-within), :host([active]) {
 				border-bottom: 1px solid var(--mo-color-accent);
 			}
 
-			:host([active])::after {
-				visibility: visible;
-				width: 100%;
-				inset-inline-start: 0px;
+			:host([active])::after, :host(:focus-within)::after {
+				scale: 1;
 			}
 
 			:host([invalid]) {
@@ -209,11 +249,15 @@ export class Field extends Component {
 		`
 	}
 
+	private get labelText() {
+		return [this.label, this.required ? '*' : ''].filter(Boolean).join(' ')
+	}
+
 	protected override get template() {
 		return html`
 			${!this.slotController.hasAssignedContent('start') ? html.nothing : html`<slot name='start'></slot>`}
-			<div part='container'>
-				<span>${this.label} ${this.required ? '*' : ''}</span>
+			<div part='container' data-label=${this.labelText}>
+				<span>${this.labelText}</span>
 				<slot @slotchange=${() => this.inputDirectionController.observe()}></slot>
 			</div>
 			${!this.slotController.hasAssignedContent('end') ? html.nothing : html`<slot name='end'></slot>`}

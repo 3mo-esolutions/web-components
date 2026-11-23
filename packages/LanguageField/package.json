@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/language-field",
-	"version": "0.3.2",
+	"version": "0.3.3",
 	"description": "A web component for multilingual fields holding one value per language, with a language picker and an all-languages dialog.",
 	"repository": {
 		"type": "git",
@@ -50,7 +50,7 @@
 		"@3mo/flex": "x",
 		"@3mo/icon-button": "x",
 		"@3mo/select-field": "x",
-		"@3mo/field-pair": "x",
+		"@3mo/field-pair": ">=0.0.9",
 		"@3mo/dialog": "x",
 		"@3mo/localization": "x",
 		"@3mo/grid": "x"

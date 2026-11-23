@@ -56,7 +56,7 @@ import '@3mo/field-pair'
 
 | Name | Description |
 | --- | --- |
-| `--mo-field-pair-attachment-width` | The attachment's width, 100px by default |
+| `--mo-field-pair-attachment-width` | The attachment's width, as wide as its content by default |
 
 ## Links
 

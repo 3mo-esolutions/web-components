@@ -17,7 +17,7 @@ export default {
 	argTypes: {
 		mode: { control: 'select', options: Object.values(FieldPairMode) },
 	},
-	decorators: [story => html`<div style='display: flex; flex-direction: column; gap: 16px; max-width: 360px'>${story()}</div>`],
+	decorators: [story => html`<mo-flex gap='1rem' alignItems='flex-start'>${story()}</mo-flex>`],
 } satisfies Meta<Args>
 
 type Story = StoryObj<Args>
@@ -51,8 +51,8 @@ export const Reversed: Story = {
 /** `mode='overlay'` lays the attachment over the field's top corner instead of beside it, which suits a text area. */
 export const Overlay: Story = {
 	render: () => html`
-		<mo-field-pair mode='overlay'>
-			<mo-field-text-area label='Description' value='A chair with four legs.'></mo-field-text-area>
+		<mo-field-pair mode='overlay' style='width: 24rem'>
+			<mo-field-text-area label='Description' value='A stackable chair with four legs.&#10;The frame is solid beech, oiled by hand, with a curved backrest and a seat of woven cane.'></mo-field-text-area>
 			<mo-field-select slot='attachment' value='en'>
 				<mo-option value='en'>English</mo-option>
 				<mo-option value='de'>German</mo-option>

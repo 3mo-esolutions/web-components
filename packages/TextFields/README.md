@@ -12,7 +12,8 @@ Web components for text, email, search, password and multi-line fields, the pass
 
 `mo-field-search` — A text field for a search term, with a search icon and a button that clears it.
 
-`mo-field-text-area` — A multi-line text field.
+`mo-field-text-area` — A multi-line text field, at least two lines high, which grows with its text.
+A `min-height` on the element makes it start higher.
 
 ## Installation
 
@@ -37,7 +38,6 @@ import '@3mo/text-fields'
 - [Pattern](https://3mo-esolutions.github.io/web-components/?path=/story/inputs-text-fields-text-field--pattern) — `pattern` validates the value against a regular expression, as on a native input - type a letter.
 - [Slots](https://3mo-esolutions.github.io/web-components/?path=/story/inputs-text-fields-text-field--slots) — `start` and `end` hold text, icons or buttons beside the value.
 - [Text Align](https://3mo-esolutions.github.io/web-components/?path=/story/inputs-text-fields-text-field--text-align) — The value follows the field's `text-align`.
-- [Content Sizing](https://3mo-esolutions.github.io/web-components/?path=/story/inputs-text-fields-text-field--content-sizing) — With `width: fit-content` the field grows with its value - type a long one.
 
 ### Email Field
 
@@ -62,6 +62,7 @@ import '@3mo/text-fields'
 - [Default](https://3mo-esolutions.github.io/web-components/?path=/story/inputs-text-fields-text-area--default)
 - [Slots](https://3mo-esolutions.github.io/web-components/?path=/story/inputs-text-fields-text-area--slots) — `start` and `end` hold buttons beside the text.
 - [Length](https://3mo-esolutions.github.io/web-components/?path=/story/inputs-text-fields-text-area--length) — `maxLength` counts down the characters left.
+- [Height](https://3mo-esolutions.github.io/web-components/?path=/story/inputs-text-fields-text-area--height) — The field grows with its text from two lines on.
 
 ## API
 
@@ -264,7 +265,7 @@ import '@3mo/text-fields'
 
 | Name | Description |
 | --- | --- |
-| `input` | The input element. |
+| `input` | The textarea. Its `max-height` limits how far the field grows; beyond it, the text scrolls. |
 | `container` | Field's container |
 
 ## Links

@@ -1155,6 +1155,21 @@ describe('FieldSelect', () => {
 			expect(visibleOptionTexts(fixture.component)).toEqual(people.map(p => p.name))
 		})
 
+		it('should show every pick in the text right away while nothing was typed', async () => {
+			fixture.component.searchable = true
+			await focusIn(fixture.component)
+			fixture.component.open = true
+			await waitUntil(() => !!getPopover(fixture.component)?.matches(':popover-open'))
+
+			for (const index of [1, 3]) {
+				await userEvent.click(fixture.component.options[index]!.renderRoot.querySelector('mo-checkbox')!)
+				await settle(fixture.component)
+			}
+
+			expect(fixture.component.value).toEqual([1, 3])
+			expect(fixture.component.searchInputElement!.value).toBe('John, Joe')
+		})
+
 		it('should render a checkbox in each option', async () => {
 			await settle(fixture.component)
 			await Promise.all(fixture.component.options.map(option => option.updateComplete))

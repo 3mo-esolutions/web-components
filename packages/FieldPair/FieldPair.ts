@@ -16,7 +16,7 @@ export enum FieldPairMode {
  * @slot - The field
  * @slot attachment - The field attached to it
  *
- * @cssprop --mo-field-pair-attachment-width - The attachment's width, 100px by default
+ * @cssprop --mo-field-pair-attachment-width - The attachment's width, as wide as its content by default
  */
 @component('mo-field-pair')
 export class FieldPair extends Component {
@@ -30,21 +30,26 @@ export class FieldPair extends Component {
 				display: flex;
 			}
 
+			/* The field spans both columns, so the attachment lies over its top corner at the end. */
 			:host([mode=overlay]) {
-				display: block;
+				display: grid;
+				grid-template-columns: minmax(0, 1fr) auto;
+			}
+
+			:host([mode=overlay]) ::slotted(:not([slot])) {
+				grid-area: 1 / 1 / 2 / 3;
 			}
 
 			slot[name=attachment] {
 				display: inline-block;
-				flex: 0 0 var(--mo-field-pair-attachment-width, 100px);
-				width: var(--mo-field-pair-attachment-width, 100px);
+				flex: 0 0 auto;
+				width: var(--mo-field-pair-attachment-width, auto);
 			}
 
 			:host([mode=overlay]) slot[name=attachment] {
-				height: auto;
-				position: absolute;
-				inset-inline-end: 0;
-				top: 0;
+				grid-area: 1 / 2;
+				align-self: start;
+				z-index: 1;
 			}
 
 			::slotted(:not([slot])) {

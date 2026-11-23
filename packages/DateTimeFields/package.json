@@ -1,6 +1,6 @@
 {
 	"name": "@3mo/date-time-fields",
-	"version": "0.19.1",
+	"version": "0.19.2",
 	"description": "Web components for date, date-time, time and range fields with locale-aware segmented entry and a calendar picker.",
 	"repository": {
 		"type": "git",
@@ -56,7 +56,7 @@
 	"peerDependencies": {
 		"@a11d/lit": "x",
 		"@3mo/date-time": ">=0.11.0",
-		"@3mo/field": ">=0.5.x",
+		"@3mo/field": ">=0.8.0",
 		"@3mo/flex": "x",
 		"@3mo/grid": "x",
 		"@3mo/icon": "x",

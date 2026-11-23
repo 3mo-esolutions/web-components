@@ -218,7 +218,9 @@ The handle resizing a column, drawing a line where the pointer is while it drags
 | Name | Description |
 | --- | --- |
 | `submenu` | The items of the submenu. |
-| (default) | Default slot for content |
+| (default) | The content. |
+| `start` | Content before the content, in the column of the icons, replacing the icon. |
+| `end` | Content after the content, such as a keyboard shortcut. |
 
 #### CSS parts
 

@@ -446,4 +446,48 @@ describe('FieldFetchableSelect', () => {
 			expect(visibleOptionTexts(fixture.component)).toEqual(['Banana'])
 		})
 	})
+
+	describe('sizing', () => {
+		let resolveFetch!: (data: Array<any>) => void
+
+		beforeEach(() => fetchSpy.mockReturnValue(new Promise<Array<any>>(resolve => resolveFetch = resolve)))
+
+		const fixture = new ComponentTestFixture<FetchableSelect>(html`
+			<mo-field-fetchable-select label='Select' searchable .fetch=${fetchDelegate}
+				.searchParameters=${(keyword: string) => ({ keyword })}
+			></mo-field-fetchable-select>
+		`)
+
+		// Sizes to its content, so the field is as wide as it wants to be.
+		const container = document.createElement('div')
+		container.style.display = 'inline-flex'
+		beforeEach(() => { document.body.append(container); container.append(fixture.component) })
+		afterEach(() => container.remove())
+
+		const select = () => fixture.component
+		// The field's content cell; its chrome is constant, apart from the dropdown icon's font arriving over the network.
+		const width = () => select().renderRoot.querySelector('#input-container')!.getBoundingClientRect().width
+
+		afterEach(() => closeMenu(select()))
+
+		it('should keep its width as the options load and as a search replaces them', async () => {
+			await settle(select())
+			expect(select().options.length).toBe(0)
+			const initial = width()
+
+			resolveFetch(['A fetched option text that is much longer than the field'])
+			await waitUntil(() => select().options.length === 1)
+			await settle(select())
+			expect(width()).toBe(initial)
+
+			fetchSpy.mockResolvedValue(['Another', 'An even longer search result than the fetched option text'])
+			await focusIn(select())
+			await type(select(), 'an')
+			await waitUntil(() => select().options.length === 2)
+			await settle(select())
+
+			expect(select().renderRoot.querySelector('#sizer')).toBeNull()
+			expect(width()).toBe(initial)
+		})
+	})
 })

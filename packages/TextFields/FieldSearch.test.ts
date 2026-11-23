@@ -65,16 +65,21 @@ describe('FieldSearch', () => {
 	})
 
 	describe('clearability', () => {
-		it('should not render a clear button while empty', () => {
-			expect(clearButton()).toBeNull()
+		it('should hide the clear button while empty', () => {
+			expect(getComputedStyle(clearButton()!).visibility).toBe('hidden')
 		})
 
-		it('should render a clear button once the input holds text', async () => {
+		it('should show the clear button once the input holds text, without changing the field\'s width', async () => {
+			fixture.component.style.width = 'fit-content'
+			await fixture.updateComplete
+			const width = fixture.component.getBoundingClientRect().width
+
 			fixture.component.inputElement.value = 'query'
 			fixture.component.inputElement.dispatchEvent(new Event('input'))
 			await fixture.updateComplete
 
-			expect(clearButton()).not.toBeNull()
+			expect(getComputedStyle(clearButton()!).visibility).toBe('visible')
+			expect(fixture.component.getBoundingClientRect().width).toBe(width)
 		})
 
 		it('should clear the value and dispatch input and change with an empty string when the clear button is clicked', async () => {
@@ -91,7 +96,7 @@ describe('FieldSearch', () => {
 			expect(fixture.component.value).toBe('')
 			expect(input).toHaveBeenCalledExactlyOnceWith('')
 			expect(change).toHaveBeenCalledExactlyOnceWith('')
-			expect(clearButton()).toBeNull()
+			expect(getComputedStyle(clearButton()!).visibility).toBe('hidden')
 		})
 
 		it('should not dispatch events when clearing while the value is already empty', async () => {

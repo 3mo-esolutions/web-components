@@ -27,10 +27,16 @@ export default {
 		required: false,
 		disabled: false,
 	},
-	decorators: [story => html`<div style='display: flex; flex-direction: column; gap: 16px; max-width: 320px'>${story()}</div>`],
+	decorators: [story => html`<mo-flex gap='1rem' alignItems='flex-start' @input=${follow} @change=${follow}>${story()}</mo-flex>`],
 } satisfies Meta<Args>
 
 type Story = StoryObj<Args>
+
+/** Stands in for the host of a frame, which tells it whether its control holds a value. */
+function follow(e: Event) {
+	const control = e.target as HTMLInputElement
+	control.closest('mo-field')?.toggleAttribute('populated', !!control.value)
+}
 
 export const Default: Story = {
 	render: ({ label, populated, active, invalid, dense, required, disabled }) => html`
@@ -40,7 +46,7 @@ export const Default: Story = {
 	`,
 }
 
-/** The frame draws only what its host tells it: `populated` lifts the label, `active` adds the accent line, `invalid` turns it red and `dense` makes the label a placeholder. */
+/** The frame draws what its host tells it: `populated` lifts the label, `active` adds the accent line as focus inside it does, `invalid` turns it red and `dense` makes the label a placeholder. */
 export const States: Story = {
 	render: () => html`
 		<mo-field label='Empty'>

@@ -116,6 +116,11 @@ export class FieldFetchableSelect<T, TDataFetcherParameters extends FieldFetchab
 		return super.hint
 	}
 
+	/** Options arrive late and change with the search, so the input keeps its native width instead. */
+	protected override get sizerTemplate() {
+		return html.nothing
+	}
+
 	protected override get optionsTemplate() {
 		return html`
 			${super.optionsTemplate}

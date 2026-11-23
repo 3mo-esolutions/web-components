@@ -50,6 +50,13 @@ export class DataGridCell<TValue extends KeyPath.ValueOf<TData>, TData = any, TD
 					user-select: none;
 				}
 
+				/* Centers an editor without align-content on a block, which Safari supports only from 17.4. */
+				:host([isEditing]) {
+					display: inline-flex;
+					flex-direction: column;
+					justify-content: center;
+				}
+
 				:host(:not([isEditing])) {
 					white-space: nowrap;
 					overflow: hidden;
@@ -70,6 +77,12 @@ export class DataGridCell<TValue extends KeyPath.ValueOf<TData>, TData = any, TD
 
 				:host([alignment=end]) {
 					text-align: end;
+				}
+
+				/* An editor grows with what is typed rather than cutting it off at the column's width. */
+				::part(input) {
+					field-sizing: content;
+					width: 100%;
 				}
 
 				${DataGridColumn.stickyStyles}

@@ -38,6 +38,26 @@ describe('FieldText', () => {
 		})
 	})
 
+	describe('sizing', () => {
+		it('should be 20 characters wide where nothing stretches it, and fill what does', async () => {
+			const characters = document.createElement('div')
+			characters.style.cssText = `font: ${getComputedStyle(fixture.component.inputElement).font}; width: 20ch`
+			const container = document.createElement('div')
+			container.style.cssText = 'display: flex; flex-direction: column; align-items: flex-start; width: 600px'
+			container.append(fixture.component, characters)
+			document.body.append(container)
+			await fixture.updateComplete
+
+			const input = fixture.component.inputElement.getBoundingClientRect().width
+			expect(fixture.component.getBoundingClientRect().width).toBeLessThan(300)
+			expect(input).toBe(characters.getBoundingClientRect().width)
+
+			container.style.alignItems = 'stretch'
+			expect(fixture.component.getBoundingClientRect().width).toBe(600)
+			container.remove()
+		})
+	})
+
 	describe('events', () => {
 		it('should proxy input event', () => expectInputEventTunnelsToField(fixture, 'input', 'test'))
 		it('should proxy change event', () => expectInputEventTunnelsToField(fixture, 'change', 'test'))

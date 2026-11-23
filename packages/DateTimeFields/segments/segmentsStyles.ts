@@ -5,9 +5,6 @@ export const segmentsStyles = css`
 	[part=segments], [part=segments-range] {
 		white-space: nowrap;
 		cursor: text;
-		/* What a browser gives the <input> of the other fields, which never set either themselves. */
-		font-size: 13.333px;
-		line-height: normal;
 		font-variant-numeric: tabular-nums;
 		/* Unlike an <input>, a <div> does not center its text in the fixed height fields up to v0.5 give their content. */
 		align-content: center;

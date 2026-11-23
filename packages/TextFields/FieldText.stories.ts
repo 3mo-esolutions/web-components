@@ -22,7 +22,7 @@ export default {
 		disabled: false,
 		readonly: false,
 	},
-	decorators: [story => html`<div style='display: flex; flex-direction: column; gap: 16px; max-width: 320px'>${story()}</div>`],
+	decorators: [story => html`<mo-flex gap='1rem' alignItems='flex-start'>${story()}</mo-flex>`],
 } satisfies Meta<Args>
 
 type Story = StoryObj<Args>
@@ -70,9 +70,4 @@ export const Slots: Story = {
 /** The value follows the field's `text-align`. */
 export const TextAlign: Story = {
 	render: () => html`<mo-field-text label='Amount' value='1.500' style='text-align: end'></mo-field-text>`,
-}
-
-/** With `width: fit-content` the field grows with its value - type a long one. */
-export const ContentSizing: Story = {
-	render: () => html`<mo-field-text label='Tag' value='web components' style='width: fit-content; min-width: 100px'></mo-field-text>`,
 }
