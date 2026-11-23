@@ -20,6 +20,12 @@ describe('SelectableButton', () => {
 			expect(fixture.component.hasAttribute('aria-checked')).toBe(false)
 		})
 
+		it('should stay a button when moved, which makes a plain mo-button presentational', () => {
+			const parent = fixture.component.parentElement!
+			parent.append(fixture.component)
+			expect(fixture.component.getAttribute('role')).toBe('button')
+		})
+
 		it('should toggle and dispatch change when clicked, since nothing else owns the answer', async () => {
 			const states = new Array<boolean>()
 			fixture.component.addEventListener('change', (e: Event) => states.push((e as CustomEvent<boolean>).detail))

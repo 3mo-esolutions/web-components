@@ -111,6 +111,41 @@ describe('Button', () => {
 		})
 	})
 
+	describe('Accessibility', () => {
+		const fixture = new ComponentTestFixture<Button>(html`<mo-button endIcon='expand_more' aria-label='Actions' aria-haspopup='menu' aria-expanded='false'>Label</mo-button>`)
+
+		const nativeButton = async () => {
+			const mdButton = fixture.component.renderRoot.querySelector<MdButton>(mdButtonSelector)!
+			await mdButton.updateComplete
+			return mdButton.shadowRoot!.querySelector('button')!
+		}
+
+		it('should make its own element presentational', () => {
+			expect(fixture.component.getAttribute('role')).toBe('presentation')
+		})
+
+		it('should pass "aria-label", "aria-haspopup" and "aria-expanded" on to the native button', async () => {
+			const button = await nativeButton()
+			expect(button.getAttribute('aria-label')).toBe('Actions')
+			expect(button.getAttribute('aria-haspopup')).toBe('menu')
+			expect(button.getAttribute('aria-expanded')).toBe('false')
+		})
+
+		it('should follow "aria-expanded" as a menu stamps it on its trigger', async () => {
+			fixture.component.setAttribute('aria-expanded', 'true')
+			await fixture.updateComplete
+			expect((await nativeButton()).getAttribute('aria-expanded')).toBe('true')
+
+			fixture.component.removeAttribute('aria-expanded')
+			await fixture.updateComplete
+			expect((await nativeButton()).hasAttribute('aria-expanded')).toBe(false)
+		})
+
+		it('should keep its icons out of its name', () => {
+			expect(fixture.component.renderRoot.querySelector('slot[name=end] > mo-icon')?.getAttribute('aria-hidden')).toBe('true')
+		})
+	})
+
 	describe('focus', () => {
 		const fixture = new ComponentTestFixture<Button>('mo-button')
 

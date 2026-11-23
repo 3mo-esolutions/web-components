@@ -29,6 +29,26 @@ describe('IconButton', () => {
 		})
 	})
 
+	describe('Accessibility', () => {
+		it('should make its own element presentational', () => {
+			expect(fixture.component.getAttribute('role')).toBe('presentation')
+		})
+
+		it('should pass "aria-label", "aria-haspopup" and "aria-expanded" on to the native button', async () => {
+			fixture.component.setAttribute('aria-label', 'More')
+			fixture.component.setAttribute('aria-haspopup', 'menu')
+			fixture.component.setAttribute('aria-expanded', 'true')
+			await settle()
+			expect(getButton().getAttribute('aria-label')).toBe('More')
+			expect(getButton().getAttribute('aria-haspopup')).toBe('menu')
+			expect(getButton().getAttribute('aria-expanded')).toBe('true')
+
+			fixture.component.removeAttribute('aria-expanded')
+			await settle()
+			expect(getButton().hasAttribute('aria-expanded')).toBe(false)
+		})
+	})
+
 	describe('disabled', () => {
 		it('should reflect "disabled" onto the md-icon-button element', async () => {
 			fixture.component.disabled = true

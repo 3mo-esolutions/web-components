@@ -41,6 +41,9 @@ export enum ButtonType {
  * @csspart button - The composed native button element.
  * @csspart ripple - The ripple element.
  * @csspart focus-ring - The focus ring element.
+ *
+ * @accessibility
+ * A `button`. Its `aria-label`, `aria-haspopup` and `aria-expanded` pass on to the native button, so it can trigger a menu or a popup, and its own element is presentational. The icons of `startIcon` and `endIcon` are decorative.
  */
 @component('mo-button')
 export class Button extends Component {
@@ -59,6 +62,17 @@ export class Button extends Component {
 
 	@property() startIcon?: MaterialIcon
 	@property() endIcon?: MaterialIcon
+
+	/** @ignore */
+	@property({ attribute: 'aria-label', reflect: true }) override ariaLabel!: string | null
+	/** @ignore */
+	@property({ attribute: 'aria-haspopup', reflect: true }) override ariaHasPopup!: string | null
+	/** @ignore */
+	@property({ attribute: 'aria-expanded', reflect: true }) override ariaExpanded!: string | null
+
+	protected override connected() {
+		this.role ||= 'presentation'
+	}
 
 	static override get styles() {
 		return css`
@@ -249,7 +263,9 @@ export class Button extends Component {
 		const buttonTag = Button.tagByType.get(this.type) ?? literal`md-text-button`
 		return html`
 			${staticHtml`
-				<${buttonTag} exportparts='button,ripple,focus-ring' ?disabled=${this.isDisabled}>
+				<${buttonTag} exportparts='button,ripple,focus-ring' ?disabled=${this.isDisabled}
+					.ariaLabel=${this.ariaLabel ?? null} .ariaHasPopup=${this.ariaHasPopup ?? null} .ariaExpanded=${this.ariaExpanded ?? null}
+				>
 					${this.contentTemplate}
 				</${buttonTag}>
 			`}
@@ -279,7 +295,7 @@ export class Button extends Component {
 	}
 
 	protected get startIconTemplate() {
-		return !this.startIcon ? html.nothing : html`<mo-icon icon=${this.startIcon}></mo-icon>`
+		return !this.startIcon ? html.nothing : html`<mo-icon icon=${this.startIcon} aria-hidden='true'></mo-icon>`
 	}
 
 	protected get slotTemplate() {
@@ -295,7 +311,7 @@ export class Button extends Component {
 	}
 
 	protected get endIconTemplate() {
-		return !this.endIcon ? html.nothing : html`<mo-icon icon=${this.endIcon}></mo-icon>`
+		return !this.endIcon ? html.nothing : html`<mo-icon icon=${this.endIcon} aria-hidden='true'></mo-icon>`
 	}
 }
 

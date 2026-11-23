@@ -164,6 +164,22 @@ export const Selection: Story = {
 	`,
 }
 
+/** A button labelled with the current choice, such as a view switcher: `selectability='single'` makes the items radios and `value` holds the chosen index. `expand_more` marks a button that opens a menu. */
+export const SingleChoice: Story = {
+	render: () => {
+		const views = ['By order', 'By product', 'By customer']
+		const [value, setValue] = useState(0)
+		return html`
+			<mo-popover-container>
+				<mo-button type='outlined' endIcon='expand_more'>${views[value]}</mo-button>
+				<mo-menu slot='popover' selectability='single' .value=${[value]} @change=${(e: CustomEvent<Array<number>>) => setValue(e.detail[0]!)}>
+					${views.map(view => html`<mo-selectable-menu-item>${view}</mo-selectable-menu-item>`)}
+				</mo-menu>
+			</mo-popover-container>
+		`
+	},
+}
+
 /** A disabled item ignores presses, and a disabled menu does not open. */
 export const Disabled: Story = {
 	render: () => html`

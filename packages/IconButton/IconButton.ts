@@ -19,13 +19,20 @@ import { MdIconButton } from '@material/web/iconbutton/icon-button.js'
  * @csspart focus-ring - The focus ring of the icon-button.
  *
  * @accessibility
- * It does not pass `aria-label` on to its button yet, so its name is the name of its icon, such as "more_vert".
+ * A `button`. Its `aria-label`, `aria-haspopup` and `aria-expanded` pass on to the native button, so it can trigger a menu or a popup, and its own element is presentational. Without an `aria-label`, its name is the name of its icon, such as "more_vert".
  */
 @component('mo-icon-button')
 export class IconButton extends Component {
 	@property() icon!: MaterialIcon
 	@disabledProperty() disabled = false
 	@property({ type: Boolean, reflect: true }) dense = false
+
+	/** @ignore */
+	@property({ attribute: 'aria-label', reflect: true }) override ariaLabel!: string | null
+	/** @ignore */
+	@property({ attribute: 'aria-haspopup', reflect: true }) override ariaHasPopup!: string | null
+	/** @ignore */
+	@property({ attribute: 'aria-expanded', reflect: true }) override ariaExpanded!: string | null
 
 	@query('md-icon-button') protected readonly iconButton!: MdIconButton
 
@@ -70,6 +77,10 @@ export class IconButton extends Component {
 		`
 	}
 
+	protected override connected() {
+		this.role ||= 'presentation'
+	}
+
 	override focus(...parameters: Parameters<Component['focus']>) {
 		this.updateComplete.then(() => this.iconButton.focus(...parameters))
 	}
@@ -80,7 +91,9 @@ export class IconButton extends Component {
 
 	protected override get template() {
 		return html`
-			<md-icon-button exportparts='button,ripple,focus-ring' ?disabled=${this.disabled}>
+			<md-icon-button exportparts='button,ripple,focus-ring' ?disabled=${this.disabled}
+				.ariaLabel=${this.ariaLabel ?? null} .ariaHasPopup=${this.ariaHasPopup ?? null} .ariaExpanded=${this.ariaExpanded ?? null}
+			>
 				<slot name='icon'>
 					<mo-icon icon=${this.icon}></mo-icon>
 				</slot>

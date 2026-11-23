@@ -43,6 +43,10 @@ import '@3mo/button'
 - [Disabled](https://3mo-esolutions.github.io/web-components/?path=/story/actions-selectable-button--disabled) — A disabled button keeps its selected state and ignores presses.
 - [Customized](https://3mo-esolutions.github.io/web-components/?path=/story/actions-selectable-button--customized) — The selected look is plain CSS, so an outer `mo-selectable-button[selected]` rule replaces it.
 
+## Accessibility
+
+A `button`. Its `aria-label`, `aria-haspopup` and `aria-expanded` pass on to the native button, so it can trigger a menu or a popup, and its own element is presentational. The icons of `startIcon` and `endIcon` are decorative.
+
 ## API
 
 ### `mo-button`

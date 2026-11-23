@@ -36,6 +36,7 @@ import '@3mo/menu'
 - [Item Content](https://3mo-esolutions.github.io/web-components/?path=/story/actions-menu--item-content) — Items take any content, such as a shortcut hint after a label that fills the row; `mo-line` separates groups.
 - [Submenus](https://3mo-esolutions.github.io/web-components/?path=/story/actions-menu--submenus) — A `mo-nested-menu-item` opens the items in its `submenu` slot beside it, on hover or with ArrowRight; without any it is a plain item.
 - [Selection](https://3mo-esolutions.github.io/web-components/?path=/story/actions-menu--selection) — `mo-selectable-menu-item`s keep a selection: one at a time with `selectability='single'`, any number by default.
+- [Single Choice](https://3mo-esolutions.github.io/web-components/?path=/story/actions-menu--single-choice) — A button labelled with the current choice, such as a view switcher: `selectability='single'` makes the items radios and `value` holds the chosen index.
 - [Disabled](https://3mo-esolutions.github.io/web-components/?path=/story/actions-menu--disabled) — A disabled item ignores presses, and a disabled menu does not open.
 - [Target](https://3mo-esolutions.github.io/web-components/?path=/story/actions-menu--target) — `target` names the element inside the anchor that opens the menu; here only the icon-button does.
 - [Anchor](https://3mo-esolutions.github.io/web-components/?path=/story/actions-menu--anchor) — Without a container, `anchor` is set as a property, here by a component of your own that renders the button and its menu.

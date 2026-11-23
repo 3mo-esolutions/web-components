@@ -33,7 +33,7 @@ import '@3mo/icon-button'
 
 ## Accessibility
 
-It does not pass `aria-label` on to its button yet, so its name is the name of its icon, such as "more_vert".
+A `button`. Its `aria-label`, `aria-haspopup` and `aria-expanded` pass on to the native button, so it can trigger a menu or a popup, and its own element is presentational. Without an `aria-label`, its name is the name of its icon, such as "more_vert".
 
 ## API
 
