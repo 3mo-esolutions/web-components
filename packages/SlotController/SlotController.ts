@@ -48,10 +48,22 @@ export class SlotController extends Controller {
 	}
 
 	private extractNodesFromChildren(slotName: string) {
-		return [...this.host.childNodes]
-			.filter(node => node instanceof Element || (node instanceof Text && !!node.textContent?.trim()))
-			.filter(child => child instanceof Element ? child.slot === slotName : !slotName)
-			.flatMap(child => child instanceof HTMLSlotElement ? child.assignedNodes() : [child])
+		const nodes = new Array<Node>()
+		for (let child = this.host.firstChild; child; child = child.nextSibling) {
+			if (child instanceof Element) {
+				if (child.slot !== slotName) {
+					continue
+				}
+				if (child instanceof HTMLSlotElement) {
+					nodes.push(...child.assignedNodes())
+				} else {
+					nodes.push(child)
+				}
+			} else if (!slotName && child instanceof Text && child.textContent?.trim()) {
+				nodes.push(child)
+			}
+		}
+		return nodes
 	}
 
 	override hostConnected() {
