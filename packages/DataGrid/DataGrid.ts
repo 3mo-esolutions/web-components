@@ -16,6 +16,13 @@ import { type DataGridColumn, type DataGridCell, type DataGridFooter, type DataG
 import { DataGridToolbarElementStyles } from './DataGridToolbarElementStyles.js'
 import { DataGridPagination, type DataGridPaginationLike, type DataGridPaginationSize, type DataGridPaginationStrategy } from './DataGridPagination.js'
 
+type SizeAnchorContent = {
+	readonly value: unknown
+	readonly getContentTemplate: unknown
+	readonly template: HTMLTemplateResult | typeof html.nothing
+	readonly length: number
+}
+
 /**
  * A table that shows an array of objects as rows, with selection, sorting, pagination, details, editing and CSV export.
  *
@@ -769,6 +776,9 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		`
 	}
 
+	/** The content of a record in each column, kept while its value stays: a refresh would otherwise render every record of the grid again to measure it. */
+	private readonly sizeAnchorContents = new WeakMap<object, Map<unknown, SizeAnchorContent>>()
+
 	/**
 	 * The hidden size anchor row renders the longest content of each column in a hidden row.
 	 * This is used to mitigate the issue of using values with fluctuating lengths
@@ -789,9 +799,32 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 		const records = this.dataRecords
 		const maxLevel = records.reduce((max, record) => Math.max(max, record.level), 0)
 
-		const getLongestContent = (column: DataGridColumn<TData>) => this.controller.records.longestContentOf(column, () => records
-			.map(record => column.getContentTemplate?.(KeyPath.get(record.data, column.dataSelector), record.data) ?? html.nothing)
-			.reduce((longest, current) => (getLength(current) > getLength(longest)) || false ? current : longest, html.nothing as HTMLTemplateResult | typeof html.nothing))
+		const getContent = (column: DataGridColumn<TData>, { data }: DataRecord<TData>) => {
+			const value = KeyPath.get(data, column.dataSelector)
+			const key = column.dataSelector ?? column
+			const contents = typeof data !== 'object' || data === null ? undefined : this.sizeAnchorContents.get(data) ?? new Map<unknown, SizeAnchorContent>()
+			const cached = contents?.get(key)
+			if (cached && cached.getContentTemplate === column.getContentTemplate && Object.is(cached.value, value)) {
+				return cached
+			}
+			const template = column.getContentTemplate?.(value, data) ?? html.nothing
+			const content: SizeAnchorContent = { value, getContentTemplate: column.getContentTemplate, template, length: getLength(template as HTMLTemplateResult) }
+			if (contents) {
+				contents.set(key, content)
+				this.sizeAnchorContents.set(data as object, contents)
+			}
+			return content
+		}
+
+		// Rendered as its cell renders it, as an editor is wider than the content it edits.
+		const getLongestContent = (column: DataGridColumn<TData>) => this.controller.records.longestContentOf(column, () => {
+			const longest = records
+				.map(record => ({ record, content: getContent(column, record) }))
+				.reduce<{ record?: DataRecord<TData>, content: Pick<SizeAnchorContent, 'template' | 'length'> }>((longest, current) => current.content.length > longest.content.length ? current : longest, { content: { template: html.nothing, length: 0 } })
+			return longest.record && this.controller.editability.isEditingAt(longest.record, column)
+				? column.getEditContentTemplate?.(KeyPath.get(longest.record.data, column.dataSelector), longest.record.data) ?? html.nothing
+				: longest.content.template
+		})
 
 		return html`
 			<style>
@@ -812,9 +845,15 @@ export class DataGrid<TData, TDetailsElement extends Element | undefined = undef
 						padding-inline: var(--mo-data-grid-cell-padding);
 						margin-inline-start: calc(var(--_max-level, 0) * var(--mo-data-grid-column-sub-row-indentation, 20px))
 					}
+
+					/* As in a cell */
+					*::part(input) {
+						field-sizing: content;
+						width: 100%;
+					}
 				}
 			</style>
-			<div id='size-anchor'>
+			<div id='size-anchor' inert>
 				${this.visibleColumns.map(column => html`
 					<div style='--_max-level: ${maxLevel}'>
 						${getLongestContent(column)}

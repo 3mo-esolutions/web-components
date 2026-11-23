@@ -85,6 +85,11 @@ export class DataGridCell<TValue extends KeyPath.ValueOf<TData>, TData = any, TD
 					width: 100%;
 				}
 
+				/* Hovering and selecting a row change the color of its sticky parts, which would otherwise restyle everything inside its cells. */
+				* {
+					--mo-data-grid-sticky-part-color: initial;
+				}
+
 				${DataGridColumn.stickyStyles}
 			}
 		`

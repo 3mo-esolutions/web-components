@@ -6,8 +6,10 @@ import { DataGridColumnBinder, DataGridEditability, DataGridSelectability, DataG
 import { fiftyPeople, fiveFamilies, fivePeople, hundredPeople, thousandPeople, twentyFiveLargeFamilies, twentyPeople, Person } from '../../stories/index.js'
 import addressColumnSource from './stories/AddressColumn.ts?raw'
 import customDataGridSource from './stories/CustomDataGrid.ts?raw'
+import orderPositionsSource from './stories/OrderPositions.ts?raw'
 import './stories/AddressColumn.js'
 import './stories/CustomDataGrid.js'
+import './stories/OrderPositions.js'
 
 type Args = {
 	readonly headerHidden: boolean
@@ -360,6 +362,12 @@ export const VirtualizedSubRows: Story = {
 			<mo-data-grid-column-date heading='Birth Date' dataSelector='birthDate'></mo-data-grid-column-date>
 		</mo-data-grid>
 	`,
+}
+
+/** A thousand positions of an order, every cell an editor: scroll through them, tab from field to field and change a quantity to see its amount and the total follow. */
+export const OrderPositions: Story = {
+	parameters: sourceOf(orderPositionsSource),
+	render: () => html`<story-order-positions></story-order-positions>`,
 }
 
 /** A `height`, a `max-height` or a share of a flex or grid container of a definite size gives the grid a height, which it takes and scrolls its rows in. Paging without a size, as many rows as fit make a page. */

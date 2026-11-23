@@ -222,6 +222,29 @@ describe('DataGridRow', () => {
 			expect(getComputedStyle(row).gridTemplateColumns).toBe('none')
 		})
 
+		it('should not render again on a refresh of the grid while it has neither cells nor details, as it shows nothing of its data', async () => {
+			const row = getRow(1)
+			await hide(row)
+			const updated = vi.spyOn(row, 'updated')
+
+			fixture.component.requestUpdate()
+			await fixture.updateComplete
+			await row.updateComplete
+
+			expect(updated).not.toHaveBeenCalled()
+		})
+
+		it('should still reflect its selection while it has neither cells nor details', async () => {
+			const row = getRow(1)
+			await hide(row)
+
+			fixture.component.select([row.data])
+			await fixture.updateComplete
+			await row.updateComplete
+
+			expect(row.hasAttribute('selected')).toBe(true)
+		})
+
 		it('should render a row it has not decided about yet, as the observer only reports after the first paint', async () => {
 			const row = getRow(0)
 			expect(row.isRendered).toBe(true)

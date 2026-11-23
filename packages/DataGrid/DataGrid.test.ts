@@ -1920,6 +1920,50 @@ describe('DataGrid', () => {
 
 			expect(anchor.textContent?.trim()).toBe(cell.renderRoot.textContent?.trim())
 		})
+
+		describe('while every cell edits', () => {
+			const fixture = new ComponentTestFixture<TestDataGrid>(html`
+				<test-data-grid editability='always'>
+					<mo-data-grid-column-text heading='Name' dataSelector='name'></mo-data-grid-column-text>
+				</test-data-grid>
+			`)
+
+			it('should render the editor of the longest content, as an editor is wider than the content it edits', async () => {
+				const grid = fixture.component
+				await grid.updateComplete
+
+				const anchor = grid.renderRoot.querySelector('#size-anchor > div')!
+
+				const longest = grid.data.map(person => person.name).reduce((a, b) => b.length > a.length ? b : a)
+				expect(anchor.querySelector('mo-field-text')?.value).toBe(longest)
+				expect(anchor.closest('[inert]')).not.toBeNull()
+			})
+		})
+
+		describe('on a refresh', () => {
+			const fixture = new ComponentTestFixture<TestDataGrid>(html`<test-data-grid></test-data-grid>`)
+
+			it('should measure a record again only when its value has changed', async () => {
+				const grid = fixture.component
+				const getContentTemplate = vi.fn((value: string) => html`${value}`)
+				grid.columns = [new DataGridColumn<Person, string>({ dataSelector: 'name', getContentTemplate })]
+				await grid.updateComplete
+				expect(getContentTemplate).toHaveBeenCalled()
+
+				grid.controller.records.invalidate()
+				getContentTemplate.mockClear()
+				grid['hiddenSizeAnchorRowTemplate']
+				expect(getContentTemplate).not.toHaveBeenCalled()
+
+				const [first] = grid.data
+				first!.name = 'Johnathan'
+				grid.controller.records.invalidate()
+				grid['hiddenSizeAnchorRowTemplate']
+				expect(getContentTemplate).toHaveBeenCalledExactlyOnceWith('Johnathan', first)
+
+				first!.name = 'John'
+			})
+		})
 	})
 
 	describe('Controller', () => {

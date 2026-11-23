@@ -39,6 +39,18 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		this.toggleAttribute('mo-data-grid-row', true)
 	}
 
+	private renderedDormantState?: string
+
+	/** What a row without cells and details shows of its record, and undefined for a row with either. */
+	private get dormantState() {
+		return isServer || this.isRendered || this.hasDetails ? undefined : `${this.level} ${this.selected}`
+	}
+
+	protected override shouldUpdate(...parameters: Parameters<Component['shouldUpdate']>) {
+		const dormantState = this.dormantState
+		return super.shouldUpdate(...parameters) && (dormantState === undefined || dormantState !== this.renderedDormantState)
+	}
+
 	protected override willUpdate(...parameters: Parameters<Component['willUpdate']>) {
 		// The data instead of the record, as the grid hands out a new record for the same data on every render.
 		if (this.data !== this.dataBeforeUpdate) {
@@ -302,6 +314,7 @@ export abstract class DataGridRow<TData, TDetailsElement extends Element | undef
 		this.toggleAttribute('detailsOpen', this.dataRecord.detailsOpen)
 		const isRendered = this.isRendered
 		this.toggleAttribute('data-subgrid', isRendered || this.hasDetails)
+		this.renderedDormantState = this.dormantState
 		return html`
 			<mo-grid id='contentContainer' columns=${isRendered ? 'subgrid' : 'none'}
 				${this.dataGrid.controller.virtualization.cells(this)}
