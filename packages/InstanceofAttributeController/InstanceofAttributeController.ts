@@ -8,23 +8,25 @@ export class InstanceofAttributeController extends Controller {
 		super(host)
 	}
 
+	private static readonly valuesByConstructor = new WeakMap<object, string>()
+
 	override hostConnected() {
-		this.host.setAttribute(InstanceofAttributeController.attribute, [...this.walkupPrototypeChainAndGetAttributeNames()].join(' '))
+		const { constructor } = this.host
+		let value = InstanceofAttributeController.valuesByConstructor.get(constructor)
+		if (value === undefined) {
+			InstanceofAttributeController.valuesByConstructor.set(constructor, value = [...this.walkupPrototypeChainAndGetAttributeNames()].join(' '))
+		}
+		this.host.setAttribute(InstanceofAttributeController.attribute, value)
 	}
 
 	private *walkupPrototypeChainAndGetAttributeNames() {
 		let prototype = this.host.constructor.prototype
 		while (prototype) {
-			try {
-				const tagName = new prototype.constructor().tagName
-				if (tagName) {
-					yield tagName.toLowerCase()
-				}
-			} catch {
-				// Do nothing
-			} finally {
-				prototype = Object.getPrototypeOf(prototype)
+			const tagName = typeof prototype.constructor !== 'function' ? undefined : customElements.getName(prototype.constructor)
+			if (tagName) {
+				yield tagName
 			}
+			prototype = Object.getPrototypeOf(prototype)
 		}
 	}
 }
