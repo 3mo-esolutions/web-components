@@ -33,8 +33,8 @@ export class Switch extends Component {
 				display: inline-flex;
 			}
 
-			:host([disabled]) {
-				pointer-events: none;
+			:host([disabled]) md-switch {
+				opacity: 0.5;
 			}
 
 			md-switch {
@@ -143,6 +143,15 @@ const updated = MdSwitch.prototype['updated']
 MdSwitch.prototype['updated'] = function (this: MdSwitch, changedProperties: PropertyValues) {
 	updated.call(this, changedProperties)
 	this.renderRoot.querySelector('.track')?.part.add('track')
+	syncInputWithSelection(this, changedProperties)
+}
+
+// md-switch binds `checked` as an attribute, which a checkbox ignores once toggled, so the next click would invert it.
+function syncInputWithSelection(mdSwitch: MdSwitch, changedProperties: PropertyValues) {
+	const input = mdSwitch.renderRoot.querySelector('input')
+	if (input && changedProperties.has('selected')) {
+		input.checked = mdSwitch.selected
+	}
 }
 
 declare global {
