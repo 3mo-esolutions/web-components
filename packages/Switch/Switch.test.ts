@@ -1,8 +1,9 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
+import { userEvent } from 'vitest/browser'
 import { type Switch } from './Switch.js'
 import './index.js'
 
-type MdSwitch = HTMLElement & { disabled: boolean, selected: boolean }
+type MdSwitch = HTMLElement & { disabled: boolean, selected: boolean, updateComplete: Promise<boolean> }
 
 describe('Switch', () => {
 	const fixture = new ComponentTestFixture<Switch>('mo-switch')
@@ -18,10 +19,29 @@ describe('Switch', () => {
 	}
 
 	describe('disabled', () => {
-		it('should set pointer-events to "none" when disabled', async () => {
+		it('should keep receiving pointer events when disabled, so that tooltips can explain why', async () => {
 			fixture.component.disabled = true
 			await fixture.updateComplete
-			expect(getComputedStyle(fixture.component).pointerEvents).toBe('none')
+			expect(getComputedStyle(fixture.component).pointerEvents).toBe('auto')
+		})
+
+		it('should fade the md-switch when disabled', async () => {
+			fixture.component.disabled = true
+			await fixture.update()
+			expect(getComputedStyle(mdSwitch()).opacity).toBe('0.5')
+		})
+
+		it('should not toggle when its label is clicked while disabled', async () => {
+			fixture.component.label = 'test'
+			fixture.component.disabled = true
+			await fixture.update()
+			const spy = spyOnChange()
+
+			labelElement()!.click()
+			await fixture.updateComplete
+
+			expect(fixture.component.selected).toBe(false)
+			expect(spy).not.toHaveBeenCalled()
 		})
 
 		it('should tunnel "disabled" to the md-switch', async () => {
@@ -102,6 +122,20 @@ describe('Switch', () => {
 			expect(fixture.component.selected).toBe(false)
 			expect(spy).toHaveBeenCalledTimes(2)
 			expect(spy.mock.lastCall![0].detail).toBe(false)
+		})
+
+		it('should stay in step with the md-switch when clicked after a programmatic selection', async () => {
+			await userEvent.click(mdSwitch())
+			fixture.component.selected = false
+			await fixture.update()
+			await mdSwitch().updateComplete
+
+			await userEvent.click(mdSwitch())
+			await fixture.updateComplete
+			await mdSwitch().updateComplete
+
+			expect(fixture.component.selected).toBe(true)
+			expect(mdSwitch().selected).toBe(true)
 		})
 
 		it('should not dispatch "change" when "selected" is set programmatically', async () => {
